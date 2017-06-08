@@ -1,0 +1,57 @@
+﻿using System;
+using System.IO;
+using GlobalPayments.Api.Terminals.Extensions;
+
+namespace GlobalPayments.Api.Terminals.PAX
+{
+    public class DebitResponse : PaxDeviceResponse
+    {
+        public string AuthorizationCode { get; set; }
+
+        internal DebitResponse(byte[] buffer)
+            : base(buffer, PAX_MSG_ID.T03_RSP_DO_DEBIT)
+        {
+        }
+
+        protected override void ParseResponse(BinaryReader br)
+        {
+            base.ParseResponse(br);
+
+            if (DeviceResponseCode == "000000")
+            {
+                HostResponse = new HostResponse(br);
+                TransactionType = br.ReadToCode(ControlCodes.FS);
+                AmountResponse = new AmountResponse(br);
+                AccountResponse = new AccountResponse(br);
+                TraceResponse = new TraceResponse(br);
+                ExtDataResponse = new ExtDataSubGroup(br);
+
+                MapResponse();
+            }
+        }
+
+        protected override void MapResponse()
+        {
+            base.MapResponse();
+
+            // Host Response
+            if (HostResponse != null)
+            {
+                AuthorizationCode = HostResponse.AuthCode;
+            }
+
+            // Account Response
+            if (AccountResponse != null)
+            {
+                PaymentType = AccountResponse.CardType.ToString();
+            }
+
+            // Account Response
+            if (AmountResponse != null)
+            {
+                TransactionAmount = AmountResponse.ApprovedAmount;
+                AmountDue = AmountResponse.AmountDue;
+            }
+        }
+    }
+}
