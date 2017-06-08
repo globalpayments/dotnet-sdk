@@ -1,0 +1,107 @@
+﻿<html>
+<head>
+    <title>HPP Post Response</title>
+</head>
+<body ng-app="hppApp">
+    <div ng-controller="hppController as hpp">
+        The template for this HPP is on: <b>{{hpp.account}}</b><br>
+        **************************************
+
+        <iframe id="hidden_iframe" frameBorder="1" name="hidden_iframe" allowtransparency="true" scrolling="no" style="background:none transparent;display:none;width:45%;"></iframe>
+
+        <form action="https://hpp.sandbox.realexpayments.com/pay" method="POST" target="hidden_iframe">
+            <input type="hidden" name="TIMESTAMP" value="{{hpp.timestamp}}">
+            <input type="hidden" name="MERCHANT_ID" value="{{hpp.merchantid}}">
+            <input type="hidden" name="ACCOUNT" value="{{hpp.account}}">
+            <input type="hidden" name="ORDER_ID" value="{{hpp.orderid}}">
+            <input type="hidden" name="CURRENCY" value="{{hpp.currency}}">
+            <input type="hidden" name="AMOUNT" value="{{hpp.amount}}">
+            <input type="hidden" name="AUTO_SETTLE_FLAG" value="1">
+            <input type="hidden" name="HPP_VERSION" value="2">
+            <input type="hidden" name="MERCHANT_RESPONSE_URL" value="http://requestb.in/10q2bjb1">
+            <input type="hidden" name="PAYER_EXIST" value="1">
+            <input type="hidden" name="PAYER_REF" value="{{hpp.payerRef}}">
+            <input type="hidden" name="HPP_SELECT_STORED_CARD" value="{{hpp.payerRef}}">
+            <input type="hidden" name="OFFER_SAVE_CARD" value="1">
+            <input type="hidden" name="HPP_POST_DIMENSIONS" value="http://localhost:8000">
+            <input type="hidden" name="HPP_POST_RESPONSE" value="http://localhost:8000">
+            <input type="hidden" id="CARD_PAYMENT_BUTTON" name="CARD_PAYMENT_BUTTON" value="Complete Payment">
+            <input type="hidden" id="SHA1HASH" name="SHA1HASH" value="{{hpp.sha1hash}}">
+            <input type=submit value="Start Demo" onclick="startListener()">
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha1.js"></script>
+    <script>
+        function displayIframe() {
+            console.log("iframe displayed");
+            var iframe = document.getElementById('hidden_iframe');
+            iframe.style.display = "block";
+        }
+
+        function startListener() {
+            displayIframe();
+
+            if (window.addEventListener) {
+                window.addEventListener('message', receiveMessage, false);
+            } else {
+                window.attachEvent('message', receiveMessage);
+            }
+        }
+
+        function receiveMessage(event) {
+            var iFrame = document.getElementById('hidden_iframe'); // This reads the iFrame and assigns it to a variable to be read
+            console.log(event.data); // This gets the data from the event passed by HPP and displays it on the console for debugging (The dimensions)
+
+            var hppMessage = JSON.parse(event.data); // This parses the JSON data into a variable
+            var currentHeight = hppMessage.iframe.height; // This reads the current height of the HPP
+
+            if (hppMessage.iframe) { // If the HPPmessage is the correct format
+                console.log("Current height: " + currentHeight);
+                var hppiframeheight = hppMessage.iframe.height;
+                var iframestyleheight = iFrame.style.height;
+
+                if (hppMessage.iframe.height >= iFrame.style.height) { // if the dimensions sent back from HPP are bigger than the current iFrame
+                    console.log("if " + hppiframeheight + " >= " + iframestyleheight);
+                    var paymentFromHeight = parseInt(hppMessage.iframe.height, 10); // Parse the integer value of the height and assign it to a variable
+                    console.log("paymentformheight: " + paymentFromHeight);
+                    iFrame.style.height = paymentFromHeight; // Set the new size of the iFrame
+                }
+                else if (currentHeight < iFrame.style.height) { // if the dimensions are smaller, do the same thing bascially but in reverse
+                    var paymentFromHeight = parseInt(hppMessage.iframe.height, 10) + 20 + "px";
+                    iFrame.style.height = currentHeight;
+                }
+            }
+        }
+
+        // do this in angular
+        (function () {
+            "use strict"
+
+            angular.module("hppApp", []).controller("hppController", hppController);
+
+            function hppController($filter) {
+                var hpp = this;
+
+                hpp.merchantid = "heartlandgpsandbox";
+                hpp.secret = "secret";
+                hpp.account = "hpp";
+                hpp.payerRef = "alan01";
+
+                hpp.timestamp = $filter('date')(new Date(), "yyyyMMddHHmmss");
+                hpp.orderid = hpp.timestamp + "-" + Math.floor((Math.random() * 1000) + 1);
+
+                hpp.currency = "GBP";
+                hpp.amount = "123";
+
+                hpp.sha1hash = [hpp.timestamp, hpp.merchantid, hpp.orderid, hpp.amount, hpp.currency, hpp.payerRef, null].join('.');
+                hpp.sha1hash = [CryptoJS.SHA1(hpp.sha1hash).toString(), hpp.secret].join('.');
+                hpp.sha1hash = CryptoJS.SHA1(hpp.sha1hash).toString();
+            };
+        })();
+    </script>
+</body>
+</html>

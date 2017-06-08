@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9876175E-E3D9-4F53-B8D3-6FEB12CD64A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DD21E082-BA5E-4EEB-B628-B727DE3DD187}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GlobalPayments.Api", "src\GlobalPayments.Api\GlobalPayments.Api.xproj", "{F17FCB7C-D151-42A3-92F0-D07C6BAEBE1E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8E5CBF7F-AF5F-462D-9C3B-3660C36D0C4A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GlobalPayments.Api.Tests", "tests\GlobalPayments.Api.Tests\GlobalPayments.Api.Tests.xproj", "{B6046949-26BA-4F0C-A6AD-5836ADAF479F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F17FCB7C-D151-42A3-92F0-D07C6BAEBE1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F17FCB7C-D151-42A3-92F0-D07C6BAEBE1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F17FCB7C-D151-42A3-92F0-D07C6BAEBE1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F17FCB7C-D151-42A3-92F0-D07C6BAEBE1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6046949-26BA-4F0C-A6AD-5836ADAF479F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6046949-26BA-4F0C-A6AD-5836ADAF479F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6046949-26BA-4F0C-A6AD-5836ADAF479F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6046949-26BA-4F0C-A6AD-5836ADAF479F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F17FCB7C-D151-42A3-92F0-D07C6BAEBE1E} = {9876175E-E3D9-4F53-B8D3-6FEB12CD64A8}
+		{B6046949-26BA-4F0C-A6AD-5836ADAF479F} = {8E5CBF7F-AF5F-462D-9C3B-3660C36D0C4A}
+	EndGlobalSection
+EndGlobal
