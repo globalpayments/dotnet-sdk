@@ -151,18 +151,21 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("AMOUNT", builder.Amount.ToNumericString());
             request.Set("CURRENCY", builder.Currency);
             request.Set("TIMESTAMP", timestamp);
-            request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, (builder.Amount != null) ? builder.Amount.ToNumericString() : null, builder.Currency));
             request.Set("AUTO_SETTLE_FLAG", (builder.TransactionType == TransactionType.Sale) ? "1" : "0");
             request.Set("COMMENT1", builder.Description);
             // request.Set("COMMENT2", );
-            request.Set("RETURN_TSS", HostedPaymentConfig.RequestTransactionStabilityScore ? "1" : "0");
-            request.Set("DCC_ENABLE", HostedPaymentConfig.DirectCurrencyConversionEnabled ? "1" : "0");
+            if(HostedPaymentConfig.RequestTransactionStabilityScore.HasValue)
+                request.Set("RETURN_TSS", HostedPaymentConfig.RequestTransactionStabilityScore.Value ? "1" : "0");
+            if(HostedPaymentConfig.DirectCurrencyConversionEnabled.HasValue)
+                request.Set("DCC_ENABLE", HostedPaymentConfig.DirectCurrencyConversionEnabled.Value ? "1" : "0");
             if (builder.HostedPaymentData != null) {
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
-                if(HostedPaymentConfig.DisplaySavedCards && builder.HostedPaymentData.CustomerKey != null)
+                if(HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null)
                     request.Set("HPP_SELECT_STORED_CARD", builder.HostedPaymentData.CustomerKey);
-                request.Set("OFFER_SAVE_CARD", builder.HostedPaymentData.OfferToSaveCard ? "1" : "0");
-                request.Set("PAYER_EXIST", builder.HostedPaymentData.CustomerExists ? "1" : "0");
+                if(builder.HostedPaymentData.OfferToSaveCard.HasValue)
+                    request.Set("OFFER_SAVE_CARD", builder.HostedPaymentData.OfferToSaveCard.Value ? "1" : "0");
+                if(builder.HostedPaymentData.CustomerExists.HasValue)
+                request.Set("PAYER_EXIST", builder.HostedPaymentData.CustomerExists.Value ? "1" : "0");
                 request.Set("PAYER_REF", builder.HostedPaymentData.CustomerKey);
                 request.Set("PMT_REF", builder.HostedPaymentData.PaymentKey);
                 request.Set("PROD_ID", builder.HostedPaymentData.ProductId);
@@ -180,12 +183,31 @@ namespace GlobalPayments.Api.Gateways {
             request.Set("HPP_LANG", HostedPaymentConfig.Language);
             request.Set("MERCHANT_RESPONSE_URL", HostedPaymentConfig.ResponseUrl);
             request.Set("CARD_PAYMENT_BUTTON", HostedPaymentConfig.PaymentButtonText);
-            request.Set("CARD_STORAGE_ENABLE", HostedPaymentConfig.CardStorageEnabled ? "1" : "0");
+            if(HostedPaymentConfig.CardStorageEnabled.HasValue)
+                request.Set("CARD_STORAGE_ENABLE", HostedPaymentConfig.CardStorageEnabled.Value ? "1" : "0");
             if (builder.TransactionType == TransactionType.Verify)
                 request.Set("VALIDATE_CARD_ONLY", builder.TransactionType == TransactionType.Verify ? "1" : "0");
             request.Set("HPP_FRAUD_FILTER_MODE", HostedPaymentConfig.FraudFilterMode.ToString());
             request.Set("HPP_VERSION", HostedPaymentConfig.Version);
 
+            var toHash = new List<string> {
+                timestamp,
+                MerchantId,
+                orderId,
+                (builder.Amount != null) ? builder.Amount.ToNumericString() : null,
+                builder.Currency
+            };
+
+            if (HostedPaymentConfig.CardStorageEnabled.HasValue || (builder.HostedPaymentData != null && builder.HostedPaymentData.OfferToSaveCard.HasValue) || HostedPaymentConfig.DisplaySavedCards.HasValue) {
+                toHash.Add((builder.HostedPaymentData.CustomerKey != null) ? builder.HostedPaymentData.CustomerKey : null);
+                toHash.Add((builder.HostedPaymentData.PaymentKey != null) ? builder.HostedPaymentData.PaymentKey : null);
+            }
+
+            if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE) {
+                toHash.Add(HostedPaymentConfig.FraudFilterMode.ToString());
+            }
+
+            request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray()));
             return request.ToString();
         }
 

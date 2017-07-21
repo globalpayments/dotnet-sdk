@@ -3,6 +3,9 @@ using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 
 namespace GlobalPayments.Api.PaymentMethods {
+    /// <summary>
+    /// Use eCheck/ACH as a payment method.
+    /// </summary>
     public class eCheck : IPaymentMethod, IChargable {
         public string AccountNumber { get; set; }
         public AccountType? AccountType { get; set; }
@@ -23,6 +26,9 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string SsnLast4 { get; set; }
         public string Token { get; set; }
 
+        /// <summary>
+        /// Set to `PaymentMethodType.ACH` for internal methods.
+        /// </summary>
         public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.ACH; } }
 
         public AuthorizationBuilder Charge(decimal? amount = null) {

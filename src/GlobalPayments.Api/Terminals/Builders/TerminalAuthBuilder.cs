@@ -15,10 +15,15 @@ namespace GlobalPayments.Api.Terminals.Builders {
             }
         }
         internal CurrencyType? Currency { get; set; }
+        internal string CustomerCode { get; set; }
         internal decimal? Gratuity { get; set; }
         internal string InvoiceNumber { get; set; }
+        internal string PoNumber { get; set; }
         internal bool RequestMultiUseToken { get; set; }
         internal bool SignatureCapture { get; set; }
+        internal decimal? TaxAmount { get; set; }
+        internal string TaxExempt { get; set; }
+        internal string TaxExemptId { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -49,6 +54,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Currency = value;
             return this;
         }
+        public TerminalAuthBuilder WithCustomerCode(string customerCode) {
+            CustomerCode = customerCode;
+            return this;
+        }
         public TerminalAuthBuilder WithGratuity(decimal? gratuity) {
             Gratuity = gratuity;
             return this;
@@ -61,12 +70,25 @@ namespace GlobalPayments.Api.Terminals.Builders {
             PaymentMethod = method;
             return this;
         }
+        public TerminalAuthBuilder WithPoNumber(string poNumber) {
+            PoNumber = poNumber;
+            return this;
+        }
         public TerminalAuthBuilder WithRequestMultiUseToken(bool requestMultiUseToken) {
             RequestMultiUseToken = requestMultiUseToken;
             return this;
         }
         public TerminalAuthBuilder WithSignatureCapture(bool signatureCapture) {
             SignatureCapture = signatureCapture;
+            return this;
+        }
+        public TerminalAuthBuilder WithTaxAmount(decimal taxAmount) {
+            TaxAmount = taxAmount;
+            return this;
+        }
+        public TerminalAuthBuilder WithTaxType(TaxType taxType, string taxExemptId = null) {
+            TaxExempt = taxType == TaxType.TAXEXEMPT ? "1" : "0";
+            TaxExemptId = taxExemptId;
             return this;
         }
         public TerminalAuthBuilder WithToken(string value) {

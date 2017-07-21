@@ -87,6 +87,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             // amounts sub group
             amounts.TransactionAmount = "{0:c}".FormatWith(builder.Amount).ToNumeric();
             amounts.TipAmount = "{0:c}".FormatWith(builder.Gratuity).ToNumeric();
+            amounts.TaxAmount = "{0:c}".FormatWith(builder.TaxAmount).ToNumeric();
 
             // account sub group
             if (builder.PaymentMethod != null) {
@@ -122,6 +123,12 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             // Trace Sub Group
             trace.InvoiceNumber = builder.InvoiceNumber;
+
+            // Commercial Group
+            commercial.CustomerCode = builder.CustomerCode;
+            commercial.PoNumber = builder.PoNumber;
+            commercial.TaxExempt = builder.TaxExempt;
+            commercial.TaxExemptId = builder.TaxExemptId;
 
             // Additional Info sub group
             if (builder.RequestMultiUseToken)

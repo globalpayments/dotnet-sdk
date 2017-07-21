@@ -26,7 +26,9 @@ namespace GlobalPayments.Api.Tests.TestData {
                 Number = card.Number,
                 ExpMonth = card.ExpMonth,
                 ExpYear = card.ExpYear,
-                PinBlock = pinBlock
+                PinBlock = pinBlock,
+                ReaderPresent = card.ReaderPresent,
+                CardPresent = card.CardPresent
             };
         }
 

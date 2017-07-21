@@ -2,7 +2,13 @@
 using GlobalPayments.Api.Builders;
 
 namespace GlobalPayments.Api.PaymentMethods {
+    /// <summary>
+    /// Use EBT as a payment method.
+    /// </summary>
     public abstract class EBT : IPaymentMethod, IBalanceable, IChargable, IRefundable, IPinProtected {
+        /// <summary>
+        /// Set to `PaymentMethodType.EBT` for internal methods.
+        /// </summary>
         public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.EBT; } }
         public string PinBlock { get; set; }
 
@@ -23,6 +29,9 @@ namespace GlobalPayments.Api.PaymentMethods {
         }
     }
 
+    /// <summary>
+    /// Use EBT manual entry data as a payment method.
+    /// </summary>
     public class EBTCardData : EBT, ICardData {
         public string ApprovalCode { get; set; }
         public bool CardPresent { get; set; }
@@ -35,6 +44,9 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string SerialNumber { get; set; }
     }
 
+    /// <summary>
+    /// Use EBT track data as a payment method.
+    /// </summary>
     public class EBTTrackData : EBT, ITrackData, IEncryptable {
         public EncryptionData EncryptionData { get; set; }
         public EntryMethod EntryMethod { get; set; }

@@ -7,182 +7,707 @@ namespace GlobalPayments.Api.Entities {
         DELETE
     }
 
+    /// <summary>
+    /// Indicates an address type.
+    /// </summary>
     public enum AddressType {
+        /// <summary>
+        /// Indicates a billing address.
+        /// </summary>
         Billing,
+
+        /// <summary>
+        /// Indicates a shipping address.
+        /// </summary>
         Shipping
     }
 
+    /// <summary>
+    /// Indicates a device type for out of scope / semi-integrated devices.
+    /// </summary>
     public enum DeviceType {
+        /// <summary>
+        /// Indicates a Pax S300 device.
+        /// </summary>
         PaxS300
     }
 
+    /// <summary>
+    /// Indicates an inquiry type.
+    /// </summary>
     public enum InquiryType {
+        /// <summary>
+        /// Indicates a foodstamp inquiry.
+        /// </summary>
         FOODSTAMP,
+
+        /// <summary>
+        /// Indicates a cash inquiry.
+        /// </summary>
         CASH
     }
 
+    /// <summary>
+    /// Indicates a payment method type.
+    /// </summary>
     public enum PaymentMethodType {
+        /// <summary>
+        /// Indicates a payment method reference.
+        /// </summary>
+        /// <remarks>
+        /// Should be accompanied by a gateway transaction ID.
+        /// </remarks>
         Reference = 0,
+
+        /// <summary>
+        /// Indicates a credit or PIN-less debit account.
+        /// </summary>
+        /// <remarks>
+        /// Should be accompanied by a token, card number, or track data.
+        /// </remarks>
         Credit = 1 << 1,
+
+        /// <summary>
+        /// Indicates a PIN debit account.
+        /// </summary>
+        /// <remarks>
+        /// Should be accompanied by track data and a PIN block.
+        /// </remarks>
         Debit = 1 << 2,
+
+        /// <summary>
+        /// Indicates an EBT account.
+        /// </summary>
+        /// <remarks>
+        /// Should be accompanied by track data and a PIN block.
+        /// </remarks>
         EBT = 1 << 3,
+
+        /// <summary>
+        /// Indicates cash as the payment method.
+        /// </summary>
         Cash = 1 << 4,
+
+        /// <summary>
+        /// Indicates an ACH/eCheck account.
+        /// </summary>
+        /// <remarks>
+        /// Should be accompanied by a token or an account number and routing number.
+        /// </remarks>
         ACH = 1 << 5,
+
+        /// <summary>
+        /// Indicates a gift/loyalty/stored value account.
+        /// </summary>
+        /// <remarks>
+        /// Should be accompanied by a token, card number, alias, or track data.
+        /// </remarks>
         Gift = 1 << 6,
+
+        /// <summary>
+        /// Indicates a recurring payment method.
+        /// </summary>
+        /// <remarks>
+        /// Should be accompanied by a payment method key.
+        /// </remarks>
         Recurring = 1 << 7
     }
 
+    /// <summary>
+    /// Indicates how the payment method data was obtained.
+    /// </summary>
     public enum EntryMethod {
+        /// <summary>
+        /// Indicates manual entry.
+        /// </summary>
         Manual,
+
+        /// <summary>
+        /// Indicates swipe entry.
+        /// </summary>
         Swipe,
+
+        /// <summary>
+        /// Indicates proximity/contactless entry.
+        /// </summary>
         Proximity
     }
 
+    /// <summary>
+    /// Indicates how the gift/loyalty/stored value account data was obtained.
+    /// </summary>
     public enum GiftEntryMethod {
+        /// <summary>
+        /// Indicates swipe entry.
+        /// </summary>
         Swipe,
+
+        /// <summary>
+        /// Indicates an alias was entered.
+        /// </summary>
         Alias,
+
+        /// <summary>
+        /// Indicates manual entry.
+        /// </summary>
         Manual
     }
 
+    /// <summary>
+    /// Indicates the transaction type.
+    /// </summary>
     [Flags]
     public enum TransactionType {
+        /// <summary>
+        /// Indicates a decline.
+        /// </summary>
         Decline = 0,
+
+        /// <summary>
+        /// Indicates an account verify.
+        /// </summary>
         Verify = 1 << 0,
+
+        /// <summary>
+        /// Indicates a capture/add to batch.
+        /// </summary>
         Capture = 1 << 1,
+
+        /// <summary>
+        /// Indicates an authorization without capture.
+        /// </summary>
         Auth = 1 << 2,
+
+        /// <summary>
+        /// Indicates a refund/return.
+        /// </summary>
         Refund = 1 << 3,
+
+        /// <summary>
+        /// Indicates a reversal.
+        /// </summary>
         Reversal = 1 << 4,
+
+        /// <summary>
+        /// Indicates a sale/charge/authorization with capture.
+        /// </summary>
         Sale = 1 << 5,
+
+        /// <summary>
+        /// Indicates an edit.
+        /// </summary>
         Edit = 1 << 6,
+
+        /// <summary>
+        /// Indicates a void.
+        /// </summary>
         Void = 1 << 7,
+
+        /// <summary>
+        /// Indicates value should be added.
+        /// </summary>
         AddValue = 1 << 8,
+
+        /// <summary>
+        /// Indicates a balance inquiry.
+        /// </summary>
         Balance = 1 << 9,
+
+        /// <summary>
+        /// Indicates an activation.
+        /// </summary>
         Activate = 1 << 10,
+
+        /// <summary>
+        /// Indicates an alias should be added.
+        /// </summary>
         Alias = 1 << 11,
+
+        /// <summary>
+        /// Indicates the payment method should be replaced.
+        /// </summary>
         Replace = 1 << 12,
+
+        /// <summary>
+        /// Indicates a reward.
+        /// </summary>
         Reward = 1 << 13,
+
+        /// <summary>
+        /// Indicates a deactivation.
+        /// </summary>
         Deactivate = 1 << 14,
+
+        /// <summary>
+        /// Indicates a batch close.
+        /// </summary>
         BatchClose = 1 << 15,
+
+        /// <summary>
+        /// Indicates a resource should be created.
+        /// </summary>
         Create = 1 << 16,
+
+        /// <summary>
+        /// Indicates a resource should be deleted.
+        /// </summary>
         Delete = 1 << 17,
+
+        /// <summary>
+        /// Indicates a benefit withdrawal.
+        /// </summary>
         BenefitWithdrawal = 1 << 18,
+
+        /// <summary>
+        /// Indicates a resource should be fetched.
+        /// </summary>
         Fetch = 1 << 19,
+
+        /// <summary>
+        /// Indicates a resource type should be searched.
+        /// </summary>
         Search = 1 << 20,
+
+        /// <summary>
+        /// Indicates a hold.
+        /// </summary>
         Hold = 1 << 21,
+
+        /// <summary>
+        /// Indicates a release.
+        /// </summary>
         Release = 1 << 22
     }
 
+    /// <summary>
+    /// Indicates if a transaction should be specialized.
+    /// </summary>
     public enum TransactionModifier {
+        /// <summary>
+        /// Indicates no specialization.
+        /// </summary>
         None = 0,
+
+        /// <summary>
+        /// Indicates an incremental transaction.
+        /// </summary>
         Incremental = 1 << 1,
+
+        /// <summary>
+        /// Indicates an additional transaction.
+        /// </summary>
         Additional = 1 << 2,
+
+        /// <summary>
+        /// Indicates an offline transaction.
+        /// </summary>
         Offline = 1 << 3,
+
+        /// <summary>
+        /// Indicates a commercial request transaction.
+        /// </summary>
         LevelII = 1 << 4,
+
+        /// <summary>
+        /// Indicates a fraud decline transaction.
+        /// </summary>
         FraudDecline = 1 << 5,
+
+        /// <summary>
+        /// Indicates a chip decline transaction.
+        /// </summary>
         ChipDecline = 1 << 6,
+
+        /// <summary>
+        /// Indicates a cash back transaction.
+        /// </summary>
         CashBack = 1 << 7,
+
+        /// <summary>
+        /// Indicates a voucher transaction.
+        /// </summary>
         Voucher = 1 << 8,
+
+        /// <summary>
+        /// Indicates a consumer authentication (3DSecure) transaction.
+        /// </summary>
         Secure3D = 1 << 9,
+
+        /// <summary>
+        /// Indicates a hosted payment transaction.
+        /// </summary>
         HostedRequest = 1 << 10,
+
+        /// <summary>
+        /// Indicates a recurring transaction.
+        /// </summary>
         Recurring = 1 << 11
     }
 
+    /// <summary>
+    /// Indicates CVN presence at time of payment.
+    /// </summary>
     public enum CvnPresenceIndicator {
+        /// <summary>
+        /// Indicates CVN was present.
+        /// </summary>
         Present = 1,
+
+        /// <summary>
+        /// Indicates CVN was present but illegible.
+        /// </summary>
         Illegible,
+
+        /// <summary>
+        /// Indicates CVN was not present.
+        /// </summary>
         NotOnCard,
+
+        /// <summary>
+        /// Indicates CVN was not requested.
+        /// </summary>
         NotRequested
     }
 
+    /// <summary>
+    /// Indicates the tax type.
+    /// </summary>
     public enum TaxType {
+        /// <summary>
+        /// Indicates tax was not used.
+        /// </summary>
         NOTUSED,
+
+        /// <summary>
+        /// Indicates sales tax was applied.
+        /// </summary>
         SALESTAX,
+
+        /// <summary>
+        /// Indicates tax exemption.
+        /// </summary>
         TAXEXEMPT
     }
 
+    /// <summary>
+    /// Indicates the currency type.
+    /// </summary>
     public enum CurrencyType {
+        /// <summary>
+        /// Indicates a true currency.
+        /// </summary>
         CURRENCY,
+
+        /// <summary>
+        /// Indicates loyalty points.
+        /// </summary>
         POINTS
     }
 
+    /// <summary>
+    /// Indicates the account type for ACH/eCheck transactions.
+    /// </summary>
     public enum AccountType {
+        /// <summary>
+        /// Indicates a checking account.
+        /// </summary>
         CHECKING,
+
+        /// <summary>
+        /// Indicates a savings account.
+        /// </summary>
         SAVINGS
     }
 
+    /// <summary>
+    /// Indicates the check type for ACH/eCheck transactions.
+    /// </summary>
     public enum CheckType {
+        /// <summary>
+        /// Indicates a personal check.
+        /// </summary>
         PERSONAL,
+
+        /// <summary>
+        /// Indicates a business check.
+        /// </summary>
         BUSINESS,
+
+        /// <summary>
+        /// Indicates a payroll check.
+        /// </summary>
         PAYROLL
     }
+
+    /// <summary>
+    /// Indicates the NACHA standard entry class (SEC) code for ACH/eCheck transactions.
+    /// </summary>
     public abstract class SecCode {
+        /// <summary>
+        /// Indicates prearranged payment and deposit (PPD).
+        /// </summary>
         public const string PPD = "PPD";
+
+        /// <summary>
+        /// Indicates cash concentration or disbursement (CCD).
+        /// </summary>
         public const string CCD = "CCD";
+
+        /// <summary>
+        /// Indicates point of purchase entry (POP).
+        /// </summary>
         public const string POP = "POP";
+
+        /// <summary>
+        /// Indicates internet initiated entry (WEB).
+        /// </summary>
         public const string WEB = "WEB";
+
+        /// <summary>
+        /// Indicates telephone initiated entry (TEL).
+        /// </summary>
         public const string TEL = "TEL";
+
+        /// <summary>
+        /// Indicates verification only.
+        /// </summary>
         public const string EBRONZE = "EBRONZE";
     }
 
+    /// <summary>
+    /// Indicates the report type.
+    /// </summary>
     [Flags]
     public enum ReportType {
+        /// <summary>
+        /// Indicates a FindTransactions report.
+        /// </summary>
         FindTransactions = 0,
+
+        /// <summary>
+        /// Indicates an Activity report.
+        /// </summary>
         Activity = 1 << 1,
+
+        /// <summary>
+        /// Indicates a BatchDetail report.
+        /// </summary>
         BatchDetail = 1 << 2,
+
+        /// <summary>
+        /// Indicates a BatchHistory report.
+        /// </summary>
         BatchHistory = 1 << 3,
+
+        /// <summary>
+        /// Indicates a BatchSummary report.
+        /// </summary>
         BatchSummary = 1 << 4,
+
+        /// <summary>
+        /// Indicates an OpenAuths report.
+        /// </summary>
         OpenAuths = 1 << 5,
+
+        /// <summary>
+        /// Indicates a Search report.
+        /// </summary>
         Search = 1 << 6,
+
+        /// <summary>
+        /// Indicates a TransactionDetail report.
+        /// </summary>
         TransactionDetail = 1 << 7
     }
 
+    /// <summary>
+    /// Indicates how timezones should be handled.
+    /// </summary>
     public enum TimeZoneConversion {
+        /// <summary>
+        /// Indicates time is in coordinated universal time (UTC).
+        /// </summary>
         UTC,
+
+        /// <summary>
+        /// Indicates the merchant is responsible for timezone conversions.
+        /// </summary>
         Merchant,
+
+        /// <summary>
+        /// Indicates the datacenter, gateway, or processor is responsible
+        /// for timezone conversions.
+        /// </summary>
         Datacenter
     }
 
+    /// <summary>
+    /// Indicates the type of recurring schedule.
+    /// </summary>
     public enum RecurringType {
+        /// <summary>
+        /// Indicates a fix number of payments.
+        /// </summary>
         Fixed,
+
+        /// <summary>
+        /// Indicates a variable number of payments.
+        /// </summary>
         Variable
     }
 
+    /// <summary>
+    /// Indicates when a transaction is ran in a recurring schedule.
+    /// </summary>
     public enum RecurringSequence {
+        /// <summary>
+        /// Indicates the transaction is the first of a recurring schedule.
+        /// </summary>
         First,
+
+        /// <summary>
+        /// Indicates the transaction is a subsequent payment of a recurring schedule.
+        /// </summary>
         Subsequent,
+
+        /// <summary>
+        /// Indicates the transaction is the last of a recurring schedule.
+        /// </summary>
         Last
     }
 
+    /// <summary>
+    /// Indicates when an email receipt should be sent for the transaction.
+    /// </summary>
+    /// <remarks>
+    /// Currently only used in recurring schedules.
+    /// </remarks>
     public enum EmailReceipt {
+        /// <summary>
+        /// Indicates an email receipt should never be sent.
+        /// </summary>
         Never,
+
+        /// <summary>
+        /// Indicates an email receipt should always be sent.
+        /// </summary>
         All,
+
+        /// <summary>
+        /// Indicates an email receipt should only be sent on approvals.
+        /// </summary>
         Approvals,
+
+        /// <summary>
+        /// Indicates an email receipt should only be sent on declines.
+        /// </summary>
         Declines
     }
 
+    /// <summary>
+    /// Indicates when in the month a recurring schedule should run.
+    /// </summary>
     public enum PaymentSchedule {
+        /// <summary>
+        /// Indicates a specified date.
+        /// </summary>
         Dynamic,
+
+        /// <summary>
+        /// Indicates the first of the month.
+        /// </summary>
         FirstDayOfTheMonth,
+
+        /// <summary>
+        /// Indicates the last of the month.
+        /// </summary>
         LastDayOfTheMonth
     }
 
+    /// <summary>
+    /// Indicates the frequency of a recurring schedule.
+    /// </summary>
     public static class ScheduleFrequency {
+        /// <summary>
+        /// Indicates a schedule should process payments weekly.
+        /// </summary>
         public const string WEEKLY = "Weekly";
+
+        /// <summary>
+        /// Indicates a schedule should process payments bi-weekly
+        /// (every other week).
+        /// </summary>
         public const string BI_WEEKLY = "Bi-Weekly";
+
+        /// <summary>
+        /// Indicates a schedule should process payments bi-monthly
+        /// (twice a month).
+        /// </summary>
         public const string BI_MONTHLY = "Bi-Monthly";
+
+        /// <summary>
+        /// Indicates a schedule should process payments semi-monthly
+        /// (every other month).
+        /// </summary>
         public const string SEMI_MONTHLY = "Semi-Monthly";
+
+        /// <summary>
+        /// Indicates a schedule should process payments monthly.
+        /// </summary>
         public const string MONTHLY = "Monthly";
+
+        /// <summary>
+        /// Indicates a schedule should process payments quarterly.
+        /// </summary>
         public const string QUARTERLY = "Quarterly";
+
+        /// <summary>
+        /// Indicates a schedule should process payments semi-annually
+        /// (twice a year).
+        /// </summary>
         public const string SEMI_ANNUALLY = "Semi-Annually";
+
+        /// <summary>
+        /// Indicates a schedule should process payments annually.
+        /// </summary>
         public const string ANNUALLY = "Annually";
     }
 
+    /// <summary>
+    /// Indicates a reason for the transaction.
+    /// </summary>
+    /// <remarks>
+    /// This is typically used for returns/reversals.
+    /// </remarks>
     public enum ReasonCode {
+        /// <summary>
+        /// Indicates fraud.
+        /// </summary>
         FRAUD,
+
+        /// <summary>
+        /// Indicates a false positive.
+        /// </summary>
         FALSEPOSITIVE,
+
+        /// <summary>
+        /// Indicates desired good is out of stock.
+        /// </summary>
         OUTOFSTOCK,
+
+        /// <summary>
+        /// Indicates desired good is in of stock.
+        /// </summary>
         INSTOCK,
+
+        /// <summary>
+        /// Indicates another reason.
+        /// </summary>
         OTHER,
+
+        /// <summary>
+        /// Indicates reason was not given.
+        /// </summary>
         NOTGIVEN
     }
 }

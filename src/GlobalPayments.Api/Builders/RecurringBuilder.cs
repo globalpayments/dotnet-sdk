@@ -21,6 +21,10 @@ namespace GlobalPayments.Api.Builders {
             }
         }
 
+        /// <summary>
+        /// Executes the builder against the gateway.
+        /// </summary>
+        /// <returns>TResult</returns>
         public override TResult Execute() {
             base.Execute();
 

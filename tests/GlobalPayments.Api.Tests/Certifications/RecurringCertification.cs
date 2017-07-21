@@ -5,7 +5,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HybridSDK.Tests.Certifications {
+namespace GlobalPayments.Api.Tests.Certifications {
     [TestClass]
     public class RecurringCertification {
         private static Customer _customerPerson;

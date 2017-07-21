@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
@@ -27,8 +28,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             try {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
-                Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
-                Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
+                Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
+                Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
             catch (GatewayException exc) {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
@@ -1384,7 +1385,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
         [TestMethod]
         public void retail_081_EbtfsPurchaseVisaManual() {
             var card = TestCards.VisaManual(false, true).AsEBT("32539F50C245A6A93D123412324000AA");
-
+            
             var response = card.Charge(102.01m)
                 .WithCurrency("USD")
                 .Execute();
@@ -1791,8 +1792,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             try {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
-                Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
-                Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
+                Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
+                Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
             catch (GatewayException exc) {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")

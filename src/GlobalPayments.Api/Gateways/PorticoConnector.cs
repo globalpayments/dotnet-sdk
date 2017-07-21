@@ -36,7 +36,8 @@ namespace GlobalPayments.Api.Gateways {
             }
             et.SubElement(block1, "Amt", builder.Amount);
             et.SubElement(block1, "GratuityAmtInfo", builder.Gratuity);
-
+            et.SubElement(block1, "ConvenienceAmtInfo", builder.ConvenienceAmt);
+            et.SubElement(block1, "ShippingAmtInfo", builder.ShippingAmt);
             // because plano...
             et.SubElement(block1, builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit ? "CashbackAmtInfo" : "CashBackAmount", builder.CashBackAmount);
 
@@ -472,7 +473,9 @@ namespace GlobalPayments.Api.Gateways {
                         SettlementAmount = root.GetValue<decimal>("SettlementAmt"),
                         Status = root.GetValue<string>("Status", "TxnStatus"),
                         TransactionDate = root.GetValue<DateTime>("TxnUtcDT", "ReqUtcDT"),
-                        TransactionId = root.GetValue<string>("GatewayTxnId")
+                        TransactionId = root.GetValue<string>("GatewayTxnId"),
+                        ConvenienceAmt = root.GetValue<decimal>("ConvenienceAmtInfo"),
+                        ShippingAmt = root.GetValue<decimal>("ShippingAmtInfo")
                     };
                 };
 

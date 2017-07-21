@@ -9,6 +9,10 @@ namespace GlobalPayments.Api.Builders {
             ReportType = type;
         }
 
+        /// <summary>
+        /// Executes the builder against the gateway.
+        /// </summary>
+        /// <returns>TResult</returns>
         public override TResult Execute() {
             base.Execute();
 

@@ -6,6 +6,15 @@ using GlobalPayments.Api.Terminals.PAX;
 
 namespace GlobalPayments.Api
 {
+    /// <summary>
+    /// Maintains references to the currently configured gateway/device objects
+    /// </summary>
+    /// <remarks>
+    /// The public `ServicesContainer.Configure` method is the only call
+    /// required of the integrator to configure the SDK's various gateway/device
+    /// interactions. The configured gateway/device objects are handled
+    /// internally by exposed APIs throughout the SDK.
+    /// </remarks>
     public class ServicesContainer : IDisposable {
         private IPaymentGateway _gateway;
         private IRecurringService _recurring;
@@ -21,6 +30,9 @@ namespace GlobalPayments.Api
             }
         }
 
+        /// <summary>
+        /// Configure the SDK's various gateway/device interactions
+        /// </summary>
         public static void Configure(ServicesConfig config) {
             config.Validate();
 
@@ -100,6 +112,9 @@ namespace GlobalPayments.Api
             return _recurring;
         }
 
+        /// <summary>
+        /// Implementation for `IDisposable`
+        /// </summary>
         public void Dispose() {
             _deviceControl.Dispose();
         }

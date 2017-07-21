@@ -9,11 +9,12 @@
     "System.Threading.Thread": "4.0.0",
     "System.Xml.XmlDocument": "4.0.1",
     "Newtonsoft.Json": "9.0.1",
+    "System.IO.FileSystem": "4.3.0",
     "System.Net.Primitives": "4.3.0"
   },
 
   "frameworks": {
-    "netcoreapp1.0": {
+    "netstandard1.3": {
       "imports": "dnxcore50"
     }
   }

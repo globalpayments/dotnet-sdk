@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
@@ -33,6 +34,12 @@ namespace GlobalPayments.Api.Utils {
     public class JsonDoc {
         Dictionary<string, object> _dict;
         IRequestEncoder _encoder;
+
+        public IEnumerable<string> Keys {
+            get {
+                return _dict.Select(p => p.Key).ToList();
+            }
+        }
 
         public JsonDoc(IRequestEncoder encoder = null) {
             _dict = new Dictionary<string, object>();
@@ -86,6 +93,13 @@ namespace GlobalPayments.Api.Utils {
                 if (_dict[name] is JsonDoc)
                     return (JsonDoc)_dict[name];
                 return null;
+            }
+            return null;
+        }
+
+        public object GetValue(string name) {
+            if (_dict.ContainsKey(name)) {
+                return _dict[name];
             }
             return null;
         }
