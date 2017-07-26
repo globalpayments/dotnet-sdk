@@ -103,5 +103,774 @@ namespace GlobalPayments.Api.Tests.Realex {
         public void VerifyWithAmount() {
             _service.Verify().WithAmount(10m).Serialize();
         }
+
+        [TestMethod]
+        public void BasicAuth()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2"                    
+                },
+            });
+
+            var hppJson = service.Authorize(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"0\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\"}";
+
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void BasicCharge()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\"}";
+
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        // testing COMMENT1, CUST_NUM, PROD_ID, VAR_REF, HPP_LANG, CARD_PAYMENT_BUTTON
+        public void BasicHostedPaymentData()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+                
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    Language = "EN",
+                    PaymentButtonText = "Place Order"
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerNumber = "a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa",
+                ProductId = "a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f",
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .WithDescription("Mobile Channel")
+                .WithClientTransactionId("My Legal Entity")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CUST_NUM\": \"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\", \"PROD_ID\": \"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\", \"COMMENT1\": \"Mobile Channel\", \"HPP_LANG\": \"EN\", \"CARD_PAYMENT_BUTTON\": \"Place Order\", \"VAR_REF\": \"My Legal Entity\"}";
+
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardNewCustomerNoRefs()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = false,
+                OfferToSaveCard = true
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"7116c49826367c6513efdc0cc81e243b8095d78f\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"0\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardNewCustomerJustPayerRef()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = false,
+                OfferToSaveCard = true,
+                CustomerKey = "376a2598-412d-4805-9f47-c177d5605853"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"4dcf4e5e2d43855fe31cdc097e985a895868563e\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"0\", \"PAYER_REF\": \"376a2598-412d-4805-9f47-c177d5605853\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardNewCustomerJustPaymentRef()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = false,
+                OfferToSaveCard = true,
+                PaymentKey = "ca46344d-4292-47dc-9ced-e8a42ce66977"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"5fe76a45585d9793fd162ab8a3cd4a42991417df\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"0\", \"PMT_REF\": \"ca46344d-4292-47dc-9ced-e8a42ce66977\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardNewCustomerAllSuppliedRefs()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = false,
+                OfferToSaveCard = true,
+                CustomerKey = "376a2598-412d-4805-9f47-c177d5605853",
+                PaymentKey = "ca46344d-4292-47dc-9ced-e8a42ce66977"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"f0cf097fe769a6a5a6254eee631e51709ba34c90\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"0\", \"PMT_REF\": \"ca46344d-4292-47dc-9ced-e8a42ce66977\", \"PAYER_REF\": \"376a2598-412d-4805-9f47-c177d5605853\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardAutoNewCustomerNoRefs()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = false,
+                OfferToSaveCard = false
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"7116c49826367c6513efdc0cc81e243b8095d78f\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"0\", \"PAYER_EXIST\": \"0\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardReturnCustomerNoPaymentRef()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = true,
+                OfferToSaveCard = true,
+                CustomerKey = "376a2598-412d-4805-9f47-c177d5605853"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"4dcf4e5e2d43855fe31cdc097e985a895868563e\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"1\", \"PAYER_REF\": \"376a2598-412d-4805-9f47-c177d5605853\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardReturnCustomerWithPaymentRef()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = true,
+                OfferToSaveCard = true,
+                PaymentKey = "ca46344d-4292-47dc-9ced-e8a42ce66977"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"5fe76a45585d9793fd162ab8a3cd4a42991417df\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"1\", \"PMT_REF\": \"ca46344d-4292-47dc-9ced-e8a42ce66977\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void StoreCardAutoReturnCustomerAllRefs()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    CardStorageEnabled = true,
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = true,
+                OfferToSaveCard = false,
+                CustomerKey = "376a2598-412d-4805-9f47-c177d5605853",
+                PaymentKey = "ca46344d-4292-47dc-9ced-e8a42ce66977"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"f0cf097fe769a6a5a6254eee631e51709ba34c90\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"0\", \"PAYER_EXIST\": \"1\", \"PMT_REF\": \"ca46344d-4292-47dc-9ced-e8a42ce66977\", \"PAYER_REF\": \"376a2598-412d-4805-9f47-c177d5605853\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void DisplayStoredCardsOfferSaveNoPaymentRef()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    DisplaySavedCards = true
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = true,
+                OfferToSaveCard = true,
+                CustomerKey = "376a2598-412d-4805-9f47-c177d5605853"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"4dcf4e5e2d43855fe31cdc097e985a895868563e\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"HPP_SELECT_STORED_CARD\": \"376a2598-412d-4805-9f47-c177d5605853\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"1\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void DisplayStoredCardsOfferSaveWithPaymentRef()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    DisplaySavedCards = true
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                CustomerExists = true,
+                OfferToSaveCard = true,
+                CustomerKey = "376a2598-412d-4805-9f47-c177d5605853",
+                PaymentKey = "ca46344d-4292-47dc-9ced-e8a42ce66977"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"f0cf097fe769a6a5a6254eee631e51709ba34c90\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"HPP_SELECT_STORED_CARD\": \"376a2598-412d-4805-9f47-c177d5605853\", \"OFFER_SAVE_CARD\": \"1\", \"PAYER_EXIST\": \"1\", \"PMT_REF\": \"ca46344d-4292-47dc-9ced-e8a42ce66977\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void BillingData()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                },
+            });
+
+            var billingAddress = new Address
+            {
+                Country = "US",
+                PostalCode = "50001"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithAddress(billingAddress, AddressType.Billing)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"BILLING_CODE\": \"50001\", \"BILLING_CO\": \"US\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void ShippingData()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                },
+            });
+
+            var shippingAddress = new Address
+            {
+                Country = "US",
+                PostalCode = "50001"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"SHIPPING_CODE\": \"50001\", \"SHIPPING_CO\": \"US\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void BillingAndShippingData()
+        {
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                },
+            });
+
+            var billingAddress = new Address
+            {
+                Country = "US",
+                PostalCode = "50001"
+            };
+
+            var shippingAddress = new Address
+            {
+                Country = "GB",
+                PostalCode = "654|123"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"SHIPPING_CODE\": \"654|123\", \"SHIPPING_CO\": \"GB\", \"BILLING_CODE\": \"50001\", \"BILLING_CO\": \"US\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void FraudFilterPassive()
+        {
+
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    FraudFilterMode = FraudFilterMode.PASSIVE
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"fff944d4da9a5dfd64d142448d5dcf6168b3b77f\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"HPP_FRAUDFILTER_MODE\": \"PASSIVE\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void FraudFilterOff()
+        {
+
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    FraudFilterMode = FraudFilterMode.OFF
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"2e98407a26f17dc8c7ed89df5cc69d17718bfeb2\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"HPP_FRAUDFILTER_MODE\": \"OFF\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void FraudFilterNone()
+        {
+
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    FraudFilterMode = FraudFilterMode.NONE
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void DynamicCurrencyConversionOn()
+        {
+
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    DynamicCurrencyConversionEnabled = true
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"DCC_ENABLE\": \"1\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void DynamicCurrencyConversionOff()
+        {
+
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    DynamicCurrencyConversionEnabled = false
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"DCC_ENABLE\": \"0\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void ReturnTssOn()
+        {
+
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    RequestTransactionStabilityScore = true
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"RETURN_TSS\": \"1\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void ReturnTssOff()
+        {
+
+            var service = new HostedService(new ServicesConfig
+            {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                    RequestTransactionStabilityScore = false
+                },
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .Serialize();
+
+            var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"RETURN_TSS\": \"0\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
     }
 }

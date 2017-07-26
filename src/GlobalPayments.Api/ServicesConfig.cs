@@ -54,7 +54,7 @@ namespace GlobalPayments.Api {
         /// <summary>
         /// Allow Direct Currency Conversion (DCC) to be available
         /// </summary>
-        public bool? DirectCurrencyConversionEnabled { get; set; }
+        public bool? DynamicCurrencyConversionEnabled { get; set; }
         /// <summary>
         /// Allow a consumer's previously stored cards to be shown
         /// </summary>
