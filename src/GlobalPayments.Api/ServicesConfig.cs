@@ -22,7 +22,7 @@ namespace GlobalPayments.Api {
     /// </summary>
     public enum FraudFilterMode {
         /// <summary>
-        /// Enables the fraud filter, but removes active filters
+        /// Fraud filter will behave as configured in RealControl
         /// </summary>
         NONE,
         /// <summary>
@@ -30,11 +30,7 @@ namespace GlobalPayments.Api {
         /// </summary>
         OFF,
         /// <summary>
-        /// Enables the fraud filter in active mode
-        /// </summary>
-        ACTIVE,
-        /// <summary>
-        /// Enables the fraud filter in passive mode
+        /// Sets the fraud filter to passive mode
         /// </summary>
         PASSIVE
     }

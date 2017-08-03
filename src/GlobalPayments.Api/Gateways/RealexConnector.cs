@@ -190,6 +190,11 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("VALIDATE_CARD_ONLY", builder.TransactionType == TransactionType.Verify ? "1" : "0");
             if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE)
                 request.Set("HPP_FRAUDFILTER_MODE", HostedPaymentConfig.FraudFilterMode.ToString());
+            if (builder.RecurringType != null || builder.RecurringSequence != null)
+            {
+                request.Set("RECURRING_TYPE", builder.RecurringType.ToString().ToLower());
+                request.Set("RECURRING_SEQUENCE", builder.RecurringSequence.ToString().ToLower());
+            }
             request.Set("HPP_VERSION", HostedPaymentConfig.Version);
 
             var toHash = new List<string> {
@@ -209,6 +214,7 @@ namespace GlobalPayments.Api.Gateways {
                 toHash.Add(HostedPaymentConfig.FraudFilterMode.ToString());
             }
 
+            var theHash = GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray());
             request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray()));
             return request.ToString();
         }
@@ -325,6 +331,7 @@ namespace GlobalPayments.Api.Gateways {
                 CvnResponseCode = root.GetValue<string>("cvnresult"),
                 AvsResponseCode = root.GetValue<string>("avspostcoderesponse"),
                 Timestamp = root.GetAttribute<string>("timestamp"),
+                
                 TransactionReference = new TransactionReference {
                     AuthCode = root.GetValue<string>("authcode"),
                     OrderId = root.GetValue<string>("orderid"),
