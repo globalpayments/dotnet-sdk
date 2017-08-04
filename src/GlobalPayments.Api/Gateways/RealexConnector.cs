@@ -196,6 +196,8 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("RECURRING_SEQUENCE", builder.RecurringSequence.ToString().ToLower());
             }
             request.Set("HPP_VERSION", HostedPaymentConfig.Version);
+            request.Set("HPP_POST_DIMENSIONS", HostedPaymentConfig.PostDimensions);
+            request.Set("HPP_POST_RESPONSE", HostedPaymentConfig.PostResponse);
 
             var toHash = new List<string> {
                 timestamp,

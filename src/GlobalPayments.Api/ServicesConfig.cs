@@ -79,6 +79,14 @@ namespace GlobalPayments.Api {
         /// Specify HPP version
         /// </summary>
         public string Version { get; set; }
+        /// <summary>
+        /// iFrame Optimisation - dimensions
+        /// </summary>
+        public string PostDimensions { get; set; }
+        /// <summary>
+        /// iFrame Optimisation - response
+        /// </summary>
+        public string PostResponse { get; set; }
     }
 
     /// <summary>
