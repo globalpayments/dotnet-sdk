@@ -1,7 +1,7 @@
-﻿{
-  "version": "1.0.0-*",
-  "testRunner": "mstest",
-  "dependencies": {
+{
+    "version": "1.0.0-*",
+    "testRunner": "mstest",
+    "dependencies": {
     "dotnet-test-mstest": "1.1.2-preview",
     "GlobalPayments.Api": "3.0.0-*",
     "MSTest.TestFramework": "1.0.8-rc2"

@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Terminals;
+using GlobalPayments.Api.Terminals.HeartSIP;
 using GlobalPayments.Api.Terminals.PAX;
 
 namespace GlobalPayments.Api
@@ -41,8 +42,12 @@ namespace GlobalPayments.Api
             DeviceController deviceController = null;
             if (config.DeviceConnectionConfig != null) {
                 switch (config.DeviceConnectionConfig.DeviceType) {
-                    case DeviceType.PaxS300:
+                    case DeviceType.PAX_S300:
                         deviceController = new PaxController(config.DeviceConnectionConfig);
+                        deviceInterface = deviceController.ConfigureInterface();
+                        break;
+                    case DeviceType.HSIP_ISC250:
+                        deviceController = new HeartSipController(config.DeviceConnectionConfig);
                         deviceInterface = deviceController.ConfigureInterface();
                         break;
                     default:

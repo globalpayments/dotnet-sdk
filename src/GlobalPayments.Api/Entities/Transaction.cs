@@ -1,4 +1,5 @@
-﻿using GlobalPayments.Api.Builders;
+﻿using System.Collections.Generic;
+using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Entities {
@@ -161,6 +162,11 @@ namespace GlobalPayments.Api.Entities {
         /// The original response message from the issuer/gateway.
         /// </summary>
         public string ResponseMessage { get; set; }
+
+        /// <summary>
+        /// A catch all for additional fields not mapped to a specific transaction properties.
+        /// </summary>
+        public Dictionary<string, string> ResponseValues { get; set; }
 
         /// <summary>
         /// The timestamp of the transaction.

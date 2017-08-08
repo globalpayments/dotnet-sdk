@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Terminals.PAX;
+﻿using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals.Abstractions {
     interface IDeviceCommInterface {

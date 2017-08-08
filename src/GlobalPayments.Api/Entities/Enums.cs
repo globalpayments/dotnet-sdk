@@ -29,7 +29,11 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a Pax S300 device.
         /// </summary>
-        PaxS300
+        PAX_S300,
+        /// <summary>
+        /// Indicates a HeeartSIP iSC250 device.
+        /// </summary>
+        HSIP_ISC250
     }
 
     /// <summary>

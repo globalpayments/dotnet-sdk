@@ -1,4 +1,5 @@
-﻿using GlobalPayments.Api.Builders;
+﻿using System.Collections.Generic;
+using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -40,6 +41,14 @@ namespace GlobalPayments.Api.Services {
             if (!hash.Equals(sha1Hash))
                 throw new ApiException("Incorrect hash. Please check your code and the Developers Documentation.");
 
+            // remainder of the values
+            var rvalues = new Dictionary<string, string>();
+            foreach (var key in response.Keys) {
+                var value = response.GetValue<string>(key);
+                if (value != null)
+                    rvalues.Add(key, value);
+            }
+
             return new Transaction {
                 AuthorizedAmount = response.GetValue<decimal>("AMOUNT"),
                 CvnResponseCode = response.GetValue<string>("CVNRESULT"),
@@ -51,7 +60,8 @@ namespace GlobalPayments.Api.Services {
                     OrderId = orderId,
                     PaymentMethodType = PaymentMethodType.Credit,
                     TransactionId = transactionId
-                }
+                },
+                ResponseValues = rvalues
             };
         }
     }

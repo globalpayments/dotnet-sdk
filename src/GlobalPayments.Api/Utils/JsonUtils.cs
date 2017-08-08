@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using GlobalPayments.Api.Entities;
 
 namespace GlobalPayments.Api.Utils {
     public interface IRequestEncoder {
@@ -18,8 +19,13 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public string Decode(object value) {
-            byte[] data = Convert.FromBase64String(value.ToString());
-            return Encoding.UTF8.GetString(data, 0, data.Length);
+            try {
+                byte[] data = Convert.FromBase64String(value.ToString());
+                return Encoding.UTF8.GetString(data, 0, data.Length);
+            }
+            catch (Exception exc) {
+                throw new ApiException(exc.Message, exc);
+            }
         }
     }
     
@@ -35,7 +41,7 @@ namespace GlobalPayments.Api.Utils {
         Dictionary<string, object> _dict;
         IRequestEncoder _encoder;
 
-        public IEnumerable<string> Keys {
+        public List<string> Keys {
             get {
                 return _dict.Select(p => p.Key).ToList();
             }

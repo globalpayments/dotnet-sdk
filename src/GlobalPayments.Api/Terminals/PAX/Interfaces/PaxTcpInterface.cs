@@ -4,11 +4,9 @@ using System.Net.Sockets;
 using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    delegate void MessageReceivedEventHandler(byte[] message);
-    delegate void ControlCodeReceivedEventHandler(ControlCodes code);
-
     internal class PaxTcpInterface : IDeviceCommInterface {
         TcpClient _client;
         NetworkStream _stream;
@@ -74,16 +72,17 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         public void Connect() {
             _client = new TcpClient();
-            // TODO: Fix this later
-            //_client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port));
+            _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.TimeOut);
             _stream = _client.GetStream();
         }
 
         public void Disconnect() {
             if (_stream != null)
+                _client.Dispose();
                 _stream.Dispose();
 
             if (_client != null)
+                _client.Dispose();
                 _client.Dispose();
         }
 
@@ -102,10 +101,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 _await.Set();
             };
 
+            OnMessageSent?.Invoke(message.ToString());
             for (int i = 0; i < 3; i++) {
                 _stream.Write(buffer, 0, buffer.Length);
-                if (OnMessageSent != null)
-                    OnMessageSent(message.ToString());
                 _await.WaitOne(1000);
 
                 if (!code.HasValue)

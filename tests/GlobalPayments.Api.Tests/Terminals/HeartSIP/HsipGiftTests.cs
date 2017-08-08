@@ -1,86 +1,72 @@
-﻿using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.PaymentMethods;
+﻿using System.Threading;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Terminals.Pax {
+namespace GlobalPayments.Api.Tests.Terminals.HeartSIP {
     [TestClass]
-    public class PaxGiftTests {
+    public class HsipGiftTests {
         IDeviceInterface _device;
 
-        public PaxGiftTests() {
+        public HsipGiftTests() {
             _device = DeviceService.Create(new ServicesConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
                 ServiceUrl = "https://cert.api2.heartlandportico.com",
                 DeviceConnectionConfig = new ConnectionConfig {
-                    DeviceType = DeviceType.PAX_S300,
-                    ConnectionMode = ConnectionModes.HTTP,
-                    IpAddress = "10.12.220.172",
-                    Port = "10009"
+                    DeviceType = DeviceType.HSIP_ISC250,
+                    ConnectionMode = ConnectionModes.TCP_IP,
+                    IpAddress = "10.12.220.130",
+                    Port = "12345",
+                    TimeOut = 30000
                 }
             });
             Assert.IsNotNull(_device);
+            _device.OpenLane();
+        }
+
+        [TestCleanup]
+        public void WaitAndReset() {
+            Thread.Sleep(3000);
+            _device.Reset();
         }
 
         #region GiftSale
         [TestMethod]
         public void GiftSale() {
+            var str_message = string.Empty;
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]01[FS]1000[FS][FS]1[FS][FS][ETX]"));
+                str_message = message;
             };
 
-            var response = _device.GiftSale(1, 10m).Execute();
+            var response = _device.GiftSale(1, 1m).Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void GiftSaleManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
-            _device.OnMessageSent += (message) => {
-                Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]01[FS]1000[FS]5022440000000000098[FS]2[FS][FS][ETX]"));
-            };
-
-            var response = _device.GiftSale(2, 10m).WithPaymentMethod(card).Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseText);
         }
 
         [TestMethod]
         public void GiftSaleWithInvoiceNumber() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]01[FS]800[FS]5022440000000000098[FS]4[US]1234[FS][FS][ETX]"));
             };
 
             var response = _device.GiftSale(4, 8m)
-                .WithPaymentMethod(card)
                 .WithInvoiceNumber("1234")
                 .Execute();
-
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
         }
 
         [TestMethod]
-        public void LoyaltySaleManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
+        public void LoyaltySale() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T08[FS]1.35[FS]01[FS]1000[FS]5022440000000000098[FS]5[FS][FS][ETX]"));
             };
 
             var response = _device.GiftSale(5, 10m)
                 .WithCurrency(CurrencyType.POINTS)
-                .WithPaymentMethod(card)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -99,52 +85,28 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         #region GiftAddValue
         [TestMethod]
-        public void GiftAddValueManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
-            _device.OnMessageSent += (message) => {
-                Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]10[FS]1000[FS]5022440000000000098[FS]8[FS][FS][ETX]"));
-            };
-
-            var response = _device.GiftAddValue(8)
-                .WithPaymentMethod(card)
-                .WithAmount(10m)
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
         public void GiftAddValue() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]10[FS]1000[FS][FS]9[FS][FS][ETX]"));
             };
 
             var response = _device.GiftAddValue(9)
                 .WithAmount(10m)
                 .Execute();
-
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void LoyaltyAddValueManual() {
-            var card = new GiftCard() { Number = "5022440000000000098" };
-
+        public void LoyaltyAddValue() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T08[FS]1.35[FS]10[FS]800[FS]5022440000000000098[FS]10[FS][FS][ETX]"));
             };
 
             var response = _device.GiftAddValue(10)
-                .WithPaymentMethod(card)
                 .WithCurrency(CurrencyType.POINTS)
                 .WithAmount(8m)
                 .Execute();
-
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -162,19 +124,20 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         #region GiftVoid
         [TestMethod]
-        public void GiftVoidManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-            var saleResponse = _device.GiftSale(13).WithAmount(10m).WithPaymentMethod(card).Execute();
+        public void GiftVoid() {
+            var saleResponse = _device.GiftSale(13).WithAmount(10m).Execute();
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
 
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]16[FS][FS][FS]13[FS][FS]HREF=" + saleResponse.TransactionId + "[ETX]"));
             };
+
+            WaitAndReset();
 
             var voidResponse = _device.GiftVoid(13)
                 .WithTransactionId(saleResponse.TransactionId)
                 .Execute();
-
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.ResponseCode);
         }
@@ -198,7 +161,6 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         public void GiftBalance() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]23[FS][FS][FS]16[FS][FS][ETX]"));
             };
 
             var response = _device.GiftBalance(16)
@@ -209,36 +171,14 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         }
 
         [TestMethod]
-        public void GiftBalanceManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
+        public void LoyaltyBalance() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]23[FS][FS]5022440000000000098[FS]17[FS][FS][ETX]"));
-            };
-
-            var response = _device.GiftBalance(17)
-                .WithPaymentMethod(card)
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void LoyaltyBalanceManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
-            _device.OnMessageSent += (message) => {
-                Assert.IsNotNull(message);
-                Assert.IsTrue(message.StartsWith("[STX]T08[FS]1.35[FS]23[FS][FS]5022440000000000098[FS]18[FS][FS][ETX]"));
             };
 
             var response = _device.GiftBalance(18)
-                .WithPaymentMethod(card)
                 .WithCurrency(CurrencyType.POINTS)
                 .Execute();
-
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }

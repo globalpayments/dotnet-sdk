@@ -6,12 +6,7 @@ namespace GlobalPayments.Api.Terminals.PAX
 {
     public class DebitResponse : PaxDeviceResponse
     {
-        public string AuthorizationCode { get; set; }
-
-        internal DebitResponse(byte[] buffer)
-            : base(buffer, PAX_MSG_ID.T03_RSP_DO_DEBIT)
-        {
-        }
+        internal DebitResponse(byte[] buffer) : base(buffer, PAX_MSG_ID.T03_RSP_DO_DEBIT) { }
 
         protected override void ParseResponse(BinaryReader br)
         {

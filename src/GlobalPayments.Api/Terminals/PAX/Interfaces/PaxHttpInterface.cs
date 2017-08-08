@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class PaxHttpInterface : IDeviceCommInterface {

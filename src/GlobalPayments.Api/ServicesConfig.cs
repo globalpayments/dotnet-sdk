@@ -22,7 +22,7 @@ namespace GlobalPayments.Api {
     /// </summary>
     public enum FraudFilterMode {
         /// <summary>
-        /// Enables the fraud filter, but removes active filters
+        /// Fraud filter will behave as configured in RealControl
         /// </summary>
         NONE,
         /// <summary>
@@ -30,11 +30,7 @@ namespace GlobalPayments.Api {
         /// </summary>
         OFF,
         /// <summary>
-        /// Enables the fraud filter in active mode
-        /// </summary>
-        ACTIVE,
-        /// <summary>
-        /// Enables the fraud filter in passive mode
+        /// Sets the fraud filter to passive mode
         /// </summary>
         PASSIVE
     }
@@ -52,9 +48,9 @@ namespace GlobalPayments.Api {
         /// </summary>
         public bool? CardStorageEnabled { get; set; }
         /// <summary>
-        /// Allow Direct Currency Conversion (DCC) to be available
+        /// Allow Dynamic Currency Conversion (DCC) to be available
         /// </summary>
-        public bool? DirectCurrencyConversionEnabled { get; set; }
+        public bool? DynamicCurrencyConversionEnabled { get; set; }
         /// <summary>
         /// Allow a consumer's previously stored cards to be shown
         /// </summary>
@@ -83,6 +79,14 @@ namespace GlobalPayments.Api {
         /// Specify HPP version
         /// </summary>
         public string Version { get; set; }
+        /// <summary>
+        /// iFrame Optimisation - dimensions
+        /// </summary>
+        public string PostDimensions { get; set; }
+        /// <summary>
+        /// iFrame Optimisation - response
+        /// </summary>
+        public string PostResponse { get; set; }
     }
 
     /// <summary>

@@ -5,45 +5,14 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Extensions;
+using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    public delegate void MessageSentEventHandler(string message);
-
-    internal abstract class DeviceController : IDisposable {
-        protected ITerminalConfiguration _settings;
-        protected IDeviceCommInterface _interface;
-
-        internal DeviceController(ITerminalConfiguration settings) {
-            settings.Validate();
-            _settings = settings;
-        }
-
-        public byte[] Send(IDeviceMessage message) {
-            return _interface?.Send(message);
-        }
-
-        internal abstract IDeviceInterface ConfigureInterface();
-
-        internal abstract TerminalResponse ProcessTransaction(TerminalAuthBuilder builder);
-        internal abstract TerminalResponse ManageTransaction(TerminalManageBuilder builder);
-
-        public void Dispose() {
-            _interface?.Disconnect();
-        }
-    }
-
     internal class PaxController : DeviceController {
         IDeviceInterface _device;
 
         public event MessageSentEventHandler OnMessageSent;
-        public ConnectionModes ConnectionMode {
-            get {
-                if(_settings != null)
-                    return _settings.ConnectionMode;
-                return ConnectionModes.SERIAL;
-            }
-        }
-
+        
         internal override IDeviceInterface ConfigureInterface() {
             if (_device == null) {
                 _device = new PaxInterface(this);
@@ -276,7 +245,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         #region Administration Messages
         // A00 - INITIALIZE
-        public InitializeResponse Initialize() {
+        public IInitializeResponse Initialize() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A00_INITIALIZE));
             return new InitializeResponse(response);
         }
@@ -290,18 +259,18 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         // A16 - RESET
-        public PaxDeviceResponse Reset() {
+        public IDeviceResponse Reset() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A16_RESET));
             return new PaxDeviceResponse(response, PAX_MSG_ID.A17_RSP_RESET);
         }
 
         // A26 - REBOOT
-        public PaxDeviceResponse Reboot() {
+        public IDeviceResponse Reboot() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A26_REBOOT));
             return new PaxDeviceResponse(response, PAX_MSG_ID.A27_RSP_REBOOT);
         }
 
-        public PaxDeviceResponse DisableHostResponseBeep() {
+        public IDeviceResponse DisableHostResponseBeep() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A04_SET_VARIABLE,
                 "00",
                 ControlCodes.FS,
@@ -310,6 +279,18 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 "N"
             ));
             return new PaxDeviceResponse(response, PAX_MSG_ID.A05_RSP_SET_VARIABLE);
+        }
+
+        public IDeviceResponse CloseLane() {
+            if(controller.DeviceType == DeviceType.PAX_S300)
+                throw new UnsupportedTransactionException("The S300 does not support yhis call.");
+            throw new UnsupportedTransactionException();
+        }
+
+        public IDeviceResponse OpenLane() {
+            if (controller.DeviceType == DeviceType.PAX_S300)
+                throw new UnsupportedTransactionException("The S300 does not support yhis call.");
+            throw new UnsupportedTransactionException();
         }
         #endregion
 
@@ -361,8 +342,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Gift).WithReferenceNumber(referenceNumber).WithAmount(amount).WithCurrency(CurrencyType.CURRENCY);
         }
 
-        public TerminalAuthBuilder GiftAddValue(int referenceNumber) {
-            return new TerminalAuthBuilder(TransactionType.AddValue, PaymentMethodType.Gift).WithReferenceNumber(referenceNumber).WithCurrency(CurrencyType.CURRENCY);
+        public TerminalAuthBuilder GiftAddValue(int referenceNumber, decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.AddValue, PaymentMethodType.Gift)
+                .WithReferenceNumber(referenceNumber)
+                .WithCurrency(CurrencyType.CURRENCY)
+                .WithAmount(amount);
         }
 
         public TerminalManageBuilder GiftVoid(int referenceNumber) {
@@ -381,7 +365,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         #endregion
 
         #region Batch Commands
-        public BatchCloseResponse BatchClose() {
+        public IBatchCloseResponse BatchClose() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.B00_BATCH_CLOSE, DateTime.Now.ToString("YYYYMMDDhhmmss")));
             return new BatchCloseResponse(response);
         }
@@ -389,5 +373,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         #region Reporting Commands
         #endregion
+
+        public void Dispose() { }
     }
 }

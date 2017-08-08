@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.HeartSIP;
 using GlobalPayments.Api.Terminals.PAX;
 
 namespace GlobalPayments.Api.Terminals {
@@ -53,6 +54,31 @@ namespace GlobalPayments.Api.Terminals {
 
             byte lrc = CalculateLRC(buffer.ToArray());
             buffer.Add(lrc);
+
+            return new DeviceMessage(buffer.ToArray());
+        }
+
+        public static DeviceMessage BuildRequest(string message, MessageFormat format) {
+            var buffer = new List<byte>();
+
+            if (format == MessageFormat.Visa2nd)
+                buffer.Add((byte)ControlCodes.STX);
+            else {
+                var length_bytes = BitConverter.GetBytes(message.Length);
+                buffer.Add(length_bytes[1]);
+                buffer.Add(length_bytes[0]);
+            }
+
+            foreach (char c in message)
+                buffer.Add((byte)c);
+
+            if (format == MessageFormat.Visa2nd) {
+                // End the Message
+                buffer.Add((byte)ControlCodes.ETX);
+
+                byte lrc = CalculateLRC(buffer.ToArray());
+                buffer.Add(lrc);
+            }
 
             return new DeviceMessage(buffer.ToArray());
         }

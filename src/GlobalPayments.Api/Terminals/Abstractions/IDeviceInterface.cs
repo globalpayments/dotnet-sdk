@@ -1,20 +1,25 @@
-﻿using GlobalPayments.Api.Terminals.Builders;
+﻿using System;
+using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Builders;
+using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Terminals.PAX;
 
 namespace GlobalPayments.Api.Terminals {
-    public interface IDeviceInterface {
+    public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
 
         #region Admin Calls
         void Cancel();
-        PaxDeviceResponse DisableHostResponseBeep();
-        InitializeResponse Initialize();
-        PaxDeviceResponse Reboot();
-        PaxDeviceResponse Reset();
+        IDeviceResponse CloseLane();
+        IDeviceResponse DisableHostResponseBeep();
+        IInitializeResponse Initialize();
+        IDeviceResponse OpenLane();
+        IDeviceResponse Reboot();
+        IDeviceResponse Reset();
         #endregion
 
         #region Batch Calls
-        BatchCloseResponse BatchClose();
+        IBatchCloseResponse BatchClose();
         #endregion
 
         #region Credit Calls
@@ -33,7 +38,7 @@ namespace GlobalPayments.Api.Terminals {
 
         #region Gift Calls
         TerminalAuthBuilder GiftSale(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder GiftAddValue(int referenceNumber);
+        TerminalAuthBuilder GiftAddValue(int referenceNumber, decimal? amount = null);
         TerminalManageBuilder GiftVoid(int referenceNumber);
         TerminalAuthBuilder GiftBalance(int referenceNumber);
         #endregion

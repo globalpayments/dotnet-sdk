@@ -13,7 +13,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
                 ServiceUrl = "https://cert.api2.heartlandportico.com",
                 DeviceConnectionConfig = new ConnectionConfig {
-                    DeviceType = DeviceType.PaxS300,
+                    DeviceType = DeviceType.PAX_S300,
                     ConnectionMode = ConnectionModes.HTTP,
                     IpAddress = "10.12.220.172",
                     Port = "10009"

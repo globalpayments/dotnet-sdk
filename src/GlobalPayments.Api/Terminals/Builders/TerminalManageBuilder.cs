@@ -5,6 +5,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalManageBuilder : TerminalBuilder<TerminalManageBuilder> {
         internal decimal? Amount { get; set; }
         internal CurrencyType? Currency { get; set; }
+        internal decimal? Gratuity { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -19,6 +20,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
         public TerminalManageBuilder WithCurrency(CurrencyType? value) {
             Currency = value;
+            return this;
+        }
+        public TerminalManageBuilder WithGratuity(decimal? amount) {
+            Gratuity = amount;
             return this;
         }
         public TerminalManageBuilder WithTransactionId(string value) {

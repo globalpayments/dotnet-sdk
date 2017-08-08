@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
@@ -83,6 +84,14 @@ namespace GlobalPayments.Api.Utils {
 
         public static ElementTree Parse(string xml) {
             return new ElementTree(xml);
+        }
+
+        public static ElementTree Parse(byte[] buffer) {
+            var xmlString = string.Empty;
+            foreach (var b in buffer)
+                xmlString += (char)b;
+
+            return Parse(xmlString);
         }
 
         private XmlElement CreateElement(string tagName) {

@@ -137,7 +137,7 @@ namespace GlobalPayments.Api.Gateways {
             var request = new JsonDoc(encoder);
 
             var orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
-            var timestamp = GenerationUtils.GenerateTimestamp();
+            var timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp();
 
             // check for right transaction types
             if (builder.TransactionType != TransactionType.Sale && builder.TransactionType != TransactionType.Auth && builder.TransactionType != TransactionType.Verify)
@@ -156,8 +156,8 @@ namespace GlobalPayments.Api.Gateways {
             // request.Set("COMMENT2", );
             if(HostedPaymentConfig.RequestTransactionStabilityScore.HasValue)
                 request.Set("RETURN_TSS", HostedPaymentConfig.RequestTransactionStabilityScore.Value ? "1" : "0");
-            if(HostedPaymentConfig.DirectCurrencyConversionEnabled.HasValue)
-                request.Set("DCC_ENABLE", HostedPaymentConfig.DirectCurrencyConversionEnabled.Value ? "1" : "0");
+            if(HostedPaymentConfig.DynamicCurrencyConversionEnabled.HasValue)
+                request.Set("DCC_ENABLE", HostedPaymentConfig.DynamicCurrencyConversionEnabled.Value ? "1" : "0");
             if (builder.HostedPaymentData != null) {
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
                 if(HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null)
@@ -166,7 +166,8 @@ namespace GlobalPayments.Api.Gateways {
                     request.Set("OFFER_SAVE_CARD", builder.HostedPaymentData.OfferToSaveCard.Value ? "1" : "0");
                 if(builder.HostedPaymentData.CustomerExists.HasValue)
                 request.Set("PAYER_EXIST", builder.HostedPaymentData.CustomerExists.Value ? "1" : "0");
-                request.Set("PAYER_REF", builder.HostedPaymentData.CustomerKey);
+                if (!HostedPaymentConfig.DisplaySavedCards.HasValue)
+                    request.Set("PAYER_REF", builder.HostedPaymentData.CustomerKey);
                 request.Set("PMT_REF", builder.HostedPaymentData.PaymentKey);
                 request.Set("PROD_ID", builder.HostedPaymentData.ProductId);
             }
@@ -187,8 +188,15 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("CARD_STORAGE_ENABLE", HostedPaymentConfig.CardStorageEnabled.Value ? "1" : "0");
             if (builder.TransactionType == TransactionType.Verify)
                 request.Set("VALIDATE_CARD_ONLY", builder.TransactionType == TransactionType.Verify ? "1" : "0");
-            request.Set("HPP_FRAUD_FILTER_MODE", HostedPaymentConfig.FraudFilterMode.ToString());
+            if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE)
+                request.Set("HPP_FRAUDFILTER_MODE", HostedPaymentConfig.FraudFilterMode.ToString());
+            if (builder.RecurringType != null || builder.RecurringSequence != null) {
+                request.Set("RECURRING_TYPE", builder.RecurringType.ToString().ToLower());
+                request.Set("RECURRING_SEQUENCE", builder.RecurringSequence.ToString().ToLower());
+            }
             request.Set("HPP_VERSION", HostedPaymentConfig.Version);
+            request.Set("HPP_POST_DIMENSIONS", HostedPaymentConfig.PostDimensions);
+            request.Set("HPP_POST_RESPONSE", HostedPaymentConfig.PostResponse);
 
             var toHash = new List<string> {
                 timestamp,

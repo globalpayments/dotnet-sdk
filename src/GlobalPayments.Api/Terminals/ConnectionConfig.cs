@@ -31,6 +31,7 @@ namespace GlobalPayments.Api.Terminals {
 
     public interface ITerminalConfiguration {
         ConnectionModes ConnectionMode { get; set; }
+        DeviceType DeviceType { get; set; }
         
         // Ethernet
         string IpAddress { get; set; }
