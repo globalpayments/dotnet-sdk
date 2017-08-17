@@ -18,7 +18,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                     ConnectionMode = ConnectionModes.TCP_IP,
                     IpAddress = "10.12.220.172",
                     Port = "10009"
-                }
+                },
+                Timeout = 30000
             });
             Assert.IsNotNull(_device);
         }
@@ -103,6 +104,39 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var response = _device.CreditAuth(1, 12m)
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var captureResponse = _device.CreditCapture(2, 12m)
+                .WithTransactionId(response.TransactionId)
+                .Execute();
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("00", captureResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void CreditAuth_CaptureManual() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var card = new CreditCardData {
+                Number = "4005554444444460",
+                ExpMonth = 12,
+                ExpYear = 17,
+                Cvn = "123"
+            };
+
+            var address = new Address {
+                StreetAddress1 = "1 Heartland Way",
+                PostalCode = "95124"
+            };
+
+            var response = _device.CreditAuth(1, 12m)
+                .WithPaymentMethod(card)
+                .WithAddress(address)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);

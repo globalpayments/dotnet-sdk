@@ -44,6 +44,27 @@ namespace GlobalPayments.Api.Gateways {
             finally { }
         }
 
+        protected GatewayResponse SendRequest(string endpoint, MultipartFormDataContent content) {
+            HttpClient httpClient = new HttpClient {
+                Timeout = TimeSpan.FromMilliseconds(Timeout)
+            };
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl + endpoint);
+            HttpResponseMessage response = null;
+            try {
+                request.Content = content;
+                response = httpClient.SendAsync(request).Result;
+                return new GatewayResponse {
+                    StatusCode = response.StatusCode,
+                    RawResponse = response.Content.ReadAsStringAsync().Result
+                };
+            }
+            catch (Exception exc) {
+                throw new GatewayException("Error occurred while communicating with gateway.", exc);
+            }
+            finally { }
+        }
+
         private string BuildQueryString(Dictionary<string, string> queryStringParams) {
             if (queryStringParams == null)
                 return string.Empty;

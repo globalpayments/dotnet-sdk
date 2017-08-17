@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
@@ -90,13 +91,13 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(request, "autosettle").Set("flag", autoSettle);
             }
 
-            // comment ...TODO: needs to be multiple
+            // TODO: needs to be multiple
             if (builder.Description != null) {
                 var comments = et.SubElement(request, "comments");
                 et.SubElement(comments, "comment", builder.Description).Set("id", "1");
             }
 
-            // TODO: fraudfilter
+            // fraudfilter
             if (builder.RecurringType != null || builder.RecurringSequence != null) {
                 et.SubElement(request, "recurring")
                     .Set("type", builder.RecurringType.ToString().ToLower())
@@ -104,13 +105,16 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // tssinfo
-            if (builder.CustomerId != null || builder.ProductId != null || builder.CustomerId != null || builder.ClientTransactionId != null) {
+            if (builder.CustomerId != null || builder.ProductId != null || builder.CustomerId != null || builder.ClientTransactionId != null || builder.BillingAddress != null || builder.ShippingAddress != null) {
                 var tssInfo = et.SubElement(request, "tssinfo");
                 et.SubElement(tssInfo, "custnum", builder.CustomerId);
                 et.SubElement(tssInfo, "prodid", builder.ProductId);
                 et.SubElement(tssInfo, "varref", builder.ClientTransactionId);
                 et.SubElement(tssInfo, "custipaddress", builder.CustomerIpAddress);
-                //et.SubElement(tssInfo, "address", "");
+                if (builder.BillingAddress != null)
+                    tssInfo.Append(BuildAddress(et, builder.BillingAddress));
+                if (builder.ShippingAddress != null)
+                    tssInfo.Append(BuildAddress(et, builder.ShippingAddress));
             }
 
             // TODO: mpi
@@ -248,7 +252,7 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.ReasonCode != null)
                 et.SubElement(request, "reasoncode").Text(builder.ReasonCode.ToString());
 
-            // comments needs to be multiple
+            // TODO: needs to be multiple
             if (builder.Description != null) {
                 var comments = et.SubElement(request, "comments");
                 et.SubElement(comments, "comment", builder.Description).Set("id", "1");
@@ -477,6 +481,19 @@ namespace GlobalPayments.Api.Gateways {
 
             // comments
             return payer;
+        }
+
+        private Element BuildAddress(ElementTree et, Address address) {
+            var code = string.Format("{0}|{1}", address.PostalCode, address.StreetAddress1);
+            if (address.Country == "GB") {
+                code = string.Format("{0}|{1}", Regex.Replace(address.PostalCode, "[^0-9]", ""), Regex.Replace(address.StreetAddress1, "[^0-9]", ""));
+            }
+
+            var addressNode = et.Element("address").Set("type", address.Type == AddressType.Billing ? "billing" : "shipping");
+            et.SubElement(addressNode, "code").Text(code);
+            et.SubElement(addressNode, "country").Text(address.Country);
+
+            return addressNode;
         }
         #endregion
     }

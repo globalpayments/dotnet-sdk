@@ -21,6 +21,7 @@ namespace GlobalPayments.Api
         private IRecurringService _recurring;
         private IDeviceInterface _device;
         private DeviceController _deviceControl;
+        private TableServiceConnector _reservationInterface;
         private static  ServicesContainer _instance;
 
         internal static ServicesContainer Instance {
@@ -56,6 +57,18 @@ namespace GlobalPayments.Api
             }
             #endregion
 
+            #region configure reservations
+            TableServiceConnector reservationConnector = null;
+            if (config.ReservationProvider != null) {
+                if (config.ReservationProvider == ReservationProviders.FreshTxt) {
+                    reservationConnector = new TableServiceConnector {
+                        ServiceUrl = "https://www.freshtxt.com/api31/",
+                        Timeout = config.Timeout
+                    };
+                }
+            }
+            #endregion
+
             #region configure gateways
             if (!string.IsNullOrEmpty(config.MerchantId)) {
                 var gateway = new RealexConnector {
@@ -69,7 +82,7 @@ namespace GlobalPayments.Api
                     ServiceUrl = config.ServiceUrl,
                     HostedPaymentConfig = config.HostedPaymentConfig
                 };
-                _instance = new ServicesContainer(gateway, gateway, deviceController, deviceInterface);
+                _instance = new ServicesContainer(gateway, gateway, deviceController, deviceInterface, reservationConnector);
             }
             else {
                 var gateway = new PorticoConnector {
@@ -89,16 +102,19 @@ namespace GlobalPayments.Api
                     Timeout = config.Timeout,
                     ServiceUrl = config.ServiceUrl + "/Portico.PayPlan.v2/"
                 };
-                _instance = new ServicesContainer(gateway, payplan, deviceController, deviceInterface);
+                _instance = new ServicesContainer(gateway, payplan, deviceController, deviceInterface, reservationConnector);
             }
             #endregion
         }
 
-        private ServicesContainer(IPaymentGateway gateway, IRecurringService recurring = null, DeviceController deviceController = null, IDeviceInterface deviceInterface = null) {
+        private ServicesContainer(IPaymentGateway gateway, IRecurringService recurring = null, DeviceController deviceController = null, IDeviceInterface deviceInterface = null, TableServiceConnector reservationInterface = null) {
             _gateway = gateway;
             _recurring = recurring;
             _device = deviceInterface;
             _deviceControl = deviceController;
+
+            // reservation service
+            _reservationInterface = reservationInterface;
         }
 
         internal IPaymentGateway GetClient() {
@@ -115,6 +131,10 @@ namespace GlobalPayments.Api
 
         internal IRecurringService GetRecurringClient() {
             return _recurring;
+        }
+
+        internal TableServiceConnector GetReservationService() {
+            return _reservationInterface;
         }
 
         /// <summary>

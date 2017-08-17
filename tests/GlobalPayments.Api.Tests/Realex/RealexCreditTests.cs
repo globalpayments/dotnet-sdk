@@ -111,5 +111,40 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
+
+        [TestMethod]
+        public void CreditFraudResponse() {
+            var billingAddress = new Address();
+            billingAddress.StreetAddress1 = "Flat 123";
+            billingAddress.StreetAddress2 = "House 456";
+            billingAddress.StreetAddress3 = "Cul-De-Sac";
+            billingAddress.City = "Halifax";
+            billingAddress.Province = "West Yorkshire";
+            billingAddress.State = "Yorkshire and the Humber";
+            billingAddress.Country = "GB";
+            billingAddress.PostalCode = "E77 4QJ";
+
+            var shippingAddress = new Address();
+            shippingAddress.StreetAddress1 = "House 456";
+            shippingAddress.StreetAddress2 = "987 The Street";
+            shippingAddress.StreetAddress3 = "Basement Flat";
+            shippingAddress.City = "Chicago";
+            shippingAddress.State = "Illinois";
+            shippingAddress.Province = "Mid West";
+            shippingAddress.Country = "US";
+            shippingAddress.PostalCode = "50001";
+
+            var fraudResponse = card.Charge(199.99m)
+                .WithCurrency("EUR")
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithProductId("SID9838383")
+                .WithClientTransactionId("Car Part HV")
+                .WithCustomerId("E8953893489")
+                .WithCustomerIpAddress("123.123.123.123")
+                .Execute();
+            Assert.IsNotNull(fraudResponse);
+            Assert.AreEqual("00", fraudResponse.ResponseCode, fraudResponse.ResponseMessage);
+        }
     }
 }

@@ -89,8 +89,13 @@ namespace GlobalPayments.Api.Terminals {
         }
 
         public static byte CalculateLRC(byte[] buffer) {
+            // account for LRC still being attached
+            var length = buffer.Length;
+            if (buffer[buffer.Length - 1] != (byte)ControlCodes.ETX)
+                length--;
+
             byte lrc = new byte();
-            for (int i = 1; i < buffer.Length; i++)
+            for (int i = 1; i < length; i++)
                 lrc = (byte)(lrc ^ buffer[i]);
             return lrc;
         }

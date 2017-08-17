@@ -33,7 +33,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     throw new NotImplementedException();
             }
 
-            _interface.Connect();
+            //_interface.Connect();
             _interface.OnMessageSent += (message) => {
                 OnMessageSent?.Invoke(message);
             };
@@ -374,6 +374,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
         #region Reporting Commands
         #endregion
 
-        public void Dispose() { }
+        public void Dispose() {
+            controller.Dispose();
+        }
     }
 }

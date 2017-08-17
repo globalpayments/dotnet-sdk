@@ -90,6 +90,13 @@ namespace GlobalPayments.Api {
     }
 
     /// <summary>
+    /// Specifies the reservation service provider
+    /// </summary>
+    public enum ReservationProviders {
+        FreshTxt
+    }
+
+    /// <summary>
     /// Configuration for connecting to a payment gateway
     /// </summary>
     public class ServicesConfig {
@@ -98,22 +105,27 @@ namespace GlobalPayments.Api {
         /// Account's site ID
         /// </summary>
         public int SiteId { get; set; }
+
         /// <summary>
         /// Account's license ID
         /// </summary>
         public int LicenseId { get; set; }
+
         /// <summary>
         /// Account's device ID
         /// </summary>
         public int DeviceId { get; set; }
+
         /// <summary>
         /// Account's username
         /// </summary>
         public string Username { get; set; }
+
         /// <summary>
         /// Account's password
         /// </summary>
         public string Password { get; set; }
+
         /// <summary>
         /// Integration's developer ID
         /// </summary>
@@ -121,6 +133,7 @@ namespace GlobalPayments.Api {
         /// This is provided at the start of an integration's certification.
         /// </remarks>
         public string DeveloperId { get; set; }
+
         /// <summary>
         /// Integration's version number
         /// </summary>
@@ -128,6 +141,7 @@ namespace GlobalPayments.Api {
         /// This is provided at the start of an integration's certification.
         /// </remarks>
         public string VersionNumber { get; set; }
+
         /// <summary>
         /// Account's secret API key
         /// </summary>
@@ -138,26 +152,32 @@ namespace GlobalPayments.Api {
         /// Account's account ID
         /// </summary>
         public string AccountId { get; set; }
+
         /// <summary>
         /// Account's merchant ID
         /// </summary>
         public string MerchantId { get; set; }
+
         /// <summary>
         /// Account's rebate password
         /// </summary>
         public string RebatePassword { get; set; }
+
         /// <summary>
         /// Account's refund password
         /// </summary>
         public string RefundPassword { get; set; }
+
         /// <summary>
         /// Account's shared secret
         /// </summary>
         public string SharedSecret { get; set; }
+
         /// <summary>
         /// Channel for an integration's transactions (e.g. "internet")
         /// </summary>
         public string Channel { get; set; }
+
         /// <summary>
         /// Hosted Payment Page (HPP) configuration
         /// </summary>
@@ -169,11 +189,18 @@ namespace GlobalPayments.Api {
         /// </summary>
         public ConnectionConfig DeviceConnectionConfig { get; set; }
 
+        /// Reservation Service Config
+        /// <summary>
+        /// Connection details for the reservation service
+        /// </summary>
+        public ReservationProviders? ReservationProvider { get; set; }
+
         // Common
         /// <summary>
         /// Gateway service URL
         /// </summary>
         public string ServiceUrl { get; set; }
+
         /// <summary>
         /// Timeout value for gateway communication (in milliseconds)
         /// </summary>
@@ -213,7 +240,8 @@ namespace GlobalPayments.Api {
 
             // service url
             if (string.IsNullOrEmpty(ServiceUrl)) {
-                throw new ConfigurationException("Service URL could not be determined from the credentials provided. Please specify an endpoint.");
+                // TODO: Figure out a better way if people only want to use a device, or FreshTxt
+                //throw new ConfigurationException("Service URL could not be determined from the credentials provided. Please specify an endpoint.");
             }
         }
     }
