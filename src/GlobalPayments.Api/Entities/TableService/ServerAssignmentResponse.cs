@@ -3,6 +3,9 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Entities.TableService {
     public class ServerAssignmentResponse : TableServiceResponse {
+        /// <summary>
+        /// Server assignments object
+        /// </summary>
         public ShiftAssignments Assignments { get; private set; }
 
         public ServerAssignmentResponse(string json) : base(json) {

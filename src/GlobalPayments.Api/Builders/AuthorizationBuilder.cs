@@ -8,6 +8,7 @@ namespace GlobalPayments.Api.Builders {
     /// payment method types.
     /// </summary>
     public class AuthorizationBuilder : TransactionBuilder<Transaction> {
+        internal AccountType? AccountType { get; set; }
         internal string Alias { get; set; }
         internal AliasAction? AliasAction { get; set; }
         internal bool AllowDuplicates { get; set; }
@@ -17,6 +18,7 @@ namespace GlobalPayments.Api.Builders {
         internal InquiryType? BalanceInquiryType { get; set; }
         internal Address BillingAddress { get; set; }
         internal decimal? CashBackAmount { get; set; }
+        internal EmvChipCondition? ChipCondition { get; set; }
         internal string ClientTransactionId { get; set; }
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
@@ -31,9 +33,11 @@ namespace GlobalPayments.Api.Builders {
         internal HostedPaymentData HostedPaymentData { get; set; }
         internal string InvoiceNumber { get; set; }
         internal bool Level2Request { get; set; }
+        internal string MessageAuthenticationCode { get; set; }
         internal string OfflineAuthCode { get; set; }
         internal bool OneTimePayment { get; set; }
         internal string OrderId { get; set; }
+        internal string PosSequenceNumber { get; set; }
         internal string ProductId { get; set; }
         internal RecurringSequence? RecurringSequence { get; set; }
         internal RecurringType? RecurringType { get; set; }
@@ -42,6 +46,16 @@ namespace GlobalPayments.Api.Builders {
         internal string ScheduleId { get; set; }
         internal Address ShippingAddress { get; set; }
         internal string Timestamp { get; set; }
+
+        /// <summary>
+        /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
+        /// </summary>
+        /// <param name="value">AccountType</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithAccountType(AccountType value) {
+            AccountType = value;
+            return this;
+        }
 
         /// <summary>
         /// Sets an address value; where applicable.
@@ -255,6 +269,22 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// This must be provided when the POS was not able to successfully communicate to the chip card and was required to fall back to a magnetic stripe read on an EMV capable terminal.
+        /// </summary>
+        /// <remarks>
+        /// The values can indicate multiple factors:
+        ///
+        ///   - The EMV chip read failed
+        ///   - Did the previous attempt fail
+        /// </remarks>
+        /// <param name="value">EmvChipCondition</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithEmvChipCondition(EmvChipCondition value) {
+            ChipCondition = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the gratuity amount; where applicable.
         /// </summary>
         /// <remarks>
@@ -330,6 +360,16 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Sets the message authentication code; where applicable.
+        /// </summary>
+        /// <param name="value">A special block of encrypted data added to every transaction when it is sent from the payment terminal to the payment processor.</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithMessageAuthenticationCode(string value) {
+            MessageAuthenticationCode = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the offline authorization code; where applicable.
         /// </summary>
         /// <remarks>
@@ -378,6 +418,16 @@ namespace GlobalPayments.Api.Builders {
             PaymentMethod = value;
             if (value is EBTCardData && ((EBTCardData)value).SerialNumber != null)
                 TransactionModifier = TransactionModifier.Voucher;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the POS Sequence Number; where applicable.
+        /// </summary>
+        /// <param name="value">POS sequence number for Canadian Debit transactions.</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithPosSequenceNumber(string value) {
+            PosSequenceNumber = value;
             return this;
         }
 

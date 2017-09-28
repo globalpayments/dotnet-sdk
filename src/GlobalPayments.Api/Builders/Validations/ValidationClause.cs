@@ -38,5 +38,27 @@ namespace GlobalPayments.Api.Builders {
                 return target;
             else return parent.For(target.type).With(target.constraint);
         }
+
+        public ValidationTarget Equals(object expected, string message = null) {
+            callback = (builder) => {
+                var value = property.GetValue(builder);
+                return value.Equals(expected);
+            };
+            this.message = message ?? string.Format("{0} was not the expected value {1}", property.Name, expected.ToString());
+            if (precondition)
+                return target;
+            else return parent.For(target.type).With(target.constraint);
+        }
+
+        public ValidationTarget DoesNotEqual(object expected, string message = null) {
+            callback = (builder) => {
+                var value = property.GetValue(builder);
+                return !value.Equals(expected);
+            };
+            this.message = message ?? string.Format("{0} cannot be the value {1}", property.Name, expected.ToString());
+            if (precondition)
+                return target;
+            else return parent.For(target.type).With(target.constraint);
+        }
     }
 }

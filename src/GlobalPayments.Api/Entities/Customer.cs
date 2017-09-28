@@ -1,4 +1,5 @@
-﻿using GlobalPayments.Api.PaymentMethods;
+﻿using System.Collections.Generic;
+using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Entities {
     /// <summary>
@@ -72,6 +73,11 @@ namespace GlobalPayments.Api.Entities {
         /// Customer resource's status
         /// </summary>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Customer's existing payment methods
+        /// </summary>
+        public List<RecurringPaymentMethod> PaymentMethods { get; set; }
 
         /// <summary>
         /// Adds a payment method to the customer

@@ -14,6 +14,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
+        internal decimal? CashBackAmount { get; set; }
         internal CurrencyType? Currency { get; set; }
         internal string CustomerCode { get; set; }
         internal decimal? Gratuity { get; set; }
@@ -48,6 +49,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
             (PaymentMethod as TransactionReference).AuthCode = value;
+            return this;
+        }
+        public TerminalAuthBuilder WithCashBack(decimal? amount) {
+            CashBackAmount = amount;
             return this;
         }
         public TerminalAuthBuilder WithCurrency(CurrencyType? value) {
@@ -123,6 +128,15 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 .Check(() => AuthCode).IsNotNull();
             Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
             Validations.For(TransactionType.AddValue).Check(() => Amount).IsNotNull();
+
+            Validations.For(PaymentMethodType.EBT).With(TransactionType.Balance)
+                .When(() => Currency).IsNotNull()
+                .Check(() => Currency).DoesNotEqual(CurrencyType.VOUCHER);
+            Validations.For(TransactionType.BenefitWithdrawal)
+                .When(() => Currency).IsNotNull()
+                .Check(() => Currency).Equals(CurrencyType.CASH_BENEFITS);
+            Validations.For(PaymentMethodType.EBT).With(TransactionType.Refund).Check(() => AllowDuplicates).Equals(false);
+            Validations.For(PaymentMethodType.EBT).With(TransactionType.BenefitWithdrawal).Check(() => AllowDuplicates).Equals(false);
         }
     }
 }

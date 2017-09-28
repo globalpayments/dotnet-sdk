@@ -139,24 +139,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <remarks>
         /// Default value is `"Unknown"`.
         /// </remarks>
-        public string CardType {
-            get {
-                string cardType = "Unknown";
-
-                try {
-                    string cardNum = Number.Replace(" ", string.Empty).Replace("-", string.Empty);
-                    foreach (string cardTypeName in RegexHash.Keys) {
-                        if (RegexHash[cardTypeName].IsMatch(cardNum)) {
-                            cardType = cardTypeName;
-                            break;
-                        }
-                    }
-                }
-                catch (Exception) { /* NOM NOM */ }
-
-                return cardType;
-            }
-        }
+        public string CardType { get; set; }
 
         /// <summary>
         /// Indicates if the card is present with the merchant at time of payment.
@@ -199,7 +182,23 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <summary>
         /// The card's number.
         /// </summary>
-        public string Number { get; set; }
+        private string _number;
+        public string Number {
+            get { return _number; }
+            set {
+                _number = value;
+                try {
+                    string cardNum = value.Replace(" ", string.Empty).Replace("-", string.Empty);
+                    foreach (string cardTypeName in RegexHash.Keys) {
+                        if (RegexHash[cardTypeName].IsMatch(cardNum)) {
+                            CardType = cardTypeName;
+                            break;
+                        }
+                    }
+                }
+                catch (Exception) { /* NOM NOM */ }
+            }
+        }
 
         /// <summary>
         /// The card's expiration month.
@@ -230,6 +229,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public CreditCardData() {
             CardPresent = false;
             ReaderPresent = false;
+            CardType = "Unknown";
             CvnPresenceIndicator = CvnPresenceIndicator.NotRequested;
         }
     }

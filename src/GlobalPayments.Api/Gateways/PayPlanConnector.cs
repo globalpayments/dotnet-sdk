@@ -316,7 +316,7 @@ namespace GlobalPayments.Api.Gateways {
 
         #region Hydrate Entities
         private Customer HydrateCustomer(JsonDoc response) {
-            return new Customer {
+            var customer = new Customer {
                 Key = response.GetValue<string>("customerKey"),
                 Id = response.GetValue<string>("customerIdentifier"),
                 FirstName = response.GetValue<string>("firstName"),
@@ -339,6 +339,17 @@ namespace GlobalPayments.Api.Gateways {
                     Country = response.GetValue<string>("country")
                 }
             };
+
+            if (response.Has("paymentMethods")) {
+                customer.PaymentMethods = new List<RecurringPaymentMethod>();
+                foreach (JsonDoc paymentResponse in response.GetEnumerator("paymentMethods")) {
+                    var paymentMethod = HydratePaymentMethod(paymentResponse);
+                    if (paymentMethod != null)
+                        customer.PaymentMethods.Add(paymentMethod);
+                }
+            }
+
+            return customer;
         }
 
         private RecurringPaymentMethod HydratePaymentMethod(JsonDoc response) {

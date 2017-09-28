@@ -4,7 +4,6 @@ using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     public class EbtResponse : PaxDeviceResponse {
-        public string AuthorizationCode { get; set; }
         public string AvsResultCode { get; set; }
         public string AvsResultText { get; set; }
         // TODO: CVV Response Code
@@ -34,18 +33,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         protected override void MapResponse() {
             base.MapResponse();
-
-            // Host Response
-            if (HostResponse != null) {
-                AuthorizationCode = HostResponse.AuthCode;
-                AvsResultCode = AvsResponse.AvsResponseCode;
-                AvsResultText = AvsResponse.AvsResponseMessage;
-            }
-
-            // Account Response
-            if (AccountResponse != null) {
-                CardType = AccountResponse.CardType.ToString();
-            }
         }
     }
 }

@@ -42,5 +42,13 @@ namespace GlobalPayments.Api.Terminals {
         TerminalManageBuilder GiftVoid(int referenceNumber);
         TerminalAuthBuilder GiftBalance(int referenceNumber);
         #endregion
+
+        #region EBT Calls
+        TerminalAuthBuilder EbtBalance(int referenceNumber);
+        TerminalAuthBuilder EbtPurchase(int referenceNumber, decimal? amount = null);
+        TerminalAuthBuilder EbtRefund(int referenceNumber, decimal? amount = null);
+        TerminalManageBuilder EbtReversal(int referenceNumber);
+        TerminalAuthBuilder EbtWithdrawl(int referenceNumber, decimal? amount = null);
+        #endregion
     }
 }

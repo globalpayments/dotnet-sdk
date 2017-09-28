@@ -143,7 +143,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void Test_005_DeletePaymentMethod() {
             var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
             paymentMethod.Delete();

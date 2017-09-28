@@ -3,6 +3,9 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Entities.TableService {
     public class ServerListResponse : TableServiceResponse {
+        /// <summary>
+        /// List of server names
+        /// </summary>
         public List<string> Servers { get; set; }
 
         public ServerListResponse(string json) : base(json) {

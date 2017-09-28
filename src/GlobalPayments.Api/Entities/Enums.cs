@@ -37,6 +37,20 @@ namespace GlobalPayments.Api.Entities {
     }
 
     /// <summary>
+    /// Indicates the chip condition for failed EMV chip reads
+    /// </summary>
+    public enum EmvChipCondition {
+        /// <summary>
+        /// Use this condition type when the current chip read failed but the previous transaction on the same device was either a successful chip read or was not a chip transaction.
+        /// </summary>
+        ChipFailedPreviousSuccess,
+        /// <summary>
+        /// Use this condition type when the current chip read failed and the previous transaction on the same device was also an unsuccessful chip read.
+        /// </summary>
+        ChipFailedPreviousFailed
+    }
+
+    /// <summary>
     /// Indicates an inquiry type.
     /// </summary>
     public enum InquiryType {
@@ -405,7 +419,13 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates loyalty points.
         /// </summary>
-        POINTS
+        POINTS,
+
+        CASH_BENEFITS,
+
+        FOODSTAMPS,
+
+        VOUCHER
     }
 
     /// <summary>

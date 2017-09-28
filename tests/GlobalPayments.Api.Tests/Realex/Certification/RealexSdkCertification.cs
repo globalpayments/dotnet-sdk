@@ -9,9 +9,8 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestCleanup]
         public void Throttle() { System.Threading.Thread.Sleep(1500); }
 
-        // The process cannot access the file 'C:\Projects\Integrations\SDK\HybridSDK\tests\GlobalPayments.Api.Tests\Realex\Certification\realex_responses.csv' because it is being used by another process.
         [TestMethod]
-        public void JAVA_Auth_006a() {
+        public void DotNet_Auth_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -35,14 +34,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-006a")
+                .WithDescription("DotNet_Auth-006a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006b() {
+        public void DotNet_Auth_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -66,14 +65,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-006b")
+                .WithDescription("DotNet_Auth-006b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006c() {
+        public void DotNet_Auth_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -97,14 +96,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-006c")
+                .WithDescription("DotNet_Auth-006c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006d() {
+        public void DotNet_Auth_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -128,14 +127,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-006d")
+                .WithDescription("DotNet_Auth-006d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006e() {
+        public void DotNet_Auth_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -159,14 +158,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-006e")
+                .WithDescription("DotNet_Auth-006e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006f() {
+        public void DotNet_Auth_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -190,14 +189,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-006f")
+                .WithDescription("DotNet_Auth-006f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006g() {
+        public void DotNet_Auth_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -221,14 +220,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-006g")
+                .WithDescription("DotNet_Auth-006g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006h() {
+        public void DotNet_Auth_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -252,14 +251,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-006h")
+                .WithDescription("DotNet_Auth-006h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006i() {
+        public void DotNet_Auth_006i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -283,14 +282,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-006i")
+                .WithDescription("DotNet_Auth-006i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006j() {
+        public void DotNet_Auth_006j() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -314,14 +313,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-006j")
+                .WithDescription("DotNet_Auth-006j")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_006k() {
+        public void DotNet_Auth_006k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -345,14 +344,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-006k")
+                .WithDescription("DotNet_Auth-006k")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_007a() {
+        public void DotNet_Auth_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -376,14 +375,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-007a")
+                .WithDescription("DotNet_Auth-007a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_007b() {
+        public void DotNet_Auth_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -407,14 +406,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-007b")
+                .WithDescription("DotNet_Auth-007b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_007c() {
+        public void DotNet_Auth_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -438,14 +437,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-007c")
+                .WithDescription("DotNet_Auth-007c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_007d() {
+        public void DotNet_Auth_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -469,14 +468,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-007d")
+                .WithDescription("DotNet_Auth-007d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_007e() {
+        public void DotNet_Auth_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -500,14 +499,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-007e")
+                .WithDescription("DotNet_Auth-007e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_008a() {
+        public void DotNet_Auth_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -531,14 +530,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-008a")
+                .WithDescription("DotNet_Auth-008a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_008b() {
+        public void DotNet_Auth_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -562,14 +561,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-008b")
+                .WithDescription("DotNet_Auth-008b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_008c() {
+        public void DotNet_Auth_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -593,14 +592,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-008c")
+                .WithDescription("DotNet_Auth-008c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_008d() {
+        public void DotNet_Auth_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -624,14 +623,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-008d")
+                .WithDescription("DotNet_Auth-008d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_008e() {
+        public void DotNet_Auth_008e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -655,14 +654,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-008e")
+                .WithDescription("DotNet_Auth-008e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_009a() {
+        public void DotNet_Auth_009a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -687,14 +686,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-009a")
+                .WithDescription("DotNet_Auth-009a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_009b() {
+        public void DotNet_Auth_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -719,14 +718,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-009b")
+                .WithDescription("DotNet_Auth-009b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_009c() {
+        public void DotNet_Auth_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -751,14 +750,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-009c")
+                .WithDescription("DotNet_Auth-009c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_009d() {
+        public void DotNet_Auth_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -782,14 +781,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-009d")
+                .WithDescription("DotNet_Auth-009d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_010a() {
+        public void DotNet_Auth_010a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -813,14 +812,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-010a")
+                .WithDescription("DotNet_Auth-010a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_010b() {
+        public void DotNet_Auth_010b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -844,14 +843,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-010b")
+                .WithDescription("DotNet_Auth-010b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_010c() {
+        public void DotNet_Auth_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -875,14 +874,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-010c")
+                .WithDescription("DotNet_Auth-010c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_010d() {
+        public void DotNet_Auth_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -906,14 +905,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-010d")
+                .WithDescription("DotNet_Auth-010d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_010e() {
+        public void DotNet_Auth_010e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -937,14 +936,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-010e")
+                .WithDescription("DotNet_Auth-010e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_011a() {
+        public void DotNet_Auth_011a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -968,14 +967,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-011a")
+                .WithDescription("DotNet_Auth-011a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_011b() {
+        public void DotNet_Auth_011b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -999,14 +998,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-011b")
+                .WithDescription("DotNet_Auth-011b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_011c() {
+        public void DotNet_Auth_011c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1030,14 +1029,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-011c")
+                .WithDescription("DotNet_Auth-011c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Auth_011d() {
+        public void DotNet_Auth_011d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1061,14 +1060,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-011d")
+                .WithDescription("DotNet_Auth-011d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_012a() {
+        public void DotNet_Auth_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1092,14 +1091,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-012a")
+                .WithDescription("DotNet_Auth-012a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_012b() {
+        public void DotNet_Auth_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1123,14 +1122,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EURO")
-                .WithDescription("JAVA-Auth-012b")
+                .WithDescription("DotNet_Auth-012b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_012c() {
+        public void DotNet_Auth_012c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1154,14 +1153,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("�UR")
-                .WithDescription("JAVA-Auth-012c")
+                .WithDescription("DotNet_Auth-012c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Auth_012d() {
+        public void DotNet_Auth_012d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1184,14 +1183,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = card.Charge(100.01m)
-                .WithDescription("JAVA-Auth-012d")
+                .WithDescription("DotNet_Auth-012d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_013a() {
+        public void DotNet_Auth_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1215,14 +1214,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-013a")
+                .WithDescription("DotNet_Auth-013a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_013b1() {
+        public void DotNet_Auth_013b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1246,14 +1245,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-013b1")
+                .WithDescription("DotNet_Auth-013b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_013b2() {
+        public void DotNet_Auth_013b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1277,14 +1276,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-013b2")
+                .WithDescription("DotNet_Auth-013b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_013c() {
+        public void DotNet_Auth_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1308,14 +1307,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-013c")
+                .WithDescription("DotNet_Auth-013c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_014a() {
+        public void DotNet_Auth_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1339,14 +1338,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-014a")
+                .WithDescription("DotNet_Auth-014a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_014b() {
+        public void DotNet_Auth_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1369,14 +1368,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-014b")
+                .WithDescription("DotNet_Auth-014b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_014c() {
+        public void DotNet_Auth_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1400,14 +1399,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-014c")
+                .WithDescription("DotNet_Auth-014c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_014d() {
+        public void DotNet_Auth_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1431,14 +1430,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-014d")
+                .WithDescription("DotNet_Auth-014d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_015a() {
+        public void DotNet_Auth_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1462,14 +1461,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-015a")
+                .WithDescription("DotNet_Auth-015a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_015b() {
+        public void DotNet_Auth_015b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1493,14 +1492,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-015b")
+                .WithDescription("DotNet_Auth-015b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_015c() {
+        public void DotNet_Auth_015c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1524,14 +1523,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-015c")
+                .WithDescription("DotNet_Auth-015c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_015d() {
+        public void DotNet_Auth_015d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1553,14 +1552,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-015d")
+                .WithDescription("DotNet_Auth-015d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_016a() {
+        public void DotNet_Auth_016a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1584,14 +1583,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-016a")
+                .WithDescription("DotNet_Auth-016a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_016b() {
+        public void DotNet_Auth_016b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1615,14 +1614,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-016b")
+                .WithDescription("DotNet_Auth-016b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_016c() {
+        public void DotNet_Auth_016c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1646,14 +1645,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-016c")
+                .WithDescription("DotNet_Auth-016c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_017a() {
+        public void DotNet_Auth_017a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1677,14 +1676,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-017a")
+                .WithDescription("DotNet_Auth-017a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_018a() {
+        public void DotNet_Auth_018a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1708,14 +1707,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-018a")
+                .WithDescription("DotNet_Auth-018a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_019a() {
+        public void DotNet_Auth_019a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1739,7 +1738,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-019a")
+                .WithDescription("DotNet_Auth-019a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -1747,7 +1746,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_019b1() {
+        public void DotNet_Auth_019b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1771,14 +1770,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-019b1")
+                .WithDescription("DotNet_Auth-019b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_019b2() {
+        public void DotNet_Auth_019b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1802,7 +1801,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-019b2")
+                .WithDescription("DotNet_Auth-019b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -1810,7 +1809,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_019c() {
+        public void DotNet_Auth_019c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1834,14 +1833,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-019c")
+                .WithDescription("DotNet_Auth-019c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_019d() {
+        public void DotNet_Auth_019d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1865,14 +1864,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-019d")
+                .WithDescription("DotNet_Auth-019d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_020a1() {
+        public void DotNet_Auth_020a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1896,14 +1895,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-020a1")
+                .WithDescription("DotNet_Auth-020a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_020a2() {
+        public void DotNet_Auth_020a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1927,14 +1926,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-020a2")
+                .WithDescription("DotNet_Auth-020a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_020a3() {
+        public void DotNet_Auth_020a3() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1958,14 +1957,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-020a3")
+                .WithDescription("DotNet_Auth-020a3")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_020a4() {
+        public void DotNet_Auth_020a4() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -1989,14 +1988,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-020a4")
+                .WithDescription("DotNet_Auth-020a4")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_020b() {
+        public void DotNet_Auth_020b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2020,14 +2019,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-020b")
+                .WithDescription("DotNet_Auth-020b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_020c() {
+        public void DotNet_Auth_020c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2051,14 +2050,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-020c")
+                .WithDescription("DotNet_Auth-020c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_021a1() {
+        public void DotNet_Auth_021a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2082,14 +2081,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-021a1")
+                .WithDescription("DotNet_Auth-021a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_021a2() {
+        public void DotNet_Auth_021a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2113,14 +2112,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-021a2")
+                .WithDescription("DotNet_Auth-021a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_021a3() {
+        public void DotNet_Auth_021a3() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2144,14 +2143,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-021a3")
+                .WithDescription("DotNet_Auth-021a3")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_021b() {
+        public void DotNet_Auth_021b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2175,14 +2174,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-021b")
+                .WithDescription("DotNet_Auth-021b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_021c() {
+        public void DotNet_Auth_021c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2206,14 +2205,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-021c")
+                .WithDescription("DotNet_Auth-021c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_022a() {
+        public void DotNet_Auth_022a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2237,14 +2236,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-022a")
+                .WithDescription("DotNet_Auth-022a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_022b() {
+        public void DotNet_Auth_022b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2268,14 +2267,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-022b")
+                .WithDescription("DotNet_Auth-022b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_022c() {
+        public void DotNet_Auth_022c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2299,14 +2298,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-022c")
+                .WithDescription("DotNet_Auth-022c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_022d() {
+        public void DotNet_Auth_022d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2330,14 +2329,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-022d")
+                .WithDescription("DotNet_Auth-022d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_022e() {
+        public void DotNet_Auth_022e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2361,14 +2360,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-022e")
+                .WithDescription("DotNet_Auth-022e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_023a1() {
+        public void DotNet_Auth_023a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2392,14 +2391,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-023a1")
+                .WithDescription("DotNet_Auth-023a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_023a2() {
+        public void DotNet_Auth_023a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2423,14 +2422,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-023a2")
+                .WithDescription("DotNet_Auth-023a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_023b1() {
+        public void DotNet_Auth_023b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2454,14 +2453,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-023b1")
+                .WithDescription("DotNet_Auth-023b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_023c() {
+        public void DotNet_Auth_023c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2485,14 +2484,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-023c")
+                .WithDescription("DotNet_Auth-023c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_024a1() {
+        public void DotNet_Auth_024a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2516,14 +2515,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-024a1")
+                .WithDescription("DotNet_Auth-024a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_024a2() {
+        public void DotNet_Auth_024a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2547,14 +2546,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-024a2")
+                .WithDescription("DotNet_Auth-024a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_024a3() {
+        public void DotNet_Auth_024a3() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2578,14 +2577,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-024a3")
+                .WithDescription("DotNet_Auth-024a3")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_024b() {
+        public void DotNet_Auth_024b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2609,14 +2608,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-024b")
+                .WithDescription("DotNet_Auth-024b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_024c() {
+        public void DotNet_Auth_024c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2640,14 +2639,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-024c")
+                .WithDescription("DotNet_Auth-024c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_025() {
+        public void DotNet_Auth_025() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2671,14 +2670,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-025")
+                .WithDescription("DotNet_Auth-025")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_026a1() {
+        public void DotNet_Auth_026a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2702,14 +2701,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-026a1")
+                .WithDescription("DotNet_Auth-026a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_026a2() {
+        public void DotNet_Auth_026a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2739,7 +2738,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Auth_026b() {
+        public void DotNet_Auth_026b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2769,7 +2768,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Auth_026c1() {
+        public void DotNet_Auth_026c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2800,7 +2799,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Auth_026c2() {
+        public void DotNet_Auth_026c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2824,14 +2823,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-026c2")
+                .WithDescription("DotNet_Auth-026c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_027a() {
+        public void DotNet_Auth_027a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2856,14 +2855,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithCustomerId("123456")
-                .WithDescription("JAVA-Auth-027a")
+                .WithDescription("DotNet_Auth-027a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_028a() {
+        public void DotNet_Auth_028a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2888,14 +2887,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerId("123456")
-                .WithDescription("JAVA-Auth-028a")
+                .WithDescription("DotNet_Auth-028a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_028b() {
+        public void DotNet_Auth_028b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2919,14 +2918,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-028b")
+                .WithDescription("DotNet_Auth-028b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_028c() {
+        public void DotNet_Auth_028c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2951,14 +2950,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithCustomerId("3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1")
-                .WithDescription("JAVA-Auth-028c")
+                .WithDescription("DotNet_Auth-028c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_028d() {
+        public void DotNet_Auth_028d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -2983,14 +2982,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerId("123456~")
-                .WithDescription("JAVA-Auth-028d")
+                .WithDescription("DotNet_Auth-028d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_029a() {
+        public void DotNet_Auth_029a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3015,14 +3014,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithProductId("123456")
-                .WithDescription("JAVA-Auth-029a")
+                .WithDescription("DotNet_Auth-029a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_029b() {
+        public void DotNet_Auth_029b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3046,14 +3045,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Auth-029b")
+                .WithDescription("DotNet_Auth-029b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_029c() {
+        public void DotNet_Auth_029c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3078,14 +3077,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithProductId("3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1")
-                .WithDescription("JAVA-Auth-029c")
+                .WithDescription("DotNet_Auth-029c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_029d() {
+        public void DotNet_Auth_029d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3110,14 +3109,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithProductId("123456~")
-                .WithDescription("JAVA-Auth-029d")
+                .WithDescription("DotNet_Auth-029d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_030a() {
+        public void DotNet_Auth_030a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3142,14 +3141,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithClientTransactionId("123456")
-                .WithDescription("JAVA-Auth-030a")
+                .WithDescription("DotNet_Auth-030a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_030b() {
+        public void DotNet_Auth_030b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3173,14 +3172,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-030b")
+                .WithDescription("DotNet_Auth-030b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_030c() {
+        public void DotNet_Auth_030c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3205,14 +3204,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithClientTransactionId("3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1")
-                .WithDescription("JAVA-Auth-030c")
+                .WithDescription("DotNet_Auth-030c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Auth_030d() {
+        public void DotNet_Auth_030d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3237,14 +3236,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithClientTransactionId("123456~")
-                .WithDescription("JAVA-Auth-030d")
+                .WithDescription("DotNet_Auth-030d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_031a() {
+        public void DotNet_Auth_031a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3269,14 +3268,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerIpAddress("123.123.123.123")
-                .WithDescription("JAVA-Auth-031a")
+                .WithDescription("DotNet_Auth-031a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_031b() {
+        public void DotNet_Auth_031b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3300,14 +3299,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-031b")
+                .WithDescription("DotNet_Auth-031b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_031c1() {
+        public void DotNet_Auth_031c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3332,14 +3331,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithCustomerIpAddress("1234.123.123.123")
-                .WithDescription("JAVA-Auth-031c1")
+                .WithDescription("DotNet_Auth-031c1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_031c2() {
+        public void DotNet_Auth_031c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3364,14 +3363,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerIpAddress("123~.123.123.123")
-                .WithDescription("JAVA-Auth-031c2")
+                .WithDescription("DotNet_Auth-031c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_032a() {
+        public void DotNet_Auth_032a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3409,14 +3408,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCurrency("EUR")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-032a")
+                .WithDescription("DotNet_Auth-032a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_033a() {
+        public void DotNet_Auth_033a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3452,14 +3451,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCurrency("USD")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-033a")
+                .WithDescription("DotNet_Auth-033a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_033b1() {
+        public void DotNet_Auth_033b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3489,14 +3488,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Auth-033b1")
+                .WithDescription("DotNet_Auth-033b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_033b2() {
+        public void DotNet_Auth_033b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3526,14 +3525,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-033b2")
+                .WithDescription("DotNet_Auth-033b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_033c1() {
+        public void DotNet_Auth_033c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3563,14 +3562,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Auth-033c1")
+                .WithDescription("DotNet_Auth-033c1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_033c2() {
+        public void DotNet_Auth_033c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3600,14 +3599,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-033c2")
+                .WithDescription("DotNet_Auth-033c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_034a() {
+        public void DotNet_Auth_034a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3643,14 +3642,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCurrency("EUR")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-034a")
+                .WithDescription("DotNet_Auth-034a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_034b1() {
+        public void DotNet_Auth_034b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3680,14 +3679,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-034b1")
+                .WithDescription("DotNet_Auth-034b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_034b2() {
+        public void DotNet_Auth_034b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3717,14 +3716,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Auth-034b2")
+                .WithDescription("DotNet_Auth-034b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_034c1() {
+        public void DotNet_Auth_034c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3754,14 +3753,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Auth-034c1")
+                .WithDescription("DotNet_Auth-034c1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_034c2() {
+        public void DotNet_Auth_034c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3791,14 +3790,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-034c2")
+                .WithDescription("DotNet_Auth-034c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_035a() {
+        public void DotNet_Auth_035a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3822,14 +3821,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Auth-035a")
+                .WithDescription("DotNet_Auth-035a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_035b() {
+        public void DotNet_Auth_035b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3853,14 +3852,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Auth-035b")
+                .WithDescription("DotNet_Auth-035b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Auth_055a() {
+        public void DotNet_Auth_055a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3903,14 +3902,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Auth-055a")
+                .WithDescription("DotNet_Auth-055a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_002a() {
+        public void DotNet_Validation_002a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -3953,14 +3952,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002a")
+                .WithDescription("DotNet_Validation-002a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_002b() {
+        public void DotNet_Validation_002b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4003,14 +4002,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002b")
+                .WithDescription("DotNet_Validation-002b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_002c1() {
+        public void DotNet_Validation_002c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4053,14 +4052,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002c1")
+                .WithDescription("DotNet_Validation-002c1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_002c2() {
+        public void DotNet_Validation_002c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4103,14 +4102,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002c2")
+                .WithDescription("DotNet_Validation-002c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_002d() {
+        public void DotNet_Validation_002d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4153,14 +4152,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002d")
+                .WithDescription("DotNet_Validation-002d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_002e() {
+        public void DotNet_Validation_002e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4203,14 +4202,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002e")
+                .WithDescription("DotNet_Validation-002e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_002f() {
+        public void DotNet_Validation_002f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4253,14 +4252,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002f")
+                .WithDescription("DotNet_Validation-002f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_002g() {
+        public void DotNet_Validation_002g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4303,14 +4302,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002g")
+                .WithDescription("DotNet_Validation-002g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_002h() {
+        public void DotNet_Validation_002h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4353,14 +4352,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-002h")
+                .WithDescription("DotNet_Validation-002h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_003a() {
+        public void DotNet_Validation_003a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4403,14 +4402,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003a")
+                .WithDescription("DotNet_Validation-003a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_003b() {
+        public void DotNet_Validation_003b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4453,14 +4452,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003b")
+                .WithDescription("DotNet_Validation-003b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_003c() {
+        public void DotNet_Validation_003c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4503,14 +4502,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003c")
+                .WithDescription("DotNet_Validation-003c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_003d() {
+        public void DotNet_Validation_003d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4553,14 +4552,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003d")
+                .WithDescription("DotNet_Validation-003d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_003e() {
+        public void DotNet_Validation_003e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4603,14 +4602,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003e")
+                .WithDescription("DotNet_Validation-003e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_003f() {
+        public void DotNet_Validation_003f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4653,14 +4652,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003f")
+                .WithDescription("DotNet_Validation-003f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_003g() {
+        public void DotNet_Validation_003g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4703,14 +4702,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003g")
+                .WithDescription("DotNet_Validation-003g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_003h() {
+        public void DotNet_Validation_003h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4753,14 +4752,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003h")
+                .WithDescription("DotNet_Validation-003h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_003i() {
+        public void DotNet_Validation_003i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4801,14 +4800,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-003i")
+                .WithDescription("DotNet_Validation-003i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_004a() {
+        public void DotNet_Validation_004a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4851,7 +4850,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004a")
+                .WithDescription("DotNet_Validation-004a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -4859,7 +4858,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_004b() {
+        public void DotNet_Validation_004b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4902,7 +4901,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004b")
+                .WithDescription("DotNet_Validation-004b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -4910,7 +4909,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_004c() {
+        public void DotNet_Validation_004c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -4953,14 +4952,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004c")
+                .WithDescription("DotNet_Validation-004c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_004d() {
+        public void DotNet_Validation_004d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5003,14 +5002,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004d")
+                .WithDescription("DotNet_Validation-004d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_004e() {
+        public void DotNet_Validation_004e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5053,14 +5052,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004e")
+                .WithDescription("DotNet_Validation-004e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_004f() {
+        public void DotNet_Validation_004f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5103,14 +5102,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004f")
+                .WithDescription("DotNet_Validation-004f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_004g() {
+        public void DotNet_Validation_004g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5153,14 +5152,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004g")
+                .WithDescription("DotNet_Validation-004g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_004h() {
+        public void DotNet_Validation_004h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5203,14 +5202,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004h")
+                .WithDescription("DotNet_Validation-004h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_004i() {
+        public void DotNet_Validation_004i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5253,7 +5252,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-004i")
+                .WithDescription("DotNet_Validation-004i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -5261,7 +5260,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_005a() {
+        public void DotNet_Validation_005a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5304,14 +5303,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005a")
+                .WithDescription("DotNet_Validation-005a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_005b() {
+        public void DotNet_Validation_005b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5354,7 +5353,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005b")
+                .WithDescription("DotNet_Validation-005b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -5362,7 +5361,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_005c() {
+        public void DotNet_Validation_005c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5405,14 +5404,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005c")
+                .WithDescription("DotNet_Validation-005c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_005d() {
+        public void DotNet_Validation_005d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5455,14 +5454,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005d")
+                .WithDescription("DotNet_Validation-005d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_005e() {
+        public void DotNet_Validation_005e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5505,7 +5504,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005e")
+                .WithDescription("DotNet_Validation-005e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -5513,7 +5512,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_005f() {
+        public void DotNet_Validation_005f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5556,14 +5555,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005f")
+                .WithDescription("DotNet_Validation-005f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_005g() {
+        public void DotNet_Validation_005g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5606,7 +5605,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005g")
+                .WithDescription("DotNet_Validation-005g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -5614,7 +5613,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_005h() {
+        public void DotNet_Validation_005h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5657,14 +5656,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-005h")
+                .WithDescription("DotNet_Validation-005h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_006a() {
+        public void DotNet_Validation_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5707,14 +5706,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-006a")
+                .WithDescription("DotNet_Validation-006a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_006b() {
+        public void DotNet_Validation_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5757,14 +5756,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-006b")
+                .WithDescription("DotNet_Validation-006b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_006c() {
+        public void DotNet_Validation_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5807,14 +5806,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-006c")
+                .WithDescription("DotNet_Validation-006c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_006d() {
+        public void DotNet_Validation_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -5841,257 +5840,6 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // create card
             var card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = 11,
-                ExpYear = 5,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // request
-            var response = card.Charge(100.01m)
-                .WithCurrency("GBP")
-                .WithCustomerId("100")
-                .WithProductId("999")
-                .WithClientTransactionId("test")
-                .WithCustomerIpAddress("123.123.123.123")
-                .WithAddress(billingAddress)
-                .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-006d")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 20000,
-                Channel = "ECOM"
-            });
-
-            // billing address
-            var billingAddress = new Address {
-                PostalCode = "779|102",
-                Country = "GB"
-            };
-
-            // shipping address
-            var shippingAddress = new Address {
-                PostalCode = "658|325",
-                Country = "FR"
-            };
-
-            // create card
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 12,
-                ExpYear = 2020,
-                Cvn = "1234",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // request
-            var response = card.Charge(100.01m)
-                .WithCurrency("GBP")
-                .WithCustomerId("100")
-                .WithProductId("999")
-                .WithClientTransactionId("test")
-                .WithCustomerIpAddress("123.123.123.123")
-                .WithAddress(billingAddress)
-                .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-006e")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void JAVA_Validation_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 20000,
-                Channel = "ECOM"
-            });
-
-            // billing address
-            var billingAddress = new Address {
-                PostalCode = "779|102",
-                Country = "GB"
-            };
-
-            // shipping address
-            var shippingAddress = new Address {
-                PostalCode = "658|325",
-                Country = "FR"
-            };
-
-            // create card
-            var card = new CreditCardData {
-                Number = "5425230000004415",
-                ExpMonth = 12,
-                ExpYear = 2020,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // request
-            var response = card.Charge(100.01m)
-                .WithCurrency("GBP")
-                .WithCustomerId("100")
-                .WithProductId("999")
-                .WithClientTransactionId("test")
-                .WithCustomerIpAddress("123.123.123.123")
-                .WithAddress(billingAddress)
-                .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-007a")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void JAVA_Validation_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 20000,
-                Channel = "ECOM"
-            });
-
-            // billing address
-            var billingAddress = new Address {
-                PostalCode = "779|102",
-                Country = "GB"
-            };
-
-            // shipping address
-            var shippingAddress = new Address {
-                PostalCode = "658|325",
-                Country = "FR"
-            };
-
-            // create card
-            var card = new CreditCardData {
-                Number = "5425230000004415",
-                ExpMonth = 12,
-                ExpYear = 2020,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // request
-            var response = card.Charge(100.01m)
-                .WithCurrency("GBP")
-                .WithCustomerId("100")
-                .WithProductId("999")
-                .WithClientTransactionId("test")
-                .WithCustomerIpAddress("123.123.123.123")
-                .WithAddress(billingAddress)
-                .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-007b")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 20000,
-                Channel = "ECOM"
-            });
-
-            // billing address
-            var billingAddress = new Address {
-                PostalCode = "779|102",
-                Country = "GB"
-            };
-
-            // shipping address
-            var shippingAddress = new Address {
-                PostalCode = "658|325",
-                Country = "FR"
-            };
-
-            // create card
-            var card = new CreditCardData {
-                Number = "5425230000004415",
-                ExpMonth = 11,
-                ExpYear = 2015,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // request
-            var response = card.Charge(100.01m)
-                .WithCurrency("GBP")
-                .WithCustomerId("100")
-                .WithProductId("999")
-                .WithClientTransactionId("test")
-                .WithCustomerIpAddress("123.123.123.123")
-                .WithAddress(billingAddress)
-                .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-007d")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 20000,
-                Channel = "ECOM"
-            });
-
-            // billing address
-            var billingAddress = new Address {
-                PostalCode = "779|102",
-                Country = "GB"
-            };
-
-            // shipping address
-            var shippingAddress = new Address {
-                PostalCode = "658|325",
-                Country = "FR"
-            };
-
-            // create card
-            var card = new CreditCardData {
-                Number = "5425230000004415",
                 ExpMonth = 11,
                 ExpYear = 5,
                 Cvn = "123",
@@ -6108,7 +5856,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-007e")
+                .WithDescription("DotNet_Validation-006d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6116,7 +5864,258 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_007f() {
+        public void DotNet_Validation_006e() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 20000,
+                Channel = "ECOM"
+            });
+
+            // billing address
+            var billingAddress = new Address {
+                PostalCode = "779|102",
+                Country = "GB"
+            };
+
+            // shipping address
+            var shippingAddress = new Address {
+                PostalCode = "658|325",
+                Country = "FR"
+            };
+
+            // create card
+            var card = new CreditCardData {
+                Number = "4263970000005262",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "1234",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // request
+            var response = card.Charge(100.01m)
+                .WithCurrency("GBP")
+                .WithCustomerId("100")
+                .WithProductId("999")
+                .WithClientTransactionId("test")
+                .WithCustomerIpAddress("123.123.123.123")
+                .WithAddress(billingAddress)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithDescription("DotNet_Validation-006e")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DotNet_Validation_007a() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 20000,
+                Channel = "ECOM"
+            });
+
+            // billing address
+            var billingAddress = new Address {
+                PostalCode = "779|102",
+                Country = "GB"
+            };
+
+            // shipping address
+            var shippingAddress = new Address {
+                PostalCode = "658|325",
+                Country = "FR"
+            };
+
+            // create card
+            var card = new CreditCardData {
+                Number = "5425230000004415",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // request
+            var response = card.Charge(100.01m)
+                .WithCurrency("GBP")
+                .WithCustomerId("100")
+                .WithProductId("999")
+                .WithClientTransactionId("test")
+                .WithCustomerIpAddress("123.123.123.123")
+                .WithAddress(billingAddress)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithDescription("DotNet_Validation-007a")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DotNet_Validation_007b() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 20000,
+                Channel = "ECOM"
+            });
+
+            // billing address
+            var billingAddress = new Address {
+                PostalCode = "779|102",
+                Country = "GB"
+            };
+
+            // shipping address
+            var shippingAddress = new Address {
+                PostalCode = "658|325",
+                Country = "FR"
+            };
+
+            // create card
+            var card = new CreditCardData {
+                Number = "5425230000004415",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // request
+            var response = card.Charge(100.01m)
+                .WithCurrency("GBP")
+                .WithCustomerId("100")
+                .WithProductId("999")
+                .WithClientTransactionId("test")
+                .WithCustomerIpAddress("123.123.123.123")
+                .WithAddress(billingAddress)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithDescription("DotNet_Validation-007b")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod, ExpectedException(typeof(GatewayException))]
+        public void DotNet_Validation_007d() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 20000,
+                Channel = "ECOM"
+            });
+
+            // billing address
+            var billingAddress = new Address {
+                PostalCode = "779|102",
+                Country = "GB"
+            };
+
+            // shipping address
+            var shippingAddress = new Address {
+                PostalCode = "658|325",
+                Country = "FR"
+            };
+
+            // create card
+            var card = new CreditCardData {
+                Number = "5425230000004415",
+                ExpMonth = 11,
+                ExpYear = 2015,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // request
+            var response = card.Charge(100.01m)
+                .WithCurrency("GBP")
+                .WithCustomerId("100")
+                .WithProductId("999")
+                .WithClientTransactionId("test")
+                .WithCustomerIpAddress("123.123.123.123")
+                .WithAddress(billingAddress)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithDescription("DotNet_Validation-007d")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod, ExpectedException(typeof(GatewayException))]
+        public void DotNet_Validation_007e() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 20000,
+                Channel = "ECOM"
+            });
+
+            // billing address
+            var billingAddress = new Address {
+                PostalCode = "779|102",
+                Country = "GB"
+            };
+
+            // shipping address
+            var shippingAddress = new Address {
+                PostalCode = "658|325",
+                Country = "FR"
+            };
+
+            // create card
+            var card = new CreditCardData {
+                Number = "5425230000004415",
+                ExpMonth = 11,
+                ExpYear = 5,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // request
+            var response = card.Charge(100.01m)
+                .WithCurrency("GBP")
+                .WithCustomerId("100")
+                .WithProductId("999")
+                .WithClientTransactionId("test")
+                .WithCustomerIpAddress("123.123.123.123")
+                .WithAddress(billingAddress)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithDescription("DotNet_Validation-007e")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(GatewayException))]
+        public void DotNet_Validation_007f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6159,14 +6158,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-007f")
+                .WithDescription("DotNet_Validation-007f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Validation_008b() {
+        public void DotNet_Validation_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6209,14 +6208,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-008b")
+                .WithDescription("DotNet_Validation-008b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_008c() {
+        public void DotNet_Validation_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6259,14 +6258,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-008c")
+                .WithDescription("DotNet_Validation-008c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_008d() {
+        public void DotNet_Validation_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6309,14 +6308,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-008d")
+                .WithDescription("DotNet_Validation-008d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_009b() {
+        public void DotNet_Validation_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6359,14 +6358,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-009b")
+                .WithDescription("DotNet_Validation-009b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_009c() {
+        public void DotNet_Validation_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6409,14 +6408,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-009c")
+                .WithDescription("DotNet_Validation-009c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Validation_009d() {
+        public void DotNet_Validation_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6459,7 +6458,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Validation-009d")
+                .WithDescription("DotNet_Validation-009d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6467,7 +6466,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_001a() {
+        public void DotNet_AVS_001a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6510,7 +6509,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-001a")
+                .WithDescription("DotNet_AVS-001a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6518,7 +6517,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_001b() {
+        public void DotNet_AVS_001b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6561,7 +6560,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-001b")
+                .WithDescription("DotNet_AVS-001b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6569,7 +6568,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_001c() {
+        public void DotNet_AVS_001c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6612,7 +6611,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-001c")
+                .WithDescription("DotNet_AVS-001c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6620,7 +6619,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_001d() {
+        public void DotNet_AVS_001d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6661,7 +6660,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-001d")
+                .WithDescription("DotNet_AVS-001d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6669,7 +6668,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_001e() {
+        public void DotNet_AVS_001e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6712,7 +6711,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-001e")
+                .WithDescription("DotNet_AVS-001e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6720,7 +6719,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_001f() {
+        public void DotNet_AVS_001f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6763,7 +6762,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-001f")
+                .WithDescription("DotNet_AVS-001f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6771,7 +6770,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_001g() {
+        public void DotNet_AVS_001g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6814,7 +6813,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-001g")
+                .WithDescription("DotNet_AVS-001g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6822,7 +6821,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003a() {
+        public void DotNet_AVS_003a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6865,7 +6864,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003a")
+                .WithDescription("DotNet_AVS-003a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6873,7 +6872,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003b() {
+        public void DotNet_AVS_003b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6916,7 +6915,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003b")
+                .WithDescription("DotNet_AVS-003b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6924,7 +6923,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003c() {
+        public void DotNet_AVS_003c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -6967,7 +6966,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003c")
+                .WithDescription("DotNet_AVS-003c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -6975,7 +6974,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003d() {
+        public void DotNet_AVS_003d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7018,7 +7017,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003d")
+                .WithDescription("DotNet_AVS-003d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -7026,7 +7025,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003e() {
+        public void DotNet_AVS_003e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7069,7 +7068,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003e")
+                .WithDescription("DotNet_AVS-003e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -7077,7 +7076,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003f() {
+        public void DotNet_AVS_003f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7120,7 +7119,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003f")
+                .WithDescription("DotNet_AVS-003f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -7128,7 +7127,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003g() {
+        public void DotNet_AVS_003g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7169,7 +7168,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003e")
+                .WithDescription("DotNet_AVS-003e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -7177,7 +7176,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_AVS_003h() {
+        public void DotNet_AVS_003h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7218,14 +7217,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCustomerIpAddress("123.123.123.123")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-AVS-003f")
+                .WithDescription("DotNet_AVS-003f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_Sample() {
+        public void DotNet_Settle_Sample() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7258,14 +7257,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006a() {
+        public void DotNet_Settle_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7298,14 +7297,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006b() {
+        public void DotNet_Settle_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7338,14 +7337,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006c() {
+        public void DotNet_Settle_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7378,14 +7377,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006d() {
+        public void DotNet_Settle_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7418,14 +7417,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006e() {
+        public void DotNet_Settle_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7458,14 +7457,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006f() {
+        public void DotNet_Settle_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7498,14 +7497,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006g() {
+        public void DotNet_Settle_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7538,14 +7537,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006h() {
+        public void DotNet_Settle_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7578,14 +7577,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006i() {
+        public void DotNet_Settle_006i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7618,14 +7617,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_006k() {
+        public void DotNet_Settle_006k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7658,14 +7657,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_007a() {
+        public void DotNet_Settle_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7698,14 +7697,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_007b() {
+        public void DotNet_Settle_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7738,14 +7737,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_007c() {
+        public void DotNet_Settle_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7778,14 +7777,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_007d() {
+        public void DotNet_Settle_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7818,14 +7817,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_007e() {
+        public void DotNet_Settle_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7858,14 +7857,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_008a() {
+        public void DotNet_Settle_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7898,14 +7897,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_008b() {
+        public void DotNet_Settle_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7938,14 +7937,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_008c() {
+        public void DotNet_Settle_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -7978,14 +7977,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_008d() {
+        public void DotNet_Settle_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8018,14 +8017,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_008e() {
+        public void DotNet_Settle_008e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8058,14 +8057,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_009a() {
+        public void DotNet_Settle_009a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8098,14 +8097,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_009b() {
+        public void DotNet_Settle_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8138,14 +8137,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Settle_009c() {
+        public void DotNet_Settle_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8178,14 +8177,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Settle_009d() {
+        public void DotNet_Settle_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8218,14 +8217,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_010c() {
+        public void DotNet_Settle_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8258,14 +8257,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_010d() {
+        public void DotNet_Settle_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8298,14 +8297,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_010e() {
+        public void DotNet_Settle_010e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8338,14 +8337,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_011a() {
+        public void DotNet_Settle_011a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8378,14 +8377,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_011b() {
+        public void DotNet_Settle_011b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8418,14 +8417,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_011c() {
+        public void DotNet_Settle_011c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8458,14 +8457,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_011d() {
+        public void DotNet_Settle_011d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8498,14 +8497,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_012a() {
+        public void DotNet_Settle_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8538,14 +8537,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_012b() {
+        public void DotNet_Settle_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8578,14 +8577,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1.005m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Settle_012c() {
+        public void DotNet_Settle_012c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8618,14 +8617,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Settle_012d() {
+        public void DotNet_Settle_012d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8658,14 +8657,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_012e() {
+        public void DotNet_Settle_012e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8698,14 +8697,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1000m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Settle_012f() {
+        public void DotNet_Settle_012f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8738,14 +8737,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_013a() {
+        public void DotNet_Settle_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8778,14 +8777,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Settle_013b() {
+        public void DotNet_Settle_013b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8818,14 +8817,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EURO")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Settle_013c() {
+        public void DotNet_Settle_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8858,14 +8857,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EU#")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_013d() {
+        public void DotNet_Settle_013d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8897,54 +8896,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Capture(1m)
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 5000,
-                Channel = "ECOM"
-            });
-
-            // create card
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 12,
-                ExpYear = 2020,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // build transaction
-            var saleResponse = card.Authorize(1m)
-                .WithCurrency("EUR")
-                .Execute();
-            Assert.IsNotNull(saleResponse);
-            Assert.AreEqual("00", saleResponse.ResponseCode);
-            Throttle();
-
-            // request
-            var response = saleResponse.Capture(1m)
-                .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void JAVA_Settle_014a() {
+        public void DotNet_Settle_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -8977,14 +8936,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_014b() {
+        public void DotNet_Settle_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9017,14 +8976,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_014c() {
+        public void DotNet_Settle_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9057,14 +9016,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_014d() {
+        public void DotNet_Settle_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9097,14 +9056,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_016a() {
+        public void DotNet_Settle_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9137,14 +9096,54 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_016b() {
+        public void DotNet_Settle_016a() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 5000,
+                Channel = "ECOM"
+            });
+
+            // create card
+            var card = new CreditCardData {
+                Number = "4263970000005262",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // build transaction
+            var saleResponse = card.Authorize(1m)
+                .WithCurrency("EUR")
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+            Throttle();
+
+            // request
+            var response = saleResponse.Capture(1m)
+                .WithCurrency("EUR")
+                .WithDescription("DotNet_Settle")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DotNet_Settle_016b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9183,7 +9182,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Settle_016c() {
+        public void DotNet_Settle_016c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9216,14 +9215,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-SettleAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                .WithDescription("DotNet_SettleAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_016d() {
+        public void DotNet_Settle_016d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9256,14 +9255,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle###")
+                .WithDescription("DotNet_Settle###")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Settle_017a() {
+        public void DotNet_Settle_017a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9296,14 +9295,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Settle")
+                .WithDescription("DotNet_Settle")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Settle_017b() {
+        public void DotNet_Settle_017b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9336,14 +9335,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Capture(1m)
                 .WithCurrency("EUR")
-                .WithDescription("SDK-JAVA-Rebate")
+                .WithDescription("SDK-DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_Sample() {
+        public void DotNet_Void_Sample() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9375,14 +9374,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006a() {
+        public void DotNet_Void_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9414,14 +9413,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006b() {
+        public void DotNet_Void_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9453,14 +9452,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006c() {
+        public void DotNet_Void_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9492,14 +9491,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006d() {
+        public void DotNet_Void_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9531,14 +9530,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006e() {
+        public void DotNet_Void_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9570,14 +9569,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006f() {
+        public void DotNet_Void_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9609,14 +9608,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006g() {
+        public void DotNet_Void_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9648,14 +9647,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006h() {
+        public void DotNet_Void_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9687,14 +9686,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006i() {
+        public void DotNet_Void_006i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9726,14 +9725,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_006k() {
+        public void DotNet_Void_006k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9765,14 +9764,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_007a() {
+        public void DotNet_Void_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9804,14 +9803,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_007b() {
+        public void DotNet_Void_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9843,14 +9842,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_007c() {
+        public void DotNet_Void_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9882,14 +9881,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_007d() {
+        public void DotNet_Void_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9921,14 +9920,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_007e() {
+        public void DotNet_Void_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9960,14 +9959,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_008a() {
+        public void DotNet_Void_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -9999,14 +9998,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_008b() {
+        public void DotNet_Void_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10038,14 +10037,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_008c() {
+        public void DotNet_Void_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10077,14 +10076,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_008d() {
+        public void DotNet_Void_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10116,14 +10115,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Void_009e() {
+        public void DotNet_Void_009e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10155,14 +10154,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_009a() {
+        public void DotNet_Void_009a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10194,14 +10193,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_009b() {
+        public void DotNet_Void_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10233,14 +10232,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Void_009c() {
+        public void DotNet_Void_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10272,14 +10271,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Void_009d() {
+        public void DotNet_Void_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10311,14 +10310,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_010c() {
+        public void DotNet_Void_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10350,14 +10349,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_010d() {
+        public void DotNet_Void_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10389,14 +10388,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_010e() {
+        public void DotNet_Void_010e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10428,14 +10427,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_011a() {
+        public void DotNet_Void_011a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10467,14 +10466,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_011b() {
+        public void DotNet_Void_011b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10506,14 +10505,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_011c() {
+        public void DotNet_Void_011c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10545,14 +10544,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_011d() {
+        public void DotNet_Void_011d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10584,14 +10583,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_012a() {
+        public void DotNet_Void_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10623,14 +10622,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_012b() {
+        public void DotNet_Void_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10662,14 +10661,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_012c() {
+        public void DotNet_Void_012c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10701,14 +10700,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_012d() {
+        public void DotNet_Void_012d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10740,14 +10739,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_013a() {
+        public void DotNet_Void_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10779,14 +10778,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_014a() {
+        public void DotNet_Void_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10818,14 +10817,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_014b() {
+        public void DotNet_Void_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10857,14 +10856,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_014c() {
+        public void DotNet_Void_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10903,7 +10902,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Void_014d() {
+        public void DotNet_Void_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10942,7 +10941,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Void_015a() {
+        public void DotNet_Void_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -10974,14 +10973,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Void_015b() {
+        public void DotNet_Void_015b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11013,14 +11012,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Void()
-                .WithDescription("JAVA-Void")
+                .WithDescription("DotNet_Void")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_Sample() {
+        public void DotNet_Rebate_Sample() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11053,14 +11052,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006a() {
+        public void DotNet_Rebate_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11093,14 +11092,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006b() {
+        public void DotNet_Rebate_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11133,14 +11132,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006c() {
+        public void DotNet_Rebate_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11173,14 +11172,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006d() {
+        public void DotNet_Rebate_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11213,14 +11212,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006e() {
+        public void DotNet_Rebate_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11253,14 +11252,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006f() {
+        public void DotNet_Rebate_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11293,14 +11292,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006g() {
+        public void DotNet_Rebate_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11333,14 +11332,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_006h() {
+        public void DotNet_Rebate_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11373,14 +11372,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_007a() {
+        public void DotNet_Rebate_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11413,14 +11412,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_007b() {
+        public void DotNet_Rebate_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11453,14 +11452,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_007c() {
+        public void DotNet_Rebate_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11493,14 +11492,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_007d() {
+        public void DotNet_Rebate_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11533,14 +11532,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_007e() {
+        public void DotNet_Rebate_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11573,14 +11572,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_008a() {
+        public void DotNet_Rebate_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11613,14 +11612,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_008b() {
+        public void DotNet_Rebate_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11653,14 +11652,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_008c() {
+        public void DotNet_Rebate_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11693,14 +11692,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_008d() {
+        public void DotNet_Rebate_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11733,14 +11732,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_008e() {
+        public void DotNet_Rebate_008e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11773,14 +11772,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_009a() {
+        public void DotNet_Rebate_009a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11813,14 +11812,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_009b() {
+        public void DotNet_Rebate_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11853,14 +11852,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_009c() {
+        public void DotNet_Rebate_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11893,14 +11892,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_009d() {
+        public void DotNet_Rebate_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11933,14 +11932,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_010c() {
+        public void DotNet_Rebate_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -11973,14 +11972,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_010d() {
+        public void DotNet_Rebate_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12013,14 +12012,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_010e() {
+        public void DotNet_Rebate_010e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12053,14 +12052,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_011a() {
+        public void DotNet_Rebate_011a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12093,14 +12092,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_011b() {
+        public void DotNet_Rebate_011b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12133,14 +12132,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EURO")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_011c() {
+        public void DotNet_Rebate_011c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12173,14 +12172,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EU##")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Rebate_011d() {
+        public void DotNet_Rebate_011d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12212,14 +12211,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Refund(1m)
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_012a() {
+        public void DotNet_Rebate_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12252,14 +12251,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_012b() {
+        public void DotNet_Rebate_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12292,14 +12291,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1.005m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_012c() {
+        public void DotNet_Rebate_012c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12332,14 +12331,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_012d() {
+        public void DotNet_Rebate_012d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12372,14 +12371,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_012e() {
+        public void DotNet_Rebate_012e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12412,14 +12411,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(100000m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_012f() {
+        public void DotNet_Rebate_012f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12452,14 +12451,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_013a() {
+        public void DotNet_Rebate_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12492,14 +12491,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_013b() {
+        public void DotNet_Rebate_013b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12532,14 +12531,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_013c() {
+        public void DotNet_Rebate_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12572,14 +12571,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_013d() {
+        public void DotNet_Rebate_013d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12612,14 +12611,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_014a() {
+        public void DotNet_Rebate_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12652,14 +12651,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_014b() {
+        public void DotNet_Rebate_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12692,14 +12691,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_014c() {
+        public void DotNet_Rebate_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12732,14 +12731,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_014d() {
+        public void DotNet_Rebate_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12772,14 +12771,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_015a() {
+        public void DotNet_Rebate_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12812,14 +12811,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_016a() {
+        public void DotNet_Rebate_016a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12852,14 +12851,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Rebate_016b() {
+        public void DotNet_Rebate_016b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12898,7 +12897,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Rebate_016c() {
+        public void DotNet_Rebate_016c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12938,7 +12937,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Rebate_016d() {
+        public void DotNet_Rebate_016d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -12978,7 +12977,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Rebate_017a() {
+        public void DotNet_Rebate_017a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13011,14 +13010,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Rebate_017b() {
+        public void DotNet_Rebate_017b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13051,14 +13050,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Rebate")
+                .WithDescription("DotNet_Rebate")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_Sample() {
+        public void DotNet_OTB_Sample() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13083,14 +13082,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006a() {
+        public void DotNet_OTB_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13115,14 +13114,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006b() {
+        public void DotNet_OTB_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13147,14 +13146,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006c() {
+        public void DotNet_OTB_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13179,14 +13178,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006d() {
+        public void DotNet_OTB_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13211,14 +13210,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006e() {
+        public void DotNet_OTB_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13243,14 +13242,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006f() {
+        public void DotNet_OTB_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13275,14 +13274,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006g() {
+        public void DotNet_OTB_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13307,14 +13306,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006h() {
+        public void DotNet_OTB_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13339,14 +13338,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006i() {
+        public void DotNet_OTB_006i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13371,14 +13370,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006k() {
+        public void DotNet_OTB_006k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13403,14 +13402,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_006l() {
+        public void DotNet_OTB_006l() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13435,14 +13434,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_007a() {
+        public void DotNet_OTB_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13467,14 +13466,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_007b() {
+        public void DotNet_OTB_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13499,14 +13498,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_007c() {
+        public void DotNet_OTB_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13531,14 +13530,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_007d() {
+        public void DotNet_OTB_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13563,14 +13562,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_007e() {
+        public void DotNet_OTB_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13595,14 +13594,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_008a() {
+        public void DotNet_OTB_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13627,14 +13626,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_008b() {
+        public void DotNet_OTB_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13659,14 +13658,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_008c() {
+        public void DotNet_OTB_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13691,14 +13690,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_008d() {
+        public void DotNet_OTB_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13723,14 +13722,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_008e() {
+        public void DotNet_OTB_008e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13755,14 +13754,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_009a() {
+        public void DotNet_OTB_009a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13787,14 +13786,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_009b() {
+        public void DotNet_OTB_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13819,14 +13818,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_009c() {
+        public void DotNet_OTB_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13851,14 +13850,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_009d() {
+        public void DotNet_OTB_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13883,14 +13882,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_010c() {
+        public void DotNet_OTB_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13915,14 +13914,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_010d() {
+        public void DotNet_OTB_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13947,14 +13946,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_010e() {
+        public void DotNet_OTB_010e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -13979,14 +13978,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_012a() {
+        public void DotNet_OTB_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14011,14 +14010,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_012b() {
+        public void DotNet_OTB_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14043,14 +14042,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_012c() {
+        public void DotNet_OTB_012c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14075,14 +14074,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_012d() {
+        public void DotNet_OTB_012d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14107,14 +14106,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_012e() {
+        public void DotNet_OTB_012e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14139,14 +14138,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_013a() {
+        public void DotNet_OTB_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14171,14 +14170,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_013b() {
+        public void DotNet_OTB_013b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14202,14 +14201,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_013c() {
+        public void DotNet_OTB_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14234,14 +14233,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_013d() {
+        public void DotNet_OTB_013d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14266,14 +14265,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_014a() {
+        public void DotNet_OTB_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14298,14 +14297,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_014b() {
+        public void DotNet_OTB_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14330,14 +14329,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_014c() {
+        public void DotNet_OTB_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14362,14 +14361,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_014d() {
+        public void DotNet_OTB_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14392,14 +14391,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_015a() {
+        public void DotNet_OTB_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14424,14 +14423,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_015b() {
+        public void DotNet_OTB_015b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14456,14 +14455,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_015c() {
+        public void DotNet_OTB_015c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14488,14 +14487,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_016a() {
+        public void DotNet_OTB_016a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14520,14 +14519,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_017a() {
+        public void DotNet_OTB_017a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14552,7 +14551,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -14560,7 +14559,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_017b() {
+        public void DotNet_OTB_017b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14585,7 +14584,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -14593,7 +14592,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_017c() {
+        public void DotNet_OTB_017c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14618,14 +14617,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_017d() {
+        public void DotNet_OTB_017d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14650,7 +14649,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -14658,7 +14657,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_017f() {
+        public void DotNet_OTB_017f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14683,7 +14682,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -14691,7 +14690,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_017g() {
+        public void DotNet_OTB_017g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14716,14 +14715,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_OTB_018a() {
+        public void DotNet_OTB_018a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14748,14 +14747,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_OTB_018b() {
+        public void DotNet_OTB_018b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14780,14 +14779,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-OTB")
+                .WithDescription("DotNet_OTB")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_Sample() {
+        public void DotNet_Credit_Sample() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14812,14 +14811,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006a() {
+        public void DotNet_Credit_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14844,14 +14843,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006b() {
+        public void DotNet_Credit_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14876,14 +14875,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006c() {
+        public void DotNet_Credit_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14908,14 +14907,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006d() {
+        public void DotNet_Credit_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14940,14 +14939,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006e() {
+        public void DotNet_Credit_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -14972,14 +14971,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006f() {
+        public void DotNet_Credit_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15004,14 +15003,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006g() {
+        public void DotNet_Credit_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15036,14 +15035,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_006h() {
+        public void DotNet_Credit_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15068,14 +15067,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_007a() {
+        public void DotNet_Credit_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15100,14 +15099,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_007b() {
+        public void DotNet_Credit_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15132,14 +15131,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_007c() {
+        public void DotNet_Credit_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15164,14 +15163,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_007d() {
+        public void DotNet_Credit_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15196,14 +15195,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_007e() {
+        public void DotNet_Credit_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15228,14 +15227,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_008a() {
+        public void DotNet_Credit_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15260,14 +15259,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_008b() {
+        public void DotNet_Credit_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15292,14 +15291,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_008c() {
+        public void DotNet_Credit_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15324,14 +15323,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_008d() {
+        public void DotNet_Credit_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15356,14 +15355,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_008e() {
+        public void DotNet_Credit_008e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15388,14 +15387,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_009a() {
+        public void DotNet_Credit_009a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15420,14 +15419,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_009b() {
+        public void DotNet_Credit_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15452,14 +15451,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_009c() {
+        public void DotNet_Credit_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15484,14 +15483,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_009d() {
+        public void DotNet_Credit_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15515,46 +15514,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 5000,
-                Channel = "ECOM"
-            });
-
-            // create card
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 12,
-                ExpYear = 2018,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "Peter Watermelon"
-            };
-
-            // request
-            var response = card.Refund(1m)
-                .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void JAVA_Credit_010d() {
+        public void DotNet_Credit_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15579,14 +15546,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_010e() {
+        public void DotNet_Credit_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15611,14 +15578,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_011a() {
+        public void DotNet_Credit_010e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15643,14 +15610,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_012a() {
+        public void DotNet_Credit_011a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15675,14 +15642,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_012b() {
+        public void DotNet_Credit_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15707,14 +15674,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_012c() {
+        public void DotNet_Credit_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15739,14 +15706,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_013a() {
+        public void DotNet_Credit_012c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15771,14 +15738,46 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DotNet_Credit_013a() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 5000,
+                Channel = "ECOM"
+            });
+
+            // create card
+            var card = new CreditCardData {
+                Number = "4263970000005262",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "Peter Watermelon"
+            };
+
+            // request
+            var response = card.Refund(1m)
+                .WithCurrency("EUR")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_013b() {
+        public void DotNet_Credit_013b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15802,14 +15801,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_013c() {
+        public void DotNet_Credit_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15834,14 +15833,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_014a() {
+        public void DotNet_Credit_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15866,14 +15865,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_014b() {
+        public void DotNet_Credit_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15898,14 +15897,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_014c() {
+        public void DotNet_Credit_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15930,14 +15929,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_014d() {
+        public void DotNet_Credit_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15960,14 +15959,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_015a() {
+        public void DotNet_Credit_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -15992,14 +15991,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_015b() {
+        public void DotNet_Credit_015b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16024,14 +16023,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_015c() {
+        public void DotNet_Credit_015c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16056,14 +16055,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_016a() {
+        public void DotNet_Credit_016a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16088,14 +16087,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_017a() {
+        public void DotNet_Credit_017a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16120,14 +16119,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_017b() {
+        public void DotNet_Credit_017b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16152,7 +16151,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -16160,7 +16159,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_017c() {
+        public void DotNet_Credit_017c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16185,14 +16184,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_017d() {
+        public void DotNet_Credit_017d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16217,7 +16216,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -16225,7 +16224,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_017f() {
+        public void DotNet_Credit_017f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16250,14 +16249,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_017g() {
+        public void DotNet_Credit_017g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16282,14 +16281,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_018a() {
+        public void DotNet_Credit_018a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16314,14 +16313,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_018b() {
+        public void DotNet_Credit_018b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16346,14 +16345,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_018c() {
+        public void DotNet_Credit_018c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16378,14 +16377,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_018d() {
+        public void DotNet_Credit_018d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16410,14 +16409,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_019a() {
+        public void DotNet_Credit_019a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16442,14 +16441,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_019b() {
+        public void DotNet_Credit_019b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16474,14 +16473,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_019c() {
+        public void DotNet_Credit_019c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16506,14 +16505,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_020a() {
+        public void DotNet_Credit_020a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16538,14 +16537,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_020b() {
+        public void DotNet_Credit_020b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16570,14 +16569,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_021a() {
+        public void DotNet_Credit_021a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16602,14 +16601,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_021b() {
+        public void DotNet_Credit_021b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16634,14 +16633,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1.005m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Credit_021c() {
+        public void DotNet_Credit_021c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16666,14 +16665,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Credit_021d() {
+        public void DotNet_Credit_021d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16698,14 +16697,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_021e() {
+        public void DotNet_Credit_021e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16730,14 +16729,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(100000m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Credit_021f() {
+        public void DotNet_Credit_021f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16762,14 +16761,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Credit_022a() {
+        public void DotNet_Credit_022a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16794,14 +16793,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_022b() {
+        public void DotNet_Credit_022b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16826,14 +16825,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EURO")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Credit_022c() {
+        public void DotNet_Credit_022c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16858,14 +16857,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Refund(1m)
                 .WithCurrency("EU#")
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Credit_022d() {
+        public void DotNet_Credit_022d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16889,14 +16888,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = card.Refund(1m)
-                .WithDescription("JAVA-Credit")
+                .WithDescription("DotNet_Credit")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_Sample() {
+        public void DotNet_Hold_Sample() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16929,14 +16928,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006a() {
+        public void DotNet_Hold_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -16969,14 +16968,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006b() {
+        public void DotNet_Hold_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17009,14 +17008,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006c() {
+        public void DotNet_Hold_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17049,14 +17048,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006d() {
+        public void DotNet_Hold_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17089,14 +17088,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006e() {
+        public void DotNet_Hold_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17129,14 +17128,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006f() {
+        public void DotNet_Hold_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17169,14 +17168,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006g() {
+        public void DotNet_Hold_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17209,14 +17208,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006h() {
+        public void DotNet_Hold_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17249,14 +17248,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006i() {
+        public void DotNet_Hold_006i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17289,14 +17288,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006k() {
+        public void DotNet_Hold_006k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17329,14 +17328,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_006l() {
+        public void DotNet_Hold_006l() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17369,14 +17368,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_007a() {
+        public void DotNet_Hold_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17409,14 +17408,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_007b() {
+        public void DotNet_Hold_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17449,14 +17448,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_007c() {
+        public void DotNet_Hold_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17489,14 +17488,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_007d() {
+        public void DotNet_Hold_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17518,7 +17517,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_007e() {
+        public void DotNet_Hold_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17540,7 +17539,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Hold_008a() {
+        public void DotNet_Hold_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17573,14 +17572,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_008b() {
+        public void DotNet_Hold_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17613,36 +17612,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 5000,
-            });
-
-            var saleResponse = Transaction.FromId(null);
-
-            // request
-            var response = saleResponse.Hold()
-                .WithReasonCode(ParseReasonCode("FRAUD"))
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_008d() {
+        public void DotNet_Hold_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17664,7 +17641,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_008e() {
+        public void DotNet_Hold_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17680,53 +17657,35 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void JAVA_Hold_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 5000,
-                Channel = "ECOM"
-            });
-
-            // create card
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 12,
-                ExpYear = 2020,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // build transaction
-            var saleResponse = card.Charge(10m)
-                .WithCurrency("EUR")
-                .Execute();
-            Assert.IsNotNull(saleResponse);
-            Assert.AreEqual("00", saleResponse.ResponseCode);
-            Throttle();
-
-            // request
-            var response = saleResponse.Hold()
-                .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_009d() {
+        public void DotNet_Hold_008e() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 5000,
+            });
+
+            var saleResponse = Transaction.FromId(null);
+
+            // request
+            var response = saleResponse.Hold()
+                .WithReasonCode(ParseReasonCode("FRAUD"))
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DotNet_Hold_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17738,19 +17697,35 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 Channel = "ECOM"
             });
 
-            var saleResponse = Transaction.FromId(null);
+            // create card
+            var card = new CreditCardData {
+                Number = "4263970000005262",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // build transaction
+            var saleResponse = card.Charge(10m)
+                .WithCurrency("EUR")
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+            Throttle();
 
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("SDK-JAVA-Query")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_009e() {
+        public void DotNet_Hold_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17767,94 +17742,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("SDK-JAVA-Query")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void JAVA_Hold_010a() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 5000,
-                Channel = "ECOM"
-            });
-
-            // create card
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 12,
-                ExpYear = 2020,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // build transaction
-            var saleResponse = card.Charge(10m)
-                .WithCurrency("EUR")
-                .Execute();
-            Assert.IsNotNull(saleResponse);
-            Assert.AreEqual("00", saleResponse.ResponseCode);
-            Throttle();
-
-            // request
-            var response = saleResponse.Hold()
-                .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
-
-        [TestMethod]
-        public void JAVA_Hold_010b() {
-            ServicesContainer.Configure(new ServicesConfig {
-                MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
-                SharedSecret = "secret",
-                RefundPassword = "refund",
-                RebatePassword = "rebate",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
-                Timeout = 5000,
-                Channel = "ECOM"
-            });
-
-            // create card
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 12,
-                ExpYear = 2020,
-                Cvn = "123",
-                CvnPresenceIndicator = (CvnPresenceIndicator)1,
-                CardHolderName = "James Mason"
-            };
-
-            // build transaction
-            var saleResponse = card.Charge(10m)
-                .WithCurrency("EUR")
-                .Execute();
-            Assert.IsNotNull(saleResponse);
-            Assert.AreEqual("00", saleResponse.ResponseCode);
-            Throttle();
-
-            // request
-            var response = saleResponse.Hold()
-                .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("SDK-DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Hold_010c() {
+        public void DotNet_Hold_009e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17871,14 +17766,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("SDK-DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_010d() {
+        public void DotNet_Hold_010a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17911,14 +17806,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_011a() {
+        public void DotNet_Hold_010b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17951,14 +17846,118 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod, ExpectedException(typeof(BuilderException))]
+        public void DotNet_Hold_010c() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 5000,
+                Channel = "ECOM"
+            });
+
+            var saleResponse = Transaction.FromId(null);
+
+            // request
+            var response = saleResponse.Hold()
+                .WithReasonCode(ParseReasonCode("FRAUD"))
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_011b() {
+        public void DotNet_Hold_010d() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 5000,
+                Channel = "ECOM"
+            });
+
+            // create card
+            var card = new CreditCardData {
+                Number = "4263970000005262",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // build transaction
+            var saleResponse = card.Charge(10m)
+                .WithCurrency("EUR")
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+            Throttle();
+
+            // request
+            var response = saleResponse.Hold()
+                .WithReasonCode(ParseReasonCode("FRAUD"))
+                .WithDescription("DotNet_Hold")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DotNet_Hold_011a() {
+            ServicesContainer.Configure(new ServicesConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret",
+                RefundPassword = "refund",
+                RebatePassword = "rebate",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+                Timeout = 5000,
+                Channel = "ECOM"
+            });
+
+            // create card
+            var card = new CreditCardData {
+                Number = "4263970000005262",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "123",
+                CvnPresenceIndicator = (CvnPresenceIndicator)1,
+                CardHolderName = "James Mason"
+            };
+
+            // build transaction
+            var saleResponse = card.Charge(10m)
+                .WithCurrency("EUR")
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+            Throttle();
+
+            // request
+            var response = saleResponse.Hold()
+                .WithReasonCode(ParseReasonCode("FRAUD"))
+                .WithDescription("DotNet_Hold")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DotNet_Hold_011b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -17991,14 +17990,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("PIUM"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_011c() {
+        public void DotNet_Hold_011c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18030,14 +18029,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Hold()
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_011d() {
+        public void DotNet_Hold_011d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18070,14 +18069,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("#####"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_012a() {
+        public void DotNet_Hold_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18110,14 +18109,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Hold_012b() {
+        public void DotNet_Hold_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18150,14 +18149,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("SDK-JAVA-Query")
+                .WithDescription("SDK-DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Hold_013a() {
+        public void DotNet_Hold_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18190,14 +18189,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Hold_013b() {
+        public void DotNet_Hold_013b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18230,14 +18229,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("SDK-JAVA-Query")
+                .WithDescription("SDK-DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Hold_013c() {
+        public void DotNet_Hold_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18270,14 +18269,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("SDK-JAVA-Query")
+                .WithDescription("SDK-DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_Sample() {
+        public void DotNet_Release_Sample() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18318,14 +18317,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006a() {
+        public void DotNet_Release_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18366,14 +18365,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006b() {
+        public void DotNet_Release_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18414,14 +18413,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006c() {
+        public void DotNet_Release_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18462,14 +18461,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006d() {
+        public void DotNet_Release_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18510,14 +18509,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006e() {
+        public void DotNet_Release_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18558,14 +18557,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006f() {
+        public void DotNet_Release_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18606,14 +18605,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006g() {
+        public void DotNet_Release_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18654,14 +18653,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006h() {
+        public void DotNet_Release_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18702,14 +18701,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006i() {
+        public void DotNet_Release_006i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18750,14 +18749,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006k() {
+        public void DotNet_Release_006k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18798,14 +18797,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_006l() {
+        public void DotNet_Release_006l() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18846,14 +18845,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_007a() {
+        public void DotNet_Release_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18894,14 +18893,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_007b() {
+        public void DotNet_Release_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18942,14 +18941,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_007c() {
+        public void DotNet_Release_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -18990,14 +18989,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_007d() {
+        public void DotNet_Release_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19019,7 +19018,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_007e() {
+        public void DotNet_Release_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19041,7 +19040,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_008c() {
+        public void DotNet_Release_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19063,7 +19062,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_008d() {
+        public void DotNet_Release_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19085,7 +19084,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_008e() {
+        public void DotNet_Release_008e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19107,7 +19106,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_009d() {
+        public void DotNet_Release_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19124,14 +19123,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Query")
+                .WithDescription("DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_009e() {
+        public void DotNet_Release_009e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19148,14 +19147,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Release()
                 .WithReasonCode(ParseReasonCode("INSTOCK"))
-                .WithDescription("JAVA-Query")
+                .WithDescription("DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_010a() {
+        public void DotNet_Release_010a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19188,14 +19187,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_010b() {
+        public void DotNet_Release_010b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19228,14 +19227,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Release_010c() {
+        public void DotNet_Release_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19252,14 +19251,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("FRAUD"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_010d() {
+        public void DotNet_Release_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19292,14 +19291,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_011a() {
+        public void DotNet_Release_011a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19332,14 +19331,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_011b() {
+        public void DotNet_Release_011b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19372,14 +19371,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("PIUM"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_011c() {
+        public void DotNet_Release_011c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19411,14 +19410,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = saleResponse.Hold()
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_011d() {
+        public void DotNet_Release_011d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19451,14 +19450,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("#####"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_012a() {
+        public void DotNet_Release_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19491,14 +19490,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Release_012b() {
+        public void DotNet_Release_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19531,14 +19530,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Query")
+                .WithDescription("DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Release_013a() {
+        public void DotNet_Release_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19571,14 +19570,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Hold")
+                .WithDescription("DotNet_Hold")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Release_013b() {
+        public void DotNet_Release_013b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19611,14 +19610,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Query")
+                .WithDescription("DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Release_013c() {
+        public void DotNet_Release_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19651,14 +19650,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = saleResponse.Hold()
                 .WithReasonCode(ParseReasonCode("OTHER"))
-                .WithDescription("JAVA-Query")
+                .WithDescription("DotNet_Query")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006a() {
+        public void DotNet_Manual_006a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19690,14 +19689,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-006a")
+                .WithDescription("DotNet_Manual-006a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006b() {
+        public void DotNet_Manual_006b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19729,14 +19728,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-006b")
+                .WithDescription("DotNet_Manual-006b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006c() {
+        public void DotNet_Manual_006c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19768,14 +19767,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-006c")
+                .WithDescription("DotNet_Manual-006c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006d() {
+        public void DotNet_Manual_006d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19807,14 +19806,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-006d")
+                .WithDescription("DotNet_Manual-006d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006e() {
+        public void DotNet_Manual_006e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19846,14 +19845,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-006e")
+                .WithDescription("DotNet_Manual-006e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006f() {
+        public void DotNet_Manual_006f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19885,14 +19884,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-006f")
+                .WithDescription("DotNet_Manual-006f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006g() {
+        public void DotNet_Manual_006g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19924,14 +19923,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-006g")
+                .WithDescription("DotNet_Manual-006g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006h() {
+        public void DotNet_Manual_006h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -19963,14 +19962,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-006h")
+                .WithDescription("DotNet_Manual-006h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006i() {
+        public void DotNet_Manual_006i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20002,14 +20001,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-006i")
+                .WithDescription("DotNet_Manual-006i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006j() {
+        public void DotNet_Manual_006j() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20041,14 +20040,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-006j")
+                .WithDescription("DotNet_Manual-006j")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_006k() {
+        public void DotNet_Manual_006k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20080,14 +20079,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-006k")
+                .WithDescription("DotNet_Manual-006k")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_007a() {
+        public void DotNet_Manual_007a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20119,14 +20118,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-007a")
+                .WithDescription("DotNet_Manual-007a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_007b() {
+        public void DotNet_Manual_007b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20158,14 +20157,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-007b")
+                .WithDescription("DotNet_Manual-007b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_007c() {
+        public void DotNet_Manual_007c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20197,14 +20196,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-007c")
+                .WithDescription("DotNet_Manual-007c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_007d() {
+        public void DotNet_Manual_007d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20236,14 +20235,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-007d")
+                .WithDescription("DotNet_Manual-007d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_007e() {
+        public void DotNet_Manual_007e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20275,14 +20274,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-007e")
+                .WithDescription("DotNet_Manual-007e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_008a() {
+        public void DotNet_Manual_008a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20314,14 +20313,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-008a")
+                .WithDescription("DotNet_Manual-008a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_008b() {
+        public void DotNet_Manual_008b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20353,14 +20352,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-008b")
+                .WithDescription("DotNet_Manual-008b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_008c() {
+        public void DotNet_Manual_008c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20392,14 +20391,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-008c")
+                .WithDescription("DotNet_Manual-008c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_008d() {
+        public void DotNet_Manual_008d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20431,14 +20430,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-008d")
+                .WithDescription("DotNet_Manual-008d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_008e() {
+        public void DotNet_Manual_008e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20470,14 +20469,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-008e")
+                .WithDescription("DotNet_Manual-008e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_009a() {
+        public void DotNet_Manual_009a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20510,14 +20509,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-009a")
+                .WithDescription("DotNet_Manual-009a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_009b() {
+        public void DotNet_Manual_009b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20550,14 +20549,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-009b")
+                .WithDescription("DotNet_Manual-009b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_009c() {
+        public void DotNet_Manual_009c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20590,14 +20589,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-009c")
+                .WithDescription("DotNet_Manual-009c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_009d() {
+        public void DotNet_Manual_009d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20629,14 +20628,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-009d")
+                .WithDescription("DotNet_Manual-009d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_010a() {
+        public void DotNet_Manual_010a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20668,14 +20667,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-010a")
+                .WithDescription("DotNet_Manual-010a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_010b() {
+        public void DotNet_Manual_010b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20707,14 +20706,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-010b")
+                .WithDescription("DotNet_Manual-010b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_010c() {
+        public void DotNet_Manual_010c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20746,14 +20745,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-010c")
+                .WithDescription("DotNet_Manual-010c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_010d() {
+        public void DotNet_Manual_010d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20785,14 +20784,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-010d")
+                .WithDescription("DotNet_Manual-010d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_010e() {
+        public void DotNet_Manual_010e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20824,14 +20823,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-010e")
+                .WithDescription("DotNet_Manual-010e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_011a() {
+        public void DotNet_Manual_011a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20863,14 +20862,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-011a")
+                .WithDescription("DotNet_Manual-011a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_011b() {
+        public void DotNet_Manual_011b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20902,14 +20901,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-011b")
+                .WithDescription("DotNet_Manual-011b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_011c() {
+        public void DotNet_Manual_011c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20941,14 +20940,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-011c")
+                .WithDescription("DotNet_Manual-011c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Manual_011d() {
+        public void DotNet_Manual_011d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -20980,14 +20979,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-011d")
+                .WithDescription("DotNet_Manual-011d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_012a() {
+        public void DotNet_Manual_012a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21019,14 +21018,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-012a")
+                .WithDescription("DotNet_Manual-012a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_012b() {
+        public void DotNet_Manual_012b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21058,14 +21057,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EURO")
-                .WithDescription("JAVA-Manual-012b")
+                .WithDescription("DotNet_Manual-012b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_012c() {
+        public void DotNet_Manual_012c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21097,14 +21096,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("�UR")
-                .WithDescription("JAVA-Manual-012c")
+                .WithDescription("DotNet_Manual-012c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void JAVA_Manual_012d() {
+        public void DotNet_Manual_012d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21127,14 +21126,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = card.Charge(100.01m)
-                .WithDescription("JAVA-Manual-012d")
+                .WithDescription("DotNet_Manual-012d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_013a() {
+        public void DotNet_Manual_013a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21166,14 +21165,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-013a")
+                .WithDescription("DotNet_Manual-013a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_013b1() {
+        public void DotNet_Manual_013b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21205,14 +21204,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-013b1")
+                .WithDescription("DotNet_Manual-013b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_013b2() {
+        public void DotNet_Manual_013b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21244,14 +21243,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-013b2")
+                .WithDescription("DotNet_Manual-013b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_013c() {
+        public void DotNet_Manual_013c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21283,14 +21282,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-013c")
+                .WithDescription("DotNet_Manual-013c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_014a() {
+        public void DotNet_Manual_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21322,14 +21321,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-014a")
+                .WithDescription("DotNet_Manual-014a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_014b() {
+        public void DotNet_Manual_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21360,14 +21359,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-014b")
+                .WithDescription("DotNet_Manual-014b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_014c() {
+        public void DotNet_Manual_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21399,14 +21398,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-014c")
+                .WithDescription("DotNet_Manual-014c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_014d() {
+        public void DotNet_Manual_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21438,14 +21437,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-014d")
+                .WithDescription("DotNet_Manual-014d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_015a() {
+        public void DotNet_Manual_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21477,14 +21476,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-015a")
+                .WithDescription("DotNet_Manual-015a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_015b() {
+        public void DotNet_Manual_015b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21516,14 +21515,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-015b")
+                .WithDescription("DotNet_Manual-015b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_015c() {
+        public void DotNet_Manual_015c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21555,14 +21554,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-015c")
+                .WithDescription("DotNet_Manual-015c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_015d() {
+        public void DotNet_Manual_015d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21592,14 +21591,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-015d")
+                .WithDescription("DotNet_Manual-015d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_016a() {
+        public void DotNet_Manual_016a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21631,14 +21630,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-016a")
+                .WithDescription("DotNet_Manual-016a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_016b() {
+        public void DotNet_Manual_016b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21670,14 +21669,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-016b")
+                .WithDescription("DotNet_Manual-016b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_016c() {
+        public void DotNet_Manual_016c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21709,14 +21708,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-016c")
+                .WithDescription("DotNet_Manual-016c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_017a() {
+        public void DotNet_Manual_017a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21748,14 +21747,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-017a")
+                .WithDescription("DotNet_Manual-017a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_018a() {
+        public void DotNet_Manual_018a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21787,14 +21786,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-018a")
+                .WithDescription("DotNet_Manual-018a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_019a() {
+        public void DotNet_Manual_019a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21826,7 +21825,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-019a")
+                .WithDescription("DotNet_Manual-019a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -21834,7 +21833,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_019b1() {
+        public void DotNet_Manual_019b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21866,14 +21865,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-019b1")
+                .WithDescription("DotNet_Manual-019b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_019b2() {
+        public void DotNet_Manual_019b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21905,7 +21904,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-019b2")
+                .WithDescription("DotNet_Manual-019b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -21913,7 +21912,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_019c() {
+        public void DotNet_Manual_019c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21945,14 +21944,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-019c")
+                .WithDescription("DotNet_Manual-019c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_019d() {
+        public void DotNet_Manual_019d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -21984,14 +21983,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-019d")
+                .WithDescription("DotNet_Manual-019d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_020a1() {
+        public void DotNet_Manual_020a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22023,14 +22022,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-020a1")
+                .WithDescription("DotNet_Manual-020a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_020a2() {
+        public void DotNet_Manual_020a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22062,14 +22061,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-020a2")
+                .WithDescription("DotNet_Manual-020a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_020a3() {
+        public void DotNet_Manual_020a3() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22101,14 +22100,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-020a3")
+                .WithDescription("DotNet_Manual-020a3")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_020a4() {
+        public void DotNet_Manual_020a4() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22140,14 +22139,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-020a4")
+                .WithDescription("DotNet_Manual-020a4")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_020b() {
+        public void DotNet_Manual_020b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22179,14 +22178,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-020b")
+                .WithDescription("DotNet_Manual-020b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_020c() {
+        public void DotNet_Manual_020c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22218,14 +22217,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-020c")
+                .WithDescription("DotNet_Manual-020c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_021a1() {
+        public void DotNet_Manual_021a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22257,14 +22256,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-021a1")
+                .WithDescription("DotNet_Manual-021a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_021a2() {
+        public void DotNet_Manual_021a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22296,14 +22295,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-021a2")
+                .WithDescription("DotNet_Manual-021a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_021a3() {
+        public void DotNet_Manual_021a3() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22335,14 +22334,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-021a3")
+                .WithDescription("DotNet_Manual-021a3")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_021b() {
+        public void DotNet_Manual_021b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22374,14 +22373,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-021b")
+                .WithDescription("DotNet_Manual-021b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_021c() {
+        public void DotNet_Manual_021c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22413,14 +22412,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Authorize(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-021c")
+                .WithDescription("DotNet_Manual-021c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_022a() {
+        public void DotNet_Manual_022a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22452,14 +22451,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-022a")
+                .WithDescription("DotNet_Manual-022a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_022b() {
+        public void DotNet_Manual_022b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22491,14 +22490,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-022b")
+                .WithDescription("DotNet_Manual-022b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_022c() {
+        public void DotNet_Manual_022c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22530,14 +22529,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-022c")
+                .WithDescription("DotNet_Manual-022c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_022d() {
+        public void DotNet_Manual_022d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22569,14 +22568,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-022d")
+                .WithDescription("DotNet_Manual-022d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_022e() {
+        public void DotNet_Manual_022e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22608,14 +22607,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-022e")
+                .WithDescription("DotNet_Manual-022e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_023a1() {
+        public void DotNet_Manual_023a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22647,14 +22646,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-023a1")
+                .WithDescription("DotNet_Manual-023a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_023a2() {
+        public void DotNet_Manual_023a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22686,14 +22685,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-023a2")
+                .WithDescription("DotNet_Manual-023a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_023b1() {
+        public void DotNet_Manual_023b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22725,14 +22724,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-023b1")
+                .WithDescription("DotNet_Manual-023b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_023c() {
+        public void DotNet_Manual_023c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22764,14 +22763,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-023c")
+                .WithDescription("DotNet_Manual-023c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_024a1() {
+        public void DotNet_Manual_024a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22803,14 +22802,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-024a1")
+                .WithDescription("DotNet_Manual-024a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_024a2() {
+        public void DotNet_Manual_024a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22842,14 +22841,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-024a2")
+                .WithDescription("DotNet_Manual-024a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_024a3() {
+        public void DotNet_Manual_024a3() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22881,14 +22880,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-024a3")
+                .WithDescription("DotNet_Manual-024a3")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_024b() {
+        public void DotNet_Manual_024b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22920,14 +22919,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-024b")
+                .WithDescription("DotNet_Manual-024b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_024c() {
+        public void DotNet_Manual_024c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22959,14 +22958,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-024c")
+                .WithDescription("DotNet_Manual-024c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_025() {
+        public void DotNet_Manual_025() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -22998,14 +22997,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-025")
+                .WithDescription("DotNet_Manual-025")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_026a1() {
+        public void DotNet_Manual_026a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23037,14 +23036,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-026a1")
+                .WithDescription("DotNet_Manual-026a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_026a2() {
+        public void DotNet_Manual_026a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23082,7 +23081,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Manual_026b() {
+        public void DotNet_Manual_026b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23120,7 +23119,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Manual_026c1() {
+        public void DotNet_Manual_026c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23159,7 +23158,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         }
 
         [TestMethod]
-        public void JAVA_Manual_026c2() {
+        public void DotNet_Manual_026c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23191,14 +23190,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-026c2")
+                .WithDescription("DotNet_Manual-026c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_027a() {
+        public void DotNet_Manual_027a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23231,14 +23230,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithCustomerId("123456")
-                .WithDescription("JAVA-Manual-027a")
+                .WithDescription("DotNet_Manual-027a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_028a() {
+        public void DotNet_Manual_028a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23271,14 +23270,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerId("123456")
-                .WithDescription("JAVA-Manual-028a")
+                .WithDescription("DotNet_Manual-028a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_028b() {
+        public void DotNet_Manual_028b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23310,14 +23309,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-028b")
+                .WithDescription("DotNet_Manual-028b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_028c() {
+        public void DotNet_Manual_028c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23350,14 +23349,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithCustomerId("3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1")
-                .WithDescription("JAVA-Manual-028c")
+                .WithDescription("DotNet_Manual-028c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_028d() {
+        public void DotNet_Manual_028d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23390,14 +23389,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerId("123456~")
-                .WithDescription("JAVA-Manual-028d")
+                .WithDescription("DotNet_Manual-028d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_029a() {
+        public void DotNet_Manual_029a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23430,14 +23429,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithProductId("123456")
-                .WithDescription("JAVA-Manual-029a")
+                .WithDescription("DotNet_Manual-029a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_029b() {
+        public void DotNet_Manual_029b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23469,14 +23468,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
-                .WithDescription("JAVA-Manual-029b")
+                .WithDescription("DotNet_Manual-029b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_029c() {
+        public void DotNet_Manual_029c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23509,14 +23508,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithProductId("3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1")
-                .WithDescription("JAVA-Manual-029c")
+                .WithDescription("DotNet_Manual-029c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_029d() {
+        public void DotNet_Manual_029d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23549,14 +23548,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithProductId("123456~")
-                .WithDescription("JAVA-Manual-029d")
+                .WithDescription("DotNet_Manual-029d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_030a() {
+        public void DotNet_Manual_030a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23589,14 +23588,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithClientTransactionId("123456")
-                .WithDescription("JAVA-Manual-030a")
+                .WithDescription("DotNet_Manual-030a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_030b() {
+        public void DotNet_Manual_030b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23628,14 +23627,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-030b")
+                .WithDescription("DotNet_Manual-030b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_030c() {
+        public void DotNet_Manual_030c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23668,14 +23667,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithClientTransactionId("3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1")
-                .WithDescription("JAVA-Manual-030c")
+                .WithDescription("DotNet_Manual-030c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_Manual_030d() {
+        public void DotNet_Manual_030d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23708,14 +23707,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithClientTransactionId("123456~")
-                .WithDescription("JAVA-Manual-030d")
+                .WithDescription("DotNet_Manual-030d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_031a() {
+        public void DotNet_Manual_031a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23748,14 +23747,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerIpAddress("123.123.123.123")
-                .WithDescription("JAVA-Manual-031a")
+                .WithDescription("DotNet_Manual-031a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_031b() {
+        public void DotNet_Manual_031b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23787,14 +23786,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-031b")
+                .WithDescription("DotNet_Manual-031b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_031c1() {
+        public void DotNet_Manual_031c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23827,14 +23826,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithCustomerIpAddress("1234.123.123.123")
-                .WithDescription("JAVA-Manual-031c1")
+                .WithDescription("DotNet_Manual-031c1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_031c2() {
+        public void DotNet_Manual_031c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23867,14 +23866,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithCustomerIpAddress("123~.123.123.123")
-                .WithDescription("JAVA-Manual-031c2")
+                .WithDescription("DotNet_Manual-031c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_032a() {
+        public void DotNet_Manual_032a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23920,14 +23919,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCurrency("EUR")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Manual-032a")
+                .WithDescription("DotNet_Manual-032a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_033a() {
+        public void DotNet_Manual_033a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -23971,14 +23970,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCurrency("USD")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Manual-033a")
+                .WithDescription("DotNet_Manual-033a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_033b1() {
+        public void DotNet_Manual_033b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24016,14 +24015,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Manual-033b1")
+                .WithDescription("DotNet_Manual-033b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_033b2() {
+        public void DotNet_Manual_033b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24061,14 +24060,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Manual-033b2")
+                .WithDescription("DotNet_Manual-033b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
-        public void JAVA_Manual_033c1() {
+        [TestMethod, ExpectedException(typeof(ApiException))]
+        public void DotNet_Manual_033c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24106,14 +24105,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Manual-033c1")
+                .WithDescription("DotNet_Manual-033c1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
-        public void JAVA_Manual_033c2() {
+        [TestMethod, ExpectedException(typeof(ApiException))]
+        public void DotNet_Manual_033c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24151,14 +24150,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Manual-033c2")
+                .WithDescription("DotNet_Manual-033c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_034a() {
+        public void DotNet_Manual_034a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24202,14 +24201,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
                 .WithCurrency("EUR")
                 .WithAddress(billingAddress)
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Manual-034a")
+                .WithDescription("DotNet_Manual-034a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_034b1() {
+        public void DotNet_Manual_034b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24247,14 +24246,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Manual-034b1")
+                .WithDescription("DotNet_Manual-034b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_034b2() {
+        public void DotNet_Manual_034b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24292,14 +24291,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Manual-034b2")
+                .WithDescription("DotNet_Manual-034b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_034c1() {
+        public void DotNet_Manual_034c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24337,14 +24336,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
                 .WithAddress(billingAddress)
-                .WithDescription("JAVA-Manual-034c1")
+                .WithDescription("DotNet_Manual-034c1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_034c2() {
+        public void DotNet_Manual_034c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24382,14 +24381,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var response = card.Charge(100.01m)
                 .WithCurrency("USD")
                 .WithAddress(shippingAddress, AddressType.Shipping)
-                .WithDescription("JAVA-Manual-034c2")
+                .WithDescription("DotNet_Manual-034c2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_035a() {
+        public void DotNet_Manual_035a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24421,14 +24420,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-Manual-035a")
+                .WithDescription("DotNet_Manual-035a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_Manual_035b() {
+        public void DotNet_Manual_035b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24460,14 +24459,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Charge(100.01m)
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-Manual-035a")
+                .WithDescription("DotNet_Manual-035a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014a() {
+        public void DotNet_verifyenrolled_014a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24491,14 +24490,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014a")
+                .WithDescription("DotNet_verifyenrolled-014a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014b() {
+        public void DotNet_verifyenrolled_014b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24522,14 +24521,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014b")
+                .WithDescription("DotNet_verifyenrolled-014b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014c() {
+        public void DotNet_verifyenrolled_014c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24553,14 +24552,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014c")
+                .WithDescription("DotNet_verifyenrolled-014c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014d() {
+        public void DotNet_verifyenrolled_014d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24584,14 +24583,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014d")
+                .WithDescription("DotNet_verifyenrolled-014d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014e() {
+        public void DotNet_verifyenrolled_014e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24615,14 +24614,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014e")
+                .WithDescription("DotNet_verifyenrolled-014e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014f() {
+        public void DotNet_verifyenrolled_014f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24646,14 +24645,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014f")
+                .WithDescription("DotNet_verifyenrolled-014f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014g() {
+        public void DotNet_verifyenrolled_014g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24677,14 +24676,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014g")
+                .WithDescription("DotNet_verifyenrolled-014g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014h() {
+        public void DotNet_verifyenrolled_014h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24708,14 +24707,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014h")
+                .WithDescription("DotNet_verifyenrolled-014h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_014i() {
+        public void DotNet_verifyenrolled_014i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24739,14 +24738,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-014i")
+                .WithDescription("DotNet_verifyenrolled-014i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_015a() {
+        public void DotNet_verifyenrolled_015a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24770,14 +24769,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015a")
+                .WithDescription("DotNet_verifyenrolled-015a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015b() {
+        public void DotNet_verifyenrolled_015b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24801,14 +24800,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015b")
+                .WithDescription("DotNet_verifyenrolled-015b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015c() {
+        public void DotNet_verifyenrolled_015c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24832,14 +24831,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015c")
+                .WithDescription("DotNet_verifyenrolled-015c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015d() {
+        public void DotNet_verifyenrolled_015d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24863,14 +24862,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015d")
+                .WithDescription("DotNet_verifyenrolled-015d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015e() {
+        public void DotNet_verifyenrolled_015e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24894,14 +24893,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015e")
+                .WithDescription("DotNet_verifyenrolled-015e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015f() {
+        public void DotNet_verifyenrolled_015f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24925,14 +24924,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015f")
+                .WithDescription("DotNet_verifyenrolled-015f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015g() {
+        public void DotNet_verifyenrolled_015g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24956,14 +24955,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015g")
+                .WithDescription("DotNet_verifyenrolled-015g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015h() {
+        public void DotNet_verifyenrolled_015h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -24987,14 +24986,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015h")
+                .WithDescription("DotNet_verifyenrolled-015h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_015i() {
+        public void DotNet_verifyenrolled_015i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25018,14 +25017,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-015i")
+                .WithDescription("DotNet_verifyenrolled-015i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_016a() {
+        public void DotNet_verifyenrolled_016a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25049,14 +25048,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016a")
+                .WithDescription("DotNet_verifyenrolled-016a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016b() {
+        public void DotNet_verifyenrolled_016b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25080,14 +25079,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016b")
+                .WithDescription("DotNet_verifyenrolled-016b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016c() {
+        public void DotNet_verifyenrolled_016c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25111,14 +25110,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016c")
+                .WithDescription("DotNet_verifyenrolled-016c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016d() {
+        public void DotNet_verifyenrolled_016d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25142,14 +25141,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016d")
+                .WithDescription("DotNet_verifyenrolled-016d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016e() {
+        public void DotNet_verifyenrolled_016e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25173,14 +25172,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016e")
+                .WithDescription("DotNet_verifyenrolled-016e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016f() {
+        public void DotNet_verifyenrolled_016f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25204,14 +25203,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016f")
+                .WithDescription("DotNet_verifyenrolled-016f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016g() {
+        public void DotNet_verifyenrolled_016g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25235,14 +25234,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016g")
+                .WithDescription("DotNet_verifyenrolled-016g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016h() {
+        public void DotNet_verifyenrolled_016h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25266,14 +25265,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016h")
+                .WithDescription("DotNet_verifyenrolled-016h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_016i() {
+        public void DotNet_verifyenrolled_016i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25297,14 +25296,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-016i")
+                .WithDescription("DotNet_verifyenrolled-016i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017a() {
+        public void DotNet_verifyenrolled_017a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25328,14 +25327,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-017a")
+                .WithDescription("DotNet_verifyenrolled-017a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017b() {
+        public void DotNet_verifyenrolled_017b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25359,14 +25358,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-017b")
+                .WithDescription("DotNet_verifyenrolled-017b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017c() {
+        public void DotNet_verifyenrolled_017c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25390,14 +25389,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-017c")
+                .WithDescription("DotNet_verifyenrolled-017c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017d() {
+        public void DotNet_verifyenrolled_017d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25421,14 +25420,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-017d")
+                .WithDescription("DotNet_verifyenrolled-017d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017e() {
+        public void DotNet_verifyenrolled_017e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25452,14 +25451,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-017e")
+                .WithDescription("DotNet_verifyenrolled-017e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017f() {
+        public void DotNet_verifyenrolled_017f() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25483,14 +25482,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-017f")
+                .WithDescription("DotNet_verifyenrolled-017f")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017g() {
+        public void DotNet_verifyenrolled_017g() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25514,14 +25513,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-017g")
+                .WithDescription("DotNet_verifyenrolled-017g")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017h() {
+        public void DotNet_verifyenrolled_017h() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25545,14 +25544,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-017h")
+                .WithDescription("DotNet_verifyenrolled-017h")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017i() {
+        public void DotNet_verifyenrolled_017i() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25576,14 +25575,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-017i")
+                .WithDescription("DotNet_verifyenrolled-017i")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017j() {
+        public void DotNet_verifyenrolled_017j() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25607,14 +25606,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-017j")
+                .WithDescription("DotNet_verifyenrolled-017j")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_017k() {
+        public void DotNet_verifyenrolled_017k() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25638,14 +25637,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-017k")
+                .WithDescription("DotNet_verifyenrolled-017k")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_018a() {
+        public void DotNet_verifyenrolled_018a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25669,14 +25668,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-018a")
+                .WithDescription("DotNet_verifyenrolled-018a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_018b() {
+        public void DotNet_verifyenrolled_018b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25700,14 +25699,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-018b")
+                .WithDescription("DotNet_verifyenrolled-018b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_018c() {
+        public void DotNet_verifyenrolled_018c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25731,14 +25730,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-018c")
+                .WithDescription("DotNet_verifyenrolled-018c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_018d() {
+        public void DotNet_verifyenrolled_018d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25762,14 +25761,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-018d")
+                .WithDescription("DotNet_verifyenrolled-018d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_018e() {
+        public void DotNet_verifyenrolled_018e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25793,14 +25792,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-018e")
+                .WithDescription("DotNet_verifyenrolled-018e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_019a() {
+        public void DotNet_verifyenrolled_019a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25824,14 +25823,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-019a")
+                .WithDescription("DotNet_verifyenrolled-019a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_019b() {
+        public void DotNet_verifyenrolled_019b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25855,14 +25854,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-019b")
+                .WithDescription("DotNet_verifyenrolled-019b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_019c() {
+        public void DotNet_verifyenrolled_019c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25886,14 +25885,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-019c")
+                .WithDescription("DotNet_verifyenrolled-019c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_019d() {
+        public void DotNet_verifyenrolled_019d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25917,14 +25916,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-019d")
+                .WithDescription("DotNet_verifyenrolled-019d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_019e() {
+        public void DotNet_verifyenrolled_019e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25948,14 +25947,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-019e")
+                .WithDescription("DotNet_verifyenrolled-019e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_020b() {
+        public void DotNet_verifyenrolled_020b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -25979,14 +25978,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-020b")
+                .WithDescription("DotNet_verifyenrolled-020b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_020c() {
+        public void DotNet_verifyenrolled_020c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26010,14 +26009,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-020c")
+                .WithDescription("DotNet_verifyenrolled-020c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_020d() {
+        public void DotNet_verifyenrolled_020d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26041,14 +26040,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-020d")
+                .WithDescription("DotNet_verifyenrolled-020d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_020e() {
+        public void DotNet_verifyenrolled_020e() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26072,14 +26071,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-020e")
+                .WithDescription("DotNet_verifyenrolled-020e")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_021a() {
+        public void DotNet_verifyenrolled_021a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26103,14 +26102,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-021a")
+                .WithDescription("DotNet_verifyenrolled-021a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_021b() {
+        public void DotNet_verifyenrolled_021b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26134,14 +26133,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-021b")
+                .WithDescription("DotNet_verifyenrolled-021b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_021c() {
+        public void DotNet_verifyenrolled_021c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26165,14 +26164,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-021c")
+                .WithDescription("DotNet_verifyenrolled-021c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_021d() {
+        public void DotNet_verifyenrolled_021d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26196,14 +26195,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-021d")
+                .WithDescription("DotNet_verifyenrolled-021d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_022a() {
+        public void DotNet_verifyenrolled_022a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26227,14 +26226,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-022a")
+                .WithDescription("DotNet_verifyenrolled-022a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_022b() {
+        public void DotNet_verifyenrolled_022b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26258,14 +26257,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EURO")
-                .WithDescription("JAVA-verifyenrolled-022b")
+                .WithDescription("DotNet_verifyenrolled-022b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_022c() {
+        public void DotNet_verifyenrolled_022c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26289,14 +26288,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("�UR")
-                .WithDescription("JAVA-verifyenrolled-022c")
+                .WithDescription("DotNet_verifyenrolled-022c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_022d() {
+        public void DotNet_verifyenrolled_022d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26319,14 +26318,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
             // request
             var response = card.Verify()
-                .WithDescription("JAVA-verifyenrolled-022d")
+                .WithDescription("DotNet_verifyenrolled-022d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_023a() {
+        public void DotNet_verifyenrolled_023a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26350,14 +26349,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-023a")
+                .WithDescription("DotNet_verifyenrolled-023a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_023b1() {
+        public void DotNet_verifyenrolled_023b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26381,14 +26380,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-023b1")
+                .WithDescription("DotNet_verifyenrolled-023b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_023b2() {
+        public void DotNet_verifyenrolled_023b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26412,14 +26411,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-023b2")
+                .WithDescription("DotNet_verifyenrolled-023b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_023c() {
+        public void DotNet_verifyenrolled_023c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26443,14 +26442,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-023c")
+                .WithDescription("DotNet_verifyenrolled-023c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_024a() {
+        public void DotNet_verifyenrolled_024a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26474,14 +26473,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-024a")
+                .WithDescription("DotNet_verifyenrolled-024a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_024b() {
+        public void DotNet_verifyenrolled_024b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26504,14 +26503,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-024b")
+                .WithDescription("DotNet_verifyenrolled-024b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_024c() {
+        public void DotNet_verifyenrolled_024c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26535,14 +26534,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-024c")
+                .WithDescription("DotNet_verifyenrolled-024c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_024d() {
+        public void DotNet_verifyenrolled_024d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26566,14 +26565,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-024d")
+                .WithDescription("DotNet_verifyenrolled-024d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_025a() {
+        public void DotNet_verifyenrolled_025a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26597,14 +26596,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-025a")
+                .WithDescription("DotNet_verifyenrolled-025a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_025b() {
+        public void DotNet_verifyenrolled_025b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26628,14 +26627,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-025b")
+                .WithDescription("DotNet_verifyenrolled-025b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_025c() {
+        public void DotNet_verifyenrolled_025c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26659,14 +26658,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-025c")
+                .WithDescription("DotNet_verifyenrolled-025c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_025d() {
+        public void DotNet_verifyenrolled_025d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26688,14 +26687,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-025d")
+                .WithDescription("DotNet_verifyenrolled-025d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_026a() {
+        public void DotNet_verifyenrolled_026a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26719,14 +26718,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-026a")
+                .WithDescription("DotNet_verifyenrolled-026a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_026b() {
+        public void DotNet_verifyenrolled_026b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26750,14 +26749,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-026b")
+                .WithDescription("DotNet_verifyenrolled-026b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_026c() {
+        public void DotNet_verifyenrolled_026c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26781,14 +26780,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-026c")
+                .WithDescription("DotNet_verifyenrolled-026c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_027a() {
+        public void DotNet_verifyenrolled_027a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26812,14 +26811,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-027a")
+                .WithDescription("DotNet_verifyenrolled-027a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_028a() {
+        public void DotNet_verifyenrolled_028a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26843,14 +26842,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-028a")
+                .WithDescription("DotNet_verifyenrolled-028a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_029a() {
+        public void DotNet_verifyenrolled_029a() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26874,7 +26873,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-029a")
+                .WithDescription("DotNet_verifyenrolled-029a")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -26882,7 +26881,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_029b1() {
+        public void DotNet_verifyenrolled_029b1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26906,14 +26905,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-029b1")
+                .WithDescription("DotNet_verifyenrolled-029b1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_029b2() {
+        public void DotNet_verifyenrolled_029b2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26937,7 +26936,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-029b2")
+                .WithDescription("DotNet_verifyenrolled-029b2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -26945,7 +26944,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_029c() {
+        public void DotNet_verifyenrolled_029c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -26969,14 +26968,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-029c")
+                .WithDescription("DotNet_verifyenrolled-029c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, Ignore]
-        public void JAVA_verifyenrolled_029d() {
+        public void DotNet_verifyenrolled_029d() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -27000,14 +26999,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-029d")
+                .WithDescription("DotNet_verifyenrolled-029d")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_030a1() {
+        public void DotNet_verifyenrolled_030a1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -27031,14 +27030,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-030a1")
+                .WithDescription("DotNet_verifyenrolled-030a1")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_030a2() {
+        public void DotNet_verifyenrolled_030a2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -27062,14 +27061,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-030a2")
+                .WithDescription("DotNet_verifyenrolled-030a2")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_030a3() {
+        public void DotNet_verifyenrolled_030a3() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -27093,14 +27092,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-030a3")
+                .WithDescription("DotNet_verifyenrolled-030a3")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_030a4() {
+        public void DotNet_verifyenrolled_030a4() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -27124,14 +27123,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("GBP")
-                .WithDescription("JAVA-verifyenrolled-030a4")
+                .WithDescription("DotNet_verifyenrolled-030a4")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void JAVA_verifyenrolled_030b() {
+        public void DotNet_verifyenrolled_030b() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -27155,14 +27154,14 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("EUR")
-                .WithDescription("JAVA-verifyenrolled-030b")
+                .WithDescription("DotNet_verifyenrolled-030b")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
-        public void JAVA_verifyenrolled_030c() {
+        public void DotNet_verifyenrolled_030c() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
@@ -27186,7 +27185,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             // request
             var response = card.Verify()
                 .WithCurrency("USD")
-                .WithDescription("JAVA-verifyenrolled-030c")
+                .WithDescription("DotNet_verifyenrolled-030c")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);

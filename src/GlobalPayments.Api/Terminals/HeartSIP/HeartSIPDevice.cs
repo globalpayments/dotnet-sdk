@@ -224,6 +224,31 @@ namespace GlobalPayments.Api.Terminals.HeartSIP {
         }
         #endregion
 
+        #region EBT Methods
+        public TerminalAuthBuilder EbtBalance(int referenceNumber) {
+            return new TerminalAuthBuilder(TransactionType.Balance, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
+        }
+
+        public TerminalAuthBuilder EbtPurchase(int referenceNumber, decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
+        }
+
+        public TerminalAuthBuilder EbtRefund(int referenceNumber, decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
+        }
+        public TerminalManageBuilder EbtReversal(int referenceNumber) {
+            return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
+        }
+
+        public TerminalManageBuilder EbtVoid(int referenceNumber) {
+            return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
+        }
+
+        public TerminalAuthBuilder EbtWithdrawl(int referenceNumber, decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.BenefitWithdrawal, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
+        }
+        #endregion
+
         public void Dispose() {
             CloseLane();
             _controller.Dispose();

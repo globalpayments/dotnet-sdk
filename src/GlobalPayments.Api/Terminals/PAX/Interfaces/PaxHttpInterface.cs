@@ -26,21 +26,15 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         public byte[] Send(IDeviceMessage message) {
+            OnMessageSent?.Invoke(message.ToString());
+
             try {
                 string payload = Convert.ToBase64String(message.GetSendBuffer());
 
                 _client = HttpWebRequest.Create(string.Format("http://{0}:{1}?{2}", _settings.IpAddress, _settings.Port, payload));
-                //var response = (HttpWebResponse)_client.GetResponse();
                 var response = _client.GetResponseAsync().Result;
-                if (OnMessageSent != null)
-                    OnMessageSent(message.ToString());
 
                 var buffer = new List<byte>();
-                //using (var sr = new StreamReader(response.GetResponseStream())) {
-                //    var rec_buffer = sr.ReadToEnd();
-                //    foreach (char c in rec_buffer)
-                //        buffer.Add((byte)c);
-                //}
                 using (var sr = new StreamReader(response.GetResponseStream())) {
                     var rec_buffer = sr.ReadToEnd();
                     foreach (char c in rec_buffer)

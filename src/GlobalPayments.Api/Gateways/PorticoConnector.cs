@@ -124,10 +124,18 @@ namespace GlobalPayments.Api.Gateways {
                 var trackData = et.SubElement(cardData, hasToken ? "TokenData" : "TrackData");
                 if (!hasToken) {
                     trackData.Text(track.Value);
-                    if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Debit) {
-                        trackData.Set("method", track.EntryMethod == EntryMethod.Swipe ? "swipe" : "proximity");
-                        block1.Append(cardData);
+                    trackData.Set("method", track.EntryMethod == EntryMethod.Swipe ? "swipe" : "proximity");
+                    if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {
+                        string chipCondition = null;
+                        if (builder.ChipCondition != null)
+                            chipCondition = builder.ChipCondition == EmvChipCondition.ChipFailedPreviousSuccess ? "CHIP_FAILED_PREV_SUCCESS" : "CHIP_FAILED_PREV_FAILED";
+
+                        et.SubElement(block1, "AccountType", builder.AccountType?.ToString() ?? null);
+                        et.SubElement(block1, "EMVChipCondition", chipCondition);
+                        et.SubElement(block1, "MessageAuthenticationCode", builder.MessageAuthenticationCode);
+                        et.SubElement(block1, "PosSequenceNbr", builder.PosSequenceNumber);
                     }
+                    else block1.Append(cardData);
                 }
                 else et.SubElement(trackData, "TokenValue").Text(tokenValue);
             }

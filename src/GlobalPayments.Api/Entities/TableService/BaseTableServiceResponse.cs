@@ -6,9 +6,21 @@ namespace GlobalPayments.Api.Entities.TableService
     public abstract class BaseTableServiceResponse {
         private List<string> _messageIds;
 
+        /// <summary>
+        /// Response code from the table service API
+        /// </summary>
         public string ResponseCode { get; set; }
+        /// <summary>
+        /// Response text from the table service
+        /// </summary>
         public string ResponseText { get; set; }
+        /// <summary>
+        /// type of object being manipulated
+        /// </summary>
         public string Class { get; set; }
+        /// <summary>
+        /// the type of action being taken on the class
+        /// </summary>
         public string Action { get; set; }
 
         internal BaseTableServiceResponse(string json) {

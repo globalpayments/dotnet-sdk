@@ -55,6 +55,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             // amounts sub group
             amounts.TransactionAmount = "{0:c}".FormatWith(builder.Amount).ToNumeric();
+            amounts.CashBackAmount = "{0:c}".FormatWith(builder.CashBackAmount).ToNumeric();
             amounts.TipAmount = "{0:c}".FormatWith(builder.Gratuity).ToNumeric();
             amounts.TaxAmount = "{0:c}".FormatWith(builder.TaxAmount).ToNumeric();
 
@@ -80,6 +81,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 else if (builder.PaymentMethod is GiftCard) {
                     var card = builder.PaymentMethod as GiftCard;
                     account.AccountNumber = card.Number;
+                }
+                else if (builder.PaymentMethod is EBTCardData) {
+                    var card = builder.PaymentMethod as EBTCardData;
                 }
             }
             if (builder.AllowDuplicates) account.DupOverrideFlag = "1";
@@ -115,6 +119,10 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 case PaymentMethodType.Gift:
                     var messageId = builder.Currency == CurrencyType.CURRENCY ? PAX_MSG_ID.T06_DO_GIFT : PAX_MSG_ID.T08_DO_LOYALTY;
                     return DoGift(messageId, transType, amounts, account, trace, cashier, extData);
+                case PaymentMethodType.EBT:
+                    if (builder.Currency != null)
+                        account.EbtType = builder.Currency.ToString().Substring(0, 1);
+                    return DoEBT(transType, amounts, account, trace, cashier);
                 default:
                     throw new UnsupportedTransactionException();
             }
@@ -156,6 +164,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 case PaymentMethodType.Gift:
                     var messageId = builder.Currency == CurrencyType.CURRENCY ? PAX_MSG_ID.T06_DO_GIFT : PAX_MSG_ID.T08_DO_LOYALTY;
                     return DoGift(messageId, transType, amounts, account, trace, new CashierSubGroup(), extData);
+                case PaymentMethodType.EBT:
+                    return DoEBT(transType, amounts, account, trace, new CashierSubGroup());
                 default:
                     throw new UnsupportedTransactionException();
             }
@@ -169,10 +179,14 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     return PAX_TXN_TYPE.AUTH;
                 case TransactionType.Balance:
                     return PAX_TXN_TYPE.BALANCE;
+                case TransactionType.BenefitWithdrawal:
+                    return PAX_TXN_TYPE.WITHDRAWAL;
                 case TransactionType.Capture:
                     return PAX_TXN_TYPE.POSTAUTH;
                 case TransactionType.Refund:
                     return PAX_TXN_TYPE.RETURN;
+                case TransactionType.Reversal:
+                    return PAX_TXN_TYPE.REVERSAL;
                 case TransactionType.Sale:
                     return PAX_TXN_TYPE.SALE_REDEEM;
                 case TransactionType.Verify:
@@ -211,7 +225,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         internal EbtResponse DoEBT(string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, CashierSubGroup cashier) {
-            var response = DoTransaction(PAX_MSG_ID.T04_DO_EBT, txnType, accounts, trace, cashier, new ExtDataSubGroup());
+            var response = DoTransaction(PAX_MSG_ID.T04_DO_EBT, txnType, amounts, accounts, trace, cashier, new ExtDataSubGroup());
             return new EbtResponse(response);
         }
 
@@ -335,6 +349,26 @@ namespace GlobalPayments.Api.Terminals.PAX {
         #endregion
 
         #region EBT Methods
+        public TerminalAuthBuilder EbtBalance(int referenceNumber) {
+            return new TerminalAuthBuilder(TransactionType.Balance, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
+        }
+
+        public TerminalAuthBuilder EbtPurchase(int referenceNumber, decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
+        }
+
+        public TerminalAuthBuilder EbtRefund(int referenceNumber, decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
+        }
+
+        public TerminalManageBuilder EbtReversal(int referenceNumber) {
+            //return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
+            throw new UnsupportedTransactionException("EBT Reversal is not supported by the current device.");
+        }
+
+        public TerminalAuthBuilder EbtWithdrawl(int referenceNumber, decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.BenefitWithdrawal, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
+        }
         #endregion
 
         #region Gift Methods

@@ -315,6 +315,9 @@ namespace GlobalPayments.Api.Gateways {
                     var cardElement = et.SubElement(request, "card");
                     et.SubElement(cardElement, "ref").Text(payment.Key ?? payment.Id);
                     et.SubElement(cardElement, "payerref").Text(payment.CustomerKey);
+
+                    string sha1hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, payment.CustomerKey, payment.Key ?? payment.Id);
+                    et.SubElement(request, "sha1hash").Text(sha1hash);
                 }
             }
 
@@ -484,9 +487,12 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         private Element BuildAddress(ElementTree et, Address address) {
-            var code = string.Format("{0}|{1}", address.PostalCode, address.StreetAddress1);
-            if (address.Country == "GB") {
-                code = string.Format("{0}|{1}", Regex.Replace(address.PostalCode, "[^0-9]", ""), Regex.Replace(address.StreetAddress1, "[^0-9]", ""));
+            var code = address.PostalCode;
+            if (address.PostalCode.Contains("|")) {
+                code = string.Format("{0}|{1}", address.PostalCode, address.StreetAddress1);
+                if (address.Country == "GB") {
+                    code = string.Format("{0}|{1}", Regex.Replace(address.PostalCode, "[^0-9]", ""), Regex.Replace(address.StreetAddress1, "[^0-9]", ""));
+                }
             }
 
             var addressNode = et.Element("address").Set("type", address.Type == AddressType.Billing ? "billing" : "shipping");
