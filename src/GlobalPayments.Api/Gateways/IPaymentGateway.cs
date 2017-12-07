@@ -3,7 +3,7 @@ using GlobalPayments.Api.Entities;
 
 namespace GlobalPayments.Api.Gateways {
     internal interface IPaymentGateway {
-        Transaction ProcesAuthorization(AuthorizationBuilder builder);
+        Transaction ProcessAuthorization(AuthorizationBuilder builder);
         Transaction ManageTransaction(ManagementBuilder builder);
         T ProcessReport<T>(ReportBuilder<T> builder) where T : class;
         string SerializeRequest(AuthorizationBuilder builder);

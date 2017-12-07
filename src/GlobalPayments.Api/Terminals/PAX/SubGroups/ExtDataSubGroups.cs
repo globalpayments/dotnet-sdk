@@ -2,6 +2,7 @@
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 using System.Collections.Generic;
 using System.IO;
 
@@ -36,7 +37,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 try {
                     _collection.Add(kv[0].ToUpper(), kv[1]);
                 }
-                catch (IndexOutOfRangeException) { }
+                catch (IndexOutOfRangeException exc) {
+                    EventLogger.Instance.Error(exc.Message);
+                }
             }
         }
 

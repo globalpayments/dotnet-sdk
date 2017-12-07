@@ -58,13 +58,17 @@ namespace GlobalPayments.Api.Terminals.HeartSIP {
             et.SubElement(request, "RequestId", builder.ReferenceNumber);
             et.SubElement(request, "CardGroup", builder.PaymentMethodType.ToString());
             et.SubElement(request, "ConfirmAmount").Text("0");
-            et.SubElement(request, "BaseAmount").Text(builder.Amount.ToNumericString());
+            et.SubElement(request, "BaseAmount").Text(builder.Amount.ToNumericCurrencyString());
             if (builder.Gratuity != null)
-                et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericString());
+                et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());
             else et.SubElement(request, "TipAmount").Text("0");
 
+            // EBT amount
+            if (builder.PaymentMethodType == PaymentMethodType.EBT)
+                et.SubElement(request, "EBTAmount").Text(builder.Amount.ToNumericCurrencyString());
+
             // total
-            et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericString());
+            et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericCurrencyString());
 
             var response = SendMessage<SipDeviceResponse>(et.ToString(request), transactionType);
             return response;
@@ -83,7 +87,7 @@ namespace GlobalPayments.Api.Terminals.HeartSIP {
             et.SubElement(request, "TransactionId", builder.TransactionId);
 
             if (builder.Gratuity != null)
-                et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericString());
+                et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());
 
             var response = SendMessage<SipDeviceResponse>(et.ToString(request), transactionType);
             return response;
@@ -236,16 +240,8 @@ namespace GlobalPayments.Api.Terminals.HeartSIP {
         public TerminalAuthBuilder EbtRefund(int referenceNumber, decimal? amount = null) {
             return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
         }
-        public TerminalManageBuilder EbtReversal(int referenceNumber) {
-            return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
-        }
-
-        public TerminalManageBuilder EbtVoid(int referenceNumber) {
-            return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
-        }
-
         public TerminalAuthBuilder EbtWithdrawl(int referenceNumber, decimal? amount = null) {
-            return new TerminalAuthBuilder(TransactionType.BenefitWithdrawal, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
+            throw new UnsupportedTransactionException("This transaction is not currently supported for this payment type.");
         }
         #endregion
 

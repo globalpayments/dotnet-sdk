@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.PaymentMethods;
 
@@ -101,10 +102,17 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string CvnResponseMessage { get; set; }
 
+        public DebitMac DebitMac { get; set; }
+
         /// <summary>
         /// The EMV response from the issuer.
         /// </summary>
         public string EmvIssuerResponse { get; set; }
+
+        /// <summary>
+        /// The host response date
+        /// </summary>
+        public DateTime? HostResponseDate { get; set; }
 
         /// <summary>
         /// The order ID supplied in the request.
@@ -168,6 +176,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public Dictionary<string, string> ResponseValues { get; set; }
 
+        internal ThreeDSecure ThreeDSecure { get; set; }
+
         /// <summary>
         /// The timestamp of the transaction.
         /// </summary>
@@ -200,6 +210,7 @@ namespace GlobalPayments.Api.Entities {
         public string Token { get; set; }
 
         internal GiftCard GiftCard { get; set; }
+
         internal TransactionReference TransactionReference { get; set; }
 
         /// <summary>

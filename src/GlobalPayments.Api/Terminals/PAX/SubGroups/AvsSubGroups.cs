@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class AvsRequest : IRequestSubGroup {
@@ -30,10 +31,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var data = values.Split((char)ControlCodes.US);
             try {
-                this.AvsResponseCode = data[0];
-                this.AvsResponseMessage = data[1];
+                AvsResponseCode = data[0];
+                AvsResponseMessage = data[1];
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
     }

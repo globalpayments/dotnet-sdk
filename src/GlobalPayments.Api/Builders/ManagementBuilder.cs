@@ -36,6 +36,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal string PayerAuthenticationResponse { get; set; }
         internal string PoNumber { get; set; }
         internal ReasonCode? ReasonCode { get; set;}
         internal decimal? TaxAmount { get; set; }
@@ -111,6 +112,16 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public ManagementBuilder WithPayerAuthenticationResponse(string value) {
+            PayerAuthenticationResponse = value;
+            return this;
+        }
+
         internal ManagementBuilder WithPaymentMethod(IPaymentMethod value) {
             PaymentMethod = value;
             return this;
@@ -178,10 +189,10 @@ namespace GlobalPayments.Api.Builders {
         /// Executes the builder against the gateway.
         /// </summary>
         /// <returns>Transaction</returns>
-        public override Transaction Execute() {
-            base.Execute();
+        public override Transaction Execute(string configName = "default") {
+            base.Execute(configName);
 
-            var client = ServicesContainer.Instance.GetClient();
+            var client = ServicesContainer.Instance.GetClient(configName);
             return client.ManageTransaction(this);
         }
 
@@ -195,6 +206,12 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.Refund)
                 .When(() => Amount).IsNotNull()
                 .Check(() => Currency).IsNotNull();
+
+            Validations.For(TransactionType.VerifySignature)
+                .Check(() => PayerAuthenticationResponse).IsNotNull()
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => OrderId).IsNotNull();
         }
     }
 }

@@ -47,7 +47,6 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder EbtBalance(int referenceNumber);
         TerminalAuthBuilder EbtPurchase(int referenceNumber, decimal? amount = null);
         TerminalAuthBuilder EbtRefund(int referenceNumber, decimal? amount = null);
-        TerminalManageBuilder EbtReversal(int referenceNumber);
         TerminalAuthBuilder EbtWithdrawl(int referenceNumber, decimal? amount = null);
         #endregion
     }

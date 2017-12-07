@@ -22,7 +22,7 @@ namespace GlobalPayments.Api.Entities {
         /// Creates a resource
         /// </summary>
         /// <returns>TResult</returns>
-        public TResult Create() {
+        public TResult Create(string configName = "default") {
             return RecurringService.Create(this as TResult);
         }
 
@@ -48,8 +48,8 @@ namespace GlobalPayments.Api.Entities {
         /// <exception cref="UnsupportedTransactionException">
         /// Thrown when gateway does not support retrieving recurring records.
         /// </exception>
-        public static TResult Find(string id) {
-            var client = ServicesContainer.Instance.GetRecurringClient();
+        public static TResult Find(string id, string configName = "default") {
+            var client = ServicesContainer.Instance.GetRecurringClient(configName);
             if (client.SupportsRetrieval) {
                 var identifier = GetIdentifierName();
                 var response = RecurringService.Search<List<TResult>>()
@@ -69,8 +69,8 @@ namespace GlobalPayments.Api.Entities {
         /// <exception cref="UnsupportedTransactionException">
         /// Thrown when gateway does not support retrieving recurring records.
         /// </exception>
-        public static List<TResult> FindAll() {
-            var client = ServicesContainer.Instance.GetRecurringClient();
+        public static List<TResult> FindAll(string configName = "default") {
+            var client = ServicesContainer.Instance.GetRecurringClient(configName);
             if (client.SupportsRetrieval) {
                 return RecurringService.Search<List<TResult>>().Execute();
             }

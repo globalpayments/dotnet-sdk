@@ -13,10 +13,10 @@ namespace GlobalPayments.Api.Builders {
         /// Executes the builder against the gateway.
         /// </summary>
         /// <returns>TResult</returns>
-        public override TResult Execute() {
-            base.Execute();
+        public override TResult Execute(string configName = "default") {
+            base.Execute(configName);
 
-            var client = ServicesContainer.Instance.GetClient();
+            var client = ServicesContainer.Instance.GetClient(configName);
             return client.ProcessReport(this);
         }
     }

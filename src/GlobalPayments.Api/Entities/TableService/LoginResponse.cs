@@ -20,7 +20,7 @@ namespace GlobalPayments.Api.Entities.TableService {
         /// </summary>
         public string TableStatus { get; set; }
 
-        public LoginResponse(string json) : base(json) {
+        public LoginResponse(string json, string configName = "default") : base(json, configName) {
             ExpectedAction = "login";
         }
 

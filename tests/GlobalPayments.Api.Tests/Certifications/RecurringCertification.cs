@@ -23,10 +23,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
         private static readonly string IdentifierBase = "{0}-{1}" + Guid.NewGuid().ToString().Substring(0, 10);
 
         private static string GetIdentifier(string identifier) {
-            var rValue = string.Format(IdentifierBase, TodayDate, identifier);
-            Console.WriteLine(rValue);
-
-            return rValue;
+            return string.Format(IdentifierBase, TodayDate, identifier);
         }
 
         public RecurringCertification() {
@@ -41,8 +38,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             try {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
-                Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
-                Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
+                //Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
+                //Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
             catch (GatewayException exc) {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
@@ -59,7 +56,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
                     schedule.Delete(true);
                 }
             }
-            catch { }
+            catch (ApiException exc) {
+                Assert.IsNotNull(exc);
+            }
 
             // Remove Payment Methods
             try {
@@ -68,7 +67,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
                     pm.Delete(true);
                 }
             }
-            catch { }
+            catch (ApiException exc) {
+                Assert.IsNotNull(exc);
+            }
 
             // Remove Customers
             try {
@@ -77,7 +78,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
                     c.Delete(true);
                 }
             }
-            catch { }
+            catch (ApiException exc) {
+                Assert.IsNotNull(exc);
+            }
         }
 
         // CUSTOMER SETUP
@@ -466,8 +469,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             try {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
-                Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
-                Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
+                //Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
+                //Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
             catch (GatewayException exc) {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")

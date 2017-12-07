@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class TraceRequest : IRequestSubGroup {
@@ -40,11 +41,12 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var data = values.Split((char)ControlCodes.US);
             try {
-                this.TransactionNumber = data[0];
-                this.ReferenceNumber = data[1];
-                this.TimeStamp = data[2];
+                TransactionNumber = data[0];
+                ReferenceNumber = data[1];
+                TimeStamp = data[2];
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
     }

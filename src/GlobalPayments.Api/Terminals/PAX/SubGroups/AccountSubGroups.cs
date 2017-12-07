@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class AccountRequest : IRequestSubGroup {
@@ -64,7 +65,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 CvdMessage = data[9];
                 CardPresent = data[10] == "0" ? true : false;
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
     }

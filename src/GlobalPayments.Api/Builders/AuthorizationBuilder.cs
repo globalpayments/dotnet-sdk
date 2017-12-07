@@ -43,8 +43,10 @@ namespace GlobalPayments.Api.Builders {
         internal RecurringType? RecurringType { get; set; }
         internal bool RequestMultiUseToken { get; set; }
         internal GiftCard ReplacementCard { get; set; }
+        internal ReversalReasonCode? ReversalReasonCode { get; set; }
         internal string ScheduleId { get; set; }
         internal Address ShippingAddress { get; set; }
+        internal string TagData { get; set; }
         internal string Timestamp { get; set; }
 
         /// <summary>
@@ -326,12 +328,8 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="value">The hosted payment data</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithHostedPaymentData(HostedPaymentData value) {
-            var client = ServicesContainer.Instance.GetClient();
-            if (client.SupportsHostedPayments) {
-                HostedPaymentData = value;
-                return this;
-            }
-            throw new UnsupportedTransactionException("You current gateway does not support hosted payments.");
+            HostedPaymentData = value;
+            return this;
         }
 
         /// <summary>
@@ -482,6 +480,11 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public AuthorizationBuilder WithReversalReasonCode(ReversalReasonCode value) {
+            ReversalReasonCode = value;
+            return this;
+        }
+
         /// <summary>
         /// Sets the schedule ID associated with the transaction; where applicable.
         /// </summary>
@@ -523,6 +526,16 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Sets the EMV tag data to be sent along with an EMV transaction.
+        /// </summary>
+        /// <param name="value">the EMV tag data</param>
+        /// <returns>Authorization Builder</returns>
+        public AuthorizationBuilder WithTagData(string value) {
+            TagData = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the timestamp; where applicable.
         /// </summary>
         /// <param name="value">The transaction's timestamp</param>
@@ -532,18 +545,17 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-
         internal AuthorizationBuilder(TransactionType type, IPaymentMethod payment = null) : base(type, payment) {}
 
         /// <summary>
         /// Executes the authorization builder against the gateway.
         /// </summary>
         /// <returns>Transaction</returns>
-        public override Transaction Execute() {
-            base.Execute();
+        public override Transaction Execute(string configName = "default") {
+            base.Execute(configName);
 
-            var client = ServicesContainer.Instance.GetClient();
-            return client.ProcesAuthorization(this);
+            var client = ServicesContainer.Instance.GetClient(configName);
+            return client.ProcessAuthorization(this);
         }
 
         /// <summary>
@@ -553,11 +565,11 @@ namespace GlobalPayments.Api.Builders {
         /// Requires the gateway and account support hosted payment pages.
         /// </remarks>
         /// <returns>string</returns>
-        public string Serialize() {
+        public string Serialize(string configName = "default") {
             TransactionModifier = TransactionModifier.HostedRequest;
             base.Execute();
 
-            var client = ServicesContainer.Instance.GetClient();
+            var client = ServicesContainer.Instance.GetClient(configName);
             if (client.SupportsHostedPayments) {
                 return client.SerializeRequest(this);
             }
@@ -601,6 +613,11 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.Replace).Check(() => ReplacementCard).IsNotNull();
 
             Validations.For(PaymentMethodType.ACH).Check(() => BillingAddress).IsNotNull();
+
+            Validations.For(PaymentMethodType.Debit).When(() => ReversalReasonCode).IsNotNull().Check(() => TransactionType).Equals(TransactionType.Reversal);
+
+            Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit).When(() => ChipCondition).IsNotNull().Check(() => TagData).IsNull();
+            Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit).When(() => TagData).IsNotNull().Check(() => ChipCondition).IsNull();
         }
     }
 }

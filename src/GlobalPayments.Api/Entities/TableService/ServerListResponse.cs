@@ -8,7 +8,7 @@ namespace GlobalPayments.Api.Entities.TableService {
         /// </summary>
         public List<string> Servers { get; set; }
 
-        public ServerListResponse(string json) : base(json) {
+        public ServerListResponse(string json, string configName = "default") : base(json, configName) {
             ExpectedAction = "getServerList";
         }
 

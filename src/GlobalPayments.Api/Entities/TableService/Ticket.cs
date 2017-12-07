@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Entities.TableService {
@@ -55,7 +53,7 @@ namespace GlobalPayments.Api.Entities.TableService {
         /// Ticket constructor
         /// </summary>
         /// <param name="json">Json Response from the Table Service API</param>
-        public Ticket(string json) : base(json) {
+        public Ticket(string json, string configName = "default") : base(json, configName) {
             ExpectedAction = "assignCheck";
         }
 
@@ -63,7 +61,11 @@ namespace GlobalPayments.Api.Entities.TableService {
             base.MapResponse(response);
 
             CheckId = response.GetValue<int>("checkID");
-            CheckInTime = response.GetValue<DateTime>("checkInTime");
+            CheckInTime = response.GetValue<DateTime>("checkInTime", (value) => {
+                if (value != null && !string.IsNullOrEmpty(value.ToString()))
+                    return DateTime.ParseExact(value.ToString(), "dd-MM-yyyy HH:mm", null);
+                return DateTime.Now;
+            });
             TableNumber = response.GetValue<int>("tableNumber");
             WaitTime = response.GetValue<int>("waitTime");
         }
@@ -79,12 +81,11 @@ namespace GlobalPayments.Api.Entities.TableService {
         /// <param name="bumpTime">optional: the time of the status change</param>
         /// <returns>TableServiceResponse</returns>
         public TableServiceResponse BumpStatus(string bumpStatus, DateTime? bumpTime = null) {
-            int bumpStatusId = ServicesContainer.Instance.GetReservationService().BumpStatusCollection[bumpStatus];
+            int bumpStatusId = ServicesContainer.Instance.GetReservationService(_configName).BumpStatusCollection[bumpStatus];
             if (bumpStatusId == 0)
-                throw new MessageException(String.Format("Unknown status value: {0}", bumpStatus));
+                throw new MessageException(string.Format("Unknown status value: {0}", bumpStatus));
             return BumpStatus(bumpStatusId, bumpTime);
         }
-
         /// <summary>
         /// This generally would be used to notifiy Freshxt of the kitchen bump time. This will allow the host to see a color
         /// status change on a table.The bumpStatusID is the status ID inside freshtxt that you want to set the bump to
@@ -118,7 +119,6 @@ namespace GlobalPayments.Api.Entities.TableService {
 
             return SendRequest<TableServiceResponse>("pos/clearTable", content);
         }
-
 
         /// <summary>
         /// This would be used to notifiy Freshxt of the order placement time.
@@ -155,9 +155,9 @@ namespace GlobalPayments.Api.Entities.TableService {
         public TableServiceResponse SettleCheck(string bumpStatus = null, DateTime? settleTime = null) {
             int? bumpStatusId = null;
             if (!string.IsNullOrEmpty(bumpStatus)) {
-                bumpStatusId = ServicesContainer.Instance.GetReservationService().BumpStatusCollection[bumpStatus];
+                bumpStatusId = ServicesContainer.Instance.GetReservationService(_configName).BumpStatusCollection[bumpStatus];
                 if (bumpStatusId == 0)
-                    throw new MessageException(String.Format("Unknown status value: {0}", bumpStatus));
+                    throw new MessageException(string.Format("Unknown status value: {0}", bumpStatus));
             }
             return SettleCheck(bumpStatusId, settleTime);
         }
@@ -219,8 +219,8 @@ namespace GlobalPayments.Api.Entities.TableService {
         /// <param name="checkId">The check ID assigned to this ticket</param>
         /// <param name="tableNumber">optional: the table number assigned to the ticket.</param>
         /// <returns>Ticket</returns>
-        public static Ticket FromId(int checkId, int? tableNumber = null) {
-            return new Ticket(string.Empty) {
+        public static Ticket FromId(int checkId, int? tableNumber = null, string configName = "default") {
+            return new Ticket(string.Empty, configName) {
                 CheckId = checkId,
                 TableNumber = tableNumber
             };

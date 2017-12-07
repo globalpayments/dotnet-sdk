@@ -4,10 +4,23 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals;
+using System.Globalization;
 
 namespace GlobalPayments.Api.Utils {
     public static class Extensions {
-        public static string ToNumericString(this decimal? dec) {
+        public static string FormatWith(this string pattern, params object[] values) {
+            return string.Format(pattern, values);
+        }
+
+        public static string ToNumeric(this string str) {
+            return Regex.Replace(str, "[^0-9]", "");
+        }
+
+        public static string ToNumericString(this decimal dec) {
+            return Regex.Replace(dec.ToString(), "[^0-9]", "");
+        }
+
+        public static string ToNumericCurrencyString(this decimal? dec) {
             return Regex.Replace(string.Format("{0:c}", dec), "[^0-9]", "");
         }
 
@@ -61,6 +74,24 @@ namespace GlobalPayments.Api.Utils {
             else throw new MessageException(string.Format("Unknown message received: {0}", code));
         }
 
+        public static int? ToInt32(this string str) {
+            if (string.IsNullOrEmpty(str))
+                return null;
 
+            int rvalue = default(int);
+            if (Int32.TryParse(str, out rvalue))
+                return rvalue;
+            return null;
+        }
+
+        public static DateTime? ToDateTime(this string str) {
+            if (string.IsNullOrEmpty(str))
+                return null;
+
+            DateTime rvalue;
+            if (DateTime.TryParseExact(str, "yyyyMMddhhmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out rvalue))
+                return rvalue;
+            return null;
+        }
     }
 }

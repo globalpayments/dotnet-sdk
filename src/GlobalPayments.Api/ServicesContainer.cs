@@ -1,12 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.HeartSIP;
 using GlobalPayments.Api.Terminals.PAX;
 
-namespace GlobalPayments.Api
-{
+namespace GlobalPayments.Api {
+    internal class ConfiguredServices : IDisposable {
+        public IPaymentGateway GatewayConnector { get; set; }
+        public IRecurringService RecurringConnector { get; set; }
+        public IDeviceInterface DeviceInterface { get; private set; }
+        private DeviceController _deviceController;
+        public DeviceController DeviceController {
+            get {
+                return _deviceController;
+            }
+            set {
+                _deviceController = value;
+                DeviceInterface = value.ConfigureInterface();
+            }
+        }
+        public TableServiceConnector ReservationConnector { get; set; }
+        public void Dispose() {
+            DeviceController.Dispose();
+        }
+    }
+
     /// <summary>
     /// Maintains references to the currently configured gateway/device objects
     /// </summary>
@@ -17,12 +37,8 @@ namespace GlobalPayments.Api
     /// internally by exposed APIs throughout the SDK.
     /// </remarks>
     public class ServicesContainer : IDisposable {
-        private IPaymentGateway _gateway;
-        private IRecurringService _recurring;
-        private IDeviceInterface _device;
-        private DeviceController _deviceControl;
-        private TableServiceConnector _reservationInterface;
-        private static  ServicesContainer _instance;
+        private Dictionary<string, ConfiguredServices> _configurations;
+        private static ServicesContainer _instance;
 
         internal static ServicesContainer Instance {
             get {
@@ -35,21 +51,19 @@ namespace GlobalPayments.Api
         /// <summary>
         /// Configure the SDK's various gateway/device interactions
         /// </summary>
-        public static void Configure(ServicesConfig config) {
+        public static void Configure(ServicesConfig config, string configName = "default") {
             config.Validate();
 
+            var cs = new ConfiguredServices();
+
             #region configure devices
-            IDeviceInterface deviceInterface = null;
-            DeviceController deviceController = null;
             if (config.DeviceConnectionConfig != null) {
                 switch (config.DeviceConnectionConfig.DeviceType) {
                     case DeviceType.PAX_S300:
-                        deviceController = new PaxController(config.DeviceConnectionConfig);
-                        deviceInterface = deviceController.ConfigureInterface();
+                        cs.DeviceController = new PaxController(config.DeviceConnectionConfig);
                         break;
                     case DeviceType.HSIP_ISC250:
-                        deviceController = new HeartSipController(config.DeviceConnectionConfig);
-                        deviceInterface = deviceController.ConfigureInterface();
+                        cs.DeviceController = new HeartSipController(config.DeviceConnectionConfig);
                         break;
                     default:
                         break;
@@ -58,10 +72,9 @@ namespace GlobalPayments.Api
             #endregion
 
             #region configure reservations
-            TableServiceConnector reservationConnector = null;
             if (config.ReservationProvider != null) {
                 if (config.ReservationProvider == ReservationProviders.FreshTxt) {
-                    reservationConnector = new TableServiceConnector {
+                    cs.ReservationConnector = new TableServiceConnector {
                         ServiceUrl = "https://www.freshtxt.com/api31/",
                         Timeout = config.Timeout
                     };
@@ -82,7 +95,8 @@ namespace GlobalPayments.Api
                     ServiceUrl = config.ServiceUrl,
                     HostedPaymentConfig = config.HostedPaymentConfig
                 };
-                _instance = new ServicesContainer(gateway, gateway, deviceController, deviceInterface, reservationConnector);
+                cs.GatewayConnector = gateway;
+                cs.RecurringConnector = gateway;
             }
             else {
                 var gateway = new PorticoConnector {
@@ -97,51 +111,69 @@ namespace GlobalPayments.Api
                     Timeout = config.Timeout,
                     ServiceUrl = config.ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx"
                 };
+                cs.GatewayConnector = gateway;
+
                 var payplan = new PayPlanConnector {
                     SecretApiKey = config.SecretApiKey,
                     Timeout = config.Timeout,
                     ServiceUrl = config.ServiceUrl + "/Portico.PayPlan.v2/"
                 };
-                _instance = new ServicesContainer(gateway, payplan, deviceController, deviceInterface, reservationConnector);
+                cs.RecurringConnector = payplan;
             }
             #endregion
+
+            if (_instance == null)
+                _instance = new ServicesContainer();
+
+            _instance.AddConfiguration(configName, cs);
         }
 
-        private ServicesContainer(IPaymentGateway gateway, IRecurringService recurring = null, DeviceController deviceController = null, IDeviceInterface deviceInterface = null, TableServiceConnector reservationInterface = null) {
-            _gateway = gateway;
-            _recurring = recurring;
-            _device = deviceInterface;
-            _deviceControl = deviceController;
-
-            // reservation service
-            _reservationInterface = reservationInterface;
+        private ServicesContainer() {
+            _configurations = new Dictionary<string, ConfiguredServices>();
         }
 
-        internal IPaymentGateway GetClient() {
-            return _gateway;
+        private void AddConfiguration(string configName, ConfiguredServices config) {
+            if (_configurations.ContainsKey(configName))
+                _configurations[configName] = config;
+            else _configurations.Add(configName, config);
         }
 
-        internal IDeviceInterface GetDeviceInterface() {
-            return _device;
+        internal IPaymentGateway GetClient(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].GatewayConnector;
+            return null;
         }
 
-        internal DeviceController GetDeviceController() {
-            return _deviceControl;
+        internal IDeviceInterface GetDeviceInterface(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].DeviceInterface;
+            return null;
         }
 
-        internal IRecurringService GetRecurringClient() {
-            return _recurring;
+        internal DeviceController GetDeviceController(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].DeviceController;
+            return null;
         }
 
-        internal TableServiceConnector GetReservationService() {
-            return _reservationInterface;
+        internal IRecurringService GetRecurringClient(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].RecurringConnector;
+            return null;
+        }
+
+        internal TableServiceConnector GetReservationService(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].ReservationConnector;
+            return null;
         }
 
         /// <summary>
         /// Implementation for `IDisposable`
         /// </summary>
         public void Dispose() {
-            _deviceControl.Dispose();
+            foreach (var config in _configurations.Values)
+                config.Dispose();
         }
     }
 }

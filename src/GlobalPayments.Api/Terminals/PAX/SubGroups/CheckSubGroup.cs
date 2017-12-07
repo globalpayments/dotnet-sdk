@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class CheckSubGroup : IRequestSubGroup, IResponseSubGroup {
@@ -25,18 +26,19 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var data = values.Split((char)ControlCodes.US);
             try {
-                this.SaleType = data[0];
-                this.RoutingNumber = data[1];
-                this.AccountNumber = data[2];
-                this.CheckNumber = data[3];
-                this.CheckType = data[4];
-                this.IdType = data[5];
-                this.IdValue = data[6];
-                this.DOB = data[7];
-                this.PhoneNumber = data[8];
-                this.ZipCode = data[9];
+                SaleType = data[0];
+                RoutingNumber = data[1];
+                AccountNumber = data[2];
+                CheckNumber = data[3];
+                CheckType = data[4];
+                IdType = data[5];
+                IdValue = data[6];
+                DOB = data[7];
+                PhoneNumber = data[8];
+                ZipCode = data[9];
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
 

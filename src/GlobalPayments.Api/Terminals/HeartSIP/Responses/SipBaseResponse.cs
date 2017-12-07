@@ -49,7 +49,7 @@ namespace GlobalPayments.Api.Terminals.HeartSIP.Responses {
             return response;
         }
 
-        public new string ToString() {
+        public override string ToString() {
             return _response;
         }
     }

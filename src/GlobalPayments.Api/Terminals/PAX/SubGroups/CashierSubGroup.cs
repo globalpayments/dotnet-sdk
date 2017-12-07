@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class CashierSubGroup : IRequestSubGroup, IResponseSubGroup {
@@ -17,10 +18,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var data = values.Split((char)ControlCodes.US);
             try {
-                this.ClerkId = data[0];
-                this.ShiftId = data[1];
+                ClerkId = data[0];
+                ShiftId = data[1];
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
 

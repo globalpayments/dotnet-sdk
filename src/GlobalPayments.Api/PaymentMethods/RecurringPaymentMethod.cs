@@ -33,20 +33,10 @@ namespace GlobalPayments.Api.PaymentMethods
         /// </summary>
         public string NameOnAccount { get; set; }
 
-        private IPaymentMethod paymentMethod;
-
         /// <summary>
         /// The underlying payment method.
         /// </summary>
-        public IPaymentMethod PaymentMethod {
-            get { return paymentMethod; }
-            set {
-                var client = ServicesContainer.Instance.GetRecurringClient();
-                if (client.SupportsUpdatePaymentDetails)
-                    paymentMethod = value;
-                else throw new UnsupportedTransactionException();
-            }
-        }
+        public IPaymentMethod PaymentMethod { get; set; }
 
         /// <summary>
         /// Set to `PaymentMethodType.Recurring` for internal methods.
@@ -76,7 +66,7 @@ namespace GlobalPayments.Api.PaymentMethods
 
         public RecurringPaymentMethod() : this(null, null) { }
         internal RecurringPaymentMethod(IPaymentMethod paymentMethod) {
-            this.paymentMethod = paymentMethod;
+            PaymentMethod = paymentMethod;
         }
         public RecurringPaymentMethod(string customerId, string paymentId) {
             CustomerKey = customerId;

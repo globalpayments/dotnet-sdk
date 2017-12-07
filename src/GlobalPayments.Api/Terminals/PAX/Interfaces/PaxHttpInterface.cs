@@ -36,7 +36,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
                 var buffer = new List<byte>();
                 using (var sr = new StreamReader(response.GetResponseStream())) {
-                    var rec_buffer = sr.ReadToEnd();
+                    var rec_buffer = sr.ReadToEndAsync().Result;
                     foreach (char c in rec_buffer)
                         buffer.Add((byte)c);
                 }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class EcomSubGroup : IRequestSubGroup, IResponseSubGroup {
@@ -21,14 +22,15 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var data = values.Split((char)ControlCodes.US);
             try {
-                this.EcomMode = data[0];
-                this.TransactionType = data[1];
-                this.SecureType = data[2];
-                this.OrderNumber = data[3];
-                this.Installments = data[4].ToInt32();
-                this.CurrentInstallment = data[5].ToInt32();
+                EcomMode = data[0];
+                TransactionType = data[1];
+                SecureType = data[2];
+                OrderNumber = data[3];
+                Installments = data[4].ToInt32();
+                CurrentInstallment = data[5].ToInt32();
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
 

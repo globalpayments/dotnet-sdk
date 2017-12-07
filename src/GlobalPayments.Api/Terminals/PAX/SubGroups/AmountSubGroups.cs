@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class AmountRequest : IRequestSubGroup {
@@ -57,7 +58,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 this.Balance1 = data[6].ToAmount();
                 this.Balance2 = data[7].ToAmount();
             }
-            catch (IndexOutOfRangeException) { }
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
+            }
         }
     }
 }

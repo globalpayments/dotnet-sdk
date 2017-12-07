@@ -107,6 +107,18 @@ namespace GlobalPayments.Api.Tests.Realex {
             paymentMethod.SaveChanges();
         }
 
+        [TestMethod]
+        public void Test_002c_EditPaymentMethodExpOnly() {
+            var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
+            paymentMethod.PaymentMethod = new CreditCardData {
+                CardType = "MC",
+                ExpMonth = 10,
+                ExpYear = 2020,
+                CardHolderName = "Philip Marlowe"
+            };
+            paymentMethod.SaveChanges();
+        }
+
         [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
         public void Test_003_FindOnRealex() {
             Customer.Find(CustomerId);
@@ -144,13 +156,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         }
 
         [TestMethod]
-        public void Test_005_DeletePaymentMethod() {
-            var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
-            paymentMethod.Delete();
-        }
-
-        [TestMethod]
-        public void Test_006_RecurringPayment() {
+        public void Test_005_RecurringPayment() {
             var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
             var response = paymentMethod.Charge(12m)
                 .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
@@ -158,6 +164,12 @@ namespace GlobalPayments.Api.Tests.Realex {
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_006_DeletePaymentMethod() {
+            var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
+            paymentMethod.Delete();
         }
     }
 }

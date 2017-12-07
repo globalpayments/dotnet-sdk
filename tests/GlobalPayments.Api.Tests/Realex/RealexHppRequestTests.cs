@@ -35,7 +35,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             Assert.IsNotNull(json);
 
             var response = _client.SendRequest(json);
-            var parsedResponse = _service.ParseResponse(response);
+            var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
         }
@@ -52,7 +52,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             Assert.IsNotNull(json);
 
             var response = _client.SendRequest(json);
-            var parsedResponse = _service.ParseResponse(response);
+            var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
         }
@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             Assert.IsNotNull(json);
 
             var response = _client.SendRequest(json);
-            var parsedResponse = _service.ParseResponse(response);
+            var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
         }

@@ -36,10 +36,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal TerminalManageBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
         }
 
-        public override TerminalResponse Execute() {
-            base.Execute();
+        public override TerminalResponse Execute(string configName = "default") {
+            base.Execute(configName);
 
-            var device = ServicesContainer.Instance.GetDeviceController();
+            var device = ServicesContainer.Instance.GetDeviceController(configName);
             return device.ManageTransaction(this);
         }
 

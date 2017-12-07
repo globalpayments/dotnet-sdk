@@ -146,7 +146,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void EbtRefundAllowDup() {
-            _device.EbtBalance(11).WithAllowDuplicates(true).Execute();
+            _device.EbtRefund(11).WithAllowDuplicates(true).Execute();
         }
 
         [TestMethod]
@@ -166,28 +166,6 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void EbtBenefitWithdrawlAllowDup() {
             _device.EbtWithdrawl(13, 10m).WithAllowDuplicates(true).Execute();
-        }
-
-        [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
-        public void EbtPurchaseReversal() {
-            var response = _device.EbtPurchase(1, 10m)
-                .WithCurrency(CurrencyType.FOODSTAMPS)
-                .WithAllowDuplicates(true)
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-
-            _device.OnMessageSent += (message) => {
-                Assert.IsNotNull(message);
-                //Assert.IsTrue(message.StartsWith("[STX]T02[FS]1.35[FS]01[FS]1000[FS][US][US][US][US][US]1[FS]5[FS][FS][ETX]"));
-            };
-
-            var reversal = _device.EbtReversal(13)
-                .WithTransactionId(response.TransactionId)
-                .WithAmount(10m)
-                .Execute();
-            Assert.IsNotNull(reversal);
-            Assert.AreEqual("00", reversal.ResponseCode);
         }
     }
 }

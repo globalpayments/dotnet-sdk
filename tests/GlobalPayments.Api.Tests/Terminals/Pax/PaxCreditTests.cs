@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 ServiceUrl = "https://cert.api2.heartlandportico.com",
                 DeviceConnectionConfig = new ConnectionConfig {
                     DeviceType = DeviceType.PAX_S300,
-                    ConnectionMode = ConnectionModes.TCP_IP,
+                    ConnectionMode = ConnectionModes.HTTP,
                     IpAddress = "10.12.220.172",
                     Port = "10009"
                 },

@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class CommercialRequest : IRequestSubGroup {
@@ -38,12 +39,13 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var data = values.Split((char)ControlCodes.US);
             try {
-                this.PoNumber = data[0];
-                this.CustomerCode = data[1];
-                this.TaxExempt = data[2] == "0" ? false : true;
-                this.TaxExemptId = data[3];
+                PoNumber = data[0];
+                CustomerCode = data[1];
+                TaxExempt = data[2] == "0" ? false : true;
+                TaxExemptId = data[3];
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
     }

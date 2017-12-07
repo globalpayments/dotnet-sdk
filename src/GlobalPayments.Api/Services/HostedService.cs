@@ -25,7 +25,7 @@ namespace GlobalPayments.Api.Services {
             return new AuthorizationBuilder(TransactionType.Verify).WithAmount(amount);
         }
 
-        public Transaction ParseResponse(string json, bool encoded = true) {
+        public Transaction ParseResponse(string json, bool encoded = false) {
             var response = JsonDoc.Parse(json, encoded ? JsonEncoders.Base64Encoder : null);
 
             var timestamp = response.GetValue<string>("TIMESTAMP");

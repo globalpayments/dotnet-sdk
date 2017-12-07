@@ -294,7 +294,7 @@ namespace GlobalPayments.Api.Gateways {
         private JsonDoc BuildAmount(JsonDoc request, string name, decimal? amount, string currency, TransactionType type) {
             if (amount.HasValue) {
                 var node = request.SubElement(name);
-                node.Set("value", amount.ToNumericString());
+                node.Set("value", amount.ToNumericCurrencyString());
                 if (type == TransactionType.Create)
                     node.Set("currency", currency);
             }

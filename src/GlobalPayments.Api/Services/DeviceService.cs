@@ -2,9 +2,9 @@
 
 namespace GlobalPayments.Api.Services {
     public class DeviceService {
-        public static IDeviceInterface Create(ServicesConfig config) {
-            ServicesContainer.Configure(config);
-            return ServicesContainer.Instance.GetDeviceInterface();
+        public static IDeviceInterface Create(ServicesConfig config, string configName = "default") {
+            ServicesContainer.Configure(config, configName);
+            return ServicesContainer.Instance.GetDeviceInterface(configName);
         }
     }
 }

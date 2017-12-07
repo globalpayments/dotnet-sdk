@@ -73,13 +73,14 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void EcomWithSecureEcommerce() {
+            card.ThreeDSecure = new ThreeDSecure {
+                PaymentDataSource = "ApplePay",
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "5"
+            };
+
             Transaction response = card.Charge(10m)
                 .WithCurrency("USD")
-                .WithEcommerceInfo(new EcommerceInfo {
-                    PaymentDataSource = "ApplePay",
-                    Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
-                    Eci = "5",
-                })
                 .WithInvoiceNumber("1234567890")
                 .WithAllowDuplicates(true)
                 .Execute();

@@ -3531,7 +3531,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_033c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
@@ -3568,7 +3568,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_033c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
@@ -3722,7 +3722,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_034c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
@@ -3759,7 +3759,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_034c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
@@ -24066,7 +24066,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod, ExpectedException(typeof(ApiException))]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_033c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
@@ -24111,7 +24111,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod, ExpectedException(typeof(ApiException))]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_033c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
@@ -24297,7 +24297,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_034c1() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",
@@ -24342,7 +24342,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_034c2() {
             ServicesContainer.Configure(new ServicesConfig {
                 MerchantId = "heartlandgpsandbox",

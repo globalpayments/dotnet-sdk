@@ -16,45 +16,13 @@ namespace GlobalPayments.Api.PaymentMethods
         int? ExpMonth { get; set; }
         int? ExpYear { get; set; }
         bool ReaderPresent { get; set; }
+        string ShortExpiry { get; }
     }
 
     public interface ITrackData {
         string Value { get; set; }
         EntryMethod EntryMethod { get; set; }
     }
-
-    //public abstract class CardData : IPaymentMethod {
-    //    public bool CardPresent { get; set; }
-    //    private string cvn;
-    //    public string Cvn {
-    //        get { return cvn; }
-    //        set {
-    //            cvn = value;
-    //            if (!string.IsNullOrEmpty(value))
-    //                CvnPresenceIndicator = CvnPresenceIndicator.Present;
-    //        }
-    //    }
-    //    public CvnPresenceIndicator CvnPresenceIndicator { get; set; }
-    //    public string Number { get; set; }
-    //    public int ExpMonth { get; set; }
-    //    public int ExpYear { get; set; }
-    //    public PaymentMethodType PaymentMethodType { get; private set; }
-    //    public bool ReaderPresent { get; set; }
-
-    //    public CardData(PaymentMethodType type) {
-    //        PaymentMethodType = type;
-    //    }
-    //}
-
-    //public abstract class TrackData : IPaymentMethod {
-    //    public string Value { get; set; }
-    //    public EntryMethod EntryMethod { get; set; }
-    //    public PaymentMethodType PaymentMethodType { get; private set; }
-
-    //    public TrackData(PaymentMethodType type) {
-    //        PaymentMethodType = type;
-    //    }
-    //}
 
     interface IAuthable {
         AuthorizationBuilder Authorize(decimal? amount = null);
@@ -101,7 +69,9 @@ namespace GlobalPayments.Api.PaymentMethods
         AuthorizationBuilder Verify();
     }
 
-    interface IVoidable {
-        
+    interface ISecure3d {
+        ThreeDSecure ThreeDSecure { get; set; }
     }
+
+    interface IVoidable { }
 }

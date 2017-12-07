@@ -35,7 +35,9 @@ namespace GlobalPayments.Api.Tests.Portico {
                     schedule.Delete(true);
                 }
             }
-            catch { }
+            catch (ApiException exc) {
+                Assert.IsNotNull(exc);
+            }
 
             // Remove Payment Methods
             try {
@@ -44,7 +46,9 @@ namespace GlobalPayments.Api.Tests.Portico {
                     pm.Delete(true);
                 }
             }
-            catch { }
+            catch (ApiException exc) {
+                Assert.IsNotNull(exc);
+            }
 
             // Remove Customers
             try {
@@ -53,7 +57,9 @@ namespace GlobalPayments.Api.Tests.Portico {
                     c.Delete(true);
                 }
             }
-            catch { }
+            catch (ApiException exc) {
+                Assert.IsNotNull(exc);
+            }
         }
 
         [TestMethod]
@@ -277,11 +283,11 @@ namespace GlobalPayments.Api.Tests.Portico {
             paymentMethod.SaveChanges();
         }
 
-        [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
-        public void Test_004c_EditPaymentMethodsMethod() {
-            var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
-            paymentMethod.PaymentMethod = new CreditCardData();
-        }
+        //[TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
+        //public void Test_004c_EditPaymentMethodsMethod() {
+        //    var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
+        //    paymentMethod.PaymentMethod = new CreditCardData();
+        //}
 
         [TestMethod]
         public void Test_004d_EditSchedule() {

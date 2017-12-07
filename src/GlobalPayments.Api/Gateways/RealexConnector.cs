@@ -19,7 +19,7 @@ namespace GlobalPayments.Api.Gateways {
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
 
         #region transaction handling
-        public Transaction ProcesAuthorization(AuthorizationBuilder builder) {
+        public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             var et = new ElementTree();
             string timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp();
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
@@ -33,7 +33,7 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(request, "channel", Channel);
             et.SubElement(request, "orderid", orderId);
             if (builder.Amount.HasValue) {
-                et.SubElement(request, "amount").Text(builder.Amount.ToNumericString()).Set("currency", builder.Currency);
+                et.SubElement(request, "amount").Text(builder.Amount.ToNumericCurrencyString()).Set("currency", builder.Currency);
             }
 
             // Hydrate the payment data fields
@@ -52,11 +52,19 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(cvnElement, "presind", (int)card.CvnPresenceIndicator);
                 }
 
+                // TODO: mpi
+                if (card.ThreeDSecure != null) {
+                    var mpi = et.SubElement(request, "mpi");
+                    et.SubElement(mpi, "cavv", card.ThreeDSecure.Cavv);
+                    et.SubElement(mpi, "xid", card.ThreeDSecure.Xid);
+                    et.SubElement(mpi, "eci", card.ThreeDSecure.Eci);
+                }
+
                 // issueno
                 string hash = string.Empty;
                 if (builder.TransactionType == TransactionType.Verify)
                     hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, card.Number);
-                else hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericString(), builder.Currency, card.Number);
+                else hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Number);
                 et.SubElement(request, "sha1hash").Text(hash);
             }
             if (builder.PaymentMethod is RecurringPaymentMethod) {
@@ -73,7 +81,7 @@ namespace GlobalPayments.Api.Gateways {
                 string hash = string.Empty;
                 if (builder.TransactionType == TransactionType.Verify)
                     hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, recurring.CustomerKey);
-                else hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericString(), builder.Currency, recurring.CustomerKey);
+                else hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, recurring.CustomerKey);
                 et.SubElement(request, "sha1hash").Text(hash);
             }
             else {
@@ -117,14 +125,6 @@ namespace GlobalPayments.Api.Gateways {
                     tssInfo.Append(BuildAddress(et, builder.ShippingAddress));
             }
 
-            // TODO: mpi
-            if (builder.EcommerceInfo != null) {
-                var mpi = et.SubElement(request, "mpi");
-                et.SubElement(mpi, "cavv", builder.EcommerceInfo.Cavv);
-                et.SubElement(mpi, "xid", builder.EcommerceInfo.Xid);
-                et.SubElement(mpi, "eci", builder.EcommerceInfo.Eci);
-            }
-
             //et.SubElement(request, "mobile");
             //et.SubElement(request, "token", token);
 
@@ -152,7 +152,7 @@ namespace GlobalPayments.Api.Gateways {
             request.Set("CHANNEL", Channel);
             request.Set("ORDER_ID", orderId);
             if(builder.Amount != null)
-                request.Set("AMOUNT", builder.Amount.ToNumericString());
+                request.Set("AMOUNT", builder.Amount.ToNumericCurrencyString());
             request.Set("CURRENCY", builder.Currency);
             request.Set("TIMESTAMP", timestamp);
             request.Set("AUTO_SETTLE_FLAG", (builder.TransactionType == TransactionType.Sale) ? "1" : "0");
@@ -206,13 +206,13 @@ namespace GlobalPayments.Api.Gateways {
                 timestamp,
                 MerchantId,
                 orderId,
-                (builder.Amount != null) ? builder.Amount.ToNumericString() : null,
+                (builder.Amount != null) ? builder.Amount.ToNumericCurrencyString() : null,
                 builder.Currency
             };
 
             if (HostedPaymentConfig.CardStorageEnabled.HasValue || (builder.HostedPaymentData != null && builder.HostedPaymentData.OfferToSaveCard.HasValue) || HostedPaymentConfig.DisplaySavedCards.HasValue) {
-                toHash.Add((builder.HostedPaymentData.CustomerKey != null) ? builder.HostedPaymentData.CustomerKey : null);
-                toHash.Add((builder.HostedPaymentData.PaymentKey != null) ? builder.HostedPaymentData.PaymentKey : null);
+                toHash.Add(builder.HostedPaymentData.CustomerKey ?? null);
+                toHash.Add(builder.HostedPaymentData.PaymentKey ?? null);
             }
 
             if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE) {
@@ -238,9 +238,13 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(request, "orderid", orderId);
             et.SubElement(request, "pasref", builder.TransactionId);
             if (builder.Amount.HasValue)
-                et.SubElement(request, "amount", builder.Amount.ToNumericString()).Set("currency", builder.Currency);
+                et.SubElement(request, "amount", builder.Amount.ToNumericCurrencyString()).Set("currency", builder.Currency);
             else if (builder.TransactionType == TransactionType.Capture)
                 throw new BuilderException("Amount cannot be null for capture.");
+
+            // payer authentication response
+            if (builder.TransactionType == TransactionType.VerifySignature)
+                et.SubElement(request, "pares", builder.PayerAuthenticationResponse);
 
             // rebate hash
             if (builder.TransactionType == TransactionType.Refund) {
@@ -258,7 +262,7 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(comments, "comment", builder.Description).Set("id", "1");
             }
 
-            et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericString(), builder.Currency, ""));
+            et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, ""));
 
             var response = DoTransaction(et.ToString(request));
             return MapResponse(response);
@@ -345,6 +349,26 @@ namespace GlobalPayments.Api.Gateways {
                     TransactionId = root.GetValue<string>("pasref")
                 }
             };
+
+            // 3d secure enrolled
+            if (root.Has("enrolled")) {
+                result.ThreeDSecure = new ThreeDSecure();
+                result.ThreeDSecure.Enrolled = root.GetValue<string>("enrolled") == "Y";
+                result.ThreeDSecure.PayerAuthenticationRequest = root.GetValue<string>("pareq");
+                result.ThreeDSecure.Xid = root.GetValue<string>("xid");
+                result.ThreeDSecure.IssuerAcsUrl = root.GetValue<string>("url");
+            }
+
+            // threedsecure
+            if (root.Has("threedsecure")) {
+                result.ThreeDSecure = new ThreeDSecure();
+                result.ThreeDSecure.Status = root.GetValue<string>("status");
+                result.ThreeDSecure.Eci = root.GetValue<string>("eci");
+                result.ThreeDSecure.Xid = root.GetValue<string>("xid");
+                result.ThreeDSecure.Cavv = root.GetValue<string>("cavv");
+                result.ThreeDSecure.Algorithm = root.GetValue<int>("algorithm");
+            }
+
             return result;
         }
 
@@ -403,6 +427,8 @@ namespace GlobalPayments.Api.Gateways {
                     if (payment is Credit)
                         return "credit";
                     else return "payment-out";
+                case TransactionType.VerifyEnrolled:
+                    return "3ds-verifyenrolled";
                 default:
                     throw new UnsupportedTransactionException();
             }
@@ -421,6 +447,8 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.Void:
                 case TransactionType.Reversal:
                     return "void";
+                case TransactionType.VerifySignature:
+                    return "3ds-verifysig";
                 default:
                     return "unknown";
             }
@@ -487,8 +515,11 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         private Element BuildAddress(ElementTree et, Address address) {
+            if (address == null)
+                return null;
+
             var code = address.PostalCode;
-            if (address.PostalCode.Contains("|")) {
+            if (!string.IsNullOrEmpty(code) && !code.Contains("|")) {
                 code = string.Format("{0}|{1}", address.PostalCode, address.StreetAddress1);
                 if (address.Country == "GB") {
                     code = string.Format("{0}|{1}", Regex.Replace(address.PostalCode, "[^0-9]", ""), Regex.Replace(address.StreetAddress1, "[^0-9]", ""));

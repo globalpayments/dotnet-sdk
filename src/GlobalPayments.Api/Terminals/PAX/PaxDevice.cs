@@ -4,8 +4,8 @@ using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
-using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Messaging;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class PaxController : DeviceController {
@@ -297,13 +297,13 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         public IDeviceResponse CloseLane() {
             if(controller.DeviceType == DeviceType.PAX_S300)
-                throw new UnsupportedTransactionException("The S300 does not support yhis call.");
+                throw new UnsupportedTransactionException("The S300 does not support this call.");
             throw new UnsupportedTransactionException();
         }
 
         public IDeviceResponse OpenLane() {
             if (controller.DeviceType == DeviceType.PAX_S300)
-                throw new UnsupportedTransactionException("The S300 does not support yhis call.");
+                throw new UnsupportedTransactionException("The S300 does not support this call.");
             throw new UnsupportedTransactionException();
         }
         #endregion
@@ -359,11 +359,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         public TerminalAuthBuilder EbtRefund(int referenceNumber, decimal? amount = null) {
             return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber).WithAmount(amount);
-        }
-
-        public TerminalManageBuilder EbtReversal(int referenceNumber) {
-            //return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.EBT).WithReferenceNumber(referenceNumber);
-            throw new UnsupportedTransactionException("EBT Reversal is not supported by the current device.");
         }
 
         public TerminalAuthBuilder EbtWithdrawl(int referenceNumber, decimal? amount = null) {

@@ -50,7 +50,7 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
                 AccountId = account,
                 ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
                 SharedSecret = _sharedSecret
-            });
+            }, "realexResponder");
 
             // gather additional information
             var shippingCode = json.GetValue<string>("SHIPPING_CODE");
@@ -73,19 +73,15 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             }
 
             try {
-                var gatewayResponse = gatewayRequest.WithCurrency(currency)
-                    .WithOrderId(orderId)
-                    .WithTimestamp(timestamp)
-                    .WithAddress(new Address {
-                        PostalCode = billingCode,
-                        Country = billingCountry
-                    })
-                    .WithAddress(new Address {
-                        PostalCode = shippingCode,
-                        Country = shippingCountry
-                    }, AddressType.Shipping)
-                    .Execute();
+                gatewayRequest.WithCurrency(currency).WithOrderId(orderId).WithTimestamp(timestamp);
+                if (billingCode != null || billingCountry != null) {
+                    gatewayRequest.WithAddress(new Address { PostalCode = billingCode, Country = billingCountry });
+                }
+                if (shippingCode != null || shippingCountry != null) {
+                    gatewayRequest.WithAddress(new Address { PostalCode = shippingCode, Country = shippingCountry }, AddressType.Shipping);
+                }
 
+                var gatewayResponse = gatewayRequest.Execute("realexResponder");
                 if (gatewayResponse.ResponseCode.Equals("00"))
                     return BuildResponse(HttpStatusCode.OK, ConvertResponse(json, gatewayResponse));
                 else return BadRequest(gatewayResponse.ResponseMessage);

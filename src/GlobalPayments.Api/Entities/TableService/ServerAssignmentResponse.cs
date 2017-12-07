@@ -8,7 +8,7 @@ namespace GlobalPayments.Api.Entities.TableService {
         /// </summary>
         public ShiftAssignments Assignments { get; private set; }
 
-        public ServerAssignmentResponse(string json) : base(json) {
+        public ServerAssignmentResponse(string json, string configName = "default") : base(json, configName) {
             ExpectedAction = "getServerAssignment";
         }
 

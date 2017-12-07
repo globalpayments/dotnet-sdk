@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.PaymentMethods {
     /// <summary>
     /// Use credit as a payment method.
     /// </summary>
-    public abstract class Credit : IPaymentMethod, IEncryptable, ITokenizable, IChargable, IAuthable, IRefundable, IReversable, IVerifiable, IPrePayable, IBalanceable {
+    public abstract class Credit : IPaymentMethod, IEncryptable, ITokenizable, IChargable, IAuthable, IRefundable, IReversable, IVerifiable, IPrePayable, IBalanceable, ISecure3d {
         /// <summary>
         /// The card's encryption data; where applicable.
         /// </summary>
@@ -18,6 +19,11 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// Set to `PaymentMethodType.Credit` for internal methods.
         /// </summary>
         public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.Credit; } }
+
+        /// <summary>
+        /// Secure 3d Data attached to the card
+        /// </summary>
+        public ThreeDSecure ThreeDSecure { get; set; }
 
         /// <summary>
         /// A token value representing the card.
@@ -30,7 +36,10 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <param name="amount">The amount of the transaction</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder Authorize(decimal? amount = null) {
-            return new AuthorizationBuilder(TransactionType.Auth, this).WithAmount(amount);
+            return new AuthorizationBuilder(TransactionType.Auth, this)
+                .WithAmount(amount ?? ThreeDSecure?.Amount)
+                .WithCurrency(ThreeDSecure?.Currency)
+                .WithOrderId(ThreeDSecure?.OrderId);
         }
 
         /// <summary>
@@ -39,7 +48,10 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <param name="amount">The amount of the transaction</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder Charge(decimal? amount = null) {
-            return new AuthorizationBuilder(TransactionType.Sale, this).WithAmount(amount);
+            return new AuthorizationBuilder(TransactionType.Sale, this)
+                .WithAmount(amount ?? ThreeDSecure?.Amount)
+                .WithCurrency(ThreeDSecure?.Currency)
+                .WithOrderId(ThreeDSecure?.OrderId);
         }
 
         /// <summary>
@@ -113,14 +125,15 @@ namespace GlobalPayments.Api.PaymentMethods {
         private Dictionary<string, Regex> RegexHash {
             get {
                 if (regexHash == null) {
-                    regexHash = new Dictionary<string, Regex>();
-                    regexHash.Add("Amex", AmexRegex);
-                    regexHash.Add("MC", MasterCardRegex);
-                    regexHash.Add("Visa", VisaRegex);
-                    regexHash.Add("DinersClub", DinersClubRegex);
-                    regexHash.Add("EnRoute", RouteClubRegex);
-                    regexHash.Add("Discover", DiscoverRegex);
-                    regexHash.Add("Jcb", JcbRegex);
+                    regexHash = new Dictionary<string, Regex> {
+                        { "Amex", AmexRegex },
+                        { "MC", MasterCardRegex },
+                        { "Visa", VisaRegex },
+                        { "DinersClub", DinersClubRegex },
+                        { "EnRoute", RouteClubRegex },
+                        { "Discover", DiscoverRegex },
+                        { "Jcb", JcbRegex },
+                };
                 }
 
                 return regexHash;
@@ -196,7 +209,9 @@ namespace GlobalPayments.Api.PaymentMethods {
                         }
                     }
                 }
-                catch (Exception) { /* NOM NOM */ }
+                catch (NullReferenceException exc) {
+                    EventLogger.Instance.Error(exc.Message);
+                }
             }
         }
 
@@ -210,7 +225,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// </summary>
         public int? ExpYear { get; set; }
 
-        internal string ShortExpiry {
+        public string ShortExpiry {
             get {
                 var month = (ExpMonth.HasValue) ? ExpMonth.ToString().PadLeft(2, '0') : string.Empty;
                 var year = (ExpYear.HasValue) ? ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty;
@@ -231,6 +246,72 @@ namespace GlobalPayments.Api.PaymentMethods {
             ReaderPresent = false;
             CardType = "Unknown";
             CvnPresenceIndicator = CvnPresenceIndicator.NotRequested;
+        }
+
+        public bool VerifyEnrolled(decimal amount, string currency, string orderId = null, string configName = "default") {
+            Transaction response;
+            try {
+                response = new AuthorizationBuilder(TransactionType.VerifyEnrolled, this)
+                   .WithAmount(amount)
+                   .WithCurrency(currency)
+                   .WithOrderId(orderId)
+                   .Execute(configName);
+            }
+            catch (GatewayException exc) {
+                if (exc.ResponseCode.Equals("110"))
+                    return false;
+                throw;
+            }
+            catch (Exception) { throw; }
+
+            if (response.ThreeDSecure != null && response.ThreeDSecure.Enrolled) {
+                ThreeDSecure = response.ThreeDSecure;
+                ThreeDSecure.Amount = amount;
+                ThreeDSecure.Currency = currency;
+                ThreeDSecure.OrderId = response.OrderId;
+                return true;
+            }
+            return false;
+        }
+
+        public bool VerifySignature(string authorizationResponse, decimal? amount, string currency, string orderId, string configName = "default") {
+            // ensure we have an object
+            if (ThreeDSecure == null)
+                ThreeDSecure = new ThreeDSecure();
+
+            ThreeDSecure.Amount = amount;
+            ThreeDSecure.Currency = currency;
+            ThreeDSecure.OrderId = orderId;
+
+            return VerifySignature(authorizationResponse, null, configName);
+        }
+        public bool VerifySignature(string authorizationResponse, string merchantData = null, string configName = "default") {
+            // ensure we have an object
+            if (ThreeDSecure == null) 
+                ThreeDSecure = new ThreeDSecure();
+
+            // if we have some merchantData use it
+            if (merchantData != null)
+                ThreeDSecure.MerchantData = merchantData;
+
+            Transaction response = new ManagementBuilder(TransactionType.VerifySignature)
+                .WithAmount(ThreeDSecure.Amount)
+                .WithCurrency(ThreeDSecure.Currency)
+                .WithPayerAuthenticationResponse(authorizationResponse)
+                .WithPaymentMethod(new TransactionReference {
+                    OrderId = ThreeDSecure.OrderId
+                })
+                .Execute(configName);
+
+            if (response.ResponseCode.Equals("00")) {
+                ThreeDSecure.Status = response.ThreeDSecure.Status;
+                ThreeDSecure.Eci = response.ThreeDSecure.Eci;
+                ThreeDSecure.Cavv = response.ThreeDSecure.Cavv;
+                ThreeDSecure.Algorithm = response.ThreeDSecure.Algorithm;
+                ThreeDSecure.Xid = response.ThreeDSecure.Xid;
+                return true;
+            }
+            else return false;
         }
     }
 

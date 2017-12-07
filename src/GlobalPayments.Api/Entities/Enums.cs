@@ -294,7 +294,17 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a release.
         /// </summary>
-        Release = 1 << 22
+        Release = 1 << 22,
+
+        /// <summary>
+        /// Indicates a verify 3d Secure enrollment transaction
+        /// </summary>
+        VerifyEnrolled = 1 << 23,
+
+        /// <summary>
+        /// Indicates a verify 3d secure verify signature transaction
+        /// </summary>
+        VerifySignature = 1 << 24
     }
 
     /// <summary>
@@ -733,5 +743,11 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates reason was not given.
         /// </summary>
         NOTGIVEN
+    }
+
+    public enum ReversalReasonCode {
+        CUSTOMERCANCELLATION,
+        TERMINALERROR,
+        TIMEOUT
     }
 }

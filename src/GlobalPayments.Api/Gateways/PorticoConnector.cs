@@ -21,7 +21,7 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         #region processing
-        public Transaction ProcesAuthorization(AuthorizationBuilder builder) {
+        public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             var et = new ElementTree();
 
             // build request
@@ -102,12 +102,25 @@ namespace GlobalPayments.Api.Gateways {
 
                 var manualEntry = et.SubElement(cardData, hasToken ? "TokenData" : "ManualEntry");
                 et.SubElement(manualEntry, hasToken ? "TokenValue" : "CardNbr").Text(tokenValue ?? card.Number);
-                et.SubElement(manualEntry, "ExpMonth").Text(card.ExpMonth.ToString());
-                et.SubElement(manualEntry, "ExpYear").Text(card.ExpYear.ToString());
+                et.SubElement(manualEntry, "ExpMonth", card.ExpMonth?.ToString());
+                et.SubElement(manualEntry, "ExpYear", card.ExpYear?.ToString());
                 et.SubElement(manualEntry, "CVV2", card.Cvn);
                 et.SubElement(manualEntry, "ReaderPresent", card.ReaderPresent ? "Y" : "N");
                 et.SubElement(manualEntry, "CardPresent", card.CardPresent ? "Y" : "N");
                 block1.Append(cardData);
+
+                // secure 3d
+                if (card is CreditCardData) {
+                    var secureEcom = (card as CreditCardData).ThreeDSecure;
+                    if (secureEcom != null) {
+                        var secureEcommerce = et.SubElement(block1, "SecureECommerce");
+                        et.SubElement(secureEcommerce, "PaymentDataSource", secureEcom.PaymentDataSource);
+                        et.SubElement(secureEcommerce, "TypeOfPaymentData", secureEcom.PaymentDataType);
+                        et.SubElement(secureEcommerce, "PaymentData", secureEcom.Cavv);
+                        et.SubElement(secureEcommerce, "ECommerceIndicator", secureEcom.Eci);
+                        et.SubElement(secureEcommerce, "XID", secureEcom.Xid);
+                    }
+                }                
 
                 // recurring data
                 if (builder.TransactionModifier == TransactionModifier.Recurring) {
@@ -125,6 +138,13 @@ namespace GlobalPayments.Api.Gateways {
                 if (!hasToken) {
                     trackData.Text(track.Value);
                     trackData.Set("method", track.EntryMethod == EntryMethod.Swipe ? "swipe" : "proximity");
+                    if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
+                        // Tag data
+                        if (!string.IsNullOrEmpty(builder.TagData)) {
+                            var tagData = et.SubElement(block1, "EMVData");
+                            et.SubElement(tagData, "EMVTagData", builder.TagData);
+                        }
+                    }
                     if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {
                         string chipCondition = null;
                         if (builder.ChipCondition != null)
@@ -134,6 +154,11 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(block1, "EMVChipCondition", chipCondition);
                         et.SubElement(block1, "MessageAuthenticationCode", builder.MessageAuthenticationCode);
                         et.SubElement(block1, "PosSequenceNbr", builder.PosSequenceNumber);
+                        et.SubElement(block1, "ReversalResonCode", builder.ReversalReasonCode);
+                        if (!string.IsNullOrEmpty(builder.TagData)) {
+                            var tagData = et.SubElement(block1, "TagData");
+                            et.SubElement(tagData, "TagValues", builder.TagData).Set("source", "chip");
+                        }
                     }
                     else block1.Append(cardData);
                 }
@@ -273,15 +298,6 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(direct, "DirectMktShipDay").Text(builder.EcommerceInfo.ShipDay.ToString());
                     et.SubElement(direct, "DirectMktShipMonth").Text(builder.EcommerceInfo.ShipMonth.ToString());
                 }
-
-                if (!string.IsNullOrEmpty(builder.EcommerceInfo.Cavv) || !string.IsNullOrEmpty(builder.EcommerceInfo.Eci) || !string.IsNullOrEmpty(builder.EcommerceInfo.Xid)) {
-                    var secureEcommerce = et.SubElement(block1, "SecureECommerce");
-                    et.SubElement(secureEcommerce, "PaymentDataSource", builder.EcommerceInfo.PaymentDataSource);
-                    et.SubElement(secureEcommerce, "TypeOfPaymentData", builder.EcommerceInfo.PaymentDataType);
-                    et.SubElement(secureEcommerce, "PaymentData", builder.EcommerceInfo.Cavv);
-                    et.SubElement(secureEcommerce, "ECommerceIndicator", builder.EcommerceInfo.Eci);
-                    et.SubElement(secureEcommerce, "XID", builder.EcommerceInfo.Xid);
-                }
             }
 
             // dynamic descriptor
@@ -377,6 +393,7 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(header, "DeveloperId", DeveloperId);
             et.SubElement(header, "VersionNumber", VersionNumber);
             et.SubElement(header, "ClientTxnId", clientTransactionId);
+            et.SubElement(header, "PosReqDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
 
             // Transaction
             var trans = et.SubElement(version1, "Transaction");
@@ -423,6 +440,7 @@ namespace GlobalPayments.Api.Gateways {
                 result.ResponseCode = NormalizeResponse(root.GetValue<string>("RspCode")) ?? gatewayRspCode;
                 result.ResponseMessage = root.GetValue<string>("RspText", "RspMessage") ?? gatewayRspText;
                 result.TransactionDescriptor = root.GetValue<string>("TxnDescriptor");
+                result.HostResponseDate = root.GetValue<DateTime>("HostRspDT");
                 if (payment != null) {
                     result.TransactionReference = new TransactionReference {
                         PaymentMethodType = payment.PaymentMethodType,
@@ -452,6 +470,20 @@ namespace GlobalPayments.Api.Gateways {
                         TransactionCount = root.GetValue<int>("TxnCnt"),
                         TotalAmount = root.GetValue<decimal>("TotalAmt"),
                         SequenceNumber = root.GetValue<string>("BatchSeqNbr")
+                    };
+                }
+
+                // debit mac
+                if (root.Has("DebitMac")) {
+                    result.DebitMac = new DebitMac {
+                        TransactionCode = root.GetValue<string>("TransactionCode"),
+                        TransmissionNumber = root.GetValue<string>("TransmissionNumber"),
+                        BankResponseCode = root.GetValue<string>("BankResponseCode"),
+                        MacKey = root.GetValue<string>("MacKey"),
+                        PinKey = root.GetValue<string>("PinKey"),
+                        FieldKey = root.GetValue<string>("FieldKey"),
+                        TraceNumber = root.GetValue<string>("TraceNumber"),
+                        MessageAuthenticationCode = root.GetValue<string>("MessageAuthenticationCode"),
                     };
                 }
             }

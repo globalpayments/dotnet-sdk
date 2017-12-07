@@ -7,7 +7,7 @@
             SetupValidations();
         }
 
-        public virtual TResult Execute() {
+        public virtual TResult Execute(string configName = "default") {
             Validations.Validate(this);
             return default(TResult);
         }

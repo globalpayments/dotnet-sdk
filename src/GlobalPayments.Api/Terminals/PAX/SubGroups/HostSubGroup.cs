@@ -2,6 +2,7 @@
 using System.IO;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class HostResponse : IResponseSubGroup {
@@ -19,14 +20,15 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var data = values.Split((char)ControlCodes.US);
             try {
-                this.HostResponseCode = data[0];
-                this.HostResponseMessage = data[1];
-                this.AuthCode = data[2];
-                this.HostRefereceNumber = data[3];
-                this.TraceNumber = data[4];
-                this.BatchNumber = data[5];
+                HostResponseCode = data[0];
+                HostResponseMessage = data[1];
+                AuthCode = data[2];
+                HostRefereceNumber = data[3];
+                TraceNumber = data[4];
+                BatchNumber = data[5];
             }
-            catch (IndexOutOfRangeException) {
+            catch (IndexOutOfRangeException exc) {
+                EventLogger.Instance.Error(exc.Message);
             }
         }
     }

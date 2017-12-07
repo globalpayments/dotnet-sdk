@@ -58,12 +58,6 @@ namespace GlobalPayments.Api.Terminals {
         public int TimeOut { get; set; }
         public string IpAddress { get; set; }
         public string Port { get; set; }
-        //public int? DeviceId { get; set; }
-        //public int? SiteId { get; set; }
-        //public int? LicenseId { get; set; }
-        //public string UserName { get; set; }
-        //public string Password { get; set; }
-        //public string Url { get; set; }
 
         public ConnectionConfig() {
             this.TimeOut = -1;

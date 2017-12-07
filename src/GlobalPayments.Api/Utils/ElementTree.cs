@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -16,7 +17,15 @@ namespace GlobalPayments.Api.Utils {
             namespaces.Add("soap", "http://schemas.xmlsoap.org/soap/envelope/");
         }
         public ElementTree(string xml) : this() {
-            doc.LoadXml(xml);
+            var settings = new XmlReaderSettings {
+                DtdProcessing = DtdProcessing.Prohibit,
+            };
+
+            var buffer = Encoding.UTF8.GetBytes(xml);
+            var stream = new MemoryStream(buffer);
+            var reader = XmlReader.Create(stream, settings);
+            doc.Load(reader);
+            //doc.LoadXml(xml);
         }
 
         public Element Element(string tagName) {
