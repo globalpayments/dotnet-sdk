@@ -285,7 +285,7 @@ namespace GlobalPayments.Api.PaymentMethods {
 
             return VerifySignature(authorizationResponse, null, configName);
         }
-        public bool VerifySignature(string authorizationResponse, string merchantData = null, string configName = "default") {
+        public bool VerifySignature(string authorizationResponse, MerchantDataCollection merchantData = null, string configName = "default") {
             // ensure we have an object
             if (ThreeDSecure == null) 
                 ThreeDSecure = new ThreeDSecure();

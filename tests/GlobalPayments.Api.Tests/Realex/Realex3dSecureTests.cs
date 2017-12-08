@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Collections.Generic;
 using GlobalPayments.Api.Utils;
+using System.Text;
 
 namespace GlobalPayments.Api.Tests.Realex {
     [TestClass]
@@ -28,6 +29,93 @@ namespace GlobalPayments.Api.Tests.Realex {
             Assert.IsNotNull(authClient.Authenticate("eJxlUsFSwjAQvfsVTO82TSm0MNs4FVBwRkUF8ZomK1Rpimkr6NebYBEdc8jsy27evrwNnO3ydesddZkVKnao6zktVKKQmVrGznx2cRo5Z+wEZiuNOHxAUWtkcI1lyZfYymTs+KIjZYRt30tl0H2WPRpFIuQyDULsdTvoMJgm9/jGoOnCTBPXB3KAhk2LFVcVAy7ezic3LAgD2ouANBBy1JMh6zULyDcGxXNkK+S6WnMll5vS7GmxA7JPgChqVekPFgUekAOAWq/Zqqo2ZZ+Q7Xbr/r/visKtX4HYSiBHcdPaRqVh3mWSJcM7Nb7t0O1iGs6n7cXnI025N7hSk1EMxFaA5BUy36MhpX7Y8r1+J+hTI39/Djy3kqwZRl4DYGN7JE3GJn4fgDFfm+EcnnRAgLtNodBUGFd/YiBHwYOx9VZUxrVxdjEb1aPXy5f5k27Tmzo/v75N4ti6vS+wbJlxikb0m84CIJaCNIMkzfxN9OdffAF4VML9"));
         }
 
+        [TestMethod]
+        public void MerchantDataEnumeratorTest() {
+            var keys = new List<string> { "Key1", "Key2", "Key3" };
+            var values = new List<string> { "Value1", "Value2", "Value3" };
+
+            var merchantData = new MerchantDataCollection();
+            for (int i = 0; i < 3; i++)
+                merchantData.Add(keys[i], values[i]);
+
+            Assert.AreEqual(3, merchantData.Count);
+
+            foreach (var kvp in merchantData) {
+                Assert.IsTrue(keys.Contains(kvp.Key));
+                //Assert.IsTrue(values.Contains(kvp.Value));
+            }   
+        }
+
+        [TestMethod]
+        public void MerchantDataTestWithHiddenValues() {
+            var card = new CreditCardData {
+                Number = "4012001037141112",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            // this causes some hidden values to be stored there
+            var enrolled = card.VerifyEnrolled(1m, "USD");
+            if (enrolled) {
+                var merchantData = card.ThreeDSecure.MerchantData;
+
+                // check that hidden values do not show up in count
+                Assert.IsNotNull(merchantData);
+                Assert.AreEqual(0, merchantData.Count);
+
+                // check I cannot pull back hidden values
+                Assert.IsNull(merchantData["_amount"]);
+                Assert.IsNull(merchantData["_currecy"]);
+                Assert.IsNull(merchantData["_orderid"]);
+
+                // add some additional values
+                for (int i = 0; i < 3; i++) {
+                    merchantData.Add("Key" + i, "Value" + i);
+
+                    // checked they're there and values are right
+                    Assert.IsNotNull(merchantData["Key" + i]);
+                    Assert.AreEqual("Value" + i, merchantData["Key" + i]);
+                }
+
+                // check updated count
+                Assert.AreEqual(3, merchantData.Count);
+            }
+        }
+
+        [TestMethod]
+        public void MerchantDataEncryptAndDecrypt() {
+            var merchantData = new MerchantDataCollection {
+                { "customer_id", "12345" },
+                { "invoice_number", "54321" }
+            };
+
+            var encrypted = merchantData.ToString((input) => {
+                var encoded = string.Format("{0}.{1}", input, "secret");
+                return Convert.ToBase64String(Encoding.UTF8.GetBytes(encoded));
+            });
+
+            var decrypted = MerchantDataCollection.Parse(encrypted, (input) => {
+                var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(input)).Split('.');
+                Assert.AreEqual("secret", decoded[1]);
+                return decoded[0];
+            });
+
+            Assert.IsNotNull(decrypted);
+            Assert.IsNotNull(decrypted["customer_id"]);
+            Assert.AreEqual("12345", decrypted["customer_id"]);
+            Assert.IsNotNull(decrypted["invoice_number"]);
+            Assert.AreEqual("54321", decrypted["invoice_number"]);
+        }
+
+        [TestMethod, ExpectedException(typeof(ApiException))]
+        public void MerchantDataMultiKey() {
+            new MerchantDataCollection {
+                { "amount", "10m" },
+                { "amount", "10m" }
+            };
+        }
+
         // full cycle
         [TestMethod]
         public void FullCycleWithMerchantData() {
@@ -42,15 +130,21 @@ namespace GlobalPayments.Api.Tests.Realex {
             if (enrolled) {
                 var secureEcom = card.ThreeDSecure;
                 if (secureEcom != null) {
+                    // add merchant data
+                    secureEcom.MerchantData.Add("client_txn_id", "123456");
+
                     // authenticate
                     var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
-                    var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData);
+                    var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
+
+                    // expand return data
                     string payerAuthenticationResponse = authResponse.pares;
-                    string md = authResponse.md;
+                    MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
 
                     // verify signature
                     if (card.VerifySignature(payerAuthenticationResponse, md)) {
-                        var response = card.Charge().Execute();
+                        var response = card.Charge()
+                            .Execute();
                         Assert.IsNotNull(response);
                         Assert.AreEqual("00", response.ResponseCode);
                     }
@@ -80,7 +174,7 @@ namespace GlobalPayments.Api.Tests.Realex {
                 if (secureEcom != null) {
                     // authenticate
                     var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
-                    var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData);
+                    var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
                     string payerAuthenticationResponse = authResponse.pares;
                     string md = authResponse.md;
 

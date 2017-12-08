@@ -1,6 +1,8 @@
-﻿using GlobalPayments.Api.Builders;
-using System;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace GlobalPayments.Api.Entities {
     public class ThreeDSecure {
@@ -9,14 +11,28 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public int Algorithm { get; set; }
 
-        internal decimal? Amount { get; set; }
+        private decimal? _amount;
+        internal decimal? Amount {
+            get { return _amount; }
+            set {
+                _amount = value;
+                MerchantData.Add("_amount", _amount.ToString(), false);
+            }
+        }
 
         /// <summary>
         /// Consumer authentication (3DSecure) verification value.
         /// </summary>
         public string Cavv { get; set; }
 
-        internal string Currency { get; set; }
+        private string _currency;
+        internal string Currency {
+            get { return _currency; }
+            set {
+                _currency = value;
+                MerchantData.Add("_currency", _currency, false);
+            }
+        }
 
         /// <summary>
         /// Consumer authentication (3DSecure) electronic commerce indicator.
@@ -33,24 +49,39 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string IssuerAcsUrl { get; set; }
 
-        public string MerchantData {
+        private MerchantDataCollection _merchantData;
+        /// <summary>
+        /// A KVP collection of merchant supplied data
+        /// </summary>
+        public MerchantDataCollection MerchantData {
             get {
-                if(Amount != null && Currency != null && OrderId != null)
-                    return Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}.{1}.{2}", Amount, Currency, OrderId)));
-                return string.Empty;
+                if (_merchantData == null)
+                    _merchantData = new MerchantDataCollection();
+                return _merchantData;
             }
             set {
-                var merchantData = Encoding.UTF8.GetString(Convert.FromBase64String(value)).Split('.');
-                Amount = decimal.Parse(merchantData[0]);
-                Currency = merchantData[1];
-                OrderId = merchantData[2];
+                _merchantData = value;
+                if (_merchantData.HasKey("_amount"))
+                    _amount = _merchantData.GetValue<decimal>("_amount");
+                if (_merchantData.HasKey("_currency"))
+                    _currency = _merchantData.GetValue<string>("_currency");
+                if (_merchantData.HasKey("_orderid"))
+                    _orderId = _merchantData.GetValue<string>("_orderid");
             }
         }
+
+        private string _orderId;
 
         /// <summary>
         /// The order ID used for the initial transaction
         /// </summary>
-        public string OrderId { get; set; }
+        public string OrderId {
+            get { return _orderId; }
+            set {
+                _orderId = value;
+                MerchantData.Add("_orderid", _orderId, false);
+            }
+        }
 
         /// <summary>
         /// The Payer Authentication Request returned by the Enrolment Server. Must be sent to the Issuing Bank's ACS (Access Control Server) URL.
@@ -83,5 +114,109 @@ namespace GlobalPayments.Api.Entities {
         public ThreeDSecure() {
             PaymentDataType = "3DSecure";
         }
+    }
+
+    public class MerchantDataCollection : IEnumerable<KeyValuePair<string, string>> {
+        private List<MerchantKVP> _collection;
+
+        public string this[string key] {
+            get {
+                var kvp = _collection.FirstOrDefault(p => p.Key == key);
+                if (kvp != null && kvp.Visible)
+                    return kvp.Value;
+                return null;
+            }
+        }
+
+        public int Count {
+            get {
+                return _collection.Where(p => p.Visible).Count();
+            }
+        }
+
+        public MerchantDataCollection() {
+            _collection = new List<MerchantKVP>();
+        }
+
+        internal void Add(string key, string value, bool visible) {
+            if (HasKey(key))
+                throw new ApiException(string.Format("Key {0} already exists in the collection.", key));
+
+            _collection.Add(new MerchantKVP {
+                Key = key,
+                Value = value,
+                Visible = visible
+            });
+        }
+        public void Add(string key, string value) {
+            Add(key, value, true);
+        }
+
+        internal T GetValue<T>(string key, Func<string, T> converter = null) {
+            var kvp = _collection.FirstOrDefault(p => p.Key == key);
+            if (kvp != null) {
+                if (converter != null)
+                    return converter(kvp.Value);
+                else return (T)Convert.ChangeType(kvp.Value, typeof(T));
+            }
+            return default(T);
+        }
+
+        internal bool HasKey(string key) {
+            return GetValue<string>(key) != null;
+        }
+
+        
+
+        public static MerchantDataCollection Parse(string kvpString, Func<string, string> decoder = null) {
+            var collection = new MerchantDataCollection();
+
+            // decrypt the string
+            var decryptedKvp = Encoding.UTF8.GetString(Convert.FromBase64String(kvpString));
+            if (decoder != null) {
+                decryptedKvp = decoder(decryptedKvp);
+            }
+
+            // build out the object
+            var merchantData = decryptedKvp.Split('|');
+            foreach (var kvp in merchantData) {
+                var data = kvp.Split(':');
+                collection.Add(data[0], data[1], bool.Parse(data[2]));
+            }
+
+            return collection;
+        }
+
+        public string ToString(Func<string, string> encryption = null) {
+            var sb = new StringBuilder();
+
+            _collection.ForEach((kvp) => {
+                sb.Append(string.Format("{0}:{1}:{2}|", kvp.Key, kvp.Value, kvp.Visible));
+            });
+
+            var formatted = sb.ToString().TrimEnd('|');
+            if (encryption != null)
+                formatted = encryption(formatted);
+
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(formatted));
+        }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator() {
+            var enumerator = new List<KeyValuePair<string, string>>(_collection.Select((kvp) => {
+                return new KeyValuePair<string, string>(kvp.Key, kvp.Value);
+            }));
+
+            return enumerator.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this.GetEnumerator();
+        }
+    }
+
+    internal class MerchantKVP {
+        public string Key { get; set; }
+        public string Value { get; set; }
+        internal bool Visible { get; set; }
     }
 }
