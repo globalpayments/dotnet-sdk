@@ -42,7 +42,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
             foreach (var kvp in merchantData) {
                 Assert.IsTrue(keys.Contains(kvp.Key));
-                //Assert.IsTrue(values.Contains(kvp.Value));
+                Assert.IsTrue(values.Contains(kvp.Value));
             }   
         }
 
@@ -130,8 +130,10 @@ namespace GlobalPayments.Api.Tests.Realex {
             if (enrolled) {
                 var secureEcom = card.ThreeDSecure;
                 if (secureEcom != null) {
-                    // add merchant data
-                    secureEcom.MerchantData.Add("client_txn_id", "123456");
+                    // reset merchant data
+                    secureEcom.MerchantData = new MerchantDataCollection {
+                        { "client_txn_id", "123456" }
+                    };
 
                     // authenticate
                     var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);

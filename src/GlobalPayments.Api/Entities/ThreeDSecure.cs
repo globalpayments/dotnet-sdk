@@ -60,6 +60,9 @@ namespace GlobalPayments.Api.Entities {
                 return _merchantData;
             }
             set {
+                if (_merchantData != null)
+                    value.MergeHidden(_merchantData);
+
                 _merchantData = value;
                 if (_merchantData.HasKey("_amount"))
                     _amount = _merchantData.GetValue<decimal>("_amount");
@@ -134,6 +137,10 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
+        internal IEnumerable<MerchantKVP> HiddenValues {
+            get { return _collection.Where(p => p.Visible == false); }
+        }
+
         public MerchantDataCollection() {
             _collection = new List<MerchantKVP>();
         }
@@ -166,7 +173,12 @@ namespace GlobalPayments.Api.Entities {
             return GetValue<string>(key) != null;
         }
 
-        
+        internal void MergeHidden(MerchantDataCollection collection) {
+            foreach (var item in collection.HiddenValues) {
+                if (!this.HasKey(item.Key))
+                    _collection.Add(item);
+            }
+        }
 
         public static MerchantDataCollection Parse(string kvpString, Func<string, string> decoder = null) {
             var collection = new MerchantDataCollection();
