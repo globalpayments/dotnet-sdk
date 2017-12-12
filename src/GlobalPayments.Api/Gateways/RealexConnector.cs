@@ -23,11 +23,12 @@ namespace GlobalPayments.Api.Gateways {
             var et = new ElementTree();
             string timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp();
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
+            string transactionType = MapAuthRequestType(builder);
 
             // Build Request
             var request = et.Element("request")
                 .Set("timestamp", timestamp)
-                .Set("type", MapAuthRequestType(builder));
+                .Set("type", transactionType);
             et.SubElement(request, "merchantid").Text(MerchantId);
             et.SubElement(request, "account", AccountId);
             et.SubElement(request, "channel", Channel);
@@ -52,7 +53,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(cvnElement, "presind", (int)card.CvnPresenceIndicator);
                 }
 
-                // TODO: mpi
+                // mpi
                 if (card.ThreeDSecure != null) {
                     var mpi = et.SubElement(request, "mpi");
                     et.SubElement(mpi, "cavv", card.ThreeDSecure.Cavv);
@@ -129,7 +130,7 @@ namespace GlobalPayments.Api.Gateways {
             //et.SubElement(request, "token", token);
 
             var response = DoTransaction(et.ToString(request));
-            return MapResponse(response);
+            return MapResponse(response, MapAcceptedCodes(transactionType));
         }
 
         public string SerializeRequest(AuthorizationBuilder builder) {
@@ -227,11 +228,12 @@ namespace GlobalPayments.Api.Gateways {
             var et = new ElementTree();
             string timestamp = GenerationUtils.GenerateTimestamp();
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
+            string transactionType = MapManageRequestType(builder.TransactionType);
 
             // Build Request
             var request = et.Element("request")
                 .Set("timestamp", timestamp)
-                .Set("type", MapManageRequestType(builder.TransactionType));
+                .Set("type", transactionType);
             et.SubElement(request, "merchantid").Text(MerchantId);
             et.SubElement(request, "account", AccountId);
             et.SubElement(request, "channel", Channel);
@@ -265,7 +267,7 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, ""));
 
             var response = DoTransaction(et.ToString(request));
-            return MapResponse(response);
+            return MapResponse(response, MapAcceptedCodes(transactionType));
         }
 
         public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
@@ -332,10 +334,10 @@ namespace GlobalPayments.Api.Gateways {
         #endregion
 
         #region response mapping
-        private Transaction MapResponse(string rawResponse) {
+        private Transaction MapResponse(string rawResponse, List<string> acceptedCodes = null) {
             var root = new ElementTree(rawResponse).Get("response");
 
-            CheckResponse(root);
+            CheckResponse(root, acceptedCodes);
             var result = new Transaction {
                 ResponseCode = root.GetValue<string>("result"),
                 ResponseMessage = root.GetValue<string>("message"),
@@ -353,7 +355,7 @@ namespace GlobalPayments.Api.Gateways {
             // 3d secure enrolled
             if (root.Has("enrolled")) {
                 result.ThreeDSecure = new ThreeDSecure();
-                result.ThreeDSecure.Enrolled = root.GetValue<string>("enrolled") == "Y";
+                result.ThreeDSecure.Enrolled = root.GetValue<string>("enrolled");
                 result.ThreeDSecure.PayerAuthenticationRequest = root.GetValue<string>("pareq");
                 result.ThreeDSecure.Xid = root.GetValue<string>("xid");
                 result.ThreeDSecure.IssuerAcsUrl = root.GetValue<string>("url");
@@ -363,10 +365,16 @@ namespace GlobalPayments.Api.Gateways {
             if (root.Has("threedsecure")) {
                 result.ThreeDSecure = new ThreeDSecure();
                 result.ThreeDSecure.Status = root.GetValue<string>("status");
-                result.ThreeDSecure.Eci = root.GetValue<string>("eci");
                 result.ThreeDSecure.Xid = root.GetValue<string>("xid");
                 result.ThreeDSecure.Cavv = root.GetValue<string>("cavv");
-                result.ThreeDSecure.Algorithm = root.GetValue<int>("algorithm");
+                
+                var eci = root.GetValue<string>("eci");
+                if (!string.IsNullOrEmpty(eci))
+                    result.ThreeDSecure.Eci = int.Parse(eci);
+
+                var algorithm = root.GetValue<string>("algorithm");
+                if (!string.IsNullOrEmpty(algorithm))
+                    result.ThreeDSecure.Algorithm = int.Parse(algorithm);
             }
 
             return result;
@@ -477,6 +485,16 @@ namespace GlobalPayments.Api.Gateways {
                     throw new UnsupportedTransactionException();
             }
         }
+
+        private List<string> MapAcceptedCodes(string transactionType) {
+            switch (transactionType) {
+                case "3ds-verifysig":
+                case "3ds-verifyenrolled":
+                    return new List<string> { "00", "110" };
+                default:
+                    return new List<string> { "00" };
+            }
+        }
         #endregion
 
         #region hydration
@@ -499,7 +517,7 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(address, "postcode", customer.Address.PostalCode);
                 var country = et.SubElement(address, "country", customer.Address.Country);
                 if (country != null)
-                    country.Set("code", "GB"); // TODO: I need a mapping for this somehow
+                    country.Set("code", customer.Address.CountryCode);
             }
 
             var phone = et.SubElement(payer, "phonenumbers");
@@ -522,7 +540,8 @@ namespace GlobalPayments.Api.Gateways {
             if (!string.IsNullOrEmpty(code) && !code.Contains("|")) {
                 code = string.Format("{0}|{1}", address.PostalCode, address.StreetAddress1);
                 if (address.Country == "GB") {
-                    code = string.Format("{0}|{1}", Regex.Replace(address.PostalCode, "[^0-9]", ""), Regex.Replace(address.StreetAddress1, "[^0-9]", ""));
+                    var encStreetAddress = string.IsNullOrEmpty(address.StreetAddress1) ? "" : Regex.Replace(address.StreetAddress1, "[^0-9]", "");
+                    code = string.Format("{0}|{1}", Regex.Replace(address.PostalCode, "[^0-9]", ""), encStreetAddress);
                 }
             }
 

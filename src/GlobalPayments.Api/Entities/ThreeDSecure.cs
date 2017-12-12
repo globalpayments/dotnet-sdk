@@ -37,12 +37,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Consumer authentication (3DSecure) electronic commerce indicator.
         /// </summary>
-        public string Eci { get; set; }
+        public int? Eci { get; set; }
 
         /// <summary>
         /// The enrolment status:
         /// </summary>
-        public bool Enrolled { get; set; }
+        public string Enrolled { get; set; }
 
         /// <summary>
         /// The URL of the Issuing Bank's ACS.
@@ -129,6 +129,11 @@ namespace GlobalPayments.Api.Entities {
                     return kvp.Value;
                 return null;
             }
+            internal set {
+                var kvp = _collection.FirstOrDefault(p => p.Key == key);
+                if (kvp != null)
+                    kvp.Value = value;
+            }
         }
 
         public int Count {
@@ -146,8 +151,12 @@ namespace GlobalPayments.Api.Entities {
         }
 
         internal void Add(string key, string value, bool visible) {
-            if (HasKey(key))
-                throw new ApiException(string.Format("Key {0} already exists in the collection.", key));
+            if (HasKey(key)) {
+                if (visible)
+                    throw new ApiException(string.Format("Key {0} already exists in the collection.", key));
+                else this[key] = value;
+            }
+                
 
             _collection.Add(new MerchantKVP {
                 Key = key,

@@ -1,4 +1,6 @@
-﻿namespace GlobalPayments.Api.Entities
+﻿using GlobalPayments.Api.Utils;
+
+namespace GlobalPayments.Api.Entities
 {
     /// <summary>
     /// Represents a billing or shipping address for the consumer.
@@ -56,6 +58,35 @@
         /// <summary>
         /// Consumer's country.
         /// </summary>
-        public string Country { get; set; }
+        private string _country;
+        public string Country {
+            get {
+                return _country;
+            }
+            set {
+                _country = value;
+                if (_countryCode == null)
+                    _countryCode = CountryUtils.GetCountryCodeByCountry(_country);
+            }
+        }
+
+        private string _countryCode;
+        /// <summary>
+        /// Consumer's country code
+        /// </summary>
+        public string CountryCode {
+            get {
+                return _countryCode;
+            }
+            set {
+                _countryCode = value;
+                if (_country == null)
+                    _country = CountryUtils.GetCountryByCode(_countryCode);
+            }
+        }
+
+        public bool IsCountry(string countryCode) {
+            return CountryUtils.IsCountry(this, countryCode);
+        }
     }
 }

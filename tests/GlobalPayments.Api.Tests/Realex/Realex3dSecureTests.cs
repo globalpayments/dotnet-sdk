@@ -224,7 +224,6 @@ namespace GlobalPayments.Api.Tests.Realex {
 
             var enrolled = card.VerifyEnrolled(1m, "USD");
             Assert.IsFalse(enrolled);
-            Assert.IsNull(card.ThreeDSecure);
         }
 
         [TestMethod]
@@ -279,7 +278,7 @@ namespace GlobalPayments.Api.Tests.Realex {
                 ThreeDSecure = new ThreeDSecure {
                     Cavv = "AAACBllleHchZTBWIGV4AAAAAAA=",
                     Xid = "crqAeMwkEL9r4POdxpByWJ1/wYg=",
-                    Eci = "5"
+                    Eci = 5
                 }
             };
 
@@ -288,6 +287,214 @@ namespace GlobalPayments.Api.Tests.Realex {
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CardHolderNotEnrolled() {
+            var card = new CreditCardData {
+                Number = "4012001038443335",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            var enrolled = card.VerifyEnrolled(10m, "USD");
+            Assert.IsFalse(enrolled);
+            Assert.IsNotNull(card.ThreeDSecure);
+            Assert.AreEqual(6, card.ThreeDSecure.Eci);
+
+            // complete the charge anyways
+            var response = card.Charge().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void UnableToVerifyEnrollment() {
+            var card = new CreditCardData {
+                Number = "4012001038488884",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            var enrolled = card.VerifyEnrolled(10m, "USD");
+            Assert.IsFalse(enrolled);
+            Assert.IsNotNull(card.ThreeDSecure);
+            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+
+            // complete the charge anyways
+            var response = card.Charge().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod, ExpectedException(typeof(GatewayException))]
+        public void InvalidResponseFromEnrollmentServer() {
+            var card = new CreditCardData {
+                Number = "4012001036298889",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            card.VerifyEnrolled(10m, "USD");
+        }
+
+        [TestMethod]
+        public void CardHolderIsEnrolledACSAuthFailed() {
+            var card = new CreditCardData {
+                Number = "4012001036853337",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            var enrolled = card.VerifyEnrolled(10m, "USD");
+            Assert.IsTrue(enrolled);
+
+            // authenticate
+            var secureEcom = card.ThreeDSecure;
+            var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
+            var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
+
+            // expand return data
+            string payerAuthenticationResponse = authResponse.pares;
+            MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
+
+            // verify signature
+            var verified = card.VerifySignature(payerAuthenticationResponse, md);
+            Assert.IsFalse(verified);
+            Assert.IsNotNull(card.ThreeDSecure);
+            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+
+            // complete the charge anyways
+            var response = card.Charge().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void CardHolderIsEnrolledACSAcknowledged() {
+            var card = new CreditCardData {
+                Number = "4012001037167778",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            var enrolled = card.VerifyEnrolled(10m, "USD");
+            Assert.IsTrue(enrolled);
+
+            // authenticate
+            var secureEcom = card.ThreeDSecure;
+            var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
+            var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
+
+            // expand return data
+            string payerAuthenticationResponse = authResponse.pares;
+            MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
+
+            // verify signature
+            var verified = card.VerifySignature(payerAuthenticationResponse, md);
+            Assert.IsTrue(verified);
+            Assert.AreEqual("A", card.ThreeDSecure.Status);
+
+            // complete the charge anyways
+            var response = card.Charge().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void CardHolderIsEnrolledACSFailed() {
+            var card = new CreditCardData {
+                Number = "4012001037461114",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            var enrolled = card.VerifyEnrolled(10m, "USD");
+            Assert.IsTrue(enrolled);
+
+            // authenticate
+            var secureEcom = card.ThreeDSecure;
+            var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
+            var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
+
+            // expand return data
+            string payerAuthenticationResponse = authResponse.pares;
+            MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
+
+            // verify signature
+            var verified = card.VerifySignature(payerAuthenticationResponse, md);
+            Assert.IsFalse(verified);
+            Assert.AreEqual("N", card.ThreeDSecure.Status);
+            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+
+            // complete the charge anyways
+            var response = card.Charge().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void CardHolderIsEnrolledACSUnavailable() {
+            var card = new CreditCardData {
+                Number = "4012001037484447",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            var enrolled = card.VerifyEnrolled(10m, "USD");
+            Assert.IsTrue(enrolled);
+
+            // authenticate
+            var secureEcom = card.ThreeDSecure;
+            var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
+            var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
+
+            // expand return data
+            string payerAuthenticationResponse = authResponse.pares;
+            MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
+
+            // verify signature
+            var verified = card.VerifySignature(payerAuthenticationResponse, md);
+            Assert.IsFalse(verified);
+            Assert.AreEqual("U", card.ThreeDSecure.Status);
+            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+
+            // complete the charge anyways
+            var response = card.Charge().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod, ExpectedException(typeof(GatewayException))]
+        public void CardHolderIsEnrolledACSInvalid() {
+            var card = new CreditCardData {
+                Number = "4012001037490006",
+                ExpMonth = 12,
+                ExpYear = 2018,
+                CardHolderName = "John Smith"
+            };
+
+            var enrolled = card.VerifyEnrolled(10m, "USD");
+            Assert.IsTrue(enrolled);
+
+            // authenticate
+            var secureEcom = card.ThreeDSecure;
+            var authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
+            var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
+
+            // expand return data
+            string payerAuthenticationResponse = authResponse.pares;
+            MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
+
+            // verify signature
+            card.VerifySignature(payerAuthenticationResponse, md);
         }
     }
 

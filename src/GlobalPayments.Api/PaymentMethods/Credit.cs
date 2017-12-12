@@ -249,27 +249,27 @@ namespace GlobalPayments.Api.PaymentMethods {
         }
 
         public bool VerifyEnrolled(decimal amount, string currency, string orderId = null, string configName = "default") {
-            Transaction response;
-            try {
-                response = new AuthorizationBuilder(TransactionType.VerifyEnrolled, this)
-                   .WithAmount(amount)
-                   .WithCurrency(currency)
-                   .WithOrderId(orderId)
-                   .Execute(configName);
-            }
-            catch (GatewayException exc) {
-                if (exc.ResponseCode.Equals("110"))
-                    return false;
-                throw;
-            }
-            catch (Exception) { throw; }
+            Transaction response = new AuthorizationBuilder(TransactionType.VerifyEnrolled, this)
+                .WithAmount(amount)
+                .WithCurrency(currency)
+                .WithOrderId(orderId)
+                .Execute(configName);
 
-            if (response.ThreeDSecure != null && response.ThreeDSecure.Enrolled) {
+            if (response.ThreeDSecure != null) {
                 ThreeDSecure = response.ThreeDSecure;
                 ThreeDSecure.Amount = amount;
                 ThreeDSecure.Currency = currency;
                 ThreeDSecure.OrderId = response.OrderId;
-                return true;
+
+                if (new List<string> { "N", "U" }.Contains(ThreeDSecure.Enrolled)) {
+                    ThreeDSecure.Xid = null;
+                    if (ThreeDSecure.Enrolled == "N")
+                        ThreeDSecure.Eci = CardType == "MC" ? 1 : 6;
+                    else if (ThreeDSecure.Enrolled == "U")
+                        ThreeDSecure.Eci = CardType == "MC" ? 0 : 7;
+                }
+
+                return ThreeDSecure.Enrolled == "Y";
             }
             return false;
         }
@@ -295,23 +295,27 @@ namespace GlobalPayments.Api.PaymentMethods {
                 ThreeDSecure.MerchantData = merchantData;
 
             Transaction response = new ManagementBuilder(TransactionType.VerifySignature)
-                .WithAmount(ThreeDSecure.Amount)
-                .WithCurrency(ThreeDSecure.Currency)
-                .WithPayerAuthenticationResponse(authorizationResponse)
-                .WithPaymentMethod(new TransactionReference {
-                    OrderId = ThreeDSecure.OrderId
-                })
-                .Execute(configName);
+            .WithAmount(ThreeDSecure.Amount)
+            .WithCurrency(ThreeDSecure.Currency)
+            .WithPayerAuthenticationResponse(authorizationResponse)
+            .WithPaymentMethod(new TransactionReference {
+                OrderId = ThreeDSecure.OrderId
+            })
+            .Execute(configName);
 
-            if (response.ResponseCode.Equals("00")) {
-                ThreeDSecure.Status = response.ThreeDSecure.Status;
+            ThreeDSecure.Status = response.ThreeDSecure.Status;
+            ThreeDSecure.Cavv = response.ThreeDSecure.Cavv;
+            ThreeDSecure.Algorithm = response.ThreeDSecure.Algorithm;
+            ThreeDSecure.Xid = response.ThreeDSecure.Xid;
+
+            if (new List<string> { "A", "Y" }.Contains(ThreeDSecure.Status) && response.ResponseCode == "00") {
                 ThreeDSecure.Eci = response.ThreeDSecure.Eci;
-                ThreeDSecure.Cavv = response.ThreeDSecure.Cavv;
-                ThreeDSecure.Algorithm = response.ThreeDSecure.Algorithm;
-                ThreeDSecure.Xid = response.ThreeDSecure.Xid;
                 return true;
             }
-            else return false;
+            else {
+                ThreeDSecure.Eci = CardType == "MC" ? 0 : 7;
+                return false;
+            }
         }
     }
 
