@@ -26,16 +26,32 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void ReportTransactionDetail() {
-            List<TransactionSummary> summary = ReportingService.Activity()
-                .WithStartDate(DateTime.UtcNow.AddDays(-7))
-                .WithEndDate(DateTime.UtcNow.AddDays(-1))
+            TransactionSummary response = ReportingService.TransactionDetail("1038021900").Execute();
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response is TransactionSummary);
+        }
+
+        [TestMethod]
+        public void ReportFindTransactionWithCriteria() {
+            List<TransactionSummary> summary = ReportingService.FindTransactions()
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-30))
+                .And(SearchCriteria.EndDate, DateTime.UtcNow)
                 .Execute();
 
-            if (summary.Count > 0) {
-                TransactionSummary response = ReportingService.TransactionDetail(summary[0].TransactionId).Execute();
-                Assert.IsNotNull(response);
-                Assert.AreEqual("00", response.GatewayResponseCode);
-            }
+            Assert.IsNotNull(summary);
+        }
+
+        [TestMethod]
+        public void ReportFindTransactionWithTransactionId() {
+            List<TransactionSummary> summary = ReportingService.FindTransactions("1038021900").Execute();
+
+            Assert.IsNotNull(summary);
+        }
+
+        [TestMethod]
+        public void ReportFindTransactionNoCriteria() {
+            List<TransactionSummary> summary = ReportingService.FindTransactions().Execute();
+            Assert.IsNotNull(summary);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
@@ -363,12 +364,50 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(transaction, "TzConversion", builder.TimeZoneConversion);
             if (builder is TransactionReportBuilder<T>) {
                 var trb = builder as TransactionReportBuilder<T>;
-                et.SubElement(transaction, "DeviceId", trb.DeviceId);
-                if(trb.StartDate.HasValue)
-                    et.SubElement(transaction, "RptStartUtcDT", trb.StartDate.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
-                if (trb.EndDate.HasValue)
-                    et.SubElement(transaction, "RptEndUtcDT", trb.EndDate.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
-                et.SubElement(transaction, "TxnId", trb.TransactionId);
+                if (trb.TransactionId != null)
+                    et.SubElement(transaction, "TxnId", trb.TransactionId);
+                else {
+                    var criteria = et.SubElement(transaction, "Criteria");
+                    et.SubElement(criteria, "StartUtcDT", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
+                    et.SubElement(criteria, "EndUtcDT", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
+                    et.SubElement(criteria, "AuthCode", trb.SearchBuilder.AuthCode);
+                    et.SubElement(criteria, "CardHolderLastName", trb.SearchBuilder.CardHolderLastName);
+                    et.SubElement(criteria, "CardHolderFirtName", trb.SearchBuilder.CardHolderFirstName);
+                    et.SubElement(criteria, "CardNbrFirstSix", trb.SearchBuilder.CardNumberFirstSix);
+                    et.SubElement(criteria, "CardNbrLastFour", trb.SearchBuilder.CardNumberLastFour);
+                    et.SubElement(criteria, "InvoiceNbr", trb.SearchBuilder.InvoiceNumber);
+                    et.SubElement(criteria, "CardHolderPONbr", trb.SearchBuilder.CardHolderPoNumber);
+                    et.SubElement(criteria, "CustomerID", trb.SearchBuilder.CustomerId);
+                    //et.SubElement(criteria, "ServiceName", trb.SearchBuilder.);
+                    //et.SubElement(criteria, "PaymentType", trb.SearchBuilder.);
+                    //et.SubElement(criteria, "CardType", trb.SearchBuilder.);
+                    et.SubElement(criteria, "IssuerResult", trb.SearchBuilder.IssuerResult);
+                    et.SubElement(criteria, "SettlementAmount", trb.SearchBuilder.SettlementAmount);
+                    et.SubElement(criteria, "IssTxnId", trb.SearchBuilder.IssuerTransactionId);
+                    et.SubElement(criteria, "RefNbr", trb.SearchBuilder.ReferenceNumber);
+                    et.SubElement(criteria, "UserName", trb.SearchBuilder.Username);
+                    et.SubElement(criteria, "ClerkID", trb.SearchBuilder.ClerkId);
+                    et.SubElement(criteria, "BatchSeqNbr", trb.SearchBuilder.BatchSequenceNumber);
+                    et.SubElement(criteria, "BatchId", trb.SearchBuilder.BatchId);
+                    et.SubElement(criteria, "SiteTrace", trb.SearchBuilder.SiteTrace);
+                    et.SubElement(criteria, "DisplayName", trb.SearchBuilder.DisplayName);
+                    et.SubElement(criteria, "ClientTxnId", trb.SearchBuilder.ClientTransactionId);
+                    et.SubElement(criteria, "UniqueDeviceId", trb.SearchBuilder.UniqueDeviceId);
+                    et.SubElement(criteria, "AcctNbrLastFour", trb.SearchBuilder.AccountNumberLastFour);
+                    et.SubElement(criteria, "BankRountingNbr", trb.SearchBuilder.BankRoutingNumber);
+                    et.SubElement(criteria, "CheckNbr", trb.SearchBuilder.CheckNumber);
+                    et.SubElement(criteria, "CheckFirstName", trb.SearchBuilder.CheckFirstName);
+                    et.SubElement(criteria, "CheckLastName", trb.SearchBuilder.CheckLastName);
+                    et.SubElement(criteria, "CheckName", trb.SearchBuilder.CheckName);
+                    et.SubElement(criteria, "GiftCurrency", trb.SearchBuilder.GiftCurrency);
+                    et.SubElement(criteria, "GiftMaskedAlias", trb.SearchBuilder.GiftMaskedAlias);
+                    et.SubElement(criteria, "OneTime", trb.SearchBuilder.OneTime);
+                    et.SubElement(criteria, "PaymentMethodKey", trb.SearchBuilder.PaymentMethodKey);
+                    et.SubElement(criteria, "ScheduleID", trb.SearchBuilder.ScheduleId);
+                    et.SubElement(criteria, "BuyerEmailAddress", trb.SearchBuilder.BuyerEmailAddress);
+                    et.SubElement(criteria, "AltPaymentStatus", trb.SearchBuilder.AltPaymentStatus);
+                    et.SubElement(criteria, "FullyCapturedInd", trb.SearchBuilder.FullyCaptured);
+                }
             }
 
             var response = DoTransaction(BuildEnvelope(et, transaction));
@@ -390,8 +429,8 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(header, "DeviceId", DeviceId);
             et.SubElement(header, "UserName", Username);
             et.SubElement(header, "Password", Password);
-            et.SubElement(header, "DeveloperId", DeveloperId);
-            et.SubElement(header, "VersionNumber", VersionNumber);
+            et.SubElement(header, "DeveloperID", DeveloperId);
+            et.SubElement(header, "VersionNbr", VersionNumber);
             et.SubElement(header, "ClientTxnId", clientTransactionId);
             et.SubElement(header, "PosReqDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
 
@@ -494,40 +533,131 @@ namespace GlobalPayments.Api.Gateways {
             var doc = new ElementTree(rawResponse).Get(MapReportType(reportType));
 
             T rvalue = Activator.CreateInstance<T>();
-            if (reportType.HasFlag(ReportType.Activity) || reportType.HasFlag(ReportType.TransactionDetail)) {
+            if (reportType.HasFlag(ReportType.FindTransactions) | reportType.HasFlag(ReportType.Activity) | reportType.HasFlag(ReportType.TransactionDetail)) {
                 Func<Element, TransactionSummary> hydrateTransactionSummary = (root) => {
-                    return new TransactionSummary {
+                    var summary = new TransactionSummary {
+                        AccountDataSource = root.GetValue<string>("AccDataSrc"),
                         Amount = root.GetValue<decimal>("Amt"),
                         AuthorizedAmount = root.GetValue<decimal>("AuthAmt"),
                         AuthCode = root.GetValue<string>("AuthCode"),
+                        BatchCloseDate = root.GetValue<DateTime>("BatchCloseDT"),
+                        BatchSequenceNumber = root.GetValue<string>("BatchSeqNbr"),
+                        CardSwiped = root.GetValue<string>("CardSwiped"),
+                        CardType = root.GetValue<string>("CardType"),
+                        ClerkId = root.GetValue<string>("ClerkID"),
                         ClientTransactionId = root.GetValue<string>("ClientTxnId"),
+                        ConvenienceAmount = root.GetValue<decimal>("ConvenienceAmtInfo"),
                         DeviceId = root.GetValue<int>("DeviceId"),
+                        GratuityAmount = root.GetValue<decimal>("GratuityAmtInfo"),
                         IssuerResponseCode = root.GetValue<string>("IssuerRspCode", "RspCode"),
                         IssuerResponseMessage = root.GetValue<string>("IssuerRspText", "RspText"),
+                        IssuerTransactionId = root.GetValue<string>("IssTxnId"),
                         MaskedCardNumber = root.GetValue<string>("MaskedCardNbr"),
-                        OriginalTransactionId = root.GetValue<string>("OriginalGatewayTxnId"),
                         GatewayResponseCode = NormalizeResponse(root.GetValue<string>("GatewayRspCode")),
                         GatewayResponseMessage = root.GetValue<string>("GatewayRspMsg"),
+                        OriginalTransactionId = root.GetValue<string>("OriginalGatewayTxnId"),
+                        PaymentType = root.GetValue<string>("PaymentType"),
+                        PoNumber = root.GetValue<string>("CardHolderPONbr"),
                         ReferenceNumber = root.GetValue<string>("RefNbr"),
+                        ResponseDate = root.GetValue<DateTime>("RspDT"),
                         ServiceName = root.GetValue<string>("ServiceName"),
                         SettlementAmount = root.GetValue<decimal>("SettlementAmt"),
+                        ShippingAmount = root.GetValue<decimal>("ShippingAmtInfo"),
+                        SiteTrace = root.GetValue<string>("SiteTrace"),
                         Status = root.GetValue<string>("Status", "TxnStatus"),
+                        TaxAmount = root.GetValue<decimal>("TaxAmt", "TaxAmtInfo"),
+                        TaxType = root.GetValue<string>("TaxType"),
                         TransactionDate = root.GetValue<DateTime>("TxnUtcDT", "ReqUtcDT"),
                         TransactionId = root.GetValue<string>("GatewayTxnId"),
-                        ConvenienceAmt = root.GetValue<decimal>("ConvenienceAmtInfo"),
-                        ShippingAmt = root.GetValue<decimal>("ShippingAmtInfo")
+                        TransactionStatus = root.GetValue<string>("TxnStatus"),
+                        Username = root.GetValue<string>("UserName"),
+
+                        Description = root.GetValue<string>("Description"),
+                        InvoiceNumber = root.GetValue<string>("InvoiceNbr"),
+                        CustomerId = root.GetValue<string>("CustomerID"),
+                        UniqueDeviceId = root.GetValue<string>("UniqueDeviceId"),
+                        TransactionDescriptor = root.GetValue<string>("TxnDescriptor"),
+                        GiftCurrency = root.GetValue<string>("GiftCurrency"),
+                        MaskedAlias = root.GetValue<string>("GiftMaskedAlias"),
+                        PaymentMethodKey = root.GetValue<string>("PaymentMethodKey"),
+                        ScheduleId = root.GetValue<string>("ScheduleID"),
+                        OneTimePayment = root.GetValue<string>("OneTime") == "1",
+                        RecurringDataCode = root.GetValue<string>("RecurringDataCode"),
+                        SurchargeAmount = root.GetValue<decimal>("SurchargeAmtInfo"),
+                        FraudRuleInfo = root.GetValue<string>("FraudInfoRule"),
+                        RepeatCount = root.GetValue<int>("RepeatCount"),
+                        EmvChipCondition = root.GetValue<string>("EMVChipCondition"),
+                        HasEmvTags = root.GetValue<string>("HasEMVTag") == "1",
+                        HasEcomPaymentData = root.GetValue<string>("HasEComPaymentData") == "1",
+                        CavvResponseCode = root.GetValue<string>("CAVVResultCode"),
+                        TokenPanLastFour = root.GetValue<string>("TokenPANLast4"),
+                        CompanyName = root.GetValue<string>("Company"),
+                        CustomerFirstName = root.GetValue<string>("CustomerFirstname"),
+                        CustomerLastName = root.GetValue<string>("CustomerLastname"),
+                        DebtRepaymentIndicator = root.GetValue<string>("DebtRepaymentIndicator") == "1",
+                        CaptureAmount = root.GetValue<decimal>("CaptureAmtInfo"),
+                        FullyCaptured = root.GetValue<string>("FullyCapturedInd") == "1"
                     };
+
+                    // card holder data
+                    
+                    // lodging data
+                    if (root.Has("LodgingData")) {
+                        summary.LodgingData = new LodgingData {
+                            PrestigiousPropertyLimit = root.GetValue<string>("PrestigiousPropertyLimit"),
+                            NoShow = root.GetValue<bool>("NoShow"),
+                            AdvancedDepositType = root.GetValue<string>("AdvancedDepositType"),
+                            LodgingDataEdit = root.GetValue<string>("LodgingDataEdit"),
+                            PreferredCustomer = root.GetValue<bool>("PReferredCustomer"),
+                        };
+                    }
+
+                    // check data
+                    if (root.Has("CheckData")) {
+                        summary.CheckData = new CheckData {
+                            AccountInfo = root.GetValue<string>("AccountInfo"),
+                            ConsumerInfo = root.GetValue<string>("ConsumerInfo"),
+                            DataEntryMode = root.GetValue<string>("DataEntryMode"),
+                            CheckType = root.GetValue<string>("CheckType"),
+                            SECCode = root.GetValue<string>("SECCode"),
+                            CheckAction = root.GetValue<string>("CheckAction")
+                        };
+                    }
+
+                    // alt payment data
+                    if (root.Has("AltPaymentData")) {
+                        summary.AltPaymentData = new AltPaymentData {
+                            BuyerEmailAddress = root.GetValue<string>("BuyerEmailAddress"),
+                            StateDate = root.GetValue<DateTime>("StatusDT"),
+                            Status = root.GetValue<string>("Status"),
+                            StatusMessage = root.GetValue<string>("StatusMsg"),
+                        };
+
+                        summary.AltPaymentData.ProcessorResponseInfo = new List<AltPaymentProcessorInfo>();
+                        foreach(var info in root.GetAll("ProcessorRspInfo")) {
+                            var pri = new AltPaymentProcessorInfo {
+                                Code = info.GetValue<string>("Code"),
+                                Message = info.GetValue<string>("Message"),
+                                Type = info.GetValue<string>("Type")
+                            };
+                            summary.AltPaymentData.ProcessorResponseInfo.Add(pri);
+                        }
+                    }
+
+                    return summary;
                 };
 
-                // Activity
+                // FindTransaction
                 if (rvalue is IEnumerable<TransactionSummary>) {
                     var list = rvalue as List<TransactionSummary>;
-                    foreach (var detail in doc.GetAll("Details")) {
-                        list.Add(hydrateTransactionSummary(detail));
+                    foreach (var transaction in doc.GetAll("Transactions")) {
+                        list.Add(hydrateTransactionSummary(transaction));
                     }
                 }
                 else {
-                    rvalue = hydrateTransactionSummary(doc) as T;
+                    var trans = doc.GetAll("Transactions").FirstOrDefault();
+                    if(trans != null)
+                        rvalue = hydrateTransactionSummary(trans) as T;
                 }
             }
             return rvalue;
@@ -710,9 +840,9 @@ namespace GlobalPayments.Api.Gateways {
         private string MapReportType(ReportType type) {
             switch (type) {
                 case ReportType.Activity:
-                    return "ReportActivity";
                 case ReportType.TransactionDetail:
-                    return "ReportTxnDetail";
+                case ReportType.FindTransactions:
+                    return "FindTransactions";
                 default:
                     throw new UnsupportedTransactionException();
             }

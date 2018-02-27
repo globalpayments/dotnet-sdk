@@ -128,7 +128,11 @@ namespace GlobalPayments.Api.Entities {
         /// <remarks>
         /// Should be accompanied by a payment method key.
         /// </remarks>
-        Recurring = 1 << 7
+        Recurring = 1 << 7,
+
+        Other = 1 << 8,
+
+        AltPayment = 1 << 9
     }
 
     /// <summary>
@@ -516,7 +520,7 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a FindTransactions report.
         /// </summary>
-        FindTransactions = 0,
+        FindTransactions = 1,
 
         /// <summary>
         /// Indicates an Activity report.
@@ -749,5 +753,14 @@ namespace GlobalPayments.Api.Entities {
         CUSTOMERCANCELLATION,
         TERMINALERROR,
         TIMEOUT
+    }
+
+    public enum CardType {
+        VISA,
+        MC,
+        DISC,
+        AMEX,
+        GIFTCARD,
+        PAYPALECOMMERCE
     }
 }

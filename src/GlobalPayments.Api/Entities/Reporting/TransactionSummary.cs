@@ -1,0 +1,200 @@
+﻿using System;
+
+namespace GlobalPayments.Api.Entities {
+    /// <summary>
+    /// Transaction-level report data
+    /// </summary>
+    public class TransactionSummary {
+        public string AccountDataSource { get; set; }
+
+        public AltPaymentData AltPaymentData { get; set; }
+
+        /// <summary>
+        /// The originally requested authorization amount.
+        /// </summary>
+        public decimal? Amount { get; set; }
+
+        //public unknown AttachmentInfo { get; set; }
+
+        /// <summary>
+        /// The authorized amount.
+        /// </summary>
+        public decimal? AuthorizedAmount { get; set; }
+
+        /// <summary>
+        /// The authorization code provided by the issuer.
+        /// </summary>
+
+        public string AuthCode { get; set; }
+
+        public DateTime? BatchCloseDate { get; set; }
+
+        public string BatchSequenceNumber { get; set; }
+
+        public Address BillingAddress { get; set; }
+
+        public decimal? CaptureAmount { get; set; }
+
+        public string CardHolderFirstName { get; set; }
+
+        public string CardHolderLastName { get; set; }
+
+        public string CardSwiped { get; set; }
+
+        public string CardType { get; set; }
+
+        public string CavvResponseCode { get; set; }
+
+        public CheckData CheckData { get; set; }
+
+        public string ClerkId { get; set; }
+
+        /// <summary>
+        /// The client transaction ID sent in the authorization request.
+        /// </summary>
+        public string ClientTransactionId { get; set; }
+
+        public string CompanyName { get; set; }
+
+        /// <summary>
+        /// The originally requested convenience amount.
+        /// </summary>
+        public decimal? ConvenienceAmount { get; set; }
+
+        public string CustomerFirstName { get; set; }
+
+        public string CustomerId { get; set; }
+
+        public string CustomerLastName { get; set; }
+
+        public bool DebtRepaymentIndicator { get; set; }
+
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The device ID where the transaction was ran; where applicable.
+        /// </summary>
+        public int DeviceId { get; set; }
+
+        public string EmvChipCondition { get; set; }
+
+        public string FraudRuleInfo { get; set; }
+
+        public bool FullyCaptured { get; set; }
+
+        public decimal? GratuityAmount { get; set; }
+
+        public bool HasEcomPaymentData { get; set; }
+
+        public bool HasEmvTags { get; set; }
+
+        public string InvoiceNumber { get; set; }
+
+        /// <summary>
+        /// The original response code from the issuer.
+        /// </summary>
+        public string IssuerResponseCode { get; set; }
+
+        /// <summary>
+        /// The original response message from the issuer.
+        /// </summary>
+        public string IssuerResponseMessage { get; set; }
+
+        public string IssuerTransactionId { get; set; }
+
+        /// <summary>
+        /// The original response code from the gateway.
+        /// </summary>
+        public string GatewayResponseCode { get; set; }
+
+        /// <summary>
+        /// The original response message from the gateway.
+        /// </summary>
+        public string GatewayResponseMessage { get; set; }
+
+        public string GiftCurrency { get; set; }
+
+        public LodgingData LodgingData { get; set; }
+
+        public string MaskedAlias { get; set; }
+
+        /// <summary>
+        /// The authorized card number, masked.
+        /// </summary>
+        public string MaskedCardNumber { get; set; }
+
+        public bool OneTimePayment { get; set; }
+
+        /// <summary>
+        /// The gateway transaction ID of the authorization request.
+        /// </summary>
+        public string OriginalTransactionId { get; set; }
+
+        public string PaymentMethodKey { get; set; }
+
+        public string PaymentType { get; set; }
+
+        public string PoNumber { get; set; }
+
+        public string RecurringDataCode { get; set; }
+
+        /// <summary>
+        /// The reference number provided by the issuer.
+        /// </summary>
+        public string ReferenceNumber { get; set; }
+
+        public int? RepeatCount { get; set; }
+
+        public DateTime? ResponseDate { get; set; }
+
+        public string ScheduleId { get; set; }
+
+        /// <summary>
+        /// The transaction type.
+        /// </summary>
+        public string ServiceName { get; set; }
+
+        /// <summary>
+        /// The settled from the authorization.
+        /// </summary>
+        public decimal? SettlementAmount { get; set; }
+
+        /// <summary>
+        /// The originally requested shipping amount.
+        /// </summary>
+        public decimal? ShippingAmount { get; set; }
+
+        public string SiteTrace { get; set; }
+
+        /// <summary>
+        /// The transaction status.
+        /// </summary>
+        public string Status { get; set; }
+
+        public decimal? SurchargeAmount { get; set; }
+
+        public decimal? TaxAmount { get; set; }
+
+        public string TaxType { get; set; }
+
+        public string TokenPanLastFour { get; set; }
+
+        /// <summary>
+        /// The date/time of the original transaction.
+        /// </summary>
+        public DateTime TransactionDate { get; set; }
+
+        public string TransactionDescriptor { get; set; }
+
+        public string TransactionStatus { get; set; }
+
+        /// <summary>
+        /// The gateway transaction ID of the transaction.
+        /// </summary>
+        public string TransactionId { get; set; }
+
+        public string UniqueDeviceId { get; set; }
+
+        public string Username { get; set; }
+    }
+}

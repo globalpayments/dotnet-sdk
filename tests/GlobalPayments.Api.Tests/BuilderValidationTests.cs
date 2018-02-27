@@ -102,27 +102,6 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void ReportTransactionDetailWithDeviceId() {
-            ReportingService.TransactionDetail("123456789")
-                .WithDeviceId("123456")
-                .Execute();
-        }
-
-        [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void ReportTransactionDetailWithStartDate() {
-            ReportingService.TransactionDetail("123456789")
-                .WithStartDate(DateTime.UtcNow)
-                .Execute();
-        }
-
-        [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void ReportTransactionDetailWithEndDate() {
-            ReportingService.TransactionDetail("123456789")
-                .WithEndDate(DateTime.UtcNow)
-                .Execute();
-        }
-
-        [TestMethod, ExpectedException(typeof(BuilderException))]
         public void ReportActivityWithTransactionId() {
             ReportingService.Activity()
                 .WithTransactionId("1234567890")

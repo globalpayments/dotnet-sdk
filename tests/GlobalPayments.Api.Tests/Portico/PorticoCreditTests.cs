@@ -65,7 +65,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ConvenienceAmt);
+            Assert.AreEqual(2m, report.ConvenienceAmount);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ShippingAmt);
+            Assert.AreEqual(2m, report.ShippingAmount);
         }
 
         [TestMethod]
@@ -106,7 +106,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ConvenienceAmt);
+            Assert.AreEqual(2m, report.ConvenienceAmount);
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ShippingAmt);
+            Assert.AreEqual(2m, report.ShippingAmount);
         }
 
         [TestMethod]
@@ -149,7 +149,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ConvenienceAmt);
+            Assert.AreEqual(2m, report.ConvenienceAmount);
         }
 
         [TestMethod]
@@ -165,7 +165,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ShippingAmt);
+            Assert.AreEqual(2m, report.ShippingAmount);
         }
 
         [TestMethod]
@@ -193,7 +193,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ConvenienceAmt);
+            Assert.AreEqual(2m, report.ConvenienceAmount);
         }
 
         [TestMethod]
@@ -209,7 +209,7 @@ namespace GlobalPayments.Api.Tests
             Assert.AreEqual("00", response.ResponseCode);
             TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
             Assert.IsNotNull(report);
-            Assert.AreEqual(2m, report.ShippingAmt);
+            Assert.AreEqual(2m, report.ShippingAmount);
         }
 
         [TestMethod]
