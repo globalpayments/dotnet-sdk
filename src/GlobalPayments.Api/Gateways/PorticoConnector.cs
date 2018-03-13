@@ -368,8 +368,8 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(transaction, "TxnId", trb.TransactionId);
                 else {
                     var criteria = et.SubElement(transaction, "Criteria");
-                    et.SubElement(criteria, "StartUtcDT", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
-                    et.SubElement(criteria, "EndUtcDT", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
+                    et.SubElement(criteria, "StartUtcDT", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFzzz"));
+                    et.SubElement(criteria, "EndUtcDT", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFzzz"));
                     et.SubElement(criteria, "AuthCode", trb.SearchBuilder.AuthCode);
                     et.SubElement(criteria, "CardHolderLastName", trb.SearchBuilder.CardHolderLastName);
                     et.SubElement(criteria, "CardHolderFirtName", trb.SearchBuilder.CardHolderFirstName);
