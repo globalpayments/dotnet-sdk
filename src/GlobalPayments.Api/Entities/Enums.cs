@@ -763,4 +763,20 @@ namespace GlobalPayments.Api.Entities {
         GIFTCARD,
         PAYPALECOMMERCE
     }
+
+    /// <summary>
+    /// Specifies the reservation service provider
+    /// </summary>
+    public enum TableServiceProviders {
+        FreshTxt
+    }
+
+    public enum PayGroupFrequency {
+        Annually = 1,
+        Quarterly = 4,
+        Monthly = 12,
+        SemiMonthly = 24,
+        BiWeekly = 26,
+        Weekly = 52
+    }
 }

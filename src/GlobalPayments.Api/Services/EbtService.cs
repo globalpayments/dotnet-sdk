@@ -4,8 +4,8 @@ using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Services {
     public class EbtService {
-        public EbtService(ServicesConfig config) {
-            ServicesContainer.Configure(config);
+        public EbtService(GatewayConfig config, string configName = "default") {
+            ServicesContainer.ConfigureService(config, configName);
         }
 
         public AuthorizationBuilder BalanceInquiry(InquiryType type = InquiryType.FOODSTAMP) {

@@ -5,8 +5,8 @@ using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Services {
     public class CheckService {
-        public CheckService(ServicesConfig config) {
-            ServicesContainer.Configure(config);
+        public CheckService(GatewayConfig config, string configName= "default") {
+            ServicesContainer.ConfigureService(config, configName);
         }
 
         // Recurring

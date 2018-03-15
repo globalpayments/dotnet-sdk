@@ -6,11 +6,11 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Services {
     public class HostedService {
-        ServicesConfig _config;
+        GatewayConfig _config;
 
-        public HostedService(ServicesConfig config) {
+        public HostedService(GatewayConfig config) {
             _config = config;
-            ServicesContainer.Configure(config);
+            ServicesContainer.ConfigureService(config);
         }
 
         public AuthorizationBuilder Authorize(decimal? amount = null) {

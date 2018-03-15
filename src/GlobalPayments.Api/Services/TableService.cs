@@ -13,7 +13,7 @@ namespace GlobalPayments.Api.Services {
         /// </summary>
         public string[] BumpStatuses {
             get {
-                return ServicesContainer.Instance.GetReservationService(_configName).BumpStatusCollection.Keys;
+                return ServicesContainer.Instance.GetTableServiceClient(_configName).BumpStatusCollection.Keys;
             }
         }
 
@@ -21,13 +21,13 @@ namespace GlobalPayments.Api.Services {
         /// Table Service constructor
         /// </summary>
         /// <param name="config">ServicesConfig object used to configure the services container.</param>
-        public TableService(ServicesConfig config, string configName = "default") {
+        public TableService(TableServiceConfig config, string configName = "default") {
             _configName = configName;
-            ServicesContainer.Configure(config, configName);
+            ServicesContainer.ConfigureService(config, configName);
         }
 
         protected T SendRequest<T>(string endpoint, MultipartForm formData) where T : TableServiceResponse {
-            var connector = ServicesContainer.Instance.GetReservationService(_configName);
+            var connector = ServicesContainer.Instance.GetTableServiceClient(_configName);
             if (!connector.Configured && !endpoint.Equals("user/login"))
                 throw new ConfigurationException("Reservation service has not been configured properly. Please ensure you have logged in first.");
 
@@ -49,7 +49,7 @@ namespace GlobalPayments.Api.Services {
             var response = SendRequest<LoginResponse>("user/login", content);
 
             // configure the connector
-            var connector = ServicesContainer.Instance.GetReservationService(_configName);
+            var connector = ServicesContainer.Instance.GetTableServiceClient(_configName);
             connector.LocationId = response.LocationId;
             connector.SecurityToken = response.Token;
             connector.SessionId = response.SessionId;

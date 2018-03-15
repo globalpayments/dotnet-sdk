@@ -10,8 +10,8 @@ namespace GlobalPayments.Api.Tests.Reservations {
         private TableService _service;
 
         public TableServiceTests() {
-            _service = new TableService(new ServicesConfig {
-                ReservationProvider = ReservationProviders.FreshTxt
+            _service = new TableService(new TableServiceConfig {
+                TableServiceProvider = TableServiceProviders.FreshTxt
             });
         }
 

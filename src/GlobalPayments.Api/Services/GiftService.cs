@@ -5,8 +5,8 @@ using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Services {
     public class GiftService {
-        public GiftService(ServicesConfig config) {
-            ServicesContainer.Configure(config);
+        public GiftService(GatewayConfig config, string configName = "default") {
+            ServicesContainer.ConfigureService(config, configName);
         }
 
         public AuthorizationBuilder Activate(decimal? amount = null) {

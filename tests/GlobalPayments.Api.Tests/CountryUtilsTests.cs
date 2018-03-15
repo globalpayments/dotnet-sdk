@@ -161,7 +161,7 @@ namespace GlobalPayments.Api.Tests {
                 CardHolderName = "Joe Smith"
             };
 
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",

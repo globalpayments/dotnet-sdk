@@ -9,7 +9,7 @@ namespace GlobalPayments.Api.Tests {
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",

@@ -20,7 +20,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         public PorticoRecurringTests() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
                 ServiceUrl = "https://cert.api2.heartlandportico.com"
             });

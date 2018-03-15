@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -42,7 +42,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -73,7 +73,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -104,7 +104,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -135,7 +135,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -166,7 +166,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -197,7 +197,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -228,7 +228,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -259,7 +259,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -290,7 +290,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006j() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -321,7 +321,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_006k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -352,7 +352,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -383,7 +383,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -414,7 +414,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -445,7 +445,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -476,7 +476,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -507,7 +507,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -538,7 +538,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -569,7 +569,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -600,7 +600,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -631,7 +631,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -662,7 +662,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_009a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -694,7 +694,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -726,7 +726,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -758,7 +758,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -789,7 +789,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_010a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -820,7 +820,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_010b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -851,7 +851,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -882,7 +882,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -913,7 +913,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_010e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -944,7 +944,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -975,7 +975,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_011b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1006,7 +1006,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_011c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1037,7 +1037,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Auth_011d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1068,7 +1068,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1099,7 +1099,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1130,7 +1130,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_012c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1161,7 +1161,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Auth_012d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1191,7 +1191,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1222,7 +1222,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_013b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1253,7 +1253,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_013b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1284,7 +1284,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1315,7 +1315,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1346,7 +1346,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1376,7 +1376,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1407,7 +1407,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1438,7 +1438,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1469,7 +1469,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_015b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1500,7 +1500,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_015c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1531,7 +1531,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_015d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1560,7 +1560,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_016a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1591,7 +1591,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_016b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1622,7 +1622,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_016c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1653,7 +1653,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_017a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1684,7 +1684,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_018a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1715,7 +1715,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_019a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1747,7 +1747,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_019b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1778,7 +1778,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_019b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1810,7 +1810,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_019c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1841,7 +1841,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_019d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1872,7 +1872,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_020a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1903,7 +1903,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_020a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1934,7 +1934,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_020a3() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1965,7 +1965,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_020a4() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -1996,7 +1996,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_020b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2027,7 +2027,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_020c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2058,7 +2058,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_021a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2089,7 +2089,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_021a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2120,7 +2120,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_021a3() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2151,7 +2151,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_021b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2182,7 +2182,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_021c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2213,7 +2213,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_022a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2244,7 +2244,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_022b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2275,7 +2275,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_022c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2306,7 +2306,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_022d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2337,7 +2337,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_022e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2368,7 +2368,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_023a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2399,7 +2399,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_023a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2430,7 +2430,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_023b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2461,7 +2461,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_023c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2492,7 +2492,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_024a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2523,7 +2523,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_024a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2554,7 +2554,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_024a3() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2585,7 +2585,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_024b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2616,7 +2616,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_024c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2647,7 +2647,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_025() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2678,7 +2678,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_026a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2709,7 +2709,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_026a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2739,7 +2739,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_026b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2769,7 +2769,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_026c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2800,7 +2800,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_026c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2831,7 +2831,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_027a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2863,7 +2863,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_028a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2895,7 +2895,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_028b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2926,7 +2926,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_028c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2958,7 +2958,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_028d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -2990,7 +2990,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_029a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3022,7 +3022,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_029b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3053,7 +3053,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_029c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3085,7 +3085,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_029d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3117,7 +3117,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_030a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3149,7 +3149,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_030b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3180,7 +3180,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_030c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3212,7 +3212,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_030d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3244,7 +3244,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_031a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3276,7 +3276,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_031b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3307,7 +3307,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_031c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3339,7 +3339,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_031c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3371,7 +3371,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_032a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3416,7 +3416,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_033a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3459,7 +3459,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_033b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3496,7 +3496,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_033b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3533,7 +3533,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_033c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3570,7 +3570,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_033c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3607,7 +3607,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_034a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3650,7 +3650,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_034b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3687,7 +3687,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_034b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3724,7 +3724,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_034c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3761,7 +3761,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Auth_034c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3798,7 +3798,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_035a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3829,7 +3829,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_035b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3860,7 +3860,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Auth_055a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3910,7 +3910,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_002a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -3960,7 +3960,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_002b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4010,7 +4010,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_002c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4060,7 +4060,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_002c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4110,7 +4110,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_002d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4160,7 +4160,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_002e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4210,7 +4210,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_002f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4260,7 +4260,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_002g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4310,7 +4310,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_002h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4360,7 +4360,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_003a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4410,7 +4410,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_003b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4460,7 +4460,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_003c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4510,7 +4510,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_003d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4560,7 +4560,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_003e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4610,7 +4610,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_003f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4660,7 +4660,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_003g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4710,7 +4710,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_003h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4760,7 +4760,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_003i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4808,7 +4808,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_004a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4859,7 +4859,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_004b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4910,7 +4910,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_004c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -4960,7 +4960,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_004d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5010,7 +5010,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_004e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5060,7 +5060,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_004f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5110,7 +5110,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_004g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5160,7 +5160,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_004h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5210,7 +5210,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_004i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5261,7 +5261,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_005a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5311,7 +5311,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_005b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5362,7 +5362,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_005c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5412,7 +5412,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_005d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5462,7 +5462,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_005e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5513,7 +5513,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_005f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5563,7 +5563,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_005g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5614,7 +5614,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_005h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5664,7 +5664,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5714,7 +5714,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5764,7 +5764,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5814,7 +5814,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5865,7 +5865,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5915,7 +5915,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -5965,7 +5965,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6015,7 +6015,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6065,7 +6065,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6116,7 +6116,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_007f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6166,7 +6166,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Validation_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6216,7 +6216,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6266,7 +6266,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6316,7 +6316,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6366,7 +6366,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6416,7 +6416,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Validation_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6467,7 +6467,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_001a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6518,7 +6518,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_001b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6569,7 +6569,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_001c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6620,7 +6620,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_001d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6669,7 +6669,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_001e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6720,7 +6720,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_001f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6771,7 +6771,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_001g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6822,7 +6822,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6873,7 +6873,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6924,7 +6924,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -6975,7 +6975,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7026,7 +7026,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7077,7 +7077,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7128,7 +7128,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7177,7 +7177,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_AVS_003h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7225,7 +7225,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_Sample() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7265,7 +7265,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7305,7 +7305,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7345,7 +7345,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7385,7 +7385,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7425,7 +7425,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7465,7 +7465,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7505,7 +7505,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7545,7 +7545,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7585,7 +7585,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7625,7 +7625,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_006k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7665,7 +7665,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7705,7 +7705,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7745,7 +7745,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7785,7 +7785,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7825,7 +7825,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7865,7 +7865,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7905,7 +7905,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7945,7 +7945,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -7985,7 +7985,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8025,7 +8025,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8065,7 +8065,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_009a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8105,7 +8105,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8145,7 +8145,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Settle_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8185,7 +8185,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Settle_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8225,7 +8225,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8265,7 +8265,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8305,7 +8305,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_010e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8345,7 +8345,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8385,7 +8385,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_011b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8425,7 +8425,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_011c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8465,7 +8465,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_011d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8505,7 +8505,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8545,7 +8545,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8585,7 +8585,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Settle_012c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8625,7 +8625,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Settle_012d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8665,7 +8665,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_012e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8705,7 +8705,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Settle_012f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8745,7 +8745,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8785,7 +8785,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Settle_013b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8825,7 +8825,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Settle_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8865,7 +8865,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_013d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8904,7 +8904,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8944,7 +8944,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -8984,7 +8984,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9024,7 +9024,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9064,7 +9064,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9104,7 +9104,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_016a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9144,7 +9144,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_016b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9183,7 +9183,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_016c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9223,7 +9223,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_016d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9263,7 +9263,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Settle_017a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9303,7 +9303,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Settle_017b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secreto",
@@ -9343,7 +9343,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_Sample() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9382,7 +9382,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9421,7 +9421,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9460,7 +9460,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9499,7 +9499,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9538,7 +9538,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9577,7 +9577,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9616,7 +9616,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9655,7 +9655,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9694,7 +9694,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9733,7 +9733,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_006k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9772,7 +9772,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9811,7 +9811,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9850,7 +9850,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9889,7 +9889,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9928,7 +9928,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -9967,7 +9967,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10006,7 +10006,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10045,7 +10045,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10084,7 +10084,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10123,7 +10123,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Void_009e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10162,7 +10162,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_009a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10201,7 +10201,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10240,7 +10240,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Void_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10279,7 +10279,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Void_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10318,7 +10318,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10357,7 +10357,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10396,7 +10396,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_010e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10435,7 +10435,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10474,7 +10474,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_011b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10513,7 +10513,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_011c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10552,7 +10552,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_011d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10591,7 +10591,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10630,7 +10630,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10669,7 +10669,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_012c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10708,7 +10708,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_012d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10747,7 +10747,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10786,7 +10786,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10825,7 +10825,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10864,7 +10864,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10903,7 +10903,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10942,7 +10942,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -10981,7 +10981,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Void_015b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11020,7 +11020,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_Sample() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11060,7 +11060,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11100,7 +11100,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11140,7 +11140,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11180,7 +11180,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11220,7 +11220,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11260,7 +11260,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11300,7 +11300,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11340,7 +11340,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11380,7 +11380,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11420,7 +11420,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11460,7 +11460,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11500,7 +11500,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11540,7 +11540,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11580,7 +11580,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11620,7 +11620,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11660,7 +11660,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11700,7 +11700,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11740,7 +11740,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11780,7 +11780,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_009a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11820,7 +11820,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11860,7 +11860,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11900,7 +11900,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11940,7 +11940,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -11980,7 +11980,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12020,7 +12020,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_010e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12060,7 +12060,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12100,7 +12100,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_011b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12140,7 +12140,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_011c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12180,7 +12180,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Rebate_011d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12219,7 +12219,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12259,7 +12259,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12299,7 +12299,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_012c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12339,7 +12339,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_012d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12379,7 +12379,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_012e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12419,7 +12419,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_012f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12459,7 +12459,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12499,7 +12499,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_013b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12539,7 +12539,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12579,7 +12579,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_013d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12619,7 +12619,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12659,7 +12659,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12699,7 +12699,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12739,7 +12739,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12779,7 +12779,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12819,7 +12819,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_016a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12859,7 +12859,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_016b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12898,7 +12898,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_016c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12938,7 +12938,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_016d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -12978,7 +12978,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Rebate_017a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13018,7 +13018,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Rebate_017b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secreto",
@@ -13058,7 +13058,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_Sample() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13090,7 +13090,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13122,7 +13122,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13154,7 +13154,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13186,7 +13186,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13218,7 +13218,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13250,7 +13250,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13282,7 +13282,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13314,7 +13314,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13346,7 +13346,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13378,7 +13378,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13410,7 +13410,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_006l() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13442,7 +13442,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13474,7 +13474,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13506,7 +13506,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13538,7 +13538,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13570,7 +13570,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13602,7 +13602,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13634,7 +13634,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13666,7 +13666,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13698,7 +13698,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13730,7 +13730,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13762,7 +13762,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_009a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13794,7 +13794,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13826,7 +13826,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13858,7 +13858,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13890,7 +13890,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13922,7 +13922,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13954,7 +13954,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_010e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -13986,7 +13986,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14018,7 +14018,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14050,7 +14050,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_012c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14082,7 +14082,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_012d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14114,7 +14114,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_012e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14146,7 +14146,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14178,7 +14178,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_013b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14209,7 +14209,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14241,7 +14241,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_013d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14273,7 +14273,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14305,7 +14305,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14337,7 +14337,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14369,7 +14369,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14399,7 +14399,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14431,7 +14431,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_015b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14463,7 +14463,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_015c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14495,7 +14495,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_016a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14527,7 +14527,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_017a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14560,7 +14560,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_017b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14593,7 +14593,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_017c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14625,7 +14625,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_017d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14658,7 +14658,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_017f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14691,7 +14691,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_017g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14723,7 +14723,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_OTB_018a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14755,7 +14755,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_OTB_018b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secreto",
@@ -14787,7 +14787,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_Sample() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14819,7 +14819,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14851,7 +14851,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14883,7 +14883,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14915,7 +14915,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14947,7 +14947,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -14979,7 +14979,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15011,7 +15011,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15043,7 +15043,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15075,7 +15075,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15107,7 +15107,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15139,7 +15139,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15171,7 +15171,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15203,7 +15203,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15235,7 +15235,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15267,7 +15267,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15299,7 +15299,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15331,7 +15331,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15363,7 +15363,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15395,7 +15395,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_009a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15427,7 +15427,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15459,7 +15459,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15491,7 +15491,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15522,7 +15522,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15554,7 +15554,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15586,7 +15586,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_010e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15618,7 +15618,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15650,7 +15650,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15682,7 +15682,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15714,7 +15714,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_012c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15746,7 +15746,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15778,7 +15778,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_013b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15809,7 +15809,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15841,7 +15841,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15873,7 +15873,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15905,7 +15905,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15937,7 +15937,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15967,7 +15967,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -15999,7 +15999,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_015b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16031,7 +16031,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_015c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16063,7 +16063,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_016a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16095,7 +16095,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_017a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16127,7 +16127,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_017b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16160,7 +16160,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_017c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16192,7 +16192,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_017d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16225,7 +16225,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_017f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16257,7 +16257,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_017g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16289,7 +16289,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_018a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16321,7 +16321,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_018b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16353,7 +16353,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_018c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16385,7 +16385,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_018d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16417,7 +16417,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_019a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16449,7 +16449,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_019b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16481,7 +16481,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_019c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16513,7 +16513,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_020a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16545,7 +16545,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_020b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secreto",
@@ -16577,7 +16577,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_021a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16609,7 +16609,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_021b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16641,7 +16641,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Credit_021c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16673,7 +16673,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Credit_021d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16705,7 +16705,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_021e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16737,7 +16737,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Credit_021f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16769,7 +16769,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Credit_022a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16801,7 +16801,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_022b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16833,7 +16833,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Credit_022c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16865,7 +16865,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Credit_022d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16896,7 +16896,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_Sample() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16936,7 +16936,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -16976,7 +16976,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17016,7 +17016,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17056,7 +17056,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17096,7 +17096,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17136,7 +17136,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17176,7 +17176,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17216,7 +17216,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17256,7 +17256,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17296,7 +17296,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17336,7 +17336,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_006l() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17376,7 +17376,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17416,7 +17416,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17456,7 +17456,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17496,7 +17496,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17518,7 +17518,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17540,7 +17540,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17580,7 +17580,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17620,7 +17620,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17642,7 +17642,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17664,7 +17664,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17686,7 +17686,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17726,7 +17726,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17750,7 +17750,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_009e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17774,7 +17774,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_010a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17814,7 +17814,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_010b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17854,7 +17854,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Hold_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17878,7 +17878,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17918,7 +17918,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17958,7 +17958,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_011b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -17998,7 +17998,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_011c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18037,7 +18037,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_011d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18077,7 +18077,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18117,7 +18117,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Hold_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secreto",
@@ -18157,7 +18157,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Hold_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18197,7 +18197,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Hold_013b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18237,7 +18237,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Hold_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18277,7 +18277,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_Sample() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18325,7 +18325,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18373,7 +18373,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18421,7 +18421,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18469,7 +18469,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18517,7 +18517,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18565,7 +18565,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18613,7 +18613,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18661,7 +18661,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18709,7 +18709,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18757,7 +18757,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18805,7 +18805,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_006l() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18853,7 +18853,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18901,7 +18901,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18949,7 +18949,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -18997,7 +18997,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19019,7 +19019,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19041,7 +19041,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19063,7 +19063,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19085,7 +19085,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19107,7 +19107,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19131,7 +19131,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_009e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19155,7 +19155,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_010a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19195,7 +19195,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_010b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19235,7 +19235,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Release_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19259,7 +19259,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19299,7 +19299,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19339,7 +19339,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_011b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19379,7 +19379,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_011c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19418,7 +19418,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_011d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19458,7 +19458,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19498,7 +19498,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Release_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secreto",
@@ -19538,7 +19538,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Release_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19578,7 +19578,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Release_013b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19618,7 +19618,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Release_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19658,7 +19658,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19697,7 +19697,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19736,7 +19736,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19775,7 +19775,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19814,7 +19814,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19853,7 +19853,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19892,7 +19892,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19931,7 +19931,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -19970,7 +19970,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20009,7 +20009,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006j() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20048,7 +20048,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_006k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20087,7 +20087,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_007a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20126,7 +20126,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_007b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20165,7 +20165,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_007c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20204,7 +20204,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_007d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20243,7 +20243,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_007e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20282,7 +20282,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_008a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20321,7 +20321,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_008b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20360,7 +20360,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_008c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20399,7 +20399,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_008d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20438,7 +20438,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_008e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20477,7 +20477,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_009a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20517,7 +20517,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_009b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20557,7 +20557,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_009c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20597,7 +20597,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_009d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20636,7 +20636,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_010a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20675,7 +20675,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_010b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20714,7 +20714,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_010c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20753,7 +20753,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_010d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20792,7 +20792,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_010e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20831,7 +20831,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_011a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20870,7 +20870,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_011b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20909,7 +20909,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_011c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20948,7 +20948,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Manual_011d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -20987,7 +20987,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_012a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21026,7 +21026,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_012b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21065,7 +21065,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_012c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21104,7 +21104,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DotNet_Manual_012d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21134,7 +21134,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_013a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21173,7 +21173,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_013b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21212,7 +21212,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_013b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21251,7 +21251,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_013c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21290,7 +21290,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21329,7 +21329,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21367,7 +21367,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21406,7 +21406,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21445,7 +21445,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21484,7 +21484,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_015b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21523,7 +21523,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_015c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21562,7 +21562,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_015d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21599,7 +21599,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_016a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21638,7 +21638,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_016b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21677,7 +21677,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_016c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21716,7 +21716,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_017a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21755,7 +21755,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_018a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21794,7 +21794,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_019a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21834,7 +21834,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_019b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21873,7 +21873,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_019b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21913,7 +21913,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_019c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21952,7 +21952,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_019d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -21991,7 +21991,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_020a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22030,7 +22030,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_020a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22069,7 +22069,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_020a3() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22108,7 +22108,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_020a4() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22147,7 +22147,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_020b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22186,7 +22186,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_020c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22225,7 +22225,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_021a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22264,7 +22264,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_021a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22303,7 +22303,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_021a3() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22342,7 +22342,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_021b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22381,7 +22381,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_021c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22420,7 +22420,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_022a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22459,7 +22459,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_022b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22498,7 +22498,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_022c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22537,7 +22537,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_022d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22576,7 +22576,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_022e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22615,7 +22615,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_023a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22654,7 +22654,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_023a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22693,7 +22693,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_023b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22732,7 +22732,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_023c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22771,7 +22771,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_024a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22810,7 +22810,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_024a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22849,7 +22849,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_024a3() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22888,7 +22888,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_024b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22927,7 +22927,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_024c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -22966,7 +22966,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_025() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23005,7 +23005,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_026a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23044,7 +23044,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_026a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23082,7 +23082,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_026b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23120,7 +23120,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_026c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23159,7 +23159,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_026c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23198,7 +23198,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_027a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23238,7 +23238,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_028a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23278,7 +23278,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_028b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23317,7 +23317,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_028c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23357,7 +23357,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_028d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23397,7 +23397,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_029a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23437,7 +23437,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_029b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23476,7 +23476,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_029c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23516,7 +23516,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_029d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23556,7 +23556,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_030a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23596,7 +23596,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_030b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23635,7 +23635,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_030c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23675,7 +23675,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_030d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23715,7 +23715,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_031a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23755,7 +23755,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_031b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23794,7 +23794,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_031c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23834,7 +23834,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_031c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23874,7 +23874,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_032a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23927,7 +23927,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_033a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -23978,7 +23978,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_033b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24023,7 +24023,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_033b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24068,7 +24068,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_033c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24113,7 +24113,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_033c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24158,7 +24158,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_034a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24209,7 +24209,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_034b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24254,7 +24254,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_034b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24299,7 +24299,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_034c1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24344,7 +24344,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_Manual_034c2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24389,7 +24389,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_035a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24428,7 +24428,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_Manual_035b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24467,7 +24467,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24498,7 +24498,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24529,7 +24529,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24560,7 +24560,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24591,7 +24591,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24622,7 +24622,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24653,7 +24653,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24684,7 +24684,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24715,7 +24715,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_014i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24746,7 +24746,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_015a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24777,7 +24777,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24808,7 +24808,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24839,7 +24839,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24870,7 +24870,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24901,7 +24901,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24932,7 +24932,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24963,7 +24963,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -24994,7 +24994,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_015i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25025,7 +25025,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_016a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25056,7 +25056,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25087,7 +25087,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25118,7 +25118,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25149,7 +25149,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25180,7 +25180,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25211,7 +25211,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25242,7 +25242,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25273,7 +25273,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_016i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25304,7 +25304,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25335,7 +25335,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25366,7 +25366,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25397,7 +25397,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25428,7 +25428,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25459,7 +25459,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017f() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25490,7 +25490,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017g() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25521,7 +25521,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017h() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25552,7 +25552,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017i() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25583,7 +25583,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017j() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25614,7 +25614,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_017k() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25645,7 +25645,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_018a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25676,7 +25676,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_018b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25707,7 +25707,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_018c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25738,7 +25738,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_018d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25769,7 +25769,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_018e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25800,7 +25800,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_019a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25831,7 +25831,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_019b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25862,7 +25862,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_019c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25893,7 +25893,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_019d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25924,7 +25924,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_019e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25955,7 +25955,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_020b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -25986,7 +25986,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_020c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26017,7 +26017,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_020d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26048,7 +26048,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_020e() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26079,7 +26079,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_021a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26110,7 +26110,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_021b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26141,7 +26141,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_021c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26172,7 +26172,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_021d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26203,7 +26203,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_022a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26234,7 +26234,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_022b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26265,7 +26265,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_022c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26296,7 +26296,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_022d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26326,7 +26326,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_023a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26357,7 +26357,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_023b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26388,7 +26388,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_023b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26419,7 +26419,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_023c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26450,7 +26450,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_024a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26481,7 +26481,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_024b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26511,7 +26511,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_024c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26542,7 +26542,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_024d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26573,7 +26573,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_025a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26604,7 +26604,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_025b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26635,7 +26635,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_025c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26666,7 +26666,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_025d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26695,7 +26695,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_026a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26726,7 +26726,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_026b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26757,7 +26757,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_026c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26788,7 +26788,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_027a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26819,7 +26819,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_028a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26850,7 +26850,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_029a() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26882,7 +26882,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_029b1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26913,7 +26913,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_029b2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26945,7 +26945,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestMethod]
         [ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_029c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -26976,7 +26976,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, Ignore]
         public void DotNet_verifyenrolled_029d() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -27007,7 +27007,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_030a1() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -27038,7 +27038,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_030a2() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -27069,7 +27069,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_030a3() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -27100,7 +27100,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_030a4() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -27131,7 +27131,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
         public void DotNet_verifyenrolled_030b() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -27162,7 +27162,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
 
         [TestMethod]
         public void DotNet_verifyenrolled_030c() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",

@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.Services {
         EBTTrackData card;
 
         public EbtServiceTests() {
-            service = new EbtService(new ServicesConfig {
+            service = new EbtService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
                 ServiceUrl = "https://cert.api2.heartlandportico.com"
             });

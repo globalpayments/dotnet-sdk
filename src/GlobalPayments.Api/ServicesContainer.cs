@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Terminals;
-using GlobalPayments.Api.Terminals.HeartSIP;
-using GlobalPayments.Api.Terminals.PAX;
 
 namespace GlobalPayments.Api {
-    internal class ConfiguredServices : IDisposable {
-        public IPaymentGateway GatewayConnector { get; set; }
-        public IRecurringService RecurringConnector { get; set; }
-        public IDeviceInterface DeviceInterface { get; private set; }
+    public class ConfiguredServices : IDisposable {
+        internal IPaymentGateway GatewayConnector { get; set; }
+
+        internal IRecurringService RecurringConnector { get; set; }
+
+        internal IDeviceInterface DeviceInterface { get; private set; }
+
         private DeviceController _deviceController;
-        public DeviceController DeviceController {
+        internal DeviceController DeviceController {
             get {
                 return _deviceController;
             }
@@ -21,7 +22,13 @@ namespace GlobalPayments.Api {
                 DeviceInterface = value.ConfigureInterface();
             }
         }
-        public TableServiceConnector ReservationConnector { get; set; }
+
+        internal OnlineBoardingConnector BoardingConnector { get; set; }
+
+        internal TableServiceConnector TableServiceConnector { get; set; }
+
+        internal PayrollConnector PayrollConnector { get; set; }
+
         public void Dispose() {
             DeviceController.Dispose();
         }
@@ -42,9 +49,9 @@ namespace GlobalPayments.Api {
 
         internal static ServicesContainer Instance {
             get {
-                if (_instance != null)
-                    return _instance;
-                else throw new ApiException("Services container not configured.");
+                if (_instance == null)
+                    _instance = new ServicesContainer();
+                return _instance;
             }
         }
 
@@ -54,82 +61,39 @@ namespace GlobalPayments.Api {
         public static void Configure(ServicesConfig config, string configName = "default") {
             config.Validate();
 
-            var cs = new ConfiguredServices();
+            // configure devices
+            ConfigureService(config.DeviceConnectionConfig, configName);
 
-            #region configure devices
-            if (config.DeviceConnectionConfig != null) {
-                switch (config.DeviceConnectionConfig.DeviceType) {
-                    case DeviceType.PAX_S300:
-                        cs.DeviceController = new PaxController(config.DeviceConnectionConfig);
-                        break;
-                    case DeviceType.HSIP_ISC250:
-                        cs.DeviceController = new HeartSipController(config.DeviceConnectionConfig);
-                        break;
-                    default:
-                        break;
-                }
+            // configure table service
+            ConfigureService(config.TableServiceConfig, configName);
+
+            // configure payroll
+            ConfigureService(config.PayrollConfig, configName);
+
+            // configure gateways
+            ConfigureService(config.GatewayConfig, configName);
+        }
+
+        public static void ConfigureService<T>(T config, string configName = "default") where T : Configuration {
+            if (config != null) {
+                if (!config.Validated)
+                    config.Validate();
+
+                var cs = Instance.GetConfiguration(configName);
+                config.ConfigureContainer(cs);
+
+                Instance.AddConfiguration(configName, cs);
             }
-            #endregion
-
-            #region configure reservations
-            if (config.ReservationProvider != null) {
-                if (config.ReservationProvider == ReservationProviders.FreshTxt) {
-                    cs.ReservationConnector = new TableServiceConnector {
-                        ServiceUrl = "https://www.freshtxt.com/api31/",
-                        Timeout = config.Timeout
-                    };
-                }
-            }
-            #endregion
-
-            #region configure gateways
-            if (!string.IsNullOrEmpty(config.MerchantId)) {
-                var gateway = new RealexConnector {
-                    AccountId = config.AccountId,
-                    Channel = config.Channel,
-                    MerchantId = config.MerchantId,
-                    RebatePassword = config.RebatePassword,
-                    RefundPassword = config.RefundPassword,
-                    SharedSecret = config.SharedSecret,
-                    Timeout = config.Timeout,
-                    ServiceUrl = config.ServiceUrl,
-                    HostedPaymentConfig = config.HostedPaymentConfig
-                };
-                cs.GatewayConnector = gateway;
-                cs.RecurringConnector = gateway;
-            }
-            else {
-                var gateway = new PorticoConnector {
-                    SiteId = config.SiteId,
-                    LicenseId = config.LicenseId,
-                    DeviceId = config.DeviceId,
-                    Username = config.Username,
-                    Password = config.Password,
-                    SecretApiKey = config.SecretApiKey,
-                    DeveloperId = config.DeveloperId,
-                    VersionNumber = config.VersionNumber,
-                    Timeout = config.Timeout,
-                    ServiceUrl = config.ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx"
-                };
-                cs.GatewayConnector = gateway;
-
-                var payplan = new PayPlanConnector {
-                    SecretApiKey = config.SecretApiKey,
-                    Timeout = config.Timeout,
-                    ServiceUrl = config.ServiceUrl + "/Portico.PayPlan.v2/"
-                };
-                cs.RecurringConnector = payplan;
-            }
-            #endregion
-
-            if (_instance == null)
-                _instance = new ServicesContainer();
-
-            _instance.AddConfiguration(configName, cs);
         }
 
         private ServicesContainer() {
             _configurations = new Dictionary<string, ConfiguredServices>();
+        }
+
+        private ConfiguredServices GetConfiguration(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName];
+            return new ConfiguredServices();
         }
 
         private void AddConfiguration(string configName, ConfiguredServices config) {
@@ -141,31 +105,43 @@ namespace GlobalPayments.Api {
         internal IPaymentGateway GetClient(string configName) {
             if (_configurations.ContainsKey(configName))
                 return _configurations[configName].GatewayConnector;
-            return null;
+            throw new ApiException("The specified configuration has not been configured for gateway processing.");
         }
 
         internal IDeviceInterface GetDeviceInterface(string configName) {
             if (_configurations.ContainsKey(configName))
                 return _configurations[configName].DeviceInterface;
-            return null;
+            throw new ApiException("The specified configuration has not been configured for terminal interaction.");
         }
 
         internal DeviceController GetDeviceController(string configName) {
             if (_configurations.ContainsKey(configName))
                 return _configurations[configName].DeviceController;
-            return null;
+            throw new ApiException("The specified configuration has not been configured for terminal interaction.");
         }
 
         internal IRecurringService GetRecurringClient(string configName) {
             if (_configurations.ContainsKey(configName))
                 return _configurations[configName].RecurringConnector;
+            throw new ApiException("The specified configuration has not been configured for recurring processing.");
+        }
+
+        internal TableServiceConnector GetTableServiceClient(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].TableServiceConnector;
+            throw new ApiException("The specified configuration has not been configured for table service.");
+        }
+
+        internal OnlineBoardingConnector GetBoardingConnector(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].BoardingConnector;
             return null;
         }
 
-        internal TableServiceConnector GetReservationService(string configName) {
+        internal PayrollConnector GetPayrollClient(string configName) {
             if (_configurations.ContainsKey(configName))
-                return _configurations[configName].ReservationConnector;
-            return null;
+                return _configurations[configName].PayrollConnector;
+            throw new ApiException("The specified configuration has not been configured for payroll.");
         }
 
         /// <summary>

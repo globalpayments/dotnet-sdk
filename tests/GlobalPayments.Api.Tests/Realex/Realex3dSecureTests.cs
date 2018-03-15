@@ -13,7 +13,7 @@ namespace GlobalPayments.Api.Tests.Realex {
     public class Realex3dSecureTests {
         [TestInitialize]
         public void Init() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "3dsecure",
                 SharedSecret = "secret",

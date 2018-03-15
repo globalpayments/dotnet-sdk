@@ -1,4 +1,7 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Terminals.PAX;
+using GlobalPayments.Api.Terminals.HeartSIP;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
@@ -43,27 +46,40 @@ namespace GlobalPayments.Api.Terminals {
         StopBits StopBits { get; set; }
         DataBits DataBits { get; set; }
 
-        int TimeOut { get; set; }
-
-        void Validate();
+        // Timeout
+        int Timeout { get; set; }
     }
 
-    public class ConnectionConfig : ITerminalConfiguration {
+    public class ConnectionConfig : Configuration, ITerminalConfiguration {
         public DeviceType DeviceType { get; set; }
         public ConnectionModes ConnectionMode { get; set; }
         public BaudRate BaudRate { get; set; }
         public Parity Parity { get; set; }
         public StopBits StopBits { get; set; }
         public DataBits DataBits { get; set; }
-        public int TimeOut { get; set; }
         public string IpAddress { get; set; }
         public string Port { get; set; }
 
         public ConnectionConfig() {
-            this.TimeOut = -1;
+            Timeout = -1;
         }
 
-        public void Validate() {
+        internal override void ConfigureContainer(ConfiguredServices services) {
+            switch (DeviceType) {
+                case DeviceType.PAX_S300:
+                    services.DeviceController = new PaxController(this);
+                    break;
+                case DeviceType.HSIP_ISC250:
+                    services.DeviceController = new HeartSipController(this);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        internal override void Validate() {
+            base.Validate();
+
             if (ConnectionMode == ConnectionModes.TCP_IP || ConnectionMode == ConnectionModes.HTTP) {
                 if (string.IsNullOrEmpty(IpAddress))
                     throw new ApiException("IpAddress is required for TCP or HTTP communication modes.");

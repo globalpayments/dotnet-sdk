@@ -65,7 +65,7 @@ namespace GlobalPayments.Api.Terminals.HeartSIP.Interfaces {
         public void Connect() {
             if (_client == null) {
                 _client = new TcpClient();
-                _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.TimeOut);
+                _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
                 _stream = _client.GetStream();
                 _stream.ReadTimeout = 60000;
             }
@@ -98,7 +98,7 @@ namespace GlobalPayments.Api.Terminals.HeartSIP.Interfaces {
                     _stream.Flush();
 
                     var task = BeginReceiveTask();
-                    if(!task.Wait(_settings.TimeOut))
+                    if(!task.Wait(_settings.Timeout))
                         throw new MessageException("Device did not respond within the timeout.");
 
                     return message_queue.ToArray();

@@ -24,7 +24,6 @@ namespace GlobalPayments.Api.Terminals {
         }
 
         internal DeviceController(ITerminalConfiguration settings) {
-            settings.Validate();
             _settings = settings;
         }
 

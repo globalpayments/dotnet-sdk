@@ -10,6 +10,10 @@ namespace GlobalPayments.Api.Gateways {
 
         public virtual string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null) {
             var response = SendRequest(verb, endpoint, data, queryStringParams);
+            return HandleResponse(response);
+        }
+
+        protected virtual string HandleResponse(GatewayResponse response) {
             if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.NoContent) {
                 var parsed = JsonDoc.Parse(response.RawResponse);
                 var error = parsed.Get("error") ?? parsed;

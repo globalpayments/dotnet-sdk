@@ -5,8 +5,8 @@ using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Services {
     public class DebitService {
-        public DebitService(ServicesConfig config) {
-            ServicesContainer.Configure(config);
+        public DebitService(GatewayConfig config, string configName = "default") {
+            ServicesContainer.ConfigureService(config, configName);
         }
 
         public AuthorizationBuilder Charge(decimal? amount = null) {

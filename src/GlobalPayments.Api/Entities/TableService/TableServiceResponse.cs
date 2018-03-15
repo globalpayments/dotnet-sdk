@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Entities.TableService {
         }
 
         protected T SendRequest<T>(string endpoint, MultipartForm formData) where T : TableServiceResponse {
-            var connector = ServicesContainer.Instance.GetReservationService(_configName);
+            var connector = ServicesContainer.Instance.GetTableServiceClient(_configName);
             if (!connector.Configured && !endpoint.Equals("user/login"))
                 throw new ConfigurationException("Reservation service has not been configured properly. Please ensure you have logged in first.");
 

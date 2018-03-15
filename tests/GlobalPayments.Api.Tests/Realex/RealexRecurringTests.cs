@@ -18,7 +18,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         }
 
         public RealexRecurringTests() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 RefundPassword = "refund",

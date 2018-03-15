@@ -45,7 +45,7 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             }
 
             // configure the container
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = merchantId,
                 AccountId = account,
                 ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",

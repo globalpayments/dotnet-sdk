@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using GlobalPayments.Api.Entities;
+using System.Threading.Tasks;
 
 namespace GlobalPayments.Api.Gateways {
     internal abstract class Gateway {
@@ -18,7 +19,7 @@ namespace GlobalPayments.Api.Gateways {
             _contentType = contentType;
         }
 
-        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null) {
+        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null) {
             HttpClient httpClient = new HttpClient {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
             };
@@ -31,10 +32,13 @@ namespace GlobalPayments.Api.Gateways {
 
             HttpResponseMessage response = null;
             try {
-                request.Content = new StringContent(data, Encoding.UTF8, _contentType);
+                if (data != null) {
+                    request.Content = new StringContent(data, Encoding.UTF8, contentType ?? _contentType);
+                }
                 response = httpClient.SendAsync(request).Result;
                 return new GatewayResponse {
                     StatusCode = response.StatusCode,
+                    RequestUrl = response.RequestMessage.RequestUri.ToString(),
                     RawResponse = response.Content.ReadAsStringAsync().Result
                 };
             }
@@ -44,6 +48,27 @@ namespace GlobalPayments.Api.Gateways {
             finally { }
         }
 
+        protected async Task<GatewayResponse> SendRequestAsync(string endpoint, MultipartFormDataContent content) {
+            HttpClient httpClient = new HttpClient {
+                Timeout = TimeSpan.FromMilliseconds(Timeout)
+            };
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl + endpoint);
+            HttpResponseMessage response = null;
+            try {
+                request.Content = content;
+                response = await httpClient.SendAsync(request);
+                return new GatewayResponse {
+                    StatusCode = response.StatusCode,
+                    RequestUrl = response.RequestMessage.RequestUri.ToString(),
+                    RawResponse = response.Content.ReadAsStringAsync().Result
+                };
+            }
+            catch (Exception exc) {
+                throw new GatewayException("Error occurred while communicating with gateway.", exc);
+            }
+            finally { }
+        }
         protected GatewayResponse SendRequest(string endpoint, MultipartFormDataContent content) {
             HttpClient httpClient = new HttpClient {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
@@ -56,6 +81,7 @@ namespace GlobalPayments.Api.Gateways {
                 response = httpClient.SendAsync(request).Result;
                 return new GatewayResponse {
                     StatusCode = response.StatusCode,
+                    RequestUrl = response.RequestMessage.RequestUri.ToString(),
                     RawResponse = response.Content.ReadAsStringAsync().Result
                 };
             }

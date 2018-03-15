@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading;
 using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,15 +12,11 @@ namespace GlobalPayments.Api.Tests.Terminals.HeartSIP.VRF {
         IDeviceInterface _device;
 
         public HsipVerificationTests() {
-            _device = DeviceService.Create(new ServicesConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2.heartlandportico.com",
-                DeviceConnectionConfig = new ConnectionConfig {
-                    DeviceType = DeviceType.HSIP_ISC250,
-                    ConnectionMode = ConnectionModes.TCP_IP,
-                    IpAddress = "10.12.220.130",
-                    Port = "12345"
-                }
+            _device = DeviceService.Create(new ConnectionConfig {
+                DeviceType = DeviceType.HSIP_ISC250,
+                ConnectionMode = ConnectionModes.TCP_IP,
+                IpAddress = "10.12.220.130",
+                Port = "12345"
             });
             Assert.IsNotNull(_device);
             _device.OpenLane();

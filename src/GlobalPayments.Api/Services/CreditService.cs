@@ -4,8 +4,8 @@ using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Services {
     public class CreditService {
-        public CreditService(ServicesConfig config) {
-            ServicesContainer.Configure(config);
+        public CreditService(GatewayConfig config, string configName = "default") {
+            ServicesContainer.ConfigureService(config, configName);
         }
 
         public AuthorizationBuilder Authorize(decimal? amount = null) {

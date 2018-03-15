@@ -3,44 +3,36 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests
-{
+namespace GlobalPayments.Api.Tests {
     [TestClass]
-    public class PorticoCreditTests
-    {
+    public class PorticoCreditTests {
         CreditCardData card;
         CreditTrackData track;
 
         [TestInitialize]
-        public void Init()
-        {
-            ServicesContainer.Configure(new ServicesConfig
-            {
+        public void Init() {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
                 ServiceUrl = "https://cert.api2.heartlandportico.com"
             });
 
-            card = new CreditCardData
-            {
+            card = new CreditCardData {
                 Number = "4111111111111111",
                 ExpMonth = 12,
                 ExpYear = 2025,
                 Cvn = "123"
             };
 
-            track = new CreditTrackData
-            {
+            track = new CreditTrackData {
                 Value = "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;",
-                EncryptionData = new EncryptionData
-                {
+                EncryptionData = new EncryptionData {
                     Version = "01"
                 }
             };
         }
 
         [TestMethod]
-        public void CreditAuthorization()
-        {
+        public void CreditAuthorization() {
             var response = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -54,8 +46,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditAuthWithConvenienceAmt()
-        {
+        public void CreditAuthWithConvenienceAmt() {
             var response = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -69,8 +60,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditAuthWithShippingAmt()
-        {
+        public void CreditAuthWithShippingAmt() {
             var response = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -84,8 +74,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSale()
-        {
+        public void CreditSale() {
             var response = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -95,8 +84,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSaleWithConvenienceAmt()
-        {
+        public void CreditSaleWithConvenienceAmt() {
             var response = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -110,8 +98,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSaleWithShippingAmt()
-        {
+        public void CreditSaleWithShippingAmt() {
             var response = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -125,8 +112,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditOfflineAuth()
-        {
+        public void CreditOfflineAuth() {
             var response = card.Authorize(16m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -137,8 +123,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditOfflineAuthWithConvenienceAmt()
-        {
+        public void CreditOfflineAuthWithConvenienceAmt() {
             var response = card.Authorize(16m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -153,8 +138,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditOfflineWithShippingAmt()
-        {
+        public void CreditOfflineWithShippingAmt() {
             var response = card.Authorize(16m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -169,8 +153,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditOfflineSale()
-        {
+        public void CreditOfflineSale() {
             var response = card.Charge(17m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -181,8 +164,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditOfflineSaleWithConvenienceAmt()
-        {
+        public void CreditOfflineSaleWithConvenienceAmt() {
             var response = card.Charge(17m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -197,8 +179,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditOfflineSaleWithShippingAmt()
-        {
+        public void CreditOfflineSaleWithShippingAmt() {
             var response = card.Charge(17m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -213,8 +194,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditRefund()
-        {
+        public void CreditRefund() {
             var response = card.Refund(16m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -224,8 +204,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditReverse()
-        {
+        public void CreditReverse() {
             var response = card.Reverse(15m)
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -234,8 +213,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditVerify()
-        {
+        public void CreditVerify() {
             var response = card.Verify()
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -244,8 +222,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSwipeAuthorization()
-        {
+        public void CreditSwipeAuthorization() {
             var response = track.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -259,8 +236,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSwipeSale()
-        {
+        public void CreditSwipeSale() {
             var response = track.Charge(15m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -270,8 +246,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSwipeOfflineAuth()
-        {
+        public void CreditSwipeOfflineAuth() {
             var response = track.Authorize(16m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -282,8 +257,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSwipeOfflineSale()
-        {
+        public void CreditSwipeOfflineSale() {
             var response = card.Charge(17m)
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
@@ -294,8 +268,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod, Ignore]
-        public void CreditSwipeAddValue()
-        {
+        public void CreditSwipeAddValue() {
             var response = track.AddValue(16m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -305,16 +278,14 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSwipeBalanceInquiry()
-        {
+        public void CreditSwipeBalanceInquiry() {
             var response = track.BalanceInquiry().Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
 
         [TestMethod]
-        public void CreditSwipeRefund()
-        {
+        public void CreditSwipeRefund() {
             var response = card.Refund(16m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -324,8 +295,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSwipeReverse()
-        {
+        public void CreditSwipeReverse() {
             var response = track.Charge(19m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -341,8 +311,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditSwipeVerify()
-        {
+        public void CreditSwipeVerify() {
             var response = card.Verify()
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -351,8 +320,7 @@ namespace GlobalPayments.Api.Tests
         }
 
         [TestMethod]
-        public void CreditVoidFromTransactionId()
-        {
+        public void CreditVoidFromTransactionId() {
             var response = card.Authorize(10.00m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)

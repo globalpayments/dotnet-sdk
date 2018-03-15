@@ -111,7 +111,7 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public T GetValue<T>(string name, Func<object, T> converter = null) {
-            if (_dict.ContainsKey(name)) {
+            if (_dict.ContainsKey(name) && _dict[name] != null) {
                 try {
                     var value = _dict[name];
                     if (_encoder != null)
@@ -136,6 +136,15 @@ namespace GlobalPayments.Api.Utils {
             return null;
         }
 
+        public IEnumerable<T> GetArray<T>(string name) {
+            if (_dict.ContainsKey(name)) {
+                if (_dict[name] is IEnumerable<T>)
+                    return (IEnumerable<T>)_dict[name];
+                return null;
+            }
+            return null;
+        }
+
         public bool Has(string name) {
             return _dict.ContainsKey(name);
         }
@@ -148,12 +157,23 @@ namespace GlobalPayments.Api.Utils {
             return null;
         }
 
+        public static T ParseSingleValue<T>(string json, string name, IRequestEncoder encoder = null) {
+            var doc = Parse(json, encoder);
+            return doc.GetValue<T>(name);
+        }
+
         public static JsonDoc ParseObject(JObject obj, IRequestEncoder encoder) {
             var values = new Dictionary<string, object>();
             foreach (var child in obj.Children<JProperty>()) {
                 if (child.Value is JArray) {
-                    var objs = ParseArray(child.Value as JArray, encoder);
-                    values.Add(child.Name, objs);
+                    if (child.Value.First is JObject) {
+                        var objs = ParseObjectArray(child.Value as JArray, encoder);
+                        values.Add(child.Name, objs);
+                    }
+                    else {
+                        var objs = ParseTypeArray<string>(child.Value as JArray, encoder);
+                        values.Add(child.Name, objs);
+                    }
                 }
                 else if (child.Value is JObject) {
                     values.Add(child.Name, ParseObject(child.Value as JObject, encoder));
@@ -163,7 +183,15 @@ namespace GlobalPayments.Api.Utils {
             return new JsonDoc(values, encoder);
         }
 
-        public static IEnumerable<JsonDoc> ParseArray(JArray objs, IRequestEncoder encoder) {
+        public static IEnumerable<T> ParseTypeArray<T>(JArray objs, IRequestEncoder encoder) {
+            var response = new List<T>();
+            foreach (var child in objs.Children<JToken>()) {
+                response.Add(child.Value<T>());
+            }
+            return response;
+        }
+
+        public static IEnumerable<JsonDoc> ParseObjectArray(JArray objs, IRequestEncoder encoder) {
             var responses = new List<JsonDoc>();
             foreach (var child in objs.Children<JObject>()) {
                 responses.Add(ParseObject(child, encoder));

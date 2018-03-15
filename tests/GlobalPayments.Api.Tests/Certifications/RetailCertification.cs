@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
         string amex_token;
 
         public RetailCertification() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
                 ServiceUrl = "https://cert.api2.heartlandportico.com"
             });

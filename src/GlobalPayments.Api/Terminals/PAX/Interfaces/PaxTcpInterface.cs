@@ -27,9 +27,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public void Connect() { 
             if (_client == null) {
                 _client = new TcpClient();
-                _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.TimeOut);
+                _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
                 _stream = _client.GetStream();
-                _stream.ReadTimeout = _settings.TimeOut;
+                _stream.ReadTimeout = _settings.Timeout;
             }
         }
 

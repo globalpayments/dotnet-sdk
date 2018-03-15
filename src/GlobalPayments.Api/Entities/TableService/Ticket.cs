@@ -81,7 +81,7 @@ namespace GlobalPayments.Api.Entities.TableService {
         /// <param name="bumpTime">optional: the time of the status change</param>
         /// <returns>TableServiceResponse</returns>
         public TableServiceResponse BumpStatus(string bumpStatus, DateTime? bumpTime = null) {
-            int bumpStatusId = ServicesContainer.Instance.GetReservationService(_configName).BumpStatusCollection[bumpStatus];
+            int bumpStatusId = ServicesContainer.Instance.GetTableServiceClient(_configName).BumpStatusCollection[bumpStatus];
             if (bumpStatusId == 0)
                 throw new MessageException(string.Format("Unknown status value: {0}", bumpStatus));
             return BumpStatus(bumpStatusId, bumpTime);
@@ -155,7 +155,7 @@ namespace GlobalPayments.Api.Entities.TableService {
         public TableServiceResponse SettleCheck(string bumpStatus = null, DateTime? settleTime = null) {
             int? bumpStatusId = null;
             if (!string.IsNullOrEmpty(bumpStatus)) {
-                bumpStatusId = ServicesContainer.Instance.GetReservationService(_configName).BumpStatusCollection[bumpStatus];
+                bumpStatusId = ServicesContainer.Instance.GetTableServiceClient(_configName).BumpStatusCollection[bumpStatus];
                 if (bumpStatusId == 0)
                     throw new MessageException(string.Format("Unknown status value: {0}", bumpStatus));
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Entities
 {
@@ -63,5 +64,13 @@ namespace GlobalPayments.Api.Entities
     public class UnsupportedTransactionException : ApiException {
         /// <param name="message">The exception message</param>
         public UnsupportedTransactionException(string message = null) : base(message ?? "Transaction type not supported for this payment method.") { }
+    }
+
+    public class ValidationException : ApiException {
+        public List<string> ValidationErrors { get; private set; }
+
+        public ValidationException(List<string> validationErrors) : base("The application failed validation. Please see the validation errors for specific details.") {
+            ValidationErrors = validationErrors;
+        }
     }
 }

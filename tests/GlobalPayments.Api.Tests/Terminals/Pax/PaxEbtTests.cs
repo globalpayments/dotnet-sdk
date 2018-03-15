@@ -9,15 +9,11 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         IDeviceInterface _device;
 
         public PaxEbtTests() {
-            _device = DeviceService.Create(new ServicesConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2.heartlandportico.com",
-                DeviceConnectionConfig = new ConnectionConfig {
-                    DeviceType = DeviceType.PAX_S300,
-                    ConnectionMode = ConnectionModes.HTTP,
-                    IpAddress = "10.12.220.172",
-                    Port = "10009"
-                }
+            _device = DeviceService.Create(new ConnectionConfig {
+                DeviceType = DeviceType.PAX_S300,
+                ConnectionMode = ConnectionModes.HTTP,
+                IpAddress = "10.12.220.172",
+                Port = "10009"
             });
             Assert.IsNotNull(_device);
         }

@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         public RealexHppRequestTests() {
             _client = new RealexHppClient("https://pay.sandbox.realexpayments.com/pay", "secret");
-            _service = new HostedService(new ServicesConfig {
+            _service = new HostedService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "hpp",
                 SharedSecret = "secret",
@@ -106,7 +106,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void BasicAuth() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -131,7 +131,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void BasicCharge() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -157,7 +157,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         // testing COMMENT1, CUST_NUM, PROD_ID, VAR_REF, HPP_LANG, CARD_PAYMENT_BUTTON
         public void BasicHostedPaymentData() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -192,7 +192,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardNewCustomerNoRefs() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -223,7 +223,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardNewCustomerJustPayerRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -255,7 +255,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardNewCustomerJustPaymentRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -287,7 +287,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardNewCustomerAllSuppliedRefs() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -320,7 +320,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardAutoNewCustomerNoRefs() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -351,7 +351,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardReturnCustomerNoPaymentRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -383,7 +383,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardReturnCustomerWithPaymentRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -415,7 +415,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StoreCardAutoReturnCustomerAllRefs() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -448,7 +448,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void DisplayStoredCardsOfferSaveNoPaymentRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -480,7 +480,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void DisplayStoredCardsOfferSaveWithPaymentRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -513,7 +513,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void BillingData() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -543,7 +543,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void ShippingData() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -573,7 +573,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void BillingAndShippingData() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -610,7 +610,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void FraudFilterPassive() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -636,7 +636,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void FraudFilterOff() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -662,7 +662,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void FraudFilterNone() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -688,7 +688,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void DynamicCurrencyConversionOn() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -714,7 +714,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void DynamicCurrencyConversionOff() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -740,7 +740,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void ReturnTssOn() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -766,7 +766,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void ReturnTssOff() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -792,7 +792,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void RecurringInfo() {
 
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -837,7 +837,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void HashCheckAllInputs() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -869,7 +869,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void HashCheckNoPaymentRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -900,7 +900,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void HashCheckNoPayerRef() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -931,7 +931,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void HashCheckFraudFilterNone() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -962,7 +962,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void AllFieldsCheck() {
-            var service = new HostedService(new ServicesConfig {
+            var service = new HostedService(new GatewayConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace GlobalPayments.Api.Utils {
     public static class Extensions {
@@ -92,6 +93,14 @@ namespace GlobalPayments.Api.Utils {
             if (DateTime.TryParseExact(str, "yyyyMMddhhmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out rvalue))
                 return rvalue;
             return null;
+        }
+
+        public static byte[] GetKey(this Rfc2898DeriveBytes bytes) {
+            return bytes.GetBytes(32);
+        }
+
+        public static byte[] GetVector(this Rfc2898DeriveBytes bytes) {
+            return bytes.GetBytes(16);
         }
     }
 }

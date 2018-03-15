@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.Configure(new ServicesConfig {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 LicenseId = 124964,
                 SiteId = 124992,
                 DeviceId = 145,
