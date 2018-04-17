@@ -682,8 +682,11 @@ namespace GlobalPayments.Api.Gateways {
                             return "OverrideFraudDecline"; // OverrideFraudDecline : Decline (Fraud)
                         throw new UnsupportedTransactionException();
                     }
-                case TransactionType.Verify:
-                    return "CreditAccountVerify"; // CreditAccountVerify : Verify
+                case TransactionType.Verify: {
+                        if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
+                            throw new UnsupportedTransactionException();
+                        return "CreditAccountVerify"; // CreditAccountVerify : Verify
+                    }
                 case TransactionType.Capture:
                     return "CreditAddToBatch"; // CreditAddToBatch : Capture
                 case TransactionType.Auth: {
@@ -696,6 +699,8 @@ namespace GlobalPayments.Api.Gateways {
                                 return "CreditOfflineAuth"; // CreditOfflineAuth : Auth (Offline|Credit)
                             else if (builder.TransactionModifier == TransactionModifier.Recurring)
                                 return "RecurringBillingAuth"; // RecurringBillingAuth : Auth (Recurring)
+                            else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
+                                throw new UnsupportedTransactionException();
                             return "CreditAuth"; // CreditAuth : Auth (Credit)
                         }
                         else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Recurring)
@@ -706,6 +711,8 @@ namespace GlobalPayments.Api.Gateways {
                         if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
                             if (builder.TransactionModifier == TransactionModifier.Offline)
                                 return "CreditOfflineSale"; // CreditOfflineSale : Sale (Offline|Credit)
+                            else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
+                                throw new UnsupportedTransactionException();
                             else if (builder.TransactionModifier == TransactionModifier.Recurring)
                                 return "RecurringBilling";
                             else return "CreditSale"; // CreditSale : Sale (Credit)

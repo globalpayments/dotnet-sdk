@@ -8,9 +8,8 @@ namespace GlobalPayments.Api.Builders
         internal TransactionModifier TransactionModifier { get; set; }
         internal IPaymentMethod PaymentMethod { get; set; }
 
-        public TransactionBuilder(TransactionType type, IPaymentMethod paymentMethod = null) : base() {
+        public TransactionBuilder(TransactionType type) : base() {
             TransactionType = type;
-            PaymentMethod = paymentMethod;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace GlobalPayments.Api.Builders {
         internal Address ShippingAddress { get; set; }
         internal string TagData { get; set; }
         internal string Timestamp { get; set; }
-
+              
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
         /// </summary>
@@ -416,6 +416,9 @@ namespace GlobalPayments.Api.Builders {
             PaymentMethod = value;
             if (value is EBTCardData && ((EBTCardData)value).SerialNumber != null)
                 TransactionModifier = TransactionModifier.Voucher;
+            if(value is CreditCardData  && ((CreditCardData)value).MobileType !=null)
+                TransactionModifier = TransactionModifier.EncryptedMobile;   
+            
             return this;
         }
 
@@ -545,7 +548,9 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        internal AuthorizationBuilder(TransactionType type, IPaymentMethod payment = null) : base(type, payment) {}
+        internal AuthorizationBuilder(TransactionType type, IPaymentMethod payment = null) : base(type) {
+            WithPaymentMethod(payment);
+        }
 
         /// <summary>
         /// Executes the authorization builder against the gateway.
@@ -618,6 +623,10 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit).When(() => ChipCondition).IsNotNull().Check(() => TagData).IsNull();
             Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit).When(() => TagData).IsNotNull().Check(() => ChipCondition).IsNull();
+            Validations.For(TransactionType.Auth | TransactionType.Sale)
+                .With(TransactionModifier.EncryptedMobile)
+                .Check(() => PaymentMethod).IsNotNull();
+                    
         }
     }
 }

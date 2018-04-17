@@ -31,6 +31,11 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string Token { get; set; }
 
         /// <summary>
+        /// A MobileType value representing the Google/Apple.
+        /// </summary>
+        public string MobileType { get; set; }
+
+        /// <summary>
         /// Creates an authorization against the payment method.
         /// </summary>
         /// <param name="amount">The amount of the transaction</param>
@@ -48,7 +53,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <param name="amount">The amount of the transaction</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder Charge(decimal? amount = null) {
-            return new AuthorizationBuilder(TransactionType.Sale, this)
+           return new AuthorizationBuilder(TransactionType.Sale, this)
                 .WithAmount(amount ?? ThreeDSecure?.Amount)
                 .WithCurrency(ThreeDSecure?.Currency)
                 .WithOrderId(ThreeDSecure?.OrderId);

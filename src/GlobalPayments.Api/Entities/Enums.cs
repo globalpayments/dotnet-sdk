@@ -373,7 +373,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a recurring transaction.
         /// </summary>
-        Recurring = 1 << 11
+        Recurring = 1 << 11,
+
+        /// <summary>
+        /// Indicates a mobile transaction.
+        /// </summary>
+        EncryptedMobile = 1 << 12
     }
 
     /// <summary>
@@ -709,6 +714,16 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a schedule should process payments annually.
         /// </summary>
         public const string ANNUALLY = "Annually";
+    }
+
+    /// <summary>
+    /// Indicates the GooglePay and ApplePay.
+    /// </summary>
+    public static class MobilePaymentMethodType
+    {
+        public const string APPLEPAY = "apple-pay";
+        public const string GOOGLEPAY = "pay-with-google";
+        
     }
 
     /// <summary>

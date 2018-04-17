@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this as T;
         }
 
-        internal TerminalBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, null) {
+        internal TerminalBuilder(TransactionType type, PaymentMethodType paymentType) : base(type) {
             PaymentMethodType = paymentType;
         }
     }

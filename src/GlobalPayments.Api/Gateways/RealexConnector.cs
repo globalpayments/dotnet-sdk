@@ -25,6 +25,17 @@ namespace GlobalPayments.Api.Gateways {
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
             string transactionType = MapAuthRequestType(builder);
 
+            if (builder.PaymentMethod is CreditCardData) {
+                var card = builder.PaymentMethod as CreditCardData;
+                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                    if (card.Token == null | card.MobileType == null)
+                    {
+                        throw new BuilderException("Token and  MobileType can not be null");
+                    }
+                    if (card.MobileType == MobilePaymentMethodType.GOOGLEPAY.ToString() && (builder.Amount == null || builder.Currency == null))
+                        throw new BuilderException("Amount and Currency can not be null for capture.");
+                }    
+            }
             // Build Request
             var request = et.Element("request")
                 .Set("timestamp", timestamp)
@@ -41,18 +52,23 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.PaymentMethod is CreditCardData) {
                 var card = builder.PaymentMethod as CreditCardData;
 
-                var cardElement = et.SubElement(request, "card");
-                et.SubElement(cardElement, "number", card.Number);
-                et.SubElement(cardElement, "expdate", card.ShortExpiry);
-                et.SubElement(cardElement, "chname").Text(card.CardHolderName);
-                et.SubElement(cardElement, "type", card.CardType.ToUpper());
-
-                if (card.Cvn != null) {
-                    var cvnElement = et.SubElement(cardElement, "cvn");
-                    et.SubElement(cvnElement, "number", card.Cvn);
-                    et.SubElement(cvnElement, "presind", (int)card.CvnPresenceIndicator);
+                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                    et.SubElement(request, "mobile", card.MobileType);
+                    et.SubElement(request, "token", card.Token);
                 }
+                else {
+                    var cardElement = et.SubElement(request, "card");
+                    et.SubElement(cardElement, "number", card.Number);
+                    et.SubElement(cardElement, "expdate", card.ShortExpiry);
+                    et.SubElement(cardElement, "chname").Text(card.CardHolderName);
+                    et.SubElement(cardElement, "type", card.CardType.ToUpper());
 
+                    if (card.Cvn != null) {
+                        var cvnElement = et.SubElement(cardElement, "cvn");
+                        et.SubElement(cvnElement, "number", card.Cvn);
+                        et.SubElement(cvnElement, "presind", (int)card.CvnPresenceIndicator);
+                    }
+                }
                 // mpi
                 if (card.ThreeDSecure != null) {
                     var mpi = et.SubElement(request, "mpi");
@@ -65,8 +81,15 @@ namespace GlobalPayments.Api.Gateways {
                 string hash = string.Empty;
                 if (builder.TransactionType == TransactionType.Verify)
                     hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, card.Number);
-                else hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Number);
-                et.SubElement(request, "sha1hash").Text(hash);
+                else {
+                    if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.APPLEPAY)
+                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, "", "", card.Token);
+                    else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.GOOGLEPAY)
+                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
+                    else
+                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Number);
+                    et.SubElement(request, "sha1hash").Text(hash);
+                }
             }
             if (builder.PaymentMethod is RecurringPaymentMethod) {
                 var recurring = builder.PaymentMethod as RecurringPaymentMethod;
@@ -170,7 +193,7 @@ namespace GlobalPayments.Api.Gateways {
                 if(builder.HostedPaymentData.OfferToSaveCard.HasValue)
                     request.Set("OFFER_SAVE_CARD", builder.HostedPaymentData.OfferToSaveCard.Value ? "1" : "0");
                 if(builder.HostedPaymentData.CustomerExists.HasValue)
-                request.Set("PAYER_EXIST", builder.HostedPaymentData.CustomerExists.Value ? "1" : "0");
+                    request.Set("PAYER_EXIST", builder.HostedPaymentData.CustomerExists.Value ? "1" : "0");
                 if (!HostedPaymentConfig.DisplaySavedCards.HasValue)
                     request.Set("PAYER_REF", builder.HostedPaymentData.CustomerKey);
                 request.Set("PMT_REF", builder.HostedPaymentData.PaymentKey);
@@ -367,7 +390,7 @@ namespace GlobalPayments.Api.Gateways {
                 result.ThreeDSecure.Status = root.GetValue<string>("status");
                 result.ThreeDSecure.Xid = root.GetValue<string>("xid");
                 result.ThreeDSecure.Cavv = root.GetValue<string>("cavv");
-                
+
                 var eci = root.GetValue<string>("eci");
                 if (!string.IsNullOrEmpty(eci))
                     result.ThreeDSecure.Eci = int.Parse(eci);
@@ -417,6 +440,10 @@ namespace GlobalPayments.Api.Gateways {
                             if (builder.PaymentMethod != null)
                                 return "manual";
                             return "offline";
+                        }
+                        else if
+                            (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                            return "auth-mobile";
                         }
                         return "auth";
                     }
