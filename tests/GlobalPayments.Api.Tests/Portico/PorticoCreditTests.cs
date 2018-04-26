@@ -334,5 +334,26 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.ResponseCode);
         }
+        [TestMethod]
+        public void creditTestWithNewCryptoURL() {
+            ServicesContainer.ConfigureService(new GatewayConfig
+            {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+            });
+            card = new CreditCardData
+            {
+                Number = "4111111111111111",
+                ExpMonth = 12,
+                ExpYear = 2025,
+                Cvn = "123"
+            };
+            var response = card.Authorize(14m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
     }
 }

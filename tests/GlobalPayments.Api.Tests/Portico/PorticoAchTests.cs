@@ -65,5 +65,21 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.ResponseCode);
         }
+
+        [TestMethod]
+        public void checkNewCryptoUrl() {
+            ServicesContainer.ConfigureService(new GatewayConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+            });
+            var response = check.Charge(10.00m)
+                .WithCurrency("USD")
+                .WithAddress(address)
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+        }
     }
 }

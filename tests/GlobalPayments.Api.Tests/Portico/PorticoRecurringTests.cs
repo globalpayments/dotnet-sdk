@@ -449,5 +449,22 @@ namespace GlobalPayments.Api.Tests.Portico {
 
             customer.Delete();
         }
+        [TestMethod]
+        public void Test_008g_CreditCharge_WithNewCryptoURL() {
+            ServicesContainer.ConfigureService(new GatewayConfig
+            {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+            });
+            var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
+            Assert.IsNotNull(paymentMethod);
+
+            var response = paymentMethod.Charge(17.01m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("51", response.ResponseCode);
+
+        }
     }
 }

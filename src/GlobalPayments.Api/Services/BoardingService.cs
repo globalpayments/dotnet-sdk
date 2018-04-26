@@ -4,9 +4,9 @@ namespace GlobalPayments.Api.Services {
     public class BoardingService {
         private BoardingConfig _config;
 
-        public BoardingService(ServicesConfig config, string configName = "default") {
-            _config = config.BoardingConfig;
-            ServicesContainer.Configure(config, configName);
+        public BoardingService(BoardingConfig config, string configName = "default") {
+            _config = config;
+            ServicesContainer.ConfigureService(config, configName);
         }
 
         public BoardingApplication NewApplication() {

@@ -44,13 +44,25 @@ namespace GlobalPayments.Api.Tests.Portico {
         [TestMethod]
         public void ReportFindTransactionWithTransactionId() {
             List<TransactionSummary> summary = ReportingService.FindTransactions("1038021900").Execute();
-
             Assert.IsNotNull(summary);
         }
 
         [TestMethod]
         public void ReportFindTransactionNoCriteria() {
             List<TransactionSummary> summary = ReportingService.FindTransactions().Execute();
+            Assert.IsNotNull(summary);
+        }
+        [TestMethod]
+        public void ReportActivityWithNewCryptoURL() {
+            ServicesContainer.ConfigureService(new GatewayConfig
+            {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+            });
+            var summary = ReportingService.Activity()
+                .WithStartDate(DateTime.UtcNow.AddDays(-7))
+                .WithEndDate(DateTime.UtcNow.AddDays(-1))
+                .Execute();
             Assert.IsNotNull(summary);
         }
     }

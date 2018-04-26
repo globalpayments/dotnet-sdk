@@ -25,6 +25,14 @@ namespace GlobalPayments.Api.Gateways {
             else throw new GatewayException("Invalid invitation token.");
         }
 
+        private GatewayResponse GetPortalUrl(string portal) {
+            var response = SendRequest(HttpMethod.Get, string.Format(@"https://onlineboarding.heartlandpaymentsystems.com/{0}", portal));
+            if (response.StatusCode == HttpStatusCode.OK) {
+                return response;
+            }
+            else throw new GatewayException("Invalid portal");
+        }
+
         public MultipartForm ValidateApplication(string url, BoardingApplication application) {
             var content = application.BuildForm();
 
@@ -44,9 +52,9 @@ namespace GlobalPayments.Api.Gateways {
                 throw new GatewayException("Application cannot be null.");
 
             // authorize session with the invitation
-            var authSession = Authenticate(Portal, invitation);
+            var authSession = invitation != null ? Authenticate(Portal, invitation) :  GetPortalUrl(Portal);
 
-            // validate
+             // validate
              var content = ValidateApplication(authSession.RequestUrl, application);
             
             // use the return URL for the next call
@@ -64,15 +72,18 @@ namespace GlobalPayments.Api.Gateways {
 
         private BoardingResponse BuildResponse(GatewayResponse response, string message = null) {
             if (response.StatusCode == HttpStatusCode.OK) {
-                string applicationId = "0";
+                var boardingResponse = new BoardingResponse();
+
                 if (response.RequestUrl.Contains("ThankYou")) {
-                    applicationId = response.RequestUrl.Substring(response.RequestUrl.IndexOf("=") + 1);
+                    boardingResponse.ApplicationId = int.Parse(response.RequestUrl.Substring(response.RequestUrl.IndexOf("=") + 1));
+                    boardingResponse.Message = ParseResponse(response.RawResponse);
+                }
+                else if(response.RequestUrl.Contains("sign.myhpy.com")) {
+                    boardingResponse.SignatureUrl = response.RequestUrl;
+                    boardingResponse.Message = "Thank you for your submission.";
                 }
 
-                return new BoardingResponse {
-                    ApplicationId = int.Parse(applicationId),
-                    Message = ParseResponse(response.RawResponse)
-                };
+                return boardingResponse;
             }
             else throw new GatewayException(message ?? "Unknown application submission error.");
         }
@@ -96,8 +107,10 @@ namespace GlobalPayments.Api.Gateways {
                 start = raw.IndexOf(startTag, start) + startTag.Length;
                 var length = raw.IndexOf(endTag, start) - start;
 
-                var message = raw.Substring(start, length);
-                sb.AppendLine(scrubHtml(message));
+                if (length > 0) {
+                    var message = raw.Substring(start, length);
+                    sb.AppendLine(scrubHtml(message));
+                }
             }
 
             return sb.ToString();
