@@ -1,0 +1,49 @@
+﻿body {
+    font-family: sans-serif;
+}
+
+/*label[for=iframesCardNumber], label[for=iframesCardExpiration], label[for=iframesCardCvv] {*/
+.form-row label {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+}
+
+#ss-banner {
+    background: transparent url(https://github.com/hps/heartland-php/blob/master/examples/end-to-end/assets/images/ss-shield@2x.png?raw=true) no-repeat left center;
+    height: 40px;
+    background-size: 280px 34px;
+    margin-bottom: 7px;
+}
+
+user agent stylesheet div {
+    display: block;
+}
+
+.form-row {
+    margin-top: 10px;
+}
+
+.form-wrapper {
+    display: block;
+    width: 300px;
+    margin: 10px auto;
+}
+
+input, select {
+    background: #fff;
+    border: 1px solid;
+    border-color: #bbb3b9 #c7c1c6 #c7c1c6;
+    box-sizing: border-box;
+    font-family: serif;
+    font-size: 16px;
+    line-height: 1;
+    margin: 0 .5em 0 0;
+    max-width: 100%;
+    outline: 0;
+    padding: 0.5278em;
+    vertical-align: baseline;
+    width: 100%;
+}

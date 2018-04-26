@@ -1,0 +1,9 @@
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\bin\Debug\netcoreapp1.1\GlobalPaymentsMVCExample.deps.json
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\bin\Debug\netcoreapp1.1\GlobalPaymentsMVCExample.runtimeconfig.json
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\bin\Debug\netcoreapp1.1\GlobalPaymentsMVCExample.runtimeconfig.dev.json
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\obj\Debug\netcoreapp1.1\end-to-end.csprojResolveAssemblyReference.cache
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\obj\Debug\netcoreapp1.1\end-to-end.AssemblyInfo.cs
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\bin\Debug\netcoreapp1.1\GlobalPaymentsMVCExample.dll
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\bin\Debug\netcoreapp1.1\GlobalPaymentsMVCExample.pdb
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\obj\Debug\netcoreapp1.1\GlobalPaymentsMVCExample.dll
+C:\Projects\Integrations\SDK\HybridSDK\examples\mvc\end-to-end\end-to-end\obj\Debug\netcoreapp1.1\GlobalPaymentsMVCExample.pdb
