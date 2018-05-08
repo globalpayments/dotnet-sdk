@@ -3,7 +3,7 @@ using GlobalPayments.Api.PaymentMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Portico {
-    [TestClass]
+    [TestClass, Ignore]
     public class PorticoInteracTests {
         DebitTrackData track;
         string tagData;

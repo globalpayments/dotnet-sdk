@@ -264,6 +264,14 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return new InitializeResponse(response);
         }
 
+        // A08 - GET SIGNATURE
+        public ISignatureResponse GetSignatureFile() {
+            var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A08_GET_SIGNATURE,
+                0, ControlCodes.FS
+            ));
+            return new SignatureResponse(response);
+        }
+
         // A14 - CANCEL
         public void Cancel() {
             if (controller.ConnectionMode == ConnectionModes.HTTP)
@@ -276,6 +284,23 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public IDeviceResponse Reset() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A16_RESET));
             return new PaxDeviceResponse(response, PAX_MSG_ID.A17_RSP_RESET);
+        }
+
+        // A20 - DO SIGNATURE
+        public ISignatureResponse PromptForSignature(string transactionId = null) {
+            var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A20_DO_SIGNATURE,
+                (transactionId != null) ? 1 : 0,
+                ControlCodes.FS,
+                transactionId ?? string.Empty,
+                ControlCodes.FS,
+                (transactionId != null) ? "00" : "",
+                ControlCodes.FS,
+                300
+            ));
+            var signatureResponse = new SignatureResponse(response);
+            if (signatureResponse.DeviceResponseCode == "000000")
+                return GetSignatureFile();
+            return signatureResponse;
         }
 
         // A26 - REBOOT

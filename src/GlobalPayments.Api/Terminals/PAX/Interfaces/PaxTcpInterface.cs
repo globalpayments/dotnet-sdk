@@ -16,8 +16,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
         int _nakCount = 0;
         
         public event MessageSentEventHandler OnMessageSent;
-        public event MessageReceivedEventHandler OnMessageReceived;
-        public event ControlCodeReceivedEventHandler OnControlCodeReceived;
 
         public PaxTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;

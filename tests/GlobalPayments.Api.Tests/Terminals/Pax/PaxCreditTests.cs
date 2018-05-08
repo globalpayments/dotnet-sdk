@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             var card = new CreditCardData {
                 Number = "4005554444444460",
                 ExpMonth = 12,
-                ExpYear = 17,
+                ExpYear = 25,
                 Cvn = "123"
             };
 

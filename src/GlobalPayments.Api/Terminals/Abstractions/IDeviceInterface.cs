@@ -16,6 +16,8 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse OpenLane();
         IDeviceResponse Reboot();
         IDeviceResponse Reset();
+        ISignatureResponse GetSignatureFile();
+        ISignatureResponse PromptForSignature(string transactionId = null);
         #endregion
 
         #region Batch Calls

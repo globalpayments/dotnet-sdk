@@ -84,7 +84,9 @@ namespace GlobalPayments.Api.Utils {
         public Element Get(string tagName) {
             try {
                 var node = doc.GetElementsByTagName(tagName)[0];
-                return Utils.Element.FromNode(doc, node);
+                if(node != null)
+                    return Utils.Element.FromNode(doc, node);
+                return null;
             }
             catch (IndexOutOfRangeException) {
                 return null;

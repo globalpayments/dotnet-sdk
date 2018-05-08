@@ -16,50 +16,52 @@ namespace GlobalPayments.Api.Terminals.HeartSIP.Interfaces {
         List<byte> message_queue;
 
         public event MessageSentEventHandler OnMessageSent;
-        public event MessageReceivedEventHandler OnMessageReceived;
 
         public HeartSipTcpInterface(ITerminalConfiguration settings) {
             this._settings = settings;
         }
 
         private async Task<bool> BeginReceiveTask() {
-            while (true) {
-                try {
-                    if (_stream == null)
+            return await Task.Run(async () => {
+                do {
+                    try {
+                        if (_stream == null)
+                            return false;
+
+                        if (_stream.DataAvailable) {
+                            do {
+                                var length = await _stream.GetLengthAsync();
+                                if (length > 0) {
+                                    byte[] buffer = new byte[8192];
+
+                                    var incomplete = true;
+                                    int offset = 0;
+                                    int temp_length = length;
+                                    do {
+                                        int bytesReceived = await _stream.ReadAsync(buffer, offset, temp_length);
+                                        if (bytesReceived != temp_length) {
+                                            offset += bytesReceived;
+                                            temp_length -= bytesReceived;
+                                        }
+                                        else incomplete = false;
+                                    } while (incomplete);
+
+                                    var readBuffer = new byte[length];
+                                    Array.Copy(buffer, readBuffer, length);
+
+                                    if (MessageReceived(readBuffer))
+                                        return true;
+                                }
+                                else break;
+                            } while (true);
+                        }
+                    }
+                    catch (Exception) {
                         return false;
-
-                    if (_stream.DataAvailable) {
-                        do {
-                            var length = await _stream.GetLengthAsync();
-                            if (length > 0) {
-                                byte[] buffer = new byte[8192];
-
-                                var incomplete = true;
-                                int offset = 0;
-                                int temp_length = length;
-                                do {
-                                    int bytesReceived = await _stream.ReadAsync(buffer, offset, temp_length);
-                                    if (bytesReceived != temp_length) {
-                                        offset += bytesReceived;
-                                        temp_length -= bytesReceived;
-                                    }
-                                    else incomplete = false;
-                                } while (incomplete);
-
-                                var readBuffer = new byte[length];
-                                Array.Copy(buffer, readBuffer, length);
-
-                                if (MessageReceived(readBuffer))
-                                    return true;
-                            }
-                            else break;
-                        } while (true);
                     }
                 }
-                catch (Exception) {
-                    return false;
-                }
-            }
+                while (true);
+            });
         }
 
         public void Connect() {

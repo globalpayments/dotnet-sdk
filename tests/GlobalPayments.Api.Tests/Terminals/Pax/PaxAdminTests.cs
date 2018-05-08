@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
@@ -61,6 +62,30 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var response = _device.Reboot();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("OK", response.DeviceResponseText);
+        }
+
+        [TestMethod]
+        public void GetSignature() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]A08[FS]1.35[FS]0[FS][ETX]"));
+            };
+
+            var response = _device.GetSignatureFile();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("OK", response.DeviceResponseText);
+        }
+
+        [TestMethod]
+        public void PromptForSignature() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]A20"));
+            };
+
+            var response = _device.PromptForSignature();
             Assert.IsNotNull(response);
             Assert.AreEqual("OK", response.DeviceResponseText);
         }

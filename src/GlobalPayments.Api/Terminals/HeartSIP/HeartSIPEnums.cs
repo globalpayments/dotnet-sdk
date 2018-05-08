@@ -23,5 +23,6 @@ namespace GlobalPayments.Api.Terminals.HeartSIP {
         public const string TIP_ADJUST = "TipAdjust";
         public const string GET_INFO_REPORT = "GetAppInfoReport";
         public const string CAPTURE = "CreditAuthComplete";
+        public const string SIGNATURE_FORM = "SIGNATUREFORM";
     }
 }

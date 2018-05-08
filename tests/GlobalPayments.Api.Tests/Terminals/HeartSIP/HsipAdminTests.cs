@@ -4,6 +4,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace GlobalPayments.Api.Tests.Terminals.HeartSIP {
     [TestClass]
@@ -15,7 +16,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HeartSIP {
                 DeviceType = DeviceType.HSIP_ISC250,
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "10.12.220.130",
-                Port = "12345"
+                Port = "12345",
+                Timeout = 60000
             });
             Assert.IsNotNull(_device);
         }
@@ -89,6 +91,35 @@ namespace GlobalPayments.Api.Tests.Terminals.HeartSIP {
             var response = _device.BatchClose();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.DeviceResponseCode, response.DeviceResponseText);
+        }
+
+        [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
+        public void GetSignature_Direct() {
+            _device.GetSignatureFile();
+        }
+
+        [TestMethod]
+        public void GetSignature_Indirect() {
+            var response = _device.CreditSale(1, 120m)
+                .WithSignatureCapture(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("0", response.SignatureStatus);
+            Assert.IsNotNull(response.SignatureData);
+        }
+
+        [TestMethod]
+        public void PromptForSignature() {
+            _device.OpenLane();
+
+            var response = _device.PromptForSignature();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.IsNotNull(response.SignatureData);
+
+            _device.Reset();
+            _device.CloseLane();
         }
     }
 }

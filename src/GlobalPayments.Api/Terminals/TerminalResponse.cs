@@ -16,6 +16,7 @@ namespace GlobalPayments.Api.Terminals {
         public string TerminalRefNumber { get; set; }
         public string Token { get; set; }
         public string SignatureStatus { get; set; }
+        public byte[] SignatureData { get; set; }
 
         // Transactional
         public string TransactionType { get; set; }

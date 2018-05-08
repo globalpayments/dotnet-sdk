@@ -530,6 +530,20 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         private T MapReportResponse<T>(string rawResponse, ReportType reportType) where T : class {
+            var response = new ElementTree(rawResponse).Get("PosResponse");
+            var acceptedCodes = new List<string>() { "00", "0" };
+
+            // Check gateway responses
+            var gatewayRspCode = NormalizeResponse(response.GetValue<string>("GatewayRspCode"));
+            var gatewayRspText = response.GetValue<string>("GatewayRspMsg");
+            if (!acceptedCodes.Contains(gatewayRspCode)) {
+                throw new GatewayException(
+                    string.Format("Unexpected Gateway Response: {0} - {1}", gatewayRspCode, gatewayRspText),
+                    gatewayRspCode,
+                    gatewayRspText
+                );
+            }
+
             var doc = new ElementTree(rawResponse).Get(MapReportType(reportType));
 
             T rvalue = Activator.CreateInstance<T>();

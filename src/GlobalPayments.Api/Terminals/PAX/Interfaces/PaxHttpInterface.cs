@@ -5,6 +5,7 @@ using System.Net;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Messaging;
+using System.Threading.Tasks;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class PaxHttpInterface : IDeviceCommInterface {
@@ -31,16 +32,20 @@ namespace GlobalPayments.Api.Terminals.PAX {
             try {
                 string payload = Convert.ToBase64String(message.GetSendBuffer());
 
-                _client = HttpWebRequest.Create(string.Format("http://{0}:{1}?{2}", _settings.IpAddress, _settings.Port, payload));
-                var response = _client.GetResponseAsync().Result;
+                return Task.Run(async () => {
+                    _client = HttpWebRequest.Create(string.Format("http://{0}:{1}?{2}", _settings.IpAddress, _settings.Port, payload));
 
-                var buffer = new List<byte>();
-                using (var sr = new StreamReader(response.GetResponseStream())) {
-                    var rec_buffer = sr.ReadToEndAsync().Result;
-                    foreach (char c in rec_buffer)
-                        buffer.Add((byte)c);
-                }
-                return buffer.ToArray();
+
+                    var response = await _client.GetResponseAsync();
+
+                    var buffer = new List<byte>();
+                    using (var sr = new StreamReader(response.GetResponseStream())) {
+                        var rec_buffer = await sr.ReadToEndAsync();
+                        foreach (char c in rec_buffer)
+                            buffer.Add((byte)c);
+                    }
+                    return buffer.ToArray();
+                }).Result;
             }
             catch (Exception exc) {
                 throw new MessageException("Failed to send message. Check inner exception for more details.", exc);

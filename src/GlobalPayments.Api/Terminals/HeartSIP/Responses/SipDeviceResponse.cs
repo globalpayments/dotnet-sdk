@@ -1,6 +1,7 @@
 ﻿using System;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Utils;
+using System.Text;
 
 namespace GlobalPayments.Api.Terminals.HeartSIP.Responses {
     public class SipDeviceResponse : SipBaseResponse, IDeviceResponse {
@@ -40,6 +41,10 @@ namespace GlobalPayments.Api.Terminals.HeartSIP.Responses {
                 ApplicationCryptogramType = (ApplicationCryptogramType)Enum.Parse(typeof(ApplicationCryptogramType), response.GetValue<string>("EMV_CryptogramType"));
             CardHolderVerificationMethod = response.GetValue<string>("EMV_TSI");
             TerminalVerificationResults = response.GetValue<string>("EMV_TVR");
+
+            // Signature
+            var attachmentData = response.GetValue<string>("AttachmentData");
+            SignatureData = Convert.FromBase64String(attachmentData);
         }
     }
 }

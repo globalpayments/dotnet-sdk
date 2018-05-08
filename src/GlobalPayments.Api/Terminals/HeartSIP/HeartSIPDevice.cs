@@ -163,6 +163,14 @@ namespace GlobalPayments.Api.Terminals.HeartSIP {
         public IDeviceResponse Reset() {
             return _controller.SendMessage<SipBaseResponse>("<SIP><Version>1.0</Version><ECRId>1004</ECRId><Request>Reset</Request></SIP>", HSIP_MSG_ID.RESET);
         }
+
+        public ISignatureResponse GetSignatureFile() {
+            throw new UnsupportedTransactionException("Signature data for this device type is automatically returned in the terminal response.");
+        }
+
+        public ISignatureResponse PromptForSignature(string transactionId = null) {
+            return _controller.SendMessage<SipSignatureResponse>("<SIP><Version>1.0</Version><ECRId>1004</ECRId><Request>SignatureForm</Request><FormText>PLEASE SIGN YOUR NAME</FormText></SIP>", HSIP_MSG_ID.SIGNATURE_FORM);
+        }
         #endregion
 
         #region Batching
