@@ -15,6 +15,7 @@ namespace GlobalPayments.Api.Builders {
         internal bool AllowPartialAuth { get; set; }
         internal decimal? Amount { get; set; }
         internal decimal? AuthAmount { get; set; }
+        internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal InquiryType? BalanceInquiryType { get; set; }
         internal Address BillingAddress { get; set; }
         internal decimal? CashBackAmount { get; set; }
@@ -126,6 +127,16 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithAuthAmount(decimal? value) {
             AuthAmount = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the auto subtantiation values for the transaction.
+        /// </summary>
+        /// <param name="value">The auto substantiation object</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithAutoSubstantiation(AutoSubstantiation value) {
+            AutoSubstantiation = value;
             return this;
         }
 

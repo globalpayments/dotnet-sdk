@@ -22,7 +22,9 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public static string ToNumericCurrencyString(this decimal? dec) {
-            return Regex.Replace(string.Format("{0:c}", dec), "[^0-9]", "");
+            if(dec != null)
+                return Regex.Replace(string.Format("{0:c}", dec), "[^0-9]", "");
+            return null;
         }
 
         public static decimal? ToAmount(this string str) {

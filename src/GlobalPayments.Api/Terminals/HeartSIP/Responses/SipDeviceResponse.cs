@@ -44,7 +44,8 @@ namespace GlobalPayments.Api.Terminals.HeartSIP.Responses {
 
             // Signature
             var attachmentData = response.GetValue<string>("AttachmentData");
-            SignatureData = Convert.FromBase64String(attachmentData);
+            if(!string.IsNullOrEmpty(attachmentData))
+                SignatureData = Convert.FromBase64String(attachmentData);
         }
     }
 }

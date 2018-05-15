@@ -305,6 +305,26 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(block1, "TxnDescriptor", builder.DynamicDescriptor);
 
             // auto substantiation
+            if (builder.AutoSubstantiation != null) {
+                var autoSub = et.SubElement(block1, "AutoSubstantiation");
+
+                var index = 0;
+                var fieldNames = new string[] { "First", "Second", "Third", "Fourth" };
+                foreach (var amount in builder.AutoSubstantiation.Amounts) {
+                    if (amount.Value != default(decimal)) {
+                        if (index > 3) {
+                            throw new BuilderException("You may only specify three different subtotals in a single transaction.");
+                        }
+
+                        var amountNode = et.SubElement(autoSub, fieldNames[index++] + "AdditionalAmtInfo");
+                        et.SubElement(amountNode, "AmtType", amount.Key);
+                        et.SubElement(amountNode, "Amt", amount.Value.ToNumericString());
+                    }
+                }
+
+                et.SubElement(autoSub, "MerchantVerificationValue", builder.AutoSubstantiation.MerchantVerificationValue);
+                et.SubElement(autoSub, "RealTimeSubstantiation", builder.AutoSubstantiation.RealTimeSubstantiation ? "Y" : "N");
+            }
 
             var response = DoTransaction(BuildEnvelope(et, transaction, builder.ClientTransactionId));
             return MapResponse(response, builder.PaymentMethod);
