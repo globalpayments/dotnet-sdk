@@ -147,7 +147,7 @@ namespace GlobalPayments.Api.Tests {
             Assert.AreEqual("00", fraudResponse.ResponseCode, fraudResponse.ResponseMessage);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void TestAuthMobileGooglePay()
         {
             var token = new CreditCardData

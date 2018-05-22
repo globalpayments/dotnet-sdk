@@ -2,7 +2,6 @@
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Messaging;
-using GlobalPayments.Api.Terminals.PAX;
 
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
@@ -12,12 +11,13 @@ namespace GlobalPayments.Api.Terminals {
         void Cancel();
         IDeviceResponse CloseLane();
         IDeviceResponse DisableHostResponseBeep();
+        ISignatureResponse GetSignatureFile();
         IInitializeResponse Initialize();
         IDeviceResponse OpenLane();
+        ISignatureResponse PromptForSignature(string transactionId = null);
         IDeviceResponse Reboot();
         IDeviceResponse Reset();
-        ISignatureResponse GetSignatureFile();
-        ISignatureResponse PromptForSignature(string transactionId = null);
+        string SendCustomMessage(DeviceMessage message);
         #endregion
 
         #region Batch Calls

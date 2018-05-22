@@ -9,7 +9,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace GlobalPayments.Api.Terminals {
-    internal class TerminalUtilities {
+    public class TerminalUtilities {
         const string _version = "1.35";
 
         private static string GetElementString(object[] elements) {
@@ -103,7 +103,7 @@ namespace GlobalPayments.Api.Terminals {
             return lrc;
         }
 
-        public static byte[] BuildSignatureImage(string pathData) {
+        internal static byte[] BuildSignatureImage(string pathData) {
             Func<string, Point> toPoint = (coord) => {
                 var xy = coord.Split(',');
                 return new Point {

@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace GlobalPayments.Api.Terminals.HeartSIP {
-    internal enum MessageFormat {
+    public enum MessageFormat {
         HeartSIP,
         Visa2nd
     }

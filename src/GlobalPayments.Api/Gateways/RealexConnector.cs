@@ -88,8 +88,8 @@ namespace GlobalPayments.Api.Gateways {
                         hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
                     else
                         hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Number);
-                    et.SubElement(request, "sha1hash").Text(hash);
                 }
+                et.SubElement(request, "sha1hash").Text(hash);
             }
             if (builder.PaymentMethod is RecurringPaymentMethod) {
                 var recurring = builder.PaymentMethod as RecurringPaymentMethod;
