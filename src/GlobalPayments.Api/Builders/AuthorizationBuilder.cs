@@ -49,7 +49,7 @@ namespace GlobalPayments.Api.Builders {
         internal Address ShippingAddress { get; set; }
         internal string TagData { get; set; }
         internal string Timestamp { get; set; }
-              
+
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
         /// </summary>
@@ -137,6 +137,15 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithAutoSubstantiation(AutoSubstantiation value) {
             AutoSubstantiation = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the Multicapture value as true/false.
+        /// </summary>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithMultiCapture(bool value) {
+           MultiCapture = value;
             return this;
         }
 

@@ -51,6 +51,7 @@ namespace GlobalPayments.Api.Services {
 
             return new Transaction {
                 AuthorizedAmount = response.GetValue<decimal>("AMOUNT"),
+                AutoSettleFlag = response.GetValue<string>("AUTO_SETTLE_FLAG"),
                 CvnResponseCode = response.GetValue<string>("CVNRESULT"),
                 ResponseCode = result,
                 ResponseMessage = message,

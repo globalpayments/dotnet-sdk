@@ -119,7 +119,7 @@ namespace GlobalPayments.Api.Gateways {
 
             // This needs to be figured out based on txn type and set to 0, 1 or MULTI
             if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Auth) {
-                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : "0";
+                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI":"0";
                 et.SubElement(request, "autosettle").Set("flag", autoSettle);
             }
 
@@ -153,7 +153,10 @@ namespace GlobalPayments.Api.Gateways {
             //et.SubElement(request, "token", token);
 
             var response = DoTransaction(et.ToString(request));
-            return MapResponse(response, MapAcceptedCodes(transactionType));
+            var mapResponse = MapResponse(response, MapAcceptedCodes(transactionType));
+            if (builder.MultiCapture)
+                mapResponse.MultiCapture = builder.MultiCapture;
+            return mapResponse;
         }
 
         public string SerializeRequest(AuthorizationBuilder builder) {
@@ -179,7 +182,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("AMOUNT", builder.Amount.ToNumericCurrencyString());
             request.Set("CURRENCY", builder.Currency);
             request.Set("TIMESTAMP", timestamp);
-            request.Set("AUTO_SETTLE_FLAG", (builder.TransactionType == TransactionType.Sale) ? "1" : "0");
+            request.Set("AUTO_SETTLE_FLAG", (builder.TransactionType == TransactionType.Sale) ? "1" : builder.MultiCapture == true ? "MULTI" : "0");
             request.Set("COMMENT1", builder.Description);
             // request.Set("COMMENT2", );
             if(HostedPaymentConfig.RequestTransactionStabilityScore.HasValue)
@@ -251,7 +254,7 @@ namespace GlobalPayments.Api.Gateways {
             var et = new ElementTree();
             string timestamp = GenerationUtils.GenerateTimestamp();
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
-            string transactionType = MapManageRequestType(builder.TransactionType);
+            string transactionType = MapManageRequestType(builder);
 
             // Build Request
             var request = et.Element("request")
@@ -262,10 +265,18 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(request, "channel", Channel);
             et.SubElement(request, "orderid", orderId);
             et.SubElement(request, "pasref", builder.TransactionId);
-            if (builder.Amount.HasValue)
-                et.SubElement(request, "amount", builder.Amount.ToNumericCurrencyString()).Set("currency", builder.Currency);
+            if (builder.Amount.HasValue) {
+                var amtElement = et.SubElement(request, "amount", builder.Amount.ToNumericCurrencyString());
+                if (!builder.MultiCapture) {
+                    amtElement.Set("currency", builder.Currency);
+                }
+            }    
             else if (builder.TransactionType == TransactionType.Capture)
                 throw new BuilderException("Amount cannot be null for capture.");
+            
+            // Capture Authcode
+            if(builder.TransactionType==TransactionType.Capture && builder.MultiCapture == true)
+             et.SubElement(request, "authcode").Text(builder.AuthorizationCode);
 
             // payer authentication response
             if (builder.TransactionType == TransactionType.VerifySignature)
@@ -374,7 +385,7 @@ namespace GlobalPayments.Api.Gateways {
                     TransactionId = root.GetValue<string>("pasref")
                 }
             };
-
+            
             // 3d secure enrolled
             if (root.Has("enrolled")) {
                 result.ThreeDSecure = new ThreeDSecure();
@@ -469,10 +480,14 @@ namespace GlobalPayments.Api.Gateways {
             }
         }
 
-        private string MapManageRequestType(TransactionType trans) {
+        private string MapManageRequestType(ManagementBuilder builder) {
+            TransactionType trans = builder.TransactionType;
             switch (trans) {
                 case TransactionType.Capture:
-                    return "settle";
+                    if (builder.MultiCapture == true)
+                        return "multisettle";
+                    else
+                        return "settle";   
                 case TransactionType.Hold:
                     return "hold";
                 case TransactionType.Refund:

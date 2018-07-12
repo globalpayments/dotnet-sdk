@@ -12,9 +12,9 @@ namespace GlobalPayments.Api.Tests.Payroll {
         public PayrollTests() {
             _service = new PayrollService(new PayrollConfig {
                 Username = "testapiuser.russell",
-                Password = "payroll2!",
+                Password = "payroll3!",
                 ApiKey = "iGF9UtaLc526poWWNgUpiCoO3BckcZUKNF3nhyKul8A=",
-                ServiceUrl = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI/Test/Test",
+                ServiceUrl = "https://taapi.heartlandpayrollonlinetest.com/",
                 Timeout = -1
             });
         }

@@ -7,6 +7,7 @@ namespace GlobalPayments.Api.Builders
         internal TransactionType TransactionType { get; set; }
         internal TransactionModifier TransactionModifier { get; set; }
         internal IPaymentMethod PaymentMethod { get; set; }
+        internal bool MultiCapture { get; set; }
 
         public TransactionBuilder(TransactionType type) : base() {
             TransactionType = type;

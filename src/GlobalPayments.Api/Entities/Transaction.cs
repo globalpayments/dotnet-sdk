@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Entities {
         /// The authorized amount.
         /// </summary>
         public decimal? AuthorizedAmount { get; set; }
+        public string AutoSettleFlag { get; set; }
 
         /// <summary>
         /// The authorization code provided by the issuer.
@@ -113,6 +114,11 @@ namespace GlobalPayments.Api.Entities {
         /// The host response date
         /// </summary>
         public DateTime? HostResponseDate { get; set; }
+
+        /// <summary>
+        /// The Auto settle Flag which comes in response
+        /// </summary>
+        public bool MultiCapture { get; set; }
 
         /// <summary>
         /// The order ID supplied in the request.
@@ -271,6 +277,7 @@ namespace GlobalPayments.Api.Entities {
         /// <param name="amount">The amount to capture</param>
         public ManagementBuilder Capture(decimal? amount = null) {
             return new ManagementBuilder(TransactionType.Capture)
+                .WithMultiCapture(MultiCapture)
                 .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
         }

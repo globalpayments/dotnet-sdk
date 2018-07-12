@@ -337,5 +337,20 @@ namespace GlobalPayments.Api.Tests.Realex {
                 Assert.AreEqual(strValue, response.ResponseValues[key]);
             }
         }
+        [TestMethod]
+        public void StandardResponseWithMultiAutoSettle() {
+            string responseJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"843680654f377bfa845387fdbace35acc9d95778\", \"RESULT\": \"00\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"AUTHCODE\": \"12345\", \"SHIPPING_CODE\": \"654|123\", \"SHIPPING_CO\": \"GB\", \"BILLING_CODE\": \"50001\", \"BILLING_CO\": \"US\", \"CARD_PAYMENT_BUTTON\": \"Place Order\", \"AVSADDRESSRESULT\": \"M\", \"AVSPOSTCODERESULT\": \"M\", \"BATCHID\": \"445196\", \"DCC_ENABLE\": \"1\", \"HPP_FRAUDFILTER_MODE\": \"PASSIVE\", \"HPP_LANG\": \"EN\", \"MESSAGE\": \"[ test system ] Authorised\", \"PASREF\": \"15011597872195765\", \"CVNRESULT\": \"M\", \"HPP_FRAUDFILTER_RESULT\": \"PASS\", \"COMMENT1\": \"Mobile Channel\", \"COMMENT2\": \"Down Payment\", \"ECI\": \"5\", \"XID\": \"vJ9NXpFueXsAqeb4iAbJJbe+66s=\", \"CAVV\": \"AAACBUGDZYYYIgGFGYNlAAAAAAA=\", \"CARDDIGITS\": \"424242xxxx4242\", \"CARDTYPE\": \"VISA\", \"EXPDATE\": \"1025\", \"CHNAME\": \"James Mason\", \"AUTO_SETTLE_FLAG\": \"MULTI\"}";
+            Transaction response = _service.ParseResponse(responseJson, false);
+
+            Assert.AreEqual("12345", response.AuthorizationCode);
+            Assert.AreEqual("MULTI", response.AutoSettleFlag);
+            Assert.AreEqual(1999, response.AuthorizedAmount.Value);
+            Assert.AreEqual("M", response.AvsResponseCode);
+            Assert.AreEqual("GTI5Yxb0SumL_TkDMCAxQA", response.OrderId);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("[ test system ] Authorised", response.ResponseMessage);
+            Assert.AreEqual("15011597872195765", response.TransactionId);
+            Assert.AreEqual("M", response.CvnResponseCode);
+        }
     }
 }

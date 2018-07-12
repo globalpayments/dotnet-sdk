@@ -71,6 +71,15 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Sets the Multicapture value as true/false.
+        /// </summary>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithMultiCapture(bool value) {
+            MultiCapture = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the currency.
         /// </summary>
         /// <remarks>

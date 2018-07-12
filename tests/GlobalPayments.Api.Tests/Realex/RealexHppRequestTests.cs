@@ -1012,5 +1012,29 @@ namespace GlobalPayments.Api.Tests.Realex {
             var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"1384392a30abbd7a1993e33c308bf9a2bd354d48\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"SHIPPING_CODE\": \"654|123\", \"SHIPPING_CO\": \"GB\", \"BILLING_CODE\": \"50001\", \"BILLING_CO\": \"US\", \"CARD_PAYMENT_BUTTON\": \"Place Order\", \"CARD_STORAGE_ENABLE\": \"1\", \"OFFER_SAVE_CARD\": \"1\", \"HPP_SELECT_STORED_CARD\": \"376a2598-412d-4805-9f47-c177d5605853\", \"DCC_ENABLE\": \"1\", \"HPP_FRAUDFILTER_MODE\": \"PASSIVE\", \"HPP_LANG\": \"EN\", \"RETURN_TSS\": \"1\", \"PAYER_EXIST\": \"1\", \"PMT_REF\": \"ca46344d-4292-47dc-9ced-e8a42ce66977\", \"CUST_NUM\": \"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\", \"PROD_ID\": \"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
+
+        [TestMethod]
+        public void CreditAuth_MultiAutoSettle() {
+            var service = new HostedService(new GatewayConfig {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ServiceUrl = "https://pay.sandbox.realexpayments.com/pay",
+                HostedPaymentConfig = new HostedPaymentConfig {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2"
+                },
+            });
+
+            string hppJson = service.Authorize(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithMultiCapture(true)
+                .Serialize();
+
+            string expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"MULTI\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"061609f85a8e0191dc7f487f8278e71898a2ee2d\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
     }
 }

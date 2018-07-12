@@ -43,6 +43,32 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void CreditAuthorizationForMultiCapture() {
+            var authorization = card.Authorize(14m)
+                .WithCurrency("USD")
+                .WithMultiCapture(true)
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(authorization);
+            Assert.AreEqual("00", authorization.ResponseCode, authorization.ResponseMessage);
+
+            var capture = authorization.Capture(3m)
+                .Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("00", capture.ResponseCode, capture.ResponseMessage);
+
+            var capture2 = authorization.Capture(5m)
+                .Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("00", capture.ResponseCode, capture.ResponseMessage);
+
+            var capture3 = authorization.Capture(7m)
+                .Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("00", capture.ResponseCode, capture.ResponseMessage);
+        }
+
+        [TestMethod]
         public void CreditSale() {
             var response = card.Charge(15m)
                 .WithCurrency("USD")
