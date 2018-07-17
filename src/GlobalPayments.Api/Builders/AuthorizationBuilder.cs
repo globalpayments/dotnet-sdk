@@ -437,8 +437,7 @@ namespace GlobalPayments.Api.Builders {
             if (value is EBTCardData && ((EBTCardData)value).SerialNumber != null)
                 TransactionModifier = TransactionModifier.Voucher;
             if(value is CreditCardData  && ((CreditCardData)value).MobileType !=null)
-                TransactionModifier = TransactionModifier.EncryptedMobile;   
-            
+                TransactionModifier = TransactionModifier.EncryptedMobile;
             return this;
         }
 
@@ -646,7 +645,6 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.Auth | TransactionType.Sale)
                 .With(TransactionModifier.EncryptedMobile)
                 .Check(() => PaymentMethod).IsNotNull();
-                    
         }
     }
 }

@@ -16,6 +16,7 @@ namespace GlobalPayments.Api.Gateways {
         public bool SupportsHostedPayments {  get { return true; } }
         public bool SupportsRetrieval { get { return false; } }
         public bool SupportsUpdatePaymentDetails { get { return true; } }
+        public string PaymentValues { get; set; }
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
 
         #region transaction handling
@@ -28,13 +29,18 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.PaymentMethod is CreditCardData) {
                 var card = builder.PaymentMethod as CreditCardData;
                 if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
-                    if (card.Token == null | card.MobileType == null)
-                    {
+                    if (card.Token == null || card.MobileType == null) {
                         throw new BuilderException("Token and  MobileType can not be null");
                     }
                     if (card.MobileType == MobilePaymentMethodType.GOOGLEPAY.ToString() && (builder.Amount == null || builder.Currency == null))
                         throw new BuilderException("Amount and Currency can not be null for capture.");
-                }    
+                }
+            }
+            if(builder.PaymentMethod is AlternatePaymentMethod) {
+                var apm = builder.PaymentMethod as AlternatePaymentMethod;
+                if (apm.ReturnUrl == null || apm.StatusUpdateUrl == null || apm.AccountHolderName == null || apm.Country == null || apm.Descriptor == null) {
+                    throw new BuilderException("PaymentMethod, ReturnUrl, StatusUpdateUrl, AccountHolderName, Country, Descriptor can not be null ");
+                }
             }
             // Build Request
             var request = et.Element("request")
@@ -43,10 +49,15 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(request, "merchantid").Text(MerchantId);
             et.SubElement(request, "account", AccountId);
             et.SubElement(request, "channel", Channel);
-            et.SubElement(request, "orderid", orderId);
             if (builder.Amount.HasValue) {
                 et.SubElement(request, "amount").Text(builder.Amount.ToNumericCurrencyString()).Set("currency", builder.Currency);
             }
+            // This needs to be figured out based on txn type and set to 0, 1 or MULTI
+            if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Auth) {
+                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI" : "0";
+                et.SubElement(request, "autosettle").Set("flag", autoSettle);
+            }
+            et.SubElement(request, "orderid", orderId);
 
             // Hydrate the payment data fields
             if (builder.PaymentMethod is CreditCardData) {
@@ -91,6 +102,21 @@ namespace GlobalPayments.Api.Gateways {
                 }
                 et.SubElement(request, "sha1hash").Text(hash);
             }
+            else if (builder.PaymentMethod is AlternatePaymentMethod) {
+                var apm = builder.PaymentMethod as AlternatePaymentMethod;
+                    et.SubElement(request, "paymentmethod", apm.AlternativePaymentMethodType);
+                    var paymentmethoddetails = et.SubElement(request, "paymentmethoddetails");
+                    et.SubElement(paymentmethoddetails, "returnurl", apm.ReturnUrl);
+                    et.SubElement(paymentmethoddetails, "statusupdateurl", apm.StatusUpdateUrl);
+                    et.SubElement(paymentmethoddetails, "descriptor", apm.Descriptor);
+                    et.SubElement(paymentmethoddetails, "country", apm.Country);
+                    et.SubElement(paymentmethoddetails, "accountholdername", apm.AccountHolderName);
+
+                // issueno
+                string hash = string.Empty;
+                hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, apm.AlternativePaymentMethodType.ToString());
+                et.SubElement(request, "sha1hash").Text(hash);
+            }
             if (builder.PaymentMethod is RecurringPaymentMethod) {
                 var recurring = builder.PaymentMethod as RecurringPaymentMethod;
                 et.SubElement(request, "payerref").Text(recurring.CustomerKey);
@@ -117,12 +143,6 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.TransactionType == TransactionType.Refund)
                 et.SubElement(request, "refundhash", GenerationUtils.GenerateHash(RefundPassword) ?? string.Empty);
 
-            // This needs to be figured out based on txn type and set to 0, 1 or MULTI
-            if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Auth) {
-                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI":"0";
-                et.SubElement(request, "autosettle").Set("flag", autoSettle);
-            }
-
             // TODO: needs to be multiple
             if (builder.Description != null) {
                 var comments = et.SubElement(request, "comments");
@@ -148,10 +168,6 @@ namespace GlobalPayments.Api.Gateways {
                 if (builder.ShippingAddress != null)
                     tssInfo.Append(BuildAddress(et, builder.ShippingAddress));
             }
-
-            //et.SubElement(request, "mobile");
-            //et.SubElement(request, "token", token);
-
             var response = DoTransaction(et.ToString(request));
             var mapResponse = MapResponse(response, MapAcceptedCodes(transactionType));
             if (builder.MultiCapture)
@@ -190,6 +206,9 @@ namespace GlobalPayments.Api.Gateways {
             if(HostedPaymentConfig.DynamicCurrencyConversionEnabled.HasValue)
                 request.Set("DCC_ENABLE", HostedPaymentConfig.DynamicCurrencyConversionEnabled.Value ? "1" : "0");
             if (builder.HostedPaymentData != null) {
+                AlternativePaymentType[] PaymentTypes = builder.HostedPaymentData.PresetPaymentMethods;
+                if (PaymentTypes != null)
+                    PaymentValues = string.Join("|", PaymentTypes);
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
                 if(HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null)
                     request.Set("HPP_SELECT_STORED_CARD", builder.HostedPaymentData.CustomerKey);
@@ -201,6 +220,12 @@ namespace GlobalPayments.Api.Gateways {
                     request.Set("PAYER_REF", builder.HostedPaymentData.CustomerKey);
                 request.Set("PMT_REF", builder.HostedPaymentData.PaymentKey);
                 request.Set("PROD_ID", builder.HostedPaymentData.ProductId);
+                request.Set("HPP_CUSTOMER_COUNTRY", builder.HostedPaymentData.Country);
+                request.Set("HPP_CUSTOMER_FIRSTNAME", builder.HostedPaymentData.CustomerFirstName);
+                request.Set("HPP_CUSTOMER_LASTNAME", builder.HostedPaymentData.CustomerLastName);
+                request.Set("MERCHANT_RESPONSE_URL", builder.HostedPaymentData.ReturnUrl);
+                request.Set("HPP_TX_STATUS_URL", builder.HostedPaymentData.StatusUpdateUrl);
+                request.Set("PM_METHODS", PaymentValues);
             }
             if (builder.ShippingAddress != null) {
                 request.Set("SHIPPING_CODE", builder.ShippingAddress.PostalCode);
@@ -270,7 +295,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (!builder.MultiCapture) {
                     amtElement.Set("currency", builder.Currency);
                 }
-            }    
+            }
             else if (builder.TransactionType == TransactionType.Capture)
                 throw new BuilderException("Amount cannot be null for capture.");
             
@@ -278,15 +303,18 @@ namespace GlobalPayments.Api.Gateways {
             if(builder.TransactionType==TransactionType.Capture && builder.MultiCapture == true)
              et.SubElement(request, "authcode").Text(builder.AuthorizationCode);
 
+            et.SubElement(request, "channel", Channel);
+            et.SubElement(request, "orderid", orderId);
+            et.SubElement(request, "pasref", builder.TransactionId);
+           
+            // Check is APM for Refund
+            if(builder.AlternativePaymentType != null)
+                et.SubElement(request, "paymentmethod", builder.AlternativePaymentType);
+
             // payer authentication response
             if (builder.TransactionType == TransactionType.VerifySignature)
                 et.SubElement(request, "pares", builder.PayerAuthenticationResponse);
 
-            // rebate hash
-            if (builder.TransactionType == TransactionType.Refund) {
-                et.SubElement(request, "authcode").Text(builder.AuthorizationCode);
-                et.SubElement(request, "refundhash", GenerationUtils.GenerateHash(RebatePassword ?? string.Empty));
-            }
 
             // reason code
             if (builder.ReasonCode != null)
@@ -298,8 +326,15 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(comments, "comment", builder.Description).Set("id", "1");
             }
 
-            et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, ""));
+            et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency,builder.AlternativePaymentType!=null?builder.AlternativePaymentType.ToString():null));
 
+            // rebate hash
+            if (builder.TransactionType == TransactionType.Refund) {
+                if (builder.AuthorizationCode != null) {
+                    et.SubElement(request, "authcode").Text(builder.AuthorizationCode);
+                }
+                et.SubElement(request, "refundhash", GenerationUtils.GenerateHash(builder.AlternativePaymentType != null ? RefundPassword : RebatePassword));
+            }
             var response = DoTransaction(et.ToString(request));
             return MapResponse(response, MapAcceptedCodes(transactionType));
         }
@@ -382,7 +417,8 @@ namespace GlobalPayments.Api.Gateways {
                     AuthCode = root.GetValue<string>("authcode"),
                     OrderId = root.GetValue<string>("orderid"),
                     PaymentMethodType = PaymentMethodType.Credit,
-                    TransactionId = root.GetValue<string>("pasref")
+                    TransactionId = root.GetValue<string>("pasref"),
+                    AlternativePaymentType = root.GetValue<string>("paymentmethod")
                 }
             };
             
@@ -452,12 +488,14 @@ namespace GlobalPayments.Api.Gateways {
                                 return "manual";
                             return "offline";
                         }
-                        else if
-                            (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                        else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
                             return "auth-mobile";
                         }
                         return "auth";
                     }
+                    else if (payment is AlternatePaymentMethod) {    
+                            return "payment-set";    
+                        }
                     else return "receipt-in";
                 case TransactionType.Capture:
                     return "settle";
@@ -472,6 +510,8 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.Refund:
                     if (payment is Credit)
                         return "credit";
+                    else if (payment is AlternatePaymentMethod)
+                        return "payment-credit";
                     else return "payment-out";
                 case TransactionType.VerifyEnrolled:
                     return "3ds-verifyenrolled";
@@ -491,6 +531,8 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.Hold:
                     return "hold";
                 case TransactionType.Refund:
+                    if(builder.AlternativePaymentType != null)
+                        return "payment-credit";
                     return "rebate";
                 case TransactionType.Release:
                     return "release";
@@ -533,6 +575,8 @@ namespace GlobalPayments.Api.Gateways {
                 case "3ds-verifysig":
                 case "3ds-verifyenrolled":
                     return new List<string> { "00", "110" };
+                case "payment-set":
+                    return new List<string> { "01" };
                 default:
                     return new List<string> { "00" };
             }

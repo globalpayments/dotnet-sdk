@@ -7,5 +7,6 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string OrderId { get; set; }
         public string TransactionId { get; set; }
         public string ClientTransactionId { get; set; }
+        public string AlternativePaymentType { get; set; }
     }
 }

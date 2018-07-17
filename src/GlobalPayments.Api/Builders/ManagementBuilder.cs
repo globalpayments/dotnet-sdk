@@ -7,6 +7,7 @@ namespace GlobalPayments.Api.Builders {
     /// payment method types.
     /// </summary>
     public class ManagementBuilder : TransactionBuilder<Transaction> {
+        internal AlternativePaymentType? AlternativePaymentType { get; set; }
         internal decimal? Amount { get; set; }
         internal decimal? AuthAmount { get; set; }
         internal string AuthorizationCode {
@@ -189,6 +190,10 @@ namespace GlobalPayments.Api.Builders {
 
         internal ManagementBuilder WithModifier(TransactionModifier value) {
             TransactionModifier = value;
+            return this;
+        }
+        public ManagementBuilder WithAlternativePaymentType(AlternativePaymentType value) {
+            this.AlternativePaymentType = value;
             return this;
         }
 

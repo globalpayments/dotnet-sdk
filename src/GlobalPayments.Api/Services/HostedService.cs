@@ -56,6 +56,7 @@ namespace GlobalPayments.Api.Services {
                 ResponseCode = result,
                 ResponseMessage = message,
                 AvsResponseCode = response.GetValue<string>("AVSPOSTCODERESULT"),
+                Timestamp = timestamp,
                 TransactionReference = new TransactionReference {
                     AuthCode = authCode,
                     OrderId = orderId,
