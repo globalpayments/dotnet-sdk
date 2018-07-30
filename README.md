@@ -2,7 +2,7 @@
     <img src="https://globalpayments.github.io/images/globapaymentsLogo.png" alt="Global Payments logo" title="Global Payments" align="right" width="225" />
 </a>
 
-# Heartland & Global Payments .NET SDK
+# Global Payments .NET SDK
 
 This SDK makes it easy to integrate your .NET application with our Card Not Present and Card Present APIs. 
 
