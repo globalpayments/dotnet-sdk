@@ -100,6 +100,10 @@ namespace GlobalPayments.Api.Tests.Terminals.HeartSIP {
 
         [TestMethod]
         public void GetSignature_Indirect() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
             var response = _device.CreditSale(1, 120m)
                 .WithSignatureCapture(true)
                 .Execute();

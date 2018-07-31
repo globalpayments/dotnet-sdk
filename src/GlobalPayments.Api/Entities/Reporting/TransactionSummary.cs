@@ -7,6 +7,11 @@ namespace GlobalPayments.Api.Entities {
     public class TransactionSummary {
         public string AccountDataSource { get; set; }
 
+        public decimal? AdjustmentAmount { get; set; }
+
+        public string AdjustmentCurrency { get; set; }
+        public string AdjustmentReason { get; set; }
+
         public AltPaymentData AltPaymentData { get; set; }
 
         /// <summary>
@@ -15,6 +20,8 @@ namespace GlobalPayments.Api.Entities {
         public decimal? Amount { get; set; }
 
         //public unknown AttachmentInfo { get; set; }
+
+        public string AquirerReferenceNumber { get; set; }
 
         /// <summary>
         /// The authorized amount.
@@ -61,6 +68,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public decimal? ConvenienceAmount { get; set; }
 
+        public string Currency { get; set; }
+
         public string CustomerFirstName { get; set; }
 
         public string CustomerId { get; set; }
@@ -68,6 +77,16 @@ namespace GlobalPayments.Api.Entities {
         public string CustomerLastName { get; set; }
 
         public bool DebtRepaymentIndicator { get; set; }
+
+        public decimal? DepositAmount { get; set; }
+
+        public string DepositCurrency { get; set; }
+
+        public DateTime? DepositDate { get; set; }
+
+        public string DepositReference { get; set; }
+
+        public string DepositType { get; set; }
 
         public string Description { get; set; }
 
@@ -77,6 +96,8 @@ namespace GlobalPayments.Api.Entities {
         public int DeviceId { get; set; }
 
         public string EmvChipCondition { get; set; }
+
+        public string EntryMode { get; set; }
 
         public string FraudRuleInfo { get; set; }
 
@@ -123,7 +144,21 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string MaskedCardNumber { get; set; }
 
+        public string MerchantCategory { get; set; }
+
+        public string MerchantDbaName { get; set; }
+
+        public string MerchantHierarchy { get; set; }
+
+        public string MerchantId { get; set; }
+
+        public string MerchantName { get; set; }
+
+        public string MerchantNumber { get; set; }
+
         public bool OneTimePayment { get; set; }
+
+        public string OrderId { get; set; }
 
         /// <summary>
         /// The gateway transaction ID of the authorization request.
@@ -148,6 +183,8 @@ namespace GlobalPayments.Api.Entities {
         public DateTime? ResponseDate { get; set; }
 
         public string ScheduleId { get; set; }
+
+        public string SchemeReferenceData { get; set; }
 
         /// <summary>
         /// The transaction type.
@@ -177,12 +214,16 @@ namespace GlobalPayments.Api.Entities {
 
         public string TaxType { get; set; }
 
+        public string TerminalId { get; set; }
+
         public string TokenPanLastFour { get; set; }
 
         /// <summary>
         /// The date/time of the original transaction.
         /// </summary>
         public DateTime TransactionDate { get; set; }
+
+        public DateTime TransactionLocalDate { get; set; }
 
         public string TransactionDescriptor { get; set; }
 

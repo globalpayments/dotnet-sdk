@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Builders {
         public override TResult Execute(string configName = "default") {
             base.Execute(configName);
 
-            var client = ServicesContainer.Instance.GetClient(configName);
+            var client = ServicesContainer.Instance.GetReportingClient(configName);
             return client.ProcessReport(this);
         }
     }

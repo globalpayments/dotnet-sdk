@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using System.Xml;
-using Newtonsoft.Json;
 
 namespace GlobalPayments.Api.Utils {
     internal class ElementTree {

@@ -5,7 +5,16 @@ using GlobalPayments.Api.Entities;
 namespace GlobalPayments.Api.Services {
     public class ReportingService {
         public static TransactionReportBuilder<List<TransactionSummary>> FindTransactions(string transactionId = null) {
-            return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.FindTransactions).WithTransactionId(transactionId);
+            return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.FindTransactions)
+                .WithTransactionId(transactionId);
+        }
+
+        public static TransactionReportBuilder<List<DepositSummary>> FindDeposits() {
+            return new TransactionReportBuilder<List<DepositSummary>>(ReportType.FindDepoits);
+        }
+
+        public static TransactionReportBuilder<List<DisputeSummary>> FindDisputes() {
+            return new TransactionReportBuilder<List<DisputeSummary>>(ReportType.FindDisputes);
         }
 
         public static TransactionReportBuilder<List<TransactionSummary>> Activity() {

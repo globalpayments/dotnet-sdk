@@ -10,6 +10,8 @@ namespace GlobalPayments.Api {
 
         internal IRecurringService RecurringConnector { get; set; }
 
+        internal IReportingService ReportingService { get; set; }
+
         internal IDeviceInterface DeviceInterface { get; private set; }
 
         private DeviceController _deviceController;
@@ -142,6 +144,12 @@ namespace GlobalPayments.Api {
             if (_configurations.ContainsKey(configName))
                 return _configurations[configName].PayrollConnector;
             throw new ApiException("The specified configuration has not been configured for payroll.");
+        }
+
+        internal IReportingService GetReportingClient(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].ReportingService;
+            throw new ApiException("The specified configuration has not been configured for reporting.");
         }
 
         /// <summary>

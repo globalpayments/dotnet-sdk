@@ -560,7 +560,17 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a TransactionDetail report.
         /// </summary>
-        TransactionDetail = 1 << 7
+        TransactionDetail = 1 << 7,
+
+        /// <summary>
+        /// Indicates a deposit report
+        /// </summary>
+        FindDepoits = 1 << 8,
+
+        /// <summary>
+        /// Indicates a dispute report
+        /// </summary>
+        FindDisputes = 1 << 9
     }
 
     /// <summary>
@@ -932,5 +942,11 @@ namespace GlobalPayments.Api.Entities {
         SemiMonthly = 24,
         BiWeekly = 26,
         Weekly = 52
+    }
+
+    internal class DataServiceReportTypes {
+        public const string TRANSACTION = "transaction";
+        public const string DEPOSIT = "deposit";
+        public const string DISPUTE = "dispute";
     }
 }

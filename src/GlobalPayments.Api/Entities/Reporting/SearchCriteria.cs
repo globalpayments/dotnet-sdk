@@ -27,9 +27,9 @@ namespace GlobalPayments.Api.Entities {
         CustomerId,
         DisplayName,
         EndDate,
+        FullyCaptured,
         GiftCurrency,
         GiftMaskedAlias,
-        ullyCaptured,
         InvoiceNumber,
         IssuerResult,
         IssuerTransactionId,
@@ -41,7 +41,25 @@ namespace GlobalPayments.Api.Entities {
         SiteTrace,
         StartDate,
         UniqueDeviceId,
-        Username
+        Username,
+    }
+
+    public enum DataServiceCriteria {
+        Amount, // Data Services
+        BankAccountNumber, // Data Services
+        CaseId, // Data Services
+        CardNumberFirstSix, // Data Services
+        CardNumberLastFour, // Data Services
+        CaseNumber, // Data Services
+        DepositReference, // Data Services
+        EndDepositDate, // Data Services
+        Hierarchy, // Data Services
+        LocalTransactionEndTime, // Data Services
+        LocalTransactionStartTime, // Data Services
+        MerchantId, // Data Services
+        OrderId, // Data Services
+        StartDepositDate, // Data Services
+        Timezone // Data Services
     }
 
     public class SearchCriteriaBuilder<TResult> where TResult : class {
@@ -51,7 +69,11 @@ namespace GlobalPayments.Api.Entities {
 
         internal string AltPaymentStatus { get; set; }
 
+        internal decimal? Amount { get; set; }
+
         internal string AuthCode { get; set; }
+
+        internal string BankAccountNumber { get; set; }
 
         internal string BankRoutingNumber { get; set; }
 
@@ -71,6 +93,10 @@ namespace GlobalPayments.Api.Entities {
 
         internal string CardNumberLastFour { get; set; }
 
+        internal string CaseId { get; set; }
+
+        internal string CaseNumber { get; set; }
+
         internal IEnumerable<CardType> CardTypes { get; set; }
 
         internal string CheckFirstName { get; set; }
@@ -87,15 +113,21 @@ namespace GlobalPayments.Api.Entities {
 
         internal string CustomerId { get; set; }
 
+        internal string DepositReference { get; set; }
+
         internal string DisplayName { get; set; }
 
         internal DateTime? EndDate { get; set; }
+
+        internal DateTime? EndDepositDate { get; set; }
+
+        internal bool? FullyCaptured { get; set; }
 
         internal string GiftCurrency { get; set; }
 
         internal string GiftMaskedAlias { get; set; }
 
-        internal bool? FullyCaptured { get; set; }
+        internal string Hierarchy { get; set; }
 
         internal string InvoiceNumber { get; set; }
 
@@ -103,7 +135,15 @@ namespace GlobalPayments.Api.Entities {
 
         internal string IssuerTransactionId { get; set; }
 
+        internal DateTime? LocalTransactionEndTime { get; set; }
+
+        internal DateTime? LocalTransactionStartTime { get; set; }
+
+        internal string MerchantId { get; set; }
+
         internal bool? OneTime { get; set; }
+
+        internal string OrderId { get; set; }
 
         internal string PaymentMethodKey { get; set; }
 
@@ -121,16 +161,34 @@ namespace GlobalPayments.Api.Entities {
 
         internal DateTime? StartDate { get; set; }
 
+        internal DateTime? StartDepositDate { get; set; }
+
         internal string UniqueDeviceId { get; set; }
 
         internal string Username { get; set; }
+
+        internal string Timezone { get; set; }
 
         internal SearchCriteriaBuilder(TransactionReportBuilder<TResult> reportBuilder) {
             _reportBuilder = reportBuilder;
         }
 
         public SearchCriteriaBuilder<TResult> And<T>(SearchCriteria criteria, T value) {
-            var prop = GetType().GetRuntimeProperties().FirstOrDefault(p => p.Name == criteria.ToString());
+            SetProperty(criteria.ToString(), value);
+            return this;
+        }
+
+        public SearchCriteriaBuilder<TResult> And<T>(DataServiceCriteria criteria, T value) {
+            SetProperty(criteria.ToString(), value);
+            return this;
+        }
+
+        public TResult Execute(string configName = "default") {
+            return _reportBuilder.Execute(configName);
+        }
+
+        private void SetProperty<T>(string propertyName, T value) {
+            var prop = GetType().GetRuntimeProperties().FirstOrDefault(p => p.Name == propertyName);
             if (prop != null) {
                 if (prop.PropertyType == typeof(T))
                     prop.SetValue(this, value);
@@ -147,11 +205,6 @@ namespace GlobalPayments.Api.Entities {
                     prop.SetValue(this, convertedValue);
                 }
             }
-            return this;
-        }
-
-        public TResult Execute(string configName = "default") {
-            return _reportBuilder.Execute(configName);
         }
     }
 }

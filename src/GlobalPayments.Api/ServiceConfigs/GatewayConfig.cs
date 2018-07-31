@@ -87,6 +87,26 @@ namespace GlobalPayments.Api {
         /// </summary>
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
 
+        /// <summary>
+        /// Client Id for Global Payments Data Services
+        /// </summary>
+        public string DataClientId { get; set; }
+
+        /// <summary>
+        /// Client Secret for Global Payments Data Services
+        /// </summary>
+        public string DataClientSecret { get; set; }
+
+        /// <summary>
+        /// The UserId for the Global Payment Data Services
+        /// </summary>
+        public string DataClientUserId { get; set; }
+
+        /// <summary>
+        /// The Url of the Global Data Service
+        /// </summary>
+        public string DataClientSeviceUrl { get; set; }
+
         internal override void ConfigureContainer(ConfiguredServices services) {
             if (!string.IsNullOrEmpty(MerchantId)) {
                 var gateway = new RealexConnector {
@@ -102,6 +122,15 @@ namespace GlobalPayments.Api {
                 };
                 services.GatewayConnector = gateway;
                 services.RecurringConnector = gateway;
+
+                var reportingService = new DataServicesConnector {
+                    ClientId = DataClientId,
+                    ClientSecret = DataClientSecret,
+                    UserId = DataClientUserId,
+                    ServiceUrl = DataClientSeviceUrl ?? "https://gpapi-qa.globalpay.com/apis/reporting/",
+                    Timeout = Timeout
+                };
+                services.ReportingService = reportingService;
             }
             else {
                 var gateway = new PorticoConnector {
@@ -117,6 +146,17 @@ namespace GlobalPayments.Api {
                     ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx"
                 };
                 services.GatewayConnector = gateway;
+
+                if (!string.IsNullOrEmpty(DataClientId)) {
+                    services.ReportingService = new DataServicesConnector {
+                        ClientId = DataClientId,
+                        ClientSecret = DataClientSecret,
+                        UserId = DataClientUserId,
+                        ServiceUrl = DataClientSeviceUrl ?? "https://gpapi-qa.globalpay.com/apis/reporting/",
+                        Timeout = Timeout
+                    };
+                }
+                else services.ReportingService = gateway;
 
                 var payplan = new PayPlanConnector {
                     SecretApiKey = SecretApiKey,
@@ -154,6 +194,14 @@ namespace GlobalPayments.Api {
             // service url
             if (string.IsNullOrEmpty(ServiceUrl)) {
                 throw new ConfigurationException("Service URL could not be determined from the credentials provided. Please specify an endpoint.");
+            }
+
+            // data client
+            if (!string.IsNullOrEmpty(DataClientId) || !string.IsNullOrEmpty(DataClientSecret)) {
+                if (string.IsNullOrEmpty(DataClientId) || string.IsNullOrEmpty(DataClientSecret))
+                    throw new ConfigurationException("Both \"DataClientID\" and \"DataClientSecret\" are required for data client services.");
+                if(string.IsNullOrEmpty(DataClientUserId))
+                    throw new ConfigurationException("DataClientUserId required for data client services.");
             }
         }
     }

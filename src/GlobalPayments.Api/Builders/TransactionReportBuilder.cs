@@ -19,7 +19,7 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal string TransactionId { get; set; }
-
+        
         private SearchCriteriaBuilder<TResult> _searchBuilder;
         internal SearchCriteriaBuilder<TResult> SearchBuilder {
             get {
@@ -70,6 +70,10 @@ namespace GlobalPayments.Api.Builders {
         }
 
         public SearchCriteriaBuilder<TResult> Where<T>(SearchCriteria criteria, T value) {
+            return SearchBuilder.And(criteria, value);
+        }
+
+        public SearchCriteriaBuilder<TResult> Where<T>(DataServiceCriteria criteria, T value) {
             return SearchBuilder.And(criteria, value);
         }
 

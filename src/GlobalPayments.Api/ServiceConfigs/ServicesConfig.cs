@@ -1,6 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Terminals;
+﻿using GlobalPayments.Api.Terminals;
 
 namespace GlobalPayments.Api {
     /// <summary>
