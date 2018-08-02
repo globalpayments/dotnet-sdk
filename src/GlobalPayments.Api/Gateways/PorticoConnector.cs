@@ -452,7 +452,7 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(header, "DeveloperID", DeveloperId);
             et.SubElement(header, "VersionNbr", VersionNumber);
             et.SubElement(header, "ClientTxnId", clientTransactionId);
-            et.SubElement(header, "PosReqDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
+            et.SubElement(header, "PosReqDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
 
             // Transaction
             var trans = et.SubElement(version1, "Transaction");
