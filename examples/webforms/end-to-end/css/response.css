@@ -1,0 +1,13 @@
+﻿body {
+}
+.btn {
+    TOP: 120px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    color: #ffffff;
+    background-color: #36b46e;
+    font-family: sans-serif;
+}

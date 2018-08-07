@@ -11,9 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\favicon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="GlobalPayments.Api" Version="1.0.2.6" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
