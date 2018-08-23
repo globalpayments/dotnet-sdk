@@ -17,6 +17,7 @@ namespace GlobalPayments.Api.Gateways {
         public string DeveloperId { get; set; }
         public string VersionNumber { get; set; }
         public bool SupportsHostedPayments { get { return false; } }
+        public string UniqueDeviceId { get; set; }
 
         public PorticoConnector() {
         }
@@ -453,6 +454,7 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(header, "VersionNbr", VersionNumber);
             et.SubElement(header, "ClientTxnId", clientTransactionId);
             et.SubElement(header, "PosReqDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+            et.SubElement(header, "UniqueDeviceId", UniqueDeviceId);
 
             // Transaction
             var trans = et.SubElement(version1, "Transaction");

@@ -102,6 +102,17 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
 
+            Func<string, DateTime?> formatDate = (date) => {
+                if (!string.IsNullOrEmpty(date)) {
+                    var pattern = "yyyy-MM-dd";
+                    if (date.Contains(" "))
+                        pattern += " hh:mm:ss";
+
+                    return DateTime.ParseExact(date, pattern, CultureInfo.InvariantCulture);
+                }
+                return null;
+            };
+
             T rvalue = Activator.CreateInstance<T>();
             if (reportType.HasFlag(ReportType.FindTransactions)) {
                 Func<JsonDoc, TransactionSummary> hydrateTransactionSummary = (root) => {
@@ -111,13 +122,13 @@ namespace GlobalPayments.Api.Gateways {
                         MerchantDbaName = root.GetValue<string>("merchantDbaName"),
                         MerchantNumber = root.GetValue<string>("merchantNumber"),
                         MerchantCategory = root.GetValue<string>("merchantCategory"),
-                        DepositDate = DateTime.Parse(root.GetValue<string>("transactionDepositDate")),
+                        DepositDate = formatDate(root.GetValue<string>("transactionDepositDate")),
                         DepositReference = root.GetValue<string>("transactionDepositReference"),
                         DepositType = root.GetValue<string>("transactionDepositType"),
                         ServiceName = root.GetValue<string>("transactionType"),
                         OrderId = root.GetValue<string>("transactionOrderId"),
-                        TransactionLocalDate = DateTime.Parse(root.GetValue<string>("transactionLocalTime")),
-                        TransactionDate = DateTime.Parse(root.GetValue<string>("transactionTime")),
+                        TransactionLocalDate = formatDate(root.GetValue<string>("transactionLocalTime")),
+                        TransactionDate = formatDate(root.GetValue<string>("transactionTime")),
                         Amount = root.GetValue<string>("transactionAmount").ToAmount(),
                         Currency = root.GetValue<string>("transactionCurrency"),
                         DepositAmount = root.GetValue<string>("transactionMerchantAmount").ToAmount(),
@@ -136,6 +147,7 @@ namespace GlobalPayments.Api.Gateways {
                         AdjustmentCurrency = root.GetValue<string>("transactionAdjustCurrency"),
                         AdjustmentReason = root.GetValue<string>("transactionAdjustReason")
                     };
+
                     return summary;
                 };
 
@@ -197,17 +209,6 @@ namespace GlobalPayments.Api.Gateways {
             }
             else if (reportType.HasFlag(ReportType.FindDisputes)) {
                 Func<JsonDoc, DisputeSummary> hydrateDisputeSummary = (root) => {
-                    Func<string, DateTime?> formatDate = (date) => {
-                        if (!string.IsNullOrEmpty(date)) {
-                            var pattern = "yyyy-MM-dd";
-                            if (date.Contains(" "))
-                                pattern += " hh:mm:ss";
-
-                            return DateTime.ParseExact(date, pattern, CultureInfo.InvariantCulture);
-                        }
-                        return null;
-                    };
-
                     var summary = new DisputeSummary {
                         MerchantHierarchy = root.GetValue<string>("merchantHierarchy"),
                         MerchantName = root.GetValue<string>("merchantName"),

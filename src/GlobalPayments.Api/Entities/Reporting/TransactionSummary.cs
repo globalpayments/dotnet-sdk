@@ -221,9 +221,9 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The date/time of the original transaction.
         /// </summary>
-        public DateTime TransactionDate { get; set; }
+        public DateTime? TransactionDate { get; set; }
 
-        public DateTime TransactionLocalDate { get; set; }
+        public DateTime? TransactionLocalDate { get; set; }
 
         public string TransactionDescriptor { get; set; }
 

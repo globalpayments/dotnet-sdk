@@ -51,6 +51,11 @@ namespace GlobalPayments.Api {
         /// </summary>
         public string SecretApiKey { get; set; }
 
+        /// <summary>
+        /// A unique device id to to be passed with each transaction
+        /// </summary>
+        public string UniqueDeviceId { get; set; }
+
         // Realex
         /// <summary>
         /// Account's account ID
@@ -127,7 +132,7 @@ namespace GlobalPayments.Api {
                     ClientId = DataClientId,
                     ClientSecret = DataClientSecret,
                     UserId = DataClientUserId,
-                    ServiceUrl = DataClientSeviceUrl ?? "https://gpapi-qa.globalpay.com/apis/reporting/",
+                    ServiceUrl = DataClientSeviceUrl ?? "https://globalpay-test.apigee.net/apis/reporting/",
                     Timeout = Timeout
                 };
                 services.ReportingService = reportingService;
@@ -143,7 +148,8 @@ namespace GlobalPayments.Api {
                     DeveloperId = DeveloperId,
                     VersionNumber = VersionNumber,
                     Timeout = Timeout,
-                    ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx"
+                    ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx",
+                    UniqueDeviceId = UniqueDeviceId
                 };
                 services.GatewayConnector = gateway;
 
@@ -152,7 +158,7 @@ namespace GlobalPayments.Api {
                         ClientId = DataClientId,
                         ClientSecret = DataClientSecret,
                         UserId = DataClientUserId,
-                        ServiceUrl = DataClientSeviceUrl ?? "https://gpapi-qa.globalpay.com/apis/reporting/",
+                        ServiceUrl = DataClientSeviceUrl ?? "https://globalpay-test.apigee.net/apis/reporting/",
                         Timeout = Timeout
                     };
                 }

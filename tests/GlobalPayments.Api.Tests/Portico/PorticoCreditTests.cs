@@ -13,7 +13,8 @@ namespace GlobalPayments.Api.Tests {
         public void Init() {
             ServicesContainer.ConfigureService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+                ServiceUrl = "https://cert.api2.heartlandportico.com",
+                UniqueDeviceId = "GSDK"
             });
 
             card = new CreditCardData {
