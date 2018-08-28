@@ -167,7 +167,7 @@ namespace GlobalPayments.Api {
                 var payplan = new PayPlanConnector {
                     SecretApiKey = SecretApiKey,
                     Timeout = Timeout,
-                    ServiceUrl = ServiceUrl + "/Portico.PayPlan.v2/"
+                    ServiceUrl = ServiceUrl + getPayPlanEndpoint(SecretApiKey)
                 };
                 services.RecurringConnector = payplan;
             }
@@ -209,6 +209,17 @@ namespace GlobalPayments.Api {
                 if(string.IsNullOrEmpty(DataClientUserId))
                     throw new ConfigurationException("DataClientUserId required for data client services.");
             }
+        }
+
+        private string getPayPlanEndpoint(string key) {
+            var components = key.Split('_');
+            var env = components[1].ToLower();
+
+            if (env.Equals("cert")) {
+                return "/Portico.PayPlan.v2/";
+            }
+
+            return "/PayPlan.v2/";
         }
     }
 }
