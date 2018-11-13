@@ -27,8 +27,10 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal string Currency { get; set; }
+        internal string CustomerId { get; set; }
         internal string Description { get; set; }
         internal decimal? Gratuity { get; set; }
+        internal string InvoiceNumber { get; set; }
         internal string OrderId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -95,6 +97,19 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Sets the customer ID; where applicable.
+        /// </summary>
+        /// <remarks>
+        /// This is an application/merchant generated value.
+        /// </remarks>
+        /// <param name="value">The customer ID</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithCustomerId(string value) {
+            CustomerId = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the transaction's description.
         /// </summary>
         /// <remarks>
@@ -119,6 +134,16 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>ManagementBuilder</returns>
         public ManagementBuilder WithGratuity(decimal? value) {
             Gratuity = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the invoice number; where applicable.
+        /// </summary>
+        /// <param name="value">The invoice number</param>
+        /// <returns>ManagementnBuilder</returns>
+        public ManagementBuilder WithInvoiceNumber(string value) {
+            InvoiceNumber = value;
             return this;
         }
 

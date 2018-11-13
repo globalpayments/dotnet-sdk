@@ -56,7 +56,7 @@ namespace GlobalPayments.Api.Entities {
                     .AddSearchCriteria(identifier, id)
                     .Execute();
                 var entity = response.FirstOrDefault();
-                if (entity != null)
+                if (entity != null && entity.Id == id)
                     return RecurringService.Get<TResult>(entity.Key);
                 return null;
             }

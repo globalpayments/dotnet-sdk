@@ -105,6 +105,12 @@ namespace GlobalPayments.Api.Tests.Portico {
                 }).Create();
             Assert.IsNotNull(payment);
             Assert.IsNotNull(payment.Key);
+
+            customer = Customer.Find(CustomerId);
+            Assert.IsNotNull(customer);
+            Assert.IsTrue(customer.PaymentMethods.Count > 0);
+
+            Assert.IsNotNull(customer.PaymentMethods.First(p => p.Key == payment.Key));
         }
 
         [TestMethod, Ignore]
@@ -245,6 +251,18 @@ namespace GlobalPayments.Api.Tests.Portico {
         public void Test_002c_FindSchedule() {
             var schedule = Schedule.Find(PaymentId("Credit"));
             Assert.IsNotNull(schedule);
+        }
+
+        [TestMethod]
+        public void Test_002d_FindCustomerFindNullKey() {
+            var customer = Customer.Find(null);
+            Assert.IsNull(customer);
+        }
+
+        [TestMethod]
+        public void Test_0023_FindCustomerFindInvalidKey() {
+            var customer = Customer.Find("1");
+            Assert.IsNull(customer);
         }
 
         [TestMethod]
@@ -449,6 +467,7 @@ namespace GlobalPayments.Api.Tests.Portico {
 
             customer.Delete();
         }
+
         [TestMethod]
         public void Test_008g_CreditCharge_WithNewCryptoURL() {
             ServicesContainer.ConfigureService(new GatewayConfig

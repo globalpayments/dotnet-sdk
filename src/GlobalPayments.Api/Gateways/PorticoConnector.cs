@@ -372,6 +372,15 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(cpc, "TaxType", builder.TaxType.ToString());
                     et.SubElement(cpc, "TaxAmt", builder.TaxAmount);
                 }
+
+                if (builder.TransactionType == TransactionType.Refund || builder.TransactionType == TransactionType.Reversal) {
+                    if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
+                        var addons = et.SubElement(root, "AdditionalTxnFields");
+                        et.SubElement(addons, "CustomerID", builder.CustomerId);
+                        et.SubElement(addons, "Description", builder.Description);
+                        et.SubElement(addons, "InvoiceNbr", builder.InvoiceNumber);
+                    }
+                }
             }
 
             var response = DoTransaction(BuildEnvelope(et, transaction, builder.ClientTransactionId));
