@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Terminals.Extensions {
 
         public static async Task<int> GetLengthAsync(this NetworkStream stream) {
             byte[] length_buffer = new byte[2];
-            int byteCount = stream.ReadAsync(length_buffer, 0, 2).Result;
+            int byteCount = await stream.ReadAsync(length_buffer, 0, 2);
 
             if (byteCount != 2)
                 return 0;

@@ -4,10 +4,8 @@ using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     public class CheckSubResponse : PaxDeviceResponse {
-        public string AuthorizationCode { get; set; }
         public string CustomerId { get; set; }
-        // TODO: public string Details { get; set; }
-
+        
         internal CheckSubResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.T13_RSP_DO_CHECK) {
         }

@@ -362,6 +362,7 @@ namespace GlobalPayments.Api.Tests.Portico {
 
             var response = paymentMethod.Charge(9m)
                 .WithCurrency("USD")
+                .WithShippingAmt(5m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);

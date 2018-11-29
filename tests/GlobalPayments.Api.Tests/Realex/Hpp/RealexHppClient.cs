@@ -27,8 +27,10 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
         }
 
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
+            string response = await request.Content.ReadAsStringAsync();
+
             // gather information
-            var json = JsonDoc.Parse(request.Content.ReadAsStringAsync().Result, JsonEncoders.Base64Encoder);
+            var json = JsonDoc.Parse(response, JsonEncoders.Base64Encoder);
             var timestamp = json.GetValue<string>("TIMESTAMP");
             var merchantId = json.GetValue<string>("MERCHANT_ID");
             var account = json.GetValue<string>("ACCOUNT");

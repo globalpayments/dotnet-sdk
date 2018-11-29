@@ -645,6 +645,8 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.Auth | TransactionType.Sale)
                 .With(TransactionModifier.EncryptedMobile)
                 .Check(() => PaymentMethod).IsNotNull();
+
+            Validations.For(PaymentMethodType.Recurring).Check(() => ShippingAmt).IsNull();
         }
     }
 }

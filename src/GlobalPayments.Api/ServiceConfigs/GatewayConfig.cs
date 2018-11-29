@@ -212,13 +212,9 @@ namespace GlobalPayments.Api {
         }
 
         private string getPayPlanEndpoint(string key) {
-            var components = key.Split('_');
-            var env = components[1].ToLower();
-
-            if (env.Equals("cert")) {
+            if (string.IsNullOrEmpty(key) || key.ToLower().Contains("cert")) {
                 return "/Portico.PayPlan.v2/";
             }
-
             return "/PayPlan.v2/";
         }
     }

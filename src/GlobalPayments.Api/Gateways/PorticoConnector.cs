@@ -496,7 +496,7 @@ namespace GlobalPayments.Api.Gateways {
                 result.AvailableBalance = root.GetValue<decimal>("AvailableBalance");
                 result.AvsResponseCode = root.GetValue<string>("AVSRsltCode");
                 result.AvsResponseMessage = root.GetValue<string>("AVSRsltText");
-                result.BalanceAmount = root.GetValue<decimal>("BalanceAmt");
+                result.BalanceAmount = root.GetValue<decimal>("BalanceAmt", "AvailableBalance");
                 result.CardType = root.GetValue<string>("CardType");
                 result.CardLast4 = root.GetValue<string>("TokenPANLast4");
                 result.CavvResponseCode = root.GetValue<string>("CAVVResultCode");

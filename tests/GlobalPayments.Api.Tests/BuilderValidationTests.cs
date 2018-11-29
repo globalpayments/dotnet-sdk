@@ -107,5 +107,10 @@ namespace GlobalPayments.Api.Tests {
                 .WithTransactionId("1234567890")
                 .Execute();
         }
+
+        [TestMethod, ExpectedException(typeof(BuilderException))]
+        public void RecurringOneTimeWithShippingAmount() {
+            new RecurringPaymentMethod().Charge(10m).WithCurrency("USD").WithShippingAmt(3m).Execute();
+        }
     }
 }

@@ -133,7 +133,7 @@ namespace GlobalPayments.Api.Utils {
                     return (IEnumerable<JsonDoc>)_dict[name];
                 return new List<JsonDoc>();
             }
-            return null;
+            return new List<JsonDoc>();
         }
 
         public IEnumerable<T> GetArray<T>(string name) {

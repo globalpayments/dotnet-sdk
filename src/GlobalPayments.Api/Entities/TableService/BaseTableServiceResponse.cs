@@ -4,8 +4,6 @@ using GlobalPayments.Api.Utils;
 namespace GlobalPayments.Api.Entities.TableService
 {
     public abstract class BaseTableServiceResponse {
-        private List<string> _messageIds;
-
         /// <summary>
         /// Response code from the table service API
         /// </summary>
