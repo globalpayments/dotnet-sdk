@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;

@@ -46,7 +46,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
             var account = new AccountRequest();
             var avs = new AvsRequest();
             var trace = new TraceRequest {
-                ReferenceNumber = builder.ReferenceNumber.ToString()
+                ReferenceNumber = builder.ReferenceNumber.ToString(),
+                ClientTransactionId = builder.ClientTransactionId
             };
             var cashier = new CashierSubGroup();
             var commercial = new CommercialRequest();
@@ -132,6 +133,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             var account = new AccountRequest();
             var trace = new TraceRequest {
                 ReferenceNumber = builder.ReferenceNumber.ToString(),
+                ClientTransactionId = builder.ClientTransactionId
             };
             var extData = new ExtDataSubGroup();
 

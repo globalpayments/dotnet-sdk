@@ -50,7 +50,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     for (int i = 0; i < 3; i++) {
                         _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
 
-                        var rvalue = _stream.GetTerminalResponse();
+                        var rvalue = _stream.GetTerminalResponseAsync().Result;
                         if (rvalue != null) {
                             byte lrc = rvalue[rvalue.Length - 1]; // Should be the LRC
                             if (lrc != TerminalUtilities.CalculateLRC(rvalue)) {

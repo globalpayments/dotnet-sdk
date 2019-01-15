@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public string AuthCode { get; set; }
         public string TransactionNumber { get; set; }
         public string TimeStamp { get; set; }
+        public string ClientTransactionId { get; set; }
 
         public string GetElementString() {
             var sb = new StringBuilder();
@@ -24,6 +25,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
             sb.Append(TransactionNumber);
             sb.Append((char)ControlCodes.US);
             sb.Append(TimeStamp);
+            sb.Append((char)ControlCodes.US);
+            sb.Append(ClientTransactionId);
 
             return sb.ToString().TrimEnd((char)ControlCodes.US);
         }

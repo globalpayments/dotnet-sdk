@@ -4,6 +4,7 @@ using GlobalPayments.Api.PaymentMethods;
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalManageBuilder : TerminalBuilder<TerminalManageBuilder> {
         internal decimal? Amount { get; set; }
+        internal string ClientTransactionId { get; set; }
         internal CurrencyType? Currency { get; set; }
         internal decimal? Gratuity { get; set; }
         internal string TransactionId {
@@ -16,6 +17,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
 
         public TerminalManageBuilder WithAmount(decimal? amount) {
             Amount = amount;
+            return this;
+        }
+        public TerminalManageBuilder WithClientTransactionId(string value) {
+            ClientTransactionId = value;
             return this;
         }
         public TerminalManageBuilder WithCurrency(CurrencyType? value) {
@@ -44,7 +49,8 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         protected override void SetupValidations() {
-            Validations.For(TransactionType.Capture | TransactionType.Void).Check(() => TransactionId).IsNotNull();
+            Validations.For(TransactionType.Capture).Check(() => TransactionId).IsNotNull();
+            Validations.For(TransactionType.Void).When(() => ClientTransactionId).IsNull().Check(() => TransactionId).IsNotNull();
             Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
         }
     }

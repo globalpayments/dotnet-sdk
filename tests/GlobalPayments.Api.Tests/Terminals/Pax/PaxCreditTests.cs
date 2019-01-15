@@ -12,9 +12,11 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         public PaxCreditTests() {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_S300,
-                ConnectionMode = ConnectionModes.HTTP,
-                IpAddress = "10.12.220.172",
-                Port = "10009",
+                ConnectionMode = ConnectionModes.TCP_IP,
+                //IpAddress = "10.12.220.172",
+                //Port = "10009",
+                IpAddress = "192.168.000.31",
+                Port = "80",
                 Timeout = 30000
             });
             Assert.IsNotNull(_device);
@@ -53,7 +55,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
             var response = _device.CreditSale(1, 11m)
                 .WithAllowDuplicates(true)
-                .WithPaymentMethod(card)
+                .WithPaymentMethod(card)                
                 .WithAddress(address)
                 .Execute();
             Assert.IsNotNull(response);

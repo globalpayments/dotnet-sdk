@@ -40,7 +40,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             this.DeviceResponseText = br.ReadToCode(ControlCodes.FS);
 
             if (!_messageIds.Contains(Command))
-                throw new MessageException(string.Format("Unexpected message type received. {1}.", this.Command));
+                throw new MessageException(string.Format("Unexpected message type received. {0}.", this.Command));
         }
 
         public override string ToString() {
@@ -79,7 +79,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 AmountDue = AmountResponse.AmountDue;
                 TipAmount = AmountResponse.TipAmount;
                 CashBackAmount = AmountResponse.CashBackAmount;
-                BalanceAmount = AmountResponse.Balance1;
+                BalanceAmount = AmountResponse.Balance1 ?? AmountResponse.Balance2;
             }
 
             // Account Response

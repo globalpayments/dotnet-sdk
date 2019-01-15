@@ -15,6 +15,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             }
         }
         internal decimal? CashBackAmount { get; set; }
+        internal string ClientTransactionId { get; set; }
         internal CurrencyType? Currency { get; set; }
         internal string CustomerCode { get; set; }
         internal decimal? Gratuity { get; set; }
@@ -53,6 +54,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
         public TerminalAuthBuilder WithCashBack(decimal? amount) {
             CashBackAmount = amount;
+            return this;
+        }
+        public TerminalAuthBuilder WithClientTransactionId(string value) {
+            ClientTransactionId = value;
             return this;
         }
         public TerminalAuthBuilder WithCurrency(CurrencyType? value) {
