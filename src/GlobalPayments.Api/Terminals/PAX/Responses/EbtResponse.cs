@@ -21,7 +21,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             if (DeviceResponseCode == "000000") {
                 HostResponse = new HostResponse(br);
-                TransactionType = br.ReadToCode(ControlCodes.FS);
+                TransactionType = ((TerminalTransactionType)Int32.Parse(br.ReadToCode(ControlCodes.FS))).ToString().Replace("_", " ");
                 AmountResponse = new AmountResponse(br);
                 AccountResponse = new AccountResponse(br);
                 TraceResponse = new TraceResponse(br);

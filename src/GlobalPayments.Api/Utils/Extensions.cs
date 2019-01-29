@@ -85,9 +85,9 @@ namespace GlobalPayments.Api.Utils {
             }
             return null;
         }
-        public static async Task<byte[]> GetTerminalResponseAsync(this NetworkStream stream) {
+        public static byte[] GetTerminalResponseAsync(this NetworkStream stream) {
             var buffer = new byte[4096];
-            int bytesReceived = await stream.ReadAsync(buffer, 0, buffer.Length);
+            int bytesReceived = stream.ReadAsync(buffer, 0, buffer.Length).Result;
             
             if (bytesReceived > 0) {
                 byte[] readBuffer = new byte[bytesReceived];
