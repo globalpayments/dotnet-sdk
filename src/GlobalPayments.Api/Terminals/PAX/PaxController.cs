@@ -41,12 +41,16 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         #region overrides
         internal override TerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
+            int requestId = builder.ReferenceNumber;
+            if (requestId == default(int) && RequestIdProvider != null) {
+                requestId = RequestIdProvider.GetRequestId();
+            }
             // create sub groups
             var amounts = new AmountRequest();
             var account = new AccountRequest();
             var avs = new AvsRequest();
             var trace = new TraceRequest {
-                ReferenceNumber = builder.ReferenceNumber.ToString(),
+                ReferenceNumber = requestId.ToString(),
                 ClientTransactionId = builder.ClientTransactionId
             };
             var cashier = new CashierSubGroup();
@@ -129,10 +133,14 @@ namespace GlobalPayments.Api.Terminals.PAX {
             }
         }
         internal override TerminalResponse ManageTransaction(TerminalManageBuilder builder) {
+            int requestId = builder.ReferenceNumber;
+            if (requestId == default(int) && RequestIdProvider != null) {
+                requestId = RequestIdProvider.GetRequestId();
+            }
             var amounts = new AmountRequest();
             var account = new AccountRequest();
             var trace = new TraceRequest {
-                ReferenceNumber = builder.ReferenceNumber.ToString(),
+                ReferenceNumber = requestId.ToString(),
                 ClientTransactionId = builder.ClientTransactionId
             };
             var extData = new ExtDataSubGroup();

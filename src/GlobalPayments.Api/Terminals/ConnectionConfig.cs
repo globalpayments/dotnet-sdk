@@ -1,7 +1,7 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.PAX;
-using GlobalPayments.Api.Terminals.HeartSIP;
+using GlobalPayments.Api.Terminals.HPA;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
@@ -35,7 +35,8 @@ namespace GlobalPayments.Api.Terminals {
     public interface ITerminalConfiguration {
         ConnectionModes ConnectionMode { get; set; }
         DeviceType DeviceType { get; set; }
-        
+        IRequestIdProvider RequestIdProvider { get; set; }
+
         // Ethernet
         string IpAddress { get; set; }
         string Port { get; set; }
@@ -59,18 +60,18 @@ namespace GlobalPayments.Api.Terminals {
         public DataBits DataBits { get; set; }
         public string IpAddress { get; set; }
         public string Port { get; set; }
-
         public ConnectionConfig() {
             Timeout = -1;
         }
+        public IRequestIdProvider RequestIdProvider { get; set; }
 
         internal override void ConfigureContainer(ConfiguredServices services) {
             switch (DeviceType) {
                 case DeviceType.PAX_S300:
                     services.DeviceController = new PaxController(this);
                     break;
-                case DeviceType.HSIP_ISC250:
-                    services.DeviceController = new HeartSipController(this);
+                case DeviceType.HPA_ISC250:
+                    services.DeviceController = new HpaController(this);
                     break;
                 default:
                     break;

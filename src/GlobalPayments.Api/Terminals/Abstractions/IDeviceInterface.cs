@@ -1,4 +1,5 @@
 ﻿using System;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Messaging;
@@ -18,6 +19,7 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse Reboot();
         IDeviceResponse Reset();
         string SendCustomMessage(DeviceMessage message);
+        IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
         #endregion
 
         #region Batch Calls
@@ -25,31 +27,31 @@ namespace GlobalPayments.Api.Terminals {
         #endregion
 
         #region Credit Calls
-        TerminalAuthBuilder CreditAuth(int referenceNumber, decimal? amount = null);
-        TerminalManageBuilder CreditCapture(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder CreditRefund(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder CreditSale(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder CreditVerify(int referenceNumber);
-        TerminalManageBuilder CreditVoid(int referenceNumber);
+        TerminalAuthBuilder CreditAuth(decimal? amount = null);
+        TerminalManageBuilder CreditCapture(decimal? amount = null);
+        TerminalAuthBuilder CreditRefund(decimal? amount = null);
+        TerminalAuthBuilder CreditSale(decimal? amount = null);
+        TerminalAuthBuilder CreditVerify();
+        TerminalManageBuilder CreditVoid();
         #endregion
 
         #region Debit Calls
-        TerminalAuthBuilder DebitSale(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder DebitRefund(int referenceNumber, decimal? amount = null);
+        TerminalAuthBuilder DebitSale(decimal? amount = null);
+        TerminalAuthBuilder DebitRefund(decimal? amount = null);
         #endregion
 
         #region Gift Calls
-        TerminalAuthBuilder GiftSale(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder GiftAddValue(int referenceNumber, decimal? amount = null);
-        TerminalManageBuilder GiftVoid(int referenceNumber);
-        TerminalAuthBuilder GiftBalance(int referenceNumber);
+        TerminalAuthBuilder GiftSale(decimal? amount = null);
+        TerminalAuthBuilder GiftAddValue(decimal? amount = null);
+        TerminalManageBuilder GiftVoid();
+        TerminalAuthBuilder GiftBalance();
         #endregion
 
         #region EBT Calls
-        TerminalAuthBuilder EbtBalance(int referenceNumber);
-        TerminalAuthBuilder EbtPurchase(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder EbtRefund(int referenceNumber, decimal? amount = null);
-        TerminalAuthBuilder EbtWithdrawl(int referenceNumber, decimal? amount = null);
+        TerminalAuthBuilder EbtBalance();
+        TerminalAuthBuilder EbtPurchase(decimal? amount = null);
+        TerminalAuthBuilder EbtRefund(decimal? amount = null);
+        TerminalAuthBuilder EbtWithdrawl(decimal? amount = null);
         #endregion
     }
 }

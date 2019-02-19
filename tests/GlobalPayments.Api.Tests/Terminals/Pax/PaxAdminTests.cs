@@ -14,7 +14,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 DeviceType = DeviceType.PAX_S300,
                 ConnectionMode = ConnectionModes.HTTP,
                 IpAddress = "10.12.220.172",
-                Port = "10009"
+                Port = "10009",
+                RequestIdProvider = new RequestIdProvider()
             });
             Assert.IsNotNull(_device);
         }

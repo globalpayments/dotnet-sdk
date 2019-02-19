@@ -7,7 +7,6 @@ namespace GlobalPayments.Api.Terminals {
     internal abstract class DeviceController : IDisposable {
         protected ITerminalConfiguration _settings;
         protected IDeviceCommInterface _interface;
-
         public ConnectionModes? ConnectionMode {
             get {
                 if (_settings != null)
@@ -22,7 +21,13 @@ namespace GlobalPayments.Api.Terminals {
                 return null;
             }
         }
-
+        public IRequestIdProvider RequestIdProvider {
+            get {
+                if (_settings != null)
+                    return _settings.RequestIdProvider;
+                return null;
+            }
+        }
         internal DeviceController(ITerminalConfiguration settings) {
             _settings = settings;
         }
