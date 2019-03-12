@@ -1,8 +1,9 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Terminals.Abstractions;
 
 namespace GlobalPayments.Api.Terminals.Builders {
-    public abstract class TerminalBuilder<T> : TransactionBuilder<TerminalResponse> where T : TerminalBuilder<T> {
+    public abstract class TerminalBuilder<T> : TransactionBuilder<ITerminalResponse> where T : TerminalBuilder<T> {
         internal PaymentMethodType PaymentMethodType { get; set; }
         internal int ReferenceNumber { get; set; }
 

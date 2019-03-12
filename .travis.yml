@@ -1,0 +1,29 @@
+language: csharp
+
+sudo: false
+branches:
+  only:
+    - master
+
+mono: none
+dotnet: 2.1.502
+
+addons:
+  apt:
+    packages:
+      - doxygen
+
+install:
+ - dotnet restore
+
+script:
+  - doxygen Doxyfile
+
+deploy:
+  local-dir: docs/html
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master

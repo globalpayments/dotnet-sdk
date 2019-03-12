@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_S300,
                 ConnectionMode = ConnectionModes.HTTP,
-                IpAddress = "10.12.220.172",
+                IpAddress = "192.168.0.31",
                 Port = "10009",
                 Timeout = 30000,
                 RequestIdProvider = new RequestIdProvider()
@@ -32,11 +32,11 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         public void SendCustomComplexMessage() {
             DeviceMessage message = TerminalUtilities.BuildRequest(
                 "A04", // FOR PAX THE FIRST ELEMENT SHOULD ALWAYS BE THE MESSAGE ID
-                "00",
+                "02",
                 ControlCodes.FS,
-                "hostRspBeep",
+                "cashBack",
                 ControlCodes.FS,
-                "N"
+                "1000,2000,3000,4000"
             );
 
             var response = device.SendCustomMessage(message);

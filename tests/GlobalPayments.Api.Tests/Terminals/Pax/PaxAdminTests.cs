@@ -12,8 +12,9 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         public PaxAdminTests() {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_S300,
-                ConnectionMode = ConnectionModes.HTTP,
-                IpAddress = "10.12.220.172",
+                ConnectionMode = ConnectionModes.TCP_IP,
+                //IpAddress = "10.12.220.172",
+                IpAddress = "192.168.0.31",
                 Port = "10009",
                 RequestIdProvider = new RequestIdProvider()
             });
@@ -89,6 +90,12 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             var response = _device.PromptForSignature();
             Assert.IsNotNull(response);
             Assert.AreEqual("OK", response.DeviceResponseText);
+        }
+
+        [TestMethod]
+        public void TurnOffBeeps() {
+            var response = _device.DisableHostResponseBeep();
+            Assert.IsNotNull(response);
         }
     }
 }

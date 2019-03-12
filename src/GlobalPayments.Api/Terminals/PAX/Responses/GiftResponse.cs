@@ -3,7 +3,7 @@ using System.IO;
 using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    public class GiftResponse : PaxDeviceResponse {
+    public class GiftResponse : PaxTerminalResponse {
         internal GiftResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.T07_RSP_DO_GIFT, PAX_MSG_ID.T09_RSP_DO_LOYALTY) {
         }
@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         protected override void ParseResponse(BinaryReader br) {
             base.ParseResponse(br);
 
-            if (DeviceResponseCode == "000000") {
+            if (acceptedCodes.Contains(DeviceResponseCode)) {
                 HostResponse = new HostResponse(br);
                 TransactionType = ((TerminalTransactionType)Int32.Parse(br.ReadToCode(ControlCodes.FS))).ToString().Replace("_", " ");
                 AmountResponse = new AmountResponse(br);

@@ -3,7 +3,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    public class SignatureResponse : PaxBaseResponse, ISignatureResponse {
+    public class SignatureResponse : PaxTerminalResponse, ISignatureResponse {
         public int TotalLength { get; set; }
         public int ResponseLegth { get; set; }
 

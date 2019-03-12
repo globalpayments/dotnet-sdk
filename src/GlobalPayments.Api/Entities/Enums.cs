@@ -729,11 +729,10 @@ namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Indicates the GooglePay and ApplePay.
     /// </summary>
-    public static class MobilePaymentMethodType
-    {
+    public static class MobilePaymentMethodType {
         public const string APPLEPAY = "apple-pay";
         public const string GOOGLEPAY = "pay-with-google";
-        
+
     }
 
     /// <summary>
@@ -948,5 +947,10 @@ namespace GlobalPayments.Api.Entities {
         public const string TRANSACTION = "transaction";
         public const string DEPOSIT = "deposit";
         public const string DISPUTE = "dispute";
+    }
+
+    public enum ApplicationCryptogramType {
+        TC,
+        ARQC
     }
 }

@@ -35,7 +35,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 return Task.Run(async () => {
                     _client = HttpWebRequest.Create(string.Format("http://{0}:{1}?{2}", _settings.IpAddress, _settings.Port, payload));
 
-
                     var response = await _client.GetResponseAsync();
 
                     var buffer = new List<byte>();

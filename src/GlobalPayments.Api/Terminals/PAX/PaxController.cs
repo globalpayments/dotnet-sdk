@@ -40,7 +40,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         #region overrides
-        internal override TerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
+        internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
@@ -132,7 +132,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     throw new UnsupportedTransactionException();
             }
         }
-        internal override TerminalResponse ManageTransaction(TerminalManageBuilder builder) {
+        internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
@@ -180,6 +180,45 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     throw new UnsupportedTransactionException();
             }
         }
+        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
+            string messageId = MapReportType(builder.ReportType);
+
+            IDeviceMessage request = null;
+            switch (builder.ReportType) {
+                case TerminalReportType.LocalDetailReport: {
+                        var criteria = builder.SearchBuilder;
+
+                        request = TerminalUtilities.BuildRequest(
+                            messageId,
+                            "01",  // EDC TYPE SET TO ALL
+                            ControlCodes.FS,
+                            // transaction type
+                            ControlCodes.FS,
+                            // card type
+                            ControlCodes.FS,
+                            //criteria.RecordNumber.HasValue ? criteria.RecordNumber.ToString() : string.Empty,
+                            ControlCodes.FS,
+                            //criteria.TransactionNumber.HasValue ? criteria.TransactionNumber.ToString() : string.Empty,
+                            ControlCodes.FS,
+                            //builder.SearchBuilder.AuthCode ?? string.Empty,
+                            ControlCodes.FS,
+                            builder.SearchBuilder.ReferenceNumber ?? string.Empty,
+                            ControlCodes.FS
+                            // additional information
+                        );
+                   } break;
+                default: {
+                        throw new UnsupportedTransactionException(string.Format("Unsupported report type: {0}", builder.ReportType.ToString()));
+                    };
+            }
+
+            var response = Send(request);
+            switch (builder.ReportType) {
+                case TerminalReportType.LocalDetailReport:
+                    return new LocalDetailReport(response);
+                default: return null;
+            }
+        }
 
         private string MapTransactionType(TransactionType type, bool requestToken = false) {
             switch (type) {
@@ -203,6 +242,14 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     return requestToken ? PAX_TXN_TYPE.TOKENIZE : PAX_TXN_TYPE.VERIFY;
                 case TransactionType.Void:
                     return PAX_TXN_TYPE.VOID;
+                default:
+                    throw new UnsupportedTransactionException();
+            }
+        }
+        private string MapReportType(TerminalReportType type) {
+            switch (type) {
+                case TerminalReportType.LocalDetailReport:
+                    return PAX_MSG_ID.R02_LOCAL_DETAIL_REPORT;
                 default:
                     throw new UnsupportedTransactionException();
             }

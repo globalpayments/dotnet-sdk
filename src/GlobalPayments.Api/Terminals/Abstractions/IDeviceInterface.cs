@@ -22,6 +22,10 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
         #endregion
 
+        #region reporting
+        TerminalReportBuilder LocalDetailReport();
+        #endregion
+
         #region Batch Calls
         IBatchCloseResponse BatchClose();
         #endregion

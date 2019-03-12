@@ -322,4 +322,15 @@ namespace GlobalPayments.Api.Terminals.PAX {
         TOKENIZE = 32,
         REVERSAL = 99,
     }
+
+    public enum PaxSearchCriteria {
+        TransactionType,
+        CardType,
+        RecordNumber,
+        TransactionNumber,
+        AuthCode,
+        ReferenceNumber,
+        MerchantId,
+        MerchantName
+    }
 }

@@ -40,13 +40,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         public byte[] Send(IDeviceMessage message) {
+            byte[] buffer = message.GetSendBuffer();
+
             Connect();
-
             using (_stream) {
-                byte[] buffer = message.GetSendBuffer();
-
                 try {
-                    OnMessageSent?.Invoke(message.ToString());
                     for (int i = 0; i < 3; i++) {
                         _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
 
@@ -68,6 +66,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     throw new MessageException(exc.Message, exc);
                 }
                 finally {
+                    OnMessageSent?.Invoke(message.ToString());
                     Disconnect();
                 }
             }

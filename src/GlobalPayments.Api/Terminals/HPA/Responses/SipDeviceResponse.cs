@@ -1,10 +1,9 @@
 ﻿using System;
-using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Utils;
-using System.Text;
+using GlobalPayments.Api.Entities;
 
 namespace GlobalPayments.Api.Terminals.HPA.Responses {
-    public class SipDeviceResponse : SipBaseResponse, IDeviceResponse {
+    public class SipDeviceResponse : SipTerminalResponse {
         public SipDeviceResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
 
         internal override void MapResponse(Element response) {

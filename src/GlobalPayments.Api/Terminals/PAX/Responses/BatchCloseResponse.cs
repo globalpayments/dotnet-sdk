@@ -4,7 +4,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    public class BatchCloseResponse : PaxDeviceResponse, IBatchCloseResponse {
+    public class BatchCloseResponse : PaxTerminalResponse, IBatchCloseResponse {
         private HostResponse hostResponse;
 
         public string TotalCount { get; set; }

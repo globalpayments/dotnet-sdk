@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Terminals.Abstractions;
 
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalAuthBuilder : TerminalBuilder<TerminalAuthBuilder> {
@@ -117,7 +118,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
         }
 
-        public override TerminalResponse Execute(string configName = "default") {
+        public override ITerminalResponse Execute(string configName = "default") {
             base.Execute(configName);
 
             var device = ServicesContainer.Instance.GetDeviceController(configName);

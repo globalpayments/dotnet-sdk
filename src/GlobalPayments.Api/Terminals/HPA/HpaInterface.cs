@@ -85,6 +85,12 @@ namespace GlobalPayments.Api.Terminals.HPA
         }
         #endregion
 
+        #region Reporting
+        public TerminalReportBuilder LocalDetailReport() {
+            throw new NotImplementedException();
+        }
+        #endregion
+
         #region Batching
         public IBatchCloseResponse BatchClose()
         {

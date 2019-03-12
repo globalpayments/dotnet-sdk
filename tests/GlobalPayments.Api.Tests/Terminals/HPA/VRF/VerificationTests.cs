@@ -4,7 +4,7 @@ using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
-using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.Terminals.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
             _device.OpenLane();
         }
 
-        private void PrintReceipt(TerminalResponse response) {
+        private void PrintReceipt(ITerminalResponse response) {
             String receipt = "x_trans_type=" + response.TransactionType;
             receipt += "&x_application_label=" + response.ApplicationLabel;
             receipt += "&x_masked_card=" + response.MaskedCardNumber;

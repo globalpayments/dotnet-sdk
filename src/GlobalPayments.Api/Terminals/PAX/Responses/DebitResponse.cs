@@ -2,18 +2,14 @@
 using System.IO;
 using GlobalPayments.Api.Terminals.Extensions;
 
-namespace GlobalPayments.Api.Terminals.PAX
-{
-    public class DebitResponse : PaxDeviceResponse
-    {
+namespace GlobalPayments.Api.Terminals.PAX {
+    public class DebitResponse : PaxTerminalResponse {
         internal DebitResponse(byte[] buffer) : base(buffer, PAX_MSG_ID.T03_RSP_DO_DEBIT) { }
 
-        protected override void ParseResponse(BinaryReader br)
-        {
+        protected override void ParseResponse(BinaryReader br) {
             base.ParseResponse(br);
 
-            if (DeviceResponseCode == "000000")
-            {
+            if (acceptedCodes.Contains(DeviceResponseCode)) {
                 HostResponse = new HostResponse(br);
                 TransactionType = ((TerminalTransactionType)Int32.Parse(br.ReadToCode(ControlCodes.FS))).ToString().Replace("_", " ");
                 AmountResponse = new AmountResponse(br);
@@ -25,25 +21,21 @@ namespace GlobalPayments.Api.Terminals.PAX
             }
         }
 
-        protected override void MapResponse()
-        {
+        protected override void MapResponse() {
             base.MapResponse();
 
             // Host Response
-            if (HostResponse != null)
-            {
+            if (HostResponse != null) {
                 AuthorizationCode = HostResponse.AuthCode;
             }
 
             // Account Response
-            if (AccountResponse != null)
-            {
+            if (AccountResponse != null) {
                 PaymentType = AccountResponse.CardType.ToString();
             }
 
             // Account Response
-            if (AmountResponse != null)
-            {
+            if (AmountResponse != null) {
                 TransactionAmount = AmountResponse.ApprovedAmount;
                 AmountDue = AmountResponse.AmountDue;
             }

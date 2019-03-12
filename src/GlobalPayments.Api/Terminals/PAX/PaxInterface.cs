@@ -45,7 +45,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         // A16 - RESET
         public IDeviceResponse Reset() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A16_RESET));
-            return new PaxDeviceResponse(response, PAX_MSG_ID.A17_RSP_RESET);
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A17_RSP_RESET);
         }
 
         // A20 - DO SIGNATURE
@@ -68,7 +68,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         // A26 - REBOOT
         public IDeviceResponse Reboot() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A26_REBOOT));
-            return new PaxDeviceResponse(response, PAX_MSG_ID.A27_RSP_REBOOT);
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A27_RSP_REBOOT);
         }
 
         public IDeviceResponse DisableHostResponseBeep() {
@@ -79,7 +79,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 ControlCodes.FS,
                 "N"
             ));
-            return new PaxDeviceResponse(response, PAX_MSG_ID.A05_RSP_SET_VARIABLE);
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A05_RSP_SET_VARIABLE);
         }
 
         public IDeviceResponse CloseLane() {
@@ -100,6 +100,12 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
         public IDeviceResponse StartCard(PaymentMethodType paymentMethodType) {
             throw new UnsupportedTransactionException("PAX does not support the start card option.");
+        }
+        #endregion
+
+        #region Reporting Messages
+        public TerminalReportBuilder LocalDetailReport() {
+            return new TerminalReportBuilder(TerminalReportType.LocalDetailReport);
         }
         #endregion
 

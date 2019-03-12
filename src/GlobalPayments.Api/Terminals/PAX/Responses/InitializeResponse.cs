@@ -3,7 +3,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    public class InitializeResponse : PaxDeviceResponse, IInitializeResponse {
+    public class InitializeResponse : PaxTerminalResponse, IInitializeResponse {
         public string SerialNumber { get; set; }
 
         internal InitializeResponse(byte[] buffer)
@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         protected override void ParseResponse(BinaryReader br) {
             base.ParseResponse(br);
-            this.SerialNumber = br.ReadToCode(ControlCodes.ETX);
+            SerialNumber = br.ReadToCode(ControlCodes.ETX);
         }
     }
 }

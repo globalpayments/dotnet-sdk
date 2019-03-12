@@ -3,7 +3,7 @@ using System.IO;
 using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    public class EbtResponse : PaxDeviceResponse {
+    public class EbtResponse : PaxTerminalResponse {
         public string AvsResultCode { get; set; }
         public string AvsResultText { get; set; }
         // TODO: CVV Response Code
@@ -19,7 +19,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         protected override void ParseResponse(BinaryReader br) {
             base.ParseResponse(br);
 
-            if (DeviceResponseCode == "000000") {
+            if (acceptedCodes.Contains(DeviceResponseCode)) {
                 HostResponse = new HostResponse(br);
                 TransactionType = ((TerminalTransactionType)Int32.Parse(br.ReadToCode(ControlCodes.FS))).ToString().Replace("_", " ");
                 AmountResponse = new AmountResponse(br);
