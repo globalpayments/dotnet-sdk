@@ -14,5 +14,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal TerminalBuilder(TransactionType type, PaymentMethodType paymentType) : base(type) {
             PaymentMethodType = paymentType;
         }
+
+        public abstract byte[] Serialize(string configName = "default");
     }
 }

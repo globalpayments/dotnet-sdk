@@ -1,4 +1,4 @@
-﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.HPA;
@@ -19,10 +19,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Timeout = 30000
             });
             Assert.IsNotNull(device);
-            device.OpenLane();
         }
 
-        [TestCleanup]
         public void WaitAndReset() {
             Thread.Sleep(3000);
             device.Reset();
@@ -30,10 +28,21 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod]
         public void SendCustomResetMessage() {
+            device.OpenLane();
+
             DeviceMessage message = TerminalUtilities.BuildRequest("<SIP><Version>1.0</Version><ECRId>1004</ECRId><Request>Reset</Request></SIP>", MessageFormat.HPA);
 
             var response = device.SendCustomMessage(message);
             Assert.IsNotNull(response);
+
+            WaitAndReset();
+        }
+
+        [TestMethod]
+        public void SerializeBuilder() {
+            var message = device.CreditAuth(10m).Serialize();
+            Assert.IsNotNull(message);
+            Assert.AreNotEqual(0, message.Length);
         }
     }
 }

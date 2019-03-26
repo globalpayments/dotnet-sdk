@@ -7,7 +7,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
     public class CreditResponse : PaxTerminalResponse {
         public Transaction SubTransaction { get; set; }
 
-        internal CreditResponse(byte[] buffer)
+        public CreditResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.T01_RSP_DO_CREDIT) {
         }
 

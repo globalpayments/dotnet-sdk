@@ -41,6 +41,43 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         #region overrides
         internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
+            var request = BuildProcessTransaction(builder);
+            switch (builder.PaymentMethodType) {
+                case PaymentMethodType.Credit:
+                    return DoCredit(request);
+                case PaymentMethodType.Debit:
+                    return DoDebit(request);
+                case PaymentMethodType.Gift:
+                    return DoGift(request);
+                case PaymentMethodType.EBT:
+                    return DoEBT(request);
+                default:
+                    throw new UnsupportedTransactionException();
+            }
+        }
+        internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
+            var request = BuildManageTransaction(builder);
+            switch (builder.PaymentMethodType) {
+                case PaymentMethodType.Credit:
+                    return DoCredit(request);
+                case PaymentMethodType.Gift:
+                    return DoGift(request);
+                case PaymentMethodType.EBT:
+                    return DoEBT(request);
+                default:
+                    throw new UnsupportedTransactionException();
+            }
+        }
+        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
+            var response = Send(BuildReportTransaction(builder));
+            switch (builder.ReportType) {
+                case TerminalReportType.LocalDetailReport:
+                    return new LocalDetailReport(response);
+                default: return null;
+            }
+        }
+
+        internal IDeviceMessage BuildProcessTransaction(TerminalAuthBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
@@ -118,21 +155,21 @@ namespace GlobalPayments.Api.Terminals.PAX {
             string transType = MapTransactionType(builder.TransactionType, builder.RequestMultiUseToken);
             switch (builder.PaymentMethodType) {
                 case PaymentMethodType.Credit:
-                    return DoCredit(transType, amounts, account, trace, avs, cashier, commercial, ecom, extData);
+                    return BuildCredit(transType, amounts, account, trace, avs, cashier, commercial, ecom, extData);
                 case PaymentMethodType.Debit:
-                    return DoDebit(transType, amounts, account, trace, cashier, extData);
+                    return BuildDebit(transType, amounts, account, trace, cashier, extData);
                 case PaymentMethodType.Gift:
                     var messageId = builder.Currency == CurrencyType.CURRENCY ? PAX_MSG_ID.T06_DO_GIFT : PAX_MSG_ID.T08_DO_LOYALTY;
-                    return DoGift(messageId, transType, amounts, account, trace, cashier, extData);
+                    return BuildGift(messageId, transType, amounts, account, trace, cashier, extData);
                 case PaymentMethodType.EBT:
                     if (builder.Currency != null)
                         account.EbtType = builder.Currency.ToString().Substring(0, 1);
-                    return DoEBT(transType, amounts, account, trace, cashier);
+                    return BuildEBT(transType, amounts, account, trace, cashier);
                 default:
                     throw new UnsupportedTransactionException();
             }
         }
-        internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
+        internal IDeviceMessage BuildManageTransaction(TerminalManageBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
@@ -170,17 +207,17 @@ namespace GlobalPayments.Api.Terminals.PAX {
             string transType = MapTransactionType(builder.TransactionType);
             switch (builder.PaymentMethodType) {
                 case PaymentMethodType.Credit:
-                    return DoCredit(transType, amounts, account, trace, new AvsRequest(), new CashierSubGroup(), new CommercialRequest(), new EcomSubGroup(), extData);
+                    return BuildCredit(transType, amounts, account, trace, new AvsRequest(), new CashierSubGroup(), new CommercialRequest(), new EcomSubGroup(), extData);
                 case PaymentMethodType.Gift:
                     var messageId = builder.Currency == CurrencyType.CURRENCY ? PAX_MSG_ID.T06_DO_GIFT : PAX_MSG_ID.T08_DO_LOYALTY;
-                    return DoGift(messageId, transType, amounts, account, trace, new CashierSubGroup(), extData);
+                    return BuildGift(messageId, transType, amounts, account, trace, new CashierSubGroup(), extData);
                 case PaymentMethodType.EBT:
-                    return DoEBT(transType, amounts, account, trace, new CashierSubGroup());
+                    return BuildEBT(transType, amounts, account, trace, new CashierSubGroup());
                 default:
                     throw new UnsupportedTransactionException();
             }
         }
-        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
+        internal IDeviceMessage BuildReportTransaction(TerminalReportBuilder builder) {
             string messageId = MapReportType(builder.ReportType);
 
             IDeviceMessage request = null;
@@ -212,12 +249,17 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     };
             }
 
-            var response = Send(request);
-            switch (builder.ReportType) {
-                case TerminalReportType.LocalDetailReport:
-                    return new LocalDetailReport(response);
-                default: return null;
-            }
+            return request;
+        }
+
+        internal override byte[] SerializeRequest(TerminalAuthBuilder builder) {
+            return BuildProcessTransaction(builder).GetSendBuffer();
+        }
+        internal override byte[] SerializeRequest(TerminalManageBuilder builder) {
+            return BuildManageTransaction(builder).GetSendBuffer();
+        }
+        internal override byte[] SerializeRequest(TerminalReportBuilder builder) {
+            return BuildReportTransaction(builder).GetSendBuffer();
         }
 
         private string MapTransactionType(TransactionType type, bool requestToken = false) {
@@ -257,7 +299,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         #endregion
 
         #region Transaction Commands
-        internal byte[] DoTransaction(string messageId, string txnType, params IRequestSubGroup[] subGroups) {
+        internal IDeviceMessage BuildRequest(string messageId, string txnType, params IRequestSubGroup[] subGroups) {
             var commands = new List<object> { txnType, ControlCodes.FS };
             if (subGroups.Length > 0) {
                 commands.Add(subGroups[0]);
@@ -267,37 +309,54 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 }
             }
 
-            var message = TerminalUtilities.BuildRequest(messageId, commands.ToArray());
-            return _interface.Send(message);
+            return TerminalUtilities.BuildRequest(messageId, commands.ToArray());
         }
 
-        internal CreditResponse DoCredit(string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, AvsRequest avs, CashierSubGroup cashier, CommercialRequest commercial, EcomSubGroup ecom, ExtDataSubGroup extData) {
-            var response = DoTransaction(PAX_MSG_ID.T00_DO_CREDIT, txnType, amounts, accounts, trace, avs, cashier, commercial, ecom, extData);
+        internal IDeviceMessage BuildCredit(string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, AvsRequest avs, CashierSubGroup cashier, CommercialRequest commercial, EcomSubGroup ecom, ExtDataSubGroup extData) {
+            return BuildRequest(PAX_MSG_ID.T00_DO_CREDIT, txnType, amounts, accounts, trace, avs, cashier, commercial, ecom, extData);
+        }
+        internal CreditResponse DoCredit(IDeviceMessage request) {
+            var response = _interface.Send(request);
             return new CreditResponse(response);
         }
 
-        internal DebitResponse DoDebit(string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, CashierSubGroup cashier, ExtDataSubGroup extData) {
-            var response = DoTransaction(PAX_MSG_ID.T02_DO_DEBIT, txnType, amounts, accounts, trace, cashier, extData);
+        internal IDeviceMessage BuildDebit(string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, CashierSubGroup cashier, ExtDataSubGroup extData) {
+            return BuildRequest(PAX_MSG_ID.T02_DO_DEBIT, txnType, amounts, accounts, trace, cashier, extData);
+        }
+        internal DebitResponse DoDebit(IDeviceMessage request) {
+            var response = _interface.Send(request);
             return new DebitResponse(response);
         }
 
-        internal EbtResponse DoEBT(string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, CashierSubGroup cashier) {
-            var response = DoTransaction(PAX_MSG_ID.T04_DO_EBT, txnType, amounts, accounts, trace, cashier, new ExtDataSubGroup());
+        internal IDeviceMessage BuildEBT(string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, CashierSubGroup cashier) {
+            return BuildRequest(PAX_MSG_ID.T04_DO_EBT, txnType, amounts, accounts, trace, cashier, new ExtDataSubGroup());
+        }
+        internal EbtResponse DoEBT(IDeviceMessage request) {
+            var response = _interface.Send(request);
             return new EbtResponse(response);
         }
 
-        internal GiftResponse DoGift(string messageId, string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, CashierSubGroup cashier, ExtDataSubGroup extData = null) {
-            var response = DoTransaction(messageId, txnType, amounts, accounts, trace, cashier, extData);
+        internal IDeviceMessage BuildGift(string messageId, string txnType, AmountRequest amounts, AccountRequest accounts, TraceRequest trace, CashierSubGroup cashier, ExtDataSubGroup extData = null) {
+            return BuildRequest(messageId, txnType, amounts, accounts, trace, cashier, extData);
+        }
+        internal GiftResponse DoGift(IDeviceMessage request) {
+            var response = _interface.Send(request);
             return new GiftResponse(response);
         }
 
-        internal CashResponse DoCash(string txnType, AmountRequest amounts, TraceRequest trace, CashierSubGroup cashier) {
-            var response = DoTransaction(PAX_MSG_ID.T10_DO_CASH, txnType, amounts, trace, cashier, new ExtDataSubGroup());
+        internal IDeviceMessage BuildCash(string txnType, AmountRequest amounts, TraceRequest trace, CashierSubGroup cashier) {
+            return BuildRequest(PAX_MSG_ID.T10_DO_CASH, txnType, amounts, trace, cashier, new ExtDataSubGroup());
+        }
+        internal CashResponse DoCash(IDeviceMessage request) {
+            var response = _interface.Send(request);
             return new CashResponse(response);
         }
 
-        internal CheckSubResponse DoCheck(string txnType, AmountRequest amounts, CheckSubGroup check, TraceRequest trace, CashierSubGroup cashier, ExtDataSubGroup extData) {
-            var response = DoTransaction(PAX_MSG_ID.T12_DO_CHECK, txnType, amounts, check, trace, cashier, extData);
+        internal IDeviceMessage BuildCheck(string txnType, AmountRequest amounts, CheckSubGroup check, TraceRequest trace, CashierSubGroup cashier, ExtDataSubGroup extData) {
+            return BuildRequest(PAX_MSG_ID.T12_DO_CHECK, txnType, amounts, check, trace, cashier, extData);
+        }
+        internal CheckSubResponse DoCheck(IDeviceMessage request) {
+            var response = _interface.Send(request);
             return new CheckSubResponse(response);
         }
         #endregion

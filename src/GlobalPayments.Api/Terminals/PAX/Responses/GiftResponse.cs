@@ -4,7 +4,7 @@ using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     public class GiftResponse : PaxTerminalResponse {
-        internal GiftResponse(byte[] buffer)
+        public GiftResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.T07_RSP_DO_GIFT, PAX_MSG_ID.T09_RSP_DO_LOYALTY) {
         }
 

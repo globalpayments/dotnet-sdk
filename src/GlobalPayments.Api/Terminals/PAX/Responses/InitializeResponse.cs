@@ -6,7 +6,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
     public class InitializeResponse : PaxTerminalResponse, IInitializeResponse {
         public string SerialNumber { get; set; }
 
-        internal InitializeResponse(byte[] buffer)
+        public InitializeResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.A01_RSP_INITIALIZE) {
         }
 

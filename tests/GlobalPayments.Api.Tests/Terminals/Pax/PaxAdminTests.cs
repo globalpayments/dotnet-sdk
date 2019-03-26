@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //IpAddress = "10.12.220.172",
                 IpAddress = "192.168.0.31",
                 Port = "10009",
-                RequestIdProvider = new RequestIdProvider()
+                RequestIdProvider = new RandomIdProvider()
             });
             Assert.IsNotNull(_device);
         }

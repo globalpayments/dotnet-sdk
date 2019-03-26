@@ -14,7 +14,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public string MID { get; set; }
         public string SequenceNumber { get; set; }
 
-        internal BatchCloseResponse(byte[] buffer)
+        public BatchCloseResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.B01_RSP_BATCH_CLOSE) {
         }
 

@@ -1,4 +1,4 @@
-﻿using GlobalPayments.Api.Entities;
+﻿﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.HPA.Interfaces;
@@ -6,6 +6,7 @@ using GlobalPayments.Api.Terminals.HPA.Responses;
 using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Utils;
 using System;
+using System.Text;
 
 namespace GlobalPayments.Api.Terminals.HPA {
     internal class HpaController : DeviceController {
@@ -48,6 +49,22 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
+            var transactionType = MapTransactionType(builder.TransactionType);
+            var response = SendMessage<SipDeviceResponse>(BuildProcessTransaction(builder), transactionType);
+            return response;
+        }
+
+        internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
+            var transactionType = MapTransactionType(builder.TransactionType);
+            var response = SendMessage<SipDeviceResponse>(BuildManageTransaction(builder), transactionType);
+            return response;
+        }
+
+        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
+            throw new NotImplementedException();
+        }
+
+        internal string BuildProcessTransaction(TerminalAuthBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
@@ -74,10 +91,10 @@ namespace GlobalPayments.Api.Terminals.HPA {
             // total
             et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericCurrencyString());
 
-            return SendMessage<SipDeviceResponse>(et.ToString(request), transactionType);
+            return et.ToString(request);
         }
 
-        internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
+        internal string BuildManageTransaction(TerminalManageBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
@@ -96,11 +113,16 @@ namespace GlobalPayments.Api.Terminals.HPA {
             if (builder.Gratuity != null)
                 et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());
 
-            var response = SendMessage<SipDeviceResponse>(et.ToString(request), transactionType);
-            return response;
+            return et.ToString(request);
         }
 
-        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
+        internal override byte[] SerializeRequest(TerminalAuthBuilder builder) {
+            return Encoding.UTF8.GetBytes(BuildProcessTransaction(builder));
+        }
+        internal override byte[] SerializeRequest(TerminalManageBuilder builder) {
+            return Encoding.UTF8.GetBytes(BuildManageTransaction(builder));
+        }
+        internal override byte[] SerializeRequest(TerminalReportBuilder builder) {
             throw new NotImplementedException();
         }
 

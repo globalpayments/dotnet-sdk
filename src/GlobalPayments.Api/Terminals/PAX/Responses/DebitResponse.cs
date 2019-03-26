@@ -4,7 +4,7 @@ using GlobalPayments.Api.Terminals.Extensions;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     public class DebitResponse : PaxTerminalResponse {
-        internal DebitResponse(byte[] buffer) : base(buffer, PAX_MSG_ID.T03_RSP_DO_DEBIT) { }
+        public DebitResponse(byte[] buffer) : base(buffer, PAX_MSG_ID.T03_RSP_DO_DEBIT) { }
 
         protected override void ParseResponse(BinaryReader br) {
             base.ParseResponse(br);

@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public string CardType { get; set; }
         // TODO: Available Balance
 
-        internal EbtResponse(byte[] buffer)
+        public EbtResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.T05_RSP_DO_EBT) {
         }
 

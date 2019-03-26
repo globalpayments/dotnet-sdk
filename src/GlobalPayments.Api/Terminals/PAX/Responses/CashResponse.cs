@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         private TraceResponse traceResponse;
         private ExtDataSubGroup extDataResponse;
 
-        internal CashResponse(byte[] buffer)
+        public CashResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.T11_RSP_DO_CASH) {
         }
 

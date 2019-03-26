@@ -6,7 +6,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
     public class CheckSubResponse : PaxTerminalResponse {
         public string CustomerId { get; set; }
         
-        internal CheckSubResponse(byte[] buffer)
+        public CheckSubResponse(byte[] buffer)
             : base(buffer, PAX_MSG_ID.T13_RSP_DO_CHECK) {
         }
 

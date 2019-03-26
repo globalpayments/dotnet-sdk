@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 IpAddress = "192.168.0.31",
                 Port = "10009",
                 Timeout = 30000,
-                RequestIdProvider = new RequestIdProvider()
+                RequestIdProvider = new RandomIdProvider()
             });
             Assert.IsNotNull(device);
         }
@@ -41,6 +41,13 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
             var response = device.SendCustomMessage(message);
             Assert.IsNotNull(response);
+        }
+
+        [TestMethod]
+        public void SerializeBuilder() {
+            var message = device.CreditAuth(10m).Serialize();
+            Assert.IsNotNull(message);
+            Assert.AreNotEqual(0, message.Length);
         }
     }
 }

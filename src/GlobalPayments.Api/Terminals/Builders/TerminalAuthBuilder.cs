@@ -125,6 +125,13 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return device.ProcessTransaction(this);
         }
 
+        public override byte[] Serialize(string configName = "default") {
+            base.Execute();
+
+            var device = ServicesContainer.Instance.GetDeviceController(configName);
+            return device.SerializeRequest(this);
+        }
+
         protected override void SetupValidations() {
             Validations.For(TransactionType.Sale | TransactionType.Auth).Check(() => Amount).IsNotNull();
             Validations.For(TransactionType.Refund).Check(() => Amount).IsNotNull();
