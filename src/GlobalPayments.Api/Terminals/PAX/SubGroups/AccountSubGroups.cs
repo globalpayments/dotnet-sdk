@@ -39,7 +39,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public string EbtType { get; private set; }
         public string VoucherNumber { get; private set; }
         public string NewAccountNumber { get; private set; }
-        public CardType CardType { get; private set; }
+        public TerminalCardType CardType { get; private set; }
         public string CardHolder { get; private set; }
         public string CvdApprovalCode { get; private set; }
         public string CvdMessage { get; private set; }
@@ -59,7 +59,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 VoucherNumber = data[4];
                 NewAccountNumber = data[5];
                 if(!string.IsNullOrEmpty(data[6]))
-                    CardType = (CardType)Int32.Parse(data[6]);
+                    CardType = (TerminalCardType)Int32.Parse(data[6]);
                 CardHolder = data[7];
                 CvdApprovalCode = data[8];
                 CvdMessage = data[9];

@@ -49,5 +49,6 @@ namespace GlobalPayments.Api.Terminals.Abstractions {
         string CardHolderVerificationMethod { get; set; }
         string TerminalVerificationResults { get; set; }
     }
+
     public interface ITerminalReport : IDeviceResponse { }
 }

@@ -55,7 +55,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 TotalRecords = int.Parse(br.ReadToCode(ControlCodes.FS));
                 RecordNumber = int.Parse(br.ReadToCode(ControlCodes.FS));
                 HostResponse = new HostResponse(br);
-                CardType = br.ReadToCode(ControlCodes.FS);
+                CardType = ((TerminalCardType)int.Parse(br.ReadToCode(ControlCodes.FS))).ToString().Replace("_", " ");
                 TransactionType = ((TerminalTransactionType)int.Parse(br.ReadToCode(ControlCodes.FS))).ToString().Replace("_", " ");
 
                 int originalTransactionTypeId;

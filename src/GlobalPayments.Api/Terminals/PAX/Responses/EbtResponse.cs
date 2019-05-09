@@ -6,6 +6,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
     public class EbtResponse : PaxTerminalResponse {
         public string AvsResultCode { get; set; }
         public string AvsResultText { get; set; }
+
         // TODO: CVV Response Code
         // TODO: CVV Response Text
         // TODO: Authorized Amount

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
-using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Terminals.HPA
@@ -156,6 +154,25 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA
             var response = _device.StartCard(PaymentMethodType.Credit);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.DeviceResponseCode);
+        }
+
+        [TestMethod]
+        public void LostTransactionRecovery() {
+            var requestId = new RandomIdProvider().GetRequestId();
+
+            var response = _device.CreditSale(10m)
+                .WithRequestId(requestId)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            WaitAndReset();
+
+            var duplicateResponse = _device.CreditSale(10m)
+                .WithRequestId(requestId)
+                .Execute();
+            Assert.IsNotNull(duplicateResponse);
+            Assert.AreEqual("00", duplicateResponse.ResponseCode);
+            Assert.AreEqual(response.AuthorizationCode, duplicateResponse.AuthorizationCode);
         }
     }
 }

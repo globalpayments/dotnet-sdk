@@ -12,14 +12,13 @@ namespace GlobalPayments.Api.Terminals.PAX {
         TcpClient _client;
         NetworkStream _stream;
         ITerminalConfiguration _settings;
-        AutoResetEvent _await;
         int _nakCount = 0;
+        int _connectionCount = 0;
         
         public event MessageSentEventHandler OnMessageSent;
 
         public PaxTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;
-            _await = new AutoResetEvent(false);
         }
 
         public void Connect() { 
@@ -29,46 +28,48 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 _stream = _client.GetStream();
                 _stream.ReadTimeout = _settings.Timeout;
             }
+            _connectionCount++;
         }
 
         public void Disconnect() {
-            _stream?.Dispose();
-            _stream = null;
+            _connectionCount--;
+            if (_connectionCount == 0) {
+                _stream?.Dispose();
+                _stream = null;
 
-            _client?.Dispose();
-            _client = null;
+                _client?.Dispose();
+                _client = null;
+            }
         }
 
         public byte[] Send(IDeviceMessage message) {
             byte[] buffer = message.GetSendBuffer();
 
             Connect();
-            using (_stream) {
-                try {
-                    for (int i = 0; i < 3; i++) {
-                        _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
+            try {
+                for (int i = 0; i < 3; i++) {
+                    _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
 
-                        var rvalue = _stream.GetTerminalResponseAsync();
-                        if (rvalue != null) {
-                            byte lrc = rvalue[rvalue.Length - 1]; // Should be the LRC
-                            if (lrc != TerminalUtilities.CalculateLRC(rvalue)) {
-                                SendControlCode(ControlCodes.NAK);
-                            }
-                            else {
-                                SendControlCode(ControlCodes.ACK);
-                                return rvalue;
-                            }
+                    var rvalue = _stream.GetTerminalResponseAsync();
+                    if (rvalue != null) {
+                        byte lrc = rvalue[rvalue.Length - 1]; // Should be the LRC
+                        if (lrc != TerminalUtilities.CalculateLRC(rvalue)) {
+                            SendControlCode(ControlCodes.NAK);
+                        }
+                        else {
+                            SendControlCode(ControlCodes.ACK);
+                            return rvalue;
                         }
                     }
-                    throw new MessageException("Terminal did not respond in the given timeout.");
                 }
-                catch (Exception exc) {
-                    throw new MessageException(exc.Message, exc);
-                }
-                finally {
-                    OnMessageSent?.Invoke(message.ToString());
-                    Disconnect();
-                }
+                throw new MessageException("Terminal did not respond in the given timeout.");
+            }
+            catch (Exception exc) {
+                throw new MessageException(exc.Message, exc);
+            }
+            finally {
+                OnMessageSent?.Invoke(message.ToString());
+                Disconnect();
             }
         }
 

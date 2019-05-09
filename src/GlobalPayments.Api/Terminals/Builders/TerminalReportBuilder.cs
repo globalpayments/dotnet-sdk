@@ -36,9 +36,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         private TerminalReportBuilder _reportBuilder;
 
         internal TerminalTransactionType? TransactionType { get; set; }
-        internal CardType? CardType { get; set; }
+        internal TerminalCardType? CardType { get; set; }
         internal int? RecordNumber { get; set; }
-        internal int? TransactionNumber { get; set; }
+        internal int? TerminalReferenceNumber { get; set; }
         internal string AuthCode { get; set; }
         internal string ReferenceNumber { get; set; }
         internal int? MerchantId { get; set; }
@@ -71,7 +71,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
                     }
                 }
                 else {
-                    var convertedValue = Convert.ChangeType(value, prop.PropertyType.GenericTypeArguments[0]);
+                    var convertedValue = Convert.ChangeType(value, prop.PropertyType);
                     prop.SetValue(this, convertedValue);
                 }
             }

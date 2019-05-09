@@ -207,17 +207,22 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("DCC_ENABLE", HostedPaymentConfig.DynamicCurrencyConversionEnabled.Value ? "1" : "0");
             if (builder.HostedPaymentData != null) {
                 AlternativePaymentType[] PaymentTypes = builder.HostedPaymentData.PresetPaymentMethods;
-                if (PaymentTypes != null)
+                if (PaymentTypes != null) {
                     PaymentValues = string.Join("|", PaymentTypes);
+                }
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
-                if(HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null)
+                if (HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null) {
                     request.Set("HPP_SELECT_STORED_CARD", builder.HostedPaymentData.CustomerKey);
-                if(builder.HostedPaymentData.OfferToSaveCard.HasValue)
+                }
+                if (builder.HostedPaymentData.OfferToSaveCard.HasValue) {
                     request.Set("OFFER_SAVE_CARD", builder.HostedPaymentData.OfferToSaveCard.Value ? "1" : "0");
-                if(builder.HostedPaymentData.CustomerExists.HasValue)
+                }
+                if (builder.HostedPaymentData.CustomerExists.HasValue) {
                     request.Set("PAYER_EXIST", builder.HostedPaymentData.CustomerExists.Value ? "1" : "0");
-                if (!HostedPaymentConfig.DisplaySavedCards.HasValue)
+                }
+                if (!HostedPaymentConfig.DisplaySavedCards.HasValue) {
                     request.Set("PAYER_REF", builder.HostedPaymentData.CustomerKey);
+                }
                 request.Set("PMT_REF", builder.HostedPaymentData.PaymentKey);
                 request.Set("PROD_ID", builder.HostedPaymentData.ProductId);
                 request.Set("HPP_CUSTOMER_COUNTRY", builder.HostedPaymentData.Country);
@@ -226,26 +231,57 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("MERCHANT_RESPONSE_URL", builder.HostedPaymentData.ReturnUrl);
                 request.Set("HPP_TX_STATUS_URL", builder.HostedPaymentData.StatusUpdateUrl);
                 request.Set("PM_METHODS", PaymentValues);
+
+                // 3DSv2
+                request.Set("HPP_CUSTOMER_EMAIL", builder.HostedPaymentData.CustomerEmail);
+                request.Set("HPP_CUSTOMER_PHONENUMBER_MOBILE", builder.HostedPaymentData.CustomerPhoneMobile);
+                request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequest);
+                if (builder.HostedPaymentData.AddressesMatch != null) {
+                    request.Set("HPP_ADDRESS_MATCH_INDICATOR", builder.HostedPaymentData.AddressesMatch.Value ? "TRUE" : "FALSE");
+                }
             }
             if (builder.ShippingAddress != null) {
+                // FRAUD VALUES
                 request.Set("SHIPPING_CODE", builder.ShippingAddress.PostalCode);
                 request.Set("SHIPPING_CO", builder.ShippingAddress.Country);
+
+                // 3DS2 VALUES
+                request.Set("HPP_SHIPPING_STREET1", builder.ShippingAddress.StreetAddress1);
+                request.Set("HPP_SHIPPING_STREET2", builder.ShippingAddress.StreetAddress2);
+                request.Set("HPP_SHIPPING_STREET3", builder.ShippingAddress.StreetAddress3);
+                request.Set("HPP_SHIPPING_CITY", builder.ShippingAddress.City);
+                request.Set("HPP_SHIPPING_STATE", builder.ShippingAddress.State);
+                request.Set("HPP_SHIPPING_POSTALCODE", builder.ShippingAddress.PostalCode);
+                request.Set("HPP_SHIPPING_COUNTRY", builder.ShippingAddress.Country);
             }
             if (builder.BillingAddress != null) {
+                // FRAUD VALUES
                 request.Set("BILLING_CODE", builder.BillingAddress.PostalCode);
                 request.Set("BILLING_CO", builder.BillingAddress.Country);
+
+                // 3DS2 VALUES
+                request.Set("HPP_BILLING_STREET1", builder.BillingAddress.StreetAddress1);
+                request.Set("HPP_BILLING_STREET2", builder.BillingAddress.StreetAddress2);
+                request.Set("HPP_BILLING_STREET3", builder.BillingAddress.StreetAddress3);
+                request.Set("HPP_BILLING_CITY", builder.BillingAddress.City);
+                request.Set("HPP_BILLING_STATE", builder.BillingAddress.State);
+                request.Set("HPP_BILLING_POSTALCODE", builder.BillingAddress.PostalCode);
+                request.Set("HPP_BILLING_COUNTRY", builder.BillingAddress.Country);
             }
             request.Set("CUST_NUM", builder.CustomerId);
             request.Set("VAR_REF", builder.ClientTransactionId);
             request.Set("HPP_LANG", HostedPaymentConfig.Language);
             request.Set("MERCHANT_RESPONSE_URL", HostedPaymentConfig.ResponseUrl);
             request.Set("CARD_PAYMENT_BUTTON", HostedPaymentConfig.PaymentButtonText);
-            if(HostedPaymentConfig.CardStorageEnabled.HasValue)
+            if (HostedPaymentConfig.CardStorageEnabled.HasValue) {
                 request.Set("CARD_STORAGE_ENABLE", HostedPaymentConfig.CardStorageEnabled.Value ? "1" : "0");
-            if (builder.TransactionType == TransactionType.Verify)
+            }
+            if (builder.TransactionType == TransactionType.Verify) {
                 request.Set("VALIDATE_CARD_ONLY", builder.TransactionType == TransactionType.Verify ? "1" : "0");
-            if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE)
+            }
+            if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE) {
                 request.Set("HPP_FRAUDFILTER_MODE", HostedPaymentConfig.FraudFilterMode.ToString());
+            }
             if (builder.RecurringType != null || builder.RecurringSequence != null) {
                 request.Set("RECURRING_TYPE", builder.RecurringType.ToString().ToLower());
                 request.Set("RECURRING_SEQUENCE", builder.RecurringSequence.ToString().ToLower());

@@ -34,6 +34,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         [TestMethod]
         public void ReportFindTransactionWithCriteria() {
             List<TransactionSummary> summary = ReportingService.FindTransactions()
+                .WithTimeZoneConversion(TimeZoneConversion.Merchant)
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-30))
                 .And(SearchCriteria.EndDate, DateTime.UtcNow)
                 .Execute();

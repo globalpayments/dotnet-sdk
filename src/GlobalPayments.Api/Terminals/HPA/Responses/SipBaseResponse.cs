@@ -3,6 +3,7 @@ using GlobalPayments.Api.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using GlobalPayments.Api.Terminals.Abstractions;
+using System;
 
 namespace GlobalPayments.Api.Terminals.HPA.Responses {
     public class SipBaseResponse : DeviceResponse {
@@ -34,7 +35,9 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                 DeviceResponseCode = NormalizeResponse(root.GetValue<string>("Result"));
                 DeviceResponseText = root.GetValue<string>("ResultText");
 
-                MapResponse(root);
+                if (DeviceResponseCode.Equals("00", StringComparison.OrdinalIgnoreCase)) {
+                    MapResponse(root);
+                }
             }
             FinalizeResponse();
         }

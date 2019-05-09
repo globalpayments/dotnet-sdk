@@ -59,6 +59,11 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public TransactionReportBuilder<TResult> WithTimeZoneConversion(TimeZoneConversion value) {
+            TimeZoneConversion = value;
+            return this;
+        }
+
         /// <summary>
         /// Sets the gateway transaction ID as criteria for the report.
         /// </summary>

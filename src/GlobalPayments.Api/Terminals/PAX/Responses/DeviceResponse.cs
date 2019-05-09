@@ -244,7 +244,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         /// The results of the terminals attempt to verify the cards authenticity.
         /// </summary>
         public string TerminalVerificationResults { get; set; }
-
+        
         internal PaxTerminalResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
 
         protected virtual void MapResponse() {

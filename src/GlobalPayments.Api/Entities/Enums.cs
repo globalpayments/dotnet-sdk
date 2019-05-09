@@ -953,4 +953,21 @@ namespace GlobalPayments.Api.Entities {
         TC,
         ARQC
     }
+
+    internal static class SAFReportType {
+        public const string APPROVED = "APPROVED SAF SUMMARY";
+        public const string PENDING = "PENDING SAF SUMMARY";
+        public const string DECLINED = "DECLINED SAF SUMMARY";
+        public const string OFFLINE_APPROVED = "OFFLINE APPROVED SAF SUMMARY";
+        public const string PARTIALLY_APPROVED = "PARTIALLY APPROVED  SAF SUMMARY";
+        public const string APPROVED_VOID = "APPROVED SAF VOID SUMMARY";
+        public const string PENDING_VOID = "PENDING SAF VOID SUMMARY";
+        public const string DECLINED_VOID = "DECLINED SAF VOID SUMMARY";
+    }
+    public enum ChallengeRequest {
+        NO_PREFERENCE,
+        NO_CHALLENGE_REQUESTED,
+        CHALLENGE_PREFERRED,
+        CHALLENGE_MANDATED
+    }
 }

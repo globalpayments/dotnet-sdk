@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
@@ -48,6 +49,13 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             var message = device.CreditAuth(10m).Serialize();
             Assert.IsNotNull(message);
             Assert.AreNotEqual(0, message.Length);
+        }
+
+        [TestMethod]
+        public void DecodeHttpMessage() {
+            byte[] buffer = Convert.FromBase64String("AlQwMBwxLjM1HDAxFTI3MjYVHx8fHx8xFTE1NTU1OTY1NjAVFRUVFQNt");
+            var message = new DeviceMessage(buffer);
+            Assert.IsNotNull(message.ToString());
         }
     }
 }

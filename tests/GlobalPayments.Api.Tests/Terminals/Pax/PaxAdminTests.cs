@@ -2,7 +2,6 @@
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
@@ -13,8 +12,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_S300,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                //IpAddress = "10.12.220.172",
-                IpAddress = "192.168.0.31",
+                IpAddress = "10.12.220.172",
+                //IpAddress = "192.168.0.31",
                 Port = "10009",
                 RequestIdProvider = new RandomIdProvider()
             });
@@ -34,11 +33,11 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.IsNotNull(response.SerialNumber);
         }
 
-        [TestMethod, ExpectedException(typeof(MessageException))]
+        [TestMethod]
         public void Cancel() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
-                Assert.AreEqual("[STX]A14[FS]1.31[FS][ETX]_", message);
+                Assert.AreEqual("[STX]A14[FS]1.35[FS][ETX]^", message);
             };
 
             _device.Cancel();

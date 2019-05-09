@@ -7,6 +7,22 @@ namespace GlobalPayments.Api.Entities {
     /// </summary>
     public class HostedPaymentData: AlternatePaymentMethod {
         /// <summary>
+        /// A value indicating to the issuer that the shipping and billing addresses
+        /// are expected to be the same. Used as a fraud prevention.
+        /// </summary>
+        public bool? AddressesMatch { get; set; }
+
+        /// <summary>
+        /// Value used to determine the challenge request preference for 3DS2
+        /// </summary>
+        public ChallengeRequest ChallengeRequest { get; set; }
+
+        /// <summary>
+        /// The customer's email address
+        /// </summary>
+        public string CustomerEmail { get; set; }
+
+        /// <summary>
         /// Indicates if the customer is known and has an account.
         /// </summary>
         public bool? CustomerExists { get; set; }
@@ -20,6 +36,11 @@ namespace GlobalPayments.Api.Entities {
         /// The customer's number.
         /// </summary>
         public string CustomerNumber { get; set; }
+
+        /// <summary>
+        /// The customer's mobile phone number
+        /// </summary>
+        public string CustomerPhoneMobile { get; set; }
 
         /// <summary>
         /// Indicates if the customer should be prompted to store their card.

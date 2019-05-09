@@ -1,4 +1,4 @@
-﻿﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.HPA.Interfaces;
@@ -48,12 +48,21 @@ namespace GlobalPayments.Api.Terminals.HPA {
             return (T)Activator.CreateInstance(typeof(T), response, messageIds);
         }
 
+        internal T SendAdminMessage<T>(HpaAdminBuilder builder) where T : SipBaseResponse {
+            int requestId = 1004;
+            if (RequestIdProvider != null) {
+                requestId = RequestIdProvider.GetRequestId();
+            }
+            builder.Set("RequestId", requestId);
+            return SendMessage<T>(builder.BuildMessage(), builder.MessageIds);
+        }
+
         internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
             var transactionType = MapTransactionType(builder.TransactionType);
             var response = SendMessage<SipDeviceResponse>(BuildProcessTransaction(builder), transactionType);
             return response;
         }
-
+        
         internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
             var transactionType = MapTransactionType(builder.TransactionType);
             var response = SendMessage<SipDeviceResponse>(BuildManageTransaction(builder), transactionType);

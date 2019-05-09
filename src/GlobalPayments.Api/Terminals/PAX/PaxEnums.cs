@@ -231,6 +231,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public static string CARD_BIN = "CARDBIN";
         public static string SIGNATURE_STATUS = "SIGNSTATUS";
         public static string TERMINAL_VERIFICATION_RESULTS = "TVR";
+        public static string MERCHANT_ID = "MM_ID";
+        public static string MERCHANT_NAME = "MM_NAME";
     }
 
     internal class PAX_CHECK_SALE_TYPE {
@@ -266,7 +268,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         ChipFallBackSwipe
     }
 
-    internal enum CardType {
+    public enum TerminalCardType {
         VISA = 01,
         MASTERCARD = 02,
         AMEX = 03,
@@ -286,7 +288,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         OTHER = 99,
     }
 
-    internal enum TerminalTransactionType {
+    public enum TerminalTransactionType {
         MENU = 00,
         SALE = 01,
         RETURN = 02,
@@ -327,7 +329,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         TransactionType,
         CardType,
         RecordNumber,
-        TransactionNumber,
+        TerminalReferenceNumber,
         AuthCode,
         ReferenceNumber,
         MerchantId,

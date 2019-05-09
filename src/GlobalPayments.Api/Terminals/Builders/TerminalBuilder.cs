@@ -11,6 +11,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
             ReferenceNumber = value;
             return this as T;
         }
+        public T WithRequestId(int value) {
+            ReferenceNumber = value;
+            return this as T;
+        }
+
         internal TerminalBuilder(TransactionType type, PaymentMethodType paymentType) : base(type) {
             PaymentMethodType = paymentType;
         }

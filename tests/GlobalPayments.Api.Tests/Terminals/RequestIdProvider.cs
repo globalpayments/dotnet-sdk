@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.Terminals {
         }
 
         public int GetRequestId() {
-            return new Random().Next(100000, 999999);
+            return random.Next(100000, 999999);
         }
     }
 

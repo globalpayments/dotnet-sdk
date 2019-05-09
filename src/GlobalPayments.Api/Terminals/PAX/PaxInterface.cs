@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
@@ -36,10 +36,18 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         // A14 - CANCEL
         public void Cancel() {
-            if (controller.ConnectionMode == ConnectionModes.HTTP)
+            if (controller.ConnectionMode == ConnectionModes.HTTP) {
                 throw new MessageException("The cancel command is not available in HTTP mode");
+            }
 
-            controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A14_CANCEL));
+            try {
+                controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A14_CANCEL));
+            }
+            catch (MessageException exc) {
+                if (!exc.Message.Equals("Terminal returned EOT for the current message.")) {
+                    throw;
+                }
+            }
         }
 
         // A16 - RESET
@@ -100,6 +108,18 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
         public IDeviceResponse StartCard(PaymentMethodType paymentMethodType) {
             throw new UnsupportedTransactionException("PAX does not support the start card option.");
+        }
+
+        public ISAFResponse SendStoreAndForward() {
+            throw new UnsupportedTransactionException();
+        }
+
+        public IDeviceResponse LineItem(string leftText, string rightText = null, string runningLeftText = null, string runningRightText = null) {
+            throw new UnsupportedTransactionException("PAX does not support the line item option.");
+        }
+
+        public IDeviceResponse SetStoreAndForwardMode(bool enabled) {
+            throw new UnsupportedTransactionException("PAX does not support the SAF mode change option");
         }
         #endregion
 

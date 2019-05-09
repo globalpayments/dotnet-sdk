@@ -225,23 +225,32 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 case TerminalReportType.LocalDetailReport: {
                         var criteria = builder.SearchBuilder;
 
+                        // additional data
+                        var additionalData = new ExtDataSubGroup();
+                        if (criteria.MerchantId.HasValue) {
+                            additionalData[EXT_DATA.MERCHANT_ID] = criteria.MerchantId.ToString();
+                        }
+                        if (!string.IsNullOrEmpty(criteria.MerchantName)) {
+                            additionalData[EXT_DATA.MERCHANT_NAME] = criteria.MerchantName;
+                        }
+
                         request = TerminalUtilities.BuildRequest(
                             messageId,
                             "01",  // EDC TYPE SET TO ALL
                             ControlCodes.FS,
-                            // transaction type
+                            criteria.TransactionType.HasValue ? ((int)criteria.TransactionType.Value).ToString().PadLeft(2, '0') : string.Empty,
                             ControlCodes.FS,
-                            // card type
+                            criteria.CardType.HasValue ? ((int)criteria.CardType.Value).ToString().PadLeft(2, '0') : string.Empty,
                             ControlCodes.FS,
-                            //criteria.RecordNumber.HasValue ? criteria.RecordNumber.ToString() : string.Empty,
+                            criteria.RecordNumber.HasValue ? criteria.RecordNumber.ToString() : string.Empty,
                             ControlCodes.FS,
-                            //criteria.TransactionNumber.HasValue ? criteria.TransactionNumber.ToString() : string.Empty,
+                            criteria.TerminalReferenceNumber.HasValue ? criteria.TerminalReferenceNumber.ToString() : string.Empty,
                             ControlCodes.FS,
-                            //builder.SearchBuilder.AuthCode ?? string.Empty,
+                            criteria.AuthCode ?? string.Empty,
                             ControlCodes.FS,
-                            builder.SearchBuilder.ReferenceNumber ?? string.Empty,
-                            ControlCodes.FS
-                            // additional information
+                            criteria.ReferenceNumber ?? string.Empty,
+                            ControlCodes.FS,
+                            additionalData
                         );
                    } break;
                 default: {

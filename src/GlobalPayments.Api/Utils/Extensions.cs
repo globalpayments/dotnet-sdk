@@ -94,10 +94,12 @@ namespace GlobalPayments.Api.Utils {
                 Array.Copy(buffer, readBuffer, bytesReceived);
 
                 var code = (ControlCodes)readBuffer[0];
-                if (code == ControlCodes.NAK)
+                if (code == ControlCodes.NAK) {
                     return null;
-                else if (code == ControlCodes.EOT)
+                }
+                else if (code == ControlCodes.EOT) {
                     throw new MessageException("Terminal returned EOT for the current message.");
+                }
                 else if (code == ControlCodes.ACK) {
                     return stream.GetTerminalResponse();
                 }
@@ -150,6 +152,32 @@ namespace GlobalPayments.Api.Utils {
 
         public static byte[] GetVector(this Rfc2898DeriveBytes bytes) {
             return bytes.GetBytes(16);
+        }
+
+        public static T GetValue<T>(this Dictionary<string, string> dict, string key) {
+            try {
+                return (T)Convert.ChangeType(dict[key], typeof(T));
+            }
+            catch (KeyNotFoundException) {
+                return default(T);
+            }
+        }
+        public static decimal? GetAmount(this Dictionary<string, string> dict, string key) {
+            try {
+                return dict[key].ToAmount();
+            }
+            catch (KeyNotFoundException) {
+                return null;
+            }
+        }
+
+        public static Boolean? GetBoolean(this Dictionary<string, string> dict, string key) {
+            try {
+                return Boolean.TryParse(dict[key], out Boolean result);
+            }
+            catch (KeyNotFoundException) {
+                return null;
+            }
         }
     }
 }
