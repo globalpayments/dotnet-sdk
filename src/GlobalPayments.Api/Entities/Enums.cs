@@ -27,9 +27,26 @@ namespace GlobalPayments.Api.Entities {
     /// </summary>
     public enum DeviceType {
         /// <summary>
+        /// Indicates PAX D200 device.
+        /// </summary>
+        PAX_D200,
+        /// <summary>
+        /// INdicates PAX D210 device.
+        /// </summary>
+        PAX_D210,
+        /// <summary>
         /// Indicates a Pax S300 device.
         /// </summary>
         PAX_S300,
+        /// <summary>
+        /// Indicates PAX PX5 device.
+        /// </summary>
+        PAX_PX5,
+        /// <summary>
+        /// Indicates PAX PX7 device.
+        /// </summary>
+        PAX_PX7,
+
         /// <summary>
         /// Indicates a HeeartSIP iSC250 device.
         /// </summary>
@@ -308,7 +325,17 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a verify 3d secure verify signature transaction
         /// </summary>
-        VerifySignature = 1 << 24
+        VerifySignature = 1 << 24,
+
+        /// <summary>
+        /// Indcates a TokenUpdateExpiry Transaction
+        /// </summary>
+        TokenUpdate = 1 << 25,
+
+        /// <summary>
+        /// Indicates a Token Delete Transaction
+        /// </summary>
+        TokenDelete = 1 << 26
     }
 
     /// <summary>

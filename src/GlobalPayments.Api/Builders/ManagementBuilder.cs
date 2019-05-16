@@ -251,6 +251,13 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => Amount).IsNotNull()
                 .Check(() => Currency).IsNotNull()
                 .Check(() => OrderId).IsNotNull();
+
+            Validations.For(TransactionType.TokenDelete | TransactionType.TokenUpdate)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => PaymentMethod).Is<ITokenizable>();
+
+            Validations.For(TransactionType.TokenUpdate)
+                .Check(() => PaymentMethod).Is<CreditCardData>();
         }
     }
 }

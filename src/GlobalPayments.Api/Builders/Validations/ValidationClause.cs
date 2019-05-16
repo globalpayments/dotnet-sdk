@@ -60,5 +60,17 @@ namespace GlobalPayments.Api.Builders {
                 return target;
             else return parent.For(target.type).With(target.constraint);
         }
+
+        public ValidationTarget Is<T>(string message = null) {
+            callback = (builder) => {
+                var value = property.GetValue(builder);
+                return value is T;
+            };
+            this.message = message ?? string.Format("{0} must be of type {1}", property.Name, typeof(T).Name);
+            if (precondition) {
+                return target;
+            }
+            else return parent.For(target.type).With(target.constraint);
+        }
     }
 }

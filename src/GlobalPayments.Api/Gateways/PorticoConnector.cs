@@ -346,24 +346,28 @@ namespace GlobalPayments.Api.Gateways {
                 if (builder.TransactionType == TransactionType.Reversal
                     || builder.TransactionType == TransactionType.Refund
                     || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift
-                    || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH)
+                    || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH) {
                     root = et.SubElement(transaction, "Block1");
-                else root = transaction;
+                }
+                else { root = transaction; }
 
                 // amount
-                if (builder.Amount != null)
+                if (builder.Amount != null) {
                     et.SubElement(root, "Amt").Text(builder.Amount.ToString());
+                }
 
                 // gratuity
-                if (builder.Gratuity != null)
+                if (builder.Gratuity != null) {
                     et.SubElement(root, "GratuityAmtInfo").Text(builder.Gratuity.ToString());
+                }
 
                 // Transaction ID
                 et.SubElement(root, "GatewayTxnId", builder.TransactionId);
 
                 // Client Txn Id
-                if (builder.TransactionType == TransactionType.Reversal)
+                if (builder.TransactionType == TransactionType.Reversal) {
                     et.SubElement(root, "ClientTxnId", builder.ClientTransactionId);
+                }
 
                 // Level II Data
                 if (builder.TransactionType == TransactionType.Edit && builder.TransactionModifier == TransactionModifier.LevelII) {
@@ -373,12 +377,39 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(cpc, "TaxAmt", builder.TaxAmount);
                 }
 
+                // Additional Txn Fields
                 if (builder.TransactionType == TransactionType.Refund || builder.TransactionType == TransactionType.Reversal) {
                     if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
                         var addons = et.SubElement(root, "AdditionalTxnFields");
                         et.SubElement(addons, "CustomerID", builder.CustomerId);
                         et.SubElement(addons, "Description", builder.Description);
                         et.SubElement(addons, "InvoiceNbr", builder.InvoiceNumber);
+                    }
+                }
+
+                // Token Management
+                if (builder.TransactionType.Equals(TransactionType.TokenUpdate) || builder.TransactionType.Equals(TransactionType.TokenDelete)) {
+                    ITokenizable token = (ITokenizable)builder.PaymentMethod;
+
+                    // Set the token value
+                    et.SubElement(root, "TokenValue").Text(token.Token);
+
+                    var tokenActions = et.SubElement(root, "TokenActions");
+                    if (builder.TransactionType.Equals(TransactionType.TokenUpdate)) {
+                        CreditCardData card = (CreditCardData)builder.PaymentMethod;
+
+                        var setElement = et.SubElement(tokenActions, "Set");
+
+                        var expMonth = et.SubElement(setElement, "Attribute");
+                        et.SubElement(expMonth, "Name", "expmonth");
+                        et.SubElement(expMonth, "Value", card.ExpMonth);
+
+                        var expYear = et.SubElement(setElement, "Attribute");
+                        et.SubElement(expYear, "Name", "expyear");
+                        et.SubElement(expYear, "Value", card.ExpYear);
+                    }
+                    else {
+                        et.SubElement(tokenActions, "Delete");
                     }
                 }
             }
@@ -860,6 +891,9 @@ namespace GlobalPayments.Api.Gateways {
                     return "GiftCardReplace"; // GiftCardReplace : Replace
                 case TransactionType.Reward:
                     return "GiftCardReward"; // GiftCardReward : Reward
+                case TransactionType.TokenDelete:
+                case TransactionType.TokenUpdate:
+                    return "ManageTokens";
                 default:
                     throw new UnsupportedTransactionException();
             }

@@ -103,7 +103,7 @@ namespace GlobalPayments.Api.Terminals {
             return lrc;
         }
 
-        internal static byte[] BuildSignatureImage(string pathData) {
+        public static byte[] BuildSignatureImage(string pathData, int width = 150) {
             Func<string, Point> toPoint = (coord) => {
                 var xy = coord.Split(',');
                 return new Point {
@@ -115,7 +115,7 @@ namespace GlobalPayments.Api.Terminals {
             // parse instructions
             var coordinates = pathData.Split('^');
 
-            Bitmap bmp = new Bitmap(150, 100);
+            Bitmap bmp = new Bitmap(width, 100);
 
             var gfx = Graphics.FromImage(bmp);
             gfx.Clear(Color.White);

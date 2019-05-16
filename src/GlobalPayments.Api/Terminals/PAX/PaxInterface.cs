@@ -31,7 +31,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A08_GET_SIGNATURE,
                 0, ControlCodes.FS
             ));
-            return new SignatureResponse(response);
+            return new SignatureResponse(response, controller.DeviceType.Value);
         }
 
         // A14 - CANCEL
@@ -91,15 +91,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         public IDeviceResponse CloseLane() {
-            if(controller.DeviceType == DeviceType.PAX_S300)
-                throw new UnsupportedTransactionException("The S300 does not support this call.");
-            throw new UnsupportedTransactionException();
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
         public IDeviceResponse OpenLane() {
-            if (controller.DeviceType == DeviceType.PAX_S300)
-                throw new UnsupportedTransactionException("The S300 does not support this call.");
-            throw new UnsupportedTransactionException();
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
         public string SendCustomMessage(DeviceMessage message) {
@@ -107,7 +103,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return Encoding.UTF8.GetString(response);
         }
         public IDeviceResponse StartCard(PaymentMethodType paymentMethodType) {
-            throw new UnsupportedTransactionException("PAX does not support the start card option.");
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
         public ISAFResponse SendStoreAndForward() {
@@ -115,11 +111,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         public IDeviceResponse LineItem(string leftText, string rightText = null, string runningLeftText = null, string runningRightText = null) {
-            throw new UnsupportedTransactionException("PAX does not support the line item option.");
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
         public IDeviceResponse SetStoreAndForwardMode(bool enabled) {
-            throw new UnsupportedTransactionException("PAX does not support the SAF mode change option");
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
         #endregion
 

@@ -112,6 +112,46 @@ namespace GlobalPayments.Api.PaymentMethods {
             var response =  new AuthorizationBuilder(TransactionType.Verify, this).WithRequestMultiUseToken(true).Execute();
             return response.Token;
         }
+
+        /// <summary>
+        /// Updates the token expiry date with the values proced to the card object
+        /// </summary>
+        /// <returns>boolean value indcating success/failure</returns>
+        public bool UpdateTokenExpiry() {
+            if (string.IsNullOrEmpty(Token)) {
+                throw new BuilderException("Token cannot be null");
+            }
+
+            try {
+                new ManagementBuilder(TransactionType.TokenUpdate)
+                    .WithPaymentMethod(this)
+                    .Execute();
+                return true;
+            }
+            catch (ApiException) {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the token associated with the current card object
+        /// </summary>
+        /// <returns>boolean value indicating success/failure</returns>
+        public bool DeleteToken() {
+            if (string.IsNullOrEmpty(Token)) {
+                throw new BuilderException("Token cannot be null");
+            }
+
+            try {
+                new ManagementBuilder(TransactionType.TokenDelete)
+                    .WithPaymentMethod(this)
+                    .Execute();
+                return true;
+            }
+            catch (ApiException) {
+                return false;
+            }
+        }
     }
 
     /// <summary>
