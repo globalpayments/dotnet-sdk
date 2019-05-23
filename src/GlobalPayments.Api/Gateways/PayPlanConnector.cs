@@ -242,7 +242,6 @@ namespace GlobalPayments.Api.Gateways {
             };
 
             if (schedule != null) {
-                request.Set("scheduleIdentifier", schedule.Id);
                 request.Set("scheduleName", schedule.Name);
                 request.Set("scheduleStatus", schedule.Status);
                 request.Set("paymentMethodKey", schedule.PaymentKey);
@@ -263,6 +262,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("numberOfPayments", schedule.NumberOfPayments);
 
                 if (type == TransactionType.Create) {
+                    request.Set("scheduleIdentifier", schedule.Id);
                     request.Set("customerKey", schedule.CustomerKey);
                     BuildDate(request, "startDate", schedule.StartDate);
                     request.Set("frequency", schedule.Frequency);
@@ -270,6 +270,7 @@ namespace GlobalPayments.Api.Gateways {
                 }
                 else { // Edit Fields
                     if (!schedule.HasStarted) {
+                        request.Set("scheduleIdentifier", schedule.Id);
                         BuildDate(request, "startDate", schedule.StartDate);
                         request.Set("frequency", schedule.Frequency);
                         request.Set("duration", mapDuration());
