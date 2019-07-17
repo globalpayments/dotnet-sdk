@@ -211,6 +211,10 @@ namespace GlobalPayments.Api.Terminals {
         /// The results of the terminals attempt to verify the cards authenticity.
         /// </summary>
         public string TerminalVerificationResults { get; set; }
+        /// <summary>
+        /// TODO give comment for this
+        /// </summary>
+        public string ReferenceNumber { get; set; }
     }
 
     public enum ApplicationCryptogramType {
