@@ -23,7 +23,6 @@ namespace GlobalPayments.Api.Utils {
             var stream = new MemoryStream(buffer);
             var reader = XmlReader.Create(stream, settings);
             doc.Load(reader);
-            //doc.LoadXml(xml);
         }
 
         public Element Element(string tagName) {

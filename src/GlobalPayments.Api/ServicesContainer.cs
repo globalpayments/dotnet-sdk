@@ -6,6 +6,8 @@ using GlobalPayments.Api.Terminals;
 
 namespace GlobalPayments.Api {
     public class ConfiguredServices : IDisposable {
+        private Dictionary<Secure3dVersion, ISecure3dProvider> _secure3dProviders;
+
         internal IPaymentGateway GatewayConnector { get; set; }
 
         internal IRecurringService RecurringConnector { get; set; }
@@ -30,6 +32,30 @@ namespace GlobalPayments.Api {
         internal TableServiceConnector TableServiceConnector { get; set; }
 
         internal PayrollConnector PayrollConnector { get; set; }
+
+        internal ISecure3dProvider GetSecure3DProvider(Secure3dVersion version) {
+            if (_secure3dProviders.ContainsKey(version)) {
+                return _secure3dProviders[version];
+            }
+            else if (version.Equals(Secure3dVersion.Any)) {
+                var provider = _secure3dProviders[Secure3dVersion.Two];
+                if (provider == null) {
+                    provider = _secure3dProviders[Secure3dVersion.One];
+                }
+                return provider;
+            }
+            return null;
+        }
+        internal void SetSecure3dProvider(Secure3dVersion version, ISecure3dProvider provider) {
+            if (_secure3dProviders.ContainsKey(version)) {
+                _secure3dProviders[version] = provider;
+            }
+            else _secure3dProviders.Add(version, provider);
+        }
+
+        public ConfiguredServices() {
+            _secure3dProviders = new Dictionary<Secure3dVersion, ISecure3dProvider>();
+        }
 
         public void Dispose() {
             DeviceController.Dispose();
@@ -150,6 +176,17 @@ namespace GlobalPayments.Api {
             if (_configurations.ContainsKey(configName))
                 return _configurations[configName].ReportingService;
             throw new ApiException("The specified configuration has not been configured for reporting.");
+        }
+
+        internal ISecure3dProvider GetSecure3d(string configName, Secure3dVersion version) {
+            if (_configurations.ContainsKey(configName)) {
+                var provider = _configurations[configName].GetSecure3DProvider(version);
+                if (provider != null) {
+                    return provider;
+                }
+                throw new ConfigurationException(string.Format("Secure 3d is not configured for version {0}.", version));
+            }
+            throw new ConfigurationException("Secure 3d is not configured on the connector.");
         }
 
         /// <summary>

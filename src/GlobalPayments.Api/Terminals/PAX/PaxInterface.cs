@@ -117,6 +117,10 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public IDeviceResponse SetStoreAndForwardMode(bool enabled) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+
+        public IDeviceResponse SendFile(SendFileType fileType, string filePath) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
         #endregion
 
         #region Reporting Messages

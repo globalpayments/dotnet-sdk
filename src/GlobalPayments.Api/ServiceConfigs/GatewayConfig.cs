@@ -112,8 +112,23 @@ namespace GlobalPayments.Api {
         /// </summary>
         public string DataClientSeviceUrl { get; set; }
 
+        public string ChallengeNotificationUrl { get; set; }
+
+        public string MerchantContactUrl { get; set; }
+
+        public string MethodNotificationUrl { get; set; }
+
+        public Secure3dVersion? Secure3dVersion { get; set; }
+
         internal override void ConfigureContainer(ConfiguredServices services) {
             if (!string.IsNullOrEmpty(MerchantId)) {
+                if (string.IsNullOrEmpty(ServiceUrl)) {
+                    if (Environment.Equals(Entities.Environment.TEST)) {
+                        ServiceUrl = ServiceEndpoints.GLOBAL_ECOM_TEST;
+                    }
+                    else ServiceUrl = ServiceEndpoints.GLOBAL_ECOM_PRODUCTION;
+                }
+
                 var gateway = new RealexConnector {
                     AccountId = AccountId,
                     Channel = Channel,
@@ -136,8 +151,42 @@ namespace GlobalPayments.Api {
                     Timeout = Timeout
                 };
                 services.ReportingService = reportingService;
+
+                // set default
+                if (Secure3dVersion == null) {
+                    Secure3dVersion = Entities.Secure3dVersion.One;
+                }
+
+                // secure 3d v1
+                if (Secure3dVersion.Equals(Entities.Secure3dVersion.One) || Secure3dVersion.Equals(Entities.Secure3dVersion.Any)) {
+                    services.SetSecure3dProvider(Entities.Secure3dVersion.One, gateway);
+                }
+
+                // secure 3d v2
+                if (Secure3dVersion.Equals(Entities.Secure3dVersion.Two) || Secure3dVersion.Equals(Entities.Secure3dVersion.Any)) {
+                    Gp3DSProvider secure3d2 = new Gp3DSProvider {
+                        MerchantId = MerchantId,
+                        AccountId = AccountId,
+                        SharedSecret = SharedSecret,
+                        ServiceUrl = Environment.Equals(Entities.Environment.TEST) ? ServiceEndpoints.THREE_DS_AUTH_TEST : ServiceEndpoints.THREE_DS_AUTH_PRODUCTION,
+                        MerchantContactUrl = MerchantContactUrl,
+                        MethodNotificationUrl = MethodNotificationUrl,
+                        ChallengeNotificationUrl = ChallengeNotificationUrl,
+                        Timeout = Timeout
+                        //secure3d2.EnableLogging = EnableLogging
+                    };  
+
+                    services.SetSecure3dProvider(Entities.Secure3dVersion.Two, secure3d2);
+                }
             }
             else {
+                if (string.IsNullOrEmpty(ServiceUrl)) {
+                    if (Environment.Equals(Entities.Environment.TEST)) {
+                        ServiceUrl = ServiceEndpoints.PORTICO_TEST;
+                    }
+                    else ServiceUrl = ServiceEndpoints.PORTICO_PRODUCTION;
+                }
+
                 var gateway = new PorticoConnector {
                     SiteId = SiteId,
                     LicenseId = LicenseId,
@@ -197,17 +246,26 @@ namespace GlobalPayments.Api {
                     throw new ConfigurationException("SharedSecret is required for this configuration.");
             }
 
-            // service url
-            if (string.IsNullOrEmpty(ServiceUrl)) {
-                throw new ConfigurationException("Service URL could not be determined from the credentials provided. Please specify an endpoint.");
-            }
-
             // data client
             if (!string.IsNullOrEmpty(DataClientId) || !string.IsNullOrEmpty(DataClientSecret)) {
                 if (string.IsNullOrEmpty(DataClientId) || string.IsNullOrEmpty(DataClientSecret))
                     throw new ConfigurationException("Both \"DataClientID\" and \"DataClientSecret\" are required for data client services.");
-                if(string.IsNullOrEmpty(DataClientUserId))
+                if (string.IsNullOrEmpty(DataClientUserId))
                     throw new ConfigurationException("DataClientUserId required for data client services.");
+            }
+
+            // secure 3d
+            if (Secure3dVersion != null) {
+                // ensure we have the fields we need
+                if (Secure3dVersion.Equals(Entities.Secure3dVersion.Two) || Secure3dVersion.Equals(Entities.Secure3dVersion.Any)) {
+                    if (string.IsNullOrEmpty(ChallengeNotificationUrl)) {
+                        throw new ConfigurationException("The challenge notification URL is required for 3DS v2 processing.");
+                    }
+
+                    if (string.IsNullOrEmpty(MethodNotificationUrl)) {
+                        throw new ConfigurationException("The method notification URL is required for 3DS v2 processing.");
+                    }
+                }
             }
         }
 

@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Value used to determine the challenge request preference for 3DS2
         /// </summary>
-        public ChallengeRequest ChallengeRequest { get; set; }
+        public ChallengeRequestIndicator ChallengeRequest { get; set; }
 
         /// <summary>
         /// The customer's email address

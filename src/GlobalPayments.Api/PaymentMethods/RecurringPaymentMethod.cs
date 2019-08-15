@@ -7,7 +7,7 @@ namespace GlobalPayments.Api.PaymentMethods
     /// <summary>
     /// Use credit or eCheck/ACH as a recurring payment method.
     /// </summary>
-    public class RecurringPaymentMethod : RecurringEntity<RecurringPaymentMethod>, IPaymentMethod, IChargable, IAuthable, IVerifiable, IRefundable {
+    public class RecurringPaymentMethod : RecurringEntity<RecurringPaymentMethod>, IPaymentMethod, IChargable, IAuthable, IVerifiable, IRefundable, ISecure3d {
         /// <summary>
         /// The address associated with the payment method account.
         /// </summary>
@@ -63,6 +63,8 @@ namespace GlobalPayments.Api.PaymentMethods
         /// The payment method's tax type
         /// </summary>
         public string TaxType { get; set; }
+
+        public ThreeDSecure ThreeDSecure { get; set; }
 
         public RecurringPaymentMethod() : this(null, null) { }
         internal RecurringPaymentMethod(IPaymentMethod paymentMethod) {

@@ -182,6 +182,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public Dictionary<string, string> ResponseValues { get; set; }
 
+        public string SchemeId { get; set; }
+
         internal ThreeDSecure ThreeDSecure { get; set; }
 
         /// <summary>

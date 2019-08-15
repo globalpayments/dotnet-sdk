@@ -11,8 +11,7 @@ using System.Text;
 namespace GlobalPayments.Api.Tests.Realex {
     [TestClass]
     public class Realex3dSecureTests {
-        [TestInitialize]
-        public void Init() {
+        public Realex3dSecureTests() {
             ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "3dsecure",
@@ -51,7 +50,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -122,7 +121,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -162,7 +161,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -201,7 +200,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -218,7 +217,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001038443335",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -231,7 +230,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -273,7 +272,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "Philip Marlowe",
                 ThreeDSecure = new ThreeDSecure {
                     Cavv = "AAACBllleHchZTBWIGV4AAAAAAA=",
@@ -294,7 +293,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001038443335",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -314,7 +313,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001038488884",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -334,7 +333,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001036298889",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -346,7 +345,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001036853337",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -379,7 +378,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037167778",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -411,7 +410,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037461114",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -444,7 +443,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037484447",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -477,7 +476,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4012001037490006",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = 2025,
                 CardHolderName = "John Smith"
             };
 
@@ -530,7 +529,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
                 return new {
                     pares = authResponse,
-                    md = md
+                    md
                 };
             }
             catch (Exception) {

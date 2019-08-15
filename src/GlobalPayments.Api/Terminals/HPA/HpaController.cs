@@ -44,8 +44,18 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         internal T SendMessage<T>(string message, params string[] messageIds) where T : SipBaseResponse {
-            var response = _interface.Send(TerminalUtilities.BuildRequest(message, Format));
-            return (T)Activator.CreateInstance(typeof(T), response, messageIds);
+            return SendMessage<T>(message, false, true, messageIds);
+        }
+        internal T SendMessage<T>(string message, bool keepAlive, bool awaitResponse, params string[] messageIds) {
+            IDeviceMessage deviceMessage = TerminalUtilities.BuildRequest(message, Format);
+            deviceMessage.KeepAlive = keepAlive;
+            deviceMessage.AwaitResponse = awaitResponse;
+
+            var response = _interface.Send(deviceMessage);
+            if (awaitResponse) {
+                return (T)Activator.CreateInstance(typeof(T), response, messageIds);
+            }
+            else return default(T);
         }
 
         internal T SendAdminMessage<T>(HpaAdminBuilder builder) where T : SipBaseResponse {
@@ -54,7 +64,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
                 requestId = RequestIdProvider.GetRequestId();
             }
             builder.Set("RequestId", requestId);
-            return SendMessage<T>(builder.BuildMessage(), builder.MessageIds);
+            return SendMessage<T>(builder.BuildMessage(), builder.KeepAlive, builder.AwaitResponse, builder.MessageIds);
         }
 
         internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {

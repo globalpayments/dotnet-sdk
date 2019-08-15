@@ -2,6 +2,9 @@
 
 namespace GlobalPayments.Api.Terminals.Abstractions {
     interface IDeviceMessage {
-        byte[] GetSendBuffer();
+        bool KeepAlive { get; set; }
+        bool AwaitResponse { get; set; }
+
+        byte[] GetSendBuffer();        
     }
 }

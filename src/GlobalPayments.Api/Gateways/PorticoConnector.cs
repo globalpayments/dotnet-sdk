@@ -356,6 +356,11 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(root, "Amt").Text(builder.Amount.ToString());
                 }
 
+                // auth amount
+                if (builder.AuthAmount != null) {
+                    et.SubElement(root, "AuthAmt").Text(builder.AuthAmount.ToString());
+                }
+
                 // gratuity
                 if (builder.Gratuity != null) {
                     et.SubElement(root, "GratuityAmtInfo").Text(builder.Gratuity.ToString());
@@ -443,7 +448,7 @@ namespace GlobalPayments.Api.Gateways {
                     //et.SubElement(criteria, "PaymentType", trb.SearchBuilder.);
                     //et.SubElement(criteria, "CardType", trb.SearchBuilder.);
                     et.SubElement(criteria, "IssuerResult", trb.SearchBuilder.IssuerResult);
-                    et.SubElement(criteria, "SettlementAmount", trb.SearchBuilder.SettlementAmount);
+                    et.SubElement(criteria, "SettlementAmt", trb.SearchBuilder.SettlementAmount);
                     et.SubElement(criteria, "IssTxnId", trb.SearchBuilder.IssuerTransactionId);
                     et.SubElement(criteria, "RefNbr", trb.SearchBuilder.ReferenceNumber);
                     et.SubElement(criteria, "UserName", trb.SearchBuilder.Username);

@@ -6,6 +6,12 @@ using System.Collections;
 
 namespace GlobalPayments.Api.Entities {
     public class ThreeDSecure {
+        public string AcsTransactionId { get; set; }
+
+        public string AcsEndVersion { get; set; }
+
+        public string AcsStartVersion { get; set; }
+
         /// <summary>
         /// The algorithm used.
         /// </summary>
@@ -20,10 +26,22 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
+        public string AuthenticationSource { get; set; }
+
+        public string AuthenticationType { get; set; }
+
+        public string AuthenticationValue { get; set; }
+
+        public string CardHolderResponseInfo { get; set; }
+
         /// <summary>
         /// Consumer authentication (3DSecure) verification value.
         /// </summary>
         public string Cavv { get; set; }
+
+        public bool ChallengeMandated { get; set; }
+
+        public string CriticalityIndicator { get; set; }
 
         private string _currency;
         internal string Currency {
@@ -33,6 +51,12 @@ namespace GlobalPayments.Api.Entities {
                 MerchantData.Add("_currency", _currency, false);
             }
         }
+
+        public string DirectoryServerTransactionId { get; set; }
+
+        public string DirectoryServerEndVersion { get; set; }
+
+        public string DirectoryServerStartVersion { get; set; }
 
         /// <summary>
         /// Consumer authentication (3DSecure) electronic commerce indicator.
@@ -64,14 +88,31 @@ namespace GlobalPayments.Api.Entities {
                     value.MergeHidden(_merchantData);
 
                 _merchantData = value;
-                if (_merchantData.HasKey("_amount"))
+                if (_merchantData.HasKey("_amount")) {
                     _amount = _merchantData.GetValue<decimal>("_amount");
-                if (_merchantData.HasKey("_currency"))
+                }
+                if (_merchantData.HasKey("_currency")) {
                     _currency = _merchantData.GetValue<string>("_currency");
-                if (_merchantData.HasKey("_orderid"))
+                }
+                if (_merchantData.HasKey("_orderid")) {
                     _orderId = _merchantData.GetValue<string>("_orderid");
+                }
+                if (_merchantData.HasKey("_version")) {
+                    Secure3dVersion version;
+                    if (Enum.TryParse(_merchantData.GetValue<string>("_version"), out version)) {
+                        _version = version;
+                    }
+                }
             }
         }
+
+        public string MessageCategory { get; set; }
+
+        public string MessageExtensionId { get; set; }
+
+        public string MessageExtensionName { get; set; }
+
+        public string MessageVersion { get; set; }
 
         private string _orderId;
 
@@ -104,10 +145,27 @@ namespace GlobalPayments.Api.Entities {
         /// </remarks>
         public string PaymentDataType { get; set; }
 
+        public string SdkInterface { get; set; }
+
+        public IEnumerable<string> SdkUiType { get; set; }
+
+        public string ServerTransactionId { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         public string Status { get; set; }
+
+        public string StatusReason { get; set; }
+
+        public Secure3dVersion? _version;
+        public Secure3dVersion? Version {
+            get { return _version; }
+            set {
+                _version = value;
+                MerchantData.Add("_version", value.ToString(), false);
+            }
+        }
 
         /// <summary>
         /// Consumer authentication (3DSecure) transaction ID.
@@ -116,6 +174,54 @@ namespace GlobalPayments.Api.Entities {
 
         public ThreeDSecure() {
             PaymentDataType = "3DSecure";
+        }
+
+        public void Merge(ThreeDSecure secureEcom) {
+            if (secureEcom != null) {
+                AcsTransactionId = MergeValue(AcsTransactionId, secureEcom.AcsTransactionId);
+                AcsEndVersion = MergeValue(AcsEndVersion, secureEcom.AcsEndVersion);
+                AcsStartVersion = MergeValue(AcsStartVersion, secureEcom.AcsStartVersion);
+                Algorithm = MergeValue(Algorithm, secureEcom.Algorithm);
+                Amount = MergeValue(Amount, secureEcom.Amount);
+                AuthenticationSource = MergeValue(AuthenticationSource, secureEcom.AuthenticationSource);
+                AuthenticationType = MergeValue(AuthenticationType, secureEcom.AuthenticationType);
+                AuthenticationValue = MergeValue(AuthenticationValue, secureEcom.AuthenticationValue);
+                CardHolderResponseInfo = MergeValue(CardHolderResponseInfo, secureEcom.CardHolderResponseInfo);
+                Cavv = MergeValue(Cavv, secureEcom.Cavv);
+                ChallengeMandated = MergeValue(ChallengeMandated, secureEcom.ChallengeMandated);
+                CriticalityIndicator = MergeValue(CriticalityIndicator, secureEcom.CriticalityIndicator);
+                Currency = MergeValue(Currency, secureEcom.Currency);
+                DirectoryServerTransactionId = MergeValue(DirectoryServerTransactionId, secureEcom.DirectoryServerTransactionId);
+                DirectoryServerEndVersion = MergeValue(DirectoryServerEndVersion, secureEcom.DirectoryServerEndVersion);
+                DirectoryServerStartVersion = MergeValue(DirectoryServerStartVersion, secureEcom.DirectoryServerStartVersion);
+                Eci = MergeValue(Eci, secureEcom.Eci);
+                Enrolled = MergeValue(Enrolled, secureEcom.Enrolled);
+                IssuerAcsUrl = MergeValue(IssuerAcsUrl, secureEcom.IssuerAcsUrl);
+                MessageCategory = MergeValue(MessageCategory, secureEcom.MessageCategory);
+                MessageExtensionId = MergeValue(MessageExtensionId, secureEcom.MessageExtensionId);
+                MessageExtensionName = MergeValue(MessageExtensionName, secureEcom.MessageExtensionName);
+                MessageVersion = MergeValue(MessageVersion, secureEcom.MessageVersion);
+                OrderId = MergeValue(OrderId, secureEcom.OrderId);
+                PayerAuthenticationRequest = MergeValue(PayerAuthenticationRequest, secureEcom.PayerAuthenticationRequest);
+                PaymentDataSource = MergeValue(PaymentDataSource, secureEcom.PaymentDataSource);
+                PaymentDataType = MergeValue(PaymentDataType, secureEcom.PaymentDataType);
+                SdkInterface = MergeValue(SdkInterface, secureEcom.SdkInterface);
+                SdkUiType = MergeValue(SdkUiType, secureEcom.SdkUiType);
+                ServerTransactionId = MergeValue(ServerTransactionId, secureEcom.ServerTransactionId);
+                Status = MergeValue(Status, secureEcom.Status);
+                StatusReason = MergeValue(StatusReason, secureEcom.StatusReason);
+                Version = MergeValue(Version, secureEcom.Version);
+                Xid = MergeValue(Xid, secureEcom.Xid);
+
+                //this.merchantData = mergeValue(merchantData, secureEcom.getMerchantData());
+            }
+        }
+
+        private T MergeValue<T>(T currentValue, T mergeValue) {
+            if (mergeValue == null) {
+                return currentValue;
+            }
+            return mergeValue;
         }
     }
 

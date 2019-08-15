@@ -6,7 +6,6 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals;
 using System.Globalization;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 namespace GlobalPayments.Api.Utils {
     public static class Extensions {
@@ -171,12 +170,22 @@ namespace GlobalPayments.Api.Utils {
             }
         }
 
-        public static Boolean? GetBoolean(this Dictionary<string, string> dict, string key) {
+        public static bool? GetBoolean(this Dictionary<string, string> dict, string key) {
             try {
-                return Boolean.TryParse(dict[key], out Boolean result);
+                return bool.TryParse(dict[key], out bool result);
             }
             catch (KeyNotFoundException) {
                 return null;
+            }
+        }
+
+        public static IEnumerable<string> SplitInMaxDataSize(this string str, int maxDataSize) {
+            if (string.IsNullOrEmpty(str)) {
+                yield return string.Empty;
+            }
+
+            for (var i = 0; i < str.Length; i += maxDataSize) {
+                yield return str.Substring(i, Math.Min(maxDataSize, str.Length - i));
             }
         }
     }

@@ -76,7 +76,7 @@ namespace GlobalPayments.Api.Tests.Realex {
                 var paymentMethod = new_customer.AddPaymentMethod(PaymentId("Credit"), new CreditCardData {
                     Number = "4263970000005262",
                     ExpMonth = 5,
-                    ExpYear = 2019,
+                    ExpYear = 2025,
                     CardHolderName = "James Mason"
                 }).Create();
                 Assert.IsNotNull(paymentMethod);

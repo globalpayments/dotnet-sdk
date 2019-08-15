@@ -6,7 +6,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class RealexConnector : XmlGateway, IPaymentGateway, IRecurringService {
+    internal class RealexConnector : XmlGateway, IPaymentGateway, IRecurringService, ISecure3dProvider {
         public string MerchantId { get; set; }
         public string AccountId { get; set; }
         public string SharedSecret { get; set; }
@@ -18,6 +18,7 @@ namespace GlobalPayments.Api.Gateways {
         public bool SupportsUpdatePaymentDetails { get { return true; } }
         public string PaymentValues { get; set; }
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
+        public Secure3dVersion Version { get { return Secure3dVersion.One; } }
 
         #region transaction handling
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
@@ -86,6 +87,9 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(mpi, "cavv", card.ThreeDSecure.Cavv);
                     et.SubElement(mpi, "xid", card.ThreeDSecure.Xid);
                     et.SubElement(mpi, "eci", card.ThreeDSecure.Eci);
+                    et.SubElement(mpi, "ds_trans_id", card.ThreeDSecure.DirectoryServerTransactionId);
+                    et.SubElement(mpi, "authentication_value", card.ThreeDSecure.AuthenticationValue);
+                    et.SubElement(mpi, "message_version", card.ThreeDSecure.MessageVersion);
                 }
 
                 // issueno
@@ -157,7 +161,7 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // tssinfo
-            if (builder.CustomerId != null || builder.ProductId != null || builder.CustomerId != null || builder.ClientTransactionId != null || builder.BillingAddress != null || builder.ShippingAddress != null) {
+            if (builder.CustomerId != null || builder.ProductId != null || builder.CustomerIpAddress != null || builder.ClientTransactionId != null || builder.BillingAddress != null || builder.ShippingAddress != null) {
                 var tssInfo = et.SubElement(request, "tssinfo");
                 et.SubElement(tssInfo, "custnum", builder.CustomerId);
                 et.SubElement(tssInfo, "prodid", builder.ProductId);
@@ -168,6 +172,33 @@ namespace GlobalPayments.Api.Gateways {
                 if (builder.ShippingAddress != null)
                     tssInfo.Append(BuildAddress(et, builder.ShippingAddress));
             }
+
+            // data supplimentary
+            if (builder.SupplementaryData != null) {
+                var supplementaryData = et.SubElement(request, "supplementarydata");
+                Dictionary<string, List<string[]>> suppData = builder.SupplementaryData;
+
+                foreach (string key in suppData.Keys) {
+                    List<string[]> dataSets = suppData[key];
+
+                    foreach (string[] data in dataSets) {
+                        Element item = et.SubElement(supplementaryData, "item").Set("type", key);
+                        for (int i = 1; i < data.Length; i++) {
+                            et.SubElement(item, "field" + i.ToString().PadLeft(2, '0'), data[i - 1]);
+                        }
+                    }
+                }
+            }
+
+            // stored credential
+            if (builder.StoredCredential != null) {
+                var storedCredentialElement = et.SubElement(request, "storedcredential");
+                et.SubElement(storedCredentialElement, "type", builder.StoredCredential.Type.ToString().ToLower());
+                et.SubElement(storedCredentialElement, "initiator", builder.StoredCredential.Initiator.ToString().ToLower());
+                et.SubElement(storedCredentialElement, "sequence", builder.StoredCredential.Sequence.ToString().ToLower());
+                et.SubElement(storedCredentialElement, "srd", builder.StoredCredential.SchemeId);
+            }
+
             var response = DoTransaction(et.ToString(request));
             var mapResponse = MapResponse(response, MapAcceptedCodes(transactionType));
             if (builder.MultiCapture)
@@ -192,7 +223,7 @@ namespace GlobalPayments.Api.Gateways {
 
             request.Set("MERCHANT_ID", MerchantId);
             request.Set("ACCOUNT", AccountId);
-            request.Set("CHANNEL", Channel);
+            request.Set("HPP_CHANNEL", Channel);
             request.Set("ORDER_ID", orderId);
             if(builder.Amount != null)
                 request.Set("AMOUNT", builder.Amount.ToNumericCurrencyString());
@@ -238,6 +269,13 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequest);
                 if (builder.HostedPaymentData.AddressesMatch != null) {
                     request.Set("HPP_ADDRESS_MATCH_INDICATOR", builder.HostedPaymentData.AddressesMatch.Value ? "TRUE" : "FALSE");
+                }
+
+                // SUPPLIMENTARY DATA
+                if (builder.HostedPaymentData.SupplementaryData != null) {
+                    foreach (string key in builder.HostedPaymentData.SupplementaryData.Keys) {
+                        request.Set(key, builder.HostedPaymentData.SupplementaryData[key]);
+                    }
                 }
             }
             if (builder.ShippingAddress != null) {
@@ -362,6 +400,30 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(comments, "comment", builder.Description).Set("id", "1");
             }
 
+            // tssinfo
+            if (builder.CustomerId != null || builder.ClientTransactionId != null) {
+                var tssInfo = et.SubElement(request, "tssinfo");
+                et.SubElement(tssInfo, "custnum", builder.CustomerId);
+                et.SubElement(tssInfo, "varref", builder.ClientTransactionId);
+            }
+
+            // data supplimentary
+            if (builder.SupplementaryData != null) {
+                var supplementaryData = et.SubElement(request, "supplementarydata");
+                Dictionary<string, List<string[]>> suppData = builder.SupplementaryData;
+
+                foreach (string key in suppData.Keys) {
+                    List<string[]> dataSets = suppData[key];
+
+                    foreach (string[] data in dataSets) {
+                        Element item = et.SubElement(supplementaryData, "item").Set("type", key);
+                        for (int i = 1; i < data.Length; i++) {
+                            et.SubElement(item, "field" + i.ToString().PadLeft(2, '0'), data[i - 1]);
+                        }
+                    }
+                }
+            }
+
             et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency,builder.AlternativePaymentType!=null?builder.AlternativePaymentType.ToString():null));
 
             // rebate hash
@@ -436,6 +498,35 @@ namespace GlobalPayments.Api.Gateways {
             return MapRecurringResponse<TResult>(response, builder);
         }
 
+        public Transaction ProcessSecure3d(Secure3dBuilder builder) {
+            TransactionType transType = builder.TransactionType;
+            if (transType.Equals(TransactionType.VerifyEnrolled)) {
+                AuthorizationBuilder authBuilder = new AuthorizationBuilder(transType, builder.PaymentMethod)
+                        .WithAmount(builder.Amount)
+                        .WithCurrency(builder.Currency)
+                        .WithOrderId(builder.OrderId);
+
+                return ProcessAuthorization(authBuilder);
+            }
+            else if (transType.Equals(TransactionType.VerifySignature)) {
+                // get our three d secure object
+                ThreeDSecure secureEcom = builder.ThreeDSecure;
+
+                // create our transaction reference
+                TransactionReference reference = new TransactionReference {
+                    OrderId = secureEcom.OrderId
+                };
+
+                ManagementBuilder managementBuilder = new ManagementBuilder(transType)
+                        .WithAmount(secureEcom.Amount)
+                        .WithCurrency(secureEcom.Currency)
+                        .WithPayerAuthenticationResponse(builder.PayerAuthenticationResponse)
+                        .WithPaymentMethod(reference);
+                return ManageTransaction(managementBuilder);
+            }
+            throw new UnsupportedTransactionException(string.Format("Unknown transaction type {0}", transType));
+        }
+
         #endregion
 
         #region response mapping
@@ -482,6 +573,9 @@ namespace GlobalPayments.Api.Gateways {
                 if (!string.IsNullOrEmpty(algorithm))
                     result.ThreeDSecure.Algorithm = int.Parse(algorithm);
             }
+
+            // stored credential
+            result.SchemeId = root.GetValue<string>("srd");
 
             return result;
         }

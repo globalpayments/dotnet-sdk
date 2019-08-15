@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 
@@ -47,6 +48,8 @@ namespace GlobalPayments.Api.Builders {
         internal ReversalReasonCode? ReversalReasonCode { get; set; }
         internal string ScheduleId { get; set; }
         internal Address ShippingAddress { get; set; }
+        internal StoredCredential StoredCredential { get; set; }
+        internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
         internal string TagData { get; set; }
         internal string Timestamp { get; set; }
 
@@ -518,6 +521,28 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithScheduleId(string value) {
             ScheduleId = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithStoredCredential(StoredCredential value) {
+            StoredCredential = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithSupplementaryData(string type, params string[] values) {
+            // create the dictionary
+            if (SupplementaryData == null) {
+                SupplementaryData = new Dictionary<string, List<string[]>>();
+            }
+
+            // add the key
+            if (!SupplementaryData.ContainsKey(type)) {
+                SupplementaryData.Add(type, new List<string[]>());
+            }
+
+            // add the values to it
+            SupplementaryData[type].Add(values);
+
             return this;
         }
 

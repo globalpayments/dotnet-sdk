@@ -13,7 +13,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_S300,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.0.31",
+                IpAddress = "10.12.220.172",
+                //IpAddress = "192.168.0.31",
                 Port = "10009",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -343,6 +344,39 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditVoidNoTransactionId() {
             _device.CreditVoid().Execute();
+        }
+
+        [TestMethod]
+        public void CreditDuplicateTransaction() {
+            var card = new CreditCardData {
+                Number = "4005554444444460",
+                ExpMonth = 12,
+                ExpYear = 20,
+                Cvn = "123"
+            };
+
+            var address = new Address {
+                StreetAddress1 = "1 Heartland Way",
+                PostalCode = "95124"
+            };
+
+            var response = _device.CreditSale(11m)
+                .WithAllowDuplicates(false)
+                .WithPaymentMethod(card)
+                .WithAddress(address)
+                .WithReferenceNumber(12345)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var duplicate = _device.CreditSale(11m)
+                .WithAllowDuplicates(false)
+                .WithPaymentMethod(card)
+                .WithAddress(address)
+                .WithReferenceNumber(12345)
+                .Execute();
+            Assert.IsNotNull(duplicate);
+            Assert.AreEqual("00", duplicate.ResponseCode);
         }
     }
 }

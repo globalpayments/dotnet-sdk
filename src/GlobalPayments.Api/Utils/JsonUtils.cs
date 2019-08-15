@@ -65,8 +65,9 @@ namespace GlobalPayments.Api.Utils {
 
         public JsonDoc Set<T>(string key, T value, bool force = false) {
             if (!EqualityComparer<T>.Default.Equals(value, default(T)) || force || typeof(T) == typeof(bool)) {
-                if (_encoder != null)
+                if (_encoder != null) {
                     _dict.Add(key, _encoder.Encode(value));
+                }
                 else _dict.Add(key, value);
             }
             return this;
@@ -108,6 +109,16 @@ namespace GlobalPayments.Api.Utils {
                 return _dict[name];
             }
             return null;
+        }
+
+        public T GetValue<T>(params string[] names) {
+            foreach (var name in names) {
+                T value = GetValue<T>(name);
+                if (!EqualityComparer<T>.Default.Equals(value, default(T))) {
+                    return value;
+                }
+            }
+            return default(T);
         }
 
         public T GetValue<T>(string name, Func<object, T> converter = null) {

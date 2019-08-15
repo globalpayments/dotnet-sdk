@@ -6,6 +6,9 @@ namespace GlobalPayments.Api.Terminals {
     public class DeviceMessage : IDeviceMessage {
         byte[] _buffer;
 
+        public bool AwaitResponse { get; set; }
+        public bool KeepAlive { get; set; }
+        
         public DeviceMessage(byte[] buffer) {
             this._buffer = buffer;
         }

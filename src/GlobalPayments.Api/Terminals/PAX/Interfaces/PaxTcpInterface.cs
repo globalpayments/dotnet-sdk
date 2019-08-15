@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Utils;
 using GlobalPayments.Api.Terminals.Abstractions;

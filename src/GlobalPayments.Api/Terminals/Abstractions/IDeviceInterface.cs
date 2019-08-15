@@ -23,6 +23,7 @@ namespace GlobalPayments.Api.Terminals {
         ISAFResponse SendStoreAndForward();
         IDeviceResponse LineItem(string leftText, string rightText = null, string runningLeftText = null, string runningRightText = null);
         IDeviceResponse SetStoreAndForwardMode(bool enabled);
+        IDeviceResponse SendFile(SendFileType fileType, string filePath);
         #endregion
 
         #region reporting

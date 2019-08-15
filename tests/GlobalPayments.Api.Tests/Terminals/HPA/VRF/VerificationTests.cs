@@ -25,7 +25,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
         }
 
         private void PrintReceipt(ITerminalResponse response) {
-            String receipt = "x_trans_type=" + response.TransactionType;
+            string receipt = "x_trans_type=" + response.TransactionType;
             receipt += "&x_application_label=" + response.ApplicationLabel;
             receipt += "&x_masked_card=" + response.MaskedCardNumber;
             receipt += "&x_application_id=" + response.ApplicationId;

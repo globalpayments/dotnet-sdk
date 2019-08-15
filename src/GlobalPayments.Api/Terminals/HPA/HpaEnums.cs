@@ -32,6 +32,7 @@ namespace GlobalPayments.Api.Terminals.HPA
         public const string LINEITEM = "LineItem";
         public const string GETPARAMETERREPORT = "GetParameterReport";
         public const string SETPARAMETERREPORT = "SetParameter";
+        public const string SENDFILE = "SendFile";
     }
 
 }

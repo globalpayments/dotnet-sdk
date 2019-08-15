@@ -2,11 +2,11 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
-using GlobalPayments.Api.Terminals.HPA.Interfaces;
 using GlobalPayments.Api.Terminals.HPA.Responses;
 using GlobalPayments.Api.Terminals.Messaging;
-using GlobalPayments.Api.Utils;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.HPA {
     public class HpaInterface : IDeviceInterface {
@@ -87,6 +87,45 @@ namespace GlobalPayments.Api.Terminals.HPA {
 
         public IDeviceResponse SetStoreAndForwardMode(bool enabled) {
             return _controller.SendAdminMessage<SipBaseResponse>(new HpaAdminBuilder(HPA_MSG_ID.SETPARAMETERREPORT).Set("FieldCount", "1").Set("Key", "STORMD").Set("Value", enabled ? "1" : "0"));
+        }
+
+        public IDeviceResponse SendFile(SendFileType imageType, string filePath) {
+            if (string.IsNullOrEmpty(filePath)) {
+                throw new ApiException("Filename is required for SendFile.");
+            }
+
+            // load the file
+            var fileUpload = new HpaFileUpload(imageType, filePath);
+
+            // build the initial message
+            var builder = new HpaAdminBuilder(HPA_MSG_ID.SENDFILE) { KeepAlive = true }
+                .Set("FileName", fileUpload.FileName)
+                .Set("FileSize", fileUpload.FileSize)
+                .Set("MultipleMessage", "1");
+
+            var response = _controller.SendAdminMessage<SipSendFileResponse>(builder);
+            if (response.DeviceResponseCode.Equals("00")) {
+                IEnumerable<string> fileParts = fileUpload.GetFileParts(response.MaxDataSize / 5);
+                foreach (var filePart in fileParts) {
+                    string multipleMessage = (filePart.Equals(fileParts.Last())) ? "0" : "1";
+
+                    var dataResponse = _controller.SendAdminMessage<SipSendFileResponse>(
+                        new HpaAdminBuilder(HPA_MSG_ID.SENDFILE) {
+                            KeepAlive = (multipleMessage.Equals("1")),
+                            AwaitResponse = (multipleMessage.Equals("0"))
+                        }
+                        .Set("FileData", filePart)
+                        .Set("MultipleMessage", multipleMessage)
+                    );
+
+                    if (dataResponse != null) {
+                        response = dataResponse;
+                    }
+                }
+
+                return response;
+            }
+            else throw new ApiException(string.Format("Failed to upload file: {0}", response.DeviceResponseText));
         }
         #endregion
 

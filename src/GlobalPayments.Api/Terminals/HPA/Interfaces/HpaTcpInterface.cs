@@ -74,15 +74,12 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
         }
 
         public void Disconnect() {
-            if (_stream != null) {
-                _stream.Dispose();
-                _stream = null;
-            }
+            _stream?.Dispose();
+            _stream = null;
 
-            if (_client != null) {
-                _client.Dispose();
-                _client = null;
-            }
+            _client?.Dispose();
+            _client = null;
+
             message_queue = null;
         }
 
@@ -93,22 +90,28 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
             message_queue = new List<byte>();
             try {
                 byte[] buffer = message.GetSendBuffer();
-                OnMessageSent?.Invoke(message.ToString().Substring(2));
 
                 if (_stream != null) {
                     _stream.Write(buffer, 0, buffer.Length);
                     _stream.Flush();
 
-                    var task = BeginReceiveTask();
-                    if(!task.Wait(_settings.Timeout))
-                        throw new MessageException("Device did not respond within the timeout.");
+                    if (message.AwaitResponse) {
+                        var task = BeginReceiveTask();
+                        if (!task.Wait(_settings.Timeout)) {
+                            throw new MessageException("Device did not respond within the timeout.");
+                        }
 
-                    return message_queue.ToArray();
+                        return message_queue.ToArray();
+                    }
+                    else return null;
                 }
                 else throw new MessageException("Device not connected.");
             }
             finally {
-                Disconnect();
+                OnMessageSent?.Invoke(message.ToString().Substring(2));
+                if (message.KeepAlive) {
+                    Disconnect();
+                }
             }
         }
 

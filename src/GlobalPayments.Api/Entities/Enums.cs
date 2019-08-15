@@ -335,7 +335,27 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a Token Delete Transaction
         /// </summary>
-        TokenDelete = 1 << 26
+        TokenDelete = 1 << 26,
+
+        /// <summary>
+        /// Indicates a verify authentication 3DS2 call
+        /// </summary>
+        VerifyAuthentication = 1 << 27,
+
+        /// <summary>
+        /// Indicates an Initiate Authentication 3DS2 call
+        /// </summary>
+        InitiateAuthentication = 1 << 28,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        DataCollect = 1 << 29,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        PreAuthCompletion = 1 << 30
     }
 
     /// <summary>
@@ -991,10 +1011,93 @@ namespace GlobalPayments.Api.Entities {
         public const string PENDING_VOID = "PENDING SAF VOID SUMMARY";
         public const string DECLINED_VOID = "DECLINED SAF VOID SUMMARY";
     }
-    public enum ChallengeRequest {
+
+    public enum ChallengeRequestIndicator {
         NO_PREFERENCE,
         NO_CHALLENGE_REQUESTED,
         CHALLENGE_PREFERRED,
         CHALLENGE_MANDATED
+    }
+
+<<<<<<< HEAD
+    public enum SendFileType {
+        Banner,
+        Logo
+    }
+=======
+>>>>>>> 6f0e27b24d19af79ecea67b3d908328b65301ec2
+    public enum AuthenticationRequestType {
+        PAYMENT_TRANSACTION,
+        RECURRING_TRANSACTION,
+        INSTALLMENT_TRANSACTION,
+        ADD_CARD,
+        MAINTAIN_CARD,
+        CARDHOLDER_VERIFICATION
+    }
+
+    public enum AuthenticationSource {
+        BROWSER,
+        STORED_RECURRING,
+        MOBILE_SDK
+    }
+
+    public enum ChallengeWindowSize {
+        WINDOWED_250X400,
+        WINDOWED_390X400,
+        WINDOWED_500X600,
+        WINDOWED_600X400,
+        FULL_SCREEN
+    }
+
+    public enum ColorDepth {
+        ONE_BIT,
+        TWO_BITS,
+        FOUR_BITS,
+        EIGHT_BITS,
+        FIFTEEN_BITS,
+        SIXTEEN_BITS,
+        TWENTY_FOUR_BITS,
+        THIRTY_TWO_BITS,
+        FORTY_EIGHT_BITS
+    }
+
+    public enum Environment {
+        TEST,
+        PRODUCTION
+    }
+
+    public enum MessageCategory {
+        PAYMENT_AUTHENTICATION,
+        NON_PAYMENT_AUTHENTICATION
+    }
+
+    public static class MessageVersion {
+        public const string VERSION_210 = "2.1.0";
+    }
+
+    public enum MethodUrlCompletion {
+        YES,
+        NO,
+        UNAVAILABLE
+    }
+
+    public enum Secure3dVersion {
+        None,
+        One,
+        Two,
+        Any
+    }
+
+    public static class ServiceEndpoints {
+        public const string GLOBAL_ECOM_PRODUCTION = "https://api.realexpayments.com/epage-remote.cgi";
+        public const string GLOBAL_ECOM_TEST = "https://api.sandbox.realexpayments.com/epage-remote.cgi";
+        public const string PORTICO_PRODUCTION = "https://api2.heartlandportico.com";
+        public const string PORTICO_TEST = "https://cert.api2.heartlandportico.com";
+        public const string THREE_DS_AUTH_PRODUCTION = "https://authentications.realexpayments.com/3ds/";
+        public const string THREE_DS_AUTH_TEST = "https://authentications.sandbox.realexpayments.com/3ds/";
+        public const string PAYROLL_PRODUCTION = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI";
+        public const string PAYROLL_TEST = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI/Test/Test";
+        public const string TABLE_SERVICE_PRODUCTION = "https://www.freshtxt.com/api31/";
+        public const string TABLE_SERVICE_TEST = "https://www.freshtxt.com/api31/";
     }
 }

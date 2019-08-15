@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
+using GlobalPayments.Api.Terminals.HPA.Responses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Terminals.HPA {
@@ -11,7 +12,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.HPA_ISC250,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "10.12.220.39",
+                //IpAddress = "10.12.220.39",
+                IpAddress = "192.168.0.94",
                 Port = "12345",
                 Timeout = 20000,
                 RequestIdProvider = new RandomIdProvider()
@@ -53,9 +55,11 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void Reboot() {
-            _device.Reset();
+            var response = _device.Reboot();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -128,6 +132,18 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             var response = _device.SetStoreAndForwardMode(true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.DeviceResponseCode);
+        }
+
+        [TestMethod]
+        public void SendFile() {
+            try {
+                SipSendFileResponse response = (SipSendFileResponse)_device.SendFile(SendFileType.Logo, @"C:\temp\IDLELOGO.JPG");
+                Assert.IsNotNull(response);
+                Assert.AreEqual("00", response.DeviceResponseCode);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message);
+            }
         }
     }
 }

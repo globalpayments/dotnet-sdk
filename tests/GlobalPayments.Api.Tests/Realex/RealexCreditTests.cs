@@ -174,10 +174,8 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod, Ignore]
-        public void TestAuthMobileGooglePay()
-        {
-            var token = new CreditCardData
-            {
+        public void AuthMobileGooglePay() {
+            var token = new CreditCardData {
                 Token = "{\"version\":\"EC_v1\",\"data\":\"dvMNzlcy6WNB\",\"header\":{\"ephemeralPublicKey\":\"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWdNhNAHy9kO2Kol33kIh7k6wh6E\",\"transactionId\":\"fd88874954acdb299c285f95a3202ad1f330d3fd4ebc22a864398684198644c3\",\"publicKeyHash\":\"h7WnNVz2gmpTSkHqETOWsskFPLSj31e3sPTS2cBxgrk\"}}",
                 MobileType = MobilePaymentMethodType.GOOGLEPAY
             };
@@ -188,6 +186,80 @@ namespace GlobalPayments.Api.Tests {
 
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void StoredCredential_Sale() {
+            StoredCredential storedCredential = new StoredCredential {
+                Type = StoredCredentialType.OneOff,
+                Initiator = StoredCredentialInitiator.CardHolder,
+                Sequence = StoredCredentialSequence.First
+            };
+
+            Transaction response = card.Charge(15m)
+                    .WithCurrency("USD")
+                    .WithAllowDuplicates(true)
+                    .WithStoredCredential(storedCredential)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.IsNotNull(response.SchemeId);
+        }
+
+        [TestMethod]
+        public void StoredCredential_OTB() {
+            StoredCredential storedCredential = new StoredCredential {
+                Type = StoredCredentialType.OneOff,
+                Initiator = StoredCredentialInitiator.CardHolder,
+                Sequence = StoredCredentialSequence.First
+            };
+
+            Transaction response = card.Verify()
+                    .WithAllowDuplicates(true)
+                    .WithStoredCredential(storedCredential)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.IsNotNull(response.SchemeId);
+        }
+
+        [TestMethod]
+        public void StoredCredential_ReceiptIn() {
+            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("03e28f0e-492e-80bd-20ec318e9334", "3c4af936-483e-a393-f558bec2fb2a");
+
+            StoredCredential storedCredential = new StoredCredential {
+                Type = StoredCredentialType.Recurring,
+                Initiator = StoredCredentialInitiator.Merchant,
+                Sequence = StoredCredentialSequence.Subsequent
+            };
+
+            Transaction response = storedCard.Authorize(15.15m)
+                    .WithCurrency("USD")
+                    .WithAllowDuplicates(true)
+                    .WithStoredCredential(storedCredential)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.IsNotNull(response.SchemeId);
+        }
+
+        [TestMethod]
+        public void StoredCredential_ReceiptIn_OTB() {
+            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("03e28f0e-492e-80bd-20ec318e9334", "3c4af936-483e-a393-f558bec2fb2a");
+
+            StoredCredential storedCredential = new StoredCredential {
+                Type = StoredCredentialType.Recurring,
+                Initiator = StoredCredentialInitiator.Merchant,
+                Sequence = StoredCredentialSequence.Subsequent
+            };
+
+            Transaction response = storedCard.Verify()
+                            .WithAllowDuplicates(true)
+                            .WithStoredCredential(storedCredential)
+                            .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.IsNotNull(response.SchemeId);
         }
     }
 }
