@@ -1019,13 +1019,33 @@ namespace GlobalPayments.Api.Entities {
         CHALLENGE_MANDATED
     }
 
-<<<<<<< HEAD
+    internal static class EODCommandType {
+        public const string END_OF_DAY = "EOD";
+        public const string REVERSAL = "Reversal";
+        public const string EMV_OFFLINE_DECLINE = "EMVOfflineDecline";
+        public const string TRANSACTION_CERTIFICATE = "TransactionCertificate";
+        public const string ATTACHMENT = "Attachment";
+        public const string SENDSAF = "SendSAF";
+        public const string BATCH_CLOSE = "BatchClose";
+        public const string HEARTBEAT = "Heartbeat";
+        public const string EMV_PARAMETER_DOWNLOAD = "EMVPDL";
+        public const string EMV_CRYPTOGRAM_TYPE = "EMVTC";
+        public const string GET_BATCH_REPORT = "GetBatchReport";
+    }
+
+    internal static class CardSummaryType {
+        public const string VISA = "VISA CARD SUMMARY";
+        public const string MC = "MASTERCARD CARD SUMMARY";
+        public const string AMEX = "AMERICAN EXPRESS CARD SUMMARY";
+        public const string DISCOVER = "DISCOVER CARD SUMMARY";
+        public const string PAYPAL = "PAYPAL CARD SUMMARY";
+    }
+
     public enum SendFileType {
         Banner,
         Logo
     }
-=======
->>>>>>> 6f0e27b24d19af79ecea67b3d908328b65301ec2
+
     public enum AuthenticationRequestType {
         PAYMENT_TRANSACTION,
         RECURRING_TRANSACTION,

@@ -122,11 +122,7 @@ namespace GlobalPayments.Api.Gateways {
                 order.Set("preorder_indicator", builder.PreOrderIndicator?.ToString());
                 order.Set("reorder_indicator", builder.ReorderIndicator?.ToString());
                 order.Set("transaction_type", builder.OrderTransactionType?.ToString());
-<<<<<<< HEAD
                 order.Set("preorder_availability_date", builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"));
-=======
-                order.Set("preorder_availability_date", builder.PreOrderAvailabilityDate?.ToString("yyyyMMdd"));
->>>>>>> 6f0e27b24d19af79ecea67b3d908328b65301ec2
 
                 // shipping address
                 Address shippingAddress = builder.ShippingAddress;

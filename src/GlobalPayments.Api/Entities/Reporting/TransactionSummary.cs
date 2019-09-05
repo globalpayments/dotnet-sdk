@@ -103,6 +103,7 @@ namespace GlobalPayments.Api.Entities {
 
         public bool FullyCaptured { get; set; }
 
+        public decimal? CashBackAmount { get; set; }
         public decimal? GratuityAmount { get; set; }
 
         public bool HasEcomPaymentData { get; set; }

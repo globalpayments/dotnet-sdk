@@ -121,6 +121,10 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public IDeviceResponse SendFile(SendFileType fileType, string filePath) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+
+        public IEODResponse EndOfDay() {
+            throw new UnsupportedTransactionException("PAX does not support the EOD option");
+        }
         #endregion
 
         #region Reporting Messages

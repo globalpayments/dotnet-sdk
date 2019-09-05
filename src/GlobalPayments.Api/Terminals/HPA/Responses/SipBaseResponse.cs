@@ -4,23 +4,30 @@ using System.Collections.Generic;
 using System.Linq;
 using GlobalPayments.Api.Terminals.Abstractions;
 using System;
+using System.Text;
 
 namespace GlobalPayments.Api.Terminals.HPA.Responses {
     public class SipBaseResponse : DeviceResponse {
-        private string _response;
+        protected string response;
+        protected string currentMessage;
 
         public string EcrId { get; set; }
+        public string RequestId { get; set; }
+        public string ResponseId { get; set; }
         public string SipId { get; set; }
 
         public SipBaseResponse(byte[] buffer, params string[] messageIds) {
-            _response = string.Empty;
+            StringBuilder sb = new StringBuilder();
+            response = string.Empty;
             foreach (byte b in buffer)
-                _response += (char)b;
+                response += (char)b;
 
-            var messages = _response.Split('\r');
+            var messages = response.Split('\r');
             foreach (var message in messages) {
                 if (string.IsNullOrEmpty(message)) 
                     continue;
+
+                currentMessage = message;
 
                 var root = ElementTree.Parse(message).Get("SIP");
                 Command = root.GetValue<string>("Response");
@@ -31,11 +38,13 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                 Version = root.GetValue<string>("Version");
                 EcrId = root.GetValue<string>("ECRId");
                 SipId = root.GetValue<string>("SIPId");
+                RequestId = root.GetValue<string>("RequestId");
+                ResponseId = root.GetValue<string>("ResponseId");
                 Status = root.GetValue<string>("MultipleMessage");
                 DeviceResponseCode = NormalizeResponse(root.GetValue<string>("Result"));
                 DeviceResponseText = root.GetValue<string>("ResultText");
 
-                if (DeviceResponseCode.Equals("00", StringComparison.OrdinalIgnoreCase)) {
+                if ((DeviceResponseCode.Equals("00", StringComparison.OrdinalIgnoreCase)) || (DeviceResponseCode.Equals("2501", StringComparison.OrdinalIgnoreCase))){
                     MapResponse(root);
                 }
             }
@@ -53,7 +62,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
         }
 
         public override string ToString() {
-            return _response;
+            return response;
         }
     }
 

@@ -139,6 +139,24 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void Credit_SupplimentaryData() {
+            var response = card.Authorize(10m)
+                .WithCurrency("GBP")
+                .WithSupplementaryData("leg", "value1", "value2", "value3")
+                .WithSupplementaryData("leg", "value1", "value2", "value3")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+
+            var captureResponse = response.Capture(10m)
+                .WithSupplementaryData("leg", "value1", "value2", "value3")
+                .WithSupplementaryData("leg", "value1", "value2", "value3")
+                .Execute();
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("00", captureResponse.ResponseCode, captureResponse.ResponseMessage);
+        }
+
+        [TestMethod]
         public void CreditFraudResponse() {
             var billingAddress = new Address();
             billingAddress.StreetAddress1 = "Flat 123";

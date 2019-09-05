@@ -183,7 +183,7 @@ namespace GlobalPayments.Api.Gateways {
 
                     foreach (string[] data in dataSets) {
                         Element item = et.SubElement(supplementaryData, "item").Set("type", key);
-                        for (int i = 1; i < data.Length; i++) {
+                        for (int i = 1; i <= data.Length; i++) {
                             et.SubElement(item, "field" + i.ToString().PadLeft(2, '0'), data[i - 1]);
                         }
                     }
@@ -417,7 +417,7 @@ namespace GlobalPayments.Api.Gateways {
 
                     foreach (string[] data in dataSets) {
                         Element item = et.SubElement(supplementaryData, "item").Set("type", key);
-                        for (int i = 1; i < data.Length; i++) {
+                        for (int i = 1; i <= data.Length; i++) {
                             et.SubElement(item, "field" + i.ToString().PadLeft(2, '0'), data[i - 1]);
                         }
                     }
@@ -545,7 +545,8 @@ namespace GlobalPayments.Api.Gateways {
                     OrderId = root.GetValue<string>("orderid"),
                     PaymentMethodType = PaymentMethodType.Credit,
                     TransactionId = root.GetValue<string>("pasref"),
-                    AlternativePaymentType = root.GetValue<string>("paymentmethod")
+                    AlternativePaymentType = root.GetValue<string>("paymentmethod"),
+                    BatchNumber = root.GetValue<string>("batchid")
                 }
             };
             

@@ -24,6 +24,7 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse LineItem(string leftText, string rightText = null, string runningLeftText = null, string runningRightText = null);
         IDeviceResponse SetStoreAndForwardMode(bool enabled);
         IDeviceResponse SendFile(SendFileType fileType, string filePath);
+        IEODResponse EndOfDay();
         #endregion
 
         #region reporting

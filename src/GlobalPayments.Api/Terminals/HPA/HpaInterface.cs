@@ -40,7 +40,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         public IInitializeResponse Initialize() {
-            return _controller.SendAdminMessage<SipInitializeResponse>(new HpaAdminBuilder(HPA_MSG_ID.GET_INFO_REPORT));
+            return _controller.SendAdminMessage<InitializeResponse>(new HpaAdminBuilder(HPA_MSG_ID.GET_INFO_REPORT));
         }
 
         public IDeviceResponse OpenLane() {
@@ -48,7 +48,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         public ISignatureResponse PromptForSignature(string transactionId = null) {
-            return _controller.SendAdminMessage<SipSignatureResponse>(new HpaAdminBuilder(HPA_MSG_ID.SIGNATURE_FORM).Set("FormText", "PLEASE SIGN YOUR NAME"));
+            return _controller.SendAdminMessage<SignatureResponse>(new HpaAdminBuilder(HPA_MSG_ID.SIGNATURE_FORM).Set("FormText", "PLEASE SIGN YOUR NAME"));
         }
 
         public IDeviceResponse Reboot() {
@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         public ISAFResponse SendStoreAndForward() {
-            return _controller.SendAdminMessage<SipSAFResponse>(new HpaAdminBuilder(HPA_MSG_ID.SENDSAF));
+            return _controller.SendAdminMessage<SAFResponse>(new HpaAdminBuilder(HPA_MSG_ID.SENDSAF));
         }
         
         public IDeviceResponse LineItem(string leftText, string rightText, string runningLeftText, string runningRightText) {
@@ -87,6 +87,21 @@ namespace GlobalPayments.Api.Terminals.HPA {
 
         public IDeviceResponse SetStoreAndForwardMode(bool enabled) {
             return _controller.SendAdminMessage<SipBaseResponse>(new HpaAdminBuilder(HPA_MSG_ID.SETPARAMETERREPORT).Set("FieldCount", "1").Set("Key", "STORMD").Set("Value", enabled ? "1" : "0"));
+        }
+
+        public IEODResponse EndOfDay() {
+            return _controller.SendAdminMessage<EODResponse>(new HpaAdminBuilder(
+                HPA_MSG_ID.ENDOFDAY, 
+                HPA_MSG_ID.REVERSAL, 
+                HPA_MSG_ID.EMVOFFLINEDECLINE, 
+                HPA_MSG_ID.EMVCRYPTOGRAMTYPE, 
+                HPA_MSG_ID.ATTACHMENT, 
+                HPA_MSG_ID.SENDSAF, 
+                HPA_MSG_ID.GET_BATCH_REPORT, 
+                HPA_MSG_ID.HEARTBEAT, 
+                HPA_MSG_ID.BATCH_CLOSE, 
+                HPA_MSG_ID.EMV_PARAMETER_DOWNLOAD, 
+                HPA_MSG_ID.TRANSACTIONCERTIFICATE));
         }
 
         public IDeviceResponse SendFile(SendFileType imageType, string filePath) {
@@ -137,7 +152,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
 
         #region Batching
         public IBatchCloseResponse BatchClose() {
-            return _controller.SendAdminMessage<SipBatchResponse>(new HpaAdminBuilder(HPA_MSG_ID.BATCH_CLOSE, HPA_MSG_ID.GET_BATCH_REPORT));
+            return _controller.SendAdminMessage<BatchResponse>(new HpaAdminBuilder(HPA_MSG_ID.BATCH_CLOSE, HPA_MSG_ID.GET_BATCH_REPORT));
         }
         #endregion
 
