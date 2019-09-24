@@ -12,8 +12,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.HPA_ISC250,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                //IpAddress = "10.12.220.39",
-                IpAddress = "192.168.0.94",
+                IpAddress = "10.12.220.39",
+                //IpAddress = "192.168.0.94",
                 Port = "12345",
                 Timeout = 20000,
                 RequestIdProvider = new RandomIdProvider()

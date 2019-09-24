@@ -355,7 +355,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// 
         /// </summary>
-        PreAuthCompletion = 1 << 30
+        PreAuthCompletion = 1 << 30,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        DccRateLookup = 1 << 31
     }
 
     /// <summary>

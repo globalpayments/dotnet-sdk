@@ -9,14 +9,18 @@ namespace GlobalPayments.Api.Tests {
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
+            var config = new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
                 RebatePassword = "rebate",
                 RefundPassword = "refund",
                 ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi"
-            });
+            };
+            ServicesContainer.ConfigureService(config);
+
+            config.AccountId = "apidcc";
+            ServicesContainer.ConfigureService(config, "dcc");
 
             card = new CreditCardData {
                 Number = "4111111111111111",
@@ -278,6 +282,113 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
             Assert.IsNotNull(response.SchemeId);
+        }
+
+        [TestMethod]
+        public void FraudManagement_Decisionmanager() {
+            Address billingAddress = new Address {
+                StreetAddress1 = "Flat 123",
+                StreetAddress2 = "House 456",
+                StreetAddress3 = "Cul-De-Sac",
+                City = "Halifax",
+                Province = "West Yorkshire",
+                State = "Yorkshire and the Humber",
+                Country = "GB",
+                PostalCode = "E77 4QJ"
+            };
+
+            Address shippingAddress = new Address {
+                StreetAddress1 = "House 456",
+
+                StreetAddress2 = "987 The Street",
+                StreetAddress3 = "Basement Flat",
+                City = "Chicago",
+                State = "Illinois",
+                Province = "Mid West",
+                Country = "US",
+                PostalCode = "50001",
+            };
+
+            Customer customer = new Customer {
+                Id = "e193c21a-ce64-4820-b5b6-8f46715de931",
+                FirstName = "James",
+                LastName = "Mason",
+                DateOfBirth = "01011980",
+                CustomerPassword = "VerySecurePassword",
+                Email = "text@example.com",
+                DomainName = "example.com",
+                HomePhone = "+35312345678",
+                DeviceFingerPrint = "devicefingerprint",
+            };
+
+            DecisionManager decisionManager = new DecisionManager {
+                BillToHostName = "example.com",
+                BillToHttpBrowserCookiesAccepted = true,
+                BillToHttpBrowserEmail = "jamesmason@example.com",
+                BillToHttpBrowserType = "Mozilla",
+                BillToIpNetworkAddress = "123.123.123.123",
+                BusinessRulesCoreThreshold = "40",
+                BillToPersonalId = "741258963",
+                InvoiceHeaderTenderType = "consumer",
+                InvoiceHeaderIsGift = true,
+                DecisionManagerProfile = "DemoProfile",
+                InvoiceHeaderReturnsAccepted = true,
+                ItemHostHedge = Risk.High,
+                ItemNonsensicalHedge = Risk.High,
+                ItemObscenitiesHedge = Risk.High,
+                ItemPhoneHedge = Risk.High,
+                ItemTimeHedge = Risk.High,
+                ItemVelocityHedge = Risk.High,
+            };
+
+            Transaction response = card.Charge(199.99m)
+                    .WithCurrency("EUR")
+                    .WithAddress(billingAddress, AddressType.Billing)
+                    .WithAddress(shippingAddress, AddressType.Shipping)
+                    .WithDecisionManager(decisionManager)
+                    .WithCustomerData(customer)
+                    .WithMiscProductData("SKU251584", "Magazine Subscription", "12", "1200", "true", "subscription", "Low")
+                    .WithMiscProductData("SKU8884784", "Charger", "10", "1200", "false", "electronic_good", "High")
+                    .WithCustomData("fieldValue01", "fieldValue02", "fieldValue03", "fieldValue04")
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DccRateLookup_Charge() {
+            Transaction dccResponse = card.GetDccRate(DccRateType.Sale, DccProcessor.Fexco)
+                .WithAmount(10.01m)
+                .WithCurrency("EUR")
+                .Execute("dcc");
+            Assert.IsNotNull(dccResponse);
+            Assert.AreEqual("00", dccResponse.ResponseCode);
+
+            Transaction saleResponse = card.Charge(10.01m)
+                    .WithCurrency("EUR")
+                    .WithDccRateData(dccResponse.DccRateData)
+                    .WithOrderId(dccResponse.OrderId)
+                    .Execute("dcc");
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DccRateLookup_Auth() {
+            Transaction dccResponse = card.GetDccRate(DccRateType.Sale, DccProcessor.Fexco)
+                    .WithAmount(10.01m)
+                    .WithCurrency("EUR")
+                    .Execute("dcc");
+            Assert.IsNotNull(dccResponse);
+            Assert.AreEqual("00", dccResponse.ResponseCode);
+
+            Transaction authResponse = card.Authorize(10.01m)
+                    .WithCurrency("EUR")
+                    .WithOrderId(dccResponse.OrderId)
+                    .WithDccRateData(dccResponse.DccRateData)
+                    .Execute("dcc");
+            Assert.IsNotNull(authResponse);
+            Assert.AreEqual("00", authResponse.ResponseCode);
         }
     }
 }

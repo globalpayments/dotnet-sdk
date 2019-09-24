@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
@@ -64,7 +63,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                         if (category.Equals("DISCOVERY CARD SUMMARY")) { DiscoverSummary = brandSummary; }
                         if (category.Equals("PAYPAL CARD SUMMARY")) { PaypalSummary = brandSummary; }
                     }
-                    catch (ApiException exc) {}
+                    catch (ApiException) { /* NOM NOM */ }
                 }
                 
                 if (category.StartsWith("TRANSACTION", StringComparison.OrdinalIgnoreCase)) {

@@ -79,13 +79,23 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return new PaxTerminalResponse(response, PAX_MSG_ID.A27_RSP_REBOOT);
         }
 
+        // A04 - SET VARIABLE
         public IDeviceResponse DisableHostResponseBeep() {
             var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A04_SET_VARIABLE,
-                "00",
+                "01",
                 ControlCodes.FS,
                 "hostRspBeep",
                 ControlCodes.FS,
-                "N"
+                "N",
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS
             ));
             return new PaxTerminalResponse(response, PAX_MSG_ID.A05_RSP_SET_VARIABLE);
         }
@@ -98,10 +108,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
-        public string SendCustomMessage(DeviceMessage message) {
-            var response = controller.Send(message);
-            return Encoding.UTF8.GetString(response);
-        }
         public IDeviceResponse StartCard(PaymentMethodType paymentMethodType) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
@@ -124,6 +130,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         public IEODResponse EndOfDay() {
             throw new UnsupportedTransactionException("PAX does not support the EOD option");
+        }
+
+        public string SendCustomMessage(DeviceMessage message) {
+            var response = controller.Send(message);
+            return Encoding.UTF8.GetString(response);
         }
         #endregion
 

@@ -103,6 +103,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string CvnResponseMessage { get; set; }
 
+        public DccRateData DccRateData { get; set; }
+
         public DebitMac DebitMac { get; set; }
 
         /// <summary>

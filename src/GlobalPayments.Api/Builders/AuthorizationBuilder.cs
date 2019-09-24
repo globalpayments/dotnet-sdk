@@ -24,11 +24,16 @@ namespace GlobalPayments.Api.Builders {
         internal string ClientTransactionId { get; set; }
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
+        internal Customer CustomerData { get; set; }
+        internal List<string[]> CustomData { get; set; }
         internal string CustomerIpAddress { get; set; }
         internal string Cvn { get; set; }
         internal string Description { get; set; }
+        internal DecisionManager DecisionManager { get; set; }
         internal string DynamicDescriptor { get; set; }
         internal EcommerceInfo EcommerceInfo { get; set; }
+        internal EmvChipCondition EmvChipCondition { get; set; }
+        internal FraudFilterMode FraudFilterMode { get; set; }
         internal decimal? Gratuity { get; set; }
         internal decimal? ConvenienceAmt { get; set; }
         internal decimal? ShippingAmt { get; set; }
@@ -36,6 +41,7 @@ namespace GlobalPayments.Api.Builders {
         internal string InvoiceNumber { get; set; }
         internal bool Level2Request { get; set; }
         internal string MessageAuthenticationCode { get; set; }
+        internal List<string[]> MiscProductData { get; set; }
         internal string OfflineAuthCode { get; set; }
         internal bool OneTimePayment { get; set; }
         internal string OrderId { get; set; }
@@ -213,6 +219,20 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public AuthorizationBuilder WithCustomData(params string[] values) {
+            if (CustomData == null) {
+                CustomData = new List<string[]>();
+            }
+            CustomData.Add(values);
+
+            return this;
+        }
+
+        public AuthorizationBuilder WithCustomerData(Customer value) {
+            CustomerData = value;
+            return this;
+        }
+
         /// <summary>
         /// Sets the customer ID; where applicable.
         /// </summary>
@@ -246,6 +266,16 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithCvn(string value) {
             Cvn = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithDccRateData(DccRateData value) {
+            DccRateData = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithDecisionManager(DecisionManager value) {
+            DecisionManager = value;
             return this;
         }
 
@@ -387,6 +417,15 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithMessageAuthenticationCode(string value) {
             MessageAuthenticationCode = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithMiscProductData(params string[] values) {
+            if (MiscProductData == null) {
+                MiscProductData = new List<string[]>();
+            }
+            MiscProductData.Add(values);
+
             return this;
         }
 

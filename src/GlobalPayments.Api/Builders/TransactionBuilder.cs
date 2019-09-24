@@ -8,6 +8,7 @@ namespace GlobalPayments.Api.Builders
         internal TransactionModifier TransactionModifier { get; set; }
         internal IPaymentMethod PaymentMethod { get; set; }
         internal bool MultiCapture { get; set; }
+        internal DccRateData DccRateData { get; set; }
 
         public TransactionBuilder(TransactionType type) : base() {
             TransactionType = type;

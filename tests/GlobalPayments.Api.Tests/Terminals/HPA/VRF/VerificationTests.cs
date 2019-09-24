@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.HPA_ISC250,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "10.12.220.39",
+                IpAddress = "10.138.141.38",
                 Port = "12345",
                 RequestIdProvider = new RandomIdProvider()
             });
@@ -127,7 +127,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("Y", response.AvsResponseCode);
-            //Assert.AreEqual("M", response.CvvResponseCode);
+            Assert.AreEqual("M", response.CvvResponseCode);
 
             Debug.WriteLine("Response: " + response.ToString());
             Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
@@ -286,8 +286,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
         [TestMethod]
         public void TestCase10b() {
             var response = _device.GiftAddValue()
-               .WithAmount(8m)
-               .Execute();
+                .WithAmount(8m)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
@@ -307,15 +307,100 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
             Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
         }
 
-        //[TestMethod]
-        //public void TestCase10d() {
-        //    var response = _device.GiftReplace(1).Execute();
-        //    Assert.IsNotNull(response);
-        //    Assert.AreEqual("00", response.ResponseCode);
+        /*
+         [TestMethod]
+         public void TestCase10d() {
+            var response = _device.GiftReplace(1).Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
 
-        //    Debug.WriteLine("Response: " + response.ToString());
-        //    Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
-        //}
+            Debug.WriteLine("Response: " + response.ToString());
+            Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
+         }
+        */
+
+         /*
+             TEST CASE #11 – EBT Food Stamp
+             Objective Transactions: Food Stamp Purchase, Food Stamp Return and Food Stamp Balance Inquiry
+             Test Card   Card #4 – MSD only Visa
+             1.Food Stamp Purchase(EBTFSPurchase) :
+             a.Initiate an EBT sale transaction and swipe Test Card #4
+             b.Select EBT Food Stamp if prompted.
+             c.Enter $101.01 as the amount
+             2.Food Stamp Return (EBTFSReturn):
+             a.Intitiate an EBT return and manually enter Test Card #4
+             b.Select EBT Food Stamp if prompted
+             c.Enter $104.01 as the amount
+             3.Food Stamp Balance Inquiry (EBTBalanceInquiry):
+             a.Initiate an EBT blance inquiry transaction and swipe Test Card #4 Settle all transactions.
+         */
+
+        [TestMethod]
+        public void TestCase11a() {
+            var response = _device.EbtPurchase(101.01m)
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            Debug.WriteLine("Response: " + response.ToString());
+            Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
+        }
+
+        [TestMethod]
+        public void TestCase11b() {
+            var response = _device.EbtRefund(104.01m).Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.DeviceResponseText);
+
+            Debug.WriteLine("Response: " + response.ToString());
+            Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
+        }
+
+        [TestMethod]
+        public void TestCase11c() {
+            var response = _device.EbtBalance().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            Debug.WriteLine("Response: " + response.ToString());
+            Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
+        }
+
+        /* 
+            TEST CASE #12 – EBT Cash Benefits 
+            Objective	Transactions: EBT Cash Benefits with Cash Back, EBT Cash Benefits Balance Inquiry and EBT Cash Benefits Withdraw
+            Test Card	Card #4 – MSD only Visa
+            EBT Cash Benefits w Cash Back (EBTCashBackPurchase):
+            a.Initiate an EBT sale transaction and swipe Test Card #4
+            b.Select EBT Cash Benefits if prompted
+            c.Enter $101.01 as the amount
+            d.Enter $5.00 as the cash back amount
+            e.The settlement amount is $106.01
+            2.EBT Cash Benefits Balance Inquiry (EBTBalanceInquiry):
+            a.Initiate an EBT cash benefit balance inquiry transaction and swipe Test Card #4
+        */
+        [TestMethod]
+        public void TestCase12a() {
+            var response = _device.EbtPurchase(101.01m)
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            Debug.WriteLine("Response: " + response.ToString());
+            Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
+        }
+
+        [TestMethod]
+        public void TestCase12b() { 
+            var response = _device.EbtBalance().Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            Debug.WriteLine("Response: " + response.ToString());
+            Debug.WriteLine("Gateway Txn ID: " + response.TransactionId);
+        }
 
         /*
             TEST CASE #13 – Batch Close 
@@ -327,7 +412,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
             Pass Criteria	Batch submission must be successful.
             Batch Sequence #:
             References		HPA Specifications.
-        */
+       
         [TestMethod]
         public void TestCase13() {
             _device.CloseLane();
@@ -339,6 +424,34 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
 
             Debug.WriteLine("Response: " + response.ToString());
             Debug.WriteLine("Sequence #: " + response.SequenceNumber);
+        }
+        */
+
+        /*
+            TEST CASE #13 – End of Day 
+            Objective End of Day, ensuring all approved transactions (offline or online) are settled. 
+            Supported transactions: Reversal, Offline Decline, Transaction Certificate, Add Attachment, SendSAF, Batch Close, EMV PDL and Heartbeat
+            Procedure	Initiate a End of Day command
+            Pass Criteria	EOD submission must be successful.
+            References		HPA Specifications.
+        */
+        [TestMethod]
+        public void TestCase13() {
+            _device.CloseLane();
+            _device.Reset();
+
+            var response = _device.EndOfDay();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+
+            Debug.WriteLine("Reversal Response: " + response.ReversalResponse.ToString());
+            Debug.WriteLine("Offline Decline Response: " + response.EmvOfflineDeclineResponse.ToString());
+            Debug.WriteLine("TransactionCertificate Response: " + response.EmvTransactionCertificationResponse.ToString());
+            Debug.WriteLine("Add Attachment Response: " + response.AttachmentResponse.ToString());
+            Debug.WriteLine("SendSAF Response: " + response.SAFResponse.ToString());
+            Debug.WriteLine("Batch Close Response: " + response.BatchCloseResponse.ToString());
+            Debug.WriteLine("EmvPDL Response: " + response.EmvPDLResponse.ToString());
+            Debug.WriteLine("Heartbeat Response: " + response.HeartBeatResponse.ToString());
         }
     }
 }

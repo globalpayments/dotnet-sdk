@@ -107,7 +107,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     var card = builder.PaymentMethod as CreditCardData;
                     if (string.IsNullOrEmpty(card.Token)) {
                         account.AccountNumber = card.Number;
-                        account.EXPD = "{0}{1}".FormatWith(card.ExpMonth, card.ExpYear);
+                        account.EXPD = card.ShortExpiry;
                         if (builder.TransactionType != TransactionType.Verify && builder.TransactionType != TransactionType.Refund)
                             account.CvvCode = card.Cvn;
                     }
@@ -152,6 +152,10 @@ namespace GlobalPayments.Api.Terminals.PAX {
             if (builder.SignatureCapture)
                 extData[EXT_DATA.SIGNATURE_CAPTURE] = "1";
 
+            if (builder.AutoSubstantiation != null) {
+                extData[EXT_DATA.PASS_THROUGH_DATA] = BuildAutoSubPassThruData(builder.AutoSubstantiation);
+            }
+
             string transType = MapTransactionType(builder.TransactionType, builder.RequestMultiUseToken);
             switch (builder.PaymentMethodType) {
                 case PaymentMethodType.Credit:
@@ -169,7 +173,34 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     throw new UnsupportedTransactionException();
             }
         }
-        internal IDeviceMessage BuildManageTransaction(TerminalManageBuilder builder) {
+
+    private string BuildAutoSubPassThruData(AutoSubstantiation autoSubstantiation) {
+        var autoSub = new List<string>();
+
+        if (autoSubstantiation.TotalHealthcareAmount != default(decimal)) {
+            autoSub.Add("HealthCare,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.TotalHealthcareAmount).ToNumeric()));
+        }
+        if (autoSubstantiation.PrescriptionSubTotal != default(decimal)) {
+            autoSub.Add("Rx,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.PrescriptionSubTotal).ToNumeric()));
+        }
+        if (autoSubstantiation.VisionSubTotal != default(decimal)) {
+            autoSub.Add("Vision,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.VisionSubTotal).ToNumeric()));
+        }
+        if (autoSubstantiation.DentalSubTotal != default(decimal)) {
+            autoSub.Add("Dental,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.DentalSubTotal).ToNumeric()));
+        }
+        if (autoSubstantiation.ClinicSubTotal != default(decimal)) {
+            autoSub.Add("Clinical,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.ClinicSubTotal).ToNumeric()));
+        }
+
+        if (autoSub.Count == 0) {
+            return string.Empty;
+        }
+        
+        return "FSA:{0}".FormatWith(string.Join("|", autoSub));
+    }
+
+    internal IDeviceMessage BuildManageTransaction(TerminalManageBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();

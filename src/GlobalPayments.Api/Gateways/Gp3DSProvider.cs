@@ -56,7 +56,7 @@ namespace GlobalPayments.Api.Gateways {
                 queryValues.Add("merchant_id", MerchantId);
                 queryValues.Add("request_timestamp", timestamp);
 
-                string rawResponse = DoTransaction(HttpMethod.Get, string.Format("authentications/{0}", builder.ServerTransactionId), request.ToString(), queryValues);
+                string rawResponse = DoTransaction(HttpMethod.Get, string.Format("authentications/{0}", builder.ServerTransactionId), null, queryValues);
                 return MapResponse(rawResponse);
             }
             else if (transType.Equals(TransactionType.InitiateAuthentication)) {

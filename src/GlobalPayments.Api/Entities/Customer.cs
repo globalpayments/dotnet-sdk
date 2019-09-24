@@ -29,6 +29,14 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string Company { get; set; }
 
+        public string CustomerPassword { get; set; }
+
+        public string DateOfBirth { get; set; }
+
+        public string DomainName { get; set; }
+
+        public string DeviceFingerPrint { get; set; }
+
         /// <summary>
         /// Customer's address
         /// </summary>

@@ -15,6 +15,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
+        internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal decimal? CashBackAmount { get; set; }
         internal string ClientTransactionId { get; set; }
         internal CurrencyType? Currency { get; set; }
@@ -51,6 +52,16 @@ namespace GlobalPayments.Api.Terminals.Builders {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
             (PaymentMethod as TransactionReference).AuthCode = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the auto subtantiation values for the transaction.
+        /// </summary>
+        /// <param name="value">The auto substantiation object</param>
+        /// <returns>TerminalAuthBuilder</returns>
+        public TerminalAuthBuilder WithAutoSubstantiation(AutoSubstantiation value) {
+            AutoSubstantiation = value;
             return this;
         }
         public TerminalAuthBuilder WithCashBack(decimal? amount) {

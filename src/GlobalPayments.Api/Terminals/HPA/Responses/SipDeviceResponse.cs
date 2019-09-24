@@ -13,7 +13,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             AmountDue = response.GetValue<string>("BalanceDueAmount").ToAmount();
             AvsResponseCode = response.GetValue<string>("AVS");
             AvsResponseText = response.GetValue<string>("AVSRsltText", "AVSResultText");
-            TransactionType = response.GetValue<string>("CardGroup");
+            TransactionType = response.GetValue<string>("Response");
             BalanceAmount = response.GetValue<string>("AvailableBalance", "BalanceReturned").ToAmount();
             CardHolderName = response.GetValue<string>("CardHolderName");
             CvvResponseCode = response.GetValue<string>("CVV");

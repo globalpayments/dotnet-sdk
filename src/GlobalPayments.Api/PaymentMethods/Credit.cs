@@ -293,6 +293,15 @@ namespace GlobalPayments.Api.PaymentMethods {
             CvnPresenceIndicator = CvnPresenceIndicator.NotRequested;
         }
 
+        public AuthorizationBuilder GetDccRate(DccRateType dccRateType, DccProcessor dccProcessor) {
+            DccRateData dccRateData = new DccRateData {
+                DccRateType = dccRateType,
+                DccProcessor = dccProcessor
+            };            
+
+            return new AuthorizationBuilder(TransactionType.DccRateLookup, this).WithDccRateData(dccRateData);
+        }
+
         public bool VerifyEnrolled(decimal amount, string currency, string orderId = null, string configName = "default") {
             Transaction response = new AuthorizationBuilder(TransactionType.VerifyEnrolled, this)
                 .WithAmount(amount)

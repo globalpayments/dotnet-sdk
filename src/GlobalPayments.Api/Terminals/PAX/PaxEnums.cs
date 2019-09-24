@@ -206,8 +206,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public static string TOKEN = "TOKEN";
         public static string CARD_TYPE = "CARDTYPE";
         public static string CARD_TYPE_BITMAP = "CARDTYPEBITMAP";
-        // TODO: This will probably come in a later release
-        //public static string PASS_THROUGH_DATA = "PASSTHRUDATA";
+        public static string PASS_THROUGH_DATA = "PASSTHRUDATA";
         public static string RETURN_REASON = "RETURNREASON";
         public static string ORIGINAL_TRANSACTION_DATE = "ORIGTRANSDATE";
         public static string ORIGINAL_PAN = "ORIGPAN";
