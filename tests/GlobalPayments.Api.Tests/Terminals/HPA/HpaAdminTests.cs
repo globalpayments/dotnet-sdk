@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 //IpAddress = "192.168.0.94",
                 Port = "12345",
                 Timeout = 20000,
-                RequestIdProvider = new RandomIdProvider()
+                RequestIdProvider = (IRequestIdProvider)new RandomIdProvider()
             });
             Assert.IsNotNull(_device);
         }

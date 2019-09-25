@@ -18,7 +18,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA.VRF {
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "10.138.141.38",
                 Port = "12345",
-                RequestIdProvider = new RandomIdProvider()
+                RequestIdProvider = (Api.Terminals.IRequestIdProvider)new RandomIdProvider()
             });
             Assert.IsNotNull(_device);
             _device.OpenLane();
