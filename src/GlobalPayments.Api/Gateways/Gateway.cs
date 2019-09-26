@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Gateways {
 
             HttpResponseMessage response = null;
             try {
-                if (data != null) {
+                if (verb != HttpMethod.Get && data != null) {
                     request.Content = new StringContent(data, Encoding.UTF8, contentType ?? _contentType);
                 }
                 response = httpClient.SendAsync(request).Result;
