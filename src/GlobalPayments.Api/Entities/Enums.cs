@@ -1118,8 +1118,8 @@ namespace GlobalPayments.Api.Entities {
         public const string GLOBAL_ECOM_TEST = "https://api.sandbox.realexpayments.com/epage-remote.cgi";
         public const string PORTICO_PRODUCTION = "https://api2.heartlandportico.com";
         public const string PORTICO_TEST = "https://cert.api2.heartlandportico.com";
-        public const string THREE_DS_AUTH_PRODUCTION = "https://authentications.realexpayments.com/3ds/";
-        public const string THREE_DS_AUTH_TEST = "https://authentications.sandbox.realexpayments.com/3ds/";
+        public const string THREE_DS_AUTH_PRODUCTION = "https://api.globalpay-ecommerce.com/3ds2/";
+        public const string THREE_DS_AUTH_TEST = "https://api.sandbox.globalpay-ecommerce.com/3ds2/";
         public const string PAYROLL_PRODUCTION = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI";
         public const string PAYROLL_TEST = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI/Test/Test";
         public const string TABLE_SERVICE_PRODUCTION = "https://www.freshtxt.com/api31/";
