@@ -49,7 +49,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             var token = new CreditCardData {
                 Token = _token
             };
-            Assert.IsTrue(token.DeleteToken());
+            token.DeleteToken().Execute();
 
             try {
                 token.Verify().Execute();

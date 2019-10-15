@@ -64,8 +64,8 @@ namespace GlobalPayments.Api.PaymentMethods
         string Token { get; set; }
         string Tokenize();
         bool UpdateTokenExpiry();
-        bool DeleteToken();
-    }
+		ManagementBuilder DeleteToken();
+	}
 
     interface IVerifiable {
         AuthorizationBuilder Verify();
