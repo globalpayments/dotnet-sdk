@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;

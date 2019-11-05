@@ -3,7 +3,6 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace GlobalPayments.Api.Tests.Terminals.HPA {
     [TestClass]
@@ -120,8 +119,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             Assert.IsNotNull(response.HeartBeatResponseText);
             Assert.IsNotNull(response.ReversalResponseText);
             Assert.IsNotNull(response.SafResponseText);
-            Assert.IsNotNull(response.BatchReportResponseText);
-
+            
             //REVERSALS
             var reversalResponse = response.ReversalResponse;
             if (reversalResponse != null) {

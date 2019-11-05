@@ -108,8 +108,10 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// with the issuer in the process.
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
-        public string Tokenize() {
-            var response =  new AuthorizationBuilder(TransactionType.Verify, this).WithRequestMultiUseToken(true).Execute();
+        public string Tokenize(string configName = "default") {
+            var response =  new AuthorizationBuilder(TransactionType.Verify, this)
+                .WithRequestMultiUseToken(true)
+                .Execute(configName);
             return response.Token;
         }
 
@@ -117,7 +119,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// Updates the token expiry date with the values proced to the card object
         /// </summary>
         /// <returns>boolean value indcating success/failure</returns>
-        public bool UpdateTokenExpiry() {
+        public bool UpdateTokenExpiry(string configName = "default") {
             if (string.IsNullOrEmpty(Token)) {
                 throw new BuilderException("Token cannot be null");
             }
@@ -125,7 +127,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             try {
                 new ManagementBuilder(TransactionType.TokenUpdate)
                     .WithPaymentMethod(this)
-                    .Execute();
+                    .Execute(configName);
                 return true;
             }
             catch (ApiException) {
@@ -137,7 +139,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// Deletes the token associated with the current card object
         /// </summary>
         /// <returns>boolean value indicating success/failure</returns>
-        public bool DeleteToken() {
+        public bool DeleteToken(string configName = "default") {
             if (string.IsNullOrEmpty(Token)) {
                 throw new BuilderException("Token cannot be null");
             }
@@ -145,7 +147,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             try {
                 new ManagementBuilder(TransactionType.TokenDelete)
                     .WithPaymentMethod(this)
-                    .Execute();
+                    .Execute(configName);
                 return true;
             }
             catch (ApiException) {

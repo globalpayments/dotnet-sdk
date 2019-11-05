@@ -3,6 +3,7 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.HPA.Responses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace GlobalPayments.Api.Tests.Terminals.HPA {
     [TestClass]
@@ -12,13 +13,20 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.HPA_ISC250,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "10.12.220.39",
-                //IpAddress = "192.168.0.94",
+                //IpAddress = "10.12.220.39",
+                IpAddress = "192.168.0.94",
                 Port = "12345",
                 Timeout = 20000,
                 RequestIdProvider = new RandomIdProvider()
             });
             Assert.IsNotNull(_device);
+        }
+
+        private void SaveSignatureFile(string transactionId, byte[] data) {
+            using (StreamWriter sw = new StreamWriter(File.OpenWrite(string.Format(@"C:\temp\{0}.bmp", transactionId)))) {
+                sw.Write(data);
+                sw.Flush();
+            }
         }
 
         [TestMethod]
@@ -84,13 +92,16 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
+
             var response = _device.CreditSale(120m)
                .WithSignatureCapture(true)
                .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode, response.DeviceResponseText);
             Assert.AreEqual("0", response.SignatureStatus);
             Assert.IsNotNull(response.SignatureData);
+
+            SaveSignatureFile(response.TransactionId, response.SignatureData);
         }
 
         [TestMethod]
@@ -99,11 +110,13 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
             var response = _device.PromptForSignature();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode, response.DeviceResponseText);
             Assert.IsNotNull(response.SignatureData);
 
             _device.Reset();
             _device.CloseLane();
+
+            SaveSignatureFile("hpa-signature-prompt", response.SignatureData);
         }
 
         [TestMethod]

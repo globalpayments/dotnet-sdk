@@ -48,7 +48,8 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         public ISignatureResponse PromptForSignature(string transactionId = null) {
-            return _controller.SendAdminMessage<SignatureResponse>(new HpaAdminBuilder(HPA_MSG_ID.SIGNATURE_FORM).Set("FormText", "PLEASE SIGN YOUR NAME"));
+            return _controller.SendAdminMessage<SignatureResponse>(new HpaAdminBuilder(HPA_MSG_ID.SIGNATURE_FORM)
+                .Set("FormText", "PLEASE SIGN BELOW"));
         }
 
         public IDeviceResponse Reboot() {

@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
                             do {
                                 var length = await _stream.GetLengthAsync();
                                 if (length > 0) {
-                                    byte[] buffer = new byte[8192];
+                                    byte[] buffer = new byte[length];
 
                                     var incomplete = true;
                                     int offset = 0;
@@ -49,8 +49,9 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
                                     var readBuffer = new byte[length];
                                     Array.Copy(buffer, readBuffer, length);
 
-                                    if (MessageReceived(readBuffer))
+                                    if (MessageReceived(readBuffer)) {
                                         return true;
+                                    }   
                                 }
                                 else break;
                             } while (true);

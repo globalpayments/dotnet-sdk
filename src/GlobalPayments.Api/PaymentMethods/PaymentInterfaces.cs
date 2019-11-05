@@ -62,9 +62,9 @@ namespace GlobalPayments.Api.PaymentMethods
 
     interface ITokenizable {
         string Token { get; set; }
-        string Tokenize();
-        bool UpdateTokenExpiry();
-        bool DeleteToken();
+        string Tokenize(string configName = "default");
+        bool UpdateTokenExpiry(string configName = "default");
+        bool DeleteToken(string configName = "default");
     }
 
     interface IVerifiable {
