@@ -8,7 +8,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class RealexConnector : XmlGateway, IPaymentGateway, IRecurringService, ISecure3dProvider {
+    internal class RealexConnector : XmlGateway, IPaymentGateway, IRecurringService, ISecure3dProvider, IOpenPathGateway {
         public string MerchantId { get; set; }
         public string AccountId { get; set; }
         public string SharedSecret { get; set; }
@@ -21,6 +21,8 @@ namespace GlobalPayments.Api.Gateways {
         public string PaymentValues { get; set; }
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
         public Secure3dVersion Version { get { return Secure3dVersion.One; } }
+        public string OpenPathApiKey { get; set; }
+        public string OpenPathApiUrl { get; set; }
 
         #region transaction handling
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {

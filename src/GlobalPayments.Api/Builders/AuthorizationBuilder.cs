@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Builders {
@@ -58,6 +59,8 @@ namespace GlobalPayments.Api.Builders {
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
         internal string TagData { get; set; }
         internal string Timestamp { get; set; }
+        public long OpenPathTransactionId { get; set; }
+        public bool OpenPathBouncedBack { get; set; }
 
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
@@ -639,12 +642,59 @@ namespace GlobalPayments.Api.Builders {
         /// Executes the authorization builder against the gateway.
         /// </summary>
         /// <returns>Transaction</returns>
-        public override Transaction Execute(string configName = "default") {
+        public override Transaction Execute(string configName = "default")
+        {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
-            return client.ProcessAuthorization(this);
+
+            // initialize an OpenPathGateway to process side integration if OpenPathApiKey is provided
+            var openPathGatewayInterface = client as IOpenPathGateway;
+
+            // create a new instance of openpath gateway object
+            var openpathGateway = new OpenPathGateway()
+                                      .WithOpenPathApiKey(openPathGatewayInterface?.OpenPathApiKey)
+                                      .WithOpenPathApiUrl(openPathGatewayInterface?.OpenPathApiUrl);
+
+            // process the side integration if apikey and url has value
+            if (openpathGateway.IsValidForSideIntegration())
+            {
+                // sets the builder to the gateway
+                openpathGateway.WithAuthorizationBuilder(this);
+
+                // Perform OpenPath side integration
+                // Throws exception if transaction is declined, rejected, error, queued
+                var openPathResult = openpathGateway.Process();
+
+                // if the transaction is already processed by OpenPath just return a new transaction for now
+                if (openPathResult.Status == OpenPathStatusType.Processed)
+                {
+                    // TODO: map the reponse of gateway connector from OpenPathResult object to Transaction
+                    return new Transaction { OpenPathResponse = openPathResult };
+                }
+                else if (openPathResult.Status == OpenPathStatusType.BouncedBack)
+                {
+                    // this means that the transaction passed all the validations in OpenPath but not processed
+                    // and a new GatewayConfiguration object was returned, use the new config to initialize a new client
+                    // the configuration can be found in OpenPath > Connectors
+
+                    ServicesContainer.ConfigureService(openPathResult.BouncebackConfig, "bounceBackConfig");
+                    base.Execute("bounceBackConfig");
+                    client = ServicesContainer.Instance.GetClient("bounceBackConfig");
+                }
+            }
+
+            var authorizationResult = client.ProcessAuthorization(this);
+
+            // sends the transaction id to OpenPath
+            if (openpathGateway.IsValidForSideIntegration())
+            {
+                openpathGateway.WithPaymentTransactionId(authorizationResult.TransactionId).SaveTransactionId();
+            }
+
+            return authorizationResult;
         }
+
 
         /// <summary>
         /// Serializes an authorization builder for hosted payment page requests.

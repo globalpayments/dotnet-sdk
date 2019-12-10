@@ -5,10 +5,12 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class AmaryllisConnector : XmlGateway, IPaymentGateway {
+    internal class AmaryllisConnector : XmlGateway, IPaymentGateway, IOpenPathGateway {
         public bool SupportsHostedPayments {
             get { return false; }
         }
+        public string OpenPathApiKey { get; set; }
+        public string OpenPathApiUrl { get; set; }
 
         #region processing
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {

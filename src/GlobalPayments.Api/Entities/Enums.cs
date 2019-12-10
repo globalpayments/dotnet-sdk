@@ -1125,4 +1125,17 @@ namespace GlobalPayments.Api.Entities {
         public const string TABLE_SERVICE_PRODUCTION = "https://www.freshtxt.com/api31/";
         public const string TABLE_SERVICE_TEST = "https://www.freshtxt.com/api31/";
     }
+
+    public enum OpenPathStatusType
+    {
+        Processing,
+        Declined,
+        Approved,
+        Rejected,
+        Error,
+        Queued,
+        Pending,
+        Processed,
+        BouncedBack
+    }
 }

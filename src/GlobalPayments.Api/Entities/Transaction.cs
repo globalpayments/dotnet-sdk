@@ -333,5 +333,10 @@ namespace GlobalPayments.Api.Entities {
         public ManagementBuilder Void() {
             return new ManagementBuilder(TransactionType.Void).WithPaymentMethod(TransactionReference);
         }
+
+        /// <summary>
+        /// The response from OpenPath's side integration
+        /// </summary>
+        public OpenPathResponse OpenPathResponse { get; set; }
     }
 }

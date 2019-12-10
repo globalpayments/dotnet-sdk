@@ -120,6 +120,17 @@ namespace GlobalPayments.Api {
 
         public Secure3dVersion? Secure3dVersion { get; set; }
 
+        /// <summary>
+        /// The OpenPath Api key for side integration in OpenPath platform
+        /// </summary>
+        public string OpenPathApiKey { get; set; }
+
+        /// <summary>
+        /// Optional: The OpenPath Api URL where the data will be posted for side integration in OpenPath platform
+        /// </summary>
+        public string OpenPathApiUrl { get; set; } = "https://api-app.openpath.io/v1/globalpayments";
+
+
         internal override void ConfigureContainer(ConfiguredServices services) {
             if (!string.IsNullOrEmpty(MerchantId)) {
                 if (string.IsNullOrEmpty(ServiceUrl)) {
@@ -138,7 +149,9 @@ namespace GlobalPayments.Api {
                     SharedSecret = SharedSecret,
                     Timeout = Timeout,
                     ServiceUrl = ServiceUrl,
-                    HostedPaymentConfig = HostedPaymentConfig
+                    HostedPaymentConfig = HostedPaymentConfig,
+                    OpenPathApiKey = OpenPathApiKey,
+                    OpenPathApiUrl = OpenPathApiUrl
                 };
                 services.GatewayConnector = gateway;
                 services.RecurringConnector = gateway;
@@ -198,7 +211,9 @@ namespace GlobalPayments.Api {
                     VersionNumber = VersionNumber,
                     Timeout = Timeout,
                     ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx",
-                    UniqueDeviceId = UniqueDeviceId
+                    UniqueDeviceId = UniqueDeviceId,
+                    OpenPathApiKey = OpenPathApiKey,
+                    OpenPathApiUrl = OpenPathApiUrl
                 };
                 services.GatewayConnector = gateway;
 
