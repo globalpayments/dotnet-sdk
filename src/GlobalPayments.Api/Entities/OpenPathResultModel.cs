@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalPayments.Api.Entities
-{
-    public class OpenPathResultModel
-    {
-        public enum ResponseTypes : int
-        {
+namespace GlobalPayments.Api.Entities {
+    public class OpenPathResultModel {
+        public enum ResponseTypes : int {
             Approved = 1,
             Declined = 2,
             Rejected = 3,
@@ -16,8 +13,7 @@ namespace GlobalPayments.Api.Entities
             Information = 6
         }
 
-        public enum VarietyTypes : int
-        {
+        public enum VarietyTypes : int {
             Soft = 1,
             Action = 2,
             Hard = 3,
@@ -25,8 +21,7 @@ namespace GlobalPayments.Api.Entities
             Unknown = 16,
         }
 
-        public enum SpecificTypes : int
-        {
+        public enum SpecificTypes : int {
             Unknown = 000000,
             Approved = 111100,
             Success = 111101,
@@ -192,8 +187,7 @@ namespace GlobalPayments.Api.Entities
 
         }
 
-        public enum ResultTypes : int
-        {
+        public enum ResultTypes : int {
             Transaction = 1,
             Address = 2,
             SecurityCode = 3,

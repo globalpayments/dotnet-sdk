@@ -6,42 +6,35 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace GlobalPayments.Api.Gateways
-{
-    public class OpenPathGateway
-    {
+namespace GlobalPayments.Api.Gateways {
+    public class OpenPathGateway {
         private string OpenPathApiKey { get; set; }
         private string OpenPathApiUrl { get; set; }
         private long OpenPathTransactionId { get; set; }
         private string PaymentTransactionId { get; set; }
         private AuthorizationBuilder AuthorizationBuilder { get; set; }
 
-        public OpenPathGateway WithOpenPathApiKey(string openPathApiKey)
-        {
+        public OpenPathGateway WithOpenPathApiKey(string openPathApiKey) {
             OpenPathApiKey = openPathApiKey;
             return this;
         }
 
-        public OpenPathGateway WithOpenPathApiUrl(string openPathApiUrl)
-        {
+        public OpenPathGateway WithOpenPathApiUrl(string openPathApiUrl) {
             OpenPathApiUrl = openPathApiUrl;
             return this;
         }
 
-        public OpenPathGateway WithPaymentTransactionId(string paymentTransactionId)
-        {
+        public OpenPathGateway WithPaymentTransactionId(string paymentTransactionId) {
             PaymentTransactionId = paymentTransactionId;
             return this;
         }
 
-        public OpenPathGateway WithAuthorizationBuilder(AuthorizationBuilder authorizationBuilder)
-        {
+        public OpenPathGateway WithAuthorizationBuilder(AuthorizationBuilder authorizationBuilder) {
             AuthorizationBuilder = authorizationBuilder;
             return this;
         }
 
-        public bool IsValidForSideIntegration()
-        {
+        public bool IsValidForSideIntegration() {
             return !string.IsNullOrWhiteSpace(OpenPathApiKey) && !string.IsNullOrWhiteSpace(OpenPathApiUrl);
         }
 
@@ -51,8 +44,7 @@ namespace GlobalPayments.Api.Gateways
         /// Throws exception if transaction is not approved
         /// </summary>
         /// <returns></returns>
-        public OpenPathResponse Process()
-        {
+        public OpenPathResponse Process() {
             if (string.IsNullOrWhiteSpace(OpenPathApiKey))
                 throw new BuilderException("OpenPath Api Key cannot be null or empty");
             else if (string.IsNullOrWhiteSpace(OpenPathApiUrl))
@@ -65,8 +57,7 @@ namespace GlobalPayments.Api.Gateways
             var result = SendRequest(JsonConvert.SerializeObject(openPathTransaction), OpenPathApiUrl);
 
             string additionalInformation = string.Join(",", result.Results);
-            switch (result.Status)
-            {
+            switch (result.Status) {
                 case OpenPathStatusType.Declined:
                     throw new BuilderException($"Transaction declined by OpenPath: { result.Message}{System.Environment.NewLine}{additionalInformation}");
                 case OpenPathStatusType.Error:
@@ -86,17 +77,14 @@ namespace GlobalPayments.Api.Gateways
         #endregion
 
         #region Sends the transaction Id to OpenPath
-        public void SaveTransactionId()
-        {
+        public void SaveTransactionId() {
             if (!string.IsNullOrWhiteSpace(OpenPathApiKey) &&
                 !string.IsNullOrWhiteSpace(OpenPathApiUrl) &&
                 !string.IsNullOrWhiteSpace(PaymentTransactionId) &&
-                OpenPathTransactionId != 0)
-            {
+                OpenPathTransactionId != 0) {
                 SendRequest(
                     JsonConvert.SerializeObject(
-                        new
-                        {
+                        new {
                             PaymentTransactionId,
                             OpenPathTransactionId
                         }
@@ -107,19 +95,15 @@ namespace GlobalPayments.Api.Gateways
         }
         #endregion
 
-        private OpenPathResponse SendRequest(string jsonContent, string url)
-        {
+        private OpenPathResponse SendRequest(string jsonContent, string url) {
             var result = new OpenPathResponse();
             // using (var client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(30000) })
             using (var client = new HttpClient())
-            using (var request = new HttpRequestMessage(HttpMethod.Post, url))
-            {
-                using (var stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json"))
-                {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, url)) {
+                using (var stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json")) {
                     request.Content = stringContent;
 
-                    using (var response = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).Result)
-                    {
+                    using (var response = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).Result) {
                         response.EnsureSuccessStatusCode();
                         var responseJson = response.Content.ReadAsStringAsync().Result;
                         result = JsonConvert.DeserializeObject<OpenPathResponse>(responseJson);

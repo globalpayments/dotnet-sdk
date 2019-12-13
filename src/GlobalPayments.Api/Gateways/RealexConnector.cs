@@ -69,8 +69,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
                     et.SubElement(request, "mobile", card.MobileType);
                     et.SubElement(request, "token", card.Token);
-                }
-                else {
+                } else {
                     var cardElement = et.SubElement(request, "card");
                     et.SubElement(cardElement, "number", card.Number);
                     et.SubElement(cardElement, "expdate", card.ShortExpiry);
@@ -96,8 +95,7 @@ namespace GlobalPayments.Api.Gateways {
                         hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Number);
                 }
                 et.SubElement(request, "sha1hash").Text(hash);
-            }
-            else if (builder.PaymentMethod is AlternatePaymentMethod) {
+            } else if (builder.PaymentMethod is AlternatePaymentMethod) {
                 var apm = builder.PaymentMethod as AlternatePaymentMethod;
 
                 et.SubElement(request, "paymentmethod", apm.AlternativePaymentMethodType);
@@ -131,8 +129,7 @@ namespace GlobalPayments.Api.Gateways {
                     hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, recurring.CustomerKey);
                 else hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, recurring.CustomerKey);
                 et.SubElement(request, "sha1hash").Text(hash);
-            }
-            else {
+            } else {
                 // TODO: Token Processing
             }
 
@@ -481,8 +478,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (!builder.MultiCapture) {
                     amtElement.Set("currency", builder.Currency);
                 }
-            }
-            else if (builder.TransactionType == TransactionType.Capture) {
+            } else if (builder.TransactionType == TransactionType.Capture) {
                 throw new BuilderException("Amount cannot be null for capture.");
             }
 
@@ -588,8 +584,7 @@ namespace GlobalPayments.Api.Gateways {
                     var customer = builder.Entity as Customer;
                     request.Append(BuildCustomer(et, customer));
                     et.SubElement(request, "sha1hash").Text(GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, null, null, customer.Key));
-                }
-                else if (builder.Entity is RecurringPaymentMethod) {
+                } else if (builder.Entity is RecurringPaymentMethod) {
                     var payment = builder.Entity as RecurringPaymentMethod;
                     var cardElement = et.SubElement(request, "card");
                     et.SubElement(cardElement, "ref").Text(payment.Key ?? payment.Id);
@@ -610,8 +605,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(request, "sha1hash").Text(sha1hash);
                     }
                 }
-            }
-            else if (builder.TransactionType == TransactionType.Delete) {
+            } else if (builder.TransactionType == TransactionType.Delete) {
                 if (builder.Entity is RecurringPaymentMethod) {
                     var payment = builder.Entity as RecurringPaymentMethod;
                     var cardElement = et.SubElement(request, "card");
@@ -636,8 +630,7 @@ namespace GlobalPayments.Api.Gateways {
                         .WithOrderId(builder.OrderId);
 
                 return ProcessAuthorization(authBuilder);
-            }
-            else if (transType.Equals(TransactionType.VerifySignature)) {
+            } else if (transType.Equals(TransactionType.VerifySignature)) {
                 // get our three d secure object
                 ThreeDSecure secureEcom = builder.ThreeDSecure;
 
@@ -665,8 +658,7 @@ namespace GlobalPayments.Api.Gateways {
             var acceptedCodes = new List<string>();
             if (builder is AuthorizationBuilder) {
                 acceptedCodes = MapAcceptedCodes(MapAuthRequestType(builder as AuthorizationBuilder));
-            }
-            else if (builder is ManagementBuilder) {
+            } else if (builder is ManagementBuilder) {
                 acceptedCodes = MapAcceptedCodes(MapManageRequestType(builder as ManagementBuilder));
             }
 
@@ -780,16 +772,13 @@ namespace GlobalPayments.Api.Gateways {
                                 if (builder.PaymentMethod != null)
                                     return "manual";
                                 return "offline";
-                            }
-                            else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                            } else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
                                 return "auth-mobile";
                             }
                             return "auth";
-                        }
-                        else if (payment is AlternatePaymentMethod) {
+                        } else if (payment is AlternatePaymentMethod) {
                             return "payment-set";
-                        }
-                        else return "receipt-in";
+                        } else return "receipt-in";
                     }
                 case TransactionType.Capture: {
                         return "settle";
@@ -797,8 +786,7 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.Verify: {
                         if (payment is Credit) {
                             return "otb";
-                        }
-                        else {
+                        } else {
                             if (builder.TransactionModifier == TransactionModifier.Secure3D)
                                 return "realvault-3ds-verifyenrolled";
                             else return "receipt-in-otb";
@@ -807,11 +795,9 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.Refund: {
                         if (payment is Credit) {
                             return "credit";
-                        }
-                        else if (payment is AlternatePaymentMethod) {
+                        } else if (payment is AlternatePaymentMethod) {
                             return "payment-credit";
-                        }
-                        else { return "payment-out"; }
+                        } else { return "payment-out"; }
                     }
                 case TransactionType.VerifyEnrolled: {
                         return "3ds-verifyenrolled";

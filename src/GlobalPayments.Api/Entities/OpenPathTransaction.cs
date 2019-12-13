@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalPayments.Api.Entities
-{
-    public class OpenPathTransaction
-    {
+namespace GlobalPayments.Api.Entities {
+    public class OpenPathTransaction {
         public string OpenPathApiKey { get; set; }
         public AccountType? AccountType { get; set; }
         public string Alias { get; set; }
@@ -53,10 +51,8 @@ namespace GlobalPayments.Api.Entities
         public TransactionModifier TransactionModifier { get; set; }
         public IPaymentMethod PaymentMethod { get; set; }
 
-        public OpenPathTransaction MapData(AuthorizationBuilder authorizationBuilder)
-        {
-            return new OpenPathTransaction
-            {
+        public OpenPathTransaction MapData(AuthorizationBuilder authorizationBuilder) {
+            return new OpenPathTransaction {
                 AccountType = authorizationBuilder.AccountType,
                 Alias = authorizationBuilder.Alias,
                 AllowDuplicates = authorizationBuilder.AllowDuplicates,

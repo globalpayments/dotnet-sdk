@@ -136,8 +136,7 @@ namespace GlobalPayments.Api {
                 if (string.IsNullOrEmpty(ServiceUrl)) {
                     if (Environment.Equals(Entities.Environment.TEST)) {
                         ServiceUrl = ServiceEndpoints.GLOBAL_ECOM_TEST;
-                    }
-                    else ServiceUrl = ServiceEndpoints.GLOBAL_ECOM_PRODUCTION;
+                    } else ServiceUrl = ServiceEndpoints.GLOBAL_ECOM_PRODUCTION;
                 }
 
                 var gateway = new RealexConnector {
@@ -187,17 +186,15 @@ namespace GlobalPayments.Api {
                         ChallengeNotificationUrl = ChallengeNotificationUrl,
                         Timeout = Timeout
                         //secure3d2.EnableLogging = EnableLogging
-                    };  
+                    };
 
                     services.SetSecure3dProvider(Entities.Secure3dVersion.Two, secure3d2);
                 }
-            }
-            else {
+            } else {
                 if (string.IsNullOrEmpty(ServiceUrl)) {
                     if (Environment.Equals(Entities.Environment.TEST)) {
                         ServiceUrl = ServiceEndpoints.PORTICO_TEST;
-                    }
-                    else ServiceUrl = ServiceEndpoints.PORTICO_PRODUCTION;
+                    } else ServiceUrl = ServiceEndpoints.PORTICO_PRODUCTION;
                 }
 
                 var gateway = new PorticoConnector {
@@ -225,8 +222,7 @@ namespace GlobalPayments.Api {
                         ServiceUrl = DataClientSeviceUrl ?? "https://globalpay-test.apigee.net/apis/reporting/",
                         Timeout = Timeout
                     };
-                }
-                else services.ReportingService = gateway;
+                } else services.ReportingService = gateway;
 
                 var payplan = new PayPlanConnector {
                     SecretApiKey = SecretApiKey,

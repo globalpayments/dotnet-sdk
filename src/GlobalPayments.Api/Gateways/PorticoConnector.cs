@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (isCheck) {
                     var check = builder.PaymentMethod as eCheck;
                     if (!string.IsNullOrEmpty(check.CheckHolderName)) {
-                        var names = check.CheckHolderName.Split(new char[] {' '}, 2);
+                        var names = check.CheckHolderName.Split(new char[] { ' ' }, 2);
                         et.SubElement(holder, "FirstName", names[0]);
                         et.SubElement(holder, "LastName", names[1]);
                     }
@@ -83,8 +83,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(identity, "SSNL4", check.SsnLast4);
                         et.SubElement(identity, "DOBYear", check.BirthYear);
                     }
-                }
-                else {
+                } else {
                     // TODO: card holder name
                 }
             }
@@ -124,7 +123,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(secureEcommerce, "ECommerceIndicator", secureEcom.Eci);
                         et.SubElement(secureEcommerce, "XID", secureEcom.Xid);
                     }
-                }                
+                }
 
                 // recurring data
                 if (builder.TransactionModifier == TransactionModifier.Recurring) {
@@ -163,10 +162,8 @@ namespace GlobalPayments.Api.Gateways {
                             var tagData = et.SubElement(block1, "TagData");
                             et.SubElement(tagData, "TagValues", builder.TagData).Set("source", "chip");
                         }
-                    }
-                    else block1.Append(cardData);
-                }
-                else et.SubElement(trackData, "TokenValue").Text(tokenValue);
+                    } else block1.Append(cardData);
+                } else et.SubElement(trackData, "TokenValue").Text(tokenValue);
             }
             #endregion
             #region GIFT
@@ -206,8 +203,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(accountInfo, "CheckNumber", check.CheckNumber);
                     et.SubElement(accountInfo, "MICRData", check.MicrNumber);
                     et.SubElement(accountInfo, "AccountType", check.AccountType.ToString());
-                }
-                else et.SubElement(block1, "TokenValue").Text(tokenValue);
+                } else et.SubElement(block1, "TokenValue").Text(tokenValue);
 
                 et.SubElement(block1, "DataEntryMode", check.EntryMode.ToString().ToUpper());
                 et.SubElement(block1, "CheckType", check.CheckType.ToString());
@@ -255,7 +251,7 @@ namespace GlobalPayments.Api.Gateways {
 
             // pin block
             if (builder.PaymentMethod is IPinProtected) {
-                if(!builder.TransactionType.HasFlag(TransactionType.Reversal))
+                if (!builder.TransactionType.HasFlag(TransactionType.Reversal))
                     et.SubElement(block1, "PinBlock", ((IPinProtected)builder.PaymentMethod).PinBlock);
             }
 
@@ -350,8 +346,7 @@ namespace GlobalPayments.Api.Gateways {
                     || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift
                     || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH) {
                     root = et.SubElement(transaction, "Block1");
-                }
-                else { root = transaction; }
+                } else { root = transaction; }
 
                 // amount
                 if (builder.Amount != null) {
@@ -414,8 +409,7 @@ namespace GlobalPayments.Api.Gateways {
                         var expYear = et.SubElement(setElement, "Attribute");
                         et.SubElement(expYear, "Name", "expyear");
                         et.SubElement(expYear, "Value", card.ExpYear);
-                    }
-                    else {
+                    } else {
                         et.SubElement(tokenActions, "Delete");
                     }
                 }
@@ -528,8 +522,7 @@ namespace GlobalPayments.Api.Gateways {
                     gatewayRspCode,
                     gatewayRspText
                 );
-            }
-            else {
+            } else {
                 result.AuthorizedAmount = root.GetValue<decimal>("AuthAmt");
                 result.AvailableBalance = root.GetValue<decimal>("AvailableBalance");
                 result.AvsResponseCode = root.GetValue<string>("AVSRsltCode");
@@ -556,7 +549,7 @@ namespace GlobalPayments.Api.Gateways {
                         AuthCode = root.GetValue<string>("AuthCode")
                     };
                 }
-                
+
                 // gift card create data
                 if (root.Has("CardData")) {
                     result.GiftCard = new GiftCard {
@@ -683,7 +676,7 @@ namespace GlobalPayments.Api.Gateways {
                     };
 
                     // card holder data
-                    
+
                     // lodging data
                     if (root.Has("LodgingData")) {
                         summary.LodgingData = new LodgingData {
@@ -717,7 +710,7 @@ namespace GlobalPayments.Api.Gateways {
                         };
 
                         summary.AltPaymentData.ProcessorResponseInfo = new List<AltPaymentProcessorInfo>();
-                        foreach(var info in root.GetAll("ProcessorRspInfo")) {
+                        foreach (var info in root.GetAll("ProcessorRspInfo")) {
                             var pri = new AltPaymentProcessorInfo {
                                 Code = info.GetValue<string>("Code"),
                                 Message = info.GetValue<string>("Message"),
@@ -736,10 +729,9 @@ namespace GlobalPayments.Api.Gateways {
                     foreach (var transaction in doc.GetAll("Transactions")) {
                         list.Add(hydrateTransactionSummary(transaction));
                     }
-                }
-                else {
+                } else {
                     var trans = doc.GetAll("Transactions").FirstOrDefault();
-                    if(trans != null)
+                    if (trans != null)
                         rvalue = hydrateTransactionSummary(trans) as T;
                 }
             }
@@ -785,8 +777,7 @@ namespace GlobalPayments.Api.Gateways {
                             else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
                                 throw new UnsupportedTransactionException();
                             return "CreditAuth"; // CreditAuth : Auth (Credit)
-                        }
-                        else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Recurring)
+                        } else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Recurring)
                             return "RecurringBillingAuth"; // RecurringBillingAuth : Auth (Recurring)
                         throw new UnsupportedTransactionException();
                     }
@@ -799,13 +790,11 @@ namespace GlobalPayments.Api.Gateways {
                             else if (builder.TransactionModifier == TransactionModifier.Recurring)
                                 return "RecurringBilling";
                             else return "CreditSale"; // CreditSale : Sale (Credit)
-                        }
-                        else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Recurring) {
+                        } else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Recurring) {
                             if ((builder.PaymentMethod as RecurringPaymentMethod).PaymentType == "ACH")
                                 return "CheckSale";
                             return "RecurringBilling"; // RecurringBilling : Sale (Recurring)
-                        }
-                        else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit)
+                        } else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit)
                             return "DebitSale"; // DebitSale : Sale (Debit)
                         else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Cash)
                             return "CashSale"; // CashSale : Sale (Cash)
@@ -817,8 +806,7 @@ namespace GlobalPayments.Api.Gateways {
                             else if (builder.TransactionModifier == TransactionModifier.Voucher)
                                 return "EBTVoucherPurchase"; // EBTVoucherPurchase : Sale (Voucher)
                             else return "EBTFSPurchase"; // EBTFSPurchase : Sale (EBT)
-                        }
-                        else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift)
+                        } else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift)
                             return "GiftCardSale"; // GiftCardSale : Sale (Gift)
                         throw new UnsupportedTransactionException();
                     }
@@ -830,8 +818,7 @@ namespace GlobalPayments.Api.Gateways {
                                 throw new UnsupportedTransactionException();
                             }
                             return "DebitReturn"; // DebitReturn : Return (Debit)
-                        }
-                        else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Cash)
+                        } else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Cash)
                             return "CashReturn"; // CashReturn : Return (Cash)
                         else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.EBT) {
                             if (builder.PaymentMethod is TransactionReference) {
@@ -849,8 +836,7 @@ namespace GlobalPayments.Api.Gateways {
                                 throw new UnsupportedTransactionException();
                             }
                             return "DebitReversal"; // DebitReversal : Reversal (Debit)
-                        }
-                        else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift)
+                        } else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift)
                             return "GiftCardReversal"; // GiftCardReversal : Reversal (Gift)
                         throw new UnsupportedTransactionException();
                     }

@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalPayments.Api.Entities
-{
-    public class OpenPathResponse
-    {
-        public OpenPathResponse()
-        {
+namespace GlobalPayments.Api.Entities {
+    public class OpenPathResponse {
+        public OpenPathResponse() {
             Results = new List<string>();
         }
 

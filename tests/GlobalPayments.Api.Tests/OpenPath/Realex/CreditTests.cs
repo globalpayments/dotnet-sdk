@@ -5,19 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalPayments.Api.Tests.OpenPath.Realex
-{
+namespace GlobalPayments.Api.Tests.OpenPath.Realex {
     [TestClass]
-    public class CreditTests
-    {
+    public class CreditTests {
         CreditCardData card;
 
         [TestInitialize]
-        public void Init()
-        {
+        public void Init() {
 
-            ServicesContainer.ConfigureService(new GatewayConfig
-            {
+            ServicesContainer.ConfigureService(new GatewayConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
@@ -28,8 +24,7 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
                 OpenPathApiUrl = "http://localhost:50451/v1/globalpayments"
             });
 
-            card = new CreditCardData
-            {
+            card = new CreditCardData {
                 Number = "4111111111111111",
                 ExpMonth = 2,
                 ExpYear = 2022,
@@ -40,8 +35,7 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
 
 
         [TestMethod]
-        public void CreditAuthorization()
-        {
+        public void CreditAuthorization() {
             var authorization = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -57,14 +51,12 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
 
 
         [TestMethod]
-        public void TestOpenPath_BounceBack()
-        {
+        public void TestOpenPath_BounceBack() {
             var transaction = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
                 .WithAccountType(AccountType.CHECKING)
-                .WithAddress(new Address
-                {
+                .WithAddress(new Address {
                     City = "Lake Forest",
                     Country = "United States",
                     CountryCode = "US",
@@ -74,8 +66,7 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
                 .WithClientTransactionId("TRANSACTION001")
                 .WithCustomerId("1")
                 .WithDescription("Test description")
-                .WithEcommerceInfo(new EcommerceInfo
-                {
+                .WithEcommerceInfo(new EcommerceInfo {
                     Channel = EcommerceChannel.ECOM,
                     ShipDay = 1,
                     ShipMonth = 10
@@ -85,8 +76,7 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
                 .WithAllowDuplicates(true);
             var response = transaction.Execute();
 
-            if (response.ResponseMessage == "OpenPathBouncedBack")
-            {
+            if (response.ResponseMessage == "OpenPathBouncedBack") {
                 response = transaction.Execute();
             }
 
@@ -96,14 +86,12 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
         }
 
         [TestMethod]
-        public void TestOpenPath_Approved_Processed_In_Stripe()
-        {
+        public void TestOpenPath_Approved_Processed_In_Stripe() {
             var transaction = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
                 .WithAccountType(AccountType.CHECKING)
-                .WithAddress(new Address
-                {
+                .WithAddress(new Address {
                     City = "Manila",
                     Country = "Philippines",
                     CountryCode = "PH",
@@ -113,8 +101,7 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
                 .WithClientTransactionId("TRANSACTION001")
                 .WithCustomerId("1")
                 .WithDescription("Test description")
-                .WithEcommerceInfo(new EcommerceInfo
-                {
+                .WithEcommerceInfo(new EcommerceInfo {
                     Channel = EcommerceChannel.ECOM,
                     ShipDay = 1,
                     ShipMonth = 10
@@ -128,14 +115,12 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
         }
 
         [TestMethod]
-        public void TestOpenPath_Approved()
-        {
+        public void TestOpenPath_Approved() {
             var transaction = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
                 .WithAccountType(AccountType.CHECKING)
-                .WithAddress(new Address
-                {
+                .WithAddress(new Address {
                     City = "Lake Forest",
                     Country = "United States",
                     CountryCode = "US",
@@ -145,8 +130,7 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
                 .WithClientTransactionId("TRANSACTION001")
                 .WithCustomerId("1")
                 .WithDescription("Test description")
-                .WithEcommerceInfo(new EcommerceInfo
-                {
+                .WithEcommerceInfo(new EcommerceInfo {
                     Channel = EcommerceChannel.ECOM,
                     ShipDay = 1,
                     ShipMonth = 10
@@ -160,14 +144,12 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
         }
 
         [TestMethod]
-        public void TestOpenPath_Declined_Because_Of_Country()
-        {
+        public void TestOpenPath_Declined_Because_Of_Country() {
             var response = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
                 .WithAccountType(AccountType.CHECKING)
-                .WithAddress(new Address
-                {
+                .WithAddress(new Address {
                     City = "Singapore",
                     Country = "Singapore",
                     CountryCode = "SG",
@@ -177,8 +159,7 @@ namespace GlobalPayments.Api.Tests.OpenPath.Realex
                 .WithClientTransactionId("TRANSACTION001")
                 .WithCustomerId("1")
                 .WithDescription("Test description")
-                .WithEcommerceInfo(new EcommerceInfo
-                {
+                .WithEcommerceInfo(new EcommerceInfo {
                     Channel = EcommerceChannel.ECOM,
                     ShipDay = 1,
                     ShipMonth = 10

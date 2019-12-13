@@ -157,7 +157,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithMultiCapture(bool value) {
-           MultiCapture = value;
+            MultiCapture = value;
             return this;
         }
 
@@ -197,14 +197,12 @@ namespace GlobalPayments.Api.Builders {
             if (TransactionType == TransactionType.Reversal || TransactionType == TransactionType.Refund) {
                 if (PaymentMethod is TransactionReference) {
                     ((TransactionReference)PaymentMethod).ClientTransactionId = value;
-                }
-                else {
+                } else {
                     PaymentMethod = new TransactionReference {
                         ClientTransactionId = value
                     };
                 }
-            }
-            else ClientTransactionId = value;
+            } else ClientTransactionId = value;
             return this;
         }
 
@@ -361,8 +359,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>       
         /// <param name="value">The Convenience amount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithConvenienceAmt(decimal? value)
-        {
+        public AuthorizationBuilder WithConvenienceAmt(decimal? value) {
             ConvenienceAmt = value;
             return this;
         }
@@ -372,8 +369,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>        
         /// <param name="value">The Shipping amount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithShippingAmt(decimal? value)
-        {
+        public AuthorizationBuilder WithShippingAmt(decimal? value) {
             ShippingAmt = value;
             return this;
         }
@@ -481,7 +477,7 @@ namespace GlobalPayments.Api.Builders {
             PaymentMethod = value;
             if (value is EBTCardData && ((EBTCardData)value).SerialNumber != null)
                 TransactionModifier = TransactionModifier.Voucher;
-            if(value is CreditCardData  && ((CreditCardData)value).MobileType !=null)
+            if (value is CreditCardData && ((CreditCardData)value).MobileType != null)
                 TransactionModifier = TransactionModifier.EncryptedMobile;
             return this;
         }
@@ -600,8 +596,7 @@ namespace GlobalPayments.Api.Builders {
         public AuthorizationBuilder WithTransactionId(string value) {
             if (PaymentMethod is TransactionReference) {
                 ((TransactionReference)PaymentMethod).TransactionId = value;
-            }
-            else {
+            } else {
                 PaymentMethod = new TransactionReference {
                     TransactionId = value
                 };
@@ -642,8 +637,7 @@ namespace GlobalPayments.Api.Builders {
         /// Executes the authorization builder against the gateway.
         /// </summary>
         /// <returns>Transaction</returns>
-        public override Transaction Execute(string configName = "default")
-        {
+        public override Transaction Execute(string configName = "default") {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
@@ -657,8 +651,7 @@ namespace GlobalPayments.Api.Builders {
                                       .WithOpenPathApiUrl(openPathGatewayInterface?.OpenPathApiUrl);
 
             // process the side integration if apikey and url has value
-            if (openpathGateway.IsValidForSideIntegration())
-            {
+            if (openpathGateway.IsValidForSideIntegration()) {
                 // sets the builder to the gateway
                 openpathGateway.WithAuthorizationBuilder(this);
 
@@ -667,13 +660,10 @@ namespace GlobalPayments.Api.Builders {
                 var openPathResult = openpathGateway.Process();
 
                 // if the transaction is already processed by OpenPath just return a new transaction for now
-                if (openPathResult.Status == OpenPathStatusType.Processed)
-                {
+                if (openPathResult.Status == OpenPathStatusType.Processed) {
                     // TODO: map the reponse of gateway connector from OpenPathResult object to Transaction
                     return new Transaction { OpenPathResponse = openPathResult };
-                }
-                else if (openPathResult.Status == OpenPathStatusType.BouncedBack)
-                {
+                } else if (openPathResult.Status == OpenPathStatusType.BouncedBack) {
                     // this means that the transaction passed all the validations in OpenPath but not processed
                     // and a new GatewayConfiguration object was returned, use the new config to initialize a new client
                     // the configuration can be found in OpenPath > Connectors
@@ -687,8 +677,7 @@ namespace GlobalPayments.Api.Builders {
             var authorizationResult = client.ProcessAuthorization(this);
 
             // sends the transaction id to OpenPath
-            if (openpathGateway.IsValidForSideIntegration())
-            {
+            if (openpathGateway.IsValidForSideIntegration()) {
                 openpathGateway.WithPaymentTransactionId(authorizationResult.TransactionId).SaveTransactionId();
             }
 
