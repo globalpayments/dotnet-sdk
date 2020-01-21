@@ -678,7 +678,9 @@ namespace GlobalPayments.Api.Builders {
 
             // sends the transaction id to OpenPath
             if (openpathGateway.IsValidForSideIntegration()) {
-                openpathGateway.WithPaymentTransactionId(authorizationResult.TransactionId).SaveTransactionId();
+                openpathGateway
+                    .WithPaymentTransactionId(authorizationResult.TransactionId)
+                    .SaveTransactionId();
             }
 
             return authorizationResult;
