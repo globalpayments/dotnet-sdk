@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="OpenPath\Realex\CreditTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../src/GlobalPayments.Api/GlobalPayments.Api.csproj" />
   </ItemGroup>
 

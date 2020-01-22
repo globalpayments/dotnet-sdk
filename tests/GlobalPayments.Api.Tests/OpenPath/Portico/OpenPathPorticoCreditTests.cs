@@ -4,13 +4,14 @@ using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace GlobalPayments.Api.OpenPath.Tests {
+namespace GlobalPayments.Api.Tests.OpenPath {
 
     [TestClass]
-    public class OpenPathPorticoCreditTests {
+    public class PorticoCreditTests {
 
         CreditCardData card;
         CreditTrackData track;
+        string currency;
 
         [TestInitialize]
         public void Init() {
@@ -22,8 +23,8 @@ namespace GlobalPayments.Api.OpenPath.Tests {
                 ServiceUrl = "https://cert.api2.heartlandportico.com",
 
                 // openpath attributes
-                OpenPathApiKey = "jVudEvnwrcpEUe3xaxZWFTuyPY4mdMd4XReACzgc",
-                OpenPathApiUrl = "https://staging-api.openpath.io/v1/globalpayments"
+                OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
+                OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
 
             });
 
@@ -41,13 +42,15 @@ namespace GlobalPayments.Api.OpenPath.Tests {
                 }
             };
 
+            currency = "USD";
+
         }
 
         [TestMethod]
         public void CreditAuthorization() {
 
             var response = card.Authorize(14m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .Execute();
 
@@ -64,7 +67,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditAuthWithConvenienceAmt() {
             var response = card.Authorize(14m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .WithConvenienceAmt(2m)
                 .Execute();
@@ -78,7 +81,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditAuthWithShippingAmt() {
             var response = card.Authorize(14m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .WithShippingAmt(2m)
                 .Execute();
@@ -92,7 +95,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditSale() {
             var response = card.Charge(15m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -102,7 +105,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditSaleWithConvenienceAmt() {
             var response = card.Charge(15m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .WithConvenienceAmt(2m)
                 .Execute();
@@ -116,7 +119,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditSaleWithShippingAmt() {
             var response = card.Charge(15m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .WithShippingAmt(2m)
                 .Execute();
@@ -130,7 +133,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditOfflineAuth() {
             var response = card.Authorize(16m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -141,7 +144,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditOfflineAuthWithConvenienceAmt() {
             var response = card.Authorize(16m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
                 .WithConvenienceAmt(2m)
@@ -156,7 +159,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditOfflineWithShippingAmt() {
             var response = card.Authorize(16m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
                 .WithShippingAmt(2m)
@@ -171,7 +174,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditOfflineSale() {
             var response = card.Charge(17m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -182,7 +185,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditOfflineSaleWithConvenienceAmt() {
             var response = card.Charge(17m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
                 .WithConvenienceAmt(2m)
@@ -197,7 +200,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditOfflineSaleWithShippingAmt() {
             var response = card.Charge(17m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
                 .WithShippingAmt(2m)
@@ -212,7 +215,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditRefund() {
             var response = card.Refund(16m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -222,6 +225,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditReverse() {
             var response = card.Reverse(15m)
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -232,6 +236,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         public void CreditVerify() {
             var response = card.Verify()
                 .WithAllowDuplicates(true)
+                .WithCurrency(currency)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -240,7 +245,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditVoidFromTransactionId() {
             var response = card.Authorize(10.00m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -255,9 +260,16 @@ namespace GlobalPayments.Api.OpenPath.Tests {
 
         [TestMethod]
         public void CreditTestWithNewCryptoURL() {
+
             ServicesContainer.ConfigureService(new GatewayConfig {
+
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+                ServiceUrl = "https://cert.api2-c.heartlandportico.com",
+
+                // openpath attributes
+                OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
+                OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
+
             });
             card = new CreditCardData {
                 Number = "4111111111111111",
@@ -266,7 +278,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
                 Cvn = "123"
             };
             var response = card.Authorize(14m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -276,7 +288,7 @@ namespace GlobalPayments.Api.OpenPath.Tests {
         [TestMethod]
         public void CreditTestWithClientTransactionId() {
             var response = card.Charge(10m)
-                .WithCurrency("USD")
+                .WithCurrency(currency)
                 .WithClientTransactionId("123456")
                 .Execute();
 

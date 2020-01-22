@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests {
     [TestClass]
-    public class RealexCreditTests {
+    public class OpenPathRealexCreditTests {
         CreditCardData card;
 
         [TestInitialize]
