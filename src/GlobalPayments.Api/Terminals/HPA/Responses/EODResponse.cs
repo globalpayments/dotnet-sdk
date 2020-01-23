@@ -129,7 +129,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
 
         public EODResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) {
             if (_sendSafMessageBuilder != null) {
-                String messages = _sendSafMessageBuilder.ToString();
+                string messages = _sendSafMessageBuilder.ToString();
                 if (!string.IsNullOrEmpty(messages)) {
                     try {
                         SAFResponse = new SAFResponse(Encoding.UTF8.GetBytes(messages), EODCommandType.SENDSAF);
@@ -141,7 +141,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             }
 
             if (_batchReportMessageBuilder != null) {
-                String messages = _batchReportMessageBuilder.ToString();
+                string messages = _batchReportMessageBuilder.ToString();
                 if (!string.IsNullOrEmpty(messages)) {
                     try {
                         BatchReportResponse = new BatchReportResponse(Encoding.UTF8.GetBytes(messages), EODCommandType.GET_BATCH_REPORT);

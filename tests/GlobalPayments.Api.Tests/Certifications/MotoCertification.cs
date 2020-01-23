@@ -20,9 +20,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         };
 
         public MotoCertification() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MRCQAQBC_VQACBE0rFaZlbDDPieMGP06JDAtjyS7NQ",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MRCQAQBC_VQACBE0rFaZlbDDPieMGP06JDAtjyS7NQ"
             });
         }
 
@@ -546,9 +545,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("B", chargeResponse.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.NOTUSED) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = chargeResponse.Edit()
-                .WithTaxType(TaxType.NOTUSED)
-                .WithPoNumber("9876543210")
+                .WithCommercialData(commercialData)
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);
@@ -577,9 +579,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("B", chargeResponse.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                TaxAmount = 1m
+            };
+
             var cpcResponse = chargeResponse.Edit()
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -602,13 +607,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
                 .WithAddress(address)
                 .WithCommercialRequest(true)
                 .Execute();
-
             Assert.IsNotNull(chargeResponse);
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("R", chargeResponse.CommercialIndicator);
 
             var cpcResponse = chargeResponse.Edit()
-                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithCommercialData(new CommercialData(TaxType.TAXEXEMPT))
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);
@@ -637,12 +641,13 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
-            //var cpcData = new HpsCpcData { CardHolderPoNumber = "9876543210", TaxType = taxTypeType.SALESTAX, TaxAmount = 1.00m };
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                PoNumber = "9876543210",
+                TaxAmount = 1m
+            };
 
             var cpcResponse = chargeResponse.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);
@@ -666,14 +671,16 @@ namespace GlobalPayments.Api.Tests.Certifications {
                 .WithAddress(address)
                 .WithCommercialRequest(true)
                 .Execute();
-
             Assert.IsNotNull(chargeResponse);
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.NOTUSED) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = chargeResponse.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.NOTUSED)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -696,14 +703,16 @@ namespace GlobalPayments.Api.Tests.Certifications {
                 .WithAddress(address)
                 .WithCommercialRequest(true)
                 .Execute();
-
             Assert.IsNotNull(chargeResponse);
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                TaxAmount = 1m
+            };
+
             var cpcResponse = chargeResponse.Edit()
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);
@@ -732,12 +741,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
-            //var cpcData = new HpsCpcData { CardHolderPoNumber = "9876543210", TaxAmount = 1.00m, TaxType = taxTypeType.SALESTAX };
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                TaxAmount = 1m
+            };
 
             var cpcResponse = chargeResponse.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);
@@ -766,9 +775,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = chargeResponse.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -796,9 +808,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.NOTUSED) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = chargeResponse.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.NOTUSED)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -825,11 +840,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
-            //var cpcData = new HpsCpcData { TaxAmount = 1.00m, TaxType = taxTypeType.SALESTAX };
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                TaxAmount = 1m
+            };
 
             var cpcResponse = chargeResponse.Edit()
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);
@@ -858,12 +874,13 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
-            //var cpcData = new HpsCpcData { CardHolderPoNumber = "9876543210", TaxAmount = 1.00m, TaxType = taxTypeType.SALESTAX };
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                PoNumber = "9876543210",
+                TaxAmount = 1m
+            };
 
             var cpcResponse = chargeResponse.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);
@@ -892,11 +909,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
-            //var cpcData = new HpsCpcData { CardHolderPoNumber = "9876543210", TaxType = taxTypeType.TAXEXEMPT };
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+                PoNumber = "9876543210"
+            };
 
             var cpcResponse = chargeResponse.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithCommercialData(commercialData)
                 .Execute();
 
             Assert.IsNotNull(cpcResponse);

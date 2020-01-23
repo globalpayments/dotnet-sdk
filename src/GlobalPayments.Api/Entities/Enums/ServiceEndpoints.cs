@@ -1,0 +1,20 @@
+﻿namespace GlobalPayments.Api.Entities {
+    public static class ServiceEndpoints {
+        public const string GLOBAL_ECOM_PRODUCTION = "https://api.realexpayments.com/epage-remote.cgi";
+        public const string GLOBAL_ECOM_TEST = "https://api.sandbox.realexpayments.com/epage-remote.cgi";
+        public const string PORTICO_PRODUCTION = "https://api2.heartlandportico.com";
+        public const string PORTICO_TEST = "https://cert.api2.heartlandportico.com";
+        public const string THREE_DS_AUTH_PRODUCTION = "https://api.globalpay-ecommerce.com/3ds2/";
+        public const string THREE_DS_AUTH_TEST = "https://api.sandbox.globalpay-ecommerce.com/3ds2/";
+        public const string PAYROLL_PRODUCTION = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI";
+        public const string PAYROLL_TEST = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI/Test/Test";
+        public const string TABLE_SERVICE_PRODUCTION = "https://www.freshtxt.com/api31/";
+        public const string TABLE_SERVICE_TEST = "https://www.freshtxt.com/api31/";
+        public const string GENIUS_API_PRODUCTION = "";
+        public const string GENIUS_API_TEST = "https://ps1.merchantware.net/Merchantware/ws/RetailTransaction/v45/Credit.asmx";
+        public const string GENIUS_TERMIAL_PRODUCTION = "";
+        public const string GENIUS_TERMIAL_TEST = "https://transport.merchantware.net/v4/transportService.asmx";
+        public const string TRANSIT_MULTIPASS_PRODUCTION = "https://gateway.transit-pass.com/servlets/TransNox_API_Server";
+        public const string TRANSIT_MULTIPASS_TEST = "https://stagegw.transnox.com/servlets/TransNox_API_Server";
+    }
+}

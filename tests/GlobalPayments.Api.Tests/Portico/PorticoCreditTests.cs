@@ -12,9 +12,8 @@ namespace GlobalPayments.Api.Tests {
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w"
             });
 
             card = new CreditCardData {
@@ -51,7 +50,7 @@ namespace GlobalPayments.Api.Tests {
             var response = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -89,7 +88,7 @@ namespace GlobalPayments.Api.Tests {
             var response = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -129,7 +128,7 @@ namespace GlobalPayments.Api.Tests {
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -170,7 +169,7 @@ namespace GlobalPayments.Api.Tests {
                 .WithCurrency("USD")
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -338,16 +337,17 @@ namespace GlobalPayments.Api.Tests {
 
         [TestMethod]
         public void CreditTestWithNewCryptoURL() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
+
             card = new CreditCardData {
                 Number = "4111111111111111",
                 ExpMonth = 12,
                 ExpYear = 2025,
                 Cvn = "123"
             };
+
             var response = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)

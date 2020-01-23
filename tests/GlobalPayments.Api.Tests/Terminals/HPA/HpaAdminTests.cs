@@ -93,7 +93,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.CreditSale(120m)
+            var response = _device.Sale(120m)
                .WithSignatureCapture(true)
                .Execute();
             Assert.IsNotNull(response);

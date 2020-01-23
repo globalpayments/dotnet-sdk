@@ -20,8 +20,9 @@ namespace GlobalPayments.Api.Builders {
         internal InquiryType? BalanceInquiryType { get; set; }
         internal Address BillingAddress { get; set; }
         internal decimal? CashBackAmount { get; set; }
-        internal EmvChipCondition? ChipCondition { get; set; }
         internal string ClientTransactionId { get; set; }
+        internal CommercialData CommercialData { get; set; }
+        internal bool CommercialRequest { get; set; }
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
         internal Customer CustomerData { get; set; }
@@ -32,19 +33,22 @@ namespace GlobalPayments.Api.Builders {
         internal DecisionManager DecisionManager { get; set; }
         internal string DynamicDescriptor { get; set; }
         internal EcommerceInfo EcommerceInfo { get; set; }
-        internal EmvChipCondition EmvChipCondition { get; set; }
+        internal EmvFallbackCondition? EmvFallbackCondition { get; set; }
+        internal EmvLastChipRead? EmvLastChipRead { get; set; }
         internal FraudFilterMode FraudFilterMode { get; set; }
         internal decimal? Gratuity { get; set; }
-        internal decimal? ConvenienceAmt { get; set; }
+        internal decimal? ConvenienceAmount { get; set; }
         internal decimal? ShippingAmt { get; set; }
         internal HostedPaymentData HostedPaymentData { get; set; }
         internal string InvoiceNumber { get; set; }
         internal bool Level2Request { get; set; }
+        internal LodgingData LodgingData { get; set; }
         internal string MessageAuthenticationCode { get; set; }
         internal List<string[]> MiscProductData { get; set; }
         internal string OfflineAuthCode { get; set; }
         internal bool OneTimePayment { get; set; }
         internal string OrderId { get; set; }
+        internal string PaymentApplicationVersion { get; set; }
         internal string PosSequenceNumber { get; set; }
         internal string ProductId { get; set; }
         internal RecurringSequence? RecurringSequence { get; set; }
@@ -58,6 +62,12 @@ namespace GlobalPayments.Api.Builders {
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
         internal string TagData { get; set; }
         internal string Timestamp { get; set; }
+
+        internal bool HasEmvFallbackData {
+            get {
+                return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
+            }
+        }
 
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
@@ -202,6 +212,7 @@ namespace GlobalPayments.Api.Builders {
                 }
             }
             else ClientTransactionId = value;
+
             return this;
         }
 
@@ -334,8 +345,11 @@ namespace GlobalPayments.Api.Builders {
         /// </remarks>
         /// <param name="value">EmvChipCondition</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithEmvChipCondition(EmvChipCondition value) {
-            ChipCondition = value;
+        public AuthorizationBuilder WithEmvFallbackData(EmvFallbackCondition condition, EmvLastChipRead lastRead, string appVersion = null) {
+            EmvFallbackCondition = condition;
+            EmvLastChipRead = lastRead;
+            PaymentApplicationVersion = appVersion;
+
             return this;
         }
 
@@ -358,9 +372,9 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>       
         /// <param name="value">The Convenience amount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithConvenienceAmt(decimal? value)
+        public AuthorizationBuilder WithConvenienceAmount(decimal? value)
         {
-            ConvenienceAmt = value;
+            ConvenienceAmount = value;
             return this;
         }
 
@@ -395,6 +409,16 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public AuthorizationBuilder WithCommercialRequest(bool value) {
+            CommercialRequest = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithCommercialData(CommercialData value) {
+            CommercialData = value;
+            return this;
+        }
+
         /// <summary>
         /// Sets the commercial request flag; where applicable.
         /// </summary>
@@ -405,10 +429,10 @@ namespace GlobalPayments.Api.Builders {
         /// </remarks>
         /// <param name="value">The commercial request flag</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithCommercialRequest(bool value) {
-            Level2Request = value;
-            return this;
-        }
+        //public AuthorizationBuilder WithCommercialRequest(bool value) {
+        //    Level2Request = value;
+        //    return this;
+        //}
 
         /// <summary>
         /// Sets the message authentication code; where applicable.
@@ -466,6 +490,11 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithOrderId(string value) {
             OrderId = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithPaymentApplicationVersion(string value) {
+            PaymentApplicationVersion = value;
             return this;
         }
 
@@ -631,6 +660,17 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+
+        /// <summary>
+        /// Lodging data information for Portico 
+        /// </summary>
+        /// <param name="value">The lodging data</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithLodgingData(LodgingData value) {
+            LodgingData = value;
+            return this;
+        }
+
         internal AuthorizationBuilder(TransactionType type, IPaymentMethod payment = null) : base(type) {
             WithPaymentMethod(payment);
         }
@@ -704,8 +744,14 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(PaymentMethodType.Debit).When(() => ReversalReasonCode).IsNotNull().Check(() => TransactionType).Equals(TransactionType.Reversal);
 
-            Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit).When(() => ChipCondition).IsNotNull().Check(() => TagData).IsNull();
-            Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit).When(() => TagData).IsNotNull().Check(() => ChipCondition).IsNull();
+            Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit)
+                .When(() => HasEmvFallbackData).IsTrue()
+                .Check(() => TagData).IsNull();
+
+            Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit)
+                .When(() => TagData).IsNotNull()
+                .Check(() => HasEmvFallbackData).IsFalse();
+
             Validations.For(TransactionType.Auth | TransactionType.Sale)
                 .With(TransactionModifier.EncryptedMobile)
                 .Check(() => PaymentMethod).IsNotNull();

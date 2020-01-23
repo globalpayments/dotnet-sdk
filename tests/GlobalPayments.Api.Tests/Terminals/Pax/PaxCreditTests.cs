@@ -28,7 +28,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.CreditSale(10m)
+            var response = _device.Sale(10m)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -53,7 +53,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var response = _device.CreditSale(11m)
+            var response = _device.Sale(11m)
                 .WithAllowDuplicates(true)
                 .WithPaymentMethod(card)
                 .WithAddress(address)
@@ -86,7 +86,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 VisionSubTotal = 2
             };
 
-            var response = _device.CreditSale(11m)
+            var response = _device.Sale(11m)
                 .WithAllowDuplicates(true)
                 .WithPaymentMethod(card)
                 .WithAddress(address)
@@ -114,7 +114,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var response = _device.CreditSale(12m)
+            var response = _device.Sale(12m)
                 .WithAllowDuplicates(true)
                 .WithPaymentMethod(card)
                 .WithAddress(address)
@@ -126,7 +126,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditSaleNoAmount() {
-            _device.CreditSale(1).Execute();
+            _device.Sale(1).Execute();
         }
 
         [TestMethod]
@@ -135,13 +135,13 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.CreditAuth(12m)
+            var response = _device.Authorize(12m)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
-            var captureResponse = _device.CreditCapture(12m)
+            var captureResponse = _device.Capture(12m)
                 .WithTransactionId(response.TransactionId)
                 .Execute();
             Assert.IsNotNull(captureResponse);
@@ -166,7 +166,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var response = _device.CreditAuth(12m)
+            var response = _device.Authorize(12m)
                 .WithPaymentMethod(card)
                 .WithAddress(address)
                 .WithAllowDuplicates(true)
@@ -174,7 +174,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
-            var captureResponse = _device.CreditCapture(12m)
+            var captureResponse = _device.Capture(12m)
                 .WithTransactionId(response.TransactionId)
                 .Execute();
             Assert.IsNotNull(captureResponse);
@@ -183,12 +183,12 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditAuthNoAmount() {
-            _device.CreditAuth(1).Execute();
+            _device.Authorize(1m).Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CaptureNoTransactionId() {
-            _device.CreditCapture(1).Execute();
+            _device.Capture(1m).Execute();
         }
 
         [TestMethod]
@@ -209,7 +209,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var saleResponse = _device.CreditSale(16m)
+            var saleResponse = _device.Sale(16m)
                 .WithPaymentMethod(card)
                 .WithAddress(address)
                 .WithAllowDuplicates(true)
@@ -218,7 +218,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.IsNotNull(saleResponse);
             Assert.AreEqual("00", saleResponse.ResponseCode);
 
-            var returnResponse = _device.CreditRefund(16m)
+            var returnResponse = _device.Refund(16m)
                 .WithTransactionId(saleResponse.TransactionId)
                 .WithAuthCode(saleResponse.AuthorizationCode)
                 .Execute();
@@ -239,7 +239,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Cvn = "123"
             };
 
-            var returnResponse = _device.CreditRefund(14m)
+            var returnResponse = _device.Refund(14m)
                 .WithPaymentMethod(card)
                 .Execute();
             Assert.IsNotNull(returnResponse);
@@ -264,7 +264,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var response = _device.CreditVerify()
+            var response = _device.Verify()
                 .WithPaymentMethod(card)
                 .WithAddress(address)
                 .WithRequestMultiUseToken(true)
@@ -273,7 +273,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.IsNotNull(response.Token);
 
-            var returnResponse = _device.CreditRefund(15m)
+            var returnResponse = _device.Refund(15m)
                 .WithToken(response.Token)
                 .Execute();
             Assert.IsNotNull(returnResponse);
@@ -282,12 +282,12 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditRefundNoAmount() {
-            _device.CreditRefund(1).Execute();
+            _device.Refund(1).Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditRefundByTransactionIdNoAuthCode() {
-            _device.CreditRefund(13m)
+            _device.Refund(13m)
                 .WithTransactionId("1234567")
                 .Execute();
         }
@@ -298,7 +298,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.CreditVerify().Execute();
+            var response = _device.Verify().Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -321,7 +321,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var response = _device.CreditVerify()
+            var response = _device.Verify()
                 .WithPaymentMethod(card)
                 .WithAddress(address)
                 .Execute();
@@ -335,7 +335,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.CreditVerify()
+            var response = _device.Verify()
                 .WithRequestMultiUseToken(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -361,7 +361,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var saleResponse = _device.CreditSale(16m)
+            var saleResponse = _device.Sale(16m)
                 .WithPaymentMethod(card)
                 .WithAddress(address)
                 .WithAllowDuplicates(true)
@@ -370,14 +370,14 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.IsNotNull(saleResponse);
             Assert.AreEqual("00", saleResponse.ResponseCode);
 
-            var voidResponse = _device.CreditVoid().WithTransactionId(saleResponse.TransactionId).Execute();
+            var voidResponse = _device.Void().WithTransactionId(saleResponse.TransactionId).Execute();
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditVoidNoTransactionId() {
-            _device.CreditVoid().Execute();
+            _device.Void().Execute();
         }
 
         [TestMethod]
@@ -394,7 +394,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var response = _device.CreditSale(11m)
+            var response = _device.Sale(11m)
                 .WithAllowDuplicates(false)
                 .WithPaymentMethod(card)
                 .WithAddress(address)
@@ -403,7 +403,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
-            var duplicate = _device.CreditSale(11m)
+            var duplicate = _device.Sale(11m)
                 .WithAllowDuplicates(false)
                 .WithPaymentMethod(card)
                 .WithAddress(address)

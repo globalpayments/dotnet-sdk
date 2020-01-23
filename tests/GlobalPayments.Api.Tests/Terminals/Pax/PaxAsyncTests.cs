@@ -30,7 +30,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         [TestMethod]
         public void CancelSale() {
             Task.Factory.StartNew(() => {
-                var response = _device.CreditSale(10m).Execute();
+                var response = _device.Sale(10m).Execute();
                 Assert.AreEqual("100002", response.DeviceResponseCode);
                 Assert.AreEqual("ABORTED", response.DeviceResponseText);
             });

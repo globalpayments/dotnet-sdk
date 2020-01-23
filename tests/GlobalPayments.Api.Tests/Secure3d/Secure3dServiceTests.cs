@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
         private BrowserData browserData;
 
         public Secure3dServiceTests() {
-            GatewayConfig config = new GatewayConfig {
+            GatewayConfig config = new GpEcomConfig {
                 MerchantId = "myMerchantId",
                 AccountId = "ecom3ds",
                 SharedSecret = "secret",
@@ -708,41 +708,39 @@ namespace GlobalPayments.Api.Tests.Secure3d {
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
 
+
         [TestMethod]
-        public void SeansLatestSNAFU() {
-            // configure client & request settings
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                MerchantId = "seanmacdomhnalltest",
-                AccountId = "yoma",
+        public void ExceptionTest() {
+            // Configure client & request settings
+            ServicesContainer.ConfigureService(new GpEcomConfig {
+                MerchantId = "myMerchantId",
+                AccountId = "ecom3ds",
                 SharedSecret = "secret",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi"
+                MethodNotificationUrl = "https://www.example.com/methodNotificationUrl",
+                ChallengeNotificationUrl = "https://www.example.com/challengeNotificationUrl",
+                MerchantContactUrl = "https://www.example.com/about",
+                Secure3dVersion = Secure3dVersion.Two
             });
 
-            // add obtained 3D Secure 2 authentication data
-            var threeDSecureData = new ThreeDSecure() {
-                AuthenticationValue = "ODQzNjgwNjU0ZjM3N2JmYTg0NTM=",
-                DirectoryServerTransactionId = "c272b04f-6e7b-43a2-bb78-90f4fb94aa25",
-                Eci = 5,
-                MessageVersion = "2.1.0"
-            };
-
             // supply existing customer/payer ref
-            string customerId = "03e28f0e-4cf0-492e-80bd-20ec318e9334";
+            string customerId = "20190819-Realex";
             // supply existing card/payment method ref
-            string paymentId = "cdb398ac-8a0e-49f7-acf0-52a38832cfc9";
+            string paymentId = "20190819-Realex-Credit";
 
             // create the payment method object
-            RecurringPaymentMethod paymentMethod = new RecurringPaymentMethod(customerId, paymentId) {
-                ThreeDSecure = threeDSecureData
-            };
+            RecurringPaymentMethod paymentMethod = new RecurringPaymentMethod(customerId, paymentId);
 
-            var orderId = "ezJDQjhENTZBLTdCNzNDQw"; // use the same Order ID from the Verify-Enrolled & Verify-Sig
-                                                    // create the Authorization with 3D Secure information
-            var response = paymentMethod.Charge(99.99m)
-               .WithOrderId(orderId)
-               .WithCurrency("EUR")
-               .Execute();
-            Assert.IsNotNull(response);
+            ThreeDSecure threeDSecureData = null;
+
+            try {
+                threeDSecureData = Secure3dService.CheckEnrollment(paymentMethod)
+                   .Execute(Secure3dVersion.Two);
+                Assert.IsNotNull(threeDSecureData);
+                Assert.AreEqual("True", threeDSecureData.Enrolled);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message);
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.CreditSale(10m)
+            var response = _device.Sale(10m)
                .WithGratuity(0m)
                .Execute();
             Assert.IsNotNull(response);
@@ -46,16 +46,17 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var response = _device.CreditSale(12m)
-           .WithSignatureCapture(true)
-           .Execute();
+
+            var response = _device.Sale(12m)
+               .WithSignatureCapture(true)
+               .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditSaleNoAmount() {
-            _device.CreditSale().Execute();
+            _device.Sale().Execute();
         }
 
         [TestMethod]
@@ -63,14 +64,15 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var response = _device.CreditAuth(12m)
+
+            var response = _device.Authorize(12m)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
             WaitAndReset();
 
-            var captureResponse = _device.CreditCapture(12m)
+            var captureResponse = _device.Capture(12m)
                 .WithTransactionId(response.TransactionId)
                 .Execute();
             Assert.IsNotNull(captureResponse);
@@ -79,12 +81,12 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditAuthNoAmount() {
-            _device.CreditAuth().Execute();
+            _device.Authorize().Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CaptureNoTransactionId() {
-            _device.CreditCapture().Execute();
+            _device.Capture().Execute();
         }
 
         [TestMethod]
@@ -92,19 +94,19 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var returnResponse = _device.CreditRefund(14m).Execute();
+            var returnResponse = _device.Refund(14m).Execute();
             Assert.IsNotNull(returnResponse);
             Assert.AreEqual("00", returnResponse.ResponseCode, returnResponse.ResponseText);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditRefundNoAmount() {
-            _device.CreditRefund().Execute();
+            _device.Refund().Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditRefundByTransactionIdNoAuthCode() {
-            _device.CreditRefund(13m)
+            _device.Refund(13m)
             .WithTransactionId("1234567")
             .Execute();
         }
@@ -114,7 +116,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var response = _device.CreditVerify().Execute();
+            var response = _device.Verify().Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -126,12 +128,12 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 str_message = message;
                 Assert.IsNotNull(message);
             };
-            var saleResponse = _device.CreditSale(17m).Execute();
+            var saleResponse = _device.Sale(17m).Execute();
             Assert.IsNotNull(saleResponse);
             Assert.AreEqual("00", saleResponse.ResponseCode);
             WaitAndReset();
 
-            var voidResponse = _device.CreditVoid()
+            var voidResponse = _device.Void()
                 .WithTransactionId(saleResponse.TransactionId)
                 .Execute();
             Assert.IsNotNull(voidResponse);
@@ -140,7 +142,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditVoidNoTransactionId() {
-            _device.CreditVoid().Execute();
+            _device.Void().Execute();
         }
 
         [TestMethod]
@@ -154,14 +156,14 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
         public void LostTransactionRecovery() {
             var requestId = new RandomIdProvider().GetRequestId();
 
-            var response = _device.CreditSale(10m)
+            var response = _device.Sale(10m)
                 .WithRequestId(requestId)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
             WaitAndReset();
 
-            var duplicateResponse = _device.CreditSale(10m)
+            var duplicateResponse = _device.Sale(10m)
                 .WithRequestId(requestId)
                 .Execute();
             Assert.IsNotNull(duplicateResponse);

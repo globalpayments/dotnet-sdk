@@ -333,5 +333,9 @@ namespace GlobalPayments.Api.Entities {
         public ManagementBuilder Void() {
             return new ManagementBuilder(TransactionType.Void).WithPaymentMethod(TransactionReference);
         }
+
+        public ManagementBuilder Increment(decimal? amount = null) {
+            return new ManagementBuilder(TransactionType.Increment).WithAmount(amount).WithPaymentMethod(TransactionReference);
+        }
     }
 }

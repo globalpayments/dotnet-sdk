@@ -27,11 +27,13 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal CommercialData CommercialData { get; set; }
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
         internal string Description { get; set; }
         internal decimal? Gratuity { get; set; }
         internal string InvoiceNumber { get; set; }
+        internal LodgingData LodgingData { get; set; }
         internal string OrderId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -41,11 +43,8 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal string PayerAuthenticationResponse { get; set; }
-        internal string PoNumber { get; set; }
         internal ReasonCode? ReasonCode { get; set;}
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
-        internal decimal? TaxAmount { get; set; }
-        internal TaxType? TaxType { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -81,6 +80,15 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>ManagementBuilder</returns>
         public ManagementBuilder WithMultiCapture(bool value) {
             MultiCapture = value;
+            return this;
+        }
+
+        public ManagementBuilder WithCommercialData(CommercialData data) {
+            CommercialData = data;
+            if (data.CommercialIndicator.Equals(CommercialIndicator.Level_II)) {
+                TransactionModifier = TransactionModifier.Level_II;
+            }
+            else { TransactionModifier = TransactionModifier.Level_III; }
             return this;
         }
 
@@ -152,7 +160,7 @@ namespace GlobalPayments.Api.Builders {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">string</param>
         /// <returns></returns>
         public ManagementBuilder WithPayerAuthenticationResponse(string value) {
             PayerAuthenticationResponse = value;
@@ -161,17 +169,6 @@ namespace GlobalPayments.Api.Builders {
 
         internal ManagementBuilder WithPaymentMethod(IPaymentMethod value) {
             PaymentMethod = value;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the purchase order number; where applicable.
-        /// </summary>
-        /// <param name="value">The PO number</param>
-        /// <returns>ManagementBuilder</returns>
-        public ManagementBuilder WithPoNumber(string value) {
-            TransactionModifier = TransactionModifier.LevelII;
-            PoNumber = value;
             return this;
         }
 
@@ -185,6 +182,12 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
         public ManagementBuilder WithSupplementaryData(string type, params string[] values) {
             // create the dictionary
             if (SupplementaryData == null) {
@@ -202,42 +205,28 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        /// <summary>
-        /// Sets the tax amount.
-        /// </summary>
-        /// <remarks>
-        /// Useful for commercial purchase card requests.
-        /// </remarks>
-        /// <seealso>See `AuthorizationBuilder.WithCommercialRequest`</seealso>
-        /// <param name="value">The tax amount</param>
-        /// <returns>ManagementBuilder</returns>
-        public ManagementBuilder WithTaxAmount(decimal? value) {
-            TransactionModifier = TransactionModifier.LevelII;
-            TaxAmount = value;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the tax type.
-        /// </summary>
-        /// <remarks>
-        /// Useful for commercial purchase card requests.
-        /// </remarks>
-        /// <seealso>See `AuthorizationBuilder.WithCommercialRequest`</seealso>
-        /// <param name="value">The tax type</param>
-        /// <returns>ManagementBuilder</returns>
-        public ManagementBuilder WithTaxType(TaxType value) {
-            TransactionModifier = TransactionModifier.LevelII;
-            TaxType = value;
-            return this;
-        }
-
         internal ManagementBuilder WithModifier(TransactionModifier value) {
             TransactionModifier = value;
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public ManagementBuilder WithAlternativePaymentType(AlternativePaymentType value) {
             this.AlternativePaymentType = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Lodging data information for Portico implementation
+        /// </summary>
+        /// <param name="value">The lodging data</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public ManagementBuilder WithLodgingData(LodgingData value) {
+            LodgingData = value;
             return this;
         }
 
@@ -258,8 +247,9 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release)
                 .Check(() => TransactionId).IsNotNull();
 
-            Validations.For(TransactionType.Edit).With(TransactionModifier.LevelII)
-                .Check(() => TaxType).IsNotNull();
+            // TODO: Need level validations
+            //Validations.For(TransactionType.Edit).With(TransactionModifier.Level_II)
+            //    .Check(() => TaxType).IsNotNull();
 
             Validations.For(TransactionType.Refund)
                 .When(() => Amount).IsNotNull()

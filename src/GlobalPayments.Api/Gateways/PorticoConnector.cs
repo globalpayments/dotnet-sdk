@@ -38,7 +38,7 @@ namespace GlobalPayments.Api.Gateways {
             }
             et.SubElement(block1, "Amt", builder.Amount);
             et.SubElement(block1, "GratuityAmtInfo", builder.Gratuity);
-            et.SubElement(block1, "ConvenienceAmtInfo", builder.ConvenienceAmt);
+            et.SubElement(block1, "ConvenienceAmtInfo", builder.ConvenienceAmount);
             et.SubElement(block1, "ShippingAmtInfo", builder.ShippingAmt);
             // because plano...
             et.SubElement(block1, builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit ? "CashbackAmtInfo" : "CashBackAmount", builder.CashBackAmount);
@@ -148,12 +148,8 @@ namespace GlobalPayments.Api.Gateways {
                         }
                     }
                     if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {
-                        string chipCondition = null;
-                        if (builder.ChipCondition != null)
-                            chipCondition = builder.ChipCondition == EmvChipCondition.ChipFailedPreviousSuccess ? "CHIP_FAILED_PREV_SUCCESS" : "CHIP_FAILED_PREV_FAILED";
-
                         et.SubElement(block1, "AccountType", builder.AccountType?.ToString() ?? null);
-                        et.SubElement(block1, "EMVChipCondition", chipCondition);
+                        et.SubElement(block1, "EMVChipCondition", EnumConverter.GetMapping(Target.Portico, builder.EmvLastChipRead));
                         et.SubElement(block1, "MessageAuthenticationCode", builder.MessageAuthenticationCode);
                         et.SubElement(block1, "PosSequenceNbr", builder.PosSequenceNumber);
                         et.SubElement(block1, "ReversalResonCode", builder.ReversalReasonCode);
@@ -280,8 +276,9 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(block1, "BalanceInquiryType", builder.BalanceInquiryType);
 
             // cpc request
-            if (builder.Level2Request)
+            if (builder.CommercialRequest) {
                 et.SubElement(block1, "CPCReq", "Y");
+            }
 
             // details
             if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
@@ -319,13 +316,44 @@ namespace GlobalPayments.Api.Gateways {
 
                         var amountNode = et.SubElement(autoSub, fieldNames[index++] + "AdditionalAmtInfo");
                         et.SubElement(amountNode, "AmtType", amount.Key);
-                        et.SubElement(amountNode, "Amt", amount.Value.ToNumericString());
+                        et.SubElement(amountNode, "Amt", amount.Value?.ToNumericString());
                     }
                 }
 
                 et.SubElement(autoSub, "MerchantVerificationValue", builder.AutoSubstantiation.MerchantVerificationValue);
                 et.SubElement(autoSub, "RealTimeSubstantiation", builder.AutoSubstantiation.RealTimeSubstantiation ? "Y" : "N");
             }
+
+            #region LodgingData
+            if (builder.LodgingData != null) {
+                var lodging = builder.LodgingData;
+
+                Element lodgingElement = et.SubElement(block1, "LodgingData");
+                et.SubElement(lodgingElement, "PrestigiousPropertyLimit", lodging.PrestigiousPropertyLimit);
+                et.SubElement(lodgingElement, "NoShow", lodging.NoShow ? "Y" : "N");
+                et.SubElement(lodgingElement, "AdvancedDepositType", lodging.AdvancedDepositType);
+                et.SubElement(lodgingElement, "PreferredCustomer", lodging.PreferredCustomer ? "Y" : "N");
+
+                if ((!string.IsNullOrEmpty(lodging.FolioNumber)) || (lodging.StayDuration != default(int)) || (lodging.CheckInDate != null) || (lodging.CheckOutDate != null) ||
+                    (lodging.Rate != default(decimal)) || (lodging.ExtraCharges != null)) {
+                    Element lodgingDataEdit = et.SubElement(lodgingElement, "LodgingDataEdit");
+                    et.SubElement(lodgingDataEdit, "FolioNumber", lodging.FolioNumber);
+                    et.SubElement(lodgingDataEdit, "Duration", lodging.StayDuration);
+                    et.SubElement(lodgingDataEdit, "CheckInDate", lodging.CheckInDate?.ToString("MM-dd-yyyy"));
+                    et.SubElement(lodgingDataEdit, "CheckOutDate", lodging.CheckOutDate?.ToString("MM-dd-yyyy"));
+                    et.SubElement(lodgingDataEdit, "Rate", lodging.Rate);
+
+                    if (lodging.ExtraCharges != null) {
+                        Element extraChargesElement = et.SubElement(lodgingDataEdit, "ExtraCharges");
+
+                        foreach (var chargeType in lodging.ExtraCharges.Keys) {
+                            et.SubElement(extraChargesElement, chargeType.ToString(), "Y");
+                        }
+                        et.SubElement(lodgingDataEdit, "ExtraChargeAmtInfo", lodging.ExtraChargeAmount);
+                    }
+                }
+            }
+            #endregion
 
             var response = DoTransaction(BuildEnvelope(et, transaction, builder.ClientTransactionId));
             return MapResponse(response, builder.PaymentMethod);
@@ -345,6 +373,7 @@ namespace GlobalPayments.Api.Gateways {
                 Element root = null;
                 if (builder.TransactionType == TransactionType.Reversal
                     || builder.TransactionType == TransactionType.Refund
+                    || builder.TransactionType == TransactionType.Increment
                     || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift
                     || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH) {
                     root = et.SubElement(transaction, "Block1");
@@ -375,11 +404,25 @@ namespace GlobalPayments.Api.Gateways {
                 }
 
                 // Level II Data
-                if (builder.TransactionType == TransactionType.Edit && builder.TransactionModifier == TransactionModifier.LevelII) {
+                if (builder.CommercialData != null) {
                     var cpc = et.SubElement(root, "CPCData");
-                    et.SubElement(cpc, "CardHolderPONbr", builder.PoNumber);
-                    et.SubElement(cpc, "TaxType", builder.TaxType.ToString());
-                    et.SubElement(cpc, "TaxAmt", builder.TaxAmount);
+                    et.SubElement(cpc, "CardHolderPONbr", builder.CommercialData.PoNumber);
+                    et.SubElement(cpc, "TaxType", builder.CommercialData.TaxType.ToString());
+                    et.SubElement(cpc, "TaxAmt", builder.CommercialData.TaxAmount);
+                }
+
+                // Lodging Data
+                if (builder.LodgingData != null) {
+                    LodgingData lodging = builder.LodgingData;
+
+                    if (lodging.ExtraCharges != null) {
+                        Element lodgingDataEdit = et.SubElement(root, "LodgingDataEdit");
+                        Element extraChargesElement = et.SubElement(lodgingDataEdit, "ExtraCharges");
+                        foreach (var chargeType in lodging.ExtraCharges.Keys) {
+                            et.SubElement(extraChargesElement, chargeType.ToString(), "Y");
+                        }
+                        et.SubElement(lodgingDataEdit, "ExtraChargeAmtInfo", lodging.ExtraChargeAmount);
+                    }
                 }
 
                 // Additional Txn Fields
@@ -685,9 +728,9 @@ namespace GlobalPayments.Api.Gateways {
                     // lodging data
                     if (root.Has("LodgingData")) {
                         summary.LodgingData = new LodgingData {
-                            PrestigiousPropertyLimit = root.GetValue<string>("PrestigiousPropertyLimit"),
+                            PrestigiousPropertyLimit = root.GetValue<PrestigiousPropertyLimit>("PrestigiousPropertyLimit"),
                             NoShow = root.GetValue<bool>("NoShow"),
-                            AdvancedDepositType = root.GetValue<string>("AdvancedDepositType"),
+                            AdvancedDepositType = root.GetValue<AdvancedDepositType>("AdvancedDepositType"),
                             LodgingDataEdit = root.GetValue<string>("LodgingDataEdit"),
                             PreferredCustomer = root.GetValue<bool>("PReferredCustomer"),
                         };
@@ -853,7 +896,7 @@ namespace GlobalPayments.Api.Gateways {
                         throw new UnsupportedTransactionException();
                     }
                 case TransactionType.Edit: {
-                        if (builder.TransactionModifier.HasFlag(TransactionModifier.LevelII))
+                        if (builder.TransactionModifier.HasFlag(TransactionModifier.Level_II))
                             return "CreditCPCEdit"; // CreditCPCEdit : Edit (Level II)
                         else return "CreditTxnEdit";  // CreditTxnEdit : Edit (Credit)
                     }
@@ -896,6 +939,8 @@ namespace GlobalPayments.Api.Gateways {
                     return "GiftCardReplace"; // GiftCardReplace : Replace
                 case TransactionType.Reward:
                     return "GiftCardReward"; // GiftCardReward : Reward
+                case TransactionType.Increment:
+                    return "CreditIncrementalAuth";
                 case TransactionType.TokenDelete:
                 case TransactionType.TokenUpdate:
                     return "ManageTokens";

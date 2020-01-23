@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Terminals {
         public bool KeepAlive { get; set; }
         
         public DeviceMessage(byte[] buffer) {
-            this._buffer = buffer;
+            _buffer = buffer;
         }
 
         public byte[] GetSendBuffer() {

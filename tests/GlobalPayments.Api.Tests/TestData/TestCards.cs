@@ -50,6 +50,13 @@ namespace GlobalPayments.Api.Tests.TestData {
             };
         }
 
+        public static CreditTrackData VisaFallbackSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            return new CreditTrackData {
+                Value = "%B4012002000060016^VI TEST CREDIT^251220118039000000000396?;4012002000060016=25122011803939600000?",
+                EntryMethod = entryMethod
+            };
+        }
+
         public static CreditTrackData VisaSwipeEncrypted(EntryMethod entryMethod = EntryMethod.Swipe) {
             return new CreditTrackData {
                 Value = "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;",

@@ -7,6 +7,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal PaymentMethodType PaymentMethodType { get; set; }
         internal int ReferenceNumber { get; set; }
 
+        public T WithPaymentMethodType(PaymentMethodType value) {
+            PaymentMethodType = value;
+            return this as T;
+        }
         public T WithReferenceNumber(int value) {
             ReferenceNumber = value;
             return this as T;

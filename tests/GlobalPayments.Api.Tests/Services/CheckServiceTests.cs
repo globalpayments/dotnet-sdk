@@ -11,9 +11,8 @@ namespace GlobalPayments.Api.Tests.Services {
         Address address;
 
         public CheckServiceTests() {
-            service = new CheckService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            service = new CheckService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
 
             check = TestData.TestChecks.Certification();

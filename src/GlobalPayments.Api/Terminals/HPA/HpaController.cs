@@ -1,19 +1,14 @@
+using System;
+using System.Text;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.HPA.Interfaces;
 using GlobalPayments.Api.Terminals.HPA.Responses;
-using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Utils;
-using System;
-using System.Text;
 
 namespace GlobalPayments.Api.Terminals.HPA {
-    internal class HpaController : DeviceController {
-        IDeviceInterface _device;
-
-        public event MessageSentEventHandler OnMessageSent;
-
+    public class HpaController : DeviceController {
         internal MessageFormat Format {
             get {
                 if (_settings != null)
@@ -23,24 +18,20 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         internal override IDeviceInterface ConfigureInterface() {
-            if (_device == null)
-                _device = new HpaInterface(this);
-            return _device;
+            if (_interface == null)
+                _interface = new HpaInterface(this);
+            return _interface;
         }
-
-        internal HpaController(ITerminalConfiguration settings) : base(settings) {
+        internal override IDeviceCommInterface ConfigureConnector() {
             switch (_settings.ConnectionMode) {
                 case ConnectionModes.TCP_IP:
-                    _interface = new HpaTcpInterface(settings);
-                    break;
+                    return new HpaTcpInterface(_settings);
                 default:
                     throw new NotImplementedException("Connection Method not available for HPA devices");
             }
+        }
 
-            //_interface.Connect();
-            _interface.OnMessageSent += (message) => {
-                OnMessageSent?.Invoke(message);
-            };
+        internal HpaController(ITerminalConfiguration settings) : base(settings) {
         }
 
         internal T SendMessage<T>(string message, params string[] messageIds) where T : SipBaseResponse {
@@ -51,7 +42,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
             deviceMessage.KeepAlive = keepAlive;
             deviceMessage.AwaitResponse = awaitResponse;
 
-            var response = _interface.Send(deviceMessage);
+            var response = _connector.Send(deviceMessage);
             if (awaitResponse) {
                 return (T)Activator.CreateInstance(typeof(T), response, messageIds);
             }
@@ -171,8 +162,8 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         public new void Dispose() {
-            _device.Dispose();
-            _interface.Disconnect();
+            _interface.Dispose();
+            _connector.Disconnect();
         }
     }
 }
