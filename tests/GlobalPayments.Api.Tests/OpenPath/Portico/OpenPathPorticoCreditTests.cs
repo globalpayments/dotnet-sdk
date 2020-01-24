@@ -23,8 +23,10 @@ namespace GlobalPayments.Api.Tests.OpenPath {
                 ServiceUrl = "https://cert.api2.heartlandportico.com",
 
                 // openpath attributes
-                OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
-                OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
+                //OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
+                //OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
+                OpenPathApiKey = "wm3UhWyKnnQM2DvM3sGfRKQqdYDYKPNs2dz3FH3d",
+                OpenPathApiUrl = "http://localhost:50451/v1/globalpayments"
 
             });
 
@@ -93,10 +95,21 @@ namespace GlobalPayments.Api.Tests.OpenPath {
         }
 
         [TestMethod]
-        public void CreditSale() {
+        public void CreditSale()
+        {
+            var billingAddress = new Address();
+            billingAddress.StreetAddress1 = "Flat 123";
+            billingAddress.StreetAddress2 = "House 456";
+            billingAddress.StreetAddress3 = "Cul-De-Sac";
+            billingAddress.City = "Halifax";
+            billingAddress.Province = "West Yorkshire";
+            billingAddress.State = "Yorkshire and the Humber";
+            billingAddress.Country = "GB";
+            billingAddress.PostalCode = "E77 4QJ";
             var response = card.Charge(15m)
                 .WithCurrency(currency)
                 .WithAllowDuplicates(true)
+                .WithAddress(billingAddress)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
