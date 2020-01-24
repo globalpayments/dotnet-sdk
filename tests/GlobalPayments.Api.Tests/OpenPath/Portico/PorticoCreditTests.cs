@@ -96,14 +96,12 @@ namespace GlobalPayments.Api.Tests.OpenPath {
         public void CreditSale()
         {
             var billingAddress = new Address();
-            billingAddress.StreetAddress1 = "Flat 123";
-            billingAddress.StreetAddress2 = "House 456";
-            billingAddress.StreetAddress3 = "Cul-De-Sac";
-            billingAddress.City = "Halifax";
-            billingAddress.Province = "West Yorkshire";
-            billingAddress.State = "Yorkshire and the Humber";
-            billingAddress.Country = "GB";
-            billingAddress.PostalCode = "E77 4QJ";
+            billingAddress.StreetAddress1 = "200 Spectrum Center Drive";
+            billingAddress.StreetAddress2 = "Suite 4123";
+            billingAddress.City = "Irvine";
+            billingAddress.State = "CA";
+            billingAddress.Country = "US";
+            billingAddress.PostalCode = "92618";
             var response = card.Charge(15m)
                 .WithCurrency(currency)
                 .WithAllowDuplicates(true)
