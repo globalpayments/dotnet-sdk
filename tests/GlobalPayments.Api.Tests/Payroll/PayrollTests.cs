@@ -14,7 +14,6 @@ namespace GlobalPayments.Api.Tests.Payroll {
                 Username = "testapiuser.russell",
                 Password = "payroll3!",
                 ApiKey = "iGF9UtaLc526poWWNgUpiCoO3BckcZUKNF3nhyKul8A=",
-                ServiceUrl = "https://taapi.heartlandpayrollonlinetest.com/",
                 Timeout = -1
             });
         }

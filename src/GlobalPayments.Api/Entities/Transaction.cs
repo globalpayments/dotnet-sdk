@@ -334,6 +334,10 @@ namespace GlobalPayments.Api.Entities {
             return new ManagementBuilder(TransactionType.Void).WithPaymentMethod(TransactionReference);
         }
 
+        public ManagementBuilder Increment(decimal? amount = null) {
+            return new ManagementBuilder(TransactionType.Increment).WithAmount(amount).WithPaymentMethod(TransactionReference);
+        }
+
         /// <summary>
         /// The response from OpenPath's side integration
         /// </summary>

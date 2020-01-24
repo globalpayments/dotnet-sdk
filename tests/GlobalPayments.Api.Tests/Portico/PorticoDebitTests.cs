@@ -11,9 +11,8 @@ namespace GlobalPayments.Api.Tests
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
 
             track = new DebitTrackData {
@@ -76,10 +75,8 @@ namespace GlobalPayments.Api.Tests
         }
         [TestMethod]
         public void debitSaleWithNewCryptoURL() {
-            ServicesContainer.ConfigureService(new GatewayConfig
-            {
-                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
-                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
 
             track = new DebitTrackData

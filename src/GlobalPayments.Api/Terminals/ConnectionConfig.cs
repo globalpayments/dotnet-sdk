@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Terminals.PAX;
 using GlobalPayments.Api.Terminals.HPA;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Genius;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
@@ -49,6 +50,9 @@ namespace GlobalPayments.Api.Terminals {
 
         // Timeout
         int Timeout { get; set; }
+
+        // Associated Gateway
+        GatewayConfig GatewayConfig { get; set; }
     }
 
     public class ConnectionConfig : Configuration, ITerminalConfiguration {
@@ -60,10 +64,12 @@ namespace GlobalPayments.Api.Terminals {
         public DataBits DataBits { get; set; }
         public string IpAddress { get; set; }
         public string Port { get; set; }
+        public IRequestIdProvider RequestIdProvider { get; set; }
+        public GatewayConfig GatewayConfig { get; set; }
+
         public ConnectionConfig() {
             Timeout = -1;
         }
-        public IRequestIdProvider RequestIdProvider { get; set; }
 
         internal override void ConfigureContainer(ConfiguredServices services) {
             switch (DeviceType) {
@@ -77,6 +83,9 @@ namespace GlobalPayments.Api.Terminals {
                 case DeviceType.HPA_ISC250:
                     services.DeviceController = new HpaController(this);
                     break;
+                //case DeviceType.GENIUS:
+                    //services.DeviceController = new GeniusController(this);
+                    //break;
                 default:
                     break;
             }

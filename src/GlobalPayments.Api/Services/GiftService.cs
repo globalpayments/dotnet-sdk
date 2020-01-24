@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Builders;
+﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 

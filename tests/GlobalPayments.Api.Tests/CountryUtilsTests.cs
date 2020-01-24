@@ -161,13 +161,12 @@ namespace GlobalPayments.Api.Tests {
                 CardHolderName = "Joe Smith"
             };
 
-            ServicesContainer.ConfigureService(new GatewayConfig {
+            ServicesContainer.ConfigureService(new GpEcomConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
                 RebatePassword = "rebate",
-                RefundPassword = "refund",
-                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi"
+                RefundPassword = "refund"
             });
 
             var response = card.Charge(10m)

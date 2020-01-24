@@ -40,7 +40,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod]
         public void SerializeBuilder() {
-            var message = device.CreditAuth(10m).Serialize();
+            var message = device.Authorize(10m).Serialize();
             Assert.IsNotNull(message);
             Assert.AreNotEqual(0, message.Length);
         }

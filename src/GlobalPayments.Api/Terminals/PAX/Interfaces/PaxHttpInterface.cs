@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public event MessageSentEventHandler OnMessageSent;
 
         public PaxHttpInterface(ITerminalConfiguration settings) {
-            this._settings = settings;
+            _settings = settings;
         }
 
         public void Connect() {

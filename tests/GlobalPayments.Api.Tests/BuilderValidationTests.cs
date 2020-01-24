@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,9 +10,8 @@ namespace GlobalPayments.Api.Tests {
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
-                ServiceUrl = "https://cert.api2.heartlandportico.com/Hps.Exchange.PosGateway/PosGatewayService.asmx"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w"
             });
 
             card = new CreditCardData {

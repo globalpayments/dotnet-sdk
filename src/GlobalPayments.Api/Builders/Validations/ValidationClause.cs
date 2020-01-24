@@ -72,5 +72,12 @@ namespace GlobalPayments.Api.Builders {
             }
             else return parent.For(target.type).With(target.constraint);
         }
+
+        public ValidationTarget IsTrue(string message = null) {
+            return Equals(true, message);
+        }
+        public ValidationTarget IsFalse(string message = null) {
+            return Equals(false, message);
+        }
     }
 }

@@ -7,7 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
     public class PaxGiftTests {
-        IDeviceInterface _device;
+        private IDeviceInterface _device;
+        private GiftCard card;
 
         public PaxGiftTests() {
             _device = DeviceService.Create(new ConnectionConfig {
@@ -18,6 +19,10 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 RequestIdProvider = new RandomIdProvider()
             });
             Assert.IsNotNull(_device);
+
+            card = new GiftCard {
+                Number = "5022440000000000098"
+            };
         }
 
         #region GiftSale
@@ -28,35 +33,35 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]01[FS]1000[FS][FS]1[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftSale(10m).Execute();
+            var response = _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
         public void GiftSaleManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]01[FS]1000[FS]5022440000000000098[FS]2[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftSale(10m).WithPaymentMethod(card).Execute();
+            var response = _device.Sale(10m)
+                .WithPaymentMethod(card)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
         public void GiftSaleWithInvoiceNumber() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]01[FS]800[FS]5022440000000000098[FS]4[US]1234[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftSale(8m)
+            var response = _device.Sale(8m)
                 .WithPaymentMethod(card)
                 .WithInvoiceNumber("1234")
                 .Execute();
@@ -68,14 +73,12 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod]
         public void LoyaltySaleManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
                 //Assert.IsTrue(message.StartsWith("[STX]T08[FS]1.35[FS]01[FS]1000[FS]5022440000000000098[FS]5[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftSale(10m)
+            var response = _device.Sale(10m)
                 .WithCurrency(CurrencyType.POINTS)
                 .WithPaymentMethod(card)
                 .Execute();
@@ -85,26 +88,29 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftSaleNoAmount() {
-            _device.GiftSale(6).Execute();
+            _device.Sale(6m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftSaleNoCurrency() {
-            _device.GiftSale(10m).WithCurrency(null).Execute();
+            _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .WithCurrency(null)
+                .Execute();
         }
         #endregion
 
         #region GiftAddValue
         [TestMethod]
         public void GiftAddValueManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]10[FS]1000[FS]5022440000000000098[FS]8[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftAddValue(8)
+            var response = _device.AddValue(8m)
                 .WithPaymentMethod(card)
                 .WithAmount(10m)
                 .Execute();
@@ -119,7 +125,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]10[FS]1000[FS][FS]9[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftAddValue(9)
+            var response = _device.AddValue(9m)
                 .WithAmount(10m)
                 .Execute();
 
@@ -136,7 +142,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T08[FS]1.35[FS]10[FS]800[FS]5022440000000000098[FS]10[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftAddValue(10)
+            var response = _device.AddValue(10m)
                 .WithPaymentMethod(card)
                 .WithCurrency(CurrencyType.POINTS)
                 .WithAmount(8m)
@@ -148,27 +154,29 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftAddValueNoAmount() {
-            _device.GiftAddValue(11).Execute();
+            _device.AddValue(11m).Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftAddValueNoCurrency() {
-            _device.GiftAddValue(12).WithCurrency(null).Execute();
+            _device.AddValue(12m).WithCurrency(null).Execute();
         }
         #endregion
 
         #region GiftVoid
         [TestMethod]
         public void GiftVoidManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-            var saleResponse = _device.GiftSale(13).WithAmount(10m).WithPaymentMethod(card).Execute();
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]16[FS][FS][FS]13[FS][FS]HREF=" + saleResponse.TransactionId + "[ETX]"));
             };
 
-            var voidResponse = _device.GiftVoid()
+            var saleResponse = _device.Sale(13m)
+                .WithPaymentMethod(card)
+                .Execute();
+
+            var voidResponse = _device.Void()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .WithTransactionId(saleResponse.TransactionId)
                 .Execute();
 
@@ -178,7 +186,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftVoidNoCurrency() {
-            _device.GiftVoid()
+            _device.Void()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .WithCurrency(null)
                 .WithTransactionId("1")
                 .Execute();
@@ -186,7 +195,10 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftVoidNoTransactionId() {
-            _device.GiftVoid().WithTransactionId(null).Execute();
+            _device.Void()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .WithTransactionId(null)
+                .Execute();
         }
         #endregion
 
@@ -198,7 +210,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]23[FS][FS][FS]16[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftBalance()
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -207,14 +220,12 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod]
         public void GiftBalanceManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
                 //Assert.IsTrue(message.StartsWith("[STX]T06[FS]1.35[FS]23[FS][FS]5022440000000000098[FS]17[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftBalance()
+            var response = _device.Balance()
                 .WithPaymentMethod(card)
                 .Execute();
 
@@ -224,14 +235,12 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod]
         public void LoyaltyBalanceManual() {
-            var card = new GiftCard { Number = "5022440000000000098" };
-
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
                 //Assert.IsTrue(message.StartsWith("[STX]T08[FS]1.35[FS]23[FS][FS]5022440000000000098[FS]18[FS][FS][ETX]"));
             };
 
-            var response = _device.GiftBalance()
+            var response = _device.Balance()
                 .WithPaymentMethod(card)
                 .WithCurrency(CurrencyType.POINTS)
                 .Execute();
@@ -242,14 +251,19 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftBalanceNoCurrency() {
-            _device.GiftBalance().WithCurrency(null).Execute();
+            _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .WithCurrency(null)
+                .Execute();
         }
         #endregion
 
         #region Certification
         [TestMethod]
         public void Test_case_15a() {
-            var response = _device.GiftBalance().Execute();
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(10m, response.BalanceAmount);
@@ -257,23 +271,21 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod]
         public void Test_case_15b() {
-            var response = _device.GiftAddValue(2).WithAmount(8m).Execute();
+            var response = _device.AddValue(2m)
+                .WithAmount(8m)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
         public void Test_case_15c() {
-            var response = _device.GiftSale(1m).Execute();
+            var response = _device.Sale(1m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
-
-        //public void test_case_15d() {
-        //    var response = _device
-        //    Assert.IsNotNull(response);
-        //    Assert.AreEqual("00", response.ResponseCode);
-        //}
         #endregion
     }
 }

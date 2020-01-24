@@ -8,13 +8,20 @@ namespace GlobalPayments.Api.PaymentMethods
     /// Use PIN debit as a payment method.
     /// </summary>
     public abstract class Debit : IPaymentMethod, IPrePayable, IRefundable, IReversable, IChargable, IEncryptable, IPinProtected {
+        public string CardType { get; set; }
+
         public EncryptionData EncryptionData { get; set; }
 
         /// <summary>
         /// Set to `PaymentMethodType.Debit` for internal methods.
         /// </summary>
         public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.Debit; } }
+
         public string PinBlock { get; set; }
+
+        public Debit() {
+            CardType = "Unknown";
+        }
 
         public AuthorizationBuilder AddValue(decimal? amount = null) {
             return new AuthorizationBuilder(TransactionType.AddValue, this).WithAmount(amount);
@@ -31,13 +38,5 @@ namespace GlobalPayments.Api.PaymentMethods
         public AuthorizationBuilder Reverse(decimal? amount = null) {
             return new AuthorizationBuilder(TransactionType.Reversal, this).WithAmount(amount);
         }
-    }
-
-    /// <summary>
-    /// Use PIN debit track data as a payment method.
-    /// </summary>
-    public class DebitTrackData : Debit, ITrackData {
-        public EntryMethod EntryMethod { get; set; }
-        public string Value { get; set; }
     }
 }

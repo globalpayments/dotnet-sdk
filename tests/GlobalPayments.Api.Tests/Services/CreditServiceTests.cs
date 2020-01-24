@@ -10,9 +10,8 @@ namespace GlobalPayments.Api.Tests.Services {
         private CreditCardData card;
 
         public CreditServiceTests() {
-            service = new CreditService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            service = new CreditService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w"
             });
 
             card = new CreditCardData {
@@ -70,9 +69,12 @@ namespace GlobalPayments.Api.Tests.Services {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                TaxAmount = 1m
+            };
+
             Transaction editResponse = service.Edit(response.TransactionId)
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(editResponse);
             Assert.AreEqual("00", editResponse.ResponseCode);

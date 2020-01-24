@@ -2,13 +2,7 @@
 using GlobalPayments.Api.Builders;
 
 namespace GlobalPayments.Api.PaymentMethods {
-    public class AlternatePaymentMethod: IPaymentMethod, IChargable, ISecure3d {
-
-        /// <summary>
-        /// Secure 3d Data attached to the apm
-        /// </summary>
-        public ThreeDSecure ThreeDSecure { get; set; }
-
+    public class AlternatePaymentMethod: IPaymentMethod, IChargable {
         /// <summary>
         /// Returns Payment Method Type.
         /// </summary>
@@ -22,7 +16,7 @@ namespace GlobalPayments.Api.PaymentMethods {
 
         /// <summary>
         /// A ReturnUrl is representing after the payment
-        /// Where the transaction return to .
+        /// Where the transaction return to.
         /// </summary>
         public string ReturnUrl { get; set; }
 
@@ -52,9 +46,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder Charge(decimal? amount = null) {
             return new AuthorizationBuilder(TransactionType.Sale, this)
-                 .WithAmount(amount ?? ThreeDSecure?.Amount)
-                 .WithCurrency(ThreeDSecure?.Currency)
-                 .WithOrderId(ThreeDSecure?.OrderId);
+                 .WithAmount(amount);
         }
     }
 }

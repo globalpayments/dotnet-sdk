@@ -26,7 +26,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]01[FS]1000[FS][US][US][US]F[US][US]1[FS]1[FS][FS][ETX]"));
             };
         
-            var response = _device.EbtPurchase(10m)
+            var response = _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.FOODSTAMPS)
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -41,7 +42,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]01[FS]1000[FS][US][US][US]C[US][US]1[FS]2[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtPurchase(10m)
+            var response = _device.Sale (10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.CASH_BENEFITS)
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -56,7 +58,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]01[FS]1000[US][US]1000[FS][US][US][US]C[US][US]1[FS]1[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtPurchase(10m)
+            var response = _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.CASH_BENEFITS)
                 .WithAllowDuplicates(true)
                 .WithCashBack(10m)
@@ -72,7 +75,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]01[FS]1000[FS][US][US][US]V[US][US]1[FS]3[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtPurchase(10m)
+            var response = _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.VOUCHER)
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -87,7 +91,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]23[FS][FS][US][US][US]F[FS]5[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtBalance()
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.FOODSTAMPS)
                 .Execute();
             Assert.IsNotNull(response);
@@ -101,7 +106,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]23[FS][FS][US][US][US]C[US][US]1[FS]6[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtBalance()
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.CASH_BENEFITS)
                 .Execute();
             Assert.IsNotNull(response);
@@ -110,7 +116,10 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void EbtBalanceInquiryWithVoucher() {
-            _device.EbtBalance().WithCurrency(CurrencyType.VOUCHER).Execute();
+            _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .WithCurrency(CurrencyType.VOUCHER)
+                .Execute();
         }
 
         [TestMethod]
@@ -120,7 +129,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]02[FS]1000[FS][US][US][US]F[FS]9[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtRefund(10m)
+            var response = _device.Refund(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.FOODSTAMPS)
                 .Execute();
             Assert.IsNotNull(response);
@@ -134,7 +144,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]02[FS]1000[FS][US][US][US]F[FS]10[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtRefund(10m)
+            var response = _device.Refund(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.FOODSTAMPS)
                 .Execute();
             Assert.IsNotNull(response);
@@ -143,7 +154,10 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void EbtRefundAllowDup() {
-            _device.EbtRefund(11).WithAllowDuplicates(true).Execute();
+            _device.Refund(11m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .WithAllowDuplicates(true)
+                .Execute();
         }
 
         [TestMethod]
@@ -153,7 +167,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 //Assert.IsTrue(message.StartsWith("[STX]T04[FS]1.35[FS]07[FS]1000[FS][US][US][US]C[FS]12[FS][FS][ETX]"));
             };
 
-            var response = _device.EbtWithdrawl(10m)
+            var response = _device.Withdrawal(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
                 .WithCurrency(CurrencyType.CASH_BENEFITS)
                 .Execute();
             Assert.IsNotNull(response);
@@ -162,7 +177,10 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void EbtBenefitWithdrawlAllowDup() {
-            _device.EbtWithdrawl(10m).WithAllowDuplicates(true).Execute();
+            _device.Withdrawal(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .WithAllowDuplicates(true)
+                .Execute();
         }
     }
 }

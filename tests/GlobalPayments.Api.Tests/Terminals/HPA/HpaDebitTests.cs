@@ -34,7 +34,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-             var response = _device.DebitSale( 10m)
+             var response = _device.Sale( 10m)
+                .WithPaymentMethodType(PaymentMethodType.Debit)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -43,7 +44,9 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DebitSaleNoAmount() {
-              _device.DebitSale().Execute();
+              _device.Sale()
+                .WithPaymentMethodType(PaymentMethodType.Debit)
+                .Execute();
         }
 
         [TestMethod]
@@ -51,14 +54,18 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var response = _device.DebitRefund(10m).Execute();
+            var response = _device.Refund(10m)
+                .WithPaymentMethodType(PaymentMethodType.Debit)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.DeviceResponseText);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void DebitRefund_NoAmount() {
-            _device.DebitRefund().Execute();
+            _device.Refund()
+                .WithPaymentMethodType(PaymentMethodType.Debit)
+                .Execute();
         }
 
         [TestMethod]

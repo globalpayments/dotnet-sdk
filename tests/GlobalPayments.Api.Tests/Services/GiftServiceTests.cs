@@ -11,9 +11,8 @@ namespace GlobalPayments.Api.Tests.Services {
         GiftCard replacement;
 
         public GiftServiceTests() {
-            service = new GiftService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            service = new GiftService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
 
             card = new GiftCard { Number = "5022440000000000007" }; ;
