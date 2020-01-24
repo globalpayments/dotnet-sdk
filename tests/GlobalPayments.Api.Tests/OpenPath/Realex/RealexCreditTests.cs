@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.OpenPath {
     [TestClass]
-    public class OpenPathRealexCreditTests {
+    public class RealexCreditTests {
 
         CreditCardData card;
         string currency;
@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Tests.OpenPath {
 
                 // openpath attributes
                 OpenPathApiKey = "wm3UhWyKnnQM2DvM3sGfRKQqdYDYKPNs2dz3FH3d",
-                OpenPathApiUrl = "http://localhost:50451/v1/globalpayments"
+                OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
 
             };
 

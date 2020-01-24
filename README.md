@@ -146,6 +146,31 @@ catch (ApiException e)
 }
 ```
 
+## OpenPath Connection
+
+Connect your Global Payments API to OpenPath to handle an unlimited amount of connections to multiple accounts and account types. Create rules (from a list of 120+) to route transaction to the correct accounts based on country, customer, products and much more.
+
+In addition to the multiple connections from a single instance, setup fraud filters, notifications and alerts and connect in to third party system to manage declines, chargebacks and much more. For more information see [OpenPath](https://openpath.io).
+
+For complete documentation go to [OpenPath Global Payments Documentation]( https://openpath-inc.zendesk.com/hc/en-us/sections/360007822631-Global-Payments)
+
+#### Configuration
+Add your OpenPath credentials to the Global Payments Service Container:
+```
+ServicesContainer.ConfigureService(new GatewayConfig {
+
+    // global payment portico attributes
+    SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
+    ServiceUrl = "https://cert.api2.heartlandportico.com",
+
+    // openpath attributes
+    OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
+    OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
+
+});
+```
+
+
 ## Contributing
 
 All our code is open sourced and we encourage fellow developers to contribute and help improve it!

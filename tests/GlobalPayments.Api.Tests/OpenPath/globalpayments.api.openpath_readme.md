@@ -51,6 +51,7 @@ ServicesContainer.ConfigureService(new GatewayConfig {
 ### Portico Tests
 `GlobalPayments.Api.Tests.OpenPath.PorticoCreditTests`
 
+### Realex Tests
 `GlobalPayments.Api.Tests.OpenPath.OpenPathRealexCreditTests`
 
 ## Revision History

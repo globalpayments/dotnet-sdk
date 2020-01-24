@@ -23,10 +23,8 @@ namespace GlobalPayments.Api.Tests.OpenPath {
                 ServiceUrl = "https://cert.api2.heartlandportico.com",
 
                 // openpath attributes
-                //OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
-                //OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
-                OpenPathApiKey = "wm3UhWyKnnQM2DvM3sGfRKQqdYDYKPNs2dz3FH3d",
-                OpenPathApiUrl = "http://localhost:50451/v1/globalpayments"
+                OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
+                OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
 
             });
 
