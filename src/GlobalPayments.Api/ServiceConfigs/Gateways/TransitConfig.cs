@@ -3,7 +3,7 @@ using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api {
-    public class TransitConfig : GatewayConfig {
+    public class TransitConfig : GlobalPayments.Api.GpEcomm.GatewayConfig {
         public string DeveloperId { get; set; }
         public string DeviceId { get;set; }
         public string MerchantId { get; set; }

@@ -52,7 +52,7 @@ namespace GlobalPayments.Api.Terminals {
         int Timeout { get; set; }
 
         // Associated Gateway
-        GatewayConfig GatewayConfig { get; set; }
+        GlobalPayments.Api.GpEcomm.GatewayConfig GatewayConfig { get; set; }
     }
 
     public class ConnectionConfig : Configuration, ITerminalConfiguration {
@@ -65,7 +65,7 @@ namespace GlobalPayments.Api.Terminals {
         public string IpAddress { get; set; }
         public string Port { get; set; }
         public IRequestIdProvider RequestIdProvider { get; set; }
-        public GatewayConfig GatewayConfig { get; set; }
+        public GlobalPayments.Api.GpEcomm.GatewayConfig GatewayConfig { get; set; }
 
         public ConnectionConfig() {
             Timeout = -1;

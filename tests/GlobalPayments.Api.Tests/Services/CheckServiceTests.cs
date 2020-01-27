@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.Services {
         Address address;
 
         public CheckServiceTests() {
-            service = new CheckService(new PorticoConfig {
+            service = new CheckService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
 

@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.Services {
         GiftCard replacement;
 
         public GiftServiceTests() {
-            service = new GiftService(new PorticoConfig {
+            service = new GiftService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
 

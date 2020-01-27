@@ -3,7 +3,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 
 namespace GlobalPayments.Api {
-    public class GeniusConfig : GatewayConfig {
+    public class GeniusConfig : GlobalPayments.Api.GpEcomm.GatewayConfig {
         public string ClerkId { get; set; }
 
         public string MerchantName { get; set; }

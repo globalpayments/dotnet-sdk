@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Tests.Services {
         private CreditCardData card;
 
         public CreditServiceTests() {
-            service = new CreditService(new PorticoConfig {
+            service = new CreditService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w"
             });
 

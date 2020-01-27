@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Utils;
 using System.Text;
 
-namespace GlobalPayments.Api.Tests.Realex {
+namespace GlobalPayments.Api.Tests.GpEcomm {
     [TestClass]
     public class GpEcom3dSecureTests {
         public GpEcom3dSecureTests() {

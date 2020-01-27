@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Tests.OpenPath {
             var response = card.Authorize(14m)
                 .WithCurrency(currency)
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -116,7 +116,7 @@ namespace GlobalPayments.Api.Tests.OpenPath {
             var response = card.Charge(15m)
                 .WithCurrency(currency)
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -156,7 +156,7 @@ namespace GlobalPayments.Api.Tests.OpenPath {
                 .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -197,7 +197,7 @@ namespace GlobalPayments.Api.Tests.OpenPath {
                 .WithCurrency(currency)
                 .WithOfflineAuthCode("12345")
                 .WithAllowDuplicates(true)
-                .WithConvenienceAmt(2m)
+                .WithConvenienceAmount(2m)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);

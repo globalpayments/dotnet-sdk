@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
         private BrowserData browserData;
 
         public Secure3dServiceTests() {
-            GatewayConfig config = new GpEcomConfig {
+            GatewayConfig config = new GatewayConfig {
                 MerchantId = "myMerchantId",
                 AccountId = "ecom3ds",
                 SharedSecret = "secret",

@@ -3,10 +3,10 @@ using System.IO;
 using GlobalPayments.Api.Terminals.Abstractions;
 
 namespace GlobalPayments.Api.Tests.Terminals {
-    public class RandomIdProvider : IRequestIdProvider {
+    public class RandomIdProviders : IRequestIdProvider {
         private Random random;
 
-        public RandomIdProvider() {
+        public RandomIdProviders() {
             random = new Random(DateTime.Now.Millisecond);
         }
 
@@ -15,15 +15,15 @@ namespace GlobalPayments.Api.Tests.Terminals {
         }
     }
 
-    public class IncrementalNumberProvider : IRequestIdProvider {
+    public class IncrementalNumberProviders : IRequestIdProvider {
         private object _fileLock = new object();
         private int _currentNumber = 1000000;
         private string _fileName = @"C:\temp\requestNumber.dat";
 
-        private static IncrementalNumberProvider _instance;
-        public static IncrementalNumberProvider GetInstance() {
+        private static IncrementalNumberProviders _instance;
+        public static IncrementalNumberProviders GetInstance() {
             if (_instance != null) {
-                _instance = new IncrementalNumberProvider();
+                _instance = new IncrementalNumberProviders();
             }
             return _instance;
         }
@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Tests.Terminals {
             get { return _currentNumber; }
         }
 
-        private IncrementalNumberProvider() {
+        private IncrementalNumberProviders() {
             lock (_fileLock) {
                 try {
                     using (var sr = new StreamReader(_fileName)) {

@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         public RealexHppResponseTests() {
             _client = new RealexHppClient("https://pay.sandbox.realexpayments.com/pay", "secret");
-            _service = new HostedService(new GatewayConfig {
+            _service = new HostedService(new GpEcomConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "hpp",
                 SharedSecret = "secret",
@@ -26,7 +26,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void BasicResponse() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -48,7 +48,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void StandardResponse() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -70,7 +70,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectHashAuthCode() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -83,7 +83,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectSharedSecret() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "SharedSecret",
@@ -96,7 +96,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void FraudCheckBlock() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -118,7 +118,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void DeclinedTransaction() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -140,7 +140,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void ReferralBTransaction() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -160,7 +160,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void ReferralATransaction() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -180,7 +180,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectResponseHash() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -193,7 +193,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectResultCode() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -206,7 +206,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectMerchantId() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -219,7 +219,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectTimestamp() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -232,7 +232,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectOrderId() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -245,7 +245,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectMessage() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -258,7 +258,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectPasref() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -271,7 +271,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void BasicEncodedResponse() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -293,7 +293,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectEncodedResponse() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -306,7 +306,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod, ExpectedException(typeof(ApiException))]
         public void IncorrectNonEncodedResponse() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",
@@ -319,7 +319,7 @@ namespace GlobalPayments.Api.Tests.Realex {
 
         [TestMethod]
         public void VerifyResponseValues() {
-            var service = new HostedService(new GatewayConfig {
+            var service = new HostedService(new GpEcomConfig {
                 MerchantId = "MerchantId",
                 AccountId = "internet",
                 SharedSecret = "secret",

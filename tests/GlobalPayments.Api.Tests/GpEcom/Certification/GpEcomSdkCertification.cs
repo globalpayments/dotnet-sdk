@@ -3,7 +3,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Realex.Certification {
+namespace GlobalPayments.Api.Tests.GpEcomm.Certification {
     [TestClass]
     public partial class GpEcomSdkCertification {
         [TestCleanup]

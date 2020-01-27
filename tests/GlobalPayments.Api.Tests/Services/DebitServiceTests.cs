@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Tests.Services {
         DebitTrackData card;
 
         public DebitServiceTests() {
-            service = new DebitService(new PorticoConfig {
+            service = new DebitService(new GatewayConfig {
                 SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
 

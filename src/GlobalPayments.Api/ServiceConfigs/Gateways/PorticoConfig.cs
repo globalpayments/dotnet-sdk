@@ -3,7 +3,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 
 namespace GlobalPayments.Api {
-    public class PorticoConfig : GatewayConfig {
+    public class PorticoConfig : GlobalPayments.Api.GpEcomm.GatewayConfig {
         /// <summary>
         /// Account's site ID
         /// </summary>

@@ -1110,4 +1110,17 @@ namespace GlobalPayments.Api.Entities {
         Two,
         Any
     }
+
+    public enum OpenPathStatusType {
+        Processing,
+        Declined,
+        Approved,
+        Rejected,
+        Error,
+        Queued,
+        Pending,
+        Processed,
+        BouncedBack
+    }
+
 }

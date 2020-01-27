@@ -3,7 +3,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 
 namespace GlobalPayments.Api {
-    public class GpEcomConfig : GatewayConfig {
+    public class GpEcomConfig : GlobalPayments.Api.GpEcomm.GatewayConfig {
         #region Gateway
         /// <summary>
         /// Account's account ID
