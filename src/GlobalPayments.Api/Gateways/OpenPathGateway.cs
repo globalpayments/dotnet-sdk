@@ -62,7 +62,7 @@ namespace GlobalPayments.Api.Gateways {
                     // and a new GatewayConfiguration object was returned, use the new config to initialize a new client
                     // the configuration can be found in OpenPath > Connectors
                     ServicesContainer.ConfigureService(openPathResult.BouncebackConfig, "bounceBackConfig");
-                    authorizationBuilder.Execute("bounceBackConfig");
+
                     client = ServicesContainer.Instance.GetClient("bounceBackConfig");
 
                 }

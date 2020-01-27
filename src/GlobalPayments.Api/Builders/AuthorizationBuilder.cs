@@ -682,26 +682,32 @@ namespace GlobalPayments.Api.Builders {
         public override Transaction Execute(string configName = "default") {
             base.Execute(configName);
 
+            var authorizationResult = (Transaction) null;
             var client = ServicesContainer.Instance.GetClient(configName);
 
-            #region OpenPath Side Integration
 
-                // initialize an OpenPathGateway to process side integration if OpenPathApiKey is provided
-                var openPathGatewayInterface = client as IOpenPathGateway;
+            // initialize an OpenPathGateway to process side integration if OpenPathApiKey is provided
+            var openPathGatewayInterface = client as IOpenPathGateway;
 
-                // create a new instance of openpath gateway object
-                var openpathGateway = new OpenPathGateway()
-                    .WithOpenPathApiKey(openPathGatewayInterface?.OpenPathApiKey)
-                    .WithOpenPathApiUrl(openPathGatewayInterface?.OpenPathApiUrl);
+            // create a new instance of openpath gateway object
+            var openpathGateway = new OpenPathGateway()
+                .WithOpenPathApiKey(openPathGatewayInterface?.OpenPathApiKey)
+                .WithOpenPathApiUrl(openPathGatewayInterface?.OpenPathApiUrl);
 
-                var rejectedTransaction = openpathGateway.ProcessAuthorization(this, client);
+            authorizationResult = openpathGateway.ProcessAuthorization(this, client);
 
-                if(rejectedTransaction != null) return rejectedTransaction;
+            if(authorizationResult == null) {
 
-            #endregion
+                // send transaction to global payments
+                authorizationResult = client.ProcessAuthorization(this);
 
-            // send transaction to global payments
-            var authorizationResult = client.ProcessAuthorization(this);
+            }
+            else {
+
+                // return openpath rejection
+                return authorizationResult;
+
+            }
 
             // sends the transaction id to OpenPath
             if (openpathGateway.IsValidForSideIntegration()) {

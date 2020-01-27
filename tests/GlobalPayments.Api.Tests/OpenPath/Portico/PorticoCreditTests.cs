@@ -223,12 +223,14 @@ namespace GlobalPayments.Api.Tests.OpenPath {
 
         [TestMethod]
         public void CreditRefund() {
+
             var response = card.Refund(16m)
-                .WithCurrency(currency)
+                .WithCurrency("USD")
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+
         }
 
         [TestMethod]
@@ -294,15 +296,6 @@ namespace GlobalPayments.Api.Tests.OpenPath {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
-        [TestMethod]
-        public void CreditTestWithClientTransactionId() {
-            var response = card.Charge(10m)
-                .WithCurrency(currency)
-                .WithClientTransactionId("123456")
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-        }
     }
+
 }
