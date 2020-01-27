@@ -3,7 +3,7 @@ using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace GlobalPayments.Api.Tests.Realex {
+namespace GlobalPayments.Api.Tests.GpEcomm {
     [TestClass]
     public class CathalReportingTest {
         public CathalReportingTest() {

@@ -17,7 +17,9 @@ namespace GlobalPayments.Api.Entities {
         public InquiryType? BalanceInquiryType { get; set; }
         public Address BillingAddress { get; set; }
         public decimal? CashBackAmount { get; set; }
-        public EmvChipCondition? ChipCondition { get; set; }
+
+        // was removed in the latest release 1.6.10
+        //public EmvChipCondition? ChipCondition { get; set; }
         public string ClientTransactionId { get; set; }
         public string Currency { get; set; }
         public string CustomerId { get; set; }
