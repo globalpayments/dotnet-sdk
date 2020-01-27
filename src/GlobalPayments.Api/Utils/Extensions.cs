@@ -22,8 +22,16 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public static string ToNumericCurrencyString(this decimal? dec) {
-            if (dec != null)
+            if (dec != null) {
                 return Regex.Replace(string.Format("{0:c}", dec), "[^0-9]", "");
+            }   
+            return null;
+        }
+
+        public static string ToCurrencyString(this decimal? dec) {
+            if (dec != null) {
+                return Regex.Replace(string.Format("{0:c}", dec), "[^0-9.,]", "");
+            }
             return null;
         }
 
@@ -84,6 +92,7 @@ namespace GlobalPayments.Api.Utils {
             }
             return null;
         }
+
         public static byte[] GetTerminalResponseAsync(this NetworkStream stream) {
             var buffer = new byte[4096];
             int bytesReceived = stream.ReadAsync(buffer, 0, buffer.Length).Result;
@@ -187,6 +196,15 @@ namespace GlobalPayments.Api.Utils {
             for (var i = 0; i < str.Length; i += maxDataSize) {
                 yield return str.Substring(i, Math.Min(maxDataSize, str.Length - i));
             }
+        }
+
+        public static string TrimEnd(this string str, string trimString) {
+            string rvalue = str;
+            if (rvalue.EndsWith(trimString)) {
+                int trimLength = trimString.Length;
+                rvalue = rvalue.Substring(0, rvalue.Length - trimLength);
+            }
+            return rvalue;
         }
     }
 }

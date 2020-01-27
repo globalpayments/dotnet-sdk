@@ -2,41 +2,32 @@
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
-using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    internal class PaxController : DeviceController {
-        IDeviceInterface _device;
-
-        public event MessageSentEventHandler OnMessageSent;
-
+    public class PaxController : DeviceController {
         internal override IDeviceInterface ConfigureInterface() {
-            if (_device == null) {
-                _device = new PaxInterface(this);
+            if (_interface == null) {
+                _interface = new PaxInterface(this);
             }
-            return _device;
+            return _interface;
         }
-
-        internal PaxController(ITerminalConfiguration settings) : base(settings) {
+        internal override IDeviceCommInterface ConfigureConnector() {
             switch (_settings.ConnectionMode) {
                 case ConnectionModes.TCP_IP:
-                    _interface = new PaxTcpInterface(settings);
-                    break;
+                    return new PaxTcpInterface(_settings);
                 case ConnectionModes.HTTP:
-                    _interface = new PaxHttpInterface(settings);
-                    break;
+                    return new PaxHttpInterface(_settings);
                 case ConnectionModes.SERIAL:
                 case ConnectionModes.SSL_TCP:
+                default:
                     throw new NotImplementedException();
             }
+        }
 
-            //_interface.Connect();
-            _interface.OnMessageSent += (message) => {
-                OnMessageSent?.Invoke(message);
-            };
+        internal PaxController(ITerminalConfiguration settings) : base(settings) {            
         }
 
         #region overrides
@@ -82,6 +73,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
             }
+
             // create sub groups
             var amounts = new AmountRequest();
             var account = new AccountRequest();
@@ -174,33 +166,33 @@ namespace GlobalPayments.Api.Terminals.PAX {
             }
         }
 
-    private string BuildAutoSubPassThruData(AutoSubstantiation autoSubstantiation) {
-        var autoSub = new List<string>();
+        private string BuildAutoSubPassThruData(AutoSubstantiation autoSubstantiation) {
+            var autoSub = new List<string>();
 
-        if (autoSubstantiation.TotalHealthcareAmount != default(decimal)) {
-            autoSub.Add("HealthCare,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.TotalHealthcareAmount).ToNumeric()));
-        }
-        if (autoSubstantiation.PrescriptionSubTotal != default(decimal)) {
-            autoSub.Add("Rx,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.PrescriptionSubTotal).ToNumeric()));
-        }
-        if (autoSubstantiation.VisionSubTotal != default(decimal)) {
-            autoSub.Add("Vision,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.VisionSubTotal).ToNumeric()));
-        }
-        if (autoSubstantiation.DentalSubTotal != default(decimal)) {
-            autoSub.Add("Dental,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.DentalSubTotal).ToNumeric()));
-        }
-        if (autoSubstantiation.ClinicSubTotal != default(decimal)) {
-            autoSub.Add("Clinical,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.ClinicSubTotal).ToNumeric()));
+            if (autoSubstantiation.TotalHealthcareAmount != default(decimal)) {
+                autoSub.Add("HealthCare,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.TotalHealthcareAmount).ToNumeric()));
+            }
+            if (autoSubstantiation.PrescriptionSubTotal != default(decimal)) {
+                autoSub.Add("Rx,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.PrescriptionSubTotal).ToNumeric()));
+            }
+            if (autoSubstantiation.VisionSubTotal != default(decimal)) {
+                autoSub.Add("Vision,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.VisionSubTotal).ToNumeric()));
+            }
+            if (autoSubstantiation.DentalSubTotal != default(decimal)) {
+                autoSub.Add("Dental,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.DentalSubTotal).ToNumeric()));
+            }
+            if (autoSubstantiation.ClinicSubTotal != default(decimal)) {
+                autoSub.Add("Clinical,{0}".FormatWith("{0:c}".FormatWith(autoSubstantiation.ClinicSubTotal).ToNumeric()));
+            }
+
+            if (autoSub.Count == 0) {
+                return string.Empty;
+            }
+
+            return "FSA:{0}".FormatWith(string.Join("|", autoSub));
         }
 
-        if (autoSub.Count == 0) {
-            return string.Empty;
-        }
-        
-        return "FSA:{0}".FormatWith(string.Join("|", autoSub));
-    }
-
-    internal IDeviceMessage BuildManageTransaction(TerminalManageBuilder builder) {
+        internal IDeviceMessage BuildManageTransaction(TerminalManageBuilder builder) {
             int requestId = builder.ReferenceNumber;
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
@@ -248,6 +240,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     throw new UnsupportedTransactionException();
             }
         }
+
         internal IDeviceMessage BuildReportTransaction(TerminalReportBuilder builder) {
             string messageId = MapReportType(builder.ReportType);
 
@@ -283,7 +276,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
                             ControlCodes.FS,
                             additionalData
                         );
-                   } break;
+                    }
+                    break;
                 default: {
                         throw new UnsupportedTransactionException(string.Format("Unsupported report type: {0}", builder.ReportType.ToString()));
                     };
@@ -356,7 +350,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return BuildRequest(PAX_MSG_ID.T00_DO_CREDIT, txnType, amounts, accounts, trace, avs, cashier, commercial, ecom, extData);
         }
         internal CreditResponse DoCredit(IDeviceMessage request) {
-            var response = _interface.Send(request);
+            var response = _connector.Send(request);
             return new CreditResponse(response);
         }
 
@@ -364,7 +358,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return BuildRequest(PAX_MSG_ID.T02_DO_DEBIT, txnType, amounts, accounts, trace, cashier, extData);
         }
         internal DebitResponse DoDebit(IDeviceMessage request) {
-            var response = _interface.Send(request);
+            var response = _connector.Send(request);
             return new DebitResponse(response);
         }
 
@@ -372,7 +366,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return BuildRequest(PAX_MSG_ID.T04_DO_EBT, txnType, amounts, accounts, trace, cashier, new ExtDataSubGroup());
         }
         internal EbtResponse DoEBT(IDeviceMessage request) {
-            var response = _interface.Send(request);
+            var response = _connector.Send(request);
             return new EbtResponse(response);
         }
 
@@ -380,7 +374,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return BuildRequest(messageId, txnType, amounts, accounts, trace, cashier, extData);
         }
         internal GiftResponse DoGift(IDeviceMessage request) {
-            var response = _interface.Send(request);
+            var response = _connector.Send(request);
             return new GiftResponse(response);
         }
 
@@ -388,7 +382,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return BuildRequest(PAX_MSG_ID.T10_DO_CASH, txnType, amounts, trace, cashier, new ExtDataSubGroup());
         }
         internal CashResponse DoCash(IDeviceMessage request) {
-            var response = _interface.Send(request);
+            var response = _connector.Send(request);
             return new CashResponse(response);
         }
 
@@ -396,7 +390,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return BuildRequest(PAX_MSG_ID.T12_DO_CHECK, txnType, amounts, check, trace, cashier, extData);
         }
         internal CheckSubResponse DoCheck(IDeviceMessage request) {
-            var response = _interface.Send(request);
+            var response = _connector.Send(request);
             return new CheckSubResponse(response);
         }
         #endregion

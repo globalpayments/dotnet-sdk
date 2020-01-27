@@ -11,9 +11,8 @@ namespace GlobalPayments.Api.Tests.Services {
         EBTTrackData card;
 
         public EbtServiceTests() {
-            service = new EbtService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            service = new EbtService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
 
             card = TestCards.VisaSwipe().AsEBT("32539F50C245A6A93D123412324000AA");

@@ -17,9 +17,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         string amex_token;
 
         public RetailCertification() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
         }
 
@@ -943,9 +942,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("B", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                TaxAmount = 1m
+            };
+
             var cpcResponse = response.Edit()
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -963,7 +965,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("B", response.CommercialIndicator);
 
-            var cpcResponse = response.Edit().WithTaxType(TaxType.NOTUSED).Execute();
+            var cpcResponse = response.Edit()
+                .WithCommercialData(new CommercialData(TaxType.NOTUSED))
+                .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
         }
@@ -981,7 +985,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("R", response.CommercialIndicator);
 
             var cpcResponse = response.Edit()
-                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithCommercialData(new CommercialData(TaxType.TAXEXEMPT))
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1004,10 +1008,13 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                PoNumber = "9876543210",
+                TaxAmount = 1m
+            };
+
             var cpcResponse = response.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1025,9 +1032,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.NOTUSED) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = response.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.NOTUSED)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1050,10 +1060,13 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                PoNumber = "9876543210",
+                TaxAmount = 1m
+            };
+
             var cpcResponse = response.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1075,11 +1088,14 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                PoNumber = "9876543210",
+                TaxAmount = 1m
+            };
+
             var cpcResponse = response.Edit()
-                    .WithPoNumber("9876543210")
-                    .WithTaxType(TaxType.SALESTAX)
-                    .WithTaxAmount(1m)
-                    .Execute();
+                .WithCommercialData(commercialData)
+                .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
         }
@@ -1100,9 +1116,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = response.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1119,9 +1138,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.SALESTAX) {
+                TaxAmount = 1m
+            };
+
             var cpcResponse = response.Edit()
-                .WithTaxType(TaxType.SALESTAX)
-                .WithTaxAmount(1m)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1144,9 +1166,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.NOTUSED) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = response.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.NOTUSED)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1168,9 +1193,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.NOTUSED) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = response.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.NOTUSED)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
@@ -1192,9 +1220,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+                PoNumber = "9876543210"
+            };
+
             var cpcResponse = response.Edit()
-                .WithPoNumber("9876543210")
-                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithCommercialData(commercialData)
                 .Execute();
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);

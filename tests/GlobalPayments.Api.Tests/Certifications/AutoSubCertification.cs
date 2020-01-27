@@ -9,22 +9,19 @@ namespace GlobalPayments.Api.Tests.Certifications {
     [TestClass]
     public class AutoSubCertification {
         public AutoSubCertification() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             }, "retail");
 
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             }, "ecomm");
         }
 
         [TestMethod]
         public void Retail_000_CloseBatch() {
-            ServicesContainer.ConfigureService(new GatewayConfig  {
-                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
 
             try {
@@ -345,7 +342,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
 
         [TestMethod]
         public void Retail_001_CloseBatch() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
+            ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw",
                 ServiceUrl = "https://cert.api2.heartlandportico.com"
             });
@@ -364,7 +361,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
 
         [TestMethod]
         public void Ecom_000_CloseBatch() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
+            ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
                 ServiceUrl = "https://cert.api2.heartlandportico.com"
             });
@@ -705,9 +702,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
 
         [TestMethod]
         public void Ecom_001_CloseBatch() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
 
             try {

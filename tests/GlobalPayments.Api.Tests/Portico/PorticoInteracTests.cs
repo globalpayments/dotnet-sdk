@@ -10,13 +10,12 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
+            ServicesContainer.ConfigureService(new PorticoConfig {
                 LicenseId = 124964,
                 SiteId = 124992,
                 DeviceId = 145,
                 Username = "9158402",
-                Password = "$Test1234",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+                Password = "$Test1234"
             });
 
             track = new DebitTrackData {
@@ -85,7 +84,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             var response = track.Charge(8m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
-                .WithEmvChipCondition(EmvChipCondition.ChipFailedPreviousSuccess)
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Successful)
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -97,7 +96,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             var response = track.Charge(8m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
-                .WithEmvChipCondition(EmvChipCondition.ChipFailedPreviousFailed)
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Failed)
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -108,7 +107,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         public void DebitInteracChipConditionWithTagData() {
             track.Charge(8m)
                 .WithCurrency("USD")
-                .WithEmvChipCondition(EmvChipCondition.ChipFailedPreviousSuccess)
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Successful)
                 .WithTagData(tagData)
                 .Execute();
         }

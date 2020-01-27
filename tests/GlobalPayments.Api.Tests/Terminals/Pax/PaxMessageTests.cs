@@ -73,7 +73,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         [TestMethod]
         public void SerializeBuilder() {
-            var message = device.CreditAuth(10m).Serialize();
+            var message = device.Authorize(10m).Serialize();
             Assert.IsNotNull(message);
             Assert.AreNotEqual(0, message.Length);
         }
@@ -83,6 +83,37 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             byte[] buffer = Convert.FromBase64String("AlQwMBwxLjM1HDAxFTI3MjYVHx8fHx8xFTE1NTU1OTY1NjAVFRUVFQNt");
             var message = new DeviceMessage(buffer);
             Assert.IsNotNull(message.ToString());
+        }
+
+        [TestMethod]
+        public void SetSafParams() {
+            DeviceMessage message = TerminalUtilities.BuildRequest(
+                "A54",
+                "1",
+                ControlCodes.FS,
+                // start date,
+                ControlCodes.FS,
+                // end date,
+                ControlCodes.FS,
+                // duration in days,
+                ControlCodes.FS,
+                // max number,
+                ControlCodes.FS,
+                "500", // total ceiling,
+                ControlCodes.FS,
+                // ceiling per card brand,
+                ControlCodes.FS,
+                "100", // halo per card type,
+                ControlCodes.FS,
+                // upload mode,
+                ControlCodes.FS,
+                // auto upload interval time,
+                ControlCodes.FS
+                // delete SAF confirmation
+            );
+
+            var response = device.SendCustomMessage(message);
+            Assert.IsNotNull(response);
         }
     }
 }

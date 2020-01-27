@@ -37,7 +37,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod]
         public void Test_002_CreditTransaction() {
-            var response = _device.CreditSale(10m)
+            var response = _device.Sale(10m)
                 .WithAllowDuplicates(true)
                .Execute();
             Assert.IsNotNull(response);
@@ -76,7 +76,7 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod]
         public void Test_006_CreditTransaction() {
-            var response = _device.CreditSale(10m)
+            var response = _device.Sale(10m)
                .WithAllowDuplicates(true)
                .Execute();
             Assert.IsNotNull(response);

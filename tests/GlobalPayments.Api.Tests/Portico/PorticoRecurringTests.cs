@@ -21,9 +21,8 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         public PorticoRecurringTests() {
-            ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
         }
 
@@ -472,10 +471,8 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void Test_008g_CreditCharge_WithNewCryptoURL() {
-            ServicesContainer.ConfigureService(new GatewayConfig
-            {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
-                ServiceUrl = "https://cert.api2-c.heartlandportico.com"
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
             Assert.IsNotNull(paymentMethod);

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
-using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Terminals.HPA
@@ -36,9 +34,11 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var response = _device.EbtPurchase(10m)
-              .WithAllowDuplicates(true)
-              .Execute();
+
+            var response = _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .WithAllowDuplicates(true)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -48,7 +48,9 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var response = _device.EbtBalance().Execute();
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -58,24 +60,34 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            var response = _device.EbtRefund(10m).Execute();
+            var response = _device.Refund(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.DeviceResponseText);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void EbtRefundAllowDup() {
-            _device.EbtRefund().WithAllowDuplicates(true).Execute();
+            _device.Refund()
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .WithAllowDuplicates(true)
+                .Execute();
         }
 
         [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
         public void EbtCashBenefitWithdrawal() {
-            var response = _device.EbtWithdrawl(10m).Execute();
+            var response = _device.Withdrawal(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void EbtBenefitWithdrawlAllowDup() {
-            _device.EbtWithdrawl(10m).WithAllowDuplicates(true).Execute();
+            _device.Withdrawal(10m)
+                .WithPaymentMethodType(PaymentMethodType.EBT)
+                .WithAllowDuplicates(true)
+                .Execute();
         }
 
         [TestMethod]

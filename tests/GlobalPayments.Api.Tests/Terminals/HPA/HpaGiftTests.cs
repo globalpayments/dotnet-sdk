@@ -38,7 +38,9 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 str_message = message;
             };
 
-            var response = _device.GiftSale(1m).Execute();
+            var response = _device.Sale(1m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseText);
         }
@@ -49,7 +51,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.GiftSale(8m)
+            var response = _device.Sale(8m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .WithInvoiceNumber("1234")
                 .Execute();
             Assert.IsNotNull(response);
@@ -63,7 +66,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.GiftSale(10m)
+            var response = _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .WithCurrency(CurrencyType.POINTS)
                 .Execute();
             Assert.IsNotNull(response);
@@ -72,23 +76,29 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftSaleNoAmount() {
-            _device.GiftSale().Execute();
+            _device.Sale()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftSaleNoCurrency() {
-            _device.GiftSale(10m).WithCurrency(null).Execute();
+            _device.Sale(10m)
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .WithCurrency(null)
+                .Execute();
         }
         #endregion
 
-        #region GiftAddValue
+        #region AddValue
         [TestMethod]
-        public void GiftAddValue() {
+        public void AddValue() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.GiftAddValue()
+            var response = _device.AddValue()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .WithAmount(10m)
                 .Execute();
             Assert.IsNotNull(response);
@@ -101,7 +111,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.GiftAddValue()
+            var response = _device.AddValue()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                .WithCurrency(CurrencyType.POINTS)
                .WithAmount(8m)
                .Execute();
@@ -110,20 +121,25 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void GiftAddValueNoAmount() {
-            _device.GiftAddValue().Execute();
+        public void AddValueNoAmount() {
+            _device.AddValue()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void GiftAddValueNoCurrency() {
-            _device.GiftAddValue().WithCurrency(null).Execute();
+        public void AddValueNoCurrency() {
+            _device.AddValue()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .WithCurrency(null)
+                .Execute();
         }
         #endregion
 
         #region GiftVoid
         [TestMethod]
         public void GiftVoid() {
-            var saleResponse = _device.GiftSale().WithAmount(10m).Execute();
+            var saleResponse = _device.Sale().WithAmount(10m).Execute();
             Assert.IsNotNull(saleResponse);
             Assert.AreEqual("00", saleResponse.ResponseCode);
 
@@ -133,7 +149,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
             WaitAndReset();
 
-            var voidResponse = _device.GiftVoid()
+            var voidResponse = _device.Void()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .WithTransactionId(saleResponse.TransactionId)
                 .Execute();
             Assert.IsNotNull(voidResponse);
@@ -142,7 +159,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftVoidNoCurrency() {
-            _device.GiftVoid()
+            _device.Void()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                .WithCurrency(null)
                .WithTransactionId("1")
                .Execute();
@@ -150,7 +168,10 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftVoidNoTransactionId() {
-            _device.GiftVoid().WithTransactionId(null).Execute();
+            _device.Void()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .WithTransactionId(null)
+                .Execute();
         }
         #endregion
 
@@ -161,7 +182,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.GiftBalance()
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                 .Execute();    
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -173,7 +195,8 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.GiftBalance()
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
                .WithCurrency(CurrencyType.POINTS)
                .Execute();
             Assert.IsNotNull(response);
@@ -182,14 +205,19 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void GiftBalanceNoCurrency() {
-            _device.GiftBalance().WithCurrency(null).Execute();
+            _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .WithCurrency(null)
+                .Execute();
         }
         #endregion
 
         #region Certification
         [TestMethod]
         public void Test_case_15a() {
-            var response = _device.GiftBalance().Execute();
+            var response = _device.Balance()
+                .WithPaymentMethodType(PaymentMethodType.Gift)
+                .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(10m, response.BalanceAmount);
@@ -197,14 +225,14 @@ namespace GlobalPayments.Api.Tests.Terminals.HPA {
 
         [TestMethod]
         public void Test_case_15b() {
-            var response = _device.GiftAddValue().WithAmount(8m).Execute();
+            var response = _device.AddValue().WithAmount(8m).Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]
         public void Test_case_15c() {
-            var response = _device.GiftSale(1m).Execute();
+            var response = _device.Sale(1m).Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }

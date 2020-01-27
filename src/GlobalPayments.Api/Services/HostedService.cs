@@ -6,9 +6,9 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Services {
     public class HostedService {
-        GatewayConfig _config;
+        GpEcomConfig _config;
 
-        public HostedService(GatewayConfig config) {
+        public HostedService(GpEcomConfig config) {
             _config = config;
             ServicesContainer.ConfigureService(config);
         }

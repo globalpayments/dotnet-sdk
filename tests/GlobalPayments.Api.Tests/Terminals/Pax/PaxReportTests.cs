@@ -42,7 +42,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 PostalCode = "95124"
             };
 
-            var response = _device.CreditSale(11m)
+            var response = _device.Sale(11m)
                 .WithAllowDuplicates(true)
                 .WithPaymentMethod(card)
                 .WithAddress(address)

@@ -50,21 +50,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a HeeartSIP iSC250 device.
         /// </summary>
-        HPA_ISC250
-    }
+        HPA_ISC250,
 
-    /// <summary>
-    /// Indicates the chip condition for failed EMV chip reads
-    /// </summary>
-    public enum EmvChipCondition {
         /// <summary>
-        /// Use this condition type when the current chip read failed but the previous transaction on the same device was either a successful chip read or was not a chip transaction.
+        /// Indicates a genius terminal
         /// </summary>
-        ChipFailedPreviousSuccess,
-        /// <summary>
-        /// Use this condition type when the current chip read failed and the previous transaction on the same device was also an unsuccessful chip read.
-        /// </summary>
-        ChipFailedPreviousFailed
+        GENIUS
     }
 
     /// <summary>
@@ -196,7 +187,7 @@ namespace GlobalPayments.Api.Entities {
     /// Indicates the transaction type.
     /// </summary>
     [Flags]
-    public enum TransactionType {
+    public enum TransactionType : long{
         /// <summary>
         /// Indicates a decline.
         /// </summary>
@@ -348,19 +339,21 @@ namespace GlobalPayments.Api.Entities {
         InitiateAuthentication = 1 << 28,
 
         /// <summary>
-        /// 
+        /// Indicates a DataCollect.
         /// </summary>
         DataCollect = 1 << 29,
 
         /// <summary>
-        /// 
+        /// Indicates a PreAuthCompletion.
         /// </summary>
         PreAuthCompletion = 1 << 30,
 
         /// <summary>
-        /// 
+        /// Indicates a DccRateLookup.
         /// </summary>
-        DccRateLookup = 1 << 31
+        DccRateLookup = 1 << 31,
+
+        Increment = 1L << 32
     }
 
     /// <summary>
@@ -390,7 +383,7 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a commercial request transaction.
         /// </summary>
-        LevelII = 1 << 4,
+        Level_II = 1 << 4,
 
         /// <summary>
         /// Indicates a fraud decline transaction.
@@ -430,7 +423,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a mobile transaction.
         /// </summary>
-        EncryptedMobile = 1 << 12
+        EncryptedMobile = 1 << 12,
+
+        /// <summary>
+        /// Indicates a level II transaction
+        /// </summary>
+        Level_III = 1 << 13
     }
 
     /// <summary>
@@ -1111,30 +1109,5 @@ namespace GlobalPayments.Api.Entities {
         One,
         Two,
         Any
-    }
-
-    public static class ServiceEndpoints {
-        public const string GLOBAL_ECOM_PRODUCTION = "https://api.realexpayments.com/epage-remote.cgi";
-        public const string GLOBAL_ECOM_TEST = "https://api.sandbox.realexpayments.com/epage-remote.cgi";
-        public const string PORTICO_PRODUCTION = "https://api2.heartlandportico.com";
-        public const string PORTICO_TEST = "https://cert.api2.heartlandportico.com";
-        public const string THREE_DS_AUTH_PRODUCTION = "https://api.globalpay-ecommerce.com/3ds2/";
-        public const string THREE_DS_AUTH_TEST = "https://api.sandbox.globalpay-ecommerce.com/3ds2/";
-        public const string PAYROLL_PRODUCTION = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI";
-        public const string PAYROLL_TEST = "https://taapi.heartlandpayrollonlinetest.com/PosWebUI/Test/Test";
-        public const string TABLE_SERVICE_PRODUCTION = "https://www.freshtxt.com/api31/";
-        public const string TABLE_SERVICE_TEST = "https://www.freshtxt.com/api31/";
-    }
-
-    public enum OpenPathStatusType {
-        Processing,
-        Declined,
-        Approved,
-        Rejected,
-        Error,
-        Queued,
-        Pending,
-        Processed,
-        BouncedBack
     }
 }
