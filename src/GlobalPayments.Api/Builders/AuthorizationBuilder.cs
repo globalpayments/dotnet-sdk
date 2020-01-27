@@ -684,38 +684,23 @@ namespace GlobalPayments.Api.Builders {
 
             var client = ServicesContainer.Instance.GetClient(configName);
 
-            // initialize an OpenPathGateway to process side integration if OpenPathApiKey is provided
-            var openPathGatewayInterface = client as IOpenPathGateway;
+            #region OpenPath Side Integration
 
-            // create a new instance of openpath gateway object
-            var openpathGateway = new OpenPathGateway()
-                                      .WithOpenPathApiKey(openPathGatewayInterface?.OpenPathApiKey)
-                                      .WithOpenPathApiUrl(openPathGatewayInterface?.OpenPathApiUrl);
+                // initialize an OpenPathGateway to process side integration if OpenPathApiKey is provided
+                var openPathGatewayInterface = client as IOpenPathGateway;
 
-            // process the side integration if apikey and url has value
-            if (openpathGateway.IsValidForSideIntegration()) {
-                // sets the builder to the gateway
-                openpathGateway.WithAuthorizationBuilder(this);
+                // create a new instance of openpath gateway object
+                var openpathGateway = new OpenPathGateway()
+                    .WithOpenPathApiKey(openPathGatewayInterface?.OpenPathApiKey)
+                    .WithOpenPathApiUrl(openPathGatewayInterface?.OpenPathApiUrl);
 
-                // Perform OpenPath side integration
-                // Throws exception if transaction is declined, rejected, error, queued
-                var openPathResult = openpathGateway.Process();
+                var rejectedTransaction = openpathGateway.ProcessAuthorization(this, client);
 
-                // if the transaction is already processed by OpenPath just return a new transaction for now
-                if (openPathResult.Status == OpenPathStatusType.Processed) {
-                    // TODO: map the reponse of gateway connector from OpenPathResult object to Transaction
-                    return new Transaction { OpenPathResponse = openPathResult };
-                } else if (openPathResult.Status == OpenPathStatusType.BouncedBack) {
-                    // this means that the transaction passed all the validations in OpenPath but not processed
-                    // and a new GatewayConfiguration object was returned, use the new config to initialize a new client
-                    // the configuration can be found in OpenPath > Connectors
+                if(rejectedTransaction != null) return rejectedTransaction;
 
-                    ServicesContainer.ConfigureService(openPathResult.BouncebackConfig, "bounceBackConfig");
-                    base.Execute("bounceBackConfig");
-                    client = ServicesContainer.Instance.GetClient("bounceBackConfig");
-                }
-            }
+            #endregion
 
+            // send transaction to global payments
             var authorizationResult = client.ProcessAuthorization(this);
 
             // sends the transaction id to OpenPath

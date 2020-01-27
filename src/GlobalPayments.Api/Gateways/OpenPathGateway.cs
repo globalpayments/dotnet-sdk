@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 
 namespace GlobalPayments.Api.Gateways {
-    public class OpenPathGateway {
+    internal class OpenPathGateway {
         private string OpenPathApiKey { get; set; }
         private string OpenPathApiUrl { get; set; }
         private long OpenPathTransactionId { get; set; }
@@ -36,6 +36,40 @@ namespace GlobalPayments.Api.Gateways {
 
         public bool IsValidForSideIntegration() {
             return !string.IsNullOrWhiteSpace(OpenPathApiKey) && !string.IsNullOrWhiteSpace(OpenPathApiUrl);
+        }
+
+        public Transaction ProcessAuthorization(AuthorizationBuilder authorizationBuilder, IPaymentGateway client) {
+
+            // process the side integration if apikey and url has value
+            if (IsValidForSideIntegration()) {
+
+                // sets the builder to the gateway
+                WithAuthorizationBuilder(authorizationBuilder);
+
+                // Perform OpenPath side integration
+                // Throws exception if transaction is declined, rejected, error, queued
+                var openPathResult = Process();
+
+                // if the transaction is already processed by OpenPath just return a new transaction for now
+                if (openPathResult.Status == OpenPathStatusType.Processed) {
+
+                    // TODO: map the reponse of gateway connector from OpenPathResult object to Transaction
+                    return new Transaction { OpenPathResponse = openPathResult };
+
+                } else if (openPathResult.Status == OpenPathStatusType.BouncedBack) {
+
+                    // this means that the transaction passed all the validations in OpenPath but not processed
+                    // and a new GatewayConfiguration object was returned, use the new config to initialize a new client
+                    // the configuration can be found in OpenPath > Connectors
+                    ServicesContainer.ConfigureService(openPathResult.BouncebackConfig, "bounceBackConfig");
+                    authorizationBuilder.Execute("bounceBackConfig");
+                    client = ServicesContainer.Instance.GetClient("bounceBackConfig");
+
+                }
+            }
+
+            return null;
+
         }
 
         #region OpenPath Validation
