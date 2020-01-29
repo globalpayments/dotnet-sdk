@@ -12,6 +12,9 @@ namespace GlobalPayments.Api.Gateways {
         private string OpenPathApiUrl { get; set; }
         private long OpenPathTransactionId { get; set; }
         private string PaymentTransactionId { get; set; }
+        private string InvoiceNumber { get; set; }
+        private string ResponseMessage { get; set; }
+        private OpenPathStatusType Status { get; set; }
         private AuthorizationBuilder AuthorizationBuilder { get; set; }
 
         public OpenPathGateway WithOpenPathApiKey(string openPathApiKey) {
@@ -31,6 +34,28 @@ namespace GlobalPayments.Api.Gateways {
 
         public OpenPathGateway WithAuthorizationBuilder(AuthorizationBuilder authorizationBuilder) {
             AuthorizationBuilder = authorizationBuilder;
+            return this;
+        }
+
+        public OpenPathGateway WithInvoiceNumber(string invoiceNumber)
+        {
+            InvoiceNumber = invoiceNumber;
+            return this;
+        }
+
+        public OpenPathGateway WithResponseCode(string responseCode)
+        {
+            if (responseCode == "00")
+                Status = OpenPathStatusType.Approved;
+            else
+                Status = OpenPathStatusType.BouncedBack;
+
+            return this;
+        }
+
+        public OpenPathGateway WithReponseMessage(string responseMessage)
+        {
+            ResponseMessage = responseMessage;
             return this;
         }
 
@@ -120,7 +145,10 @@ namespace GlobalPayments.Api.Gateways {
                     JsonConvert.SerializeObject(
                         new {
                             PaymentTransactionId,
-                            OpenPathTransactionId
+                            OpenPathTransactionId,
+                            InvoiceNumber,
+                            Status,
+                            ResponseMessage
                         }
                     ),
                     $"{OpenPathApiUrl}/updatetransactionid"

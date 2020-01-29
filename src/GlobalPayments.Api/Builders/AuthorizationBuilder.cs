@@ -713,6 +713,9 @@ namespace GlobalPayments.Api.Builders {
             if (openpathGateway.IsValidForSideIntegration()) {
                 openpathGateway
                     .WithPaymentTransactionId(authorizationResult.TransactionId)
+                    .WithInvoiceNumber(authorizationResult.OrderId)
+                    .WithResponseCode(authorizationResult.ResponseCode)
+                    .WithReponseMessage(authorizationResult.ResponseMessage)
                     .SaveTransactionId();
             }
 
