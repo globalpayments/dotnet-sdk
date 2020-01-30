@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Tests.OpenPath {
 
                 // openpath attributes
                 OpenPathApiKey = "ZFQ4CTapPpZAEmjFAGeZfJsRaaFsafuZepCzV9TY",
-                OpenPathApiUrl = "https://unittest-api.openpath.io/v1/globalpayments"
+                OpenPathApiUrl = "https://staging-api.openpath.io/v1/globalpayments"
 
             });
 
