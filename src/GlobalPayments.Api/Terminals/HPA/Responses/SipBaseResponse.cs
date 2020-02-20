@@ -249,6 +249,8 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
         /// </summary>
         public string TerminalVerificationResults { get; set; }
 
+        public decimal? MerchantFee { get; set; }
+
         internal SipTerminalResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
     }
 

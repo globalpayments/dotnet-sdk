@@ -660,7 +660,7 @@ namespace GlobalPayments.Api.Gateways {
             if (reportType.HasFlag(ReportType.FindTransactions) | reportType.HasFlag(ReportType.Activity) | reportType.HasFlag(ReportType.TransactionDetail)) {
                 Func<Element, TransactionSummary> hydrateTransactionSummary = (root) => {
                     var summary = new TransactionSummary {
-                        AccountDataSource = root.GetValue<string>("AccDataSrc"),
+                        AccountDataSource = root.GetValue<string>("AcctDataSrc"),
                         Amount = root.GetValue<decimal>("Amt"),
                         AuthorizedAmount = root.GetValue<decimal>("AuthAmt"),
                         AuthCode = root.GetValue<string>("AuthCode"),

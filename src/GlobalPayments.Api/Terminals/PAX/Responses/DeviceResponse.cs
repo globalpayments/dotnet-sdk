@@ -244,6 +244,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
         /// The results of the terminals attempt to verify the cards authenticity.
         /// </summary>
         public string TerminalVerificationResults { get; set; }
+
+        public decimal? MerchantFee { get; set; }
         
         internal PaxTerminalResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
 
@@ -263,6 +265,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 TipAmount = AmountResponse.TipAmount;
                 CashBackAmount = AmountResponse.CashBackAmount;
                 BalanceAmount = AmountResponse.Balance1 ?? AmountResponse.Balance2;
+                MerchantFee = AmountResponse.MerchantFee;
             }
 
             // Account Response
