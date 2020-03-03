@@ -3,16 +3,20 @@ using GlobalPayments.Api.Terminals.PAX;
 using GlobalPayments.Api.Terminals.HPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Genius;
+using System.IO.Ports;
+using GlobalPayments.Api.Terminals.INGENICO;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
         SERIAL,
         TCP_IP,
         SSL_TCP,
-        HTTP
+        HTTP,
+        TCP_IP_SERVER
     }
 
     public enum BaudRate {
+        r9600 = 9600,
         r38400 = 38400,
         r57600 = 57600,
         r19200 = 19200,
@@ -47,6 +51,7 @@ namespace GlobalPayments.Api.Terminals {
         Parity Parity { get; set; }
         StopBits StopBits { get; set; }
         DataBits DataBits { get; set; }
+        Handshake Handshake { get; set; }
 
         // Timeout
         int Timeout { get; set; }
@@ -62,6 +67,7 @@ namespace GlobalPayments.Api.Terminals {
         public Parity Parity { get; set; }
         public StopBits StopBits { get; set; }
         public DataBits DataBits { get; set; }
+        public Handshake Handshake { get; set; }
         public string IpAddress { get; set; }
         public string Port { get; set; }
         public IRequestIdProvider RequestIdProvider { get; set; }
@@ -84,8 +90,11 @@ namespace GlobalPayments.Api.Terminals {
                     services.DeviceController = new HpaController(this);
                     break;
                 //case DeviceType.GENIUS:
-                    //services.DeviceController = new GeniusController(this);
-                    //break;
+                //services.DeviceController = new GeniusController(this);
+                //break;
+                case DeviceType.INGENICO:
+                    services.DeviceController = new IngenicoController(this);
+                    break;
                 default:
                     break;
             }
