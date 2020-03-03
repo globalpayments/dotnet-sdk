@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.INGENICO;
 using GlobalPayments.Api.Terminals.PAX;
 using System;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Reflection;
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalReportBuilder {
         internal TerminalReportType ReportType { get; set; }
+        internal ReceiptType ReceiptType { get; set; }
 
         private TerminalSearchBuilder _searchBuilder;
         internal TerminalSearchBuilder SearchBuilder {
@@ -20,6 +22,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
 
         public TerminalReportBuilder(TerminalReportType reportType) {
             ReportType = reportType;
+        }
+
+        public TerminalReportBuilder(ReceiptType receiptType) {
+            ReceiptType = receiptType;
         }
 
         public TerminalSearchBuilder Where<T>(PaxSearchCriteria criteria, T value) {
