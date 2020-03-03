@@ -256,5 +256,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
 
     public class SipTerminalReport : SipBaseResponse, ITerminalReport {
         internal SipTerminalReport(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
+
+        public string ReportData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

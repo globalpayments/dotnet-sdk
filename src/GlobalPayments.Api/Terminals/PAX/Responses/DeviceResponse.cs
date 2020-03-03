@@ -327,6 +327,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
         internal PaxTerminalReport(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) {
         }
 
+        public string ReportData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         protected virtual void MapResponse() { }
     }
 }
