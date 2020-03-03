@@ -8,7 +8,9 @@ namespace GlobalPayments.Api {
         public string DeviceId { get;set; }
         public string MerchantId { get; set; }
         public string TransactionKey { get; set; }
-        
+
+        private AcceptorConfig AcceptorConfig;
+
         public TransitConfig() : base(GatewayProvider.TransIT) { }
 
         internal override void ConfigureContainer(ConfiguredServices services) {
@@ -20,7 +22,7 @@ namespace GlobalPayments.Api {
                 }
                 else ServiceUrl = ServiceEndpoints.TRANSIT_MULTIPASS_PRODUCTION;
             }
-
+            AcceptorConfig = new AcceptorConfig();
             var gateway = new TransitConnector() {
                 AcceptorConfig = AcceptorConfig,
                 DeveloperId = DeveloperId,

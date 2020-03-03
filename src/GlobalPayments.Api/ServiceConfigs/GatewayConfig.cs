@@ -4,6 +4,9 @@ using System;
 
 namespace GlobalPayments.Api {
     public class GatewayConfig : Configuration {
+        public GatewayConfig(GatewayProvider transIT) {
+        }
+
         // Portico
         /// <summary>
         /// Account's site ID
