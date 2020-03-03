@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.INGENICO;
 
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalAuthBuilder : TerminalBuilder<TerminalAuthBuilder> {
@@ -35,6 +36,17 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
+        internal INGENICO.ReportType? ReportType { get; set; } = null;
+
+        /// <summary>
+        /// Sets the report type for the transaction.
+        /// </summary>
+        /// <param name="reportType">Report Type</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithReportType(INGENICO.ReportType reportType) {
+            ReportType = reportType;
+            return this;
+        }
 
         public TerminalAuthBuilder WithAddress(Address address) {
             Address = address;
@@ -48,10 +60,17 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Amount = amount;
             return this;
         }
+
+        /// <summary>
+        /// Sets the authorization code for the transaction.
+        /// </summary>
+        /// <param name="value">Authorization Code</param>
+        /// <returns></returns>
         public TerminalAuthBuilder WithAuthCode(string value) {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
             (PaymentMethod as TransactionReference).AuthCode = value;
+            ExtendedDataTags = ExtendedDataTags.AUTHCODE;
             return this;
         }
 
@@ -64,8 +83,15 @@ namespace GlobalPayments.Api.Terminals.Builders {
             AutoSubstantiation = value;
             return this;
         }
+
+        /// <summary>
+        /// Sets the cash back for the transaction.
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public TerminalAuthBuilder WithCashBack(decimal? amount) {
             CashBackAmount = amount;
+            ExtendedDataTags = ExtendedDataTags.CASHB;
             return this;
         }
         public TerminalAuthBuilder WithClientTransactionId(string value) {
@@ -126,9 +152,56 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
+        #region Additional Methods for Ingenico
+
+        internal string CurrencyCode { get; set; }
+        internal PaymentMode PaymentMode { get; set; }
+
+        internal string TableNumber { get; set; }
+        internal ExtendedDataTags ExtendedDataTags { get; set; }
+
+
+        /// <summary>
+        /// Sets the currency code for the transaction.
+        /// </summary>
+        /// <param name="value">Currency Code</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithCurrencyCode(string value) {
+            CurrencyCode = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the payment mode for the transaction.
+        /// </summary>
+        /// <param name="value">Payment Mode</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithPaymentMode(PaymentMode value) {
+            PaymentMode = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the table number for the transaction.
+        /// </summary>
+        /// <param name="value">Table Number</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithTableNumber(string value) {
+            TableNumber = value;
+            ExtendedDataTags = ExtendedDataTags.TABLE_NUMBER;
+            return this;
+        }
+
+        #endregion
+
         internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
         }
 
+        /// <summary>
+        /// Executes the transaction.
+        /// </summary>
+        /// <param name="configName"></param>
+        /// <returns></returns>
         public override ITerminalResponse Execute(string configName = "default") {
             base.Execute(configName);
 
