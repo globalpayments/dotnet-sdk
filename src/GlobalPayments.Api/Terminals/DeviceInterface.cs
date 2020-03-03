@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
+using GlobalPayments.Api.Terminals.INGENICO;
 using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals {
@@ -10,18 +11,26 @@ namespace GlobalPayments.Api.Terminals {
         protected IRequestIdProvider _requestIdProvider;
 
         public event MessageSentEventHandler OnMessageSent;
+        public event BroadcastMessageEventHandler OnBroadcastMessage;
 
         internal DeviceInterface(T controller) {
             _controller = controller;
             _controller.OnMessageSent += (message) => {
                 OnMessageSent?.Invoke(message);
             };
+
+            _controller.OnBroadcastMessage += (code, message) => {
+                OnBroadcastMessage?.Invoke(code, message);
+            };
+
+
             _requestIdProvider = _controller.RequestIdProvider;
         }
 
         #region Admin Methods
-        public virtual void Cancel() {
-            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        public virtual TerminalManageBuilder Cancel(decimal? amount = null) {
+            return new TerminalManageBuilder(TransactionType.Cancel, PaymentMethodType.Credit)
+                .WithAmount(amount);
         }
 
         public virtual IDeviceResponse CloseLane() {
@@ -93,8 +102,16 @@ namespace GlobalPayments.Api.Terminals {
 
         #region Reporting Methods
         public virtual TerminalReportBuilder LocalDetailReport() {
-            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+            return new TerminalReportBuilder(TerminalReportType.LocalDetailReport);
         }
+        public virtual TerminalReportBuilder GetLastReceipt(ReceiptType type = ReceiptType.TICKET) {
+            return new TerminalReportBuilder(type);
+        }
+
+        public virtual TerminalAuthBuilder GetReport(INGENICO.ReportType type) {
+            return new TerminalAuthBuilder(TransactionType.Create, PaymentMethodType.Other).WithReportType(type);
+        }
+
         #endregion
 
         #region Transactions
@@ -121,8 +138,15 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Credit)
                 .WithAmount(amount);
         }
+
+        public virtual TerminalAuthBuilder Completion(decimal? amount = null) {
+            return new TerminalAuthBuilder(TransactionType.PreAuthCompletion, PaymentMethodType.Credit)
+                .WithAmount(amount);
+        }
+
         public virtual TerminalAuthBuilder Verify() {
-            return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit);
+            return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit)
+                .WithAmount(6.18m);
         }
         public virtual TerminalManageBuilder Void() {
             return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.Credit);
@@ -137,6 +161,21 @@ namespace GlobalPayments.Api.Terminals {
         public void Dispose() {
             _controller.Dispose();
         }
+        #endregion
+
+        #region For clarification
+
+        #region Transaction Management
+        public virtual TerminalManageBuilder Reverse(decimal? amount = null) {
+            return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.Credit)
+                .WithAmount(amount);
+        }
+        public virtual TerminalManageBuilder Duplicate(decimal? amount = null) {
+            return new TerminalManageBuilder(TransactionType.Duplicate, PaymentMethodType.Credit)
+                .WithAmount(amount);
+        }
+        #endregion
+
         #endregion
     }
 }
