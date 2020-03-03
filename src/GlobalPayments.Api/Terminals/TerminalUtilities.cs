@@ -7,6 +7,7 @@ using GlobalPayments.Api.Terminals.HPA;
 using System.IO;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using GlobalPayments.Api.Entities;
 
 namespace GlobalPayments.Api.Terminals {
     public class TerminalUtilities {
@@ -28,6 +29,35 @@ namespace GlobalPayments.Api.Terminals {
             }
 
             return sb.ToString();
+        }
+
+        public static DeviceMessage BuildIngenicoRequest(string message, ConnectionModes? settings) {
+            var buffer = new List<byte>();
+            byte[] lrc;
+
+            switch (settings) {
+                case ConnectionModes.SERIAL:
+                    buffer.Add((byte)ControlCodes.STX);
+                    foreach (char c in message)
+                        buffer.Add((byte)c);
+                    buffer.Add((byte)ControlCodes.ETX);
+                    lrc = CalculateLRC(message);
+                    buffer.Add(lrc[0]);
+                    break;
+                case ConnectionModes.TCP_IP_SERVER:
+                    var _msg = CalculateHeader(Encoding.UTF8.GetBytes(message)) + message;
+
+                    foreach (char c in _msg)
+                        buffer.Add((byte)c);
+
+                    break;
+                case ConnectionModes.TCP_IP:
+                    break;
+                default:
+                    throw new BuilderException("Failed to build request message. Unknown Connection mode.");
+            }
+
+            return new DeviceMessage(buffer.ToArray());
         }
 
         private static DeviceMessage BuildMessage(string messageId, string message) {
@@ -118,7 +148,7 @@ namespace GlobalPayments.Api.Terminals {
             Bitmap bmp = new Bitmap(width, 100);
 
             var gfx = Graphics.FromImage(bmp);
-            gfx.Clear(Color.White);
+            //gfx.Clear(Color.White);
 
             var index = 0;
             var coordinate = coordinates[index++];
@@ -141,6 +171,41 @@ namespace GlobalPayments.Api.Terminals {
                 bmp.Save(ms, ImageFormat.Bmp);
                 return ms.ToArray();
             }
+        }
+
+        public static string CalculateHeader(byte[] buffer) {
+            //The Header contains the data length in hexadecimal format on two digits
+            var hex = buffer.Length.ToString("X4");
+            hex = hex.PadLeft(4, '0');
+
+            // Get total value per two char.
+            var fDigit = hex[0].ToString() + hex[1];
+            var sDigit = hex[2].ToString() + hex[3];
+
+            return string.Format("{0}{1}", Convert.ToChar(Convert.ToUInt32(fDigit, 16)),
+               Convert.ToChar(Convert.ToUInt32(sDigit, 16)));
+        }
+
+        public static int HeaderLength(byte[] buffer) {
+            // Conversion from decimal to hex value
+            var fHex = Convert.ToInt64(buffer[0]).ToString("X2");
+            var sHex = Convert.ToInt64(buffer[1]).ToString("X2");
+
+            // Concat two hex value
+            var _hex = fHex + sHex;
+
+            // Get decimal value of concatenated hex
+            return int.Parse(_hex, System.Globalization.NumberStyles.HexNumber);
+        }
+
+        public static byte[] CalculateLRC(string requestMessage) {
+            byte[] bytes = Encoding.ASCII.GetBytes((requestMessage + (char)ControlCodes.ETX));
+            byte lrc = 0;
+            for (int i = 0; i < bytes.Length; i++) {
+                lrc ^= bytes[i];
+            }
+            bytes = new byte[] { lrc };
+            return bytes;
         }
     }
 }
