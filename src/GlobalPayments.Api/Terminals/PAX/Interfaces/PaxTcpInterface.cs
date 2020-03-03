@@ -14,6 +14,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         int _connectionCount = 0;
         
         public event MessageSentEventHandler OnMessageSent;
+        public event BroadcastMessageEventHandler OnBroadcastMessage;
 
         public PaxTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;
