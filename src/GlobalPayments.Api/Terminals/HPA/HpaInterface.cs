@@ -14,9 +14,10 @@ namespace GlobalPayments.Api.Terminals.HPA {
         }
 
         #region Admin Messages
-        public override void Cancel() {
+        public override TerminalManageBuilder Cancel(decimal? amount = null) {
             // TODO: Cancel for HPA?
             Reset();
+            return null;
         }
 
         public override IDeviceResponse CloseLane() {
