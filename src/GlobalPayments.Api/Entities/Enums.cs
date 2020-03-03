@@ -55,7 +55,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a genius terminal
         /// </summary>
-        GENIUS
+        GENIUS,
+
+		/// <summary>
+        /// Indicates a Ingenico terminal
+        /// </summary>
+        INGENICO
     }
 
     /// <summary>
@@ -353,7 +358,17 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         DccRateLookup = 1 << 31,
 
-        Increment = 1L << 32
+        Increment = 1L << 32,
+
+        /// <summary>
+        /// Indicate that latest transaction will be duplicate.
+        /// </summary>
+        Duplicate = 1L << 33,
+
+        /// <summary>
+        /// Indicate that the current transaction will be cancelled.
+        /// </summary>
+        Cancel = 1L << 34
     }
 
     /// <summary>
