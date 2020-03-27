@@ -212,7 +212,6 @@ namespace GlobalPayments.Api.Builders {
                 }
             }
             else ClientTransactionId = value;
-
             return this;
         }
 
