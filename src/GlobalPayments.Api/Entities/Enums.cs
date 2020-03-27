@@ -57,10 +57,20 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         GENIUS,
 
-		/// <summary>
-        /// Indicates a Ingenico terminal
+        /// <summary>
+        /// Indicates an Ingenico Desk/5000 terminal underlying in Epos software package.
         /// </summary>
-        INGENICO
+        Ingenico_EPOS_Desk5000,
+
+        /// <summary>
+        /// Indicates an Ingenico Lane/3000 terminal underlying in Epos software package.
+        /// </summary>
+        Ingenico_EPOS_Lane3000,
+
+        /// <summary>
+        /// Indicates an Ingenico Move/3500 terminal underlying in Epos software package.
+        /// </summary>
+        Ingenico_EPOS_Move3500
     }
 
     /// <summary>

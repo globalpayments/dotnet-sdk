@@ -92,7 +92,9 @@ namespace GlobalPayments.Api.Terminals {
                 //case DeviceType.GENIUS:
                 //services.DeviceController = new GeniusController(this);
                 //break;
-                case DeviceType.INGENICO:
+                case DeviceType.Ingenico_EPOS_Desk5000:
+                case DeviceType.Ingenico_EPOS_Lane3000:
+                case DeviceType.Ingenico_EPOS_Move3500:
                     services.DeviceController = new IngenicoController(this);
                     break;
                 default:
