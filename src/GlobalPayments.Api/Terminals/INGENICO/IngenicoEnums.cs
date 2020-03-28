@@ -44,10 +44,6 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         ZBAL
     }
 
-    public enum Environment {
-        TEST,
-        PRODUCTION
-    }
     public enum TransactionStatus {
         SUCCESS = 0,
         REFERRAL = 2,
@@ -55,20 +51,23 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         FAILED = 7,
         RECEIVED = 9
     }
+
     public enum ReverseStatus {
         REVERSAL_SUCCESS = 0,
         REVERSAL_FAILED = 7,
         NOTHING_TO_REVERSE = 9
     }
+
     public enum CancelStatus {
         CANCEL_DONE = 9,
-        CANCE_FAILED = 7
+        CANCEL_FAILED = 7
     }
 
     public enum DynamicCurrencyStatus {
         CONVERSION_APPLIED = 1,
         REJECTED = 0
     }
+
     public enum TransactionSubTypes {
         SPLIT_SALE_TXN = 0x53, // 0x53 byte for 'S'
         DCC_TXN = 0x44, // 0x44 byte for 'D'
@@ -81,10 +80,12 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         XBAL,
         ZBAL
     }
+
     public enum TerminalStatus {
         NOT_READY = 0,
         READY = 1
     }
+
     public enum TerminalModes {
         STANDARD_MODE = 0,
         VENDING_MODE = 1
@@ -107,6 +108,7 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         AccountVerification = 6,
         ReferralConfirmation = 9
     }
+
     public enum PaymentMode {
         APPLICATION = 0,
         MAILORDER = 1
