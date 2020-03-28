@@ -217,7 +217,7 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
                 if (_serial != null) {
                     string bufferSend = Encoding.ASCII.GetString(message.GetSendBuffer());
                     OnMessageSent?.Invoke(bufferSend.Substring(1, bufferSend.Length - 3));
-                    var task = WriteMessage(message);
+                    Task<bool> task = WriteMessage(message);
                     if (!task.Wait(_settings.Timeout)) {
                         throw new MessageException("Terminal did not response within timeout.");
                     }
