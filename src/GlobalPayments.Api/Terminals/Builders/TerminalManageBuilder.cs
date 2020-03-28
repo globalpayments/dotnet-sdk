@@ -11,8 +11,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal decimal? Gratuity { get; set; }
         internal string TransactionId {
             get {
-                if (PaymentMethod is TransactionReference)
+                if (PaymentMethod is TransactionReference) {
                     return (PaymentMethod as TransactionReference).TransactionId;
+                }
                 return null;
             }
         }
@@ -36,7 +37,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             CurrencyCode = value;
             return this;
         }
-        
+
         public TerminalManageBuilder WithAmount(decimal? amount) {
             Amount = amount;
             return this;
@@ -60,8 +61,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         /// <param name="value">Authorization Code</param>
         /// <returns></returns>
         public TerminalManageBuilder WithAuthCode(string value) {
-            if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
+            if (PaymentMethod == null || !(PaymentMethod is TransactionReference)) {
                 PaymentMethod = new TransactionReference();
+            }
             (PaymentMethod as TransactionReference).AuthCode = value;
             ExtendedDataTags = ExtendedDataTags.AUTHCODE;
             return this;
@@ -71,7 +73,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
             (PaymentMethod as TransactionReference).TransactionId = value;
-            
+
             return this;
         }
 
@@ -96,7 +98,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Validations.For(TransactionType.Capture).When(() => AuthCode).IsNull().Check(() => TransactionId).IsNotNull();
             Validations.For(TransactionType.Void).When(() => ClientTransactionId).IsNull().Check(() => TransactionId).IsNotNull();
             Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
-            Validations.For(TransactionType.Cancel).Check(() => Amount).IsNotNull();
         }
     }
 }
