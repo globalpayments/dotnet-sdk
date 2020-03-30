@@ -132,7 +132,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 .GetLastReceipt()
             .Execute();
 
-            Assert.IsNotNull(response.ReportData);
+            Assert.IsNotNull(response.ToString());
         }
     }
 }

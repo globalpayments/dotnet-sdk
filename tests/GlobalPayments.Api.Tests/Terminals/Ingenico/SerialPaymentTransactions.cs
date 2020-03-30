@@ -112,9 +112,9 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 .GetLastReceipt(ReceiptType.SPLITR)
                 .Execute();
 
-            string test = splitR.ReportData;
+            string test = splitR.ToString();
 
-            if (splitR.ReportData.Contains("</CREDIT_CARD_RECEIPT>"))
+            if (splitR.ToString().Contains("</CREDIT_CARD_RECEIPT>"))
                 Assert.IsNotNull(splitR);
         }
 
@@ -124,9 +124,9 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 .GetLastReceipt(ReceiptType.TICKET)
                 .Execute();
 
-            string test = res.ReportData;
+            string test = res.ToString();
 
-            if (res.ReportData.Contains("</CREDIT_CARD_RECEIPT>"))
+            if (res.ToString().Contains("</CREDIT_CARD_RECEIPT>"))
                 Assert.IsNotNull(res);
         }
 
@@ -136,7 +136,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
             /** This example doesn't return XML/Report Data but it intiate End of Day 
             Report and the terminal will return EODOK if success.
             */
-            ITerminalResponse res = _device
+            ITerminalReport res = _device
                 .GetReport(ReportType.EOD)
                 .Execute();
 
