@@ -80,6 +80,7 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         public string ApplicationPreferredName { get; set; }
         public string ApplicationLabel { get; set; }
         public string ApplicationId { get; set; }
+        public decimal? MerchantFee { get; set; }
         #endregion
 
         /** Index
@@ -110,15 +111,11 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
 
     public class IngenicoTerminalReportResponse : IngenicoBaseResponse, ITerminalReport {
         private byte[] _buffer;
-        private string _reportData;
 
         internal IngenicoTerminalReportResponse(byte[] buffer) {
             _buffer = buffer;
-            _reportData = ASCIIEncoding.ASCII.GetString(_buffer);
             Status = _buffer.Length > 0 ? "SUCCESS" : "FAILED";
         }
-
-        public string ReportData { get { return _reportData;} set { } }
 
         public override string ToString() {
             return Encoding.ASCII.GetString(_buffer);
