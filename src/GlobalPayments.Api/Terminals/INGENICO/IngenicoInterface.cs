@@ -58,7 +58,7 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         #endregion
 
         #region XML & Report Management
-        public override TerminalAuthBuilder GetReport(ReportType type) {
+        public override TerminalReportBuilder GetReport(ReportType type) {
             return base.GetReport(type);
         }
 
