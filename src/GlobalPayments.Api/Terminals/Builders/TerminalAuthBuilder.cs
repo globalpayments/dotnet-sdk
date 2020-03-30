@@ -38,20 +38,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
-        internal INGENICO.ReportType? ReportType { get; set; }
         internal string CurrencyCode { get; set; }
         internal PaymentMode PaymentMode { get; set; }
         internal string TableNumber { get; set; }
-
-        /// <summary>
-        /// Sets the report type for the transaction.
-        /// </summary>
-        /// <param name="reportType">Report Type</param>
-        /// <returns></returns>
-        public TerminalAuthBuilder WithReportType(INGENICO.ReportType reportType) {
-            ReportType = reportType;
-            return this;
-        }
 
         public TerminalAuthBuilder WithAddress(Address address) {
             Address = address;
