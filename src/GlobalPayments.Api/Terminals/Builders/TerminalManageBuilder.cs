@@ -19,7 +19,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
         internal string CurrencyCode { get; set; }
         internal PaymentMode PaymentMode { get; set; }
-        internal ExtendedDataTags ExtendedDataTags { get; set; }
         internal string AuthCode {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -65,7 +64,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 PaymentMethod = new TransactionReference();
             }
             (PaymentMethod as TransactionReference).AuthCode = value;
-            ExtendedDataTags = ExtendedDataTags.AUTHCODE;
             return this;
         }
 
