@@ -10,9 +10,9 @@ namespace GlobalPayments.Api.Entities {
         public decimal? Rate { get; set; }
         public int StayDuration { get; set; }
 
-        public PrestigiousPropertyLimit PrestigiousPropertyLimit { get; set; }
+        public PrestigiousPropertyLimit? PrestigiousPropertyLimit { get; set; }
         public bool NoShow { get; set; }
-        public AdvancedDepositType AdvancedDepositType { get; set; }
+        public AdvancedDepositType? AdvancedDepositType { get; set; }
         public string LodgingDataEdit { get; set; }
         public bool PreferredCustomer { get; set; }
 

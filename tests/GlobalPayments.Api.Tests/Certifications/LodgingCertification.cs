@@ -46,7 +46,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
         public void Lodging_001_SaleVisaSwiped_SingleStay() {
             track = TestCards.VisaSwipe();
 
-            var lodgingData = new LodgingData { StayDuration = 99 };
+            var lodgingData = new LodgingData { StayDuration = 1 };
 
             Transaction response = track.Charge(10m)
                     .WithCurrency("USD")
@@ -698,7 +698,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
             card = TestCards.AmexManual(false, true);
 
             var lodgingData = new LodgingData {
-                StayDuration = 2,
+                StayDuration = 1,
                 AdvancedDepositType = AdvancedDepositType.ASSURED_RESERVATION,
                 NoShow = true
             };
@@ -2131,7 +2131,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
         */
         [TestMethod]
         public void Lodging_096_DebitPartialApproval() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.VisaSwipe(), "32539F50C245A6A93D123412324000AA");
+            DebitTrackData track = TestCards.AsDebit(TestCards.MasterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
 
             Transaction response = track.Charge(33m)
                     .WithCurrency("USD")
@@ -2140,9 +2140,22 @@ namespace GlobalPayments.Api.Tests.Certifications {
                     .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("10", response.ResponseCode);
-            Assert.AreEqual(22m, response.AuthorizedAmount);
+            Assert.AreEqual(22m, response.AuthorizedAmount); ;
         }
 
+        [TestMethod]
+        public void Lodging_096a_DebitPartialApproval() {
+            DebitTrackData track = TestCards.AsDebit(TestCards.VisaSwipe(), "32539F50C245A6A93D123412324000AA");
+
+            Transaction response = track.Charge(44m)
+                    .WithCurrency("USD")
+                    .WithAllowPartialAuth(true)
+                    .WithAllowDuplicates(true)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("10", response.ResponseCode);
+            Assert.AreEqual(33m, response.AuthorizedAmount);
+        }
         /*
             RETURN
         */
@@ -2150,7 +2163,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
         public void Lodging_097_DebitReturn() {
             DebitTrackData track = TestCards.AsDebit(TestCards.VisaSwipe(), "32539F50C245A6A93D123412324000AA");
 
-            Transaction response = track.Refund(141m)
+            Transaction response = track.Refund(40m)
                     .WithCurrency("USD")
                     .Execute();
             Assert.IsNotNull(response);
@@ -2190,7 +2203,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.IsNotNull(response);
             Assert.AreEqual("10", response.ResponseCode);
 
-            Transaction reversal = track.Reverse(44m)
+            Transaction reversal = track.Reverse(33m)
                     .WithCurrency("USD")
                     .WithAllowDuplicates(true)
                     .Execute();
@@ -2242,7 +2255,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
         public void Lodging_103_ContactlessSale_Amex() {
             track = TestCards.AmexSwipe(EntryMethod.Proximity);
 
-            Transaction response = track.Charge(6m)
+            Transaction response = track.Charge(9m)
                     .WithCurrency("USD")
                     .WithAllowDuplicates(true)
                     .Execute();
@@ -2253,64 +2266,80 @@ namespace GlobalPayments.Api.Tests.Certifications {
         /*
             TIME OUT REVERSAL (TOR)
         */
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void Lodging_104_TimeOutReversal_Discover() {
             track = TestCards.DiscoverSwipe();
 
             string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
 
-            track.Charge(15.27m)
+            track.Charge(10.33m)
                     .WithCurrency("USD")
                     .WithClientTransactionId(clientTransactionId)
                     .Execute();
 
-            Transaction reversal = track.Reverse(15.27m)
-                    .WithCurrency("USD")
-                    .WithClientTransactionId(clientTransactionId)
-                    .WithAllowDuplicates(true)
-                    .Execute();
-            Assert.IsNotNull(reversal);
-            Assert.AreEqual("00", reversal.ResponseCode);
+            var response = Transaction.FromId(null, PaymentMethodType.Credit);
+            response.ClientTransactionId = clientTransactionId;
+
+            var reversalResponse = response.Reverse(10.33m).Execute();
+            Assert.IsNotNull(reversalResponse);
+            Assert.AreEqual("00", reversalResponse.ResponseCode);
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(GatewayException))]
         public void Lodging_105_TimeOutReversal_Master() {
             track = TestCards.MasterCardSwipe();
 
             string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
 
-            track.Charge(15.28m)
+            track.Charge(10.33m)
                     .WithCurrency("USD")
                     .WithClientTransactionId(clientTransactionId)
                     .Execute();
 
-            Transaction reversal = track.Reverse(15.28m)
-                    .WithCurrency("USD")
-                    .WithClientTransactionId(clientTransactionId)
-                    .WithAllowDuplicates(true)
-                    .Execute();
-            Assert.IsNotNull(reversal);
-            Assert.AreEqual("00", reversal.ResponseCode);
+            var response = Transaction.FromId(null, PaymentMethodType.Credit);
+            response.ClientTransactionId = clientTransactionId;
+
+            var reversalResponse = response.Reverse(10.33m).Execute();
+            Assert.IsNotNull(reversalResponse);
+            Assert.AreEqual("00", reversalResponse.ResponseCode);
         }
 
-        [TestMethod]
-        public void Lodging_106_TimeOutReversal() {
-            track = TestCards.DiscoverSwipe();
+        [TestMethod, ExpectedException(typeof(GatewayException))]
+        public void Lodging_106_TimeOutReversal_Jcb() {
+            track = TestCards.JcbSwipe();
 
             string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
 
-            track.Charge(15.29m)
+            track.Charge(10.33m)
                     .WithCurrency("USD")
                     .WithClientTransactionId(clientTransactionId)
                     .Execute();
 
-            Transaction reversal = track.Reverse(15.29m)
+            var response = Transaction.FromId(null, PaymentMethodType.Credit);
+            response.ClientTransactionId = clientTransactionId;
+
+            var reversalResponse = response.Reverse(10.33m).Execute();
+            Assert.IsNotNull(reversalResponse);
+            Assert.AreEqual("00", reversalResponse.ResponseCode);
+        }
+
+        [TestMethod, ExpectedException(typeof(GatewayException))]
+        public void Lodging_107_TimeOutReversal_Visa() {
+            track = TestCards.VisaSwipe();
+
+            string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
+
+            track.Charge(10.33m)
                     .WithCurrency("USD")
                     .WithClientTransactionId(clientTransactionId)
-                    .WithAllowDuplicates(true)
                     .Execute();
-            Assert.IsNotNull(reversal);
-            Assert.AreEqual("00", reversal.ResponseCode);
+
+            var response = Transaction.FromId(null, PaymentMethodType.Credit);
+            response.ClientTransactionId = clientTransactionId;
+
+            var reversalResponse = response.Reverse(10.33m).Execute();
+            Assert.IsNotNull(reversalResponse);
+            Assert.AreEqual("00", reversalResponse.ResponseCode);
         }
 
         [TestMethod]
@@ -2325,6 +2354,39 @@ namespace GlobalPayments.Api.Tests.Certifications {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }
+        }
+
+        /*
+           		Per GSTP ISO Lodging MSRDebit Purchase with Cash Back
+       */
+
+        [TestMethod]
+        public void Lodging_246_DebitSale_Master() {
+            DebitTrackData track = TestCards.AsDebit(TestCards.MasterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+
+            Transaction response = track.Charge(3.73m)
+                    .WithCurrency("USD")
+                    .WithCashBack(0.40m)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Lodging_247_DebitSaleVisaKeyed_CardPresent() {
+            card = TestCards.VisaManual(true, true);
+
+            Transaction response = card.Charge(3.70m)
+                    .WithCurrency("USD")
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            Transaction duplicateResponse = card.Charge(3.70m)
+                   .WithCurrency("USD")
+                   .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", duplicateResponse.ResponseCode);
         }
     }
 }

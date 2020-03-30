@@ -339,8 +339,8 @@ namespace GlobalPayments.Api.Gateways {
                     Element lodgingDataEdit = et.SubElement(lodgingElement, "LodgingDataEdit");
                     et.SubElement(lodgingDataEdit, "FolioNumber", lodging.FolioNumber);
                     et.SubElement(lodgingDataEdit, "Duration", lodging.StayDuration);
-                    et.SubElement(lodgingDataEdit, "CheckInDate", lodging.CheckInDate?.ToString("MM-dd-yyyy"));
-                    et.SubElement(lodgingDataEdit, "CheckOutDate", lodging.CheckOutDate?.ToString("MM-dd-yyyy"));
+                    et.SubElement(lodgingDataEdit, "CheckInDate", lodging.CheckInDate?.ToString("yyyy-MM-dd"));
+                    et.SubElement(lodgingDataEdit, "CheckOutDate", lodging.CheckOutDate?.ToString("yyyy-MM-dd"));
                     et.SubElement(lodgingDataEdit, "Rate", lodging.Rate);
 
                     if (lodging.ExtraCharges != null) {
