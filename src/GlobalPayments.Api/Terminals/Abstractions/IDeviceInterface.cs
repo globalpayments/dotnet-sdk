@@ -48,7 +48,7 @@ namespace GlobalPayments.Api.Terminals {
         /// </summary>
         /// <param name="type">Report Type</param>
         /// <returns></returns>
-        TerminalAuthBuilder GetReport(INGENICO.ReportType type);
+        TerminalReportBuilder GetReport(INGENICO.ReportType type);
         #endregion
 
         #region Batch Calls
