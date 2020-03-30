@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
 
         public IngenicoTransactionTests() {
             _device = DeviceService.Create(new ConnectionConfig() {
-                DeviceType = Entities.DeviceType.INGENICO,
+                DeviceType = Entities.DeviceType.Ingenico_EPOS_Desk5000,
                 ConnectionMode = ConnectionModes.TCP_IP_SERVER,
                 Port = "18101",
                 Timeout = 60000,

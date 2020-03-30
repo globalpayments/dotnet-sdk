@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
-using GlobalPayments.Api.Terminals.Abstractions;
-using GlobalPayments.Api.Terminals.INGENICO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
@@ -17,7 +12,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
 
         public TransactionTest() {
             _device = DeviceService.Create(new ConnectionConfig() {
-                DeviceType = Entities.DeviceType.INGENICO,
+                DeviceType = DeviceType.Ingenico_EPOS_Lane3000,
                 ConnectionMode = ConnectionModes.TCP_IP_SERVER,
                 Port = "18101",
                 Timeout = 60000,

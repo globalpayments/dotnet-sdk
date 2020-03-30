@@ -4,9 +4,6 @@ using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.INGENICO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ReportType = GlobalPayments.Api.Terminals.INGENICO.ReportType;
@@ -18,7 +15,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
 
         public SerialPaymentTransactions() {
             _device = DeviceService.Create(new ConnectionConfig() {
-                DeviceType = DeviceType.INGENICO,
+                DeviceType = DeviceType.Ingenico_EPOS_Lane3000,
                 ConnectionMode = ConnectionModes.SERIAL,
                 Port = "5",
                 BaudRate = BaudRate.r9600,
