@@ -1,4 +1,5 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Utils;
@@ -84,14 +85,25 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
             int forceOnline = 0;
             string extendedData = "0000000000";
 
-            // For Auth code value in extended data
-            if (!string.IsNullOrEmpty(builder.AuthCode))
-                extendedData = ValidateExtendedData(builder.AuthCode, builder.ExtendedDataTags);
-            else if (!builder.TransactionId.IsNull() && builder.TransactionType == TransactionType.Reversal)
-                // For Reversal with Transaction Id value in extended data
-                extendedData = ValidateExtendedData(builder.TransactionId, ExtendedDataTags.TXN_COMMANDS_PARAMS);
-            else
-                extendedData = ValidateExtendedData(builder.TransactionType.ToString(), ExtendedDataTags.TXN_COMMANDS);
+            // Validation for Authcode
+            if (!string.IsNullOrEmpty(builder.AuthCode)) {
+                extendedData = INGENICO_REQ_CMD.AUTHCODE.FormatWith(builder.AuthCode); 
+            }
+            // Validation for Reversal with Transaction Id value in Extended data
+            else if (!builder.TransactionId.IsNull() && builder.TransactionType == TransactionType.Reversal) {
+                extendedData = INGENICO_REQ_CMD.REVERSE_WITH_ID.FormatWith(builder.TransactionId);
+            }
+            // TODO: Remove Cancel, Duplicate, Reverse here this should be on Interface
+            // Temporary for CANCEL.
+            else if (builder.TransactionType == TransactionType.Cancel) {
+                extendedData = INGENICO_REQ_CMD.CANCEL;
+            }
+            else if (builder.TransactionType == TransactionType.Duplicate) {
+                extendedData = INGENICO_REQ_CMD.DUPLICATE;
+            }
+            else if (builder.TransactionType == TransactionType.Reversal) {
+                extendedData = INGENICO_REQ_CMD.REVERSE;
+            }
 
             // Concat all data to create a request string.
             var sb = new StringBuilder();
@@ -131,25 +143,30 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
                 string tableId = builder.TableNumber;
 
                 // Validations
+                if (referenceNumber == default(int) && RequestIdProvider != null) {
+                    referenceNumber = RequestIdProvider.GetRequestId();
+                }
                 amount = ValidateAmount(amount);
                 paymentMode = ValidatePaymentMode(builder.PaymentMode);
                 currencyCode = ValidateCurrency((string.IsNullOrEmpty(builder.CurrencyCode) ? currencyCode : builder.CurrencyCode));
 
                 if (!string.IsNullOrEmpty(tableId)) {
-                    bool validateTableId = ValidateTableReference(tableId);
-                    if (validateTableId)
-                        extendedData = ValidateExtendedData(tableId, builder.ExtendedDataTags);
+                    ValidateTableId(tableId);
+                    extendedData = INGENICO_REQ_CMD.TABLE_WITH_ID.FormatWith(tableId);
                 }
-
-                if (!IsObjectNullOrEmpty(cashbackAmount))
-                    extendedData = ValidateExtendedData(cashbackAmount.ToString(), builder.ExtendedDataTags);
-                else if (!string.IsNullOrEmpty(authCode))
-                    extendedData = ValidateExtendedData(authCode, builder.ExtendedDataTags);
+                else if (!string.IsNullOrEmpty(authCode)) {
+                    extendedData = INGENICO_REQ_CMD.AUTHCODE.FormatWith(authCode);
+                }
+                else if (cashbackAmount != null) {
+                    ValidateCashbackAmount(cashbackAmount);
+                    cashbackAmount *= 100;
+                    extendedData = INGENICO_REQ_CMD.CASHBACK.FormatWith(Convert.ToInt64(Math.Round(cashbackAmount.Value, MidpointRounding.AwayFromZero)));
+                }
 
                 // Concat all data to create a request string.
                 var sb = new StringBuilder();
 
-                sb.Append(referenceNumber.ToString("00"));
+                sb.Append(referenceNumber.ToString("00").Substring(0, 2));
                 sb.Append(amount?.ToString("00000000"));
                 sb.Append(returnRep);
                 sb.Append(paymentMode);
@@ -172,7 +189,7 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         }
 
         #region Validations
-        private static bool IsObjectNullOrEmpty(object value) {
+        private bool IsObjectNullOrEmpty(object value) {
             bool response = false;
             if (value.IsNull() || string.IsNullOrWhiteSpace(value.ToString())) {
                 response = true;
@@ -184,19 +201,22 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
             return response;
         }
 
-        private static bool ValidateTableReference(string value) {
-            bool response = false;
-            if (!string.IsNullOrEmpty(value) && value.Length <= 8) {
-                response = true;
+        private void ValidateTableId(string value) {
+            if (value.Length != 8) {
+                throw new BuilderException("The required length for table number is 8.");
             }
-            else {
-                throw new BuilderException("Table number must not be less than or equal 0 or greater than 8 numerics.");
-            }
-
-            return response;
         }
 
-        private static int ValidatePaymentMode(PaymentMode? paymentMode) {
+        private void ValidateCashbackAmount(decimal? value) {
+            if (value >= 1000000m) {
+                throw new BuilderException("Cashback Amount exceed.");
+            }
+            if (value < 0m) {
+                throw new BuilderException("Cashback Amount must not be in less than zero.");
+            }
+        }
+
+        private int ValidatePaymentMode(PaymentMode? paymentMode) {
             if (IsObjectNullOrEmpty(paymentMode)) {
                 paymentMode = PaymentMode.APPLICATION;
             }
@@ -204,52 +224,7 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
             return (int)paymentMode;
         }
 
-        private static string ValidateExtendedData(string value, ExtendedDataTags tags) {
-            string extendedData = string.Empty;
-            switch (tags) {
-                case ExtendedDataTags.CASHB:
-                    decimal? cashbackAmount = Convert.ToDecimal(value);
-                    if (cashbackAmount > 0m && cashbackAmount < 1000000m) {
-                        cashbackAmount *= 100;
-                    }
-                    else if (cashbackAmount <= 0m) {
-                        throw new BuilderException("Cashback Amount must not be in less than or equal 0 value.");
-                    }
-                    else {
-                        throw new BuilderException("Cashback Amount exceed.");
-                    }
-
-                    extendedData = "CASHB={0};".FormatWith(Convert.ToInt64(Math.Round(cashbackAmount.Value, MidpointRounding.AwayFromZero)));
-                    break;
-                case ExtendedDataTags.AUTHCODE:
-                    extendedData = "AUTHCODE={0}".FormatWith(value);
-                    break;
-                case ExtendedDataTags.TABLE_NUMBER:
-                    extendedData = "CMD=ID{0}".FormatWith(value);
-                    break;
-                case ExtendedDataTags.TXN_COMMANDS:
-                    var transType = (TransactionType)Enum.Parse(typeof(TransactionType), value, true);
-                    switch (transType) {
-                        case TransactionType.Cancel:
-                            extendedData = INGENICO_REQ_CMD.CANCEL;
-                            break;
-                        case TransactionType.Duplicate:
-                            extendedData = INGENICO_REQ_CMD.DUPLICATE;
-                            break;
-                        case TransactionType.Reversal:
-                            extendedData = INGENICO_REQ_CMD.REVERSE;
-                            break;
-                    }
-                    break;
-                case ExtendedDataTags.TXN_COMMANDS_PARAMS:
-                    extendedData = INGENICO_REQ_CMD.REVERSE_WITH_ID.FormatWith(value);
-                    break;
-            }
-
-            return extendedData;
-        }
-
-        private static string ValidateCurrency(string currencyCode) {
+        private string ValidateCurrency(string currencyCode) {
             if (!string.IsNullOrWhiteSpace(currencyCode)) {
                 currencyCode = currencyCode.PadLeft(3, '0');
             }
@@ -261,11 +236,11 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         }
 
         private decimal? ValidateAmount(decimal? amount) {
-            if (amount == null) {
-                throw new BuilderException("Amount can not be null.");
-            }
-            else if (amount > 0 && amount < 1000000m) {
+            if (amount != null && amount > 0 && amount < 1000000m) {
                 amount *= 100;
+            }
+            else if (amount == null) {
+                throw new BuilderException("Amount can not be null.");
             }
             else if (amount >= 1000000m) {
                 throw new BuilderException("Amount exceed.");
