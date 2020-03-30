@@ -3,10 +3,18 @@ using System;
 
 namespace GlobalPayments.Api.Terminals.INGENICO {
     internal class INGENICO_REQ_CMD {
+        // Request Transactions
+        public const string AUTHCODE = "AUTHCODE={0}";
+        public const string CASHBACK = "CASHB={0}";
+
+        // Request Commands
         public const string CANCEL = "CMD=CANCEL";
         public const string DUPLICATE = "CMD=DUPLIC";
         public const string REVERSE = "CMD=REVERSE";
         public const string REVERSE_WITH_ID = "CMD=REV{0}";
+        public const string TABLE_WITH_ID = "CMD=ID{0}";
+
+        // Requesr Report
         public const string REPORT = "0100000001100826EXT0100000A010B010CMD={0}";
         public const string RECEIPT = "0100000001100826EXT0100000A010B010CMD={0}";
     }
@@ -112,13 +120,5 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
     public enum PaymentMode {
         APPLICATION = 0,
         MAILORDER = 1
-    }
-
-    public enum ExtendedDataTags {
-        CASHB,
-        AUTHCODE,
-        TABLE_NUMBER,
-        TXN_COMMANDS,
-        TXN_COMMANDS_PARAMS
     }
 }
