@@ -10,6 +10,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal TerminalReportType ReportType { get; set; }
         internal ReceiptType ReceiptType { get; set; }
 
+        // TODO: Remove this property. Need to clarify with Russell.
+        internal ReportType? _ReportType { get; set; }
+
         private TerminalSearchBuilder _searchBuilder;
         internal TerminalSearchBuilder SearchBuilder {
             get {
@@ -30,6 +33,17 @@ namespace GlobalPayments.Api.Terminals.Builders {
 
         public TerminalSearchBuilder Where<T>(PaxSearchCriteria criteria, T value) {
             return SearchBuilder.And(criteria, value);
+        }
+
+
+        /// <summary>
+        /// Sets the report type for the transaction.
+        /// </summary>
+        /// <param name="reportType">Report Type</param>
+        /// <returns></returns>
+        public TerminalReportBuilder WithReportType(ReportType reportType) {
+            _ReportType = reportType;
+            return this;
         }
 
         public ITerminalReport Execute(string configName = "default") {
