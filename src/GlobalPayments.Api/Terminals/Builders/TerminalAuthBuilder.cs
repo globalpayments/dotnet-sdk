@@ -11,8 +11,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal decimal? Amount { get; set; }
         internal string AuthCode {
             get {
-                if (PaymentMethod is TransactionReference)
+                if (PaymentMethod is TransactionReference) {
                     return (PaymentMethod as TransactionReference).AuthCode;
+                }
                 return null;
             }
         }
@@ -31,12 +32,16 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal string TaxExemptId { get; set; }
         internal string TransactionId {
             get {
-                if (PaymentMethod is TransactionReference)
+                if (PaymentMethod is TransactionReference) {
                     return (PaymentMethod as TransactionReference).TransactionId;
+                }
                 return null;
             }
         }
-        internal INGENICO.ReportType? ReportType { get; set; } = null;
+        internal INGENICO.ReportType? ReportType { get; set; }
+        internal string CurrencyCode { get; set; }
+        internal PaymentMode PaymentMode { get; set; }
+        internal string TableNumber { get; set; }
 
         /// <summary>
         /// Sets the report type for the transaction.
@@ -67,10 +72,10 @@ namespace GlobalPayments.Api.Terminals.Builders {
         /// <param name="value">Authorization Code</param>
         /// <returns></returns>
         public TerminalAuthBuilder WithAuthCode(string value) {
-            if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
+            if (PaymentMethod == null || !(PaymentMethod is TransactionReference)) {
                 PaymentMethod = new TransactionReference();
+            }
             (PaymentMethod as TransactionReference).AuthCode = value;
-            ExtendedDataTags = ExtendedDataTags.AUTHCODE;
             return this;
         }
 
@@ -91,7 +96,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
         /// <returns></returns>
         public TerminalAuthBuilder WithCashBack(decimal? amount) {
             CashBackAmount = amount;
-            ExtendedDataTags = ExtendedDataTags.CASHB;
             return this;
         }
         public TerminalAuthBuilder WithClientTransactionId(string value) {
@@ -152,15 +156,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
-        #region Additional Methods for Ingenico
-
-        internal string CurrencyCode { get; set; }
-        internal PaymentMode PaymentMode { get; set; }
-
-        internal string TableNumber { get; set; }
-        internal ExtendedDataTags ExtendedDataTags { get; set; }
-
-
         /// <summary>
         /// Sets the currency code for the transaction.
         /// </summary>
@@ -188,11 +183,8 @@ namespace GlobalPayments.Api.Terminals.Builders {
         /// <returns></returns>
         public TerminalAuthBuilder WithTableNumber(string value) {
             TableNumber = value;
-            ExtendedDataTags = ExtendedDataTags.TABLE_NUMBER;
             return this;
         }
-
-        #endregion
 
         internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
         }
