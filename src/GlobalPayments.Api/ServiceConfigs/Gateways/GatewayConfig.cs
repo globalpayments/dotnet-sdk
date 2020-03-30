@@ -1,7 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 
-namespace GlobalPayments.Api.Gateway {
+namespace GlobalPayments.Api {
     public abstract class GatewayConfig : Configuration {
         public AcceptorConfig AcceptorConfig { get; set; }
         protected GatewayProvider GatewayProvider { get; set; }
