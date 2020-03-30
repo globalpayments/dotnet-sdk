@@ -108,8 +108,8 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalReportBuilder(type);
         }
 
-        public virtual TerminalAuthBuilder GetReport(INGENICO.ReportType type) {
-            return new TerminalAuthBuilder(TransactionType.Create, PaymentMethodType.Other).WithReportType(type);
+        public virtual TerminalReportBuilder GetReport(INGENICO.ReportType type) {
+            return new TerminalReportBuilder(TerminalReportType.LocalDetailReport).WithReportType(type);
         }
 
         #endregion
