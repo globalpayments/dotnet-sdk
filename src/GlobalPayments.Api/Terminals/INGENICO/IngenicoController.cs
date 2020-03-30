@@ -50,8 +50,15 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
         }
 
         internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
-            IDeviceMessage request = TerminalUtilities.BuildIngenicoRequest(INGENICO_REQ_CMD.RECEIPT.FormatWith(builder.ReceiptType), _settings.ConnectionMode);
-            return ReportRequest(request);
+            IDeviceMessage request;
+            if (builder._ReportType != null) {
+                request = BuildReportTransaction(builder);
+                return ReportRequest(request);
+            }
+            else {
+                request = TerminalUtilities.BuildIngenicoRequest(INGENICO_REQ_CMD.RECEIPT.FormatWith(builder.ReceiptType), _settings.ConnectionMode);
+                return ReportRequest(request);
+            }
         }
 
         internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
@@ -87,7 +94,7 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
 
             // Validation for Authcode
             if (!string.IsNullOrEmpty(builder.AuthCode)) {
-                extendedData = INGENICO_REQ_CMD.AUTHCODE.FormatWith(builder.AuthCode); 
+                extendedData = INGENICO_REQ_CMD.AUTHCODE.FormatWith(builder.AuthCode);
             }
             // Validation for Reversal with Transaction Id value in Extended data
             else if (!builder.TransactionId.IsNull() && builder.TransactionType == TransactionType.Reversal) {
@@ -124,63 +131,69 @@ namespace GlobalPayments.Api.Terminals.INGENICO {
 
         internal IDeviceMessage BuildProcessTransaction(TerminalAuthBuilder builder) {
             string message = string.Empty;
-            if (!IsObjectNullOrEmpty(builder.ReportType))
-                message = INGENICO_REQ_CMD.REPORT.FormatWith(builder.ReportType);
-            else {
-                int referenceNumber = builder.ReferenceNumber;
-                decimal? amount = builder.Amount;
-                int returnRep = 1;
-                int paymentMode = 0;
-                int paymentType = (int)((IngenicoInterface)_device).paymentMethod;
-                string currencyCode = "826";
-                string privateData = "EXT0100000";
-                int immediateAnswer = 0;
-                int forceOnline = 0;
-                string extendedData = "0000000000";
+            int referenceNumber = builder.ReferenceNumber;
+            decimal? amount = builder.Amount;
+            int returnRep = 1;
+            int paymentMode = 0;
+            int paymentType = (int)((IngenicoInterface)_device).paymentMethod;
+            string currencyCode = "826";
+            string privateData = "EXT0100000";
+            int immediateAnswer = 0;
+            int forceOnline = 0;
+            string extendedData = "0000000000";
 
-                decimal? cashbackAmount = builder.CashBackAmount;
-                string authCode = builder.AuthCode;
-                string tableId = builder.TableNumber;
+            decimal? cashbackAmount = builder.CashBackAmount;
+            string authCode = builder.AuthCode;
+            string tableId = builder.TableNumber;
 
-                // Validations
-                if (referenceNumber == default(int) && RequestIdProvider != null) {
-                    referenceNumber = RequestIdProvider.GetRequestId();
-                }
-                amount = ValidateAmount(amount);
-                paymentMode = ValidatePaymentMode(builder.PaymentMode);
-                currencyCode = ValidateCurrency((string.IsNullOrEmpty(builder.CurrencyCode) ? currencyCode : builder.CurrencyCode));
+            // Validations
+            if (referenceNumber == default(int) && RequestIdProvider != null) {
+                referenceNumber = RequestIdProvider.GetRequestId();
+            }
+            amount = ValidateAmount(amount);
+            paymentMode = ValidatePaymentMode(builder.PaymentMode);
+            currencyCode = ValidateCurrency((string.IsNullOrEmpty(builder.CurrencyCode) ? currencyCode : builder.CurrencyCode));
 
-                if (!string.IsNullOrEmpty(tableId)) {
-                    ValidateTableId(tableId);
-                    extendedData = INGENICO_REQ_CMD.TABLE_WITH_ID.FormatWith(tableId);
-                }
-                else if (!string.IsNullOrEmpty(authCode)) {
-                    extendedData = INGENICO_REQ_CMD.AUTHCODE.FormatWith(authCode);
-                }
-                else if (cashbackAmount != null) {
-                    ValidateCashbackAmount(cashbackAmount);
-                    cashbackAmount *= 100;
-                    extendedData = INGENICO_REQ_CMD.CASHBACK.FormatWith(Convert.ToInt64(Math.Round(cashbackAmount.Value, MidpointRounding.AwayFromZero)));
-                }
-
-                // Concat all data to create a request string.
-                var sb = new StringBuilder();
-
-                sb.Append(referenceNumber.ToString("00").Substring(0, 2));
-                sb.Append(amount?.ToString("00000000"));
-                sb.Append(returnRep);
-                sb.Append(paymentMode);
-                sb.Append(paymentType);
-                sb.Append(currencyCode);
-                sb.Append(privateData);
-                sb.Append("A01" + immediateAnswer);
-                sb.Append("B01" + forceOnline);
-                sb.Append(extendedData);
-
-                message = sb.ToString();
+            if (!string.IsNullOrEmpty(tableId)) {
+                ValidateTableId(tableId);
+                extendedData = INGENICO_REQ_CMD.TABLE_WITH_ID.FormatWith(tableId);
+            }
+            else if (!string.IsNullOrEmpty(authCode)) {
+                extendedData = INGENICO_REQ_CMD.AUTHCODE.FormatWith(authCode);
+            }
+            else if (cashbackAmount != null) {
+                ValidateCashbackAmount(cashbackAmount);
+                cashbackAmount *= 100;
+                extendedData = INGENICO_REQ_CMD.CASHBACK.FormatWith(Convert.ToInt64(Math.Round(cashbackAmount.Value, MidpointRounding.AwayFromZero)));
             }
 
+            // Concat all data to create a request string.
+            var sb = new StringBuilder();
+
+            sb.Append(referenceNumber.ToString("00").Substring(0, 2));
+            sb.Append(amount?.ToString("00000000"));
+            sb.Append(returnRep);
+            sb.Append(paymentMode);
+            sb.Append(paymentType);
+            sb.Append(currencyCode);
+            sb.Append(privateData);
+            sb.Append("A01" + immediateAnswer);
+            sb.Append("B01" + forceOnline);
+            sb.Append(extendedData);
+
+            message = sb.ToString();
+
             return TerminalUtilities.BuildIngenicoRequest(message, _settings.ConnectionMode);
+        }
+
+        internal IDeviceMessage BuildReportTransaction(TerminalReportBuilder builder) {
+            if (!IsObjectNullOrEmpty(builder.ReportType)) {
+                string message = INGENICO_REQ_CMD.REPORT.FormatWith(builder.ReportType);
+                return TerminalUtilities.BuildIngenicoRequest(message, _settings.ConnectionMode);
+            }
+            else {
+                throw new BuilderException("Type of report is missing in request.");
+            }
         }
 
         internal IngenicoTerminalReportResponse ReportRequest(IDeviceMessage request) {
