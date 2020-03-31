@@ -8,7 +8,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Utils;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     public class IngenicoInterface : DeviceInterface<IngenicoController>, IDeviceInterface {
         internal PaymentType? paymentMethod = null;
         internal IngenicoInterface(IngenicoController controller) : base(controller) {

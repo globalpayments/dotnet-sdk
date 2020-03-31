@@ -2,8 +2,10 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 using GlobalPayments.Api.Terminals.Messaging;
+// TODO: remove this.
+using ReportType = GlobalPayments.Api.Terminals.Ingenico.ReportType;
 
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {

@@ -6,7 +6,7 @@ using System.Text;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Utils;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     public abstract class IngenicoBaseResponse : IDeviceResponse {
         public string Status { get; set; }
         public string Command { get; set; }

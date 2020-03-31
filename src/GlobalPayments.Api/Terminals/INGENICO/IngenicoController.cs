@@ -6,7 +6,7 @@ using GlobalPayments.Api.Utils;
 using System;
 using System.Text;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     public class IngenicoController : DeviceController {
         IDeviceInterface _device;
 

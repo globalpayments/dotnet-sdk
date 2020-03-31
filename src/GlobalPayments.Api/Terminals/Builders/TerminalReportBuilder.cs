@@ -1,5 +1,5 @@
 ﻿using GlobalPayments.Api.Terminals.Abstractions;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 using GlobalPayments.Api.Terminals.PAX;
 using System;
 using System.Linq;

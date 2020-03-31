@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     public class TcpListenerEx : TcpListener {
         public TcpListenerEx(IPAddress localaddr, int port) : base(localaddr, port) {
 

@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 //using Serilog;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     internal class IngenicoTcpInterface : IDeviceCommInterface {
         private TcpClient _client;
         private NetworkStream _stream;

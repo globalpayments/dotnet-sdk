@@ -2,7 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalAuthBuilder : TerminalBuilder<TerminalAuthBuilder> {

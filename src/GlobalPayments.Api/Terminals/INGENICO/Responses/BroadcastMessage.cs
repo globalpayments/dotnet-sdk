@@ -1,10 +1,10 @@
 ﻿using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     public class BroadcastMessage {
         private byte[] _buffer;
         private string _code;

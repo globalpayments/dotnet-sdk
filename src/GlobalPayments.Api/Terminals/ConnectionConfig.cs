@@ -4,7 +4,7 @@ using GlobalPayments.Api.Terminals.HPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Genius;
 using System.IO.Ports;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {

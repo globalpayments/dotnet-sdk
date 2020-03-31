@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     public class CancelResponse : IngenicoTerminalResponse, IDeviceResponse{
         public CancelResponse(byte[] buffer) : base(buffer) {
             ParseResponse(buffer);

@@ -2,7 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals {
