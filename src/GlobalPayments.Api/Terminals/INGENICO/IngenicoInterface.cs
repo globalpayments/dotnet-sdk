@@ -69,11 +69,14 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         #region Transaction Management
 
-        public override TerminalManageBuilder Cancel(decimal? amount = null) {
-            if (amount != null) {
-                return base.Cancel(amount);
-            }
-            else throw new BuilderException("Amount can't be null.");
+        public override IDeviceResponse Cancel() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(INGENICO_REQ_CMD.REQUEST_MESSAGE);
+            sb.Append(INGENICO_REQ_CMD.CANCEL);
+
+            byte[] response = _controller.Send(TerminalUtilities.BuildRequest(sb.ToString(), settings: _controller.ConnectionMode.Value));
+
+            return new CancelResponse(response);
         }
 
         public override TerminalManageBuilder Reverse(decimal? amount = null) {
