@@ -56,7 +56,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                 return ReportRequest(request);
             }
             else {
-                request = TerminalUtilities.BuildIngenicoRequest(INGENICO_REQ_CMD.RECEIPT.FormatWith(builder.ReceiptType), _settings.ConnectionMode);
+                request = TerminalUtilities.BuildRequest(INGENICO_REQ_CMD.RECEIPT.FormatWith(builder.ReceiptType), settings: _settings.ConnectionMode);
                 return ReportRequest(request);
             }
         }
@@ -126,7 +126,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             sb.Append("B01" + forceOnline);
             sb.Append(extendedData);
 
-            return TerminalUtilities.BuildIngenicoRequest(sb.ToString(), _settings.ConnectionMode);
+            return TerminalUtilities.BuildRequest(sb.ToString(), settings: _settings.ConnectionMode);
         }
 
         internal IDeviceMessage BuildProcessTransaction(TerminalAuthBuilder builder) {
@@ -183,13 +183,13 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
             message = sb.ToString();
 
-            return TerminalUtilities.BuildIngenicoRequest(message, _settings.ConnectionMode);
+            return TerminalUtilities.BuildRequest(message, settings: _settings.ConnectionMode);
         }
 
         internal IDeviceMessage BuildReportTransaction(TerminalReportBuilder builder) {
             if (!IsObjectNullOrEmpty(builder.ReportType)) {
                 string message = INGENICO_REQ_CMD.REPORT.FormatWith(builder.ReportType);
-                return TerminalUtilities.BuildIngenicoRequest(message, _settings.ConnectionMode);
+                return TerminalUtilities.BuildRequest(message, settings: _settings.ConnectionMode);
             }
             else {
                 throw new BuilderException("Type of report is missing in request.");

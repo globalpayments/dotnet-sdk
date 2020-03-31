@@ -31,35 +31,6 @@ namespace GlobalPayments.Api.Terminals {
             return sb.ToString();
         }
 
-        public static DeviceMessage BuildIngenicoRequest(string message, ConnectionModes? settings) {
-            var buffer = new List<byte>();
-            byte[] lrc;
-
-            switch (settings) {
-                case ConnectionModes.SERIAL:
-                    buffer.Add((byte)ControlCodes.STX);
-                    foreach (char c in message)
-                        buffer.Add((byte)c);
-                    buffer.Add((byte)ControlCodes.ETX);
-                    lrc = CalculateLRC(message);
-                    buffer.Add(lrc[0]);
-                    break;
-                case ConnectionModes.TCP_IP_SERVER:
-                    var _msg = CalculateHeader(Encoding.UTF8.GetBytes(message)) + message;
-
-                    foreach (char c in _msg)
-                        buffer.Add((byte)c);
-
-                    break;
-                case ConnectionModes.TCP_IP:
-                    break;
-                default:
-                    throw new BuilderException("Failed to build request message. Unknown Connection mode.");
-            }
-
-            return new DeviceMessage(buffer.ToArray());
-        }
-
         private static DeviceMessage BuildMessage(string messageId, string message) {
             var buffer = new List<byte>();
 
@@ -87,6 +58,35 @@ namespace GlobalPayments.Api.Terminals {
 
             byte lrc = CalculateLRC(buffer.ToArray());
             buffer.Add(lrc);
+
+            return new DeviceMessage(buffer.ToArray());
+        }
+
+        public static DeviceMessage BuildRequest(string message, ConnectionModes settings) {
+            var buffer = new List<byte>();
+            byte[] lrc;
+
+            switch (settings) {
+                case ConnectionModes.SERIAL:
+                    buffer.Add((byte)ControlCodes.STX);
+                    foreach (char c in message)
+                        buffer.Add((byte)c);
+                    buffer.Add((byte)ControlCodes.ETX);
+                    lrc = CalculateLRC(message);
+                    buffer.Add(lrc[0]);
+                    break;
+                case ConnectionModes.TCP_IP_SERVER:
+                    var _msg = CalculateHeader(Encoding.UTF8.GetBytes(message)) + message;
+
+                    foreach (char c in _msg)
+                        buffer.Add((byte)c);
+
+                    break;
+                case ConnectionModes.TCP_IP:
+                    break;
+                default:
+                    throw new BuilderException("Failed to build request message. Unknown Connection mode.");
+            }
 
             return new DeviceMessage(buffer.ToArray());
         }
@@ -148,6 +148,7 @@ namespace GlobalPayments.Api.Terminals {
             Bitmap bmp = new Bitmap(width, 100);
 
             var gfx = Graphics.FromImage(bmp);
+            // TODO: Remove color from Utilities
             //gfx.Clear(Color.White);
 
             var index = 0;
