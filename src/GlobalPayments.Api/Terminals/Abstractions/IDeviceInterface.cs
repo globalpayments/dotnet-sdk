@@ -19,7 +19,7 @@ namespace GlobalPayments.Api.Terminals {
         /// </summary>
         /// <param name="amount">Amount to be passed for cancel request.</param>
         /// <returns>TerminalManageBuilder</returns>
-        TerminalManageBuilder Cancel(decimal? amount = null);
+        IDeviceResponse Cancel();
         IDeviceResponse CloseLane();
         IDeviceResponse DisableHostResponseBeep();
         ISignatureResponse GetSignatureFile();

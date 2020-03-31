@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return new SignatureResponse(response, _controller.DeviceType.Value);
         }
 
-        public override TerminalManageBuilder Cancel(decimal? amount = null) {
+        public override IDeviceResponse Cancel() {
             if (_controller.ConnectionMode == ConnectionModes.HTTP) {
                 throw new MessageException("The cancel command is not available in HTTP mode");
             }

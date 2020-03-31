@@ -36,9 +36,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
             var tsk2 = Task.Factory.StartNew(() => {
                 Thread.Sleep(7000);
 
-                var respCancel = _device.Cancel(15.12m)
-                .WithReferenceNumber(03)
-                .Execute();
+                var respCancel = _device.Cancel();
 
                 Assert.IsNotNull(respCancel);
                 Assert.AreEqual(respCancel.Status, "CANCEL_DONE");

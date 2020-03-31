@@ -28,9 +28,8 @@ namespace GlobalPayments.Api.Terminals {
         }
 
         #region Admin Methods
-        public virtual TerminalManageBuilder Cancel(decimal? amount = null) {
-            return new TerminalManageBuilder(TransactionType.Cancel, PaymentMethodType.Credit)
-                .WithAmount(amount);
+        public virtual IDeviceResponse Cancel() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
         public virtual IDeviceResponse CloseLane() {
@@ -108,7 +107,7 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalReportBuilder(type);
         }
 
-        public virtual TerminalReportBuilder GetReport(INGENICO.ReportType type) {
+        public virtual TerminalReportBuilder GetReport(Ingenico.ReportType type) {
             return new TerminalReportBuilder(TerminalReportType.LocalDetailReport).WithReportType(type);
         }
 

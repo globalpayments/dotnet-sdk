@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
@@ -60,9 +60,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
             var tsk2 = Task.Factory.StartNew(() => {
                 Thread.Sleep(7000);
 
-                var respCancel = _device.Cancel(15.12m)
-                .WithReferenceNumber(03)
-                .Execute();
+                var respCancel = _device.Cancel();
 
                 Assert.IsNotNull(respCancel);
             });
