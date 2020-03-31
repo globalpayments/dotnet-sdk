@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Terminals {
         #region Admin Calls
 
         /// <summary>
-        /// A method for Cancelling a live transaction.
+        /// A method to Cancel a live transaction.
         /// </summary>
         /// <param name="amount">Amount to be passed for cancel request.</param>
         /// <returns>TerminalManageBuilder</returns>
@@ -90,7 +90,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder AddValue(decimal? amount = null);
 
         /// <summary>
-        /// Intructs the terminal to transact a pre-autorization transaction.
+        /// Instructs the terminal to transact a pre-authorization transaction.
         /// </summary>
         /// <param name="amount">Amount</param>
         /// <returns></returns>
@@ -99,14 +99,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalManageBuilder Capture(decimal? amount = null);
 
         /// <summary>
-        /// Intructs the terminal to complete the completed hotel mode pre-auth transaction.
-        /// </summary>
-        /// <param name="amount">Complete Amount/param>
-        /// <returns></returns>
-        TerminalAuthBuilder Completion(decimal? amount = null);
-
-        /// <summary>
-        /// Instruct the temrinal to refund the last completed transaction.
+        /// Instruct the terminal to refund the last completed transaction.
         /// </summary>
         /// <param name="amount">Refund Amount</param>
         /// <returns></returns>
