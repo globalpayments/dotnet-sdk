@@ -41,16 +41,6 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             return base.Authorize(amount);
         }
 
-        /// <summary>
-        /// Completion method is the Hotel Mode Completion of Ingenico
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public override TerminalAuthBuilder Completion(decimal? amount = null) {
-            paymentMethod = PaymentType.CompletionMode;
-            return base.Completion(amount);
-        }
-
         public override TerminalAuthBuilder Verify() {
             paymentMethod = PaymentType.AccountVerification;
             return base.Verify();

@@ -138,11 +138,6 @@ namespace GlobalPayments.Api.Terminals {
                 .WithAmount(amount);
         }
 
-        public virtual TerminalAuthBuilder Completion(decimal? amount = null) {
-            return new TerminalAuthBuilder(TransactionType.PreAuthCompletion, PaymentMethodType.Credit)
-                .WithAmount(amount);
-        }
-
         public virtual TerminalAuthBuilder Verify() {
             return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit)
                 .WithAmount(6.18m);
