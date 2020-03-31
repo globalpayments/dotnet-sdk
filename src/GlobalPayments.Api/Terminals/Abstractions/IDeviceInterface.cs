@@ -50,7 +50,7 @@ namespace GlobalPayments.Api.Terminals {
         /// </summary>
         /// <param name="type">Report Type</param>
         /// <returns></returns>
-        TerminalReportBuilder GetReport(INGENICO.ReportType type);
+        TerminalReportBuilder GetReport(ReportType type);
         #endregion
 
         #region Batch Calls
@@ -90,9 +90,9 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder AddValue(decimal? amount = null);
 
         /// <summary>
-        /// Intructs the terminal to transact hotel mode pre-auth.
+        /// Intructs the terminal to transact a pre-autorization transaction.
         /// </summary>
-        /// <param name="amount">Pre-auth Amount</param>
+        /// <param name="amount">Amount</param>
         /// <returns></returns>
         TerminalAuthBuilder Authorize(decimal? amount = null);
         TerminalAuthBuilder Balance();
