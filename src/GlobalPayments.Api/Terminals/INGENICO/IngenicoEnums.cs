@@ -1,20 +1,25 @@
 ﻿
 using System;
 
-namespace GlobalPayments.Api.Terminals.INGENICO {
+namespace GlobalPayments.Api.Terminals.Ingenico {
     internal class INGENICO_REQ_CMD {
         // Request Transactions
         public const string AUTHCODE = "AUTHCODE={0}";
         public const string CASHBACK = "CASHB={0}";
 
         // Request Commands
+        /**
+         * REQUEST_MESSAGE is hard-coded in order to fulfill the request message frame 3
+         * and values in here are ignored in the terminal.
+         */
+        public const string REQUEST_MESSAGE = "0100000001100826EXT0100000A010B010";
         public const string CANCEL = "CMD=CANCEL";
         public const string DUPLICATE = "CMD=DUPLIC";
         public const string REVERSE = "CMD=REVERSE";
         public const string REVERSE_WITH_ID = "CMD=REV{0}";
         public const string TABLE_WITH_ID = "CMD=ID{0}";
 
-        // Requesr Report
+        // Request Report
         public const string REPORT = "0100000001100826EXT0100000A010B010CMD={0}";
         public const string RECEIPT = "0100000001100826EXT0100000A010B010CMD={0}";
     }

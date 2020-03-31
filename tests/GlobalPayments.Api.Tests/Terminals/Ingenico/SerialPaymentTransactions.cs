@@ -2,11 +2,11 @@
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.Abstractions;
-using GlobalPayments.Api.Terminals.INGENICO;
+using GlobalPayments.Api.Terminals.Ingenico;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
-using ReportType = GlobalPayments.Api.Terminals.INGENICO.ReportType;
+using ReportType = GlobalPayments.Api.Terminals.Ingenico.ReportType;
 
 namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
     [TestClass]
@@ -45,7 +45,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         public void SaleTest() {
             var response = _device.Sale(6.18m)
             .WithReferenceNumber(1)
-            .WithPaymentMode(Api.Terminals.INGENICO.PaymentMode.APPLICATION)
+            .WithPaymentMode(PaymentMode.APPLICATION)
             .WithCurrencyCode("826")
             .WithTableNumber("1")
             .Execute();
@@ -66,7 +66,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         public void SaleRefund() {
             var response = _device.Refund(6.18m)
             .WithReferenceNumber(1)
-            .WithPaymentMode(Api.Terminals.INGENICO.PaymentMode.APPLICATION)
+            .WithPaymentMode(PaymentMode.APPLICATION)
             .WithCurrencyCode("826")
             .WithTableNumber("1")
             .Execute();
@@ -78,7 +78,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         public void preAuth() {
             var response = _device.Authorize(20.00m)
             .WithReferenceNumber(1)
-            .WithPaymentMode(Api.Terminals.INGENICO.PaymentMode.APPLICATION)
+            .WithPaymentMode(PaymentMode.APPLICATION)
             .WithCurrencyCode("826")
             .Execute();
 
@@ -90,7 +90,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
             var task1 = Task.Factory.StartNew(() => {
                 var response = _device.Sale(523m)
                                 .WithReferenceNumber(1)
-                                .WithPaymentMode(Api.Terminals.INGENICO.PaymentMode.APPLICATION)
+                                .WithPaymentMode(PaymentMode.APPLICATION)
                                 .WithCurrencyCode("826")
                                 .Execute();
 
@@ -147,7 +147,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         public void Cashback() {
             var response = _device.Sale(20.00m)
                     .WithReferenceNumber(01)
-                    .WithPaymentMode(Api.Terminals.INGENICO.PaymentMode.APPLICATION)
+                    .WithPaymentMode(PaymentMode.APPLICATION)
                     .WithCurrencyCode("826")
                     .WithCashBack(2.00m)
                     .Execute();
@@ -171,7 +171,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         public void test123() {
             var response = _device.Verify()
                     .WithReferenceNumber(01)
-                    .WithPaymentMode(Api.Terminals.INGENICO.PaymentMode.APPLICATION)
+                    .WithPaymentMode(PaymentMode.APPLICATION)
                     .WithCurrencyCode("826")
                     .Execute();
 
