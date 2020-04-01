@@ -17,93 +17,115 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 DeviceType = Entities.DeviceType.Ingenico_EPOS_Desk5000,
                 ConnectionMode = ConnectionModes.TCP_IP_SERVER,
                 Port = "18101",
-                Timeout = 60000,
-                RequestIdProvider = new RandomIdProvider()
+                Timeout = 60000
             });
             Assert.IsNotNull(_device);
         }
 
         [TestMethod]
+        public void Test() {
+            SaleTest();
+            RefundTest();
+            PreAuthTest();
+            CompletionTest();
+        }
+
         public void SaleTest() {
-            try {
-                _device.Dispose();
-                Thread.Sleep(25000);
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
 
-                var resp = _device.Sale(15m)
-                    .WithCashBack(2m)
-                    .WithCurrencyCode("826")
-                    .Execute();
+            var resp = _device.Sale(6.18m)
+                .WithReferenceNumber(1)
+                .WithCurrencyCode("826")
+                .WithCashBack(3m)
+                .Execute();
 
-                Assert.IsNotNull(resp);
-                Assert.IsNotNull(resp.AuthorizationCode);
-            }
-            catch (Exception ex) {
-                Assert.Fail(ex.Message);
-            }
-            finally {
-                _device.Dispose();
-            }
+            Assert.IsNotNull(resp);
+
+            Thread.Sleep(5000);
+        }
+
+        public void RefundTest() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var resp = _device.Refund(6.18m)
+                .WithReferenceNumber(1)
+                .WithCurrencyCode("826")
+                .WithCashBack(3m)
+                .Execute();
+
+            Assert.IsNotNull(resp);
+
+            Thread.Sleep(5000);
+        }
+
+        public void PreAuthTest() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var resp = _device.Authorize(6.18m)
+                .WithReferenceNumber(1)
+                .WithCurrencyCode("826")
+                .WithCashBack(3m)
+                .Execute();
+
+            Assert.IsNotNull(resp);
+
+            Thread.Sleep(5000);
+        }
+
+        [TestMethod]
+        public void CompletionTest() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var resp = _device.Capture(6.18m)
+                .WithAuthCode("025433")
+                .WithReferenceNumber(1)
+                .WithCurrencyCode("826")
+                .Execute();
+
+            Assert.IsNotNull(resp);
+
+            Thread.Sleep(5000);
+        }
+
+        [TestMethod]
+        public void AsyncCancelTest() {
+
+            Thread thSale = new Thread(new ThreadStart(() => {
+                var resp = _device.Sale(6.18m)
+                .WithReferenceNumber(1)
+                .WithCurrencyCode("826")
+                .WithCashBack(3m)
+                .Execute();
+
+
+                Assert.IsNotNull(resp, "Sale Assert");
+            }));
+
+
+            Thread thCancel = new Thread(new ThreadStart(() => {
+                var resp = _device.Cancel();
+
+                Assert.IsNotNull(resp, "Cancel assert");
+            }));
+
+            thSale.Start();
+            Thread.Sleep(2000);
+            thCancel.Start();
         }
 
         [TestMethod]
         public void CancelTest() {
+            var resp = _device.Cancel();
 
-            var tsk1 = Task.Factory.StartNew(() => {
-                var respSale = _device.Sale(15.12m)
-                .WithCashBack(3m)
-                .WithReferenceNumber(02)
-                .Execute();
-
-                Assert.IsNotNull(respSale);
-            });
-
-            var tsk2 = Task.Factory.StartNew(() => {
-                Thread.Sleep(7000);
-
-                var respCancel = _device.Cancel();
-
-                Assert.IsNotNull(respCancel);
-            });
-
-            Task.WaitAll(tsk1, tsk2);
-        }
-
-        [TestMethod]
-        public void ReverseTest() {
-
-            var resSale = _device.Sale(125.12m)
-                .WithReferenceNumber(55)
-                .Execute();
-
-            Thread.Sleep(10000);
-
-            if (resSale != null) {
-                var resp = _device.Reverse(amount: 6.18m)
-                .WithReferenceNumber(12)
-                .Execute();
-
-                var termId = resp.TerminalRefNumber;
-
-                Assert.IsNotNull(termId);
-                Assert.IsNotNull(resp);
-            }
-            else Assert.IsNull(resSale);
-        }
-
-        [TestMethod]
-        public void DuplicateTest() {
-            var resp = _device.Duplicate();
             Assert.IsNotNull(resp);
-        }
-
-        [TestMethod]
-        public void ParsingRawResponseTest() {
-            string res = "09000015120                                                       826CANCELDONE";
-            byte[] buffers = Encoding.ASCII.GetBytes(res);
-
-            var pResp = new DataResponse(ASCIIEncoding.ASCII.GetBytes(res.Substring(12, 55)));
-
-            Assert.IsNotNull(pResp);
         }
     }
 }

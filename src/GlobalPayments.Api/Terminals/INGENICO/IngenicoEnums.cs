@@ -5,7 +5,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
     internal class INGENICO_REQ_CMD {
         // Request Transactions
         public const string AUTHCODE = "AUTHCODE={0}";
-        public const string CASHBACK = "CASHB={0}";
+        public const string CASHBACK = "CASHB={0};";
 
         // Request Commands
         /**

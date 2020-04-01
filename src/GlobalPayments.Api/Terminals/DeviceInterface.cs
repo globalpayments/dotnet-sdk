@@ -137,7 +137,7 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Credit)
                 .WithAmount(amount);
         }
-
+         
         public virtual TerminalAuthBuilder Verify() {
             return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit)
                 .WithAmount(6.18m);
