@@ -87,13 +87,6 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         REFERRAL_RESULT = 0x82 // 0x52 byte for 'R'
     }
 
-    public enum ReportTypes {
-        BANKING,
-        EOD,
-        XBAL,
-        ZBAL
-    }
-
     public enum TerminalStatus {
         NOT_READY = 0,
         READY = 1

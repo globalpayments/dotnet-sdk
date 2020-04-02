@@ -187,8 +187,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         internal IDeviceMessage BuildReportTransaction(TerminalReportBuilder builder) {
-            if (!IsObjectNullOrEmpty(builder.ReportType)) {
-                string message = INGENICO_REQ_CMD.REPORT.FormatWith(builder.ReportType);
+            if (!IsObjectNullOrEmpty(builder.Type)) {
+                string message = INGENICO_REQ_CMD.REPORT.FormatWith(builder.Type);
                 return TerminalUtilities.BuildRequest(message, settings: _settings.ConnectionMode);
             }
             else {
