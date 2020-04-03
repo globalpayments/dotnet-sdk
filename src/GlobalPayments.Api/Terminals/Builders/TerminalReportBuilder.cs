@@ -29,19 +29,12 @@ namespace GlobalPayments.Api.Terminals.Builders {
             ReceiptType = receiptType;
         }
 
-        public TerminalSearchBuilder Where<T>(PaxSearchCriteria criteria, T value) {
-            return SearchBuilder.And(criteria, value);
+        public TerminalReportBuilder(ReportType reportType) {
+            Type = reportType;
         }
 
-
-        /// <summary>
-        /// Sets the report type for the transaction.
-        /// </summary>
-        /// <param name="reportType">Report Type</param>
-        /// <returns></returns>
-        public TerminalReportBuilder WithReportType(ReportType reportType) {
-            Type = reportType;
-            return this;
+        public TerminalSearchBuilder Where<T>(PaxSearchCriteria criteria, T value) {
+            return SearchBuilder.And(criteria, value);
         }
 
         public ITerminalReport Execute(string configName = "default") {

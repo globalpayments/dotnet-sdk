@@ -14,6 +14,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
     internal class IngenicoSerialInterface : IDeviceCommInterface {
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         ITerminalConfiguration _settings;
 
@@ -242,6 +243,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             foreach (char b in messageData) {
                 _messageResponse.Add((byte)b);
             }
+            OnMessageReceived?.Invoke(Encoding.UTF8.GetString(_messageResponse.ToArray()));
             return true;
         }
     }

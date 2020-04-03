@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Terminals {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         internal DeviceInterface(T controller) {
             _controller = controller;
@@ -21,6 +22,10 @@ namespace GlobalPayments.Api.Terminals {
 
             _controller.OnBroadcastMessage += (code, message) => {
                 OnBroadcastMessage?.Invoke(code, message);
+            };
+
+            _controller.OnMessageReceived += (message) => {
+                OnMessageReceived?.Invoke(message);
             };
 
 
@@ -108,7 +113,8 @@ namespace GlobalPayments.Api.Terminals {
         }
 
         public virtual TerminalReportBuilder GetReport(Ingenico.ReportType type) {
-            return new TerminalReportBuilder(TerminalReportType.LocalDetailReport).WithReportType(type);
+            //return new TerminalReportBuilder(TerminalReportType.LocalDetailReport).WithReportType(type);
+            return new TerminalReportBuilder(type);
         }
 
         #endregion

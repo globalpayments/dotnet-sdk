@@ -199,6 +199,18 @@ namespace GlobalPayments.Api.Terminals {
             return int.Parse(_hex, System.Globalization.NumberStyles.HexNumber);
         }
 
+        public static void HeaderLength(byte[] buffer, out int result) {
+            // Conversion from decimal to hex value
+            var fHex = Convert.ToInt64(buffer[0]).ToString("X2");
+            var sHex = Convert.ToInt64(buffer[1]).ToString("X2");
+
+            // Concat two hex value
+            var _hex = fHex + sHex;
+
+            // Get decimal value of concatenated hex
+            result = int.Parse(_hex, System.Globalization.NumberStyles.HexNumber);
+        }
+
         public static byte[] CalculateLRC(string requestMessage) {
             byte[] bytes = Encoding.ASCII.GetBytes((requestMessage + (char)ControlCodes.ETX));
             byte lrc = 0;

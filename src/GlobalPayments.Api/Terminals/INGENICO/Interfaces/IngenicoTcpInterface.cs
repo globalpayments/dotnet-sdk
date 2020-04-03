@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using System.Threading;
 using System.Threading.Tasks;
-//using Serilog;
 
 namespace GlobalPayments.Api.Terminals.Ingenico {
     internal class IngenicoTcpInterface : IDeviceCommInterface {
@@ -25,6 +24,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         public IngenicoTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;
@@ -169,31 +169,53 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             }
         }
 
-        private void AnalyzeReceivedData() {
+        private async void AnalyzeReceivedData() {
             try {
                 var headerBuffer = new byte[2];
                 while (_stream.CanRead && _listener.Active && _client.Connected) {
 
-                    _stream.ReadAsync(headerBuffer, 0, headerBuffer.Length).Wait();
+                    await _stream.ReadAsync(headerBuffer, 0, headerBuffer.Length);
 
-                    var dataLength = Task.Run(() => TerminalUtilities.HeaderLength(headerBuffer)).Result;
-                    byte[] dataBuffer = new byte[dataLength + 2];
+                    int dataLength = await Task.Run(() => TerminalUtilities.HeaderLength(headerBuffer));
+                    if (dataLength > 0) {
+                        byte[] dataBuffer = new byte[dataLength];
 
-                    // Read data
-                    _stream.ReadAsync(dataBuffer, 0, dataBuffer.Length).Wait();
+                        var incomplete = true;
+                        int offset = 0;
+                        int tempLength = dataLength;
 
-                    if (isBroadcast(dataBuffer)) {
-                        _broadcastMessage = new BroadcastMessage(dataBuffer);
-                        OnBroadcastMessage?.Invoke(_broadcastMessage.Code, _broadcastMessage.Message);
+                        do {
+
+                            // Read data
+                            int bytesReceived = await _stream.ReadAsync(dataBuffer, offset, tempLength);
+                            if (bytesReceived != tempLength) {
+                                offset += bytesReceived;
+                                tempLength -= bytesReceived;
+                            }
+                            else {
+                                incomplete = false;
+                            }
+                        } while (incomplete);
+
+                        var readBuffer = new byte[dataLength];
+                        Array.Copy(dataBuffer, readBuffer, dataLength);
+
+                        if (isBroadcast(readBuffer)) {
+                            _broadcastMessage = new BroadcastMessage(readBuffer);
+                            OnBroadcastMessage?.Invoke(_broadcastMessage.Code, _broadcastMessage.Message);
+                        }
+                        else if (isKeepAlive(readBuffer) && INGENICO_GLOBALS.KeepAlive) {
+                            var keepAliveRep = KeepAliveResponse(readBuffer);
+                            _stream.WriteAsync(keepAliveRep, 0, keepAliveRep.Length).Wait();
+                        }
+                        else { // Receiving request response data.
+                            OnMessageReceived?.Invoke(UTF8Encoding.UTF8.GetString(readBuffer));
+                            termResponse = readBuffer;
+                        }
                     }
-                    else if (isKeepAlive(dataBuffer) && INGENICO_GLOBALS.KeepAlive) {
-                        var keepAliveRep = KeepAliveResponse(dataBuffer);
-                        _stream.WriteAsync(keepAliveRep, 0, keepAliveRep.Length).Wait();
+                    else {
+                        throw new ApiException("No data received.");
                     }
-                    else { // Receiving request response data.
-                        termResponse = dataBuffer;
-                    }
-                    headerBuffer = new byte[2];
                 }
             }
             catch (Exception ex) {

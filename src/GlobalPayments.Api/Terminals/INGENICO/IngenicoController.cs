@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
+using GlobalPayments.Api.Terminals.Ingenico.Responses;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Text;
@@ -51,13 +52,13 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
             IDeviceMessage request;
-            if (builder._ReportType != null) {
+            if (builder.Type != null) {
                 request = BuildReportTransaction(builder);
                 return ReportRequest(request);
             }
             else {
                 request = TerminalUtilities.BuildRequest(INGENICO_REQ_CMD.RECEIPT.FormatWith(builder.ReceiptType), settings: _settings.ConnectionMode);
-                return ReportRequest(request);
+                return XmlRequest(request);
             }
         }
 
@@ -196,9 +197,14 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             }
         }
 
-        internal IngenicoTerminalReportResponse ReportRequest(IDeviceMessage request) {
-            var send = Send(request);
+        internal IngenicoTerminalReportResponse XmlRequest(IDeviceMessage request) {
+            byte[] send = Send(request);
             return new IngenicoTerminalReportResponse(send);
+        }
+
+        internal ReportResponse ReportRequest(IDeviceMessage request) {
+            byte[] send = Send(request);
+            return new ReportResponse(send);
         }
 
         #region Validations
@@ -215,8 +221,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         private void ValidateTableId(string value) {
-            if (value.Length != 8) {
-                throw new BuilderException("The required length for table number is 8.");
+            if (value.Length > 8) {
+                throw new BuilderException("The maximum length for table number is 8.");
             }
         }
 

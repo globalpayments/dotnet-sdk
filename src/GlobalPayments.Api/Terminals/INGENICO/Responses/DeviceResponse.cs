@@ -120,5 +120,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         public override string ToString() {
             return Encoding.ASCII.GetString(_buffer);
         }
+
+
     }
 }

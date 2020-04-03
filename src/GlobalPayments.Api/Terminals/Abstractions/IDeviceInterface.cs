@@ -11,6 +11,7 @@ namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
         event BroadcastMessageEventHandler OnBroadcastMessage;
+        event MessageReceivedEventHandler OnMessageReceived;
 
         #region Admin Calls
 
@@ -39,14 +40,15 @@ namespace GlobalPayments.Api.Terminals {
         #region reporting
         TerminalReportBuilder LocalDetailReport();
         /// <summary>
-        /// Instruct the terminal to print the receipt of the last completed transaction.
+        /// Used to request the XML data for the last completed report that is stored in the terminal’s memory
         /// </summary>
         /// <param name="type">Receipt Type</param>
         /// <returns></returns>
         TerminalReportBuilder GetLastReceipt(ReceiptType type = ReceiptType.TICKET);
 
         /// <summary>
-        /// Instruct the terminal to get the report in XML format of all the transactions.
+        /// Instruct the terminal to initiate report and stores it in terminal's memory. 
+        /// GetLastReceipt can be used to extract XML data after. 
         /// </summary>
         /// <param name="type">Report Type</param>
         /// <returns></returns>

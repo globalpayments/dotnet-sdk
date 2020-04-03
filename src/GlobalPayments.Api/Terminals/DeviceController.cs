@@ -34,6 +34,7 @@ namespace GlobalPayments.Api.Terminals {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         internal DeviceController(ITerminalConfiguration settings) {
             _settings = settings;
@@ -44,6 +45,10 @@ namespace GlobalPayments.Api.Terminals {
 
             _connector.OnBroadcastMessage += (code, message) => {
                 OnBroadcastMessage?.Invoke(code, message);
+            };
+
+            _connector.OnMessageReceived += (message) => {
+                OnMessageReceived?.Invoke(message);
             };
         }
 
