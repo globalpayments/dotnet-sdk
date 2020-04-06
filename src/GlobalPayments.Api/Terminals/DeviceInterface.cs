@@ -92,6 +92,10 @@ namespace GlobalPayments.Api.Terminals {
         public virtual IDeviceResponse StartCard(PaymentMethodType paymentMethodType) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+
+        public virtual IDeviceResponse Duplicate() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
         #endregion
 
         #region Batching
@@ -168,10 +172,6 @@ namespace GlobalPayments.Api.Terminals {
         #region Transaction Management
         public virtual TerminalManageBuilder Reverse(decimal? amount = null) {
             return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.Credit)
-                .WithAmount(amount);
-        }
-        public virtual TerminalManageBuilder Duplicate(decimal? amount = null) {
-            return new TerminalManageBuilder(TransactionType.Duplicate, PaymentMethodType.Credit)
                 .WithAmount(amount);
         }
         #endregion

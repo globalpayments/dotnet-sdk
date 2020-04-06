@@ -79,8 +79,14 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         ///// <summary>
         ///// Duplicate falls under lost transaction recovery and we have mechanisms for this which we'll need to look into further 
         ///// </summary>
-        public override TerminalManageBuilder Duplicate(decimal? amount = null) {
-            return base.Duplicate(amount);
+        public override IDeviceResponse Duplicate() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(INGENICO_REQ_CMD.REQUEST_MESSAGE);
+            sb.Append(INGENICO_REQ_CMD.DUPLICATE);
+
+            byte[] response = _controller.Send(TerminalUtilities.BuildRequest(sb.ToString(), settings: _controller.ConnectionMode.Value));
+
+            return new IngenicoTerminalResponse(response);
         }
 
         #endregion

@@ -35,6 +35,13 @@ namespace GlobalPayments.Api.Terminals {
         ISAFResponse SendStoreAndForward();
         IDeviceResponse SetStoreAndForwardMode(bool enabled);
         IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
+
+        /// <summary>
+        /// The terminal immediately initiates a duplicate of the last completed transaction
+        /// </summary>
+        /// <param name="amount">Amount to be passed for cancel request.</param>
+        /// <returns>TerminalManageBuilder</returns>
+        IDeviceResponse Duplicate();
         #endregion
 
         #region reporting
@@ -132,12 +139,6 @@ namespace GlobalPayments.Api.Terminals {
         /// <returns>TerminalManageBuilder</returns>
         TerminalManageBuilder Reverse(decimal? amount = null);
 
-        /// <summary>
-        /// The terminal immediately initiates a duplicate of the last completed transaction
-        /// </summary>
-        /// <param name="amount">Amount to be passed for cancel request.</param>
-        /// <returns>TerminalManageBuilder</returns>
-        TerminalManageBuilder Duplicate(decimal? amount = null);
         #endregion
     }
 }

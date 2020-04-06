@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
+using GlobalPayments.Api.Terminals.Ingenico;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
@@ -75,13 +76,11 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         [TestMethod]
         public void DuplicTest() {
 
-            var duplicate = _device.Duplicate(12.5m)
-                .WithReferenceNumber(39)
-                .Execute();
+            var duplicate = _device.Duplicate();
 
             _device.Dispose();
             Assert.IsNotNull(duplicate);
-            Assert.AreEqual(duplicate.TransactionAmount, 12.5m);
+            Assert.AreEqual(((IngenicoTerminalResponse)duplicate).PrivateData, "DUPLICDONE");
         }
     }
 }
