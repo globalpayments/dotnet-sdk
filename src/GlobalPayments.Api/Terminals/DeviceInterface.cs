@@ -105,7 +105,7 @@ namespace GlobalPayments.Api.Terminals {
 
         #region Reporting Methods
         public virtual TerminalReportBuilder LocalDetailReport() {
-            return new TerminalReportBuilder(TerminalReportType.LocalDetailReport);
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
         public virtual TerminalReportBuilder GetLastReceipt(ReceiptType type = ReceiptType.TICKET) {
             return new TerminalReportBuilder(type);
