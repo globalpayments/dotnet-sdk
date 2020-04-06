@@ -39,10 +39,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
             IDeviceMessage request = BuildManageTransaction(builder);
 
-            if (builder.TransactionType == TransactionType.Cancel) {
-                return DoCancelRequest(request);
-            }
-            else if (builder.TransactionType == TransactionType.Reversal) {
+            if (builder.TransactionType == TransactionType.Reversal) {
                 return DoReverseRequest(request);
             }
             else {
@@ -100,14 +97,6 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             // Validation for Reversal with Transaction Id value in Extended data
             else if (!builder.TransactionId.IsNull() && builder.TransactionType == TransactionType.Reversal) {
                 extendedData = INGENICO_REQ_CMD.REVERSE_WITH_ID.FormatWith(builder.TransactionId);
-            }
-            // TODO: Remove Cancel, Duplicate, Reverse here this should be on Interface
-            // Temporary for CANCEL.
-            else if (builder.TransactionType == TransactionType.Cancel) {
-                extendedData = INGENICO_REQ_CMD.CANCEL;
-            }
-            else if (builder.TransactionType == TransactionType.Duplicate) {
-                extendedData = INGENICO_REQ_CMD.DUPLICATE;
             }
             else if (builder.TransactionType == TransactionType.Reversal) {
                 extendedData = INGENICO_REQ_CMD.REVERSE;
