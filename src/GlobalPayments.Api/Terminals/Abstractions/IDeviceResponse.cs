@@ -51,7 +51,5 @@ namespace GlobalPayments.Api.Terminals.Abstractions {
         decimal? MerchantFee { get; set; }
     }
 
-    public interface ITerminalReport : IDeviceResponse {
-
-    }
+    public interface ITerminalReport : IDeviceResponse { }
 }
