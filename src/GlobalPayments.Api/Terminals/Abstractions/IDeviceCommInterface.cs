@@ -11,8 +11,5 @@ namespace GlobalPayments.Api.Terminals.Abstractions {
         event MessageSentEventHandler OnMessageSent;
 
         event BroadcastMessageEventHandler OnBroadcastMessage;
-
-        // TODO: Remove this event
-        event MessageReceivedEventHandler OnMessageReceived;
     }
 }

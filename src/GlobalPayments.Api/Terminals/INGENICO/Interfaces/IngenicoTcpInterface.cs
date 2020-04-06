@@ -24,7 +24,6 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
-        public event MessageReceivedEventHandler OnMessageReceived;
 
         public IngenicoTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;
@@ -209,7 +208,6 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                             _stream.WriteAsync(keepAliveRep, 0, keepAliveRep.Length).Wait();
                         }
                         else { // Receiving request response data.
-                            OnMessageReceived?.Invoke(UTF8Encoding.UTF8.GetString(readBuffer));
                             termResponse = readBuffer;
                         }
                     }

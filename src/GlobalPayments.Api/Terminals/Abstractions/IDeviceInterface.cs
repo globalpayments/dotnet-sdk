@@ -11,7 +11,6 @@ namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
         event BroadcastMessageEventHandler OnBroadcastMessage;
-        event MessageReceivedEventHandler OnMessageReceived;
 
         #region Admin Calls
 

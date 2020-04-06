@@ -12,7 +12,6 @@ namespace GlobalPayments.Api.Terminals {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
-        public event MessageReceivedEventHandler OnMessageReceived;
 
         internal DeviceInterface(T controller) {
             _controller = controller;
@@ -22,10 +21,6 @@ namespace GlobalPayments.Api.Terminals {
 
             _controller.OnBroadcastMessage += (code, message) => {
                 OnBroadcastMessage?.Invoke(code, message);
-            };
-
-            _controller.OnMessageReceived += (message) => {
-                OnMessageReceived?.Invoke(message);
             };
 
 
