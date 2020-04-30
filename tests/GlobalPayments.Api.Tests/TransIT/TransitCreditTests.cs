@@ -151,14 +151,14 @@ namespace GlobalPayments.Api.Tests.TransIT {
 
             var captureResponse = response.Capture(10m)
                 .WithCurrency("USD")
-                .WithMultiCapture(true)
+                .WithMultiCapture(1, 2)
                 .Execute();
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode, captureResponse.ResponseMessage);
 
             var captureResponse2 = response.Capture(10m)
                 .WithCurrency("USD")
-                .WithMultiCapture(true)
+                .WithMultiCapture(2, 2)
                 .Execute();
             Assert.IsNotNull(captureResponse2);
             Assert.AreEqual("00", captureResponse2.ResponseCode, captureResponse2.ResponseMessage);
@@ -174,7 +174,7 @@ namespace GlobalPayments.Api.Tests.TransIT {
 
             var captureResponse = response.Capture(12m)
                 .WithCurrency("USD")
-                .WithMultiCapture(true)
+                .WithMultiCapture(1, 2)
                 .Execute();
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode, captureResponse.ResponseMessage);
@@ -196,12 +196,15 @@ namespace GlobalPayments.Api.Tests.TransIT {
 
             var captureResponse = response.Capture(21m)
                 .WithCurrency("USD")
-                //.WithMultiCapture(true)
+                .WithMultiCapture(1, 2)
                 .Execute();
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode, captureResponse.ResponseMessage);
 
-            response.Capture(10m).WithCurrency("USD").WithMultiCapture(true).Execute();
+            response.Capture(10m)
+                .WithCurrency("USD")
+                .WithMultiCapture(2, 2)
+                .Execute();
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]

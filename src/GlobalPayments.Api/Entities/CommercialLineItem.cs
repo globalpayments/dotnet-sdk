@@ -1,10 +1,12 @@
 ﻿namespace GlobalPayments.Api.Entities {
     public class CommercialLineItem {
+        public string AlternateTaxId { get; set; }
         public string CommodityCode { get; set; }
         public CreditDebitIndicator CreditDebitIndicator { get; set; }
         public string Description { get; set; }
-        public decimal? DiscountAmount { get; set; }
+        public DiscountDetails DiscountDetails { get; set; }
         public decimal? ExtendedAmount { get; set; }
+        public string Name { get; set; }
         public NetGrossIndicator NetGrossIndicator { get; set; }
         public string ProductCode { get; set; }
         public decimal? Quantity { get; set; }

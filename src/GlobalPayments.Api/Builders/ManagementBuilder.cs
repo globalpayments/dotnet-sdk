@@ -34,6 +34,8 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? Gratuity { get; set; }
         internal string InvoiceNumber { get; set; }
         internal LodgingData LodgingData { get; set; }
+        internal int? MultiCapturePaymentCount { get; set; }
+        internal int? MultiCaptureSequence { get; set; }
         internal string OrderId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -53,6 +55,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal VoidReason? VoidReason { get; set; }
 
         /// <summary>
         /// Sets the current transaction's amount.
@@ -78,8 +81,16 @@ namespace GlobalPayments.Api.Builders {
         /// Sets the Multicapture value as true/false.
         /// </summary>
         /// <returns>ManagementBuilder</returns>
-        public ManagementBuilder WithMultiCapture(bool value) {
-            MultiCapture = value;
+        //public ManagementBuilder WithMultiCapture(bool value) {
+        //    MultiCapture = value;
+        //    return this;
+        //}
+
+        public ManagementBuilder WithMultiCapture(int sequence = 1, int paymentCount = 1) {
+            MultiCapture = true;
+            MultiCaptureSequence = sequence;
+            MultiCapturePaymentCount = paymentCount;
+
             return this;
         }
 
@@ -230,6 +241,11 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public ManagementBuilder WithVoidReason(VoidReason? value) {
+            VoidReason = value;
+            return this;
+        }
+
         internal ManagementBuilder(TransactionType type) : base(type) {}
 
         /// <summary>
@@ -267,6 +283,17 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.TokenUpdate)
                 .Check(() => PaymentMethod).Is<CreditCardData>();
+
+            Validations.For(
+                TransactionType.Capture |
+                TransactionType.Edit |
+                TransactionType.Hold |
+                TransactionType.Release |
+                TransactionType.TokenUpdate |
+                TransactionType.TokenDelete |
+                TransactionType.VerifySignature |
+                TransactionType.Refund)
+                .Check(() => VoidReason).IsNull();
         }
     }
 }

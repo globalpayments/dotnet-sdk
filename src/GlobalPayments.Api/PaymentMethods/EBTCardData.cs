@@ -7,6 +7,7 @@ namespace GlobalPayments.Api.PaymentMethods {
     public class EBTCardData : EBT, ICardData {
         public string ApprovalCode { get; set; }
         public bool CardPresent { get; set; }
+        public string CardType { get; set; }
         public string Cvn { get; set; }
         public CvnPresenceIndicator CvnPresenceIndicator { get; set; }
         public int? ExpMonth { get; set; }

@@ -5,11 +5,16 @@ using System.Net.Http;
 using System.Text;
 using GlobalPayments.Api.Entities;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using GlobalPayments.Api.Logging;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
     internal abstract class Gateway {
         private string _contentType;
 
+        //public bool EnableLogging { get; set; }
+        public IRequestLogger RequestLogger { get; set; }
         public Dictionary<string, string> Headers { get; set; }
         public int Timeout { get; set; }
         public string ServiceUrl { get; set; }
@@ -34,12 +39,17 @@ namespace GlobalPayments.Api.Gateways {
             try {
                 if (verb != HttpMethod.Get && data != null) {
                     request.Content = new StringContent(data, Encoding.UTF8, contentType ?? _contentType);
+                    RequestLogger?.RequestSent(data);                    
                 }
                 response = httpClient.SendAsync(request).Result;
+
+                string rawResponse = response.Content.ReadAsStringAsync().Result;
+                RequestLogger?.ResponseReceived(rawResponse);
+
                 return new GatewayResponse {
                     StatusCode = response.StatusCode,
                     RequestUrl = response.RequestMessage.RequestUri.ToString(),
-                    RawResponse = response.Content.ReadAsStringAsync().Result
+                    RawResponse = rawResponse
                 };
             }
             catch (Exception exc) {
@@ -56,12 +66,18 @@ namespace GlobalPayments.Api.Gateways {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl + endpoint);
             HttpResponseMessage response = null;
             try {
+                RequestLogger?.RequestSent(content.ToString());
+
                 request.Content = content;
                 response = await httpClient.SendAsync(request);
+
+                string rawResponse = response.Content.ReadAsStringAsync().Result;
+                RequestLogger?.ResponseReceived(rawResponse);
+
                 return new GatewayResponse {
                     StatusCode = response.StatusCode,
                     RequestUrl = response.RequestMessage.RequestUri.ToString(),
-                    RawResponse = response.Content.ReadAsStringAsync().Result
+                    RawResponse = rawResponse
                 };
             }
             catch (Exception exc) {
@@ -77,12 +93,18 @@ namespace GlobalPayments.Api.Gateways {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl + endpoint);
             HttpResponseMessage response = null;
             try {
+                RequestLogger?.RequestSent(content.ToString());
+
                 request.Content = content;
                 response = httpClient.SendAsync(request).Result;
+
+                string rawResponse = response.Content.ReadAsStringAsync().Result;
+                RequestLogger?.ResponseReceived(rawResponse);
+
                 return new GatewayResponse {
                     StatusCode = response.StatusCode,
                     RequestUrl = response.RequestMessage.RequestUri.ToString(),
-                    RawResponse = response.Content.ReadAsStringAsync().Result
+                    RawResponse = rawResponse
                 };
             }
             catch (Exception exc) {

@@ -7,7 +7,7 @@ namespace GlobalPayments.Api.PaymentMethods
     /// <summary>
     /// Use gift/loyaly/stored value account as a payment method.
     /// </summary>
-    public class GiftCard : IPaymentMethod, IPrePayable, IBalanceable, IReversable, IChargable {
+    public class GiftCard : IPaymentMethod, IPrePaid, IBalanceable, IReversable, IChargable {
         /// <summary>
         /// The gift card's alias.
         /// </summary>

@@ -116,7 +116,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(lineItem, "Quantity", item.Quantity);
                         et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
                         et.SubElement(lineItem, "UnitCost", item.UnitCost);
-                        et.SubElement(lineItem, "DiscountAmount", item.DiscountAmount);
+                        et.SubElement(lineItem, "DiscountAmount", item.DiscountDetails?.DiscountAmount);
                         et.SubElement(lineItem, "TotalAmount", item.TotalAmount);
                         et.SubElement(lineItem, "TaxAmount", item.TaxAmount);
                         et.SubElement(lineItem, "ExtendedAmount", item.ExtendedAmount);

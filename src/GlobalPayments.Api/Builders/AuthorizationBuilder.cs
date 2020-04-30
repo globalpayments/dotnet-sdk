@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
@@ -15,6 +15,7 @@ namespace GlobalPayments.Api.Builders {
         internal bool AllowDuplicates { get; set; }
         internal bool AllowPartialAuth { get; set; }
         internal decimal? Amount { get; set; }
+        internal bool AmountEstimated { get; set; }
         internal decimal? AuthAmount { get; set; }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal InquiryType? BalanceInquiryType { get; set; }
@@ -41,7 +42,6 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? ShippingAmt { get; set; }
         internal HostedPaymentData HostedPaymentData { get; set; }
         internal string InvoiceNumber { get; set; }
-        internal bool Level2Request { get; set; }
         internal LodgingData LodgingData { get; set; }
         internal string MessageAuthenticationCode { get; set; }
         internal List<string[]> MiscProductData { get; set; }
@@ -135,6 +135,11 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public AuthorizationBuilder WithAmountEstimated(bool value) {
+            AmountEstimated = value;
+            return this;
+        }
+
         /// <summary>
         /// Sets the transaction's authorization amount; where applicable.
         /// </summary>
@@ -163,8 +168,8 @@ namespace GlobalPayments.Api.Builders {
         /// Sets the Multicapture value as true/false.
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithMultiCapture(bool value) {
-           MultiCapture = value;
+        public AuthorizationBuilder WithMultiCapture(bool value = true) {
+            MultiCapture = value;
             return this;
         }
 
@@ -212,6 +217,7 @@ namespace GlobalPayments.Api.Builders {
                 }
             }
             else ClientTransactionId = value;
+
             return this;
         }
 

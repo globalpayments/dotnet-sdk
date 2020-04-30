@@ -12,8 +12,8 @@
         public const string TABLE_SERVICE_TEST = "https://www.freshtxt.com/api31/";
         public const string GENIUS_API_PRODUCTION = "";
         public const string GENIUS_API_TEST = "https://ps1.merchantware.net/Merchantware/ws/RetailTransaction/v45/Credit.asmx";
-        public const string GENIUS_TERMIAL_PRODUCTION = "";
-        public const string GENIUS_TERMIAL_TEST = "https://transport.merchantware.net/v4/transportService.asmx";
+        public const string GENIUS_TERMINAL_PRODUCTION = "";
+        public const string GENIUS_TERMINAL_TEST = "https://transport.merchantware.net/v4/transportService.asmx";
         public const string TRANSIT_MULTIPASS_PRODUCTION = "https://gateway.transit-pass.com/servlets/TransNox_API_Server";
         public const string TRANSIT_MULTIPASS_TEST = "https://stagegw.transnox.com/servlets/TransNox_API_Server";
     }

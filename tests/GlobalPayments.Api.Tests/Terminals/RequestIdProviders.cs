@@ -22,7 +22,7 @@ namespace GlobalPayments.Api.Tests.Terminals {
 
         private static IncrementalNumberProvider _instance;
         public static IncrementalNumberProvider GetInstance() {
-            if (_instance != null) {
+            if (_instance == null) {
                 _instance = new IncrementalNumberProvider();
             }
             return _instance;

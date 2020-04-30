@@ -5,7 +5,7 @@ namespace GlobalPayments.Api.PaymentMethods {
     /// <summary>
     /// Use credit as a payment method.
     /// </summary>
-    public abstract class Credit : IPaymentMethod, IEncryptable, ITokenizable, IChargable, IAuthable, IRefundable, IReversable, IVerifiable, IPrePayable, IBalanceable, ISecure3d {
+    public abstract class Credit : IPaymentMethod, IEncryptable, ITokenizable, IChargable, IAuthable, IRefundable, IReversable, IVerifiable, IPrePaid, IBalanceable, ISecure3d {
         /// <summary>
         /// The card type of the manual entry data.
         /// </summary>
@@ -50,11 +50,12 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// </summary>
         /// <param name="amount">The amount of the transaction</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder Authorize(decimal? amount = null) {
+        public AuthorizationBuilder Authorize(decimal? amount = null, bool isEstimated = false) {
             return new AuthorizationBuilder(TransactionType.Auth, this)
                 .WithAmount(amount ?? ThreeDSecure?.Amount)
                 .WithCurrency(ThreeDSecure?.Currency)
-                .WithOrderId(ThreeDSecure?.OrderId);
+                .WithOrderId(ThreeDSecure?.OrderId)
+                .WithAmountEstimated(isEstimated);
         }
 
         /// <summary>
@@ -119,8 +120,13 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
         public string Tokenize(string configName = "default") {
-            var response =  new AuthorizationBuilder(TransactionType.Verify, this)
-                .WithRequestMultiUseToken(true)
+            return Tokenize(true, configName);
+        }
+        public string Tokenize(bool verifyCard, string configName = "default") {
+            TransactionType type = verifyCard ? TransactionType.Verify : TransactionType.Tokenize;
+
+            var response =  new AuthorizationBuilder(type, this)
+                .WithRequestMultiUseToken(verifyCard)
                 .Execute(configName);
             return response.Token;
         }

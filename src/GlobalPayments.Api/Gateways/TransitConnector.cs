@@ -6,88 +6,13 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class TransitRequest {
-        private string _root;
-        private Dictionary<string, string> _values;
-
-        private string this[string key] {
-            get {
-                if (_values.ContainsKey(key)) {
-                    return _values[key];
-                }
-                return null;
-            }
-        }
-
-        public TransitRequest(string root) {
-            _root = root;
-            _values = new Dictionary<string, string>();
-        }
-
-        public TransitRequest Set(string key, string value) {
-            if (value != null) {
-                _values.Add(key, value);
-            }
-            return this;
-        }
-
-        public string BuildRequest<T>(T builder) where T : TransactionBuilder<Transaction> {
-            var et = new ElementTree();
-
-            Element transaction = et.Element(_root);
-            foreach (var element in BuildRequestMap(builder)) {
-                et.SubElement(transaction, element, this[element]);
-            }
-
-            return et.ToString(transaction);
-        }
-
-        private LinkedList<string> BuildRequestMap<T>(T builder) where T : TransactionBuilder<Transaction> {
-            IPaymentMethod paymentMethod = builder.PaymentMethod;
-
-            switch (builder.TransactionType) {
-                case TransactionType.Auth:
-                case TransactionType.Sale: {
-                        if (paymentMethod is Debit) {
-                            return BuildList("deviceID|transactionKey|manifest|cardDataSource|transactionAmount|tip|salesTax|taxType|taxAmount|taxRate|currencyCode|track2Data|track3Data|emulatedTrackData|emvTags|emvFallbackCondition|lastChipRead|paymentAppVersion|emcContactlessToContactChip|pin|pinKsn|secureCode|paymentAccountReference|panReferenceIdentifier|nfcTags|ksn|transactionMID|externalReferenceID|operatorID|orderNumber|cardOnFile|merchantReportID|encryptionType|tokenRequired|healthCareAccountType|prescriptionAmount|visionAmount|dentalAmount|clinicAmount|isQualifiedIIAS|rxNumber|couponID|providerID|providerToken|locationID|notifyEmailID|customerCode|firstName|lastName|transTotalDiscountAmount|transDiscountName|transDiscountAmount|transDiscountPercentage|priority|stackable|productCode|productName|price|quantity|measurementUnit|productDiscountName|productDiscountAmount|productDiscountPercentage|productDiscountType|priority|stackable|productTaxName|productTaxAmount|productTaxPercentage|productTaxType|productVariation|modifierName|modifierValue|modifierPrice|productNotes|softDescriptor|developerID|registeredUserIndicator|lastRegisteredChangeDate|laneID|authorizationIndicator|terminalCapability|terminalOperatingEnvironment|cardholderAuthenticationMethod|terminalAuthenticationCapability|terminalOutputCapability|maxPinLength|terminalCardCaptureCapability|cardholderPresentDetail|cardPresentDetail|cardDataInputMode|cardholderAuthenticationEntity|cardDataOutputCapability|splitTenderPayment|splitTenderID|splitTenderConsolidatedReceipt|noIndividualTransactionReceipt");
-                        }
-                        return BuildList("deviceID|transactionKey|manifest|cardDataSource|transactionAmount|tip|salesTax|taxType|taxAmount|taxRate|taxCategory|shippingCharges|dutyCharges|surcharge|additionalAmountType|additionalAmount|additionalAmountSign|currencyCode|cardNumber|expirationDate|cvv2|track1Data|track2Data|track3Data|emulatedTrackData|cardHolderName|secureCode|securityProtocol|ucafCollectionIndicator|paymentAccountReference|panReferenceIdentifier|eciIndicator|cardOnFileTransactionIdentifier|emvTags|pin|pinKsn|emvFallbackCondition|lastChipRead|paymentAppVersion|emvContactlessToContactChip|nfcTags|walletSource|checkOutID|addressLine1|zip|transactionMID|externalReferenceID|operatorID|orderNumber|cardOnFile|merchantReportID|encryptionType|ksn|tokenRequired|healthCareAccountType|prescriptionAmount|visionAmount|dentalAmount|clinicAmount|isQualifiedIIAS|rxNumber|couponID|providerID|providerToken|locationID|notifyEmailID|orderID|customerCode|firstName|lastName|customerPhone|transTotalDiscountAmount|transDiscountName|transDiscountAmount|transDiscountPercentage|priority|stackable|productCode|productName|price|quantity|measurementUnit|productDiscountName|productDiscountAmount|productDicsountPercentage|productDiscountType|priority|stackable|productTaxName|productTaxAmount|productTaxPercentage|productTaxType|productVariation|modifierName|modifierValue|modifierPrice|productNotes|productDiscountIndicator|productCommodityCode|alternateTaxID|creditIndicator|orderNotes|orderServiceTimestamp|commercialCardLevel|purchaseOrder|chargeDescriptor|customerVATNumber|customerRefID|orderDate|summaryCommodityCode|vatInvoice|chargeDescriptor2|chargeDescriptor3|chargeDescriptor4|supplierReferenceNumber|shipFromZip|shipToZip|destinationCountryCode|orderID|tokenRequesterID|softDescriptor|terminalCapability|terminalOperatingEnvironment|cardholderAuthenticationMethod|terminalAuthenticationCapability|terminalOutputCapability|maxPinLength|terminalCardCaptureCapability|cardholderPresentDetail|cardPresentDetail|cardDataInputMode|cardholderAuthenticationEntity|cardDataOutputCapability|mPosAcceptanceDeviceType|developerID|paymentFacilitatorIdentifier|paymentFacilitatorName|subMerchantIdentifier|subMerchantName|subMerchantCountryCode|subMerchantStateCode|subMerchantCity|subMerchantPostalCode|subMerchantEmailId|subMerchantPhone|isoIdentifier|isRecurring|billingType|paymentCount|currentPaymentCount|isoIdentifier|registeredUserIndicator|lastRegisteredChangeDate|laneID|authorizationIndicator|splitTenderPayment|splitTenderID|splitTenderConsolidatedReceipt|noIndividualTransactionReceipt");
-                    }
-                case TransactionType.Balance:
-                        return BuildList("deviceID|transactionKey|manifest|cardDataSource|currencyCode|track1Data|track2Data|track3Data|emulatedTrackData|cardNumber|expirationDate|cvv2|cardHolderName|secureCode|securityProtocol|ucafCollectionIndicator|paymentAccountReference|panReferenceIdentifier|eciIndicator|cardOnFileTransactionIdentifier|nfcTags|walletSource|checkOutID|dtvv|addressLine1|zip|transactionMID|externalReferenceID|operatorID|orderNumber|cardOnFile|encryptionType|ksn|tokenRequired|customerCode|firstName|lastName|customerPhone|tokenRequesterID|softDescriptor|developerID|laneID|terminalCapability|terminalOperatingEnvironment|cardholderAuthenticationMethod|terminalAuthenticationCapability|terminalOutputCapability|maxPinLength|terminalCardCaptureCapability|cardholderPresentDetail|cardPresentDetail|cardDataInputMode|cardholderAuthenticationEntity|cardDataOutputCapability|mPosAcceptanceDeviceType");
-                case TransactionType.Capture:
-                        return BuildList("deviceID|transactionKey|manifest|transactionAmount|tip|salesTax|taxType|taxAmount|taxRate|taxCategory|shippingCharges|dutyCharges|surcharge|additionalAmountType|additionalAmount|additionalAmountSign|transactionID|externalReferenceID|operatorID|isPartialShipment|currentPaymentSequenceNumber|totalPaymentCount|softDescriptor|merchantReportID|customerCode|firstName|lastName|transTotalDiscountAmount|transDiscountName|transDiscountAmount|transDiscountPercentage|priority|stackable|productCode|productName|price|quantity|measurementUnit|productDiscountName|productDiscountAmount|productDicsountPercentage|productDiscountType|priority|stackable|productTaxName|productTaxAmount|productTaxPercentage|productTaxType|productVariation|modifierName|modifierValue|modiferPrice|productNotes|productDiscountIndicator|productCommodityCode|alternateTaxID|creditIndicator|orderNotes|orderServiceTimestamp|commercialCardLevel|purchaseOrder|chargeDescriptor|customerVATNumber|customerRefID|orderDate|summaryCommodityCode|vatInvoice|chargeDescriptor2|chargeDescriptor3|chargeDescriptor4|supplierReferenceNumber|shipFromZip|shipToZip|destinationCountryCode|developerID|paymentFacilitatorIdentifier|paymentFacilitatorName|subMerchantIdentifier|subMerchantName|subMerchantCountryCode|subMerchantStateCode|subMerchantCity|subMerchantPostalCode|subMerchantEmailId|subMerchantPhone");
-                case TransactionType.Verify: {
-                        /* This is the list for the zero dollar authorization */
-                        return BuildList("deviceID|transactionKey|manifest|cardDataSource|currencyCode|track1Data|track2Data|track3Data|emulatedTrackData|cardNumber|expirationDate|cvv2|cardHolderName|secureCode|securityProtocol|ucafCollectionIndicator|paymentAccountReference|panReferenceIdentifier|eciIndicator|nfcTags|walletSource|checkOutID|addressLine1|zip|transactionMID|externalReferenceID|operatorID|orderNumber|cardOnFile|merchantReportID|encryptionType|ksn|tokenRequired|customerCode|firstName|lastName|tokenRequesterID|softDescriptor|developerID|laneID|terminalCapability|terminalOperatingEnvironment|cardholderAuthenticationMethod|terminalAuthenticationCapability|terminalOutputCapability|maxPinLength|terminalCardCaptureCapability|cardholderPresentDetail|cardPresentDetail|cardDataInputMode|cardholderAuthenticationEntity|cardDataOutputCapability|mPosAcceptanceDeviceType");
-
-                        /* This is the list for the card AVS and CVV check */
-                        //return BuildList("deviceID|transactionKey|manifest|cardDataSource|emulatedTrackData|cardNumber|expirationDate|cvv2|walletSource|checkOutID|cardHolderName|secureCode|securityProtocol|ucafCollectionIndicator|paymentAccountReference|panReferenceIdentifier|eciIndicator|nfcTags|addressLine1|zip|externalReferenceID|operatorID|orderNumber|cardOnFile|merchantReportID|encryptionType|ksn|tokenRequired|customerCode|firstName|lastName|tokenRequesterID|softDescriptor|developerID|laneID|terminalCapability|terminalOperatingEnvironment|cardholderAuthenticationMethod|terminalAuthenticationCapability|terminalOutputCapability|maxPinLength|terminalCardCaptureCapability|cardholderPresentDetail|cardPresentDetail|cardDataInputMode|cardholderAuthenticationEntity|cardDataOutputCapability|mPosAcceptanceDeviceType");
-                    }
-                default: throw new UnsupportedTransactionException();
-            }
-        }
-
-        private LinkedList<string> BuildList(string str) {
-            var list = new LinkedList<string>();
-
-            string[] values = str.Split('|');
-            foreach (string value in values) {
-                if (!string.IsNullOrEmpty(value)) {
-                    list.AddLast(value);
-                }
-            }
-
-            return list;
-        }
-    }
-
-    internal class TransitConnector : XmlGateway, IPaymentGateway {
+    internal class TransitConnector : XmlGateway, IPaymentGateway, ISecure3dProvider {
         public AcceptorConfig AcceptorConfig { get; set; }
         public string DeviceId { get; set; }
         public string DeveloperId { get; set; }
         public string MerchantId { get; set; }
         public string TransactionKey { get; set; }
+        public Secure3dVersion Version { get; set; }
 
         public bool SupportsHostedPayments { get { return false; } }
 
@@ -121,28 +46,42 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
-            var request = new TransitRequest(MapTransactionType(builder))
+            var request = new TransitRequestBuilder(MapTransactionType(builder))
                 .Set("developerID", DeveloperId)
                 .Set("deviceID", DeviceId)
                 .Set("transactionKey", TransactionKey)
-                .Set("transactionAmount", builder.Amount.ToCurrencyString());
+                .Set("transactionAmount", builder.Amount.ToCurrencyString())
+                .Set("tokenRequired", builder.RequestMultiUseToken ? "Y" : "N")
+                .Set("externalReferenceID", builder.ClientTransactionId);
 
             request.Set("cardDataSource", MapCardDataSource(builder));
             if (builder.PaymentMethod is ICardData card) {
-                request.Set("cardNumber", card.Number)
+                string cardNumber = card.Number;
+                string cardDataInputMode = "ELECTRONIC_COMMERCE_NO_SECURITY_CHANNEL_ENCRYPTED_SET_WITHOUT_CARDHOLDER_CERTIFICATE";
+                if (card.CardType.Equals("Amex") && !string.IsNullOrEmpty(card.Cvn)) {
+                    cardDataInputMode = "MANUALLY_ENTERED_WITH_KEYED_CID_AMEX_JCB";
+                }
+
+                if (card is ITokenizable token && token.Token != null) {
+                    cardNumber = token.Token;
+                    //cardDataInputMode = "MERCHANT_INITIATED_TRANSACTION_CARD_CREDENTIAL_STORED_ON_FILE";
+                }
+
+                request.Set("cardNumber", cardNumber)
                     .Set("expirationDate", card.ShortExpiry)
                     .Set("cvv2", card.Cvn)
                     .Set("cardPresentDetail", card.CardPresent ? "CARD_PRESENT" : "CARD_NOT_PRESENT")
                     .Set("cardholderPresentDetail", card.CardPresent ? "CARDHOLDER_PRESENT" : "CARDHOLDER_NOT_PRESENT_ELECTRONIC_COMMERCE")
-                    .Set("cardDataInputMode", card.CardPresent ? "KEY_ENTERED_INPUT" : "PAN_ENTRY_ELECTRONIC_COMMERCE_INCLUDING_REMOTE_CHIP")
-                    .Set("cardholderAuthenticationMethod", "UNKNOWN");
+                    .Set("cardDataInputMode", cardDataInputMode)
+                    .Set("cardholderAuthenticationMethod", "NOT_AUTHENTICATED")
+                    .Set("authorizationIndicator", builder.AmountEstimated ? "PREAUTH" : "FINAL");
             }
             else if (builder.PaymentMethod is ITrackData track) {
                 request.Set(track.TrackNumber.Equals(TrackNumber.TrackTwo) ? "track2Data" : "track1Data", track.TrackData);
                 request.Set("cardPresentDetail", "CARD_PRESENT")
                     .Set("cardholderPresentDetail", "CARDHOLDER_PRESENT")
                     .Set("cardDataInputMode", "MAGNETIC_STRIPE_READER_INPUT")
-                    .Set("cardholderAuthenticationMethod", "UNKNOWN");
+                    .Set("cardholderAuthenticationMethod", "NOT_AUTHENTICATED");
 
                 if (builder.HasEmvFallbackData) {
                     request.Set("emvFallbackCondition", EnumConverter.GetMapping(Target.Transit, builder.EmvFallbackCondition))
@@ -151,11 +90,66 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
 
+            // AVS
+            if (builder.BillingAddress != null) {
+                request.Set("addressLine1", builder.BillingAddress.StreetAddress1)
+                    .Set("zip", builder.BillingAddress.PostalCode);
+            }
+
             // PIN Debit
             if (builder.PaymentMethod is IPinProtected pinProtected) {
                 request.Set("pin", pinProtected.PinBlock.Substring(0, 16))
                     .Set("pinKsn", pinProtected.PinBlock.Substring(16));
             }
+
+            #region 3DS 1/2
+            if (builder.PaymentMethod is ISecure3d secure && secure.ThreeDSecure != null) {
+                if (secure.ThreeDSecure.Version.Equals(Secure3dVersion.One)) {
+                    request.Set("programProtocol", "1");
+                }
+                else {
+                    request.Set("programProtocol", "2")
+                        .Set("directoryServerTransactionID", secure.ThreeDSecure.DirectoryServerTransactionId);
+                }
+
+                request.Set("eciIndicator", secure.ThreeDSecure.Eci)
+                    .Set("secureCode", secure.ThreeDSecure.SecureCode)
+                    .Set("digitalPaymentCryptogram", secure.ThreeDSecure.AuthenticationValue)
+                    .Set("securityProtocol", secure.ThreeDSecure.AuthenticationType)
+                    .Set("ucafCollectionIndicator", EnumConverter.GetMapping(Target.Transit, secure.ThreeDSecure.UCAFIndicator));
+                    
+            }
+            #endregion
+
+            #region Commercial Card Requests
+            if (builder.CommercialData != null) {
+                var cd = builder.CommercialData;
+
+                if (cd.CommercialIndicator.Equals(CommercialIndicator.Level_II)) {
+                    request.Set("commercialCardLevel", "LEVEL2");
+                }
+                else {
+                    request.Set("commercialCardLevel", "LEVEL3");
+                    request.SetProductDetails(cd.LineItems);
+                }
+
+                request.Set("salesTax", cd.TaxAmount.ToCurrencyString())
+                    .Set("chargeDescriptor", cd.Description)
+                    .Set("customerRefID", cd.CustomerReferenceId)
+                    .Set("purchaseOrder", cd.PoNumber)
+                    .Set("shipToZip", cd.DestinationPostalCode)
+                    .Set("shipFromZip", cd.OriginPostalCode)
+                    .Set("supplierReferenceNumber", cd.SupplierReferenceNumber)
+                    .Set("customerVATNumber", cd.CustomerVAT_Number)
+                    .Set("summaryCommodityCode", cd.SummaryCommodityCode)
+                    .Set("shippingCharges", cd.FreightAmount.ToCurrencyString())
+                    .Set("dutyCharges", cd.DutyAmount.ToCurrencyString())
+                    .Set("destinationCountryCode", cd.DestinationCountryCode)
+                    .Set("vatInvoice", cd.VAT_InvoiceNumber)
+                    .Set("orderDate", cd.OrderDate?.ToString("dd/MM/yyyy"))
+                    .SetAdditionalTaxDetails(cd.AdditionalTaxDetails);
+            }
+            #endregion
 
             // Acceptor Config
             request.Set("terminalCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardDataInputCapability))
@@ -172,14 +166,17 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         public Transaction ManageTransaction(ManagementBuilder builder) {
-            var request = new TransitRequest(MapTransactionType(builder))
+            var request = new TransitRequestBuilder(MapTransactionType(builder))
                 .Set("developerID", DeveloperId)
                 .Set("deviceID", DeviceId)
                 .Set("transactionKey", TransactionKey)
                 .Set("transactionAmount", builder.Amount.ToCurrencyString())
                 .Set("tip", builder.Gratuity.ToCurrencyString())
                 .Set("transactionID", builder.TransactionId)
-                .Set("isPartialShipment", builder.MultiCapture ? "Y" : null);
+                .Set("isPartialShipment", builder.MultiCapture ? "Y" : null)
+                .SetPartialShipmentData(builder.MultiCaptureSequence, builder.MultiCapturePaymentCount)
+                .Set("externalReferenceID", builder.ClientTransactionId)
+                .Set("voidReason", EnumConverter.GetMapping(Target.Transit, builder.VoidReason));
 
             string response = DoTransaction(request.BuildRequest(builder));
             return MapResponse(builder, response);
@@ -187,6 +184,10 @@ namespace GlobalPayments.Api.Gateways {
 
         public string SerializeRequest(AuthorizationBuilder builder) {
             throw new UnsupportedTransactionException();
+        }
+
+        public Transaction ProcessSecure3d(Secure3dBuilder builder) {
+            throw new NotImplementedException();
         }
 
         private Transaction MapResponse<T>(T builder, string rawResponse) where T : TransactionBuilder<Transaction> {
@@ -226,7 +227,7 @@ namespace GlobalPayments.Api.Gateways {
                 // cardHolderVerificationCode
                 CardType = root.GetValue<string>("cardType"),
                 CardLast4 = root.GetValue<string>("maskedCardNumber"),
-                // token
+                Token = root.GetValue<string>("token"),
                 // expirationDate
                 // accountUpdaterResponseCode
                 CommercialIndicator = root.GetValue<string>("commercialCard"),
@@ -261,6 +262,20 @@ namespace GlobalPayments.Api.Gateways {
                 // additionalAmountAndAccountType
             };
 
+            // batch response
+            if (root.Has("batchInfo")) {
+                Element batchInfo = root.Get("batchInfo");
+
+                trans.BatchSummary = new BatchSummary {
+                    ResponseCode = responseCode,
+                    SicCode = batchInfo.GetValue<string>("SICCODE"),
+                    SaleCount = batchInfo.GetValue<int>("saleCount"),
+                    SaleAmount = batchInfo.GetValue<decimal>("saleAmount"),
+                    ReturnCount = batchInfo.GetValue<int>("returnCount"),
+                    ReturnAmount = batchInfo.GetValue<decimal>("returnAmount")
+                };
+            }
+
             return trans;
         }
 
@@ -277,12 +292,20 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 case TransactionType.Balance:
                     return "BalanceInquiry";
+                case TransactionType.BatchClose:
+                    return "BatchClose";
+                case TransactionType.Reversal:
+                case TransactionType.Void:
+                    return "Void";
                 case TransactionType.Verify:
                     return "CardAuthentication";
+                case TransactionType.Tokenize:
+                    return "GetOnusToken";
                 default:
                     throw new UnsupportedTransactionException();
             }
         }
+
         private string MapCardDataSource(AuthorizationBuilder builder) {
             IPaymentMethod paymentMethod = builder.PaymentMethod;
 

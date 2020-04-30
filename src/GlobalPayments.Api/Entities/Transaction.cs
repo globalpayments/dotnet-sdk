@@ -120,7 +120,11 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The Auto settle Flag which comes in response
         /// </summary>
-        public bool MultiCapture { get; set; }
+        public bool MultiCapture { get { return (MultiCapturePaymentCount != null && MultiCapturePaymentCount != null); } }
+
+        public int? MultiCapturePaymentCount { get; set; }
+
+        public int? MultiCaptureSequence { get; set; }
 
         /// <summary>
         /// The order ID supplied in the request.
@@ -280,10 +284,14 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         /// <param name="amount">The amount to capture</param>
         public ManagementBuilder Capture(decimal? amount = null) {
-            return new ManagementBuilder(TransactionType.Capture)
-                .WithMultiCapture(MultiCapture)
+            var builder = new ManagementBuilder(TransactionType.Capture)
                 .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
+
+            if (MultiCapture) {
+                builder.WithMultiCapture(MultiCaptureSequence.Value, MultiCapturePaymentCount.Value);
+            }
+            return builder;
         }
 
         /// <summary>
@@ -330,8 +338,10 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Voids the original transaction.
         /// </summary>
-        public ManagementBuilder Void() {
-            return new ManagementBuilder(TransactionType.Void).WithPaymentMethod(TransactionReference);
+        public ManagementBuilder Void(VoidReason? reason = null) {
+            return new ManagementBuilder(TransactionType.Void)
+                .WithPaymentMethod(TransactionReference)
+                .WithVoidReason(reason);
         }
 
         public ManagementBuilder Increment(decimal? amount = null) {

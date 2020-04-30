@@ -1,14 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Entities {
     public class CommercialData {
+        public AdditionalTaxDetails AdditionalTaxDetails { get; set; }
+
         public CommercialIndicator CommercialIndicator { get; private set; }
+
+        public string CustomerVAT_Number { get; set; }
+
+        public string CustomerReferenceId { get; set; }
 
         public string Description { get; set; }
 
         public decimal? DiscountAmount { get; set; }
 
-        public decimal DutyAmount { get; set; }
+        public decimal? DutyAmount { get; set; }
 
         public string DestinationPostalCode { get; set; }
 
@@ -18,13 +25,21 @@ namespace GlobalPayments.Api.Entities {
 
         public List<CommercialLineItem> LineItems { get; private set; }
 
+        public DateTime? OrderDate { get; set; }
+
         public string OriginPostalCode { get; set; }
 
         public string PoNumber { get; set; }
 
+        public string SupplierReferenceNumber { get; set; }
+
+        public string SummaryCommodityCode { get; set; }
+
         public decimal? TaxAmount { get; set; }
 
         public TaxType TaxType { get; private set; }
+
+        public string VAT_InvoiceNumber { get; set; }
 
         public CommercialData(TaxType taxType, CommercialIndicator level = CommercialIndicator.Level_II) {
             TaxType = taxType;

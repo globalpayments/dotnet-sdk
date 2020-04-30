@@ -22,6 +22,7 @@ namespace GlobalPayments.Api.Entities {
         public decimal? SaleAmount { get; set; }
         public int SaleCount { get; set; }
         public string SequenceNumber { get; set; }
+        public string SicCode { get; set; }
         public string SiteId { get; set; }
         public string Status { get; set; }
         public decimal? TotalAmount { get; set; }

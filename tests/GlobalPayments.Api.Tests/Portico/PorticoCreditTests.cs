@@ -366,5 +366,15 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
+
+        [TestMethod]
+        public void CreditTokenize() {
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
+            }, "tokenize");
+
+            var token = card.Tokenize("tokenize");
+            Assert.IsNotNull(token);
+        }
     }
 }

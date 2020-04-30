@@ -48,10 +48,12 @@ namespace GlobalPayments.Api {
 
             // data client
             if (!string.IsNullOrEmpty(DataClientId) || !string.IsNullOrEmpty(DataClientSecret)) {
-                if (string.IsNullOrEmpty(DataClientId) || string.IsNullOrEmpty(DataClientSecret))
+                if (string.IsNullOrEmpty(DataClientId) || string.IsNullOrEmpty(DataClientSecret)) {
                     throw new ConfigurationException("Both \"DataClientID\" and \"DataClientSecret\" are required for data client services.");
-                if (string.IsNullOrEmpty(DataClientUserId))
+                }
+                if (string.IsNullOrEmpty(DataClientUserId)) {
                     throw new ConfigurationException("DataClientUserId required for data client services.");
+                }
             }
         }
     }

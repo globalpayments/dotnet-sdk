@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests {
@@ -66,10 +67,11 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
-        public void checkNewCryptoUrl() {
+        public void CheckNewCryptoUrl() {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
+
             var response = check.Charge(10.00m)
                 .WithCurrency("USD")
                 .WithAddress(address)
@@ -77,7 +79,40 @@ namespace GlobalPayments.Api.Tests {
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+        }
 
+        [TestMethod]
+        public void SupportTestCase() {
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                    SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                    Environment = Environment.TEST,
+                    RequestLogger = new RequestFileLogger(@"C:\temp\portico\requestlog.txt")
+                }
+            );
+
+            var check = new eCheck {
+                AccountNumber = "24413815",
+                RoutingNumber = "490000018",
+                AccountType = AccountType.CHECKING,
+                CheckType = CheckType.PERSONAL,
+                EntryMode = EntryMethod.Manual,
+                SecCode = SecCode.PPD,
+                CheckHolderName = "John Doe"
+            };
+
+            var address = new Address {
+                StreetAddress1 = "123 Main St.",
+                City = "Downtown",
+                State = "NJ",
+                PostalCode = "12345"
+            };
+
+            var response = check.Charge(10.00m)
+               .WithCurrency("USD")
+               .WithAddress(address)
+               .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
         }
     }
 }

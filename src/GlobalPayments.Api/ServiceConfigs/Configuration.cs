@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Logging;
 
 namespace GlobalPayments.Api {
     public abstract class Configuration {
@@ -6,6 +7,8 @@ namespace GlobalPayments.Api {
         protected Environment _environment = Environment.TEST;
 
         public Environment Environment { get { return _environment; } set { _environment = value; }  }
+
+        public IRequestLogger RequestLogger { get; set; }
 
         /// <summary>
         /// Gateway service URL

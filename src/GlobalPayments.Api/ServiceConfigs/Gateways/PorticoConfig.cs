@@ -88,7 +88,8 @@ namespace GlobalPayments.Api {
                 VersionNumber = VersionNumber,
                 Timeout = Timeout,
                 ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx",
-                UniqueDeviceId = UniqueDeviceId
+                UniqueDeviceId = UniqueDeviceId,
+                RequestLogger = RequestLogger
             };
             services.GatewayConnector = gateway;
 
@@ -100,7 +101,8 @@ namespace GlobalPayments.Api {
             var payplan = new PayPlanConnector {
                 SecretApiKey = SecretApiKey,
                 Timeout = Timeout,
-                ServiceUrl = ServiceUrl + PayPlanEndpoint
+                ServiceUrl = ServiceUrl + PayPlanEndpoint,
+                RequestLogger = RequestLogger
             };
             services.RecurringConnector = payplan;
         }
