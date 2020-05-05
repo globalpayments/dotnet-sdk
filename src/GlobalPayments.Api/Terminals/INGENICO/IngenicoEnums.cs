@@ -119,4 +119,9 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         APPLICATION = 0,
         MAILORDER = 1
     }
+
+    public enum TaxFreeType {
+        CREDIT = 0,
+        CASH = 1
+    }
 }

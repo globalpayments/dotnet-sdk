@@ -141,6 +141,16 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                 referenceNumber = RequestIdProvider.GetRequestId();
             }
             amount = ValidateAmount(amount);
+
+            // Tax free Refund handling
+            if (paymentType == (int)PaymentType.Refund && builder.TaxFreeType == TaxFreeType.CASH) {
+                paymentType = (int)PaymentType.TaxFreeCashRefund;
+            }
+            else if (paymentType == (int)PaymentType.Refund && builder.TaxFreeType == TaxFreeType.CREDIT) {
+                paymentType = (int)PaymentType.TaxFreeCreditRefund;
+
+            }
+
             paymentMode = ValidatePaymentMode(builder.PaymentMode);
             currencyCode = ValidateCurrency((string.IsNullOrEmpty(builder.CurrencyCode) ? currencyCode : builder.CurrencyCode));
 

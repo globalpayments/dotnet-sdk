@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.Ingenico;
@@ -17,7 +18,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 DeviceType = Entities.DeviceType.Ingenico_EPOS_Desk5000,
                 ConnectionMode = ConnectionModes.TCP_IP_SERVER,
                 Port = "18101",
-                Timeout = 60000
+                Timeout = 30 * 1000
             });
             Assert.IsNotNull(_device);
         }
@@ -102,6 +103,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 var resp = _device.Sale(6.18m)
                 .WithReferenceNumber(1)
                 .WithCurrencyCode("826")
+                .WithTaxFree(TaxFreeType.CASH)
                 .WithCashBack(3m)
                 .Execute();
 
@@ -126,6 +128,40 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
             var resp = _device.Cancel();
 
             Assert.IsNotNull(resp);
+        }
+
+        [TestMethod]
+        public void TaxFreeCreditCardRefundTest() {
+            try {
+                var respone = _device.Refund(5m)
+                    .WithTaxFree(TaxFreeType.CREDIT)
+                    .Execute();
+
+                Assert.IsNotNull(respone);
+            }
+            catch (ApiException e) {
+                Assert.Fail(e.Message);
+                //throw e;
+            }
+            catch (Exception e) {
+                Assert.Fail(e.Message);
+                //throw e;
+            }
+        }
+
+        [TestMethod]
+        public void TaxFreeCashRefundTest() {
+            try {
+                var respone = _device.Refund(5m)
+                    .WithReferenceNumber(1)
+                    .WithTaxFree(TaxFreeType.CASH)
+                    .Execute();
+
+                Assert.IsNotNull(respone);
+            }
+            catch (Exception e) {
+                Assert.Fail(e.Message);
+            }
         }
     }
 }

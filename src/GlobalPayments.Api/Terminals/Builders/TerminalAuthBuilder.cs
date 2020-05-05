@@ -41,6 +41,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal string CurrencyCode { get; set; }
         internal PaymentMode PaymentMode { get; set; }
         internal string TableNumber { get; set; }
+        internal TaxFreeType? TaxFreeType { get; set; }
 
         public TerminalAuthBuilder WithAddress(Address address) {
             Address = address;
@@ -172,6 +173,18 @@ namespace GlobalPayments.Api.Terminals.Builders {
         /// <returns></returns>
         public TerminalAuthBuilder WithTableNumber(string value) {
             TableNumber = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Method used for requesting a Tax Free Refund Payment type transaction.
+        /// </summary>
+        /// <param name="taxFreeType">
+        /// Payment Type of refund. Either Cash or Credit
+        /// </param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithTaxFree(TaxFreeType taxFreeType) {
+            TaxFreeType = taxFreeType;
             return this;
         }
 
