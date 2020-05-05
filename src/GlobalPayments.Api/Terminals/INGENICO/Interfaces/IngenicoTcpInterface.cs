@@ -21,6 +21,9 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         private BroadcastMessage _broadcastMessage;
         private byte[] termResponse;
         private Thread dataReceiving;
+        private bool _isKeepAlive;
+        private bool _isKeepAliveRunning;
+        private Exception _receivingException;
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
@@ -84,6 +87,10 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                     throw new ConfigurationException("Server is not running.");
                 }
 
+                // Validate keep alive for setting of timeout during Transaction
+                if (!_isKeepAlive) {
+                    _stream.ReadTimeout = _settings.Timeout;
+                }
 
                 if (_ipAddresses.Count > 0) {
                     _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
@@ -92,7 +99,19 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
                     while (termResponse == null) {
                         Thread.Sleep(100);
+                        if (_receivingException != null) {
+                            Exception ex = _receivingException;
+                            _receivingException = null;
+                            throw ex;
+                        }
+
                         if (termResponse != null) {
+
+                            // Remove timeout for stream  read
+                            if (!_isKeepAlive) {
+                                _stream.ReadTimeout = -1;
+                            }
+
                             return termResponse;
                         }
                     }
@@ -119,7 +138,10 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
                 // Set timeout for client to send data.
                 _server = _listener.Server;
-                _server.ReceiveTimeout = _settings.Timeout;
+
+                // Initialize keep Alive value to false.
+                _isKeepAlive = false;
+                _isKeepAliveRunning = false;
             }
             else {
                 throw new ConfigurationException("Server already initialize.");
@@ -129,6 +151,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         private void AcceptingClient() {
             _client = _listener.AcceptTcpClient();
             _stream = _client.GetStream();
+
+
             _ipAddresses.Add(((IPEndPoint)_client.Client.RemoteEndPoint).Address);
 
             // Start thread for handling keep alive request.
@@ -171,9 +195,9 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         private async void AnalyzeReceivedData() {
             try {
                 var headerBuffer = new byte[2];
-                while (_stream.CanRead && _listener.Active && _client.Connected) {
+                while (true) {
 
-                    await _stream.ReadAsync(headerBuffer, 0, headerBuffer.Length);
+                    _stream.Read(headerBuffer, 0, headerBuffer.Length);
 
                     int dataLength = await Task.Run(() => TerminalUtilities.HeaderLength(headerBuffer));
                     if (dataLength > 0) {
@@ -186,7 +210,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                         do {
 
                             // Read data
-                            int bytesReceived = await _stream.ReadAsync(dataBuffer, offset, tempLength);
+                            int bytesReceived = _stream.Read(dataBuffer, offset, tempLength);
                             if (bytesReceived != tempLength) {
                                 offset += bytesReceived;
                                 tempLength -= bytesReceived;
@@ -204,6 +228,14 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                             OnBroadcastMessage?.Invoke(_broadcastMessage.Code, _broadcastMessage.Message);
                         }
                         else if (isKeepAlive(readBuffer) && INGENICO_GLOBALS.KeepAlive) {
+
+                            _isKeepAlive = true;
+
+                            if (_isKeepAlive && !_isKeepAliveRunning) {
+                                _stream.ReadTimeout = _settings.Timeout;
+                                _isKeepAliveRunning = true;
+                            }
+
                             var keepAliveRep = KeepAliveResponse(readBuffer);
                             _stream.WriteAsync(keepAliveRep, 0, keepAliveRep.Length).Wait();
                         }
@@ -212,14 +244,12 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                         }
                     }
                     else {
-                        throw new ApiException("No data received.");
+                        _receivingException = new ApiException("No data received.");
                     }
                 }
             }
             catch (Exception ex) {
-                if (_stream.CanRead && _listener.Active && _client.Connected) {
-                    throw new ApiException("Unable to get data from terminal. " + ex.Message);
-                }
+                _receivingException = ex;
             }
         }
         #endregion
