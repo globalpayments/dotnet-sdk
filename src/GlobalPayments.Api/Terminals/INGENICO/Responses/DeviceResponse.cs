@@ -25,9 +25,15 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         internal string terminalRawData;
         internal string _currencyCode;
         internal DataResponse _respField;
+        private byte[] _buffer;
 
         internal IngenicoTerminalResponse(byte[] buffer) {
+            _buffer = buffer;
             ParseResponse(buffer);
+        }
+
+        public override string ToString() {
+            return Encoding.UTF8.GetString(_buffer, 0, _buffer.Length);
         }
 
         #region Added Properties Specific for Ingenico
