@@ -41,6 +41,12 @@ namespace GlobalPayments.Api.Terminals {
         /// <param name="amount">Amount to be passed for cancel request.</param>
         /// <returns>TerminalManageBuilder</returns>
         IDeviceResponse Duplicate();
+
+        /// <summary>
+        /// Command used to gain feedback as to the status of the terminal.
+        /// </summary>
+        /// <returns></returns>
+        IDeviceResponse GetTerminalStatus();
         #endregion
 
         #region reporting
