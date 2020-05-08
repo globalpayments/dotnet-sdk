@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Utils;
+using System;
 
 namespace GlobalPayments.Api.Terminals.Ingenico {
     public abstract class IngenicoBaseResponse : IDeviceResponse {
@@ -25,15 +26,19 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         internal string terminalRawData;
         internal string _currencyCode;
         internal DataResponse _respField;
+        
         private byte[] _buffer;
+        private bool _parsedResponseData;
 
-        internal IngenicoTerminalResponse(byte[] buffer) {
+        internal IngenicoTerminalResponse(byte[] buffer, bool parseRepField = true) {
             _buffer = buffer;
+            _parsedResponseData = parseRepField;
             ParseResponse(buffer);
         }
 
         public override string ToString() {
-            return Encoding.UTF8.GetString(_buffer, 0, _buffer.Length);
+            base.DeviceResponseText = Encoding.UTF8.GetString(_buffer, 0, _buffer.Length);
+            return base.DeviceResponseText;
         }
 
         #region Added Properties Specific for Ingenico
@@ -102,15 +107,19 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         */
         public virtual void ParseResponse(byte[] response) {
             if (response != null) {
+
                 ReferenceNumber = Encoding.UTF8.GetString(response.SubArray(0, 2));
                 _transactionStatus = ((TransactionStatus)Encoding.UTF8.GetString(response.SubArray(2, 1)).ToInt32()).ToString();
                 decimal.TryParse(Encoding.UTF8.GetString(response.SubArray(3, 8)), out _amount);
                 _paymentMode = (PaymentMode)Encoding.UTF8.GetString(response.SubArray(11, 1)).ToInt32();
-                _respField = new DataResponse(response.SubArray(12, 55));
                 _currencyCode = Encoding.UTF8.GetString(response.SubArray(67, 3));
                 _privateData = Encoding.UTF8.GetString(response.SubArray(70, response.Length - 70));
-
                 Status = _transactionStatus;
+
+                // This is for parsing of Response field for Transaction request
+                if (_parsedResponseData) {
+                    _respField = new DataResponse(response.SubArray(12, 55));
+                }
             }
         }
     }
