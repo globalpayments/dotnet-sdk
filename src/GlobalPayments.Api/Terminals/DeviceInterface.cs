@@ -91,6 +91,10 @@ namespace GlobalPayments.Api.Terminals {
         public virtual IDeviceResponse Duplicate() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+
+        public virtual IDeviceResponse GetTerminalStatus() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
         #endregion
 
         #region Batching
