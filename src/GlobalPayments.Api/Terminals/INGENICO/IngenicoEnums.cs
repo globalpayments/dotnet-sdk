@@ -19,6 +19,9 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         public const string REVERSE_WITH_ID = "CMD=REV{0}";
         public const string TABLE_WITH_ID = "CMD=ID{0}";
 
+        // Terminal Management Commands
+        public const string STATE = "CMD=STATE";
+
         // Request Report
         public const string REPORT = "0100000001100826EXT0100000A010B010CMD={0}";
         public const string RECEIPT = "0100000001100826EXT0100000A010B010CMD={0}";
@@ -31,6 +34,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         public const string KEEP_ALIVE_RESPONSE = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?> <TID CODE=\"{0}\">OK</TID>";
         public static bool KeepAlive = true;
         public const int IP_PORT = 18101;
+        public const int RAW_RESPONSE_LENGTH = 80;
     }
 
     internal static class INGENICO_RESP {
@@ -92,8 +96,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         READY = 1
     }
 
-    public enum TerminalModes {
-        STANDARD_MODE = 0,
+    public enum SalesMode {
+        STANDARD_SALE_MODE = 0,
         VENDING_MODE = 1
     }
 
@@ -123,5 +127,39 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
     public enum TaxFreeType {
         CREDIT = 0,
         CASH = 1
+    }
+
+    // Codes in Response field for TLV format
+    public enum RepFieldCode {
+        AuthCode = 67, // C
+        CashbackAmount = 90, // Z
+        GratuityAmount = 89, // Y
+        FinalTransactionAmount = 77, // M
+        AvailableAmount = 65, // A
+        DccCurrency = 85, // U
+        DccConvertedAmount = 79, // O
+        PaymentMethod = 80, // P
+        TransactionSubType = 84, // T
+        SplitSalePaidAmount = 83, // S
+        DccOperationStatus = 68, // D
+    }
+
+    public enum StateResponseCode {
+        Status = 83, // S
+        AppVersionNumber = 86, // V
+        HandsetNumber = 72, // H
+        TerminalId = 84, // T
+    }
+
+    public enum TLVFormat {
+        /// <summary>
+        /// Format for transaction request.
+        /// </summary>
+        Standard,
+
+        /// <summary>
+        /// Format for State command request.
+        /// </summary>
+        State
     }
 }
