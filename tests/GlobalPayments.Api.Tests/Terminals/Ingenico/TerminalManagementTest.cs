@@ -33,6 +33,18 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         }
 
         [TestMethod]
+        public void PIDCommandTest() {
+            try {
+                var resp = _device.Initialize();
+
+                Assert.IsNotNull(resp);
+            }
+            catch (Exception e) {
+                Assert.Fail(e.Message);
+            }
+        }
+
+        [TestMethod]
         public void StateParsing() {
             string resp = "010000006180S1810e0b8c8f000f0a001V109712019054H011T0822164769";
             byte[] rawResp = Encoding.UTF8.GetBytes(resp, 0, resp.Length);
