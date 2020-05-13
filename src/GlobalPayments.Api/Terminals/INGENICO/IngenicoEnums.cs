@@ -21,6 +21,10 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         // Terminal Management Commands
         public const string STATE = "CMD=STATE";
+        public const string PID = "CMD=PID";
+        public const string LOGON = "CMD=LOGON";
+        public const string RESET = "CMD=RESET";
+        public const string CALLTMS = "CMD=CALLTMS";
 
         // Request Report
         public const string REPORT = "0100000001100826EXT0100000A010B010CMD={0}";
@@ -161,5 +165,22 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         /// Format for State command request.
         /// </summary>
         State
+    }
+
+    public enum ParseFormat {
+        /// <summary>
+        /// For Transaction response parsing format
+        /// </summary>
+        Transaction = 0,
+
+        /// <summary>
+        /// For State Command response parsing format
+        /// </summary>
+        State = 1,
+
+        /// <summary>
+        /// For PID Command response parsing format
+        /// </summary>
+        PID = 2,
     }
 }
