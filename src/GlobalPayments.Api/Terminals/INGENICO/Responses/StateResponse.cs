@@ -18,7 +18,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         private string _terminalId;
 
         public StateResponse(byte[] buffer) 
-            : base(buffer, false) {
+            : base(buffer, ParseFormat.State) {
         }
 
         public TerminalStatus TerminalStatus { get { return _terminalStatus; } set { } }
