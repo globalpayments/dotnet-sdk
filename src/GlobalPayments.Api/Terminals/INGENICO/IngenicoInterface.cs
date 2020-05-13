@@ -14,7 +14,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         internal IngenicoInterface(IngenicoController controller) : base(controller) {
         }
 
-        #region Admin Methods
+        #region Terminal Management/Admin Methods
         public override IDeviceResponse GetTerminalStatus() {
             StringBuilder sb = new StringBuilder();
             sb.Append(INGENICO_REQ_CMD.REQUEST_MESSAGE);
@@ -24,6 +24,17 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
             return new StateResponse(response);
         }
+
+        public override IInitializeResponse Initialize() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(INGENICO_REQ_CMD.REQUEST_MESSAGE);
+            sb.Append(INGENICO_REQ_CMD.PID);
+
+            byte[] response = _controller.Send(TerminalUtilities.BuildRequest(sb.ToString(), settings: _controller.ConnectionMode.Value));
+
+            return new POSIdentifierResponse(response);
+        }
+
         #endregion
 
         #region Payment Transaction Management
