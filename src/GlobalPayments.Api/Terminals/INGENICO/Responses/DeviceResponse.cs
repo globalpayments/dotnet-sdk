@@ -28,11 +28,11 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         internal DataResponse _respField;
         
         private byte[] _buffer;
-        private bool _parsedResponseData;
+        private ParseFormat _parseFormat;
 
-        internal IngenicoTerminalResponse(byte[] buffer, bool parseRepField = true) {
+        internal IngenicoTerminalResponse(byte[] buffer, ParseFormat format = ParseFormat.Transaction) {
             _buffer = buffer;
-            _parsedResponseData = parseRepField;
+            _parseFormat = format;
             ParseResponse(buffer);
         }
 
@@ -117,7 +117,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                 Status = _transactionStatus;
 
                 // This is for parsing of Response field for Transaction request
-                if (_parsedResponseData) {
+                if (_parseFormat == ParseFormat.Transaction) {
                     _respField = new DataResponse(response.SubArray(12, 55));
                 }
             }
