@@ -38,8 +38,7 @@ namespace GlobalPayments.Api.Terminals {
         /// <summary>
         /// The terminal immediately initiates a duplicate of the last completed transaction
         /// </summary>
-        /// <param name="amount">Amount to be passed for cancel request.</param>
-        /// <returns>TerminalManageBuilder</returns>
+        /// <returns>IDeviceResponse</returns>
         IDeviceResponse Duplicate();
 
         /// <summary>
@@ -47,6 +46,14 @@ namespace GlobalPayments.Api.Terminals {
         /// </summary>
         /// <returns></returns>
         IDeviceResponse GetTerminalStatus();
+
+        /// <summary>
+        /// Command used to request for CALL TMS in the terminal. 
+        /// </summary>
+        /// <returns>IDeviceResponse</returns>
+        IDeviceResponse GetTerminalConfiguration();
+
+        IDeviceResponse TestConnection();
         #endregion
 
         #region reporting
