@@ -35,6 +35,36 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             return new POSIdentifierResponse(response);
         }
 
+        public override IDeviceResponse GetTerminalConfiguration() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(INGENICO_REQ_CMD.REQUEST_MESSAGE);
+            sb.Append(INGENICO_REQ_CMD.CALLTMS);
+
+            byte[] response = _controller.Send(TerminalUtilities.BuildRequest(sb.ToString(), settings: _controller.ConnectionMode.Value));
+
+            return new IngenicoTerminalResponse(response);
+        }
+
+        public override IDeviceResponse TestConnection() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(INGENICO_REQ_CMD.REQUEST_MESSAGE);
+            sb.Append(INGENICO_REQ_CMD.LOGON);
+
+            byte[] response = _controller.Send(TerminalUtilities.BuildRequest(sb.ToString(), settings: _controller.ConnectionMode.Value));
+
+            return new IngenicoTerminalResponse(response);
+        }
+
+        public override IDeviceResponse Reboot() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(INGENICO_REQ_CMD.REQUEST_MESSAGE);
+            sb.Append(INGENICO_REQ_CMD.RESET);
+
+            byte[] response = _controller.Send(TerminalUtilities.BuildRequest(sb.ToString(), settings: _controller.ConnectionMode.Value));
+
+            return new IngenicoTerminalResponse(response);
+        }
+
         #endregion
 
         #region Payment Transaction Management
