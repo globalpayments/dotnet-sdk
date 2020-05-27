@@ -4,6 +4,7 @@ using GlobalPayments.Api.Terminals.Ingenico;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Text;
+using System.Threading;
 
 namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
     [TestClass]
@@ -45,25 +46,42 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         }
 
         [TestMethod]
-        public void StateParsing() {
-            string resp = "010000006180S1810e0b8c8f000f0a001V109712019054H011T0822164769";
-            byte[] rawResp = Encoding.UTF8.GetBytes(resp, 0, resp.Length);
+        public void CALLTMSCommandTest() {
+            try {
+                var resp = _device.GetTerminalConfiguration();
 
-            var stateResp = new StateResponse(rawResp);
-
-            var s = stateResp.ReferenceNumber;
-
-            Assert.IsNotNull(stateResp);
+                Assert.IsNotNull(resp);
+                Assert.IsNotNull((resp as IngenicoTerminalResponse).PrivateData);
+            }
+            catch (Exception e) {
+                Assert.Fail(e.Message);
+            }
         }
 
         [TestMethod]
-        public void CancelResponseParsing() {
-            string resp = "019000006180                                                       826CANCELDONE";
-            byte[] rawResp = Encoding.UTF8.GetBytes(resp, 0, resp.Length);
+        public void LOGONCommandTest() {
+            try {
+                var resp = _device.TestConnection();
 
-            var TerminalResponse = new CancelResponse(rawResp);
+                Assert.IsNotNull(resp);
+                Assert.IsNotNull((resp as IngenicoTerminalResponse).PrivateData);
+            }
+            catch (Exception e) {
+                Assert.Fail(e.Message);
+            }
+        }
 
-            Assert.IsNotNull(TerminalResponse);
+        [TestMethod]
+        public void RESETCommandTest() {
+            try {
+                var resp = _device.Reboot();
+
+                Assert.IsNotNull(resp);
+                Assert.IsNotNull((resp as IngenicoTerminalResponse).PrivateData);
+            }
+            catch (Exception e) {
+                Assert.Fail(e.Message);
+            }
         }
     }
 }
