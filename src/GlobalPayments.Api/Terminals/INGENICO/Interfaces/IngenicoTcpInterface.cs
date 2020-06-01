@@ -24,6 +24,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         private bool _isKeepAlive;
         private bool _isKeepAliveRunning;
         private Exception _receivingException;
+        private bool _isResponseNeeded;
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
@@ -80,6 +81,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
             byte[] buffer = message.GetSendBuffer();
             termResponse = null;
+            _isResponseNeeded = true;
 
             try {
                 // Validate if server is starting
@@ -106,7 +108,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                         }
 
                         if (termResponse != null) {
-
+                            _isResponseNeeded = false;
                             // Remove timeout for stream  read
                             if (!_isKeepAlive) {
                                 _stream.ReadTimeout = -1;
@@ -151,6 +153,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         private void AcceptingClient() {
             _client = _listener.AcceptTcpClient();
             _stream = _client.GetStream();
+            _stream.ReadTimeout = _settings.Timeout;
 
 
             _ipAddresses.Add(((IPEndPoint)_client.Client.RemoteEndPoint).Address);
@@ -246,6 +249,14 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                     else {
                         _receivingException = new ApiException("No data received.");
                     }
+                }
+            }
+            catch (System.IO.IOException ex) {
+                if (_isResponseNeeded || _isKeepAlive) {
+                    _receivingException = ex;
+                }
+                else {
+                    AnalyzeReceivedData();
                 }
             }
             catch (Exception ex) {

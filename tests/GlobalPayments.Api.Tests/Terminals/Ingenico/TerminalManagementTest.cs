@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 DeviceType = Entities.DeviceType.Ingenico_EPOS_Desk5000,
                 ConnectionMode = ConnectionModes.TCP_IP_SERVER,
                 Port = "18101",
-                Timeout = 30 * 1000
+                Timeout = 5 * 1000
             });
             Assert.IsNotNull(_device);
         }
