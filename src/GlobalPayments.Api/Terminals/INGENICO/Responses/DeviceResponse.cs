@@ -44,10 +44,10 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         #region Added Properties Specific for Ingenico
         public string DccCurrency { get { return _respField.DccCode; } set { } }
         public DynamicCurrencyStatus? DccStatus { get { return _respField.DccStatus; } set { } }
+        public decimal? DccAmount { get { return _respField.DccAmount; } set { } }
         public TransactionSubTypes? TransactionSubType { get { return _respField.TransactionSubType; } set { } }
-        public decimal SplitSaleAmount { get { return 0; } set { } }
+        public decimal? SplitSaleAmount { get { return 0; } set { } }
         public PaymentMode PaymentMode { get { return _paymentMode; } set { } }
-        public string DynamicCurrencyCode { get { return _respField.DccCode; } }
         public string CurrencyCode { get { return _currencyCode; } set { } }
         public string PrivateData { get { return _privateData; } }
         public decimal? FinalTransactionAmount { get { return _respField.FinalAmount; } }
