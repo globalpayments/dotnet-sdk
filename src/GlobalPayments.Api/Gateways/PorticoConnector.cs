@@ -316,7 +316,7 @@ namespace GlobalPayments.Api.Gateways {
 
                         var amountNode = et.SubElement(autoSub, fieldNames[index++] + "AdditionalAmtInfo");
                         et.SubElement(amountNode, "AmtType", amount.Key);
-                        et.SubElement(amountNode, "Amt", amount.Value?.ToNumericString());
+                        et.SubElement(amountNode, "Amt", amount.Value?.ToString());
                     }
                 }
 
