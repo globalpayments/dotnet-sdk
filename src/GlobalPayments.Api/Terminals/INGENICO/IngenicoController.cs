@@ -25,9 +25,6 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             switch (_settings.ConnectionMode) {
                 case ConnectionModes.SERIAL:
                     return new IngenicoSerialInterface(_settings);
-                case ConnectionModes.TCP_IP:
-                case ConnectionModes.SSL_TCP:
-                case ConnectionModes.HTTP:
                 case ConnectionModes.TCP_IP_SERVER:
                     return new IngenicoTcpInterface(_settings);
                 default:
