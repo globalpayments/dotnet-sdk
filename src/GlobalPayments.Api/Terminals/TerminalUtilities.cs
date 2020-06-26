@@ -82,8 +82,6 @@ namespace GlobalPayments.Api.Terminals {
                         buffer.Add((byte)c);
 
                     break;
-                case ConnectionModes.TCP_IP:
-                    break;
                 default:
                     throw new BuilderException("Failed to build request message. Unknown Connection mode.");
             }
@@ -148,8 +146,7 @@ namespace GlobalPayments.Api.Terminals {
             Bitmap bmp = new Bitmap(width, 100);
 
             var gfx = Graphics.FromImage(bmp);
-            // TODO: Remove color from Utilities
-            //gfx.Clear(Color.White);
+            gfx.Clear(Color.White);
 
             var index = 0;
             var coordinate = coordinates[index++];

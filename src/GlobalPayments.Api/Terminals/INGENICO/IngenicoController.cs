@@ -92,7 +92,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                 extendedData = INGENICO_REQ_CMD.AUTHCODE.FormatWith(builder.AuthCode);
             }
             // Validation for Reversal with Transaction Id value in Extended data
-            else if (!builder.TransactionId.IsNull() && builder.TransactionType == TransactionType.Reversal) {
+            else if (builder.TransactionId != null && builder.TransactionType == TransactionType.Reversal) {
                 extendedData = INGENICO_REQ_CMD.REVERSE_WITH_ID.FormatWith(builder.TransactionId);
             }
             else if (builder.TransactionType == TransactionType.Reversal) {
@@ -206,7 +206,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         #region Validations
         private bool IsObjectNullOrEmpty(object value) {
             bool response = false;
-            if (value.IsNull() || string.IsNullOrWhiteSpace(value.ToString())) {
+            if (value == null || string.IsNullOrWhiteSpace(value.ToString())) {
                 response = true;
             }
             else {

@@ -211,9 +211,5 @@ namespace GlobalPayments.Api.Utils {
             Array.Copy(data, index, result, 0, length);
             return result;
         }
-
-        public static bool IsNull<T>(this T data) {
-            return data == null;
-        }
     }
 }
