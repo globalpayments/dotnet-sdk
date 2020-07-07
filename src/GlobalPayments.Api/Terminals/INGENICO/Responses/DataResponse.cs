@@ -9,15 +9,15 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
     public class DataResponse {
 
         private string _authCode;
-        private decimal? _finalAmount;
+        private string _finalAmount;
         private PaymentMethod? _paymentMethod;
-        private decimal? _cashbackAmount;
-        private decimal? _gratuityAmount;
-        private decimal? _availableAmount;
+        private string _cashbackAmount;
+        private string _gratuityAmount;
+        private string _availableAmount;
         private string _dccCode;
-        private decimal? _dccAmount;
+        private string _dccAmount;
         private TransactionSubTypes? _txnSubType;
-        private decimal? _splitSaleAmount;
+        private string _splitSaleAmount;
         private DynamicCurrencyStatus? _dccStatus;
 
         private byte[] _buffer;
@@ -35,8 +35,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         public decimal? FinalAmount {
-            get { return _finalAmount.ToString().ToAmount(); }
-            set { _finalAmount = value; }
+            get { return _finalAmount.ToAmount(); }
+            set { _finalAmount = value.ToString(); }
         }
 
         public PaymentMethod? PaymentMethod {
@@ -45,18 +45,18 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         public decimal? CashbackAmount {
-            get { return _cashbackAmount.ToString().ToAmount(); }
-            set { _cashbackAmount = value; }
+            get { return _cashbackAmount.ToAmount(); }
+            set { _cashbackAmount = value.ToString(); }
         }
 
         public decimal? GratuityAmount {
-            get { return _gratuityAmount.ToString().ToAmount(); }
-            set { _gratuityAmount = value; }
+            get { return _gratuityAmount.ToAmount(); }
+            set { _gratuityAmount = value.ToString(); }
         }
 
         public decimal? AvailableAmount {
-            get { return _availableAmount.ToString().ToAmount(); }
-            set { _availableAmount = value; }
+            get { return _availableAmount.ToAmount(); }
+            set { _availableAmount = value.ToString(); }
         }
         public string DccCode {
             get { return _dccCode; }
@@ -64,8 +64,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         public decimal? DccAmount {
-            get { return _dccAmount.ToString().ToAmount(); }
-            set { _dccAmount = value; }
+            get { return _dccAmount.ToAmount(); }
+            set { _dccAmount = value.ToString(); }
         }
 
         public TransactionSubTypes? TransactionSubType {
@@ -74,8 +74,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         public decimal? SplitSaleAmount {
-            get { return _splitSaleAmount.ToString().ToAmount(); }
-            set { _splitSaleAmount = value; }
+            get { return _splitSaleAmount.ToAmount(); }
+            set { _splitSaleAmount = value.ToString(); }
         }
 
         public DynamicCurrencyStatus? DccStatus {
@@ -90,18 +90,17 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             var tlv = new TypeLengthValue(_buffer);
 
             Type stringType = typeof(string);
-            Type decimalType = typeof(decimal?);
 
             _authCode = (string)tlv.GetValue((byte)RepFieldCode.AuthCode, stringType);
-            _cashbackAmount = (decimal?)tlv.GetValue((byte)RepFieldCode.CashbackAmount, decimalType);
-            _gratuityAmount = (decimal?)tlv.GetValue((byte)RepFieldCode.GratuityAmount, decimalType);
-            _finalAmount = (decimal?)tlv.GetValue((byte)RepFieldCode.FinalTransactionAmount, decimalType);
-            _availableAmount = (decimal?)tlv.GetValue((byte)RepFieldCode.AvailableAmount, decimalType);
+            _cashbackAmount = (string)tlv.GetValue((byte)RepFieldCode.CashbackAmount, stringType);
+            _gratuityAmount = (string)tlv.GetValue((byte)RepFieldCode.GratuityAmount, stringType);
+            _finalAmount = (string)tlv.GetValue((byte)RepFieldCode.FinalTransactionAmount, stringType);
+            _availableAmount = (string)tlv.GetValue((byte)RepFieldCode.AvailableAmount, stringType);
             _dccCode = (string)tlv.GetValue((byte)RepFieldCode.DccCurrency, stringType);
-            _dccAmount = (decimal?)tlv.GetValue((byte)RepFieldCode.DccConvertedAmount, decimalType);
+            _dccAmount = (string)tlv.GetValue((byte)RepFieldCode.DccConvertedAmount, stringType);
             _txnSubType = (TransactionSubTypes?)tlv.GetValue((byte)RepFieldCode.TransactionSubType, typeof(TransactionSubTypes?));
             _dccStatus = (DynamicCurrencyStatus?)tlv.GetValue((byte)RepFieldCode.DccOperationStatus, typeof(DynamicCurrencyStatus?));
-            _splitSaleAmount = (decimal?)tlv.GetValue((byte)RepFieldCode.SplitSalePaidAmount, decimalType);
+            _splitSaleAmount = (string)tlv.GetValue((byte)RepFieldCode.SplitSalePaidAmount, stringType);
             _paymentMethod = (PaymentMethod?)tlv.GetValue((byte)RepFieldCode.PaymentMethod, typeof(PaymentMethod?));
         }
     }
