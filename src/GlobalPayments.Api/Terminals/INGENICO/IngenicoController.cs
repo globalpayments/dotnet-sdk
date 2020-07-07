@@ -281,9 +281,9 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             return new CancelResponse(response);
         }
 
-        private ReverseResponse DoReverseRequest(IDeviceMessage request) {
+        private IngenicoTerminalResponse DoReverseRequest(IDeviceMessage request) {
             byte[] response = Send(request);
-            return new ReverseResponse(response);
+            return new IngenicoTerminalResponse(response);
         }
         #endregion
     }
