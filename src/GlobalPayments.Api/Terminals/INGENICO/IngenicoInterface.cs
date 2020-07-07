@@ -119,7 +119,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
             byte[] response = _controller.Send(TerminalUtilities.BuildRequest(sb.ToString(), settings: _controller.ConnectionMode.Value));
 
-            return new CancelResponse(response);
+            return new IngenicoTerminalResponse(response);
         }
 
         public override TerminalManageBuilder Reverse(decimal? amount = null) {
