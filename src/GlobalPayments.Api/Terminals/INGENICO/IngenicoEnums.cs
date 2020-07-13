@@ -39,6 +39,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         public static bool KeepAlive = true;
         public const int IP_PORT = 18101;
         public const int RAW_RESPONSE_LENGTH = 80;
+        public const string MGMT_SCOPE = "root\\CIMV2";
+        public const string MGMT_QUERY = "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"";
     }
 
     internal static class INGENICO_RESP {

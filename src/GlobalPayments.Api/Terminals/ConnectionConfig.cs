@@ -23,15 +23,6 @@ namespace GlobalPayments.Api.Terminals {
         r115200 = 115200
     }
 
-    public enum Parity {
-        None = 0,
-        Odd,
-        Even,
-    }
-    public enum StopBits {
-        One = 1,
-        Two
-    }
     public enum DataBits {
         Seven = 7,
         Eight = 8
@@ -108,7 +99,7 @@ namespace GlobalPayments.Api.Terminals {
             if (ConnectionMode == ConnectionModes.TCP_IP || ConnectionMode == ConnectionModes.HTTP) {
                 if (string.IsNullOrEmpty(IpAddress))
                     throw new ApiException("IpAddress is required for TCP or HTTP communication modes.");
-                if(string.IsNullOrEmpty(Port))
+                if (string.IsNullOrEmpty(Port))
                     throw new ApiException("Port is required for TCP or HTTP communication modes.");
             }
         }

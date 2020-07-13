@@ -20,11 +20,10 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                 Port = "5",
                 BaudRate = BaudRate.r9600,
                 DataBits = DataBits.Seven,
-                StopBits = StopBits.One,
-                Parity = Parity.Even,
+                StopBits = System.IO.Ports.StopBits.One,
+                Parity = System.IO.Ports.Parity.Even,
                 Handshake = System.IO.Ports.Handshake.None,
-                Timeout = 65000,
-                RequestIdProvider = new RandomIdProvider()
+                Timeout = 65000
             });
 
             Assert.IsNotNull(_device);
