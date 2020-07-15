@@ -1,4 +1,5 @@
 ﻿
+using GlobalPayments.Api.Utils;
 using System;
 
 namespace GlobalPayments.Api.Terminals.Ingenico {
@@ -92,9 +93,14 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
     }
 
     public enum TransactionSubTypes {
-        SPLIT_SALE_TXN = 0x53, // 0x53 byte for 'S'
-        DCC_TXN = 0x44, // 0x44 byte for 'D'
-        REFERRAL_RESULT = 0x82 // 0x52 byte for 'R'
+        [Description("S")]
+        SPLIT_SALE_TXN,
+
+        [Description("D")]
+        DCC_TXN,
+
+        [Description("R")]
+        REFERRAL_RESULT
     }
 
     public enum TerminalStatus {

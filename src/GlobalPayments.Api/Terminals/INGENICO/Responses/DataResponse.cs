@@ -98,7 +98,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             _availableAmount = (string)tlv.GetValue((byte)RepFieldCode.AvailableAmount, stringType);
             _dccCode = (string)tlv.GetValue((byte)RepFieldCode.DccCurrency, stringType);
             _dccAmount = (string)tlv.GetValue((byte)RepFieldCode.DccConvertedAmount, stringType);
-            _txnSubType = (TransactionSubTypes?)tlv.GetValue((byte)RepFieldCode.TransactionSubType, typeof(TransactionSubTypes?));
+            _txnSubType = EnumConverter.FromDescription<TransactionSubTypes>(tlv.GetValue((byte)RepFieldCode.TransactionSubType, stringType));
             _dccStatus = (DynamicCurrencyStatus?)tlv.GetValue((byte)RepFieldCode.DccOperationStatus, typeof(DynamicCurrencyStatus?));
             _splitSaleAmount = (string)tlv.GetValue((byte)RepFieldCode.SplitSalePaidAmount, stringType);
             _paymentMethod = (PaymentMethod?)tlv.GetValue((byte)RepFieldCode.PaymentMethod, typeof(PaymentMethod?));

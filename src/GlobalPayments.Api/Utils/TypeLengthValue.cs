@@ -62,9 +62,6 @@ namespace GlobalPayments.Api.Utils {
                 else if (returnType == typeof(string)) {
                     return strValue;
                 }
-                else if (returnType == typeof(TransactionSubTypes?)) {
-                    return (TransactionSubTypes)int.Parse(Convert.ToInt64(value[0]).ToString("X2"), System.Globalization.NumberStyles.HexNumber);
-                }
                 else if (returnType == typeof(DynamicCurrencyStatus?)) {
                     return (DynamicCurrencyStatus)int.Parse(strValue);
                 }
