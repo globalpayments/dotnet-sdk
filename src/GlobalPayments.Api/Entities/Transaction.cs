@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.PaymentMethods;
 
-namespace GlobalPayments.Api.Entities {
+namespace GlobalPayments.Api.Entities
+{
     /// <summary>
     /// Transaction response.
     /// </summary>
-    public class Transaction {
+    public class Transaction
+    {
         /// <summary>
         /// The authorized amount.
         /// </summary>
@@ -17,13 +19,16 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The authorization code provided by the issuer.
         /// </summary>
-        public string AuthorizationCode {
-            get {
+        public string AuthorizationCode
+        {
+            get
+            {
                 if (TransactionReference != null)
                     return TransactionReference.AuthCode;
                 return null;
             }
-            set {
+            set
+            {
                 if (TransactionReference == null)
                     TransactionReference = new TransactionReference();
                 TransactionReference.AuthCode = value;
@@ -75,13 +80,16 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The client transaction ID supplied in the request.
         /// </summary>
-        public string ClientTransactionId {
-            get {
+        public string ClientTransactionId
+        {
+            get
+            {
                 if (TransactionReference != null)
                     return TransactionReference.ClientTransactionId;
                 return null;
             }
-            set {
+            set
+            {
                 if (TransactionReference == null)
                     TransactionReference = new TransactionReference();
                 TransactionReference.ClientTransactionId = value;
@@ -129,13 +137,16 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The order ID supplied in the request.
         /// </summary>
-        public string OrderId {
-            get {
+        public string OrderId
+        {
+            get
+            {
                 if (TransactionReference != null)
                     return TransactionReference.OrderId;
                 return null;
             }
-            set {
+            set
+            {
                 if (TransactionReference == null)
                     TransactionReference = new TransactionReference();
                 TransactionReference.OrderId = value;
@@ -145,13 +156,16 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The type of payment made in the request.
         /// </summary>
-        public PaymentMethodType PaymentMethodType {
-            get {
+        public PaymentMethodType PaymentMethodType
+        {
+            get
+            {
                 if (TransactionReference != null)
                     return TransactionReference.PaymentMethodType;
                 return PaymentMethodType.Credit;
             }
-            set {
+            set
+            {
                 if (TransactionReference == null)
                     TransactionReference = new TransactionReference();
                 TransactionReference.PaymentMethodType = value;
@@ -205,16 +219,30 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The gateway transaction ID of the transaction.
         /// </summary>
-        public string TransactionId {
-            get {
+        public string TransactionId
+        {
+            get
+            {
                 if (TransactionReference != null)
                     return TransactionReference.TransactionId;
                 return null;
             }
-            set {
+            set
+            {
                 if (TransactionReference == null)
                     TransactionReference = new TransactionReference();
                 TransactionReference.TransactionId = value;
+            }
+        }
+
+        public string BatchNumber
+        {
+            get => TransactionReference?.BatchNumber;
+            set
+            {
+                if (TransactionReference == null)
+                    TransactionReference = new TransactionReference();
+                TransactionReference.BatchNumber = value;
             }
         }
 
@@ -238,9 +266,12 @@ namespace GlobalPayments.Api.Entities {
         /// <param name="paymentMethodType">
         /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
         /// </param>
-        public static Transaction FromId(string transactionId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit) {
-            return new Transaction {
-                TransactionReference = new TransactionReference {
+        public static Transaction FromId(string transactionId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit)
+        {
+            return new Transaction
+            {
+                TransactionReference = new TransactionReference
+                {
                     TransactionId = transactionId,
                     PaymentMethodType = paymentMethodType
                 }
@@ -255,13 +286,16 @@ namespace GlobalPayments.Api.Entities {
         /// at a later date/time.
         /// </remarks>
         /// <param name="transactionId">The original transaction ID</param>
-        /// <param name="transactionId">The original transaction's order ID</param>
+        /// <param name="orderId">The original transaction's order ID</param>
         /// <param name="paymentMethodType">
         /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
         /// </param>
-        public static Transaction FromId(string transactionId, string orderId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit) {
-            return new Transaction {
-                TransactionReference = new TransactionReference {
+        public static Transaction FromId(string transactionId, string orderId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit)
+        {
+            return new Transaction
+            {
+                TransactionReference = new TransactionReference
+                {
                     TransactionId = transactionId,
                     PaymentMethodType = paymentMethodType,
                     OrderId = orderId
@@ -273,7 +307,8 @@ namespace GlobalPayments.Api.Entities {
         /// Creates an additional authorization against the original transaction.
         /// </summary>
         /// <param name="amount">The additional amount to authorize</param>
-        public ManagementBuilder AdditionalAuth(decimal? amount = null) {
+        public ManagementBuilder AdditionalAuth(decimal? amount = null)
+        {
             return new ManagementBuilder(TransactionType.Auth)
                 .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
@@ -283,12 +318,14 @@ namespace GlobalPayments.Api.Entities {
         /// Captures the original transaction.
         /// </summary>
         /// <param name="amount">The amount to capture</param>
-        public ManagementBuilder Capture(decimal? amount = null) {
+        public ManagementBuilder Capture(decimal? amount = null)
+        {
             var builder = new ManagementBuilder(TransactionType.Capture)
                 .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
 
-            if (MultiCapture) {
+            if (MultiCapture)
+            {
                 builder.WithMultiCapture(MultiCaptureSequence.Value, MultiCapturePaymentCount.Value);
             }
             return builder;
@@ -297,14 +334,16 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Edits the original transaction.
         /// </summary>
-        public ManagementBuilder Edit() {
+        public ManagementBuilder Edit()
+        {
             return new ManagementBuilder(TransactionType.Edit).WithPaymentMethod(TransactionReference);
         }
 
         /// <summary>
         /// Places the original transaction on hold.
         /// </summary>
-        public ManagementBuilder Hold() {
+        public ManagementBuilder Hold()
+        {
             return new ManagementBuilder(TransactionType.Hold).WithPaymentMethod(TransactionReference);
         }
 
@@ -312,7 +351,8 @@ namespace GlobalPayments.Api.Entities {
         /// Refunds/returns the original transaction.
         /// </summary>
         /// <param name="amount">The amount to refund/return</param>
-        public ManagementBuilder Refund(decimal? amount = null) {
+        public ManagementBuilder Refund(decimal? amount = null)
+        {
             return new ManagementBuilder(TransactionType.Refund)
                 .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
@@ -321,7 +361,8 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Releases the original transaction from a hold.
         /// </summary>
-        public ManagementBuilder Release() {
+        public ManagementBuilder Release()
+        {
             return new ManagementBuilder(TransactionType.Release).WithPaymentMethod(TransactionReference);
         }
 
@@ -329,7 +370,8 @@ namespace GlobalPayments.Api.Entities {
         /// Reverses the original transaction.
         /// </summary>
         /// <param name="amount">The original authorization amount</param>
-        public ManagementBuilder Reverse(decimal? amount = null) {
+        public ManagementBuilder Reverse(decimal? amount = null)
+        {
             return new ManagementBuilder(TransactionType.Reversal)
                 .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
@@ -338,13 +380,15 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Voids the original transaction.
         /// </summary>
-        public ManagementBuilder Void(VoidReason? reason = null) {
+        public ManagementBuilder Void(VoidReason? reason = null)
+        {
             return new ManagementBuilder(TransactionType.Void)
                 .WithPaymentMethod(TransactionReference)
                 .WithVoidReason(reason);
         }
 
-        public ManagementBuilder Increment(decimal? amount = null) {
+        public ManagementBuilder Increment(decimal? amount = null)
+        {
             return new ManagementBuilder(TransactionType.Increment).WithAmount(amount).WithPaymentMethod(TransactionReference);
         }
     }
