@@ -60,6 +60,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                 try {
                     CardType = CardUtils.MapCardType(_number);
                     FleetCard = CardUtils.IsFleet(CardType, _number);
+                    PurchaseCard = CardUtils.IsPurchase(CardType, _number);
                 }
                 catch (Exception) {
                     CardType = "Unknown";

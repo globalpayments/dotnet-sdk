@@ -71,5 +71,35 @@ namespace GlobalPayments.Api.Utils {
             }
             return null;
         }
+        public static T FromMapping<T>(Target target, object value) {
+            var fields = typeof(T).GetRuntimeFields();            
+            foreach (var field in fields) {
+                var attr = field.GetCustomAttribute<MapAttribute>();
+                if (attr != null && attr.Value.Equals(value) && attr.Target.Equals(target)) {
+                    var rvalue = (T)Enum.Parse(typeof(T), field.Name);
+                    return rvalue;
+                }
+            }
+            return default(T);
+
+        }
     }
+
+    //public class EnumUtils {
+        //public static bool IsDefined<V>(byte value) where V : System.Enum {
+        //    return Parse<V>(value) != null;
+        //}
+        //public static V Parse<V>(byte value) where V : System.Enum {
+        //    ReverseByteEnumMap<V> map = new ReverseByteEnumMap<V>();
+        //    return map.Get(value);
+        //}
+        //public static V Parse<V>(string value) where V : System.Enum {
+        //    ReverseStringEnumMap<V> map = new ReverseStringEnumMap<V>();
+        //    return map.Get(value);
+        //}
+        //public static V Parse<V>(int value) where V : System.Enum {
+        //    ReverseIntEnumMap<V> map = new ReverseIntEnumMap<V>();
+        //    return map.Get(value);
+        //}
+    //}
 }

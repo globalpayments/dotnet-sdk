@@ -44,10 +44,15 @@ namespace GlobalPayments.Api.Tests.TestData {
         }
 
         public static CreditTrackData VisaSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
-            return new CreditTrackData {
+            CreditTrackData rvalue = new CreditTrackData {
                 Value = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
                 EntryMethod = entryMethod
             };
+            return rvalue;
+            //return new CreditTrackData {
+            //    Value = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
+            //    EntryMethod = entryMethod
+            //};
         }
 
         public static CreditTrackData VisaFallbackSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
@@ -90,10 +95,15 @@ namespace GlobalPayments.Api.Tests.TestData {
         }
 
         public static CreditTrackData MasterCardSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
-            return new CreditTrackData {
-                Value = "%B5473500000000014^MC TEST CARD^251210199998888777766665555444433332?;5473500000000014=25121019999888877776?",
+            CreditTrackData rvalue = new CreditTrackData {
+                Value = "%B5506740000004316^MC TEST CARD^251210199998888777766665555444433332?;5506740000004316=25121019999888877776?",
                 EntryMethod = entryMethod
             };
+            return rvalue;
+            //return new CreditTrackData {
+            //    Value = "%B5473500000000014^MC TEST CARD^251210199998888777766665555444433332?;5473500000000014=25121019999888877776?",
+            //    EntryMethod = entryMethod
+            //};
         }
 
         public static CreditTrackData MasterCard24Swipe(EntryMethod entryMethod = EntryMethod.Swipe) {
@@ -132,10 +142,15 @@ namespace GlobalPayments.Api.Tests.TestData {
         }
 
         public static CreditTrackData DiscoverSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
-            return new CreditTrackData {
+            CreditTrackData creditTrackData = new CreditTrackData {
                 Value = "%B6011000990156527^DIS TEST CARD^25121011000062111401?;6011000990156527=25121011000062111401?",
                 EntryMethod = entryMethod
             };
+            return creditTrackData;
+            //return new CreditTrackData {
+            //    Value = "%B6011000990156527^DIS TEST CARD^25121011000062111401?;6011000990156527=25121011000062111401?",
+            //    EntryMethod = entryMethod
+            //};
         }
         public static CreditTrackData DiscoverSwipeEncrypted(EntryMethod entryMethod = EntryMethod.Swipe) {
             return new CreditTrackData {
@@ -159,10 +174,16 @@ namespace GlobalPayments.Api.Tests.TestData {
         }
 
         public static CreditTrackData AmexSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
-            return new CreditTrackData {
-                Value = "%B3727 006992 51018^AMEX TEST CARD^2512990502700?;372700699251018=2512990502700?",
+            CreditTrackData rvalue = new CreditTrackData {
+                Value = "%B3739 531923 51004^STANDARD ANSI             ^2008100812345?",
                 EntryMethod = entryMethod
             };
+            return rvalue;
+            //return new CreditTrackData
+            //{
+            //    Value = "%B3727 006992 51018^AMEX TEST CARD^2512990502700?;372700699251018=2512990502700?",
+            //    EntryMethod = entryMethod
+            //};
         }
 
         public static CreditCardData JcbManual(bool cardPresent = false, bool readerPresent = false) {
@@ -193,6 +214,175 @@ namespace GlobalPayments.Api.Tests.TestData {
             return new GiftCard {
                 Number = "5022440000000000007"
             };
+        }        
+        public static CreditCardData VisaFleetManual(bool cardPresent = false, bool readerPresent = false) {
+            CreditCardData rvalue = new CreditCardData {
+                Number = "4761360000000249",
+                ExpMonth = 12,
+                ExpYear = 2025,
+                Cvn = "123",
+                CardPresent = cardPresent,
+                ReaderPresent = readerPresent
+            };
+            return rvalue;
+        }        
+        public static CreditTrackData VisaFleetSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData {
+                Value = "%B4485536666666663^VISA TEST CARD/GOOD^25121019206100000001?;4485536666666663=16111019206100000001?",
+                EntryMethod = entryMethod
+            };
+            return rvalue;
+            //CreditTrackData rvalue = new CreditTrackData();
+            //rvalue.Value = "%B4484630000000126^VISA TEST CARD/GOOD^25121019206100000001?;4484630000000126=16111019206100000001?";
+            //rvalue.EntryMethod = entryMethod;
+            //return rvalue;
+        }        
+        public static CreditCardData MasterCardFleetManual(bool cardPresent = false, bool readerPresent = false) {
+            CreditCardData card = new CreditCardData {
+                Number = "5567300000000016",
+                ExpMonth = 12,
+                ExpYear = 2025,
+                Cvn = "123",
+                CardPresent = cardPresent,
+                ReaderPresent = readerPresent
+            };
+
+            return card;
+        }        
+        public static CreditTrackData MasterCardFleetSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData {
+                Value = "%B5567300000000016^MASTERCARD FLEET          ^2512101777766665555444433332111?;5567300000000016=25121019999888877724?",
+                EntryMethod = entryMethod
+            };
+            return rvalue;
+            //CreditTrackData track = new CreditTrackData();
+            //track.Value = "%B5567300000000016^MASTERCARD FLEET          ^2512101777766665555444433332111?;5567300000000016=25121019999888877711?";
+            //track.EntryMethod = entryMethod;
+
+            //return track;
+        }
+        public static CreditCardData FleetOneManual(bool cardPresent = false, bool readerPresent = false) {
+            CreditCardData rvalue = new CreditCardData {
+                Number = "5014860000000000126",
+                ExpMonth = 12,
+                ExpYear = 2025,
+                Cvn = "123",
+                CardPresent = cardPresent,
+                ReaderPresent = readerPresent
+            };
+            return rvalue;
+        }
+        public static CreditTrackData FleetOneSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData {
+                Value = "%B5014860000000126^FLEETONE TEST CARD/GOOD^25121019206100000001?;5014860000000126=16111019206100000001?",
+                EntryMethod = entryMethod
+            };
+            return rvalue;            
+        }
+        public static GiftCard ValueLinkManual() {
+            GiftCard rvalue = new GiftCard();
+            rvalue.SetValue("6010561234567890123");
+            return rvalue;
+        }
+        public static GiftCard ValueLinkSwipe() {
+            GiftCard rvalue = new GiftCard();
+            rvalue.SetValue("7083559999009209310=999900100000000");
+            return rvalue;
+        }
+        public static CreditCardData AmexManualEncrypted(bool cardPresent=true) {
+            CreditCardData rvalue = new CreditCardData();
+            rvalue.Number = "372700790311018";
+            rvalue.ExpMonth = 12;
+            rvalue.ExpYear = 2020;
+            rvalue.CardPresent = cardPresent;
+            rvalue.ReaderPresent = true;
+            rvalue.EncryptionData = EncryptionData.Version2("/wECAQEEAoFGAgEH4gwTTDT6jRZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0yp142cX/wGCVF/gVBOFEiFbZxWq0ZQeADdyMNKbOOzxu2MsHhZ+MkDQrz1KJKJVOHQyV3/mnHBWsQPdlGpVkxK0GxFrxbtIxOwViiBZb2ySajpUat6o+MunOrz7ZsYeurOJHtrpYrLEmPgVwxL3dn3Br+XS5sF2pqtG4lq5MsmgAzzKH9/llZ+FDb1e0NJX/8Nso784bBAr3dmUqagCaWSVb4fcg", "1");
+            return rvalue;
+        }
+        public static CreditTrackData AmexSwipeEncrypted(EntryMethod entryMethod=EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData();
+            rvalue.Value = "B372700791018^AMEX TEST CARD^2512990ocSvC1w2YgC";
+            rvalue.EntryMethod = entryMethod;
+            rvalue.EncryptionData = EncryptionData.Version2("/wECAQEEAoFGAgEH4gwTTDT6jRZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0yp142cX/wGCVF/gVBOFEiFbZxWq0ZQeADdyMNKbOOzxu2MsHhZ+MkDQrz1KJKJVOHQyV3/mnHBWsQPdlGpVkxK0GxFrxbtIxOwViiBZb2ySajpUat6o+MunOrz7ZsYeurOJHtrpYrLEmPgVwxL3dn3Br+XS5sF2pqtG4lq5MsmgAzzKH9/llZ+FDb1e0NJX/8Nso784bBAr3dmUqagCaWSVb4fcg", "1");
+            return rvalue;
+        }
+        /*
+        SVS
+        ;7083559900007000792=99990018010300000?
+        ;7083559900007000776=99990013849500000?
+        ;7083559900007000818=99990012504400000?
+        */
+        public static GiftCard SvsManual() {
+            GiftCard rvalue = new GiftCard();
+            rvalue.SetValue("6394700000001113");
+            rvalue.Pin = "1234";
+            return rvalue;
+        }
+        public static GiftCard SvsSwipe() {
+            GiftCard rvalue = new GiftCard();
+            rvalue.SetValue(";7083559900007000818=99990012504400000?");
+            return rvalue;
+        }
+
+        public static CreditCardData VisaCorporateManual(bool cardPresent = false, bool readerPresent = false) {
+            CreditCardData rvalue = new CreditCardData();
+            rvalue.Number = "4013872718148777";
+            rvalue.ExpMonth = 12;
+            rvalue.ExpYear = 2025;
+            rvalue.Cvn = "123";
+            rvalue.CardPresent = cardPresent;
+            rvalue.ReaderPresent = readerPresent;
+            return rvalue;
+        }
+
+        public static CreditTrackData VisaCorporateSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData();
+            rvalue.Value = "%B4273594425847534^VISA TEST CARD/GOOD^2512101?;4273594425847534=1712101?";
+            rvalue.EntryMethod = entryMethod;
+            return rvalue;
+        }
+
+        public static CreditCardData VisaPurchasingManual(bool cardPresent = false, bool readerPresent = false) {
+            CreditCardData rvalue = new CreditCardData();
+            rvalue.Number = "4484104292153662";
+            rvalue.ExpMonth = 12;
+            rvalue.ExpYear = 2025;
+            rvalue.Cvn = "123";
+            rvalue.CardPresent = cardPresent;
+            rvalue.ReaderPresent = readerPresent;
+            return rvalue;
+        }
+
+        public static CreditTrackData VisaPurchasingSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData();
+            rvalue.Value = "%B4484104292153662^POSINT TEST VISA P CARD^2512501032100321001000?;4484104292153662=18035010321?";
+            rvalue.EntryMethod = entryMethod;
+            return rvalue;
+        }
+
+        public static CreditCardData MasterCardPurchasingManual(bool cardPresent = false, bool readerPresent = false) {
+            CreditCardData rvalue = new CreditCardData();
+            rvalue.Number = "5302490000004066";
+            rvalue.ExpMonth = 12;
+            rvalue.ExpYear = 2025;
+            rvalue.Cvn = "123";
+            rvalue.CardPresent = cardPresent;
+            rvalue.ReaderPresent = readerPresent;
+            return rvalue;
+        }
+
+        public static CreditTrackData MasterCardPurchasingSwipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData();
+            rvalue.Value = "%B5405059925478964^MASTERCARD TEST^25121011234567890123?;5405059925478964=18121011234567890123?";
+            rvalue.EntryMethod = entryMethod;
+            return rvalue;
+        }
+
+        public static CreditTrackData MasterCard2Swipe(EntryMethod entryMethod = EntryMethod.Swipe) {
+            CreditTrackData rvalue = new CreditTrackData();
+            rvalue.Value = "%B2223000010005780^TEST CARD/EMV BIN-2^25121010000000009210?;2223000010005780=25121010000000009210?";
+            rvalue.EntryMethod = entryMethod;
+            return rvalue;
         }
     }
 }

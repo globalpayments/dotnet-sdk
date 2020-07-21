@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GlobalPayments.Api.Builders;
+using System;
 using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Entities {
@@ -28,5 +29,38 @@ namespace GlobalPayments.Api.Entities {
         public decimal? TotalAmount { get; set; }
         public int TransactionCount { get; set; }
         public string TransactionToken { get; set; }
+        public bool IsBalanced {
+            get {
+                if (ResponseCode != null) {
+                    return ResponseCode.Equals("500");
+                }
+                return false;
+            }
+            set { }
+        }
+
+        public BatchSummary ResubmitTransactions(List<String> transactionTokens, String configName) {
+            if(!ResponseCode.Equals("580")) {
+                throw new BuilderException("Batch recovery has not been requested for this batch.");
+            }
+
+            // resubmit the tokens
+            LinkedList<Transaction> responses = new LinkedList<Transaction>();
+            foreach(string token in transactionTokens) {
+                Transaction response = new ResubmitBuilder(TransactionType.DataCollect)
+                        .WithTransactionToken(token)
+                        .Execute(configName);
+                responses.AddLast(response);
+            }
+            ResentTransactions = responses;
+
+            // resubmit the batch summary
+            Transaction batchResponse = new ResubmitBuilder(TransactionType.BatchClose)
+                    .WithTransactionToken(TransactionToken)
+                    .Execute(configName);
+            ResentBatchClose = batchResponse;
+            ResponseCode = batchResponse.ResponseCode;
+            return this;
+        }
     }
 }

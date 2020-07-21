@@ -1,12 +1,10 @@
 ﻿using GlobalPayments.Api.Utils;
 
-namespace GlobalPayments.Api.Entities
-{
+namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Represents a billing or shipping address for the consumer.
     /// </summary>
-    public class Address
-    {
+    public class Address {
         private string province;
 
         internal AddressType Type { get; set; }
@@ -87,6 +85,13 @@ namespace GlobalPayments.Api.Entities
 
         public bool IsCountry(string countryCode) {
             return CountryUtils.IsCountry(this, countryCode);
+        }
+
+        public string Name { get; set; }
+
+        public Address(string streetAddress1 = null, string code = null) {
+            this.StreetAddress1 = streetAddress1;
+            this.PostalCode = code;
         }
     }
 }

@@ -937,4 +937,15 @@ namespace GlobalPayments.Api.Entities {
         Two,
         Any
     }
+    
+    public enum EbtCardType {
+        CashBenefit,	
+        FoodStamp	
+    }	
+
+    public enum BatchCloseType {	
+        Forced,	
+        EndOfShift,	
+        //EndOfDay	
+    }
 }

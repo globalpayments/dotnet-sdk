@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Gateways.Events;
+using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Entities {
@@ -19,13 +21,15 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string AuthorizationCode {
             get {
-                if (TransactionReference != null)
+                if (TransactionReference != null) {
                     return TransactionReference.AuthCode;
+                }
                 return null;
             }
             set {
-                if (TransactionReference == null)
+                if (TransactionReference == null) {
                     TransactionReference = new TransactionReference();
+                }
                 TransactionReference.AuthCode = value;
             }
         }
@@ -77,17 +81,75 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string ClientTransactionId {
             get {
-                if (TransactionReference != null)
+                if (TransactionReference != null) {
                     return TransactionReference.ClientTransactionId;
+                }
                 return null;
             }
             set {
-                if (TransactionReference == null)
+                if (TransactionReference == null) {
                     TransactionReference = new TransactionReference();
+                }
                 TransactionReference.ClientTransactionId = value;
             }
         }
+        public NtsData NTSData {
+            get {
+                if (TransactionReference != null) {
+                    return TransactionReference.NtsData;
+                }
+                return null;
+            }
+            set {
+                if (TransactionReference == null) {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.NtsData = value;
+            }
+        }
+        public string MessageTypeIndicator {
+            get {
+                if (TransactionReference != null) {
+                    return TransactionReference.MessageTypeIndicator;
+                }
+                return null;
+            }
+            set {
+                if (TransactionReference == null) {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.MessageTypeIndicator = value;
+            }
+        }
+        public string SystemTraceAuditNumber {
+            get {
+                if (TransactionReference != null) {
+                    return TransactionReference.SystemTraceAuditNumber;
+                }
+                return null;
+            }
+            set {
+                if (TransactionReference == null) {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.SystemTraceAuditNumber = value;
+            }
+        }
+        public string OriginalTransactionTime {
+            get {
+                if (TransactionReference != null) {
+                    return TransactionReference.OriginalTransactionTime;
+                }
+                return null;
+            }
+            set {
+                if (TransactionReference == null) {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.OriginalTransactionTime = value;
 
+            }
+        }
         /// <summary>
         /// The commercial indicator for Level II/III.
         /// </summary>
@@ -131,13 +193,15 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string OrderId {
             get {
-                if (TransactionReference != null)
+                if (TransactionReference != null) {
                     return TransactionReference.OrderId;
+                }
                 return null;
             }
             set {
-                if (TransactionReference == null)
+                if (TransactionReference == null) {
                     TransactionReference = new TransactionReference();
+                }
                 TransactionReference.OrderId = value;
             }
         }
@@ -147,13 +211,15 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public PaymentMethodType PaymentMethodType {
             get {
-                if (TransactionReference != null)
+                if (TransactionReference != null) {
                     return TransactionReference.PaymentMethodType;
+                }
                 return PaymentMethodType.Credit;
             }
             set {
-                if (TransactionReference == null)
+                if (TransactionReference == null) {
                     TransactionReference = new TransactionReference();
+                }
                 TransactionReference.PaymentMethodType = value;
             }
         }
@@ -207,14 +273,30 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string TransactionId {
             get {
-                if (TransactionReference != null)
+                if (TransactionReference != null) {
                     return TransactionReference.TransactionId;
+                }
                 return null;
             }
             set {
-                if (TransactionReference == null)
+                if (TransactionReference == null) {
                     TransactionReference = new TransactionReference();
+                }
                 TransactionReference.TransactionId = value;
+            }
+        }
+        public string ProcessingCode {
+            get {
+                if (TransactionReference != null) {
+                    return TransactionReference.OriginalProcessingCode;
+                }
+                return null;
+            }
+            set {
+                if (TransactionReference == null) {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.OriginalProcessingCode = value;
             }
         }
 
@@ -226,48 +308,9 @@ namespace GlobalPayments.Api.Entities {
         internal GiftCard GiftCard { get; set; }
 
         internal TransactionReference TransactionReference { get; set; }
-
-        /// <summary>
-        /// Creates a `Transaction` object from a stored transaction ID.
-        /// </summary>
-        /// <remarks>
-        /// Used to expose management requests on the original transaction
-        /// at a later date/time.
-        /// </remarks>
-        /// <param name="transactionId">The original transaction ID</param>
-        /// <param name="paymentMethodType">
-        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
-        /// </param>
-        public static Transaction FromId(string transactionId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit) {
-            return new Transaction {
-                TransactionReference = new TransactionReference {
-                    TransactionId = transactionId,
-                    PaymentMethodType = paymentMethodType
-                }
-            };
-        }
-
-        /// <summary>
-        /// Creates a `Transaction` object from a stored transaction ID.
-        /// </summary>
-        /// <remarks>
-        /// Used to expose management requests on the original transaction
-        /// at a later date/time.
-        /// </remarks>
-        /// <param name="transactionId">The original transaction ID</param>
-        /// <param name="transactionId">The original transaction's order ID</param>
-        /// <param name="paymentMethodType">
-        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
-        /// </param>
-        public static Transaction FromId(string transactionId, string orderId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit) {
-            return new Transaction {
-                TransactionReference = new TransactionReference {
-                    TransactionId = transactionId,
-                    PaymentMethodType = paymentMethodType,
-                    OrderId = orderId
-                }
-            };
-        }
+        public PriorMessageInformation MessageInformation { get; set; }
+        public string TransactionToken { get; set; }
+        public List<IGatewayEvent> GatewayEvents { get; set; }
 
         /// <summary>
         /// Creates an additional authorization against the original transaction.
@@ -277,6 +320,13 @@ namespace GlobalPayments.Api.Entities {
             return new ManagementBuilder(TransactionType.Auth)
                 .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
+        }
+
+        public ManagementBuilder Cancel(decimal? amount = null) {
+            return new ManagementBuilder(TransactionType.Void)
+                    .WithPaymentMethod(TransactionReference)
+                    .WithCustomerInitiated(true)
+                    .WithAmount(amount);
         }
 
         /// <summary>
@@ -306,6 +356,12 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public ManagementBuilder Hold() {
             return new ManagementBuilder(TransactionType.Hold).WithPaymentMethod(TransactionReference);
+        }
+
+        public ManagementBuilder PreAuthCompletion(decimal? amount = null) {
+            return new ManagementBuilder(TransactionType.PreAuthCompletion)
+                    .WithPaymentMethod(TransactionReference)
+                    .WithAmount(amount);
         }
 
         /// <summary>
@@ -338,14 +394,84 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Voids the original transaction.
         /// </summary>
-        public ManagementBuilder Void(VoidReason? reason = null) {
+        public ManagementBuilder Void(VoidReason? reason = null, decimal? amount = null, bool force = false) {
             return new ManagementBuilder(TransactionType.Void)
                 .WithPaymentMethod(TransactionReference)
-                .WithVoidReason(reason);
+                .WithVoidReason(reason)
+                .WithAmount(amount)
+                .WithForcedReversal(force);
         }
 
         public ManagementBuilder Increment(decimal? amount = null) {
             return new ManagementBuilder(TransactionType.Increment).WithAmount(amount).WithPaymentMethod(TransactionReference);
         }
+
+        /// <summary>
+        /// Creates a `Transaction` object from a stored transaction ID.
+        /// </summary>
+        /// <remarks>
+        /// Used to expose management requests on the original transaction
+        /// at a later date/time.
+        /// </remarks>
+        /// <param name="transactionId">The original transaction ID</param>
+        /// <param name="paymentMethodType">
+        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
+        /// </param>
+        public static Transaction FromId(string transactionId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit)
+        {
+            return new Transaction
+            {
+                TransactionReference = new TransactionReference
+                {
+                    TransactionId = transactionId,
+                    PaymentMethodType = paymentMethodType
+                }
+            };
+        }
+
+        /// <summary>
+        /// Creates a `Transaction` object from a stored transaction ID.
+        /// </summary>
+        /// <remarks>
+        /// Used to expose management requests on the original transaction
+        /// at a later date/time.
+        /// </remarks>
+        /// <param name="transactionId">The original transaction ID</param>
+        /// <param name="transactionId">The original transaction's order ID</param>
+        /// <param name="paymentMethodType">
+        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
+        /// </param>
+        public static Transaction FromId(string transactionId, string orderId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit)
+        {
+            return new Transaction
+            {
+                TransactionReference = new TransactionReference
+                {
+                    TransactionId = transactionId,
+                    PaymentMethodType = paymentMethodType,
+                    OrderId = orderId
+                }
+            };
+        }
+
+        public static Transaction FromNetwork(decimal? amount, string authCode, NtsData originalNtsCode, IPaymentMethod originalPaymentMethod, string messageTypeIndicator = null, string stan = null, string originalTransactionTime = null, string originalProcessingCode = null, string acquirerId = null)
+        {
+            TransactionReference reference = new TransactionReference();
+            reference.OriginalAmount = amount;
+            reference.AcquiringInstitutionId = acquirerId;
+            reference.AuthCode = authCode;
+            reference.MessageTypeIndicator = messageTypeIndicator;
+            reference.NtsData = originalNtsCode;
+            reference.OriginalPaymentMethod = originalPaymentMethod;
+            reference.OriginalTransactionTime = originalTransactionTime;
+            reference.SystemTraceAuditNumber = stan;
+            reference.OriginalProcessingCode = originalProcessingCode;
+
+            Transaction trans = new Transaction();
+            trans.TransactionReference = reference;
+
+            return trans;
+        }
+
     }
 }

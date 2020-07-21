@@ -23,6 +23,8 @@ namespace GlobalPayments.Api {
         internal bool Validated { get; private set; }
 
         internal abstract void ConfigureContainer(ConfiguredServices services);
+        public bool EnableLogging { get; set; }
+        public bool ForceGatewayTimeout { get; set; }
 
         internal virtual void Validate() {
             Validated = true;
