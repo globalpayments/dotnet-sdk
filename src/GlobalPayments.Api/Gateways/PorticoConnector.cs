@@ -122,7 +122,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(secureEcommerce, "ECommerceIndicator", secureEcom.Eci);
                         et.SubElement(secureEcommerce, "XID", secureEcom.Xid);
                     }
-                }                
+                }
 
                 // recurring data
                 if (builder.TransactionModifier == TransactionModifier.Recurring) {
@@ -192,17 +192,17 @@ namespace GlobalPayments.Api.Gateways {
                 // check action
                 et.SubElement(block1, "CheckAction").Text("SALE");
 
+                var accountInfo = et.SubElement(block1, "AccountInfo");
                 // account info
                 if (string.IsNullOrEmpty(check.Token)) {
-                    var accountInfo = et.SubElement(block1, "AccountInfo");
                     et.SubElement(accountInfo, "RoutingNumber", check.RoutingNumber);
                     et.SubElement(accountInfo, "AccountNumber", check.AccountNumber);
                     et.SubElement(accountInfo, "CheckNumber", check.CheckNumber);
                     et.SubElement(accountInfo, "MICRData", check.MicrNumber);
-                    et.SubElement(accountInfo, "AccountType", check.AccountType.ToString());
                 }
                 else et.SubElement(block1, "TokenValue").Text(tokenValue);
 
+                et.SubElement(accountInfo, "AccountType", check.AccountType.ToString());
                 et.SubElement(block1, "DataEntryMode", check.EntryMode.ToString().ToUpper());
                 et.SubElement(block1, "CheckType", check.CheckType.ToString());
                 et.SubElement(block1, "SECCode", check.SecCode);
@@ -597,7 +597,7 @@ namespace GlobalPayments.Api.Gateways {
                         AuthCode = root.GetValue<string>("AuthCode")
                     };
                 }
-                
+
                 // gift card create data
                 if (root.Has("CardData")) {
                     result.GiftCard = new GiftCard {
@@ -724,7 +724,7 @@ namespace GlobalPayments.Api.Gateways {
                     };
 
                     // card holder data
-                    
+
                     // lodging data
                     if (root.Has("LodgingData")) {
                         summary.LodgingData = new LodgingData {
@@ -989,6 +989,11 @@ namespace GlobalPayments.Api.Gateways {
 
             if (paymentMethod is ITokenizable && !string.IsNullOrEmpty(((ITokenizable)paymentMethod).Token)) {
                 tokenValue = ((ITokenizable)paymentMethod).Token;
+                return true;
+            }
+
+            if (paymentMethod is eCheck && !string.IsNullOrEmpty(((eCheck)paymentMethod).Token)) {
+                tokenValue = ((eCheck)paymentMethod).Token;
                 return true;
             }
             return false;
