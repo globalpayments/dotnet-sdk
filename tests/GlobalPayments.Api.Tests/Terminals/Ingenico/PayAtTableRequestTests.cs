@@ -19,7 +19,6 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
         public PayAtTableRequestTests() {
 
 
-            TerminalUtilities.log("TERMINAL START CONNECTION...");
 
             _device = DeviceService.Create(new ConnectionConfig() {
                 DeviceType = DeviceType.Ingenico_EPOS_Desk5000,
@@ -34,20 +33,17 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
 
             _device.OnPayAtTableRequest += _device_OnPayAtTableRequest;
 
-            TerminalUtilities.log("TERMINAL CONNECTED");
         }
 
         private void _device_OnPayAtTableRequest(PATRequest request) {
             // Success ConfirmaitonOK
 
-            TerminalUtilities.log("OnPayAtTableRequest " + request.ToString() + "  " + request.RequestType.ToString());
 
             Thread.Sleep(5 * 1000);
 
 
 
             if (request.RequestType == PATRequestType.TableReceipt) {
-                TerminalUtilities.log("Receipt response");
                 _device.PayAtTableResponse()
                     .WithXMLPath("C:\\tmp\\receipt.txt")
                     .Execute();
