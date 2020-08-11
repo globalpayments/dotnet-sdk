@@ -143,5 +143,9 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         #endregion
+
+        public override TerminalAuthBuilder PayAtTableResponse() {
+            return base.PayAtTableResponse();
+        }
     }
 }
