@@ -42,6 +42,8 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         public const int RAW_RESPONSE_LENGTH = 80;
         public const string MGMT_SCOPE = "root\\CIMV2";
         public const string MGMT_QUERY = "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"";
+        public const int MSG_FRAME_TWO_LEN = 80;
+        public const string XML_TAG = "<?xml";
     }
 
     internal static class INGENICO_RESP {
@@ -52,6 +54,11 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         public readonly static string[] XML = { "<CREDIT_CARD_RECEIPT>", "LF" };
         public readonly static string INVALID = "\u0005\u0004";
         public readonly static string ENDXML = "</CREDIT_CARD_RECEIPT>";
+    }
+
+    internal static class PAYATTABLE_RESP {
+        public readonly static string PAT_EPOS_NUMBER = "00";
+        public readonly static string PAT_STATUS = "0";
     }
 
     public enum ReceiptType {
@@ -190,5 +197,60 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         /// For PID Command response parsing format
         /// </summary>
         PID = 2,
+
+        /// <summary>
+        /// For Pay@Table functionalities in terminal
+        /// </summary>
+        PayAtTableRequest
+    }
+
+    /// <summary>
+    /// Type of request message from terminal during Pay@Table mode.
+    /// </summary>
+    public enum PATRequestType {
+        /// <summary>
+        /// Indicates a Table Lock
+        /// </summary>
+        TableLock = 1,
+
+        /// <summary>
+        /// Indicates a Table Unlock
+        /// </summary>
+        TableUnlock = 2,
+
+        /// <summary>
+        /// Indicates a Receipt for table 
+        /// </summary>
+        TableReceipt = 3,
+
+        /// <summary>
+        /// Indicates a List of Table.
+        /// </summary>
+        TableList = 4,
+
+    }
+
+    /// <summary>
+    /// Confirmation options
+    /// </summary>
+    public enum PATResponseType {
+        /// <summary>
+        /// Positive confirmation
+        /// </summary>
+        CONF_OK,
+
+        /// <summary>
+        /// Negative confirmation
+        /// </summary>
+        CONF_NOK
+    }
+
+    /// <summary>
+    /// Indicates if the EPOS want to uses the additional Message
+    /// </summary>
+    public enum PATPaymentMode {
+        NO_ADDITIONAL = 0,
+
+        USE_ADDITIONAL = 1
     }
 }
