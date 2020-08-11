@@ -49,6 +49,9 @@ namespace GlobalPayments.Api.Terminals {
 
         // Associated Gateway
         GatewayConfig GatewayConfig { get; set; }
+
+        // Pay@Table
+        DeviceMode? DeviceMode { get; set; }
     }
 
     public class ConnectionConfig : Configuration, ITerminalConfiguration {
@@ -63,6 +66,7 @@ namespace GlobalPayments.Api.Terminals {
         public string Port { get; set; }
         public IRequestIdProvider RequestIdProvider { get; set; }
         public GatewayConfig GatewayConfig { get; set; }
+        public DeviceMode? DeviceMode { get; set; }
 
         public ConnectionConfig() {
             Timeout = -1;
