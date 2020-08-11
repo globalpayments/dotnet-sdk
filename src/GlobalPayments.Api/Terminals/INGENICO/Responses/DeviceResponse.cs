@@ -42,12 +42,16 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                 Status = ((TransactionStatus)Encoding.UTF8.GetString(response.SubArray(2, 1)).ToInt32()).ToString();
                 Amount = Encoding.UTF8.GetString(response.SubArray(3, 8));
                 PaymentMode = (PaymentMode)Encoding.UTF8.GetString(response.SubArray(11, 1)).ToInt32();
-                DccCurrency = Encoding.UTF8.GetString(response.SubArray(67, 3));
+                CurrencyCode = Encoding.UTF8.GetString(response.SubArray(67, 3));
                 PrivateData = Encoding.UTF8.GetString(response.SubArray(70, response.Length - 70));
 
                 // This is for parsing of Response field for Transaction request
                 if (_parseFormat == ParseFormat.Transaction) {
                     _respField = new DataResponse(response.SubArray(12, 55));
+
+                    DccAmount = _respField.DccAmount;
+                    DccCurrency = _respField.DccCode;
+                    DccStatus = _respField.DccStatus;
                 }
             }
         }
