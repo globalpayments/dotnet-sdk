@@ -74,6 +74,16 @@ namespace GlobalPayments.Api.Entities {
     }
 
     /// <summary>
+    /// Indicates a device mode.
+    /// </summary>
+    public enum DeviceMode {
+        /// <summary>
+        /// For devices that supports Pay@Table functionalities.
+        /// </summary>
+        PAY_AT_TABLE
+    }
+
+    /// <summary>
     /// Indicates an inquiry type.
     /// </summary>
     public enum InquiryType {
