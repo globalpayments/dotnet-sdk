@@ -4,13 +4,12 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Ingenico;
 using GlobalPayments.Api.Terminals.Messaging;
-// TODO: remove this.
-using ReportType = GlobalPayments.Api.Terminals.Ingenico.ReportType;
 
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
         event BroadcastMessageEventHandler OnBroadcastMessage;
+        event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         #region Admin Calls
 
@@ -71,7 +70,7 @@ namespace GlobalPayments.Api.Terminals {
         /// </summary>
         /// <param name="type">Report Type</param>
         /// <returns></returns>
-        TerminalReportBuilder GetReport(ReportType type);
+        TerminalReportBuilder GetReport(Ingenico.ReportType type);
         #endregion
 
         #region Batch Calls
@@ -150,6 +149,17 @@ namespace GlobalPayments.Api.Terminals {
         /// <param name="amount">Amount to be passed for cancel request.</param>
         /// <returns>TerminalManageBuilder</returns>
         TerminalManageBuilder Reverse(decimal? amount = null);
+
+        #endregion
+
+        #region Pay@Table Feature
+
+        /// <summary>
+        /// Response to terminal after Pay@Table request has been made.
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        TerminalAuthBuilder PayAtTableResponse();
 
         #endregion
     }
