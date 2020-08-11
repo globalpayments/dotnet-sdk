@@ -118,6 +118,31 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         internal IDeviceMessage BuildProcessTransaction(TerminalAuthBuilder builder) {
             string message = string.Empty;
+
+            // For Pay@Table functionalities
+            if (_settings.DeviceMode != null && _settings.DeviceMode == DeviceMode.PAY_AT_TABLE) {
+                if (builder.PayAtTableResponse != null && builder.AdditionalMessage != null) {
+
+                    StringBuilder payAtTableResp = new StringBuilder();
+                    payAtTableResp.Append(PAYATTABLE_RESP.PAT_EPOS_NUMBER);
+                    payAtTableResp.Append(PAYATTABLE_RESP.PAT_STATUS);
+                    payAtTableResp.Append((int?)builder.AdditionalMessage ?? 0);
+                    payAtTableResp.Append(ValidateAmount(builder.Amount)?.ToString("00000000"));
+                    payAtTableResp.Append(ValidateCurrency(builder.CurrencyCode) );
+                    payAtTableResp.Append(builder.PayAtTableResponse.ToString());
+
+                    message = payAtTableResp.ToString();
+                }
+                else if (!string.IsNullOrEmpty(builder.FilePath)) {
+                    message = TerminalUtilities.GetTextContent(builder.FilePath);
+                }
+                else {
+                    throw new BuilderException("PayAtTable Response type and Additional message can not be null.");
+                }
+                return TerminalUtilities.BuildRequest(message, settings: _settings.ConnectionMode);
+            }
+
+
             int referenceNumber = builder.ReferenceNumber;
             decimal? amount = builder.Amount;
             int returnRep = 1;
@@ -247,7 +272,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                 currencyCode = "826";
             }
 
-            return currencyCode;
+            return currencyCode.Substring(0, 3);
         }
 
         private decimal? ValidateAmount(decimal? amount) {
