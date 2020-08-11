@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using System.Threading;
 using System.Threading.Tasks;
+using GlobalPayments.Api.Terminals.Ingenico.Requests;
 
 namespace GlobalPayments.Api.Terminals.Ingenico {
     internal class IngenicoTcpInterface : IDeviceCommInterface {
@@ -30,6 +31,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         public IngenicoTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;
@@ -105,6 +107,10 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                     _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
                     // Should be move to Finally block before deployment
                     OnMessageSent?.Invoke(Encoding.UTF8.GetString(RemoveHeader(buffer)));
+
+                    if (_settings.DeviceMode == DeviceMode.PAY_AT_TABLE) {
+                        return null;
+                    }
 
                     while (_termResponse == null) {
                         Thread.Sleep(100);
@@ -210,61 +216,101 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                 var headerBuffer = new byte[2];
                 while (_readData) {
 
-                    _stream.Read(headerBuffer, 0, headerBuffer.Length);
-                    if (!_readData) {
-                        throw new Exception();
+                    // For Pay@Table functionalities handling.
+                    if (_settings.DeviceMode == DeviceMode.PAY_AT_TABLE) {
+
+                        _stream.Read(headerBuffer, 0, headerBuffer.Length);
+                        if (!_readData) {
+                            throw new Exception();
+                        }
+                        int dataLength = await Task.Run(() => TerminalUtilities.HeaderLength(headerBuffer));
+                        if (dataLength > 0) {
+                            byte[] dataBuffer = new byte[dataLength];
+
+                            var incomplete = true;
+                            int offset = 0;
+                            int tempLength = dataLength;
+
+                            do {
+
+                                // Read data
+                                int bytesReceived = _stream.Read(dataBuffer, offset, tempLength);
+                                if (!_readData) {
+                                    throw new Exception();
+                                }
+                                if (bytesReceived != tempLength) {
+                                    offset += bytesReceived;
+                                    tempLength -= bytesReceived;
+                                }
+                                else {
+                                    incomplete = false;
+                                }
+                            } while (incomplete);
+
+                            var readBuffer = new byte[dataLength];
+                            Array.Copy(dataBuffer, readBuffer, dataLength);
+                            PayAtTableHandler(readBuffer);
+                        }
+
                     }
-                    int dataLength = await Task.Run(() => TerminalUtilities.HeaderLength(headerBuffer));
-                    if (dataLength > 0) {
-                        byte[] dataBuffer = new byte[dataLength];
-
-                        var incomplete = true;
-                        int offset = 0;
-                        int tempLength = dataLength;
-
-                        do {
-
-                            // Read data
-                            int bytesReceived = _stream.Read(dataBuffer, offset, tempLength);
-                            if (!_readData) {
-                                throw new Exception();
-                            }
-                            if (bytesReceived != tempLength) {
-                                offset += bytesReceived;
-                                tempLength -= bytesReceived;
-                            }
-                            else {
-                                incomplete = false;
-                            }
-                        } while (incomplete);
-
-                        var readBuffer = new byte[dataLength];
-                        Array.Copy(dataBuffer, readBuffer, dataLength);
-
-                        if (isBroadcast(readBuffer)) {
-                            _broadcastMessage = new BroadcastMessage(readBuffer);
-                            OnBroadcastMessage?.Invoke(_broadcastMessage.Code, _broadcastMessage.Message);
-                        }
-                        else if (isKeepAlive(readBuffer) && INGENICO_GLOBALS.KeepAlive) {
-
-                            _isKeepAlive = true;
-
-                            if (_isKeepAlive && !_isKeepAliveRunning) {
-                                _stream.ReadTimeout = _settings.Timeout;
-                                _isKeepAliveRunning = true;
-                            }
-
-                            var keepAliveRep = KeepAliveResponse(readBuffer);
-                            _stream.WriteAsync(keepAliveRep, 0, keepAliveRep.Length).Wait();
-                        }
-                        else { // Receiving request response data.
-                            _termResponse = readBuffer;
-                        }
-                    }
+                    // For standard device functionalities handling
                     else {
-                        _receivingException = new ApiException("No data received.");
-                    }
+                        _stream.Read(headerBuffer, 0, headerBuffer.Length);
+                        if (!_readData) {
+                            throw new Exception();
+                        }
+                        int dataLength = await Task.Run(() => TerminalUtilities.HeaderLength(headerBuffer));
+                        if (dataLength > 0) {
+                            byte[] dataBuffer = new byte[dataLength];
 
+                            var incomplete = true;
+                            int offset = 0;
+                            int tempLength = dataLength;
+
+                            do {
+
+                                // Read data
+                                int bytesReceived = _stream.Read(dataBuffer, offset, tempLength);
+                                if (!_readData) {
+                                    throw new Exception();
+                                }
+                                if (bytesReceived != tempLength) {
+                                    offset += bytesReceived;
+                                    tempLength -= bytesReceived;
+                                }
+                                else {
+                                    incomplete = false;
+                                }
+                            } while (incomplete);
+
+                            var readBuffer = new byte[dataLength];
+                            Array.Copy(dataBuffer, readBuffer, dataLength);
+
+                            if (isBroadcast(readBuffer)) {
+                                _broadcastMessage = new BroadcastMessage(readBuffer);
+                                OnBroadcastMessage?.Invoke(_broadcastMessage.Code, _broadcastMessage.Message);
+                            }
+                            else if (isKeepAlive(readBuffer) && INGENICO_GLOBALS.KeepAlive) {
+
+                                _isKeepAlive = true;
+
+                                if (_isKeepAlive && !_isKeepAliveRunning) {
+                                    _stream.ReadTimeout = _settings.Timeout;
+                                    _isKeepAliveRunning = true;
+                                }
+
+                                var keepAliveRep = KeepAliveResponse(readBuffer);
+                                _stream.WriteAsync(keepAliveRep, 0, keepAliveRep.Length).Wait();
+                            }
+                            else { // Receiving request response data.
+                                _termResponse = readBuffer;
+                            }
+                        }
+                        else {
+                            _receivingException = new ApiException("No data received.");
+                        }
+
+                    }
                 }
             }
             catch (Exception ex) {
@@ -281,6 +327,10 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                     _disposable = true;
                 }
             }
+        }
+
+        private void PayAtTableHandler(byte[] buffer) {
+            OnPayAtTableRequest?.Invoke(new PATRequest(buffer));
         }
         #endregion
     }
