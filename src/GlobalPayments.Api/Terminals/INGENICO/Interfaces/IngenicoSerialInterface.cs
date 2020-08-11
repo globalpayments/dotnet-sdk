@@ -13,29 +13,30 @@ using System.Management;
 
 namespace GlobalPayments.Api.Terminals.Ingenico {
     internal class IngenicoSerialInterface : IDeviceCommInterface {
-        private SerialPort serialPort;
-        private ITerminalConfiguration settings;
+        private SerialPort _serialPort;
+        private ITerminalConfiguration _settings;
 
-        private bool transComplete;
-        private bool isResult;
-        private bool isAcknowledge;
-        private bool isBroadcast;
-        private bool isXML;
+        private bool _transComplete;
+        private bool _isResult;
+        private bool _isAcknowledge;
+        private bool _isBroadcast;
+        private bool _isXML;
 
-        private List<byte> messageResponse;
-        private string bufferReceived = string.Empty;
-        private StringBuilder report = new StringBuilder();
+        private List<byte> _messageResponse;
+        private string _bufferReceived = string.Empty;
+        private StringBuilder _report = new StringBuilder();
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         public IngenicoSerialInterface(ITerminalConfiguration settings) {
-            this.settings = settings;
+            this._settings = settings;
             Connect();
         }
 
         public void Connect() {
-            if (serialPort == null) {
+            if (_serialPort == null) {
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(INGENICO_GLOBALS.MGMT_SCOPE, INGENICO_GLOBALS.MGMT_QUERY);
 
                 string manufacturer = string.Empty;
@@ -43,30 +44,30 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                     manufacturer = mgmtObject["Manufacturer"].ToString().ToLower();
                     if (manufacturer.Equals("ingenico")) {
                         string caption = mgmtObject["Caption"].ToString();
-                        string portName = "COM{0}".FormatWith(settings.Port);
+                        string portName = "COM{0}".FormatWith(_settings.Port);
                         if (caption.Equals(portName)) {
-                            serialPort = new SerialPort() {
+                            _serialPort = new SerialPort() {
                                 PortName = portName,
-                                BaudRate = (int)settings.BaudRate,
-                                DataBits = (int)settings.DataBits,
-                                StopBits = settings.StopBits,
-                                Parity = settings.Parity,
-                                Handshake = settings.Handshake,
+                                BaudRate = (int)_settings.BaudRate,
+                                DataBits = (int)_settings.DataBits,
+                                StopBits = _settings.StopBits,
+                                Parity = _settings.Parity,
+                                Handshake = _settings.Handshake,
                                 RtsEnable = true,
                                 DtrEnable = true,
-                                ReadTimeout = settings.Timeout
+                                ReadTimeout = _settings.Timeout
                             };
                         }
                     }
                 }
 
-                if (serialPort == null) {
+                if (_serialPort == null) {
                     throw new ConfigurationException("Can't connect to the terminal. Port not found.");
                 }
 
-                if (!serialPort.IsOpen) {
-                    serialPort.DataReceived += new SerialDataReceivedEventHandler(Serial_DataReceived);
-                    serialPort.Open();
+                if (!_serialPort.IsOpen) {
+                    _serialPort.DataReceived += new SerialDataReceivedEventHandler(Serial_DataReceived);
+                    _serialPort.Open();
                 }
             } else {
                 throw new ConfigurationException("Serial port is already open.");
@@ -77,27 +78,27 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             SerialPort serial = (SerialPort)sender;
             do {
                 Thread.Sleep(0100);
-                bufferReceived = serial.ReadExisting();
+                _bufferReceived = serial.ReadExisting();
 
-                if (!string.IsNullOrEmpty(bufferReceived)) {
-                    serialPort.ReadTimeout = settings.Timeout;
+                if (!string.IsNullOrEmpty(_bufferReceived)) {
+                    _serialPort.ReadTimeout = _settings.Timeout;
 
-                    if (bufferReceived.Equals(INGENICO_RESP.ACKNOWLEDGE)) {
-                        isAcknowledge = true;
+                    if (_bufferReceived.Equals(INGENICO_RESP.ACKNOWLEDGE)) {
+                        _isAcknowledge = true;
                         break;
-                    } else if (bufferReceived.Equals(INGENICO_RESP.ENQUIRY)) {
-                        serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ACK), 0, 1);
+                    } else if (_bufferReceived.Equals(INGENICO_RESP.ENQUIRY)) {
+                        _serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ACK), 0, 1);
                         break;
-                    } else if (bufferReceived.Contains(INGENICO_GLOBALS.BROADCAST)) {
-                        isBroadcast = true;
+                    } else if (_bufferReceived.Contains(INGENICO_GLOBALS.BROADCAST)) {
+                        _isBroadcast = true;
                         break;
-                    } else if (INGENICO_RESP.XML.Any(bufferReceived.Contains)) {
-                        isXML = true;
+                    } else if (INGENICO_RESP.XML.Any(_bufferReceived.Contains)) {
+                        _isXML = true;
                         break;
-                    } else if (!bufferReceived.Contains(INGENICO_RESP.INVALID)
-                        && !bufferReceived.Contains(INGENICO_GLOBALS.BROADCAST)
-                        && !INGENICO_RESP.XML.Any(bufferReceived.Contains)) {
-                        isResult = true;
+                    } else if (!_bufferReceived.Contains(INGENICO_RESP.INVALID)
+                        && !_bufferReceived.Contains(INGENICO_GLOBALS.BROADCAST)
+                        && !INGENICO_RESP.XML.Any(_bufferReceived.Contains)) {
+                        _isResult = true;
                         break;
                     }
                 }
@@ -105,9 +106,9 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         }
 
         public void Disconnect() {
-            serialPort.Close();
-            serialPort?.Dispose();
-            serialPort = null;
+            _serialPort.Close();
+            _serialPort?.Dispose();
+            _serialPort = null;
         }
 
         private bool ValidateResponseLRC(string calculate, string actual) {
@@ -127,17 +128,17 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
             return await Task.Run(() => {
                 try {
                     int enquiryCount = 0;
-                    messageResponse = new List<byte>();
+                    _messageResponse = new List<byte>();
 
-                    if (serialPort == null) {
+                    if (_serialPort == null) {
                         return false;
                     }
 
                     do {
-                        serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ENQ), 0, 1);
-                        if (!isAcknowledge) {
+                        _serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ENQ), 0, 1);
+                        if (!_isAcknowledge) {
                             Thread.Sleep(1000);
-                            serialPort.Write(BitConverter.GetBytes((char)ControlCodes.EOT), 0, 1);
+                            _serialPort.Write(BitConverter.GetBytes((char)ControlCodes.EOT), 0, 1);
                             enquiryCount++;
 
                             if (enquiryCount.Equals(3)) {
@@ -148,60 +149,60 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
                                 byte[] msg = message.GetSendBuffer();
                                 foreach (byte b in msg) {
                                     byte[] _b = new byte[] { b };
-                                    serialPort.Write(_b, 0, 1);
+                                    _serialPort.Write(_b, 0, 1);
                                 }
 
-                                if (isAcknowledge) {
-                                    serialPort.Write(BitConverter.GetBytes((char)ControlCodes.EOT), 0, 1);
-                                    isAcknowledge = false;
+                                if (_isAcknowledge) {
+                                    _serialPort.Write(BitConverter.GetBytes((char)ControlCodes.EOT), 0, 1);
+                                    _isAcknowledge = false;
                                     break;
                                 }
                             } while (true);
 
                             do {
                                 Thread.Sleep(100);
-                                if (isBroadcast) {
-                                    byte[] bMsg = Encoding.ASCII.GetBytes(bufferReceived);
+                                if (_isBroadcast) {
+                                    byte[] bMsg = Encoding.ASCII.GetBytes(_bufferReceived);
                                     BroadcastMessage broadcastMsg = new BroadcastMessage(bMsg);
                                     OnBroadcastMessage?.Invoke(broadcastMsg.Code, broadcastMsg.Message);
-                                    isBroadcast = false;
+                                    _isBroadcast = false;
                                 }
 
-                                if (isXML) {
+                                if (_isXML) {
                                     do {
-                                        report.Append(bufferReceived);
-                                        if (report.ToString().Contains(INGENICO_RESP.ENDXML)) {
-                                            string xmlData = report.ToString().Substring(1, report.ToString().Length - 3);
+                                        _report.Append(_bufferReceived);
+                                        if (_report.ToString().Contains(INGENICO_RESP.ENDXML)) {
+                                            string xmlData = _report.ToString().Substring(1, _report.ToString().Length - 3);
                                             if (MessageReceived(xmlData)) {
-                                                serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ACK), 0, 1);
-                                                isXML = false;
-                                                transComplete = true;
+                                                _serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ACK), 0, 1);
+                                                _isXML = false;
+                                                _transComplete = true;
                                             }
                                         }
                                         Thread.Sleep(0500);
-                                    } while (!transComplete);
+                                    } while (!_transComplete);
                                 }
 
-                                if (isResult) {
+                                if (_isResult) {
                                     string check = Encoding.UTF8.GetString(message.GetSendBuffer());
-                                    if (bufferReceived.Contains(check.Substring(0, 2))) {
+                                    if (_bufferReceived.Contains(check.Substring(0, 2))) {
                                         do {
-                                            string rData = bufferReceived.Substring(1, bufferReceived.Length - 3);
-                                            bufferReceived = bufferReceived.Substring(1, bufferReceived.Length - 3);
-                                            bool validateLRC = ValidateResponseLRC(rData, bufferReceived);
+                                            string rData = _bufferReceived.Substring(1, _bufferReceived.Length - 3);
+                                            _bufferReceived = _bufferReceived.Substring(1, _bufferReceived.Length - 3);
+                                            bool validateLRC = ValidateResponseLRC(rData, _bufferReceived);
                                             if (validateLRC) {
                                                 if (MessageReceived(rData)) {
-                                                    serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ACK), 0, 1);
-                                                    isResult = false;
-                                                    transComplete = true;
+                                                    _serialPort.Write(BitConverter.GetBytes((char)ControlCodes.ACK), 0, 1);
+                                                    _isResult = false;
+                                                    _transComplete = true;
                                                 }
                                             }
-                                        } while (!transComplete);
+                                        } while (!_transComplete);
                                     }
                                 }
-                            } while (!transComplete);
+                            } while (!_transComplete);
 
-                            return transComplete;
+                            return _transComplete;
                         }
                     } while (true);
                 } catch (MessageException e) {
@@ -212,30 +213,30 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         public byte[] Send(IDeviceMessage message) {
             try {
-                if (serialPort != null) {
+                if (_serialPort != null) {
                     string bufferSend = Encoding.ASCII.GetString(message.GetSendBuffer());
                     OnMessageSent?.Invoke(bufferSend.Substring(1, bufferSend.Length - 3));
                     Task<bool> task = WriteMessage(message);
-                    if (!task.Wait(settings.Timeout)) {
+                    if (!task.Wait(_settings.Timeout)) {
                         throw new MessageException("Terminal did not response within timeout.");
                     }
 
-                    return messageResponse.ToArray();
+                    return _messageResponse.ToArray();
                 } else {
                     throw new MessageException("Terminal not connected.");
                 }
             } finally {
-                transComplete = false;
+                _transComplete = false;
             }
         }
 
         private bool MessageReceived(string messageData) {
-            if (messageResponse == null) {
+            if (_messageResponse == null) {
                 return false;
             }
 
             foreach (char b in messageData) {
-                messageResponse.Add((byte)b);
+                _messageResponse.Add((byte)b);
             }
 
             return true;

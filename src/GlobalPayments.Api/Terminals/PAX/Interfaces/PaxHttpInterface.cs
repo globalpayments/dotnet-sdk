@@ -14,6 +14,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         public PaxHttpInterface(ITerminalConfiguration settings) {
             _settings = settings;
