@@ -42,6 +42,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal PaymentMode PaymentMode { get; set; }
         internal string TableNumber { get; set; }
         internal TaxFreeType? TaxFreeType { get; set; }
+        internal PATPaymentMode? AdditionalMessage { get; set; }
+        internal PATResponseType? PayAtTableResponse { get; private set; }
+        public string FilePath { get; private set; }
 
         public TerminalAuthBuilder WithAddress(Address address) {
             Address = address;
@@ -166,6 +169,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
+        public TerminalAuthBuilder WithPaymentMode(PATPaymentMode additionalMessage) {
+            AdditionalMessage = additionalMessage;
+            return this;
+        }
+
         /// <summary>
         /// Sets the table number for the transaction.
         /// </summary>
@@ -185,6 +193,16 @@ namespace GlobalPayments.Api.Terminals.Builders {
         /// <returns></returns>
         public TerminalAuthBuilder WithTaxFree(TaxFreeType taxFreeType) {
             TaxFreeType = taxFreeType;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithPayAtTableResponseType(PATResponseType response) {
+            PayAtTableResponse = response;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithXMLPath(string filePath) {
+            FilePath = filePath;
             return this;
         }
 
