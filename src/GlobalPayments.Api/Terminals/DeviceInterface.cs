@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Terminals {
 
         public event MessageSentEventHandler OnMessageSent;
         public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         internal DeviceInterface(T controller) {
             _controller = controller;
@@ -21,6 +22,10 @@ namespace GlobalPayments.Api.Terminals {
 
             _controller.OnBroadcastMessage += (code, message) => {
                 OnBroadcastMessage?.Invoke(code, message);
+            };
+
+            _controller.OnPayAtTableRequest += (request) => {
+                OnPayAtTableRequest?.Invoke(request);
             };
 
 
@@ -154,7 +159,7 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Credit)
                 .WithAmount(amount);
         }
-         
+
         public virtual TerminalAuthBuilder Verify() {
             return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit)
                 .WithAmount(6.18m);
@@ -181,6 +186,15 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.Credit)
                 .WithAmount(amount);
         }
+
+        #endregion
+
+        #region Pay@Table Methods
+
+        public virtual TerminalAuthBuilder PayAtTableResponse() {
+            return new TerminalAuthBuilder(TransactionType.Void, PaymentMethodType.Other);
+        }
+
         #endregion
 
         #endregion
