@@ -11,5 +11,7 @@ namespace GlobalPayments.Api.Terminals.Abstractions {
         event MessageSentEventHandler OnMessageSent;
 
         event BroadcastMessageEventHandler OnBroadcastMessage;
+
+        event PayAtTableRequestEventHandler OnPayAtTableRequest;
     }
 }
