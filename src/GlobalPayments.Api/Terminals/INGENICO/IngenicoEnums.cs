@@ -228,6 +228,12 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         /// </summary>
         TableList = 4,
 
+        /// <summary>
+        /// Indicates a Transaction Outcome request
+        /// </summary>
+        TransactionOutcome,
+
+        XMLData
     }
 
     /// <summary>
