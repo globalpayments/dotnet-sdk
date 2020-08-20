@@ -67,6 +67,7 @@ namespace GlobalPayments.Api.Builders {
         internal string TransportData { get; set; }
         internal string Timestamp { get; set; }
         internal VoidReason? VoidReason { get; set; }
+        internal bool AllowDuplicates { get; set; }
 
         /// <summary>
         /// Sets the current transaction's amount.
@@ -271,6 +272,17 @@ namespace GlobalPayments.Api.Builders {
         }
         public ManagementBuilder WithReferenceNumber(string value) {
             ReferenceNumber = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Allows duplicate transactions by skipping the
+        /// gateway's duplicate checking.
+        /// </summary>
+        /// <param name="value">The duplicate skip flag</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithAllowDuplicates(bool value) {
+            AllowDuplicates = value;
             return this;
         }
 
