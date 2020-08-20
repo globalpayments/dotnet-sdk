@@ -21,6 +21,7 @@ namespace GlobalPayments.Api.Builders {
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal InquiryType? BalanceInquiryType { get; set; }
         internal Address BillingAddress { get; set; }
+        internal string CardBrandTransactionId { get; set; }
         internal decimal? CashBackAmount { get; set; }
         internal string ClientTransactionId { get; set; }
         internal CommercialData CommercialData { get; set; }
@@ -69,6 +70,7 @@ namespace GlobalPayments.Api.Builders {
         internal string ShiftNumber { get; set; }
         internal string ClerkId { get; set; }
         internal string TransportData { get; set; }
+        internal StoredCredentialInitiator? TransactionInitiator { get; set; }
 
         internal bool HasEmvFallbackData {
             get {
@@ -183,6 +185,12 @@ namespace GlobalPayments.Api.Builders {
 
         internal AuthorizationBuilder WithBalanceInquiryType(InquiryType? value) {
             BalanceInquiryType = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithCardBrandStorage(StoredCredentialInitiator transactionInitiator, string value = null) {
+            TransactionInitiator = transactionInitiator;
+            CardBrandTransactionId = value;
             return this;
         }
 

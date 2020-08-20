@@ -59,6 +59,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public BatchSummary BatchSummary { get; set; }
 
+        public string CardBrandTransactionId { get; set; }
+
         /// <summary>
         /// The type of card used in the transaction.
         /// </summary>
