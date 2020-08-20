@@ -73,10 +73,19 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// </summary>
         public int? ExpMonth { get; set; }
 
+        internal int? _expYear;
+
         /// <summary>
         /// The card's expiration year.
         /// </summary>
-        public int? ExpYear { get; set; }
+        public int? ExpYear {
+            get { return _expYear; }
+            set {
+                if (value.HasValue && (int)Math.Floor(Math.Log10(value.Value)) + 1 == 2) {
+                    _expYear = value + 2000;
+                }
+            }
+        }
 
         public string ShortExpiry {
             get {
