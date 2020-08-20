@@ -54,36 +54,39 @@ namespace GlobalPayments.Api.Gateways {
 
             #region card holder
             var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
-            if (isCheck || builder.BillingAddress != null) {
-                var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
+            var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
 
-                if (builder.BillingAddress != null) {
-                    et.SubElement(holder, isCheck ? "Address1" : "CardHolderAddr", builder.BillingAddress.StreetAddress1);
-                    et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
-                    et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
-                    et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
+            if (builder.BillingAddress != null) {
+                et.SubElement(holder, isCheck ? "Address1" : "CardHolderAddr", builder.BillingAddress.StreetAddress1);
+                et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
+                et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
+                et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
+            }
+
+            if (isCheck) {
+                var check = builder.PaymentMethod as eCheck;
+                if (!string.IsNullOrEmpty(check.CheckHolderName)) {
+                    var names = check.CheckHolderName.Split(new char[] {' '}, 2);
+                    et.SubElement(holder, "FirstName", names[0]);
+                    et.SubElement(holder, "LastName", names[1]);
                 }
+                et.SubElement(holder, "CheckName", check.CheckName);
+                et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
+                et.SubElement(holder, "DLNumber", check.DriversLicenseNumber);
+                et.SubElement(holder, "DLState", check.DriversLicenseState);
 
-                if (isCheck) {
-                    var check = builder.PaymentMethod as eCheck;
-                    if (!string.IsNullOrEmpty(check.CheckHolderName)) {
-                        var names = check.CheckHolderName.Split(new char[] {' '}, 2);
-                        et.SubElement(holder, "FirstName", names[0]);
-                        et.SubElement(holder, "LastName", names[1]);
-                    }
-                    et.SubElement(holder, "CheckName", check.CheckName);
-                    et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
-                    et.SubElement(holder, "DLNumber", check.DriversLicenseNumber);
-                    et.SubElement(holder, "DLState", check.DriversLicenseState);
-
-                    if (!string.IsNullOrEmpty(check.SsnLast4) || check.BirthYear != default(int)) {
-                        var identity = et.SubElement(holder, "IdentityInfo");
-                        et.SubElement(identity, "SSNL4", check.SsnLast4);
-                        et.SubElement(identity, "DOBYear", check.BirthYear);
-                    }
+                if (!string.IsNullOrEmpty(check.SsnLast4) || check.BirthYear != default(int)) {
+                    var identity = et.SubElement(holder, "IdentityInfo");
+                    et.SubElement(identity, "SSNL4", check.SsnLast4);
+                    et.SubElement(identity, "DOBYear", check.BirthYear);
                 }
-                else {
-                    // TODO: card holder name
+            }
+            else {
+                var card = builder.PaymentMethod as CreditCardData;
+                if (!string.IsNullOrEmpty(card.CardHolderName)) {
+                    var names = card.CardHolderName.Split(new char[] {' '}, 2);
+                    et.SubElement(holder, "CardHolderFirstName", names[0]);
+                    et.SubElement(holder, "CardHolderLastName", names[1]);
                 }
             }
             #endregion
@@ -101,6 +104,13 @@ namespace GlobalPayments.Api.Gateways {
             #region ICardData
             if (builder.PaymentMethod is ICardData) {
                 var card = builder.PaymentMethod as ICardData;
+
+                //credential on file
+                if (builder.TransactionInitiator != null) {
+                    Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
+                    et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
+                    et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
+                }
 
                 var manualEntry = et.SubElement(cardData, hasToken ? "TokenData" : "ManualEntry");
                 et.SubElement(manualEntry, hasToken ? "TokenValue" : "CardNbr").Text(tokenValue ?? card.Number);
@@ -223,6 +233,12 @@ namespace GlobalPayments.Api.Gateways {
             #region RecurringPaymentMethod
             if (builder.PaymentMethod is RecurringPaymentMethod) {
                 var method = builder.PaymentMethod as RecurringPaymentMethod;
+                //credential on file
+                if (builder.TransactionInitiator != null) {
+                    Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
+                    et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
+                    et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
+                }
 
                 // check action
                 if (method.PaymentType == "ACH") {
@@ -401,6 +417,10 @@ namespace GlobalPayments.Api.Gateways {
                 // Client Txn Id
                 if (builder.TransactionType == TransactionType.Reversal) {
                     et.SubElement(root, "ClientTxnId", builder.ClientTransactionId);
+                }
+
+                if (builder.AllowDuplicates) {
+                    et.SubElement(root, "AllowDup", "Y");
                 }
 
                 // Level II Data
@@ -586,6 +606,7 @@ namespace GlobalPayments.Api.Gateways {
                 result.PointsBalanceAmount = root.GetValue<decimal>("PointsBalanceAmt");
                 result.RecurringDataCode = root.GetValue<string>("RecurringDataCode");
                 result.ReferenceNumber = root.GetValue<string>("RefNbr");
+                result.CardBrandTransactionId = root.GetValue<string>("CardBrandTxnId");
                 result.ResponseCode = NormalizeResponse(root.GetValue<string>("RspCode")) ?? gatewayRspCode;
                 result.ResponseMessage = root.GetValue<string>("RspText", "RspMessage") ?? gatewayRspText;
                 result.TransactionDescriptor = root.GetValue<string>("TxnDescriptor");
