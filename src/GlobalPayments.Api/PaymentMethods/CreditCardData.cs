@@ -83,6 +83,8 @@ namespace GlobalPayments.Api.PaymentMethods {
             set {
                 if (value.HasValue && (int)Math.Floor(Math.Log10(value.Value)) + 1 == 2) {
                     _expYear = value + 2000;
+                } else {
+                    _expYear = value;
                 }
             }
         }
