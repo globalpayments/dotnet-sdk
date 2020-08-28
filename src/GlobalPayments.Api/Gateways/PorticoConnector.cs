@@ -5,9 +5,10 @@ using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.ServiceConfigs.Gateways;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class PorticoConnector : XmlGateway, IPaymentGateway, IReportingService {
+    internal class PorticoConnector : XmlGateway, IPaymentGateway, IReportingService, IOpenPathConfig {
         public int SiteId { get; set; }
         public int LicenseId { get; set; }
         public int DeviceId { get; set; }
@@ -18,6 +19,8 @@ namespace GlobalPayments.Api.Gateways {
         public string VersionNumber { get; set; }
         public bool SupportsHostedPayments { get { return false; } }
         public string UniqueDeviceId { get; set; }
+        public string OpenPathApiKey  { get; set; }
+        public string OpenPathApiUrl { get; set; }
 
         public PorticoConnector() {
         }

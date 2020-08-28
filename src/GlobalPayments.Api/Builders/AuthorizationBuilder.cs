@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.ServiceConfigs.Gateways;
+using GlobalPayments.Api.Services;
+using Newtonsoft.Json;
 
 namespace GlobalPayments.Api.Builders {
     /// <summary>
@@ -693,7 +698,26 @@ namespace GlobalPayments.Api.Builders {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
-            return client.ProcessAuthorization(this);
+            var openPath = client as IOpenPathConfig;
+            OpenPathResponse openPathResult = null;
+
+            if (!string.IsNullOrWhiteSpace(openPath?.OpenPathApiKey)) {
+                openPathResult = OpenPathService.PreFlightFraudCheck(this, openPath);
+
+                // check if the transaction is already processed in OpenPath
+                if (openPathResult.Status == OpenPathStatusType.Processed) {
+                    var transactionResult = openPathResult.Results?.Last();
+                    if (!string.IsNullOrWhiteSpace(transactionResult))
+                        return JsonConvert.DeserializeObject<Transaction>(transactionResult);
+                }
+            }
+
+            var result = client.ProcessAuthorization(this);
+
+            if (openPathResult != null) {
+                OpenPathService.PostFlightFraudCheck(openPathResult, result);
+            }
+            return result;
         }
 
         /// <summary>

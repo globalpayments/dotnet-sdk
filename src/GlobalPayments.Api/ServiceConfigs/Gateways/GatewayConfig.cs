@@ -28,6 +28,23 @@ namespace GlobalPayments.Api {
         public string DataClientSeviceUrl { get; set; }
         #endregion
 
+        /// <summary>
+        /// The OpenPath Api key for integration with OpenPath platform
+        /// </summary>
+        public string OpenPathApiKey { get; set; }
+
+        /// <summary>
+        /// The OpenPath Api key for integration with OpenPath platform
+        /// </summary>
+        public string OpenPathApiUrl {
+            get {
+                if (Environment == Environment.TEST) {
+                    return "http://localhost:48010/v1/globalpayments";
+                }
+                return "https://api.openpath.io/v1/globalpayments";
+            }
+        }
+
         internal GatewayConfig(GatewayProvider provider) {
             GatewayProvider = provider;
         }

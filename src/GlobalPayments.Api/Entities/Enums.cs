@@ -945,7 +945,21 @@ namespace GlobalPayments.Api.Entities {
 
     public enum BatchCloseType {	
         Forced,	
-        EndOfShift,	
+        EndOfShift,
         //EndOfDay	
+    }
+
+    public enum OpenPathStatusType {
+        Processing,
+        Declined,
+        Approved,
+        Rejected,
+        Error,
+        Queued,
+        Pending,
+        Processed,
+        BouncedBack,
+        Unknown,
+        NotSet
     }
 }

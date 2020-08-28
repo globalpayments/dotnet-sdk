@@ -89,7 +89,9 @@ namespace GlobalPayments.Api {
                 Timeout = Timeout,
                 ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx",
                 UniqueDeviceId = UniqueDeviceId,
-                RequestLogger = RequestLogger
+                RequestLogger = RequestLogger,
+                OpenPathApiUrl = OpenPathApiUrl,
+                OpenPathApiKey = OpenPathApiKey
             };
             services.GatewayConnector = gateway;
 
