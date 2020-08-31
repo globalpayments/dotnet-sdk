@@ -704,6 +704,12 @@ namespace GlobalPayments.Api.Builders {
             if (!string.IsNullOrWhiteSpace(openPath?.OpenPathApiKey)) {
                 openPathResult = OpenPathService.PreFlightFraudCheck(this, openPath);
 
+                if (openPathResult.Status == OpenPathStatusType.Error || 
+                    openPathResult.Status == OpenPathStatusType.Declined ||
+                    openPathResult.Status == OpenPathStatusType.Rejected) {
+                    throw new GatewayException(openPathResult.Results?.Last());
+                }
+
                 // check if the transaction is already processed in OpenPath
                 if (openPathResult.Status == OpenPathStatusType.Processed) {
                     var transactionResult = openPathResult.Results?.Last();
@@ -715,7 +721,7 @@ namespace GlobalPayments.Api.Builders {
             var result = client.ProcessAuthorization(this);
 
             if (openPathResult != null) {
-                OpenPathService.PostFlightFraudCheck(openPathResult, result);
+                OpenPathService.PostFlightFraudCheck(this, openPathResult, result, openPath);
             }
             return result;
         }

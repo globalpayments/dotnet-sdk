@@ -14,7 +14,6 @@ namespace GlobalPayments.Api.Tests {
         public void Init() {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
-                OpenPathApiKey = "pnxuxwuAWaTQvCUU7NtMzAAUgxyd3TV7FrP3JCYy"
             });
 
             card = new CreditCardData {

@@ -4,8 +4,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.ServiceConfigs.Gateways
 {
-    public interface IOpenPathConfig
-    {
+    public interface IOpenPathConfig {
         /// <summary>
         /// The OpenPath Api key for integration with OpenPath platform
         /// </summary>
