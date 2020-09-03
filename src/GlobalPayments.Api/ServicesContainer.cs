@@ -38,11 +38,13 @@ namespace GlobalPayments.Api {
                 return _secure3dProviders[version];
             }
             else if (version.Equals(Secure3dVersion.Any)) {
-                var provider = _secure3dProviders[Secure3dVersion.Two];
-                if (provider == null) {
-                    provider = _secure3dProviders[Secure3dVersion.One];
+                if (_secure3dProviders.ContainsKey(Secure3dVersion.Two)) {
+                    return _secure3dProviders[Secure3dVersion.Two];
                 }
-                return provider;
+                else if (_secure3dProviders.ContainsKey(Secure3dVersion.One))
+                {
+                    return _secure3dProviders[Secure3dVersion.One];
+                }
             }
             return null;
         }
