@@ -33,6 +33,7 @@ namespace GlobalPayments.Api.Builders {
         internal string CustomerIpAddress { get; set; }
         internal string Cvn { get; set; }
         internal string Description { get; set; }
+        internal string Comment2 { get; set; }
         internal DecisionManager DecisionManager { get; set; }
         internal string DynamicDescriptor { get; set; }
         internal EcommerceInfo EcommerceInfo { get; set; }
@@ -321,6 +322,12 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithDescription(string value) {
             Description = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithComment2(string value)
+        {
+            Comment2 = value;
             return this;
         }
 

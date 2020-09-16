@@ -13,6 +13,7 @@ namespace GlobalPayments.Api.Gateways {
         public string AccountId { get; set; }
         public string SharedSecret { get; set; }
         public string Channel { get; set; }
+        public string AutoSettleFlag { get; set; }
         public string RebatePassword { get; set; }
         public string RefundPassword { get; set; }
         public bool SupportsHostedPayments { get { return true; } }
@@ -340,9 +341,10 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("AMOUNT", builder.Amount.ToNumericCurrencyString());
             request.Set("CURRENCY", builder.Currency);
             request.Set("TIMESTAMP", timestamp);
-            request.Set("AUTO_SETTLE_FLAG", (builder.TransactionType == TransactionType.Sale) ? "1" : builder.MultiCapture == true ? "MULTI" : "0");
+            //request.Set("AUTO_SETTLE_FLAG", (builder.TransactionType == TransactionType.Sale) ? "1" : builder.MultiCapture == true ? "MULTI" : "0");
+            request.Set("AUTO_SETTLE_FLAG", AutoSettleFlag);
             request.Set("COMMENT1", builder.Description);
-            // request.Set("COMMENT2", );
+            request.Set("COMMENT2", builder.Comment2);
             if (HostedPaymentConfig.RequestTransactionStabilityScore.HasValue)
                 request.Set("RETURN_TSS", HostedPaymentConfig.RequestTransactionStabilityScore.Value ? "1" : "0");
             if (HostedPaymentConfig.DynamicCurrencyConversionEnabled.HasValue)

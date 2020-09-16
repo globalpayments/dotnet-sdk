@@ -39,6 +39,8 @@ namespace GlobalPayments.Api {
         /// Hosted Payment Page (HPP) configuration
         /// </summary>
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
+
+        public string AutoSettleFlag { get; set; }
         #endregion
 
         #region Secure 3D
@@ -73,7 +75,8 @@ namespace GlobalPayments.Api {
                 SharedSecret = SharedSecret,
                 Timeout = Timeout,
                 ServiceUrl = ServiceUrl,
-                HostedPaymentConfig = HostedPaymentConfig
+                HostedPaymentConfig = HostedPaymentConfig,
+                AutoSettleFlag = AutoSettleFlag
             };
             services.GatewayConnector = gateway;
             services.RecurringConnector = gateway;            
@@ -99,6 +102,7 @@ namespace GlobalPayments.Api {
                     MethodNotificationUrl = MethodNotificationUrl,
                     ChallengeNotificationUrl = ChallengeNotificationUrl,
                     Timeout = Timeout
+                    
                     //secure3d2.EnableLogging = EnableLogging
                 };
 
