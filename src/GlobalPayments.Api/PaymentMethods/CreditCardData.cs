@@ -60,6 +60,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                 try {
                     CardType = CardUtils.MapCardType(_number);
                     FleetCard = CardUtils.IsFleet(CardType, _number);
+                    PurchaseCard = CardUtils.IsPurchase(CardType, _number);
                 }
                 catch (Exception) {
                     CardType = "Unknown";
@@ -72,10 +73,21 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// </summary>
         public int? ExpMonth { get; set; }
 
+        internal int? _expYear;
+
         /// <summary>
         /// The card's expiration year.
         /// </summary>
-        public int? ExpYear { get; set; }
+        public int? ExpYear {
+            get { return _expYear; }
+            set {
+                if (value.HasValue && (int)Math.Floor(Math.Log10(value.Value)) + 1 == 2) {
+                    _expYear = value + 2000;
+                } else {
+                    _expYear = value;
+                }
+            }
+        }
 
         public string ShortExpiry {
             get {

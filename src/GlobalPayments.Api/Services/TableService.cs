@@ -9,7 +9,7 @@ namespace GlobalPayments.Api.Services {
         private readonly string _configName;
 
         /// <summary>
-        /// String array of the bump statuses as reported by the table service API.
+        /// string array of the bump statuses as reported by the table service API.
         /// </summary>
         public string[] BumpStatuses {
             get {

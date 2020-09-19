@@ -179,6 +179,22 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a token only transaction
         /// </summary>
-        Tokenize = 1L << 33
+        /// 
+        Tokenize = 1L << 33,
+
+        /// <summary>
+        ///
+        /// </summary>
+        CashOut = 1L << 34,
+
+        /// <summary>
+        ///
+        /// </summary>
+        Payment = 1L << 35,
+
+        /// <summary>
+        ///
+        /// </summary>
+        CashAdvance = 1L << 36
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using GlobalPayments.Api.Gateways.Events;
+using System;
 using System.Collections.Generic;
 
-namespace GlobalPayments.Api.Entities
-{
+namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// A general error occurred.
     /// </summary>
@@ -41,6 +41,7 @@ namespace GlobalPayments.Api.Entities
         /// The gateway response message.
         /// </summary>
         public string ResponseMessage { get; private set; }
+        public List<IGatewayEvent> GatewayEvents { get; set; }
 
         internal GatewayException(string message, string responseCode = null, string responseMessage = null) : base(message) {
             ResponseCode = responseCode;
@@ -72,5 +73,15 @@ namespace GlobalPayments.Api.Entities
         public ValidationException(List<string> validationErrors) : base("The application failed validation. Please see the validation errors for specific details.") {
             ValidationErrors = validationErrors;
         }
+    }
+    public class GatewayTimeoutException : GatewayException {
+        public string Host { get; set; }
+        public string MessageTypeIndicator { get; set; }
+        public string ProcessingCode { get; set; }
+        public int ReversalCount { get; set; }
+        public string ReversalResponseCode { get; set; }
+        public string ReversalResponseText { get; set; }
+        public GatewayTimeoutException() : base("The gateway did not respond within the given timeout.") { }
+        public GatewayTimeoutException(Exception innerException) : base("The gateway did not respond within the given timeout.", innerException) { }
     }
 }

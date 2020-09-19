@@ -39,6 +39,30 @@ namespace GlobalPayments.Api.Tests {
             };
         }
 
+        [TestMethod, Ignore]
+        public void CheckSaleWithSingleUseToken() {
+            var check = new eCheck {
+                Token = "supt_bUNE7MtGwN0hdDcElNijZ83A",
+                CheckType = CheckType.PERSONAL,
+                SecCode = SecCode.PPD,
+                AccountType = AccountType.CHECKING,
+                EntryMode = EntryMethod.Manual,
+                CheckHolderName = "John Doe",
+                DriversLicenseNumber = "09876543210",
+                DriversLicenseState = "TX",
+                PhoneNumber = "8003214567",
+                BirthYear = 1997,
+                SsnLast4 = "4321"
+            };
+
+            var response = check.Charge(11m)
+                .WithCurrency("USD")
+                .WithAddress(address)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+        }
+
         [TestMethod]
         public void CheckSale() {
             var response = check.Charge(11m)
