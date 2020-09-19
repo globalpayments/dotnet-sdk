@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api {
@@ -12,6 +14,20 @@ namespace GlobalPayments.Api {
         public CardDataOutputCapability CardDataOutputCapability { get; set; }
         public TerminalOutputCapability TerminalOutputCapability { get; set; }
         public PinCaptureCapability PinCaptureCapability { get; set; }
+        public string HardwareLevel { get; set; }
+        public string SoftwareLevel { get; set; }
+        public string OperatingSystemLevel { get; set; }
+        public string Timezone { get; set; }
+        public bool? SupportsPartialApproval { get; set; }
+        public bool? SupportsReturnBalance { get; set; }
+        public bool? SupportsCashOver { get; set; }
+        public bool? MobileDevice { get; set; }
+        public bool? SupportsShutOffAmount { get; set; }
+        public bool? SupportsDiscoverNetworkReferenceId { get; set; }
+        public bool? SupportsAvsCnvVoidReferrals { get; set; }
+        public bool? SupportsEmvPin { get; set; }
+        public EncryptionType SupportedEncryptionType { get; set; }
+        public Address Address { get; set; }
 
         public AcceptorConfig() {
             CardDataInputCapability = CardDataInputCapability.MagStripe_KeyEntry;
@@ -21,6 +37,7 @@ namespace GlobalPayments.Api {
             CardDataOutputCapability = CardDataOutputCapability.None;
             TerminalOutputCapability = TerminalOutputCapability.None;
             PinCaptureCapability = PinCaptureCapability.TwelveCharacters;
+            SupportedEncryptionType = EncryptionType.TEP2;
         }
 
         public void Validate(Target target) {
@@ -36,6 +53,34 @@ namespace GlobalPayments.Api {
                     }
                 }
             }
+        }
+        public bool HasPosConfiguration_MessageControl() {
+            return (!string.IsNullOrEmpty(Timezone)
+                    || SupportsPartialApproval != null
+                    || SupportsReturnBalance != null
+                    || SupportsCashOver != null
+                    || MobileDevice != null);
+        }
+        public bool HasPosConfiguration_IssuerData() {
+            return (SupportsPartialApproval != null
+                    || SupportsShutOffAmount != null
+                    || SupportsReturnBalance != null
+                    || SupportsDiscoverNetworkReferenceId != null
+                    || SupportsAvsCnvVoidReferrals != null
+                    || SupportsEmvPin != null
+                    || MobileDevice != null);
+        }
+        public string GetPosConfigForIssuerData()        {
+            string rvalue = SupportsPartialApproval != null ? (bool)SupportsPartialApproval ? "Y" : "N" : "N";
+            rvalue = string.Concat(rvalue, (SupportsShutOffAmount != null ? (bool)SupportsShutOffAmount ? "Y" : "N" : "N")
+                    , ("N")
+                    , (SupportsReturnBalance != null ? (bool)SupportsReturnBalance ? "Y" : "N" : "N")
+                    , (SupportsDiscoverNetworkReferenceId != null ? (bool)SupportsDiscoverNetworkReferenceId ? "Y" : "N" : "N")
+                    , (SupportsAvsCnvVoidReferrals != null ? (bool)SupportsAvsCnvVoidReferrals ? "Y" : "N" : "N")
+                    , (SupportsEmvPin != null ? (bool)SupportsEmvPin ? "Y" : "N" : "N")
+                    , (MobileDevice != null ? (bool)MobileDevice ? "Y" : "N" : "N")
+                    , ("N"));
+            return rvalue;
         }
     }
 }

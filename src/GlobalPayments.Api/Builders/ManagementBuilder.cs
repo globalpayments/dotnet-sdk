@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using System.Collections.Generic;
 
@@ -55,7 +56,18 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal int TransactionCount { get; set; }
+        internal decimal TotalCredits { get; set; }
+        internal decimal TotalDebits { get; set; }
+        internal string ReferenceNumber { get; set; }
+        internal BatchCloseType BatchCloseType { get; set; }
+        internal decimal? CashBackAmount { get; set; }
+        internal bool ForcedReversal { get; set; }
+        internal bool CustomerInitiated { get; set; }
+        internal string TransportData { get; set; }
+        internal string Timestamp { get; set; }
         internal VoidReason? VoidReason { get; set; }
+        internal bool AllowDuplicates { get; set; }
 
         /// <summary>
         /// Sets the current transaction's amount.
@@ -227,7 +239,50 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="value"></param>
         /// <returns></returns>
         public ManagementBuilder WithAlternativePaymentType(AlternativePaymentType value) {
-            this.AlternativePaymentType = value;
+            AlternativePaymentType = value;
+            return this;
+        }
+        public ManagementBuilder WithCashBackAmount(decimal? value) {
+            CashBackAmount = value;
+            return this;
+        }
+        public ManagementBuilder WithBatchNumber(int batchNumber, int sequenceNumber = 0) {
+            BatchNumber = batchNumber;
+            SequenceNumber = sequenceNumber;
+            return this;
+        }
+        public ManagementBuilder WithBatchCloseType(BatchCloseType value) {
+            BatchCloseType = value;
+            return this;
+        }
+        public ManagementBuilder WithBatchTotals(int transactionCount, decimal totalDebits, decimal totalCredits) {
+            TransactionCount = transactionCount;
+            TotalDebits = totalDebits;
+            TotalCredits = totalCredits;
+
+            return this;
+        }
+        public ManagementBuilder WithTransportData(string value) {
+            TransportData = value;
+            return this;
+        }
+        public ManagementBuilder WithTimestamp(string value) {
+            Timestamp = value;
+            return this;
+        }
+        public ManagementBuilder WithReferenceNumber(string value) {
+            ReferenceNumber = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Allows duplicate transactions by skipping the
+        /// gateway's duplicate checking.
+        /// </summary>
+        /// <param name="value">The duplicate skip flag</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithAllowDuplicates(bool value) {
+            AllowDuplicates = value;
             return this;
         }
 
@@ -261,7 +316,7 @@ namespace GlobalPayments.Api.Builders {
 
         protected override void SetupValidations() {
             Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release)
-                .Check(() => TransactionId).IsNotNull();
+                .Check(() => PaymentMethod).IsNotNull();
 
             // TODO: Need level validations
             //Validations.For(TransactionType.Edit).With(TransactionModifier.Level_II)
@@ -294,6 +349,26 @@ namespace GlobalPayments.Api.Builders {
                 TransactionType.VerifySignature |
                 TransactionType.Refund)
                 .Check(() => VoidReason).IsNull();
+        }
+        public ManagementBuilder WithForcedReversal(bool value) {
+            ForcedReversal = value;
+            return this;
+        }
+        public ManagementBuilder WithProductData(ProductData value) {
+            ProductData = value;
+            return this;
+        }
+        public ManagementBuilder WithFleetData(FleetData value) {
+            FleetData = value;
+            return this;
+        }
+        public ManagementBuilder WithCustomerInitiated(bool value) {
+            CustomerInitiated = value;
+            return this;
+        }
+        public ManagementBuilder WithForceGatewayTimeout(bool value) {
+            ForceGatewayTimeout = value;
+            return this;
         }
     }
 }

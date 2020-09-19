@@ -9,12 +9,17 @@ namespace GlobalPayments.Api.Entities.Payroll {
         public string Username { get; set; }
         public string ApiKey { get; set; }
 
+        public PayrollEncoder(string username = null, string apiKey = null) {
+            this.Username = username;
+            this.ApiKey = apiKey;
+        }
+
         public string Encode(object value) {
             if (value == null)
                 return null;
 
             using (var aes = Aes.Create()) {
-                var key = new Rfc2898DeriveBytes(ApiKey, Encoding.UTF8.GetBytes(Username), 1000);
+                var key = new Rfc2898DeriveBytes(ApiKey, Encoding.UTF8.GetBytes(Username.PadRight(8, ' ')), 1000);
 
                 var ems = new MemoryStream();
                 using (var encrypt = new CryptoStream(ems, aes.CreateEncryptor(key.GetKey(), key.GetVector()), CryptoStreamMode.Write)) {
@@ -31,7 +36,7 @@ namespace GlobalPayments.Api.Entities.Payroll {
                 return null;
 
             using (var aes = Aes.Create()) {
-                var key = new Rfc2898DeriveBytes(ApiKey, Encoding.UTF8.GetBytes(Username), 1000);
+                var key = new Rfc2898DeriveBytes(ApiKey, Encoding.UTF8.GetBytes(Username.PadRight(8, ' ')), 1000);
 
                 var dms = new MemoryStream();
                 using (var decrypt = new CryptoStream(dms, aes.CreateDecryptor(key.GetKey(), key.GetVector()), CryptoStreamMode.Write)) {

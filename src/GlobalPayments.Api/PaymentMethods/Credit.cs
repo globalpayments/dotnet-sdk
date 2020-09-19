@@ -41,6 +41,8 @@ namespace GlobalPayments.Api.PaymentMethods {
 
         public bool FleetCard { get; set; }
 
+        public bool PurchaseCard { get; set; }
+
         public Credit() {
             CardType = "Unknown";
         }
@@ -56,7 +58,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                 .WithCurrency(ThreeDSecure?.Currency)
                 .WithOrderId(ThreeDSecure?.OrderId)
                 .WithAmountEstimated(isEstimated);
-        }
+        }        
 
         /// <summary>
         /// Creates a charge (sale) against the payment method.

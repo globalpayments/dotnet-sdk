@@ -19,8 +19,13 @@ namespace GlobalPayments.Api.PaymentMethods {
             get {
                 var month = (ExpMonth.HasValue) ? ExpMonth.ToString().PadLeft(2, '0') : string.Empty;
                 var year = (ExpYear.HasValue) ? ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty;
-                return month + year;
+                return year + month;
             }
+        }
+        public EBTCardData() {
+        }
+        public EBTCardData(EbtCardType cardType) {
+            EbtCardType = cardType;
         }
     }
 }

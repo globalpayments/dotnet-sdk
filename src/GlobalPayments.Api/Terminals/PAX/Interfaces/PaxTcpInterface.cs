@@ -59,6 +59,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
                             return rvalue;
                         }
                     }
+                    else {
+                        // Reset the connection before the next attempt
+                        Disconnect();
+                        Connect();
+                    }
                 }
                 throw new MessageException("Terminal did not respond in the given timeout.");
             }

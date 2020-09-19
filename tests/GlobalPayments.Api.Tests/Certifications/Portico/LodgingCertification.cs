@@ -1916,6 +1916,34 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
+        public void Lodging_IncrementalAuth_SaleWithCOF() {
+            CreditCardData card = TestCards.VisaManual(true, true);
+
+            Transaction response = card.Charge(115m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithCardBrandStorage(StoredCredentialInitiator.Merchant)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.IsNotNull(response.CardBrandTransactionId);
+
+            Transaction cofResponse = card.Charge(115m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithCardBrandStorage(StoredCredentialInitiator.Merchant, response.CardBrandTransactionId)
+                .Execute();
+            Assert.IsNotNull(cofResponse);
+            Assert.AreEqual("00", cofResponse.ResponseCode);
+
+            Transaction incremental = cofResponse.Increment(23m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(incremental);
+            Assert.AreEqual("00", incremental.ResponseCode);
+        }
+
+        [TestMethod]
         public void Lodging_085_IncrementalAuth_MasterSale() {
             track = TestCards.MasterCardSwipe();
 
