@@ -27,7 +27,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             }
         }
 
-        internal PaxController(ITerminalConfiguration settings) : base(settings) {            
+        internal PaxController(ITerminalConfiguration settings) : base(settings) {
         }
 
         #region overrides
@@ -260,7 +260,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
                         request = TerminalUtilities.BuildRequest(
                             messageId,
-                            "01",  // EDC TYPE SET TO ALL
+                            "00",  // EDC TYPE SET TO ALL
                             ControlCodes.FS,
                             criteria.TransactionType.HasValue ? ((int)criteria.TransactionType.Value).ToString().PadLeft(2, '0') : string.Empty,
                             ControlCodes.FS,
