@@ -53,42 +53,45 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             #region card holder
-            var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
-            var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
+            if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring) {
+                var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
+                var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
 
-            if (builder.BillingAddress != null) {
-                et.SubElement(holder, isCheck ? "Address1" : "CardHolderAddr", builder.BillingAddress.StreetAddress1);
-                et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
-                et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
-                et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
-            }
+                if (builder.BillingAddress != null) {
+                    et.SubElement(holder, isCheck ? "Address1" : "CardHolderAddr", builder.BillingAddress.StreetAddress1);
+                    et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
+                    et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
+                    et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
+                }
 
-            if (isCheck) {
-                var check = builder.PaymentMethod as eCheck;
-                if (!string.IsNullOrEmpty(check.CheckHolderName)) {
-                    var names = check.CheckHolderName.Split(new char[] {' '}, 2);
-                    et.SubElement(holder, "FirstName", names[0]);
-                    et.SubElement(holder, "LastName", names[1]);
-                }
-                et.SubElement(holder, "CheckName", check.CheckName);
-                et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
-                et.SubElement(holder, "DLNumber", check.DriversLicenseNumber);
-                et.SubElement(holder, "DLState", check.DriversLicenseState);
+                if (isCheck) {
+                    var check = builder.PaymentMethod as eCheck;
+                    if (!string.IsNullOrEmpty(check.CheckHolderName)) {
+                        var names = check.CheckHolderName.Split(new char[] {' '}, 2);
+                        et.SubElement(holder, "FirstName", names[0]);
+                        et.SubElement(holder, "LastName", names[1]);
+                    }
+                    et.SubElement(holder, "CheckName", check.CheckName);
+                    et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
+                    et.SubElement(holder, "DLNumber", check.DriversLicenseNumber);
+                    et.SubElement(holder, "DLState", check.DriversLicenseState);
 
-                if (!string.IsNullOrEmpty(check.SsnLast4) || check.BirthYear != default(int)) {
-                    var identity = et.SubElement(holder, "IdentityInfo");
-                    et.SubElement(identity, "SSNL4", check.SsnLast4);
-                    et.SubElement(identity, "DOBYear", check.BirthYear);
+                    if (!string.IsNullOrEmpty(check.SsnLast4) || check.BirthYear != default(int)) {
+                        var identity = et.SubElement(holder, "IdentityInfo");
+                        et.SubElement(identity, "SSNL4", check.SsnLast4);
+                        et.SubElement(identity, "DOBYear", check.BirthYear);
+                    }
+                }
+                else {
+                    var card = builder.PaymentMethod as CreditCardData;
+                    if (!string.IsNullOrEmpty(card.CardHolderName)) {
+                        var names = card.CardHolderName.Split(new char[] {' '}, 2);
+                        et.SubElement(holder, "CardHolderFirstName", names[0]);
+                        et.SubElement(holder, "CardHolderLastName", names[1]);
+                    }
                 }
             }
-            else {
-                var card = builder.PaymentMethod as CreditCardData;
-                if (!string.IsNullOrEmpty(card.CardHolderName)) {
-                    var names = card.CardHolderName.Split(new char[] {' '}, 2);
-                    et.SubElement(holder, "CardHolderFirstName", names[0]);
-                    et.SubElement(holder, "CardHolderLastName", names[1]);
-                }
-            }
+            
             #endregion
 
             // card data
