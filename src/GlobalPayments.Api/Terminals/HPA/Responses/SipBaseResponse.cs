@@ -41,7 +41,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                 RequestId = root.GetValue<string>("RequestId");
                 ResponseId = root.GetValue<string>("ResponseId");
                 Status = root.GetValue<string>("MultipleMessage");
-                DeviceResponseCode = NormalizeResponse(root.GetValue<string>("Result"));
+                DeviceResponseCode = NormalizeResponse(root.GetValue<string>("Result"));    
                 DeviceResponseText = root.GetValue<string>("ResultText");
 
                 if ((DeviceResponseCode.Equals("00", StringComparison.OrdinalIgnoreCase)) || (DeviceResponseCode.Equals("2501", StringComparison.OrdinalIgnoreCase))){

@@ -1,12 +1,7 @@
-﻿using GlobalPayments.Api.Utils;
-
-namespace GlobalPayments.Api.Entities {
-    [MapTarget(Target.Portico)]
+﻿namespace GlobalPayments.Api.Entities {
     public enum StoredCredentialInitiator {
-        [Map(Target.Portico, "C")]
         CardHolder,
-        [Map(Target.Portico, "M")]
-        Merchant,        
+        Merchant,
         Scheduled
     }
 }

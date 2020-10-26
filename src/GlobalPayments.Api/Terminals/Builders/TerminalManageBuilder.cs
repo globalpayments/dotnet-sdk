@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Ingenico;
 
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalManageBuilder : TerminalBuilder<TerminalManageBuilder> {
@@ -10,10 +11,30 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal decimal? Gratuity { get; set; }
         internal string TransactionId {
             get {
-                if (PaymentMethod is TransactionReference)
+                if (PaymentMethod is TransactionReference) {
                     return (PaymentMethod as TransactionReference).TransactionId;
+                }
                 return null;
             }
+        }
+        internal string CurrencyCode { get; set; }
+        internal PaymentMode PaymentMode { get; set; }
+        internal string AuthCode {
+            get {
+                if (PaymentMethod is TransactionReference)
+                    return (PaymentMethod as TransactionReference).AuthCode;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Sets the currency code for the transaction.
+        /// </summary>
+        /// <param name="value">Currency Code</param>
+        /// <returns></returns>
+        public TerminalManageBuilder WithCurrencyCode(string value) {
+            CurrencyCode = value;
+            return this;
         }
 
         public TerminalManageBuilder WithAmount(decimal? amount) {
@@ -32,10 +53,25 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Gratuity = amount;
             return this;
         }
+
+        /// <summary>
+        /// Sets the authorization code for the transaction.
+        /// </summary>
+        /// <param name="value">Authorization Code</param>
+        /// <returns></returns>
+        public TerminalManageBuilder WithAuthCode(string value) {
+            if (PaymentMethod == null || !(PaymentMethod is TransactionReference)) {
+                PaymentMethod = new TransactionReference();
+            }
+            (PaymentMethod as TransactionReference).AuthCode = value;
+            return this;
+        }
+
         public TerminalManageBuilder WithTransactionId(string value) {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
             (PaymentMethod as TransactionReference).TransactionId = value;
+
             return this;
         }
 
@@ -57,7 +93,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         protected override void SetupValidations() {
-            Validations.For(TransactionType.Capture).Check(() => TransactionId).IsNotNull();
+            Validations.For(TransactionType.Capture).When(() => AuthCode).IsNull().Check(() => TransactionId).IsNotNull();
             Validations.For(TransactionType.Void).When(() => ClientTransactionId).IsNull().Check(() => TransactionId).IsNotNull();
             Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
         }

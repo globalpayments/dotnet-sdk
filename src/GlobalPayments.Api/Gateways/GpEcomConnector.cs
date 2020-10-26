@@ -661,11 +661,11 @@ namespace GlobalPayments.Api.Gateways {
             var root = new ElementTree(rawResponse).Get("response");
 
             var acceptedCodes = new List<string>();
-            if (builder is AuthorizationBuilder authBuilder) {
-                acceptedCodes = MapAcceptedCodes(MapAuthRequestType(authBuilder));
+            if (builder is AuthorizationBuilder) {
+                acceptedCodes = MapAcceptedCodes(MapAuthRequestType(builder as AuthorizationBuilder));
             }
-            else if (builder is ManagementBuilder managementBuilder) {
-                acceptedCodes = MapAcceptedCodes(MapManageRequestType(managementBuilder));
+            else if (builder is ManagementBuilder) {
+                acceptedCodes = MapAcceptedCodes(MapManageRequestType(builder as ManagementBuilder));
             }
 
             CheckResponse(root, acceptedCodes);
@@ -682,13 +682,9 @@ namespace GlobalPayments.Api.Gateways {
                     TransactionId = root.GetValue<string>("pasref"),
                     AlternativePaymentType = root.GetValue<string>("paymentmethod"),
                     BatchNumber = root.GetValue<string>("batchid")
-                }
+                },
+                MultiCapture = builder.MultiCapture
             };
-
-            if (builder is ManagementBuilder mb && mb.MultiCapture) {
-                result.MultiCapturePaymentCount = mb.MultiCapturePaymentCount;
-                result.MultiCaptureSequence = mb.MultiCaptureSequence;
-            }
 
             // dccinfo
             if (root.Has("dccinfo")) {

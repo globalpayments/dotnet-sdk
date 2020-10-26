@@ -149,8 +149,6 @@ namespace GlobalPayments.Api.Entities {
 
         public IEnumerable<string> SdkUiType { get; set; }
 
-        public string SecureCode { get; set; }
-
         public string ServerTransactionId { get; set; }
 
         /// <summary>
@@ -159,8 +157,6 @@ namespace GlobalPayments.Api.Entities {
         public string Status { get; set; }
 
         public string StatusReason { get; set; }
-
-        public UCAFIndicator UCAFIndicator { get; set; }
 
         public Secure3dVersion? _version;
         public Secure3dVersion? Version {

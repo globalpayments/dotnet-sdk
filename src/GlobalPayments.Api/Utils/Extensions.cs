@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using System.Text.RegularExpressions;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GlobalPayments.Api.Utils {
     public static class Extensions {
@@ -205,6 +206,11 @@ namespace GlobalPayments.Api.Utils {
                 rvalue = rvalue.Substring(0, rvalue.Length - trimLength);
             }
             return rvalue;
+        }
+        public static T[] SubArray<T>(this T[] data, int index, int length) {
+            T[] result = new T[length];
+            Array.Copy(data, index, result, 0, length);
+            return result;
         }
     }
 }

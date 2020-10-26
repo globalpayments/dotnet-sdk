@@ -24,18 +24,20 @@ namespace GlobalPayments.Api.Terminals.PAX {
             return new SignatureResponse(response, _controller.DeviceType.Value);
         }
 
-        public override void Cancel() {
+        public override IDeviceResponse Cancel() {
             if (_controller.ConnectionMode == ConnectionModes.HTTP) {
                 throw new MessageException("The cancel command is not available in HTTP mode");
             }
 
             try {
                 _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A14_CANCEL));
+                return null;
             }
             catch (MessageException exc) {
                 if (!exc.Message.Equals("Terminal returned EOT for the current message.")) {
                     throw;
                 }
+                return null;
             }
         }
 

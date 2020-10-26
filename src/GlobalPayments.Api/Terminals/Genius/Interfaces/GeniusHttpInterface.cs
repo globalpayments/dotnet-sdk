@@ -17,6 +17,8 @@ namespace GlobalPayments.Api.Terminals.Genius.Interfaces {
         private GeniusConfig _gatewayConfig;
 
         public event MessageSentEventHandler OnMessageSent;
+        public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         public GeniusHttpInterface(ITerminalConfiguration settings) {
             _settings = settings;
@@ -66,9 +68,9 @@ namespace GlobalPayments.Api.Terminals.Genius.Interfaces {
             try {
                 string payload = Encoding.UTF8.GetString(message.GetSendBuffer());
 
-                string url = ServiceEndpoints.GENIUS_TERMINAL_TEST;
+                string url = ServiceEndpoints.GENIUS_TERMIAL_TEST;
                 if (_gatewayConfig.Environment.Equals(Entities.Environment.PRODUCTION)) {
-                    url = ServiceEndpoints.GENIUS_TERMINAL_PRODUCTION;
+                    url = ServiceEndpoints.GENIUS_TERMIAL_PRODUCTION;
                 }
 
                 HttpClient httpClient = new HttpClient {

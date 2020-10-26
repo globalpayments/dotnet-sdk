@@ -1,6 +1,8 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
+using GlobalPayments.Api.Terminals.Ingenico;
 using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals {
@@ -9,17 +11,29 @@ namespace GlobalPayments.Api.Terminals {
         protected IRequestIdProvider _requestIdProvider;
 
         public event MessageSentEventHandler OnMessageSent;
+        public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         internal DeviceInterface(T controller) {
             _controller = controller;
             _controller.OnMessageSent += (message) => {
                 OnMessageSent?.Invoke(message);
             };
+
+            _controller.OnBroadcastMessage += (code, message) => {
+                OnBroadcastMessage?.Invoke(code, message);
+            };
+
+            _controller.OnPayAtTableRequest += (request) => {
+                OnPayAtTableRequest?.Invoke(request);
+            };
+
+
             _requestIdProvider = _controller.RequestIdProvider;
         }
 
         #region Admin Methods
-        public virtual void Cancel() {
+        public virtual IDeviceResponse Cancel() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
@@ -78,6 +92,22 @@ namespace GlobalPayments.Api.Terminals {
         public virtual IDeviceResponse StartCard(PaymentMethodType paymentMethodType) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+
+        public virtual IDeviceResponse Duplicate() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
+        public virtual IDeviceResponse GetTerminalStatus() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
+        public virtual IDeviceResponse GetTerminalConfiguration() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
+        public virtual IDeviceResponse TestConnection() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
         #endregion
 
         #region Batching
@@ -94,6 +124,15 @@ namespace GlobalPayments.Api.Terminals {
         public virtual TerminalReportBuilder LocalDetailReport() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+        public virtual TerminalReportBuilder GetLastReceipt(ReceiptType type = ReceiptType.TICKET) {
+            return new TerminalReportBuilder(type);
+        }
+
+        public virtual TerminalReportBuilder GetReport(Ingenico.ReportType type) {
+            //return new TerminalReportBuilder(TerminalReportType.LocalDetailReport).WithReportType(type);
+            return new TerminalReportBuilder(type);
+        }
+
         #endregion
 
         #region Transactions
@@ -120,8 +159,10 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Credit)
                 .WithAmount(amount);
         }
+
         public virtual TerminalAuthBuilder Verify() {
-            return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit);
+            return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit)
+                .WithAmount(6.18m);
         }
         public virtual TerminalManageBuilder Void() {
             return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.Credit);
@@ -136,6 +177,26 @@ namespace GlobalPayments.Api.Terminals {
         public void Dispose() {
             _controller.Dispose();
         }
+        #endregion
+
+        #region For clarification
+
+        #region Transaction Management
+        public virtual TerminalManageBuilder Reverse(decimal? amount = null) {
+            return new TerminalManageBuilder(TransactionType.Reversal, PaymentMethodType.Credit)
+                .WithAmount(amount);
+        }
+
+        #endregion
+
+        #region Pay@Table Methods
+
+        public virtual TerminalAuthBuilder PayAtTableResponse() {
+            return new TerminalAuthBuilder(TransactionType.PayAtTable, PaymentMethodType.Other);
+        }
+
+        #endregion
+
         #endregion
     }
 }
