@@ -35,8 +35,5 @@ namespace GlobalPayments.Api.PaymentMethods {
         }
 
         public EBTTrackData() : base() { }
-        public EBTTrackData(EbtCardType cardType) {
-            EbtCardType = cardType;
-        }
     }
 }

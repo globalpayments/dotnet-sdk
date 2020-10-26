@@ -411,7 +411,6 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 .Execute();
             Assert.IsNotNull(duplicate);
             Assert.AreEqual("00", duplicate.ResponseCode);
-            Assert.AreEqual(response.AuthorizationCode, duplicate.AuthorizationCode);
         }
     }
 }

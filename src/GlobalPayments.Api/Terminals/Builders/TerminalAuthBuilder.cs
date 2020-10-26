@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Ingenico;
 
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalAuthBuilder : TerminalBuilder<TerminalAuthBuilder> {
@@ -10,8 +11,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal decimal? Amount { get; set; }
         internal string AuthCode {
             get {
-                if (PaymentMethod is TransactionReference)
+                if (PaymentMethod is TransactionReference) {
                     return (PaymentMethod as TransactionReference).AuthCode;
+                }
                 return null;
             }
         }
@@ -30,11 +32,19 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal string TaxExemptId { get; set; }
         internal string TransactionId {
             get {
-                if (PaymentMethod is TransactionReference)
+                if (PaymentMethod is TransactionReference) {
                     return (PaymentMethod as TransactionReference).TransactionId;
+                }
                 return null;
             }
         }
+        internal string CurrencyCode { get; set; }
+        internal PaymentMode PaymentMode { get; set; }
+        internal string TableNumber { get; set; }
+        internal TaxFreeType? TaxFreeType { get; set; }
+        internal PATPaymentMode? AdditionalMessage { get; set; }
+        internal PATResponseType? PayAtTableResponse { get; private set; }
+        public string FilePath { get; private set; }
 
         public TerminalAuthBuilder WithAddress(Address address) {
             Address = address;
@@ -48,9 +58,16 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Amount = amount;
             return this;
         }
+
+        /// <summary>
+        /// Sets the authorization code for the transaction.
+        /// </summary>
+        /// <param name="value">Authorization Code</param>
+        /// <returns></returns>
         public TerminalAuthBuilder WithAuthCode(string value) {
-            if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
+            if (PaymentMethod == null || !(PaymentMethod is TransactionReference)) {
                 PaymentMethod = new TransactionReference();
+            }
             (PaymentMethod as TransactionReference).AuthCode = value;
             return this;
         }
@@ -64,6 +81,12 @@ namespace GlobalPayments.Api.Terminals.Builders {
             AutoSubstantiation = value;
             return this;
         }
+
+        /// <summary>
+        /// Sets the cash back for the transaction.
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public TerminalAuthBuilder WithCashBack(decimal? amount) {
             CashBackAmount = amount;
             return this;
@@ -126,9 +149,80 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
-        internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
+        /// <summary>
+        /// Sets the currency code for the transaction.
+        /// </summary>
+        /// <param name="value">Currency Code</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithCurrencyCode(string value) {
+            CurrencyCode = value;
+            return this;
         }
 
+        /// <summary>
+        /// Sets the payment mode for the transaction.
+        /// </summary>
+        /// <param name="value">Payment Mode</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithPaymentMode(PaymentMode value) {
+            PaymentMode = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the payment mode for the Pay@Table feature
+        /// </summary>
+        /// <param name="additionalMessage">Pay@Table Payment Mode</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithPaymentMode(PATPaymentMode additionalMessage) {
+            AdditionalMessage = additionalMessage;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the table number for the transaction.
+        /// </summary>
+        /// <param name="value">Table Number</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithTableNumber(string value) {
+            TableNumber = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Method used for requesting a Tax Free Refund Payment type transaction.
+        /// </summary>
+        /// <param name="taxFreeType">
+        /// Payment Type of refund. Either Cash or Credit
+        /// </param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithTaxFree(TaxFreeType taxFreeType) {
+            TaxFreeType = taxFreeType;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithPayAtTableResponseType(PATResponseType response) {
+            PayAtTableResponse = response;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the path of the XML Document.
+        /// </summary>
+        /// <param name="filePath">XML Document Path</param>
+        /// <returns></returns>
+        public TerminalAuthBuilder WithXMLPath(string filePath) {
+            FilePath = filePath;
+            return this;
+        }
+
+        internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) { }
+
+        /// <summary>
+        /// Executes the transaction.
+        /// </summary>
+        /// <param name="configName"></param>
+        /// <returns></returns>
         public override ITerminalResponse Execute(string configName = "default") {
             base.Execute(configName);
 

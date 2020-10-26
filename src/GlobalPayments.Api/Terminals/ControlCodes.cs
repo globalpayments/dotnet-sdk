@@ -15,6 +15,11 @@ namespace GlobalPayments.Api.Terminals {
         GS = 0x1D,
         EOT = 0x04,
 
+        // Ingenico Currency Symbol
+        NUM = 0x23,
+        GBP = 0xA3,
+        SP = 0x20,
+
         // PAX Specific ??
         US = 0x1F,
         RS = 0x1E,

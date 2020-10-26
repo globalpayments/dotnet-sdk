@@ -1,5 +1,4 @@
 ﻿using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using System.Collections.Generic;
 
@@ -35,8 +34,6 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? Gratuity { get; set; }
         internal string InvoiceNumber { get; set; }
         internal LodgingData LodgingData { get; set; }
-        internal int? MultiCapturePaymentCount { get; set; }
-        internal int? MultiCaptureSequence { get; set; }
         internal string OrderId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -56,18 +53,6 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
-        internal int TransactionCount { get; set; }
-        internal decimal TotalCredits { get; set; }
-        internal decimal TotalDebits { get; set; }
-        internal string ReferenceNumber { get; set; }
-        internal BatchCloseType BatchCloseType { get; set; }
-        internal decimal? CashBackAmount { get; set; }
-        internal bool ForcedReversal { get; set; }
-        internal bool CustomerInitiated { get; set; }
-        internal string TransportData { get; set; }
-        internal string Timestamp { get; set; }
-        internal VoidReason? VoidReason { get; set; }
-        internal bool AllowDuplicates { get; set; }
 
         /// <summary>
         /// Sets the current transaction's amount.
@@ -93,16 +78,8 @@ namespace GlobalPayments.Api.Builders {
         /// Sets the Multicapture value as true/false.
         /// </summary>
         /// <returns>ManagementBuilder</returns>
-        //public ManagementBuilder WithMultiCapture(bool value) {
-        //    MultiCapture = value;
-        //    return this;
-        //}
-
-        public ManagementBuilder WithMultiCapture(int sequence = 1, int paymentCount = 1) {
-            MultiCapture = true;
-            MultiCaptureSequence = sequence;
-            MultiCapturePaymentCount = paymentCount;
-
+        public ManagementBuilder WithMultiCapture(bool value) {
+            MultiCapture = value;
             return this;
         }
 
@@ -239,50 +216,7 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="value"></param>
         /// <returns></returns>
         public ManagementBuilder WithAlternativePaymentType(AlternativePaymentType value) {
-            AlternativePaymentType = value;
-            return this;
-        }
-        public ManagementBuilder WithCashBackAmount(decimal? value) {
-            CashBackAmount = value;
-            return this;
-        }
-        public ManagementBuilder WithBatchNumber(int batchNumber, int sequenceNumber = 0) {
-            BatchNumber = batchNumber;
-            SequenceNumber = sequenceNumber;
-            return this;
-        }
-        public ManagementBuilder WithBatchCloseType(BatchCloseType value) {
-            BatchCloseType = value;
-            return this;
-        }
-        public ManagementBuilder WithBatchTotals(int transactionCount, decimal totalDebits, decimal totalCredits) {
-            TransactionCount = transactionCount;
-            TotalDebits = totalDebits;
-            TotalCredits = totalCredits;
-
-            return this;
-        }
-        public ManagementBuilder WithTransportData(string value) {
-            TransportData = value;
-            return this;
-        }
-        public ManagementBuilder WithTimestamp(string value) {
-            Timestamp = value;
-            return this;
-        }
-        public ManagementBuilder WithReferenceNumber(string value) {
-            ReferenceNumber = value;
-            return this;
-        }
-
-        /// <summary>
-        /// Allows duplicate transactions by skipping the
-        /// gateway's duplicate checking.
-        /// </summary>
-        /// <param name="value">The duplicate skip flag</param>
-        /// <returns>ManagementBuilder</returns>
-        public ManagementBuilder WithAllowDuplicates(bool value) {
-            AllowDuplicates = value;
+            this.AlternativePaymentType = value;
             return this;
         }
 
@@ -293,11 +227,6 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public ManagementBuilder WithLodgingData(LodgingData value) {
             LodgingData = value;
-            return this;
-        }
-
-        public ManagementBuilder WithVoidReason(VoidReason? value) {
-            VoidReason = value;
             return this;
         }
 
@@ -316,7 +245,7 @@ namespace GlobalPayments.Api.Builders {
 
         protected override void SetupValidations() {
             Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release)
-                .Check(() => PaymentMethod).IsNotNull();
+                .Check(() => TransactionId).IsNotNull();
 
             // TODO: Need level validations
             //Validations.For(TransactionType.Edit).With(TransactionModifier.Level_II)
@@ -338,37 +267,6 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.TokenUpdate)
                 .Check(() => PaymentMethod).Is<CreditCardData>();
-
-            Validations.For(
-                TransactionType.Capture |
-                TransactionType.Edit |
-                TransactionType.Hold |
-                TransactionType.Release |
-                TransactionType.TokenUpdate |
-                TransactionType.TokenDelete |
-                TransactionType.VerifySignature |
-                TransactionType.Refund)
-                .Check(() => VoidReason).IsNull();
-        }
-        public ManagementBuilder WithForcedReversal(bool value) {
-            ForcedReversal = value;
-            return this;
-        }
-        public ManagementBuilder WithProductData(ProductData value) {
-            ProductData = value;
-            return this;
-        }
-        public ManagementBuilder WithFleetData(FleetData value) {
-            FleetData = value;
-            return this;
-        }
-        public ManagementBuilder WithCustomerInitiated(bool value) {
-            CustomerInitiated = value;
-            return this;
-        }
-        public ManagementBuilder WithForceGatewayTimeout(bool value) {
-            ForceGatewayTimeout = value;
-            return this;
         }
     }
 }

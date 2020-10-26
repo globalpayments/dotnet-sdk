@@ -13,15 +13,15 @@ namespace GlobalPayments.Api.Tests.TransIT {
             //});
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void GenerateKey_Manual() {
             // TODO: I have verified this works and am awaiting for guidance on how to handle the transaction keys before finalizing this piece
             string transactionKey = TransitService.GenerateTransactionKey(
                 Environment.TEST,
-                "887000003282",
-                "TA5654114",
-                "TransitCert2020!"
-                //"3RDHBVQOYIGTC9WQ32CPBFMPGX5OTWN3"
+                "887000003226",
+                "TA5622118",
+                "f8mapGqWrE^rVaA9",
+                "3RDHBVQOYIGTC9WQ32CPBFMPGX5OTWN3"
             );
             Assert.IsNotNull(transactionKey);
         }

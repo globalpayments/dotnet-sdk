@@ -16,6 +16,8 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
         List<byte> message_queue;
 
         public event MessageSentEventHandler OnMessageSent;
+        public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         public HpaTcpInterface(ITerminalConfiguration settings) {
             this._settings = settings;

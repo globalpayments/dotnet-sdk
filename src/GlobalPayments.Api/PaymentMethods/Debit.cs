@@ -2,11 +2,12 @@
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 
-namespace GlobalPayments.Api.PaymentMethods {
+namespace GlobalPayments.Api.PaymentMethods
+{
     /// <summary>
     /// Use PIN debit as a payment method.
     /// </summary>
-    public abstract class Debit : IPaymentMethod, IPrePaid, IRefundable, IReversable, IChargable, IEncryptable, IPinProtected {
+    public abstract class Debit : IPaymentMethod, IPrePayable, IRefundable, IReversable, IChargable, IEncryptable, IPinProtected {
         public string CardType { get; set; }
 
         public EncryptionData EncryptionData { get; set; }
@@ -37,10 +38,5 @@ namespace GlobalPayments.Api.PaymentMethods {
         public AuthorizationBuilder Reverse(decimal? amount = null) {
             return new AuthorizationBuilder(TransactionType.Reversal, this).WithAmount(amount);
         }
-        public AuthorizationBuilder Authorize(decimal? amount = null, bool isEstimated = true) {
-            return new AuthorizationBuilder(TransactionType.Auth, this)
-                    .WithAmount(amount)
-                    .WithAmountEstimated(true);
-        }
-    }   
+    }
 }

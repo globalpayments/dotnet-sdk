@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Builders {
@@ -16,12 +15,10 @@ namespace GlobalPayments.Api.Builders {
         internal bool AllowDuplicates { get; set; }
         internal bool AllowPartialAuth { get; set; }
         internal decimal? Amount { get; set; }
-        internal bool AmountEstimated { get; set; }
         internal decimal? AuthAmount { get; set; }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal InquiryType? BalanceInquiryType { get; set; }
         internal Address BillingAddress { get; set; }
-        internal string CardBrandTransactionId { get; set; }
         internal decimal? CashBackAmount { get; set; }
         internal string ClientTransactionId { get; set; }
         internal CommercialData CommercialData { get; set; }
@@ -65,19 +62,12 @@ namespace GlobalPayments.Api.Builders {
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
         internal string TagData { get; set; }
         internal string Timestamp { get; set; }
-        internal decimal FeeAmount { get; set; }
-        internal FeeType FeeType { get; set; }
-        internal string ShiftNumber { get; set; }
-        internal string ClerkId { get; set; }
-        internal string TransportData { get; set; }
-        internal StoredCredentialInitiator? TransactionInitiator { get; set; }
 
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
             }
         }
-        internal EmvLastChipRead EmvChipCondition { get; set; }
 
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
@@ -145,11 +135,6 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithAmountEstimated(bool value) {
-            AmountEstimated = value;
-            return this;
-        }
-
         /// <summary>
         /// Sets the transaction's authorization amount; where applicable.
         /// </summary>
@@ -178,19 +163,13 @@ namespace GlobalPayments.Api.Builders {
         /// Sets the Multicapture value as true/false.
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithMultiCapture(bool value = true) {
-            MultiCapture = value;
+        public AuthorizationBuilder WithMultiCapture(bool value) {
+           MultiCapture = value;
             return this;
         }
 
         internal AuthorizationBuilder WithBalanceInquiryType(InquiryType? value) {
             BalanceInquiryType = value;
-            return this;
-        }
-
-        public AuthorizationBuilder WithCardBrandStorage(StoredCredentialInitiator transactionInitiator, string value = null) {
-            TransactionInitiator = transactionInitiator;
-            CardBrandTransactionId = value;
             return this;
         }
 
@@ -392,7 +371,8 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>       
         /// <param name="value">The Convenience amount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithConvenienceAmount(decimal? value) {
+        public AuthorizationBuilder WithConvenienceAmount(decimal? value)
+        {
             ConvenienceAmount = value;
             return this;
         }
@@ -402,7 +382,8 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>        
         /// <param name="value">The Shipping amount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithShippingAmt(decimal? value) {
+        public AuthorizationBuilder WithShippingAmt(decimal? value)
+        {
             ShippingAmt = value;
             return this;
         }
@@ -775,74 +756,6 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => PaymentMethod).IsNotNull();
 
             Validations.For(PaymentMethodType.Recurring).Check(() => ShippingAmt).IsNull();
-        }
-        
-        public AuthorizationBuilder WithForceGatewayTimeout(bool value) {
-            ForceGatewayTimeout = value;
-            return this;
-        }
-
-        public AuthorizationBuilder WithFee(FeeType feeType, decimal feeAmount) {
-            FeeType = feeType;
-            FeeAmount = feeAmount;
-
-            return this;
-        }
-
-        public AuthorizationBuilder WithUniqueDeviceId(string value) {
-            UniqueDeviceId = value;
-            return this;
-        }
-
-        public AuthorizationBuilder WithClerkId(string value) {
-            ClerkId = value;
-            return this;
-        }
-
-        public AuthorizationBuilder WithShiftNumber(string value) {
-            ShiftNumber = value;
-            return this;
-        }
-        public AuthorizationBuilder WithTransportData(string value) {
-            TransportData = value;
-            return this;
-        }
-        public AuthorizationBuilder WithBatchNumber(int value) {
-            BatchNumber = value;
-            return this;
-        }
-        public AuthorizationBuilder WithBatchNumber(int batchNumber, int sequenceNumber) {
-            BatchNumber = batchNumber;
-            SequenceNumber = sequenceNumber;
-            return this;
-        }
-        public AuthorizationBuilder WithCompanyId(string value) {
-            CompanyId = value;
-            return this;
-        }
-        public AuthorizationBuilder WithFleetData(FleetData value) {
-            FleetData = value;
-            return this;
-        }
-        public AuthorizationBuilder WithIssuerData(Dictionary<DE62_CardIssuerEntryTag, string> value) {
-            IssuerData = value;
-            return this;
-        }
-        public AuthorizationBuilder WithSystemTraceAuditNumber(int value) {
-            SystemTraceAuditNumber = value;
-            return this;
-        }        
-        public AuthorizationBuilder WithTransactionMatchingData(TransactionMatchingData value) {
-            TransactionMatchingData = value;
-            return this;
-        }
-        public AuthorizationBuilder WithChipCondition(EmvLastChipRead value) {
-            EmvChipCondition = value;
-            return this;
-        }
-        public AuthorizationBuilder WithProductData(ProductData value) {
-            ProductData = value;
-            return this;
         }
     }
 }

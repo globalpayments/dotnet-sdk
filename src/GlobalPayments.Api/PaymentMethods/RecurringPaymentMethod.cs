@@ -81,11 +81,8 @@ namespace GlobalPayments.Api.PaymentMethods
         /// </summary>
         /// <param name="amount">The amount of the transaction</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder Authorize(decimal? amount = null, bool isEstimated = false) {
-            return new AuthorizationBuilder(TransactionType.Auth, this)
-                .WithAmount(amount)
-                .WithOneTimePayment(true)
-                .WithAmountEstimated(isEstimated);
+        public AuthorizationBuilder Authorize(decimal? amount = null) {
+            return new AuthorizationBuilder(TransactionType.Auth, this).WithAmount(amount).WithOneTimePayment(true);
         }
 
         /// <summary>

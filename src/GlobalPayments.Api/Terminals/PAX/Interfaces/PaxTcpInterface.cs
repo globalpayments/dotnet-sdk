@@ -14,6 +14,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
         int _connectionCount = 0;
         
         public event MessageSentEventHandler OnMessageSent;
+        public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         public PaxTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;
@@ -58,11 +60,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
                             SendControlCode(ControlCodes.ACK);
                             return rvalue;
                         }
-                    }
-                    else {
-                        // Reset the connection before the next attempt
-                        Disconnect();
-                        Connect();
                     }
                 }
                 throw new MessageException("Terminal did not respond in the given timeout.");
