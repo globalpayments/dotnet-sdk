@@ -17,15 +17,12 @@ namespace GlobalPayments.Api.Utils {
             return Regex.Replace(str, "[^0-9]", "");
         }
 
-        public static string ToNumericString(this decimal dec) {
-            return Regex.Replace(dec.ToString(), "[^0-9]", "");
+        public static string ToNumericCurrencyString(this decimal dec) {
+            return Regex.Replace(string.Format("{0:c}", dec), "[^0-9]", "");
         }
 
         public static string ToNumericCurrencyString(this decimal? dec) {
-            if (dec != null) {
-                return Regex.Replace(string.Format("{0:c}", dec), "[^0-9]", "");
-            }   
-            return null;
+            return dec?.ToNumericCurrencyString();
         }
 
         public static string ToCurrencyString(this decimal? dec) {

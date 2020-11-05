@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
@@ -53,7 +53,9 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             #region card holder
-            if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring) {
+            if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring
+                && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift
+            ) {
                 var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
                 var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
 
@@ -82,16 +84,16 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(identity, "DOBYear", check.BirthYear);
                     }
                 }
-                else {
+                else{
                     var card = builder.PaymentMethod as CreditCardData;
-                    if (!string.IsNullOrEmpty(card.CardHolderName)) {
+                    if (card != null && !string.IsNullOrEmpty(card.CardHolderName)) {
                         var names = card.CardHolderName.Split(new char[] {' '}, 2);
                         et.SubElement(holder, "CardHolderFirstName", names[0]);
                         et.SubElement(holder, "CardHolderLastName", names[1]);
                     }
                 }
             }
-            
+
             #endregion
 
             // card data
@@ -594,7 +596,7 @@ namespace GlobalPayments.Api.Gateways {
                 );
             }
             else {
-                result.AuthorizedAmount = root.GetValue<decimal>("AuthAmt");
+                result.AuthorizedAmount = root.GetValue<decimal>("SplitTenderCardAmt", "AuthAmt");
                 result.AvailableBalance = root.GetValue<decimal>("AvailableBalance");
                 result.AvsResponseCode = root.GetValue<string>("AVSRsltCode");
                 result.AvsResponseMessage = root.GetValue<string>("AVSRsltText");

@@ -53,6 +53,11 @@ namespace GlobalPayments.Api.Entities {
         HPA_ISC250,
 
         /// <summary>
+        /// Indicates a HeartSIP Lane 3000 device
+        /// </summary>
+        HPA_LANE3000,
+
+        /// <summary>
         /// Indicates a genius terminal
         /// </summary>
         GENIUS

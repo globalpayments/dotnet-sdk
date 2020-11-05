@@ -120,11 +120,15 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
             if (message_queue == null)
                 return false;
 
-            message_queue.AddRange(buffer);
-
             var msg = ElementTree.Parse(buffer).Get("SIP");
             var multiMessage = msg.GetValue<int>("MultipleMessage");
             var response = msg.GetValue<string>("Response");
+            if (response == HPA_MSG_ID.NOTIFICATION) {
+                return false;
+            }
+
+            message_queue.AddRange(buffer);
+
             var text = msg.GetValue<string>("ResponseText");
             if (multiMessage != 0) {
                 message_queue.Add((byte)'\r'); // Delimiting character

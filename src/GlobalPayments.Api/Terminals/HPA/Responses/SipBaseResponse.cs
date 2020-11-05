@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                 var root = ElementTree.Parse(message).Get("SIP");
                 Command = root.GetValue<string>("Response");
                 if (Command != null && !messageIds.ToList().Contains(Command)) {
-                    throw new MessageException("Excpected {0} but recieved {1}".FormatWith(string.Join(", ", messageIds), Command));
+                    throw new MessageException("Expected {0} but recieved {1}".FormatWith(string.Join(", ", messageIds), Command));
                 }
 
                 Version = root.GetValue<string>("Version");

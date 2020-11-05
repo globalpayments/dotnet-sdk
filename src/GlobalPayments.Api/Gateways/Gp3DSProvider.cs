@@ -107,14 +107,14 @@ namespace GlobalPayments.Api.Gateways {
 
                 // order details
                 JsonDoc order = request.SubElement("order");
-                order.Set("amount", builder.Amount.ToNumericString());
+                order.Set("amount", builder.Amount.ToNumericCurrencyString());
                 order.Set("currency", builder.Currency);
                 order.Set("id", orderId);
                 order.Set("address_match_indicator", builder.AddressMatchIndicator ? "true" : "false");
                 order.Set("date_time_created", builder.OrderCreateDate?.ToString("yyyy-MM-dd'T'hh:mm'Z'"));
                 order.Set("gift_card_count", builder.GiftCardCount);
                 order.Set("gift_card_currency", builder.GiftCardCurrency);
-                order.Set("gift_card_amount", builder.GiftCardAmount?.ToNumericString());
+                order.Set("gift_card_amount", builder.GiftCardAmount.ToNumericCurrencyString());
                 order.Set("delivery_email", builder.DeliveryEmail);
                 order.Set("delivery_timeframe", builder.DeliveryTimeframe?.ToString());
                 order.Set("shipping_method", builder.ShippingMethod?.ToString());

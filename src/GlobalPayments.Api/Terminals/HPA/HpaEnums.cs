@@ -38,5 +38,6 @@ namespace GlobalPayments.Api.Terminals.HPA {
         public const string EMV_PARAMETER_DOWNLOAD = "EMVPDL";
         public const string EMVCRYPTOGRAMTYPE = "EMVTC";
         public const string SENDFILE = "SendFile";
+        public const string NOTIFICATION = "Notification";
     }
 }

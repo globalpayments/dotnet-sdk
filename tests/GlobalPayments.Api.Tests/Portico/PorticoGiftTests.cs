@@ -61,6 +61,18 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void GiftSaleWithPartialApproval()
+        {
+            var response = card.Charge(15m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("13", response.ResponseCode, response.ResponseMessage);
+            Assert.AreEqual(10.00m, response.AuthorizedAmount);
+            Assert.AreEqual(0m, response.BalanceAmount);
+        }
+
+        [TestMethod]
         public void GiftDeactivate() {
             var response = card.Deactivate().Execute();
             Assert.IsNotNull(response);
