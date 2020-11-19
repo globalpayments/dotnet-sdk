@@ -847,13 +847,6 @@ namespace GlobalPayments.Api.Entities {
         public const string DECLINED_VOID = "DECLINED SAF VOID SUMMARY";
     }
 
-    public enum ChallengeRequestIndicator {
-        NO_PREFERENCE,
-        NO_CHALLENGE_REQUESTED,
-        CHALLENGE_PREFERRED,
-        CHALLENGE_MANDATED
-    }
-
     internal static class EODCommandType {
         public const string END_OF_DAY = "EOD";
         public const string REVERSAL = "Reversal";
@@ -887,13 +880,7 @@ namespace GlobalPayments.Api.Entities {
         INSTALLMENT_TRANSACTION,
         ADD_CARD,
         MAINTAIN_CARD,
-        CARDHOLDER_VERIFICATION
-    }
-
-    public enum AuthenticationSource {
-        BROWSER,
-        STORED_RECURRING,
-        MOBILE_SDK
+        CARDHOLDER_VERIFICATION,
     }
 
     public enum ChallengeWindowSize {

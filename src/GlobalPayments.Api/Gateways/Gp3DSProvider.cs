@@ -77,6 +77,11 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("challenge_notification_url", ChallengeNotificationUrl);
                 request.Set("method_url_completion", builder.MethodUrlCompletion.ToString());
                 request.Set("merchant_contact_url", MerchantContactUrl);
+                request.Set("merchant_initiated_request_type", builder.MerchantInitiatedRequestType?.ToString());
+                request.Set("whitelist_status", builder.WhitelistStatus?.ToString());
+                request.Set("decoupled_flow_request", builder.DecoupledFlowRequest?.ToString());
+                request.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout);
+                request.Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
 
                 // card details
                 string hashValue = string.Empty;
@@ -277,6 +282,7 @@ namespace GlobalPayments.Api.Gateways {
                 Headers.Add("Authorization", string.Format("securehash {0}", value));
             }
             else Headers["Authorization"] = string.Format("securehash {0}", value);
+            Headers["X-GP-Version"] = "2.2.0";
         }
 
         private Transaction MapResponse(string rawResponse) {
@@ -302,6 +308,9 @@ namespace GlobalPayments.Api.Gateways {
             secureEcom.AuthenticationSource = doc.GetValue<string>("authentication_source");
             secureEcom.MessageCategory = doc.GetValue<string>("message_category");
             secureEcom.MessageVersion = doc.GetValue<string>("message_version");
+            secureEcom.AcsInfoIndicator = doc.GetArray<string>("acs_info_indicator");
+            secureEcom.DecoupledResponseIndicator = doc.GetValue<string>("decoupled_response_indicator");
+            secureEcom.WhitelistStatus = doc.GetValue<string>("whitelist_status");
 
             // challenge mandated
             if (doc.Has("challenge_mandated")) {
@@ -322,7 +331,7 @@ namespace GlobalPayments.Api.Gateways {
             if (doc.Has("message_extension")) {
                 foreach (JsonDoc messageExtension in doc.GetEnumerator("message_extension")) {
                     secureEcom.CriticalityIndicator = messageExtension.GetValue<string>("criticality_indicator");
-                    //secureEcom.MessageExtensionData = messageExtensions.GetValue<string>("data");
+                    secureEcom.MessageExtensionData = messageExtension.GetValue<string>("data");
                     secureEcom.MessageExtensionId = messageExtension.GetValue<string>("id");
                     secureEcom.MessageExtensionName = messageExtension.GetValue<string>("name");
                 }
@@ -333,7 +342,7 @@ namespace GlobalPayments.Api.Gateways {
             secureEcom.DirectoryServerStartVersion = doc.GetValue<string>("ds_protocol_version_start");
             secureEcom.AcsEndVersion = doc.GetValue<string>("acs_protocol_version_end");
             secureEcom.AcsStartVersion = doc.GetValue<string>("acs_protocol_version_start");
-
+            
             // payer authentication request
             if (doc.Has("method_data")) {
                 JsonDoc methodData = doc.Get("method_data");

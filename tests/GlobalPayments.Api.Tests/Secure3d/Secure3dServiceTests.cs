@@ -357,7 +357,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
                         .WithMethodUrlCompletion(MethodUrlCompletion.NO)
 
                         // optionals
-                        .WithMerchantInitiatedRequestType(AuthenticationRequestType.RECURRING_TRANSACTION)
+                        .WithMerchantInitiatedRequestType(MerchantInitiatedRequestType.RECURRING_TRANSACTION)
 
                         .Execute();
                 Assert.IsNotNull(initAuth);

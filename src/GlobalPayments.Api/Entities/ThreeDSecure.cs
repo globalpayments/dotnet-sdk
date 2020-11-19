@@ -12,6 +12,8 @@ namespace GlobalPayments.Api.Entities {
 
         public string AcsStartVersion { get; set; }
 
+        public IEnumerable<string> AcsInfoIndicator { get; set; }
+
         /// <summary>
         /// The algorithm used.
         /// </summary>
@@ -52,6 +54,8 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
+        public string DecoupledResponseIndicator { get; set; }
+
         public string DirectoryServerTransactionId { get; set; }
 
         public string DirectoryServerEndVersion { get; set; }
@@ -67,6 +71,11 @@ namespace GlobalPayments.Api.Entities {
         /// The enrolment status:
         /// </summary>
         public string Enrolled { get; set; }
+
+        /// <summary>
+        /// The exempt status
+        /// </summary>
+        public ExemptStatus? ExemptStatus { get; set; }
 
         /// <summary>
         /// The URL of the Issuing Bank's ACS.
@@ -107,6 +116,8 @@ namespace GlobalPayments.Api.Entities {
         }
 
         public string MessageCategory { get; set; }
+
+        public string MessageExtensionData { get; set; }
 
         public string MessageExtensionId { get; set; }
 
@@ -171,6 +182,8 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
+        public string WhitelistStatus { get; set; }
+
         /// <summary>
         /// Consumer authentication (3DSecure) transaction ID.
         /// </summary>
@@ -195,6 +208,7 @@ namespace GlobalPayments.Api.Entities {
                 ChallengeMandated = MergeValue(ChallengeMandated, secureEcom.ChallengeMandated);
                 CriticalityIndicator = MergeValue(CriticalityIndicator, secureEcom.CriticalityIndicator);
                 Currency = MergeValue(Currency, secureEcom.Currency);
+                DecoupledResponseIndicator = MergeValue(DecoupledResponseIndicator, secureEcom.DecoupledResponseIndicator);
                 DirectoryServerTransactionId = MergeValue(DirectoryServerTransactionId, secureEcom.DirectoryServerTransactionId);
                 DirectoryServerEndVersion = MergeValue(DirectoryServerEndVersion, secureEcom.DirectoryServerEndVersion);
                 DirectoryServerStartVersion = MergeValue(DirectoryServerStartVersion, secureEcom.DirectoryServerStartVersion);
@@ -202,6 +216,7 @@ namespace GlobalPayments.Api.Entities {
                 Enrolled = MergeValue(Enrolled, secureEcom.Enrolled);
                 IssuerAcsUrl = MergeValue(IssuerAcsUrl, secureEcom.IssuerAcsUrl);
                 MessageCategory = MergeValue(MessageCategory, secureEcom.MessageCategory);
+                MessageExtensionData = MergeValue(MessageExtensionData, secureEcom.MessageExtensionData);
                 MessageExtensionId = MergeValue(MessageExtensionId, secureEcom.MessageExtensionId);
                 MessageExtensionName = MergeValue(MessageExtensionName, secureEcom.MessageExtensionName);
                 MessageVersion = MergeValue(MessageVersion, secureEcom.MessageVersion);
@@ -215,6 +230,7 @@ namespace GlobalPayments.Api.Entities {
                 Status = MergeValue(Status, secureEcom.Status);
                 StatusReason = MergeValue(StatusReason, secureEcom.StatusReason);
                 Version = MergeValue(Version, secureEcom.Version);
+                WhitelistStatus = MergeValue(WhitelistStatus, secureEcom.WhitelistStatus);
                 Xid = MergeValue(Xid, secureEcom.Xid);
 
                 //this.merchantData = mergeValue(merchantData, secureEcom.getMerchantData());

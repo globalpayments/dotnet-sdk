@@ -24,6 +24,9 @@ namespace GlobalPayments.Api.Builders {
         internal CustomerAuthenticationMethod? CustomerAuthenticationMethod { get; set; }
         internal DateTime? CustomerAuthenticationTimestamp { get; set; }
         internal string CustomerEmail { get; set; }
+        internal DecoupledFlowRequest? DecoupledFlowRequest { get; set; }
+        internal int? DecoupledFlowTimeout { get; set; }
+        internal string DecoupledNotificationUrl { get; set; }
         internal string DeliveryEmail { get; set; }
         internal DeliveryTimeFrame? DeliveryTimeframe { get; set; }
         internal string EncodedData { get; set; }
@@ -37,7 +40,7 @@ namespace GlobalPayments.Api.Builders {
         internal int? MaximumTimeout { get; set; }
         internal MerchantDataCollection MerchantData { get; set; }
         internal MessageCategory MessageCategory { get; set; }
-        internal AuthenticationRequestType? MerchantInitiatedRequestType { get; set; }
+        internal MerchantInitiatedRequestType? MerchantInitiatedRequestType { get; set; }
         internal string MessageVersion { get; set; }
         internal MethodUrlCompletion MethodUrlCompletion { get; set; }
         internal string MobileCountryCode { get; set; }
@@ -92,6 +95,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal WhitelistStatus? WhitelistStatus { get; set; }
         internal string WorkCountryCode { get; set; }
         internal string WorkNumber { get; set; }
 
@@ -171,6 +175,18 @@ namespace GlobalPayments.Api.Builders {
             CustomerEmail = value;
             return this;
         }
+        public Secure3dBuilder WithDecoupledFlowRequest(DecoupledFlowRequest value) {
+            DecoupledFlowRequest = value;
+            return this;
+        }
+        public Secure3dBuilder WithDecoupledFlowTimeout(int value) {
+            DecoupledFlowTimeout = value;
+            return this;
+        }
+        public Secure3dBuilder WithDecoupledNotificationUrl(string value) {
+            DecoupledNotificationUrl = value;
+            return this;
+        }
         public Secure3dBuilder WithDeliveryEmail(string deliveryEmail) {
             DeliveryEmail = deliveryEmail;
             return this;
@@ -204,6 +220,7 @@ namespace GlobalPayments.Api.Builders {
             HomeNumber = number;
             return this;
         }
+
         public Secure3dBuilder WithMaxNumberOfInstallments(int? maxNumberOfInstallments) {
             MaxNumberOfInstallments = maxNumberOfInstallments;
             return this;
@@ -227,7 +244,7 @@ namespace GlobalPayments.Api.Builders {
             MessageCategory = value;
             return this;
         }
-        public Secure3dBuilder WithMerchantInitiatedRequestType(AuthenticationRequestType merchantInitiatedRequestType) {
+        public Secure3dBuilder WithMerchantInitiatedRequestType(MerchantInitiatedRequestType merchantInitiatedRequestType) {
             MerchantInitiatedRequestType = merchantInitiatedRequestType;
             return this;
         }
@@ -387,6 +404,10 @@ namespace GlobalPayments.Api.Builders {
         }
         public Secure3dBuilder WithTransactionType(TransactionType transactionType) {
             TransactionType = transactionType;
+            return this;
+        }
+        public Secure3dBuilder WithWhitelistStatus(WhitelistStatus whitelistStatus) {
+            WhitelistStatus = whitelistStatus;
             return this;
         }
         public Secure3dBuilder WithWorkNumber(string countryCode, string number) {

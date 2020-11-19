@@ -246,6 +246,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(mpi, "ds_trans_id", secureEcom.DirectoryServerTransactionId);
                     et.SubElement(mpi, "authentication_value", secureEcom.AuthenticationValue);
                     et.SubElement(mpi, "message_version", secureEcom.MessageVersion);
+                    et.SubElement(mpi, "exempt_status", secureEcom.ExemptStatus?.ToString());
                 }
             }
             #endregion
