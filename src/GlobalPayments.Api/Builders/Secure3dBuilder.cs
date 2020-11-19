@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Builders {
         internal CustomerAuthenticationMethod? CustomerAuthenticationMethod { get; set; }
         internal DateTime? CustomerAuthenticationTimestamp { get; set; }
         internal string CustomerEmail { get; set; }
-        internal DecoupledFlowRequest? DecoupledFlowRequest { get; set; }
+        internal bool? DecoupledFlowRequest { get; set; }
         internal int? DecoupledFlowTimeout { get; set; }
         internal string DecoupledNotificationUrl { get; set; }
         internal string DeliveryEmail { get; set; }
@@ -95,7 +95,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
-        internal WhitelistStatus? WhitelistStatus { get; set; }
+        internal bool? WhitelistStatus { get; set; }
         internal string WorkCountryCode { get; set; }
         internal string WorkNumber { get; set; }
 
@@ -175,7 +175,7 @@ namespace GlobalPayments.Api.Builders {
             CustomerEmail = value;
             return this;
         }
-        public Secure3dBuilder WithDecoupledFlowRequest(DecoupledFlowRequest value) {
+        public Secure3dBuilder WithDecoupledFlowRequest(bool value) {
             DecoupledFlowRequest = value;
             return this;
         }
@@ -406,7 +406,7 @@ namespace GlobalPayments.Api.Builders {
             TransactionType = transactionType;
             return this;
         }
-        public Secure3dBuilder WithWhitelistStatus(WhitelistStatus whitelistStatus) {
+        public Secure3dBuilder WithWhitelistStatus(bool whitelistStatus) {
             WhitelistStatus = whitelistStatus;
             return this;
         }

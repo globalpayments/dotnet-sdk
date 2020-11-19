@@ -78,8 +78,8 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("method_url_completion", builder.MethodUrlCompletion.ToString());
                 request.Set("merchant_contact_url", MerchantContactUrl);
                 request.Set("merchant_initiated_request_type", builder.MerchantInitiatedRequestType?.ToString());
-                request.Set("whitelist_status", builder.WhitelistStatus?.ToString());
-                request.Set("decoupled_flow_request", builder.DecoupledFlowRequest?.ToString());
+                request.Set("whitelist_status", builder.WhitelistStatus);
+                request.Set("decoupled_flow_request", builder.DecoupledFlowRequest);
                 request.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout);
                 request.Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
 
