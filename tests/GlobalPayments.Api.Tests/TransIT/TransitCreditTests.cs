@@ -246,5 +246,23 @@ namespace GlobalPayments.Api.Tests.TransIT {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
+
+        [TestMethod]
+        public void Refund_WithReference() {
+            var response = card.Charge(10m)
+                .WithCurrency("USD")
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var refundResponse = Transaction.FromId(response.TransactionId)
+                .Refund()
+                .WithCurrency("USD")
+                .Execute();
+
+            Assert.IsNotNull(refundResponse);
+            Assert.AreEqual("00", refundResponse.ResponseCode);
+        }
     }
 }

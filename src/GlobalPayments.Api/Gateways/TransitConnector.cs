@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
@@ -117,7 +120,7 @@ namespace GlobalPayments.Api.Gateways {
                     .Set("digitalPaymentCryptogram", secure.ThreeDSecure.AuthenticationValue)
                     .Set("securityProtocol", secure.ThreeDSecure.AuthenticationType)
                     .Set("ucafCollectionIndicator", EnumConverter.GetMapping(Target.Transit, secure.ThreeDSecure.UCAFIndicator));
-                    
+
             }
             #endregion
 
@@ -301,6 +304,8 @@ namespace GlobalPayments.Api.Gateways {
                     return "CardAuthentication";
                 case TransactionType.Tokenize:
                     return "GetOnusToken";
+                case TransactionType.Refund:
+                    return "Return";
                 default:
                     throw new UnsupportedTransactionException();
             }
@@ -338,6 +343,60 @@ namespace GlobalPayments.Api.Gateways {
                 return "10";
             }
             else return input;
+        }
+
+        public string CreateManifest()
+        {
+            var dateFormatString = DateTime.Now.ToString("MMddyyyy");
+
+            var plainText = StringUtils.PadRight(MerchantId, 20, ' ') +
+                            StringUtils.PadRight(DeviceId, 24, ' ') +
+                            "000000000000" +
+                            StringUtils.PadRight(dateFormatString, 8, ' ');
+
+            var tempTransactionKey = TransactionKey.Substring(0, 16);
+
+            var byteArray = Encoding.UTF8.GetBytes(tempTransactionKey);
+            var encrypted = new byte[0];
+
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Padding = PaddingMode.None;
+                aesAlg.Mode = CipherMode.CBC;
+                aesAlg.BlockSize = 128;
+                aesAlg.KeySize = 128;
+                aesAlg.Key = byteArray;
+                aesAlg.IV = byteArray;
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+            var encryptedData = BitConverter.ToString(encrypted).ToLower().Replace("-", string.Empty);
+
+            var hashKey = HashHmac(TransactionKey, TransactionKey);
+
+            return hashKey.Substring(0, 4) + encryptedData + hashKey.Substring(hashKey.Length - 4, 4); ;
+        }
+
+        private string HashHmac(string message, string secret)
+        {
+            Encoding encoding = Encoding.UTF8;
+            using (HMACMD5 hmac = new HMACMD5(encoding.GetBytes(secret)))
+            {
+                var msg = encoding.GetBytes(message);
+                var hash = hmac.ComputeHash(msg);
+                return BitConverter.ToString(hash).ToLower().Replace("-", string.Empty);
+            }
         }
     }
 }
