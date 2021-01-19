@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GlobalPayments.Api.Builders;
+using System;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Entities {
     public class DisputeSummary {
@@ -13,6 +15,7 @@ namespace GlobalPayments.Api.Entities {
         public string Type { get; set; }
         public decimal? CaseAmount { get; set; }
         public string CaseCurrency { get; set; }
+        public string CaseStage { get; set; }
         public string CaseStatus { get; set; }
         public string CaseDescription { get; set; }
         public string TransactionOrderId { get; set; }
@@ -34,6 +37,8 @@ namespace GlobalPayments.Api.Entities {
         public string TransactionCardType { get; set; }
         public string TransactionMaskedCardNumber { get; set; }
         public string Reason { get; set; }
+        public string ReasonCode { get; set; }
+        public string Result { get; set; }
         public string IssuerComment { get; set; }
         public string IssuerCaseNumber { get; set; }
         public decimal? DisputeAmount { get; set; }
@@ -42,5 +47,19 @@ namespace GlobalPayments.Api.Entities {
         public string DisputeCustomerCurrency { get; set; }
         public DateTime? RespondByDate { get; set; }
         public string CaseOriginalReference { get; set; }
+        public decimal? LastAdjustmentAmount { get; set; }
+        public string LastAdjustmentCurrency { get; set; }
+        public string LastAdjustmentFunding { get; set; }
+
+        public ManagementBuilder Accept() {
+            return new ManagementBuilder(Entities.TransactionType.DisputeAcceptance)
+                .WithDisputeId(CaseId);
+        }
+
+        public ManagementBuilder Challenge(IEnumerable<DisputeDocument> documents) {
+            return new ManagementBuilder(Entities.TransactionType.DisputeChallenge)
+                .WithDisputeId(CaseId)
+                .WithDisputeDocuments(documents);
+        }
     }
 }

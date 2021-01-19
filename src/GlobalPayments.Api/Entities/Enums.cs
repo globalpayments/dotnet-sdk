@@ -264,31 +264,6 @@ namespace GlobalPayments.Api.Entities {
     }
 
     /// <summary>
-    /// Indicates CVN presence at time of payment.
-    /// </summary>
-    public enum CvnPresenceIndicator {
-        /// <summary>
-        /// Indicates CVN was present.
-        /// </summary>
-        Present = 1,
-
-        /// <summary>
-        /// Indicates CVN was present but illegible.
-        /// </summary>
-        Illegible,
-
-        /// <summary>
-        /// Indicates CVN was not present.
-        /// </summary>
-        NotOnCard,
-
-        /// <summary>
-        /// Indicates CVN was not requested.
-        /// </summary>
-        NotRequested
-    }
-
-    /// <summary>
     /// Indicates the tax type.
     /// </summary>
     public enum TaxType {
@@ -447,12 +422,37 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a deposit report
         /// </summary>
-        FindDepoits = 1 << 8,
+        FindDeposits = 1 << 8,
 
         /// <summary>
         /// Indicates a dispute report
         /// </summary>
-        FindDisputes = 1 << 9
+        FindDisputes = 1 << 9,
+
+        /// <summary>
+        /// Indicates a settlement dispute report
+        /// </summary>
+        FindSettlementDisputes = 1 << 10,
+
+        /// <summary>
+        /// Indicates a Deposit Details report.
+        /// </summary>
+        DepositDetail = 1 << 11,
+
+        /// <summary>
+        /// Indicates a Dispute Details report.
+        /// </summary>
+        DisputeDetail = 1 << 12,
+
+        /// <summary>
+        /// Indicates a Settlement Dispute Details report.
+        /// </summary>
+        SettlementDisputeDetail = 1 << 13,
+
+        /// <summary>
+        /// Indicates a settlement transactions report
+        /// </summary>
+        FindSettlementTransactions = 1 << 14,
     }
 
     /// <summary>

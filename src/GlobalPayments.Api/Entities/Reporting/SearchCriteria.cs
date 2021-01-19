@@ -6,18 +6,23 @@ using System.Reflection;
 
 namespace GlobalPayments.Api.Entities {
     public enum SearchCriteria {
+        AccountName,
         AccountNumberLastFour,
         AltPaymentStatus,
+        AquirerReferenceNumber,
         AuthCode,
         BankRoutingNumber,
         BatchId,
         BatchSequenceNumber,
+        BrandReference,
         BuyerEmailAddress,
+        CardBrand,
         CardHolderFirstName,
         CardHolderLastName,
         CardHolderPoNumber,
         CardNumberFirstSix,
         CardNumberLastFour,
+        Channel,
         CheckFirstName,
         CheckLastName,
         CheckName,
@@ -25,6 +30,7 @@ namespace GlobalPayments.Api.Entities {
         ClerkId,
         ClientTransactionId,
         CustomerId,
+        DepositStatus,
         DisplayName,
         EndDate,
         FullyCaptured,
@@ -33,43 +39,67 @@ namespace GlobalPayments.Api.Entities {
         InvoiceNumber,
         IssuerResult,
         IssuerTransactionId,
+        Name,
         OneTime,
+        PaymentEntryMode,
         PaymentMethodKey,
+        PaymentType,
         ReferenceNumber,
         SettlementAmount,
         ScheduleId,
         SiteTrace,
         StartDate,
+        TokenFirstSix,
+        TokenLastFour,
+        TransactionStatus,
+        DisputeStage,
+        DisputeStatus,
         UniqueDeviceId,
         Username,
     }
 
     public enum DataServiceCriteria {
+        AdjustmentFunding, // Data Services
         Amount, // Data Services
         BankAccountNumber, // Data Services
         CaseId, // Data Services
         CardNumberFirstSix, // Data Services
         CardNumberLastFour, // Data Services
         CaseNumber, // Data Services
+        Country, //Data Services
+        Currency, // Data Services
         DepositReference, // Data Services
+        EndAdjustmentDate, // Data Services
+        EndBatchDate, // Data Services
         EndDepositDate, // Data Services
+        EndStageDate, // Data Services
         Hierarchy, // Data Services
         LocalTransactionEndTime, // Data Services
         LocalTransactionStartTime, // Data Services
         MerchantId, // Data Services
         OrderId, // Data Services
+        StartAdjustmentDate, // Data Services
+        StartBatchDate, // Data Services
         StartDepositDate, // Data Services
+        StartStageDate, // Data Services
+        SystemHierarchy, // Data Services
         Timezone // Data Services
     }
 
     public class SearchCriteriaBuilder<TResult> where TResult : class {
         private TransactionReportBuilder<TResult> _reportBuilder;
 
+        internal string AccountName { get; set; }
+
         internal string AccountNumberLastFour { get; set; }
+
+        internal AdjustmentFunding? AdjustmentFunding { get; set; }
 
         internal string AltPaymentStatus { get; set; }
 
         internal decimal? Amount { get; set; }
+
+        internal string AquirerReferenceNumber { get; set; }
 
         internal string AuthCode { get; set; }
 
@@ -81,7 +111,11 @@ namespace GlobalPayments.Api.Entities {
 
         internal string BatchSequenceNumber { get; set; }
 
+        internal string BrandReference { get; set; }
+
         internal string BuyerEmailAddress { get; set; }
+
+        internal string CardBrand { get; set; }
 
         internal string CardHolderFirstName { get; set; }
 
@@ -99,6 +133,8 @@ namespace GlobalPayments.Api.Entities {
 
         internal IEnumerable<CardType> CardTypes { get; set; }
 
+        internal Channel? Channel { get; set; }
+
         internal string CheckFirstName { get; set; }
 
         internal string CheckLastName { get; set; }
@@ -111,15 +147,35 @@ namespace GlobalPayments.Api.Entities {
 
         internal string ClientTransactionId { get; set; }
 
+        internal string Country { get; set; }
+
+        internal string Currency { get; set; }
+
         internal string CustomerId { get; set; }
+
+        internal string DepositId { get; set; }
 
         internal string DepositReference { get; set; }
 
+        internal DepositStatus? DepositStatus { get; set; }
+
         internal string DisplayName { get; set; }
+
+        internal string DisputeId { get; set; }
+
+        internal DisputeStage? DisputeStage { get; set;  }
+
+        internal DisputeStatus? DisputeStatus { get; set; }
+
+        internal DateTime? EndAdjustmentDate { get; set; }
+
+        internal DateTime? EndBatchDate { get; set; }
 
         internal DateTime? EndDate { get; set; }
 
         internal DateTime? EndDepositDate { get; set; }
+
+        internal DateTime? EndStageDate { get; set; }
 
         internal bool? FullyCaptured { get; set; }
 
@@ -141,11 +197,17 @@ namespace GlobalPayments.Api.Entities {
 
         internal string MerchantId { get; set; }
 
+        internal string Name { get; set; }
+
         internal bool? OneTime { get; set; }
 
         internal string OrderId { get; set; }
 
+        internal PaymentEntryMode? PaymentEntryMode { get; set; }
+
         internal string PaymentMethodKey { get; set; }
+
+        internal PaymentType? PaymentType { get; set; }
 
         internal IEnumerable<PaymentMethodType> PaymentTypes { get; set; }
 
@@ -155,13 +217,29 @@ namespace GlobalPayments.Api.Entities {
 
         internal decimal? SettlementAmount { get; set; }
 
+        internal string SettlementDisputeId { get; set; }
+
         internal string ScheduleId { get; set; }
 
         internal string SiteTrace { get; set; }
 
+        internal DateTime? StartAdjustmentDate { get; set; }
+
+        internal DateTime? StartBatchDate { get; set; }
+
         internal DateTime? StartDate { get; set; }
 
         internal DateTime? StartDepositDate { get; set; }
+
+        internal DateTime? StartStageDate { get; set; }
+
+        internal string SystemHierarchy { get; set; }
+
+        internal string TokenFirstSix { get; set; }
+
+        internal string TokenLastFour { get; set; }
+
+        internal TransactionStatus? TransactionStatus { get; set; }
 
         internal string UniqueDeviceId { get; set; }
 

@@ -19,7 +19,15 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal string TransactionId { get; set; }
-        
+        internal int? Page { get; set; }
+        internal int? PageSize { get; set; }
+        internal TransactionSortProperty? TransactionOrderBy { get; set; }
+        internal SortDirection? TransactionOrder { get; set; }
+        internal DepositSortProperty? DepositOrderBy { get; set; }
+        internal SortDirection? DepositOrder { get; set; }
+        internal DisputeSortProperty? DisputeOrderBy { get; set; }
+        internal SortDirection? DisputeOrder { get; set; }
+
         private SearchCriteriaBuilder<TResult> _searchBuilder;
         internal SearchCriteriaBuilder<TResult> SearchBuilder {
             get {
@@ -30,12 +38,32 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Sets the gateway deposit id as criteria for the report.
+        /// </summary>
+        /// <param name="value">The gateway deposit id</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> WithDepositId(string value) {
+            SearchBuilder.DepositId = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the device ID as criteria for the report.
         /// </summary>
         /// <param name="value">The device ID</param>
         /// <returns>TResult</returns>
         public TransactionReportBuilder<TResult> WithDeviceId(string value) {
             SearchBuilder.UniqueDeviceId = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the gateway dispute id as criteria for the report.
+        /// </summary>
+        /// <param name="value">The gateway dispute id</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> WithDisputeId(string value) {
+            SearchBuilder.DisputeId = value;
             return this;
         }
 
@@ -71,6 +99,64 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>TResult</returns>
         public TransactionReportBuilder<TResult> WithTransactionId(string value) {
             TransactionId = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the gateway paging criteria for the report.
+        /// </summary>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> WithPaging(int page, int pageSize) {
+            Page = page;
+            PageSize = pageSize;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the gateway settlement dispute id as criteria for the report.
+        /// </summary>
+        /// <param name="value">The gateway settlement dispute id</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> WithSettlementDisputeId(string value) {
+            SearchBuilder.SettlementDisputeId = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the gateway transaction order by criteria for the report.
+        /// </summary>
+        /// <param name="orderBy">Order by property</param>
+        /// <param name="direction">Order by direction</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> OrderBy(TransactionSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
+            TransactionOrderBy = orderBy;
+            TransactionOrder = direction;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the gateway deposit order by criteria for the report.
+        /// </summary>
+        /// <param name="orderBy">Order by property</param>
+        /// <param name="direction">Order by direction</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> OrderBy(DepositSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
+            DepositOrderBy = orderBy;
+            DepositOrder = direction;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the gateway dispute order by criteria for the report.
+        /// </summary>
+        /// <param name="orderBy">Order by property</param>
+        /// <param name="direction">Order by direction</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> OrderBy(DisputeSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
+            DisputeOrderBy = orderBy;
+            DisputeOrder = direction;
             return this;
         }
 

@@ -2,6 +2,7 @@
 
 namespace GlobalPayments.Api.Entities {
     public class DepositSummary {
+        public string DepositId { get; set; }
         public string MerchantHierarchy { get; set; }
         public string MerchantName { get; set; }
         public string MerchantDbaName { get; set; }
@@ -33,5 +34,6 @@ namespace GlobalPayments.Api.Entities {
         public int AdjustmentTotalCount { get; set; }
         public decimal? AdjustmentTotalAmount { get; set; }
         public string AdjustmentTotalCurrency { get; set; }
+        public string Status { get; set; }
     }
 }

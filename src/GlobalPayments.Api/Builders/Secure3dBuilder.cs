@@ -36,6 +36,7 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? GiftCardAmount { get; set; }
         internal string HomeCountryCode { get; set; }
         internal string HomeNumber { get; set; }
+        internal string IdempotencyKey { get; set; }
         internal int? MaxNumberOfInstallments { get; set; }
         internal int? MaximumTimeout { get; set; }
         internal MerchantDataCollection MerchantData { get; set; }
@@ -220,7 +221,10 @@ namespace GlobalPayments.Api.Builders {
             HomeNumber = number;
             return this;
         }
-
+        public Secure3dBuilder WithIdempotencyKey(string value) {
+            IdempotencyKey = value;
+            return this;
+        }
         public Secure3dBuilder WithMaxNumberOfInstallments(int? maxNumberOfInstallments) {
             MaxNumberOfInstallments = maxNumberOfInstallments;
             return this;

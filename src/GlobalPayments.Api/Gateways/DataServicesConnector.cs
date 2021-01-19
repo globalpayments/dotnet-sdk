@@ -78,7 +78,7 @@ namespace GlobalPayments.Api.Gateways {
             switch (type) {
                 case ReportType.FindTransactions:
                     return "transaction";
-                case ReportType.FindDepoits:
+                case ReportType.FindDeposits:
                     return "deposit";
                 case ReportType.FindDisputes:
                     return "dispute";
@@ -160,7 +160,7 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 }
             }
-            else if (reportType.HasFlag(ReportType.FindDepoits)) {
+            else if (reportType.HasFlag(ReportType.FindDeposits)) {
                 Func<JsonDoc, DepositSummary> hydrateDepositSummary = (root) => {
                     var summary = new DepositSummary {
                         MerchantHierarchy = root.GetValue<string>("merchantHierarchy"),

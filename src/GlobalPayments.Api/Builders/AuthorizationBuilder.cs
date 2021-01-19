@@ -43,6 +43,7 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? ConvenienceAmount { get; set; }
         internal decimal? ShippingAmt { get; set; }
         internal HostedPaymentData HostedPaymentData { get; set; }
+        internal string IdempotencyKey { get; set; }
         internal string InvoiceNumber { get; set; }
         internal bool Level2Request { get; set; }
         internal LodgingData LodgingData { get; set; }
@@ -71,6 +72,7 @@ namespace GlobalPayments.Api.Builders {
         internal string ClerkId { get; set; }
         internal string TransportData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
+        internal decimal? SurchargeAmount { get; set; }
 
         internal bool HasEmvFallbackData {
             get {
@@ -418,6 +420,16 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Field submitted in the request that is used to ensure idempotency is maintained within the action
+        /// </summary>
+        /// <param name="value">The idempotency key</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithIdempotencyKey(string value) {
+            IdempotencyKey = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the invoice number; where applicable.
         /// </summary>
         /// <param name="value">The invoice number</param>
@@ -686,6 +698,16 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithLodgingData(LodgingData value) {
             LodgingData = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the surcharge amount; where applicable.
+        /// </summary>       
+        /// <param name="value">The surcharge amount</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithSurchargeAmount(decimal? value) {
+            SurchargeAmount = value;
             return this;
         }
 

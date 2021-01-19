@@ -73,6 +73,21 @@ namespace GlobalPayments.Api.Entities {
         public string CardLast4 { get; set; }
 
         /// <summary>
+        /// The card number used in the transaction.
+        /// </summary>
+        public string CardNumber { get; set; }
+
+        /// <summary>
+        /// The card expiry month used in the transaction.
+        /// </summary>
+        public int? CardExpMonth { get; set; }
+
+        /// <summary>
+        /// The card expiry year used in the transaction.
+        /// </summary>
+        public int? CardExpYear { get; set; }
+
+        /// <summary>
         /// The consumer authentication (3DSecure) verification
         /// value response code.
         /// </summary>

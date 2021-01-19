@@ -40,17 +40,23 @@ namespace GlobalPayments.Api.Entities {
 
         public Address BillingAddress { get; set; }
 
+        public string BrandReference { get; set; }
+
         public decimal? CaptureAmount { get; set; }
 
         public string CardHolderFirstName { get; set; }
 
         public string CardHolderLastName { get; set; }
 
+        public string CardHolderName { get; set; }
+
         public string CardSwiped { get; set; }
 
         public string CardType { get; set; }
 
         public string CavvResponseCode { get; set; }
+
+        public string Channel { get; set; }
 
         public CheckData CheckData { get; set; }
 
@@ -246,5 +252,7 @@ namespace GlobalPayments.Api.Entities {
         public decimal? AmountDue { get; set; }
 
         public bool HostTimeout { get; set; }
+
+        public string Country { get; set; }
     }
 }

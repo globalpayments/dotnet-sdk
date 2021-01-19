@@ -10,11 +10,15 @@ namespace GlobalPayments.Api.Services {
         }
 
         public static TransactionReportBuilder<List<DepositSummary>> FindDeposits() {
-            return new TransactionReportBuilder<List<DepositSummary>>(ReportType.FindDepoits);
+            return new TransactionReportBuilder<List<DepositSummary>>(ReportType.FindDeposits);
         }
 
         public static TransactionReportBuilder<List<DisputeSummary>> FindDisputes() {
             return new TransactionReportBuilder<List<DisputeSummary>>(ReportType.FindDisputes);
+        }
+
+        public static TransactionReportBuilder<List<DisputeSummary>> FindSettlementDisputes() {
+            return new TransactionReportBuilder<List<DisputeSummary>>(ReportType.FindSettlementDisputes);
         }
 
         public static TransactionReportBuilder<List<TransactionSummary>> Activity() {
@@ -42,7 +46,27 @@ namespace GlobalPayments.Api.Services {
         //}
 
         public static TransactionReportBuilder<TransactionSummary> TransactionDetail(string transactionId) {
-            return new TransactionReportBuilder<TransactionSummary>(ReportType.TransactionDetail).WithTransactionId(transactionId);
+            return new TransactionReportBuilder<TransactionSummary>(ReportType.TransactionDetail)
+                .WithTransactionId(transactionId);
+        }
+
+        public static TransactionReportBuilder<DepositSummary> DepositDetail(string depositId) {
+            return new TransactionReportBuilder<DepositSummary>(ReportType.DepositDetail)
+                .WithDepositId(depositId);
+        }
+
+        public static TransactionReportBuilder<DisputeSummary> DisputeDetail(string disputeId) {
+            return new TransactionReportBuilder<DisputeSummary>(ReportType.DisputeDetail)
+                .WithDisputeId(disputeId);
+        }
+
+        public static TransactionReportBuilder<DisputeSummary> SettlementDisputeDetail(string settlementDisputeId) {
+            return new TransactionReportBuilder<DisputeSummary>(ReportType.SettlementDisputeDetail)
+                .WithSettlementDisputeId(settlementDisputeId);
+        }
+
+        public static TransactionReportBuilder<List<TransactionSummary>> FindSettlementTransactions() {
+            return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.FindSettlementTransactions);
         }
     }
 }

@@ -121,23 +121,44 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// with the issuer in the process.
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
-        public string Tokenize(string configName = "default") {
-            return Tokenize(true, configName);
+        public string Tokenize(string configName = "default", string idempotencyKey = null) {
+            return Tokenize(true, configName, idempotencyKey);
         }
-        public string Tokenize(bool verifyCard, string configName = "default") {
+        public string Tokenize(bool verifyCard, string configName = "default", string idempotencyKey = null) {
             TransactionType type = verifyCard ? TransactionType.Verify : TransactionType.Tokenize;
 
             var response =  new AuthorizationBuilder(type, this)
                 .WithRequestMultiUseToken(verifyCard)
+                .WithIdempotencyKey(idempotencyKey)
                 .Execute(configName);
             return response.Token;
+        }
+
+        /// <summary>
+        /// Detokenizes payment method
+        /// </summary>
+        /// <param name="configName"></param>
+        /// <returns></returns>
+        ITokenizable ITokenizable.Detokenize(string configName, string idempotencyKey) {
+            if (string.IsNullOrEmpty(Token)) {
+                throw new BuilderException("Token cannot be null");
+            }
+
+            var transaction = new ManagementBuilder(TransactionType.Detokenize)
+                .WithPaymentMethod(this)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute(configName);
+
+            CardType = transaction.CardType;
+
+            return this;
         }
 
         /// <summary>
         /// Updates the token expiry date with the values proced to the card object
         /// </summary>
         /// <returns>boolean value indcating success/failure</returns>
-        public bool UpdateTokenExpiry(string configName = "default") {
+        public bool UpdateTokenExpiry(string configName = "default", string idempotencyKey = null) {
             if (string.IsNullOrEmpty(Token)) {
                 throw new BuilderException("Token cannot be null");
             }
@@ -145,6 +166,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             try {
                 new ManagementBuilder(TransactionType.TokenUpdate)
                     .WithPaymentMethod(this)
+                    .WithIdempotencyKey(idempotencyKey)
                     .Execute(configName);
                 return true;
             }
@@ -157,7 +179,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// Deletes the token associated with the current card object
         /// </summary>
         /// <returns>boolean value indicating success/failure</returns>
-        public bool DeleteToken(string configName = "default") {
+        public bool DeleteToken(string configName = "default", string idempotencyKey = null) {
             if (string.IsNullOrEmpty(Token)) {
                 throw new BuilderException("Token cannot be null");
             }
@@ -165,6 +187,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             try {
                 new ManagementBuilder(TransactionType.TokenDelete)
                     .WithPaymentMethod(this)
+                    .WithIdempotencyKey(idempotencyKey)
                     .Execute(configName);
                 return true;
             }

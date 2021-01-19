@@ -5,9 +5,8 @@ using System.Net.Http;
 using System.Text;
 using GlobalPayments.Api.Entities;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using GlobalPayments.Api.Logging;
-using GlobalPayments.Api.Utils;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways {
     internal abstract class Gateway {
@@ -15,6 +14,7 @@ namespace GlobalPayments.Api.Gateways {
 
         //public bool EnableLogging { get; set; }
         public IRequestLogger RequestLogger { get; set; }
+        public IWebProxy WebProxy { get; set; }
         public Dictionary<string, string> Headers { get; set; }
         public int Timeout { get; set; }
         public string ServiceUrl { get; set; }
@@ -24,8 +24,24 @@ namespace GlobalPayments.Api.Gateways {
             _contentType = contentType;
         }
 
+        private string GenerateRequestLog(HttpRequestMessage request) {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{request.Method.ToString()} {request.RequestUri}");
+            foreach (var header in request.Headers) {
+                sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            }
+            if (request.Content != null) {
+                foreach (var header in request.Content.Headers) {
+                    sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                }
+                sb.AppendLine(request.Content.ReadAsStringAsync().Result);
+            }
+            return sb.ToString();
+        }
+
         protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null) {
-            HttpClient httpClient = new HttpClient {
+            HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
+                
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
             };
 
@@ -39,11 +55,14 @@ namespace GlobalPayments.Api.Gateways {
             try {
                 if (verb != HttpMethod.Get && data != null) {
                     request.Content = new StringContent(data, Encoding.UTF8, contentType ?? _contentType);
-                    RequestLogger?.RequestSent(data);                    
                 }
+
+                RequestLogger?.RequestSent(GenerateRequestLog(request));
+                
                 response = httpClient.SendAsync(request).Result;
 
                 string rawResponse = response.Content.ReadAsStringAsync().Result;
+
                 RequestLogger?.ResponseReceived(rawResponse);
 
                 return new GatewayResponse {
@@ -59,19 +78,21 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         protected async Task<GatewayResponse> SendRequestAsync(string endpoint, MultipartFormDataContent content) {
-            HttpClient httpClient = new HttpClient {
+            HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
             };
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl + endpoint);
             HttpResponseMessage response = null;
             try {
-                RequestLogger?.RequestSent(content.ToString());
-
                 request.Content = content;
+
+                RequestLogger?.RequestSent(GenerateRequestLog(request));
+
                 response = await httpClient.SendAsync(request);
 
                 string rawResponse = response.Content.ReadAsStringAsync().Result;
+
                 RequestLogger?.ResponseReceived(rawResponse);
 
                 return new GatewayResponse {
@@ -85,6 +106,7 @@ namespace GlobalPayments.Api.Gateways {
             }
             finally { }
         }
+
         protected GatewayResponse SendRequest(string endpoint, MultipartFormDataContent content) {
             HttpClient httpClient = new HttpClient {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
@@ -93,12 +115,14 @@ namespace GlobalPayments.Api.Gateways {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl + endpoint);
             HttpResponseMessage response = null;
             try {
-                RequestLogger?.RequestSent(content.ToString());
-
                 request.Content = content;
+
+                RequestLogger?.RequestSent(GenerateRequestLog(request));
+
                 response = httpClient.SendAsync(request).Result;
 
                 string rawResponse = response.Content.ReadAsStringAsync().Result;
+                
                 RequestLogger?.ResponseReceived(rawResponse);
 
                 return new GatewayResponse {

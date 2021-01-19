@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Tests.Logging {
 
         public void RequestSent(string request) {
             Task.Run(() => {
-                AppendText("Response: {0}", request);
+                AppendText("Request: {0}", request);
             });
         }
 

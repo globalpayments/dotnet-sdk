@@ -32,7 +32,10 @@ namespace GlobalPayments.Api.Builders {
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
         internal string Description { get; set; }
+        internal IEnumerable<DisputeDocument> DisputeDocuments { get; set; }
+        internal string DisputeId { get; set; }
         internal decimal? Gratuity { get; set; }
+        internal string IdempotencyKey { get; set;  }
         internal string InvoiceNumber { get; set; }
         internal LodgingData LodgingData { get; set; }
         internal int? MultiCapturePaymentCount { get; set; }
@@ -157,6 +160,26 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Sets the dispute documents
+        /// </summary>
+        /// <param name="value">The dispute documents</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithDisputeDocuments(IEnumerable<DisputeDocument> value) {
+            DisputeDocuments = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the dispute id
+        /// </summary>
+        /// <param name="value">The dispute id</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithDisputeId(string value) {
+            DisputeId = value;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the gratuity amount; where applicable.
         /// </summary>
         /// <remarks>
@@ -167,6 +190,16 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>ManagementBuilder</returns>
         public ManagementBuilder WithGratuity(decimal? value) {
             Gratuity = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Field submitted in the request that is used to ensure idempotency is maintained within the action
+        /// </summary>
+        /// <param name="value">The idempotency key</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithIdempotencyKey(string value) {
+            IdempotencyKey = value;
             return this;
         }
 
