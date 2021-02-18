@@ -16,6 +16,8 @@ namespace GlobalPayments.Api {
 
         internal IDeviceInterface DeviceInterface { get; private set; }
 
+        internal IBillingProvider BillingProvider { get; set; }
+
         private DeviceController _deviceController;
         internal DeviceController DeviceController {
             get {
@@ -187,6 +189,15 @@ namespace GlobalPayments.Api {
                 throw new ConfigurationException(string.Format("Secure 3d is not configured for version {0}.", version));
             }
             throw new ConfigurationException("Secure 3d is not configured on the connector.");
+        }
+
+        internal IBillingProvider GetBillingClient(string configName) {
+            if (_configurations.ContainsKey(configName))
+            {
+                return _configurations[configName].BillingProvider;
+            }
+
+            throw new ApiException("The specified configuration has not been configured for gateway processing.");
         }
 
         /// <summary>

@@ -110,6 +110,12 @@ namespace GlobalPayments.Api.Entities {
                 TransactionReference.ClientTransactionId = value;
             }
         }
+
+        /// <summary>
+        /// The fee amount to charge
+        /// </summary>
+        public decimal ConvenienceFee { get; set; }
+
         public NtsData NTSData {
             get {
                 if (TransactionReference != null) {

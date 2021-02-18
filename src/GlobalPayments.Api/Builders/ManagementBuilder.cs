@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal IEnumerable<Bill> Bills { get; set; }
         internal string ClientTransactionId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -29,8 +31,10 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal CommercialData CommercialData { get; set; }
+        internal decimal? ConvenienceAmount { get; set; }
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
+        internal string CustomerIpAddress { get; set; }
         internal string Description { get; set; }
         internal IEnumerable<DisputeDocument> DisputeDocuments { get; set; }
         internal string DisputeId { get; set; }
@@ -93,6 +97,16 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Adds the bills to the transaction, where applicable
+        /// </summary>
+        /// <param name="values">The transaction's bills</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public ManagementBuilder WithBills(params Bill[] values) {
+            Bills = values;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the Multicapture value as true/false.
         /// </summary>
         /// <returns>ManagementBuilder</returns>
@@ -115,6 +129,16 @@ namespace GlobalPayments.Api.Builders {
                 TransactionModifier = TransactionModifier.Level_II;
             }
             else { TransactionModifier = TransactionModifier.Level_III; }
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the Convenience amount; where applicable.
+        /// </summary>
+        /// <param name="value">The Convenience amount</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public ManagementBuilder WithConvenienceAmount(decimal? value) {
+            ConvenienceAmount = value;
             return this;
         }
 
@@ -214,7 +238,7 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value">string</param>
         /// <returns></returns>
@@ -239,7 +263,7 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="type"></param>
         /// <param name="values"></param>
@@ -267,7 +291,7 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>

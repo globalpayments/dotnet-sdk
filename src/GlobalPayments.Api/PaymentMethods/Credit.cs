@@ -7,6 +7,11 @@ namespace GlobalPayments.Api.PaymentMethods {
     /// </summary>
     public abstract class Credit : IPaymentMethod, IEncryptable, ITokenizable, IChargable, IAuthable, IRefundable, IReversable, IVerifiable, IPrePaid, IBalanceable, ISecure3d {
         /// <summary>
+        /// The name of the issuing Bank
+        /// </summary>
+        public string BankName { get; set; }
+
+        /// <summary>
         /// The card type of the manual entry data.
         /// </summary>
         /// <remarks>
@@ -58,7 +63,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                 .WithCurrency(ThreeDSecure?.Currency)
                 .WithOrderId(ThreeDSecure?.OrderId)
                 .WithAmountEstimated(isEstimated);
-        }        
+        }
 
         /// <summary>
         /// Creates a charge (sale) against the payment method.

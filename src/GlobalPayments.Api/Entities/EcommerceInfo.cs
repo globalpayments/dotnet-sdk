@@ -47,6 +47,14 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Identifies mail order / telephone order (MOTO) transactions.
         /// </summary>
-        MOTO
+        MOTO,
+        /// <summary>
+        /// Identifies mail order transactions.
+        /// </summary>
+        MAIL,
+        /// <summary>
+        /// Identifies telephone order transactions.
+        /// </summary>
+        PHONE
     }
 }

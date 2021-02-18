@@ -14,6 +14,8 @@
         public string UnitOfMeasure { get; set; }
         public string UPC { get; set; }
         public decimal? TaxAmount { get; set; }
+        public string TaxName { get; set; }
+        public decimal? TaxPercentage { get; set; }
         public decimal? TotalAmount { get; set; }
     }
 }

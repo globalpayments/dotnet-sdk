@@ -112,11 +112,16 @@ namespace GlobalPayments.Api.Utils {
                             _et.SubElement(discountDetails, "productDiscountAmount", item.DiscountDetails.DiscountAmount);
                             _et.SubElement(discountDetails, "productDiscountPercentage", item.DiscountDetails.DiscountAmount);
                             _et.SubElement(discountDetails, "productDiscountType", item.DiscountDetails.DiscountAmount);
+                            _et.SubElement(discountDetails, "priority", item.DiscountDetails.DiscountPriority);
+                            _et.SubElement(discountDetails, "stackable", item.DiscountDetails.DiscountIsStackable ? "YES" : "NO");
                         }
 
                         // tax details
                         if (item.TaxAmount != null) {
                             var taxDetails = _et.SubElement(productElement, "productTaxDetails");
+                            _et.SubElement(taxDetails, "productTaxName", item.TaxName);
+                            _et.SubElement(taxDetails, "productTaxAmount", item.TaxAmount.ToCurrencyString());
+                            _et.SubElement(taxDetails, "productTaxPercentage", item.TaxPercentage);
                         }
 
                         _et.SubElement(productElement, "productNotes", item.Description);

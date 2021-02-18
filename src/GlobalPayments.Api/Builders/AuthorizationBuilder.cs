@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 
@@ -21,6 +22,8 @@ namespace GlobalPayments.Api.Builders {
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal InquiryType? BalanceInquiryType { get; set; }
         internal Address BillingAddress { get; set; }
+        internal IEnumerable<Bill> Bills { get; set; }
+        internal Customer Customer { get; set; }
         internal string CardBrandTransactionId { get; set; }
         internal decimal? CashBackAmount { get; set; }
         internal string ClientTransactionId { get; set; }
@@ -80,6 +83,7 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal EmvLastChipRead EmvChipCondition { get; set; }
+        internal DateTime LastRegisteredDate { get; set; }
 
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
@@ -187,6 +191,26 @@ namespace GlobalPayments.Api.Builders {
 
         internal AuthorizationBuilder WithBalanceInquiryType(InquiryType? value) {
             BalanceInquiryType = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the bills to the transaction, where applicable
+        /// </summary>
+        /// <param name="values">The transaction's bills</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithBills(params Bill[] values) {
+            Bills = values;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the customer, where applicable
+        /// </summary>
+        /// <param name="value">The transaction's customer</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithCustomer(Customer value) {
+            Customer = value;
             return this;
         }
 
@@ -391,7 +415,7 @@ namespace GlobalPayments.Api.Builders {
 
         /// <summary>
         /// Sets the Convenience amount; where applicable.
-        /// </summary>       
+        /// </summary>
         /// <param name="value">The Convenience amount</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithConvenienceAmount(decimal? value) {
@@ -401,7 +425,7 @@ namespace GlobalPayments.Api.Builders {
 
         /// <summary>
         /// Sets the Shipping amount; where applicable.
-        /// </summary>        
+        /// </summary>
         /// <param name="value">The Shipping amount</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithShippingAmt(decimal? value) {
@@ -446,6 +470,11 @@ namespace GlobalPayments.Api.Builders {
 
         public AuthorizationBuilder WithCommercialData(CommercialData value) {
             CommercialData = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithLastRegisteredDate(DateTime value) {
+            LastRegisteredDate = value;
             return this;
         }
 
@@ -692,7 +721,7 @@ namespace GlobalPayments.Api.Builders {
 
 
         /// <summary>
-        /// Lodging data information for Portico 
+        /// Lodging data information for Portico
         /// </summary>
         /// <param name="value">The lodging data</param>
         /// <returns>AuthorizationBuilder</returns>
@@ -703,7 +732,7 @@ namespace GlobalPayments.Api.Builders {
 
         /// <summary>
         /// Sets the surcharge amount; where applicable.
-        /// </summary>       
+        /// </summary>
         /// <param name="value">The surcharge amount</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithSurchargeAmount(decimal? value) {
@@ -780,8 +809,6 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.Replace).Check(() => ReplacementCard).IsNotNull();
 
-            Validations.For(PaymentMethodType.ACH).Check(() => BillingAddress).IsNotNull();
-
             Validations.For(PaymentMethodType.Debit).When(() => ReversalReasonCode).IsNotNull().Check(() => TransactionType).Equals(TransactionType.Reversal);
 
             Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit)
@@ -798,7 +825,7 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(PaymentMethodType.Recurring).Check(() => ShippingAmt).IsNull();
         }
-        
+
         public AuthorizationBuilder WithForceGatewayTimeout(bool value) {
             ForceGatewayTimeout = value;
             return this;
@@ -853,7 +880,7 @@ namespace GlobalPayments.Api.Builders {
         public AuthorizationBuilder WithSystemTraceAuditNumber(int value) {
             SystemTraceAuditNumber = value;
             return this;
-        }        
+        }
         public AuthorizationBuilder WithTransactionMatchingData(TransactionMatchingData value) {
             TransactionMatchingData = value;
             return this;

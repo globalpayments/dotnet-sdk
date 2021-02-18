@@ -18,5 +18,8 @@
         public const string TRANSIT_MULTIPASS_TEST = "https://stagegw.transnox.com/servlets/TransNox_API_Server";
         public const string GP_API_PRODUCTION = "";
         public const string GP_API_TEST = "https://apis.sandbox.globalpay.com/ucp";
+        internal const string BILLPAY_TEST = "https://testing.heartlandpaymentservices.net/";
+        public const string BILLPAY_CERTIFICATION = "https://staging.heartlandpaymentservices.net/";
+        public const string BILLPAY_PRODUCTION = "https://heartlandpaymentservices.net/";
     }
 }

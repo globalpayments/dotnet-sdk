@@ -111,6 +111,11 @@ namespace GlobalPayments.Api.Utils {
             else element = doc.CreateElement(tagName);
             return element;
         }
+
+        public void AddNamespace(string prefix, string uri)
+        {
+            namespaces.Add(prefix, uri);
+        }
     }
 
     internal class Element {
