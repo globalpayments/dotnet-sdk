@@ -4,6 +4,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 
@@ -100,7 +101,7 @@ namespace GlobalPayments.Api.Gateways {
                             cardDetail.Set("first_name", names[0]);
                         }
                         if (names.Length >= 2) {
-                            cardDetail.Set("last_name", names[1]);
+                            cardDetail.Set("last_name", string.Join(" ", names.Skip(1)));
                         }
                     }
                 }

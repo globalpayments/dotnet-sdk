@@ -55,6 +55,7 @@ namespace GlobalPayments.Api.Builders {
         internal string PayerAuthenticationResponse { get; set; }
         internal ReasonCode? ReasonCode { get; set;}
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
+        internal decimal? SurchargeAmount { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -282,6 +283,14 @@ namespace GlobalPayments.Api.Builders {
             // add the values to it
             SupplementaryData[type].Add(values);
 
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the surcharge amount for the transaction.
+        /// </summary>
+        public ManagementBuilder WithSurchargeAmount(decimal value) {
+            SurchargeAmount = value;
             return this;
         }
 

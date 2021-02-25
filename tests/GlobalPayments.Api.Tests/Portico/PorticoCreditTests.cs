@@ -195,6 +195,43 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void CreditSaleWithSurchargeAmount() {
+            var amount = 10m;
+            var response = card.Charge(amount)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithSurchargeAmount(amount * .35m)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
+            Assert.IsNotNull(report);
+            Assert.AreEqual(amount * .35m, report.SurchargeAmount);
+        }
+
+        [TestMethod]
+        public void CreditSaleAndEditWithSurchargeAmount() {
+            var amount = 10m;
+            var response = card.Charge(amount)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var edit = response.Edit()
+                .WithSurchargeAmount(amount * .35m)
+                .Execute();
+            Assert.IsNotNull(edit);
+            Assert.AreEqual("00", edit.ResponseCode);
+
+            TransactionSummary report = ReportingService.TransactionDetail(response.TransactionId).Execute();
+            Assert.IsNotNull(report);
+            Assert.AreEqual(amount * .35m, report.SurchargeAmount);
+        }
+
+        [TestMethod]
         public void CreditOfflineAuth() {
             var response = card.Authorize(16m)
                 .WithCurrency("USD")

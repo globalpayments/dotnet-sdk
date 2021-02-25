@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.Gateways.Events;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
@@ -280,6 +281,11 @@ namespace GlobalPayments.Api.Entities {
         public string SchemeId { get; set; }
 
         internal ThreeDSecure ThreeDSecure { get; set; }
+
+        /// <summary>
+        /// The response from ProPay
+        /// </summary>
+        public PayFacResponseData PayFacData;
 
         /// <summary>
         /// The timestamp of the transaction.

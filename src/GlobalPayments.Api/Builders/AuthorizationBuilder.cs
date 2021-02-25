@@ -67,6 +67,7 @@ namespace GlobalPayments.Api.Builders {
         internal Address ShippingAddress { get; set; }
         internal StoredCredential StoredCredential { get; set; }
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
+        internal decimal? SurchargeAmount { get; set; }
         internal string TagData { get; set; }
         internal string Timestamp { get; set; }
         internal decimal FeeAmount { get; set; }
@@ -75,7 +76,6 @@ namespace GlobalPayments.Api.Builders {
         internal string ClerkId { get; set; }
         internal string TransportData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
-        internal decimal? SurchargeAmount { get; set; }
 
         internal bool HasEmvFallbackData {
             get {
@@ -670,6 +670,14 @@ namespace GlobalPayments.Api.Builders {
             // add the values to it
             SupplementaryData[type].Add(values);
 
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the surcharge amount for the transaction.
+        /// </summary>
+        public AuthorizationBuilder WithSurchargeAmount(decimal value) {
+            SurchargeAmount = value;
             return this;
         }
 

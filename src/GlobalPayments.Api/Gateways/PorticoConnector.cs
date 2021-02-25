@@ -40,6 +40,7 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(block1, "GratuityAmtInfo", builder.Gratuity);
             et.SubElement(block1, "ConvenienceAmtInfo", builder.ConvenienceAmount);
             et.SubElement(block1, "ShippingAmtInfo", builder.ShippingAmt);
+            et.SubElement(block1, "SurchargeAmtInfo", builder.SurchargeAmount);
             // because plano...
             et.SubElement(block1, builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit ? "CashbackAmtInfo" : "CashBackAmount", builder.CashBackAmount);
 
@@ -411,6 +412,10 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(root, "AuthAmt").Text(builder.AuthAmount.ToString());
                 }
 
+                if (builder.SurchargeAmount != null) {
+                    et.SubElement(root, "SurchargeAmtInfo", builder.SurchargeAmount);
+                }
+
                 // gratuity
                 if (builder.Gratuity != null) {
                     et.SubElement(root, "GratuityAmtInfo").Text(builder.Gratuity.ToString());
@@ -659,6 +664,15 @@ namespace GlobalPayments.Api.Gateways {
                         FieldKey = root.GetValue<string>("FieldKey"),
                         TraceNumber = root.GetValue<string>("TraceNumber"),
                         MessageAuthenticationCode = root.GetValue<string>("MessageAuthenticationCode"),
+                    };
+                }
+
+                // PayFac elements
+                if (root.Has("PaymentFacilitatorTxnId") || root.Has("PaymentFacilitatorTxnNbr")) {
+                    result.PayFacData = new Entities.PayFac.PayFacResponseData()
+                    {
+                        TransactionId = root.GetValue<string>("PaymentFacilitatorTxnId"),
+                        TransactionNumber = root.GetValue<string>("PaymentFacilitatorTxnNbr")
                     };
                 }
             }

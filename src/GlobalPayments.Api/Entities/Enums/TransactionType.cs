@@ -211,5 +211,106 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a dispute challenge
         /// </summary>
         DisputeChallenge = 1L << 39,
+
+        /// <summary>
+        /// 
+        /// ProPay: Create Account
+        /// </summary>
+        CreateAccount = 1L << 40,
+
+        /// <summary>
+        /// ProPay: Edit Account
+        /// </summary>
+        EditAccount = 1L << 41,
+
+        /// <summary>
+        /// ProPay: Reset Account Password
+        /// </summary>
+        ResetPassword = 1L << 42,
+
+        /// <summary>
+        /// ProPay: Renew Account
+        /// </summary>
+        RenewAccount = 1L << 43,
+
+        /// <summary>
+        /// ProPay: Update Beneficial Ownership Information
+        /// </summary>
+        UpdateBeneficialOwnership = 1L << 44,
+
+        /// <summary>
+        /// ProPay: Disown an account
+        /// </summary>
+        DisownAccount = 1L << 45,
+
+        /// <summary>
+        /// ProPay: Upload a document to a ProPay account related to a chargeback
+        /// </summary>
+        UploadDocumentChargeback = 1L << 46,
+
+        /// <summary>
+        /// ProPay: Upload a document to a ProPay account
+        /// </summary>
+        UploadDocument = 1L << 47,
+
+        /// <summary>
+        /// ProPay: Obtain a single-sign-on key
+        /// </summary>
+        ObtainSSOKey = 1L << 48,
+
+        /// <summary>
+        /// ProPay: Update bank account ownership information
+        /// </summary>
+        UpdateBankAccountOwnership = 1L << 49,
+
+        /// <summary>
+        /// ProPay: Add funds to a ProPay account (EFT)
+        /// </summary>
+        AddFunds = 1L << 50,
+
+        /// <summary>
+        /// ProPay: Sweep funds from a ProPay account (EFT)
+        /// </summary>
+        SweepFunds = 1L << 51,
+
+        /// <summary>
+        /// ProPay: Add a card for Flash Funds
+        /// </summary>
+        AddCardFlashFunds = 1L << 52,
+
+        /// <summary>
+        /// ProPay: Move money out via Flash Funds
+        /// </summary>
+        PushMoneyFlashFunds = 1L << 53,
+
+        /// <summary>
+        /// ProPay: Disburse funds to a ProPay account
+        /// </summary>
+        DisburseFunds = 1L << 54,
+
+        /// <summary>
+        /// ProPay: SpendBack Transaction
+        /// </summary>
+        SpendBack = 1L << 55,
+
+        /// <summary>
+        /// ProPay: Roll back a SplitPay transaction
+        /// </summary>
+        ReverseSplitPay = 1L << 56,
+
+        /// <summary>
+        /// ProPay: Split funds from an existing transaction
+        /// </summary>
+        SplitFunds = 1L << 57,
+
+        /// <summary>
+        /// ProPay: Get Account details
+        /// </summary>
+        GetAccountDetails = 1L << 58,
+
+        /// <summary>
+        /// ProPay: Get Account balance
+        /// </summary>
+        GetAccountBalance = 1L << 59,
     }
 }

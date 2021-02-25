@@ -817,6 +817,9 @@ namespace GlobalPayments.Api.Gateways {
                         else { return "payment-out"; }
                     }
                 case TransactionType.VerifyEnrolled: {
+                        if (builder.PaymentMethod is RecurringPaymentMethod) {
+                            return "realvault-3ds-verifyenrolled";
+                        }
                         return "3ds-verifyenrolled";
                     }
                 case TransactionType.DccRateLookup: {
