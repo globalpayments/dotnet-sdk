@@ -4,16 +4,18 @@ using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System.Linq;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     /// <summary>
     /// Factory method to create and return the request object based on the transaction type
     /// </summary>
     internal class AuthorizationRequest : GatewayRequestBase {
-        public AuthorizationRequest(Credentials credentials, string serviceUrl, int timeout) {
+        public AuthorizationRequest(Credentials credentials, string serviceUrl, int timeout, IWebProxy webProxy) {
             this.Credentials = credentials;
             this.ServiceUrl = serviceUrl;
             this.Timeout = timeout;
+            this.WebProxy = webProxy;
         }
 
         internal Transaction Execute(AuthorizationBuilder builder, bool isBillDataHosted) {

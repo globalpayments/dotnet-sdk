@@ -3,17 +3,19 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Utils;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     /// <summary>
     /// Factory method to create and return the request object based on the transaction type
     /// </summary>
     internal class BillingRequest : GatewayRequestBase {
-        public BillingRequest(Credentials credentials, string serviceUrl, int timeout)
+        public BillingRequest(Credentials credentials, string serviceUrl, int timeout, IWebProxy webPRoxy)
         {
             this.Credentials = credentials;
             this.ServiceUrl = serviceUrl;
             this.Timeout = timeout;
+            this.WebProxy = webPRoxy;
         }
 
         internal BillingResponse Execute(BillingBuilder builder) {

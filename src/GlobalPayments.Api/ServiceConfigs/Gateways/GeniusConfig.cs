@@ -37,7 +37,8 @@ namespace GlobalPayments.Api {
                 RegisterNumber = RegisterNumber,
                 TerminalId = TerminalId,
                 Timeout = Timeout,
-                ServiceUrl = ServiceUrl
+                ServiceUrl = ServiceUrl,
+                WebProxy = WebProxy
             };
 
             services.GatewayConnector = gateway;

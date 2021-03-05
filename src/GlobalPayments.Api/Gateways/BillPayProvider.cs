@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Gateways.BillPay;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways {
     internal class BillPayProvider: IBillingProvider, IPaymentGateway, IRecurringService {
@@ -19,13 +20,15 @@ namespace GlobalPayments.Api.Gateways {
 
         public string ServiceUrl { get; set; }
 
+        public IWebProxy WebProxy { get; set; }
+
         /// <summary>
         /// Invokes a request against the BillPay gateway using the AuthorizationBuilder
         /// </summary>
         /// <param name="builder">The <see cref="AuthorizationBuilder">AuthroizationBuilder</see> containing the required information to build the request</param>
         /// <returns>A Transaction response</returns>
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
-            return new AuthorizationRequest(Credentials, ServiceUrl, Timeout)
+            return new AuthorizationRequest(Credentials, ServiceUrl, Timeout, WebProxy)
                 .Execute(builder, IsBillDataHosted);
         }
 
@@ -35,18 +38,18 @@ namespace GlobalPayments.Api.Gateways {
         /// <param name="builder">The <see cref="ManagementBuilder">ManagementBuilder</see> containing the required information to build the request</param>
         /// <returns>A Transaction response</returns>
         public Transaction ManageTransaction(ManagementBuilder builder) {
-            return new ManagementRequest(Credentials, ServiceUrl, Timeout)
+            return new ManagementRequest(Credentials, ServiceUrl, Timeout, WebProxy)
                 .Execute(builder, IsBillDataHosted);
         }
 
         public BillingResponse ProcessBillingRequest(BillingBuilder builder) {
-            return new BillingRequest(Credentials, ServiceUrl, Timeout)
+            return new BillingRequest(Credentials, ServiceUrl, Timeout, WebProxy)
                 .Execute(builder);
         }
 
         public T ProcessRecurring<T>(RecurringBuilder<T> builder) where T : class
         {
-            return new RecurringRequest<T>(Credentials, ServiceUrl, Timeout)
+            return new RecurringRequest<T>(Credentials, ServiceUrl, Timeout, WebProxy)
                 .Execute(builder);
         }
 
