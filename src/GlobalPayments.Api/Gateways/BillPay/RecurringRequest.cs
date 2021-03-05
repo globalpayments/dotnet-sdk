@@ -3,13 +3,15 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     internal sealed class RecurringRequest<T> : GatewayRequestBase where T: class {
-        public RecurringRequest(Credentials credentials, string serviceUrl, int timeout) {
+        public RecurringRequest(Credentials credentials, string serviceUrl, int timeout, IWebProxy webProxy) {
             this.Credentials = credentials;
             this.ServiceUrl = serviceUrl;
             this.Timeout = timeout;
+            this.WebProxy = webProxy;
         }
 
         internal T Execute(RecurringBuilder<T> builder) {
