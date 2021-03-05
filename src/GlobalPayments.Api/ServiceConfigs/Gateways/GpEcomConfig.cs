@@ -73,7 +73,8 @@ namespace GlobalPayments.Api {
                 SharedSecret = SharedSecret,
                 Timeout = Timeout,
                 ServiceUrl = ServiceUrl,
-                HostedPaymentConfig = HostedPaymentConfig
+                HostedPaymentConfig = HostedPaymentConfig,
+                WebProxy = WebProxy
             };
             services.GatewayConnector = gateway;
             services.RecurringConnector = gateway;            
@@ -98,7 +99,8 @@ namespace GlobalPayments.Api {
                     MerchantContactUrl = MerchantContactUrl,
                     MethodNotificationUrl = MethodNotificationUrl,
                     ChallengeNotificationUrl = ChallengeNotificationUrl,
-                    Timeout = Timeout
+                    Timeout = Timeout,
+                    WebProxy = WebProxy
                     //secure3d2.EnableLogging = EnableLogging
                 };
 

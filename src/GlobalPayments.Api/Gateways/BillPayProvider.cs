@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Gateways.BillPay;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways {
     internal class BillPayProvider: IBillingProvider, IPaymentGateway, IRecurringService {
@@ -18,6 +19,8 @@ namespace GlobalPayments.Api.Gateways {
         public int Timeout { get; set; }
 
         public string ServiceUrl { get; set; }
+
+        public IWebProxy WebProxy { get; set; }
 
         /// <summary>
         /// Invokes a request against the BillPay gateway using the AuthorizationBuilder
