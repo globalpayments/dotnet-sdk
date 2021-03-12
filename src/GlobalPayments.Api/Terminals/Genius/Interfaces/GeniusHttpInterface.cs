@@ -17,6 +17,8 @@ namespace GlobalPayments.Api.Terminals.Genius.Interfaces {
         private GeniusConfig _gatewayConfig;
 
         public event MessageSentEventHandler OnMessageSent;
+        public event BroadcastMessageEventHandler OnBroadcastMessage;
+        public event PayAtTableRequestEventHandler OnPayAtTableRequest;
 
         public GeniusHttpInterface(ITerminalConfiguration settings) {
             _settings = settings;

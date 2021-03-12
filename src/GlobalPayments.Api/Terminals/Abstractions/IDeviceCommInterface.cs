@@ -9,5 +9,9 @@ namespace GlobalPayments.Api.Terminals.Abstractions {
         byte[] Send(IDeviceMessage message);
 
         event MessageSentEventHandler OnMessageSent;
+
+        event BroadcastMessageEventHandler OnBroadcastMessage;
+
+        event PayAtTableRequestEventHandler OnPayAtTableRequest;
     }
 }

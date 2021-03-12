@@ -60,7 +60,32 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a genius terminal
         /// </summary>
-        GENIUS
+        GENIUS,
+
+        /// <summary>
+        /// Indicates an Ingenico Desk/5000 terminal underlying in Epos software package.
+        /// </summary>
+        Ingenico_EPOS_Desk5000,
+
+        /// <summary>
+        /// Indicates an Ingenico Lane/3000 terminal underlying in Epos software package.
+        /// </summary>
+        Ingenico_EPOS_Lane3000,
+
+        /// <summary>
+        /// Indicates an Ingenico Move/3500 terminal underlying in Epos software package.
+        /// </summary>
+        Ingenico_EPOS_Move3500
+    }
+
+    /// <summary>
+    /// Indicates a device mode.
+    /// </summary>
+    public enum DeviceMode {
+        /// <summary>
+        /// For devices that supports Pay@Table functionalities.
+        /// </summary>
+        PAY_AT_TABLE
     }
 
     /// <summary>
