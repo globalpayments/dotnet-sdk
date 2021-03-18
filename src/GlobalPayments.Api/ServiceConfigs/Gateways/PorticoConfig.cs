@@ -110,7 +110,8 @@ namespace GlobalPayments.Api {
                 Timeout = Timeout,
                 ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx",
                 UniqueDeviceId = UniqueDeviceId,
-                RequestLogger = RequestLogger
+                RequestLogger = RequestLogger,
+                WebProxy = WebProxy
             };
             services.GatewayConnector = gateway;
 
@@ -123,7 +124,8 @@ namespace GlobalPayments.Api {
                 SecretApiKey = SecretApiKey,
                 Timeout = Timeout,
                 ServiceUrl = ServiceUrl + PayPlanEndpoint,
-                RequestLogger = RequestLogger
+                RequestLogger = RequestLogger,
+                WebProxy = WebProxy
             };
             services.RecurringConnector = payplan;
 
@@ -136,13 +138,14 @@ namespace GlobalPayments.Api {
                     ServiceUrl = ProPayUS ? ServiceEndpoints.PROPAY_PRODUCTION : ServiceEndpoints.PROPAY_PRODUCTION_CANADIAN;
                 }
 
-                var payFac = new ProPayConnector()
-                {
+                var payFac = new ProPayConnector() {
                     CertStr = CertificationStr,
                     TermID = TerminalID,
                     Timeout = Timeout,
                     ServiceUrl = ServiceUrl,
-                    X509CertPath = X509CertificatePath
+                    X509CertPath = X509CertificatePath,
+                    RequestLogger = RequestLogger,
+                    WebProxy = WebProxy
                 };
 
                 services.PayFacProvider = payFac;

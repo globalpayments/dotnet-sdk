@@ -55,6 +55,11 @@ namespace GlobalPayments.Api.PaymentMethods
         public bool PreferredPayment { get; set; }
 
         /// <summary>
+        /// eCheck sec code value
+        /// </summary>
+        public string SecCode { get; set; }
+
+        /// <summary>
         /// The payment method status
         /// </summary>
         public string Status { get; set; }

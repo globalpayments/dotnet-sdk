@@ -2,7 +2,6 @@
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace GlobalPayments.Api.Tests {
     [TestClass]
@@ -80,6 +79,13 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void GetCountryCodeByExactNumericCode() {
+            string result = CountryUtils.GetCountryCodeByCountry("840");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("US", result);
+        }
+
+        [TestMethod]
         public void GetCountryByCodeNullDoesNotError() {
             CountryUtils.GetCountryCodeByCountry(null);
         }
@@ -121,6 +127,14 @@ namespace GlobalPayments.Api.Tests {
             Address address = new Address();
             address.Country = "United States of America";
             Assert.IsTrue(address.IsCountry("US"));
+        }
+
+        [TestMethod]
+        public void CheckAddressCodeFromNumericCodeExact() {
+            Address address = new Address();
+            address.Country = "056";
+            Assert.IsNotNull(address.CountryCode);
+            Assert.AreEqual("BE", address.CountryCode);
         }
 
         [TestMethod]

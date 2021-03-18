@@ -262,6 +262,10 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(data, "CVV2", card.Cvn);
                 }
 
+                if (method.PaymentType == "ACH" && (method.SecCode != null)) {
+                    et.SubElement(block1, "SECCode").Text(method.SecCode);
+                }
+
                 // recurring data
                 var recurring = et.SubElement(block1, "RecurringData");
                 et.SubElement(recurring, "ScheduleID", builder.ScheduleId);

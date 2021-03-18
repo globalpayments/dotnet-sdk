@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GlobalPayments.Api.Mapping {
@@ -18,6 +19,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.Timestamp = json.GetValue<string>("time_created");
                 transaction.ResponseMessage = json.GetValue<string>("status");
                 transaction.ReferenceNumber = json.GetValue<string>("reference");
+                transaction.ClientTransactionId = json.GetValue<string>("reference");
                 transaction.BatchSummary = new BatchSummary {
                     SequenceNumber = json.GetValue<string>("batch_id")
                 };
@@ -26,6 +28,7 @@ namespace GlobalPayments.Api.Mapping {
 
                 if (json.Has("payment_method")) {
                     JsonDoc paymentMethod = json.Get("payment_method");
+                    transaction.Token = paymentMethod.GetValue<string>("id");
                     transaction.AuthorizationCode = paymentMethod.GetValue<string>("result");
                     if (paymentMethod.Has("card")) {
                         JsonDoc card = paymentMethod.Get("card");
@@ -82,6 +85,42 @@ namespace GlobalPayments.Api.Mapping {
             return summary;
         }
 
+        public static T MapReportResponse<T>(string rawResponse, ReportType reportType) where T : class {
+            T result = Activator.CreateInstance<T>();
+
+            JsonDoc json = JsonDoc.Parse(rawResponse);
+
+            if (reportType == ReportType.TransactionDetail && result is TransactionSummary) {
+                result = MapTransactionSummary(json) as T;
+            }
+            else if ((reportType == ReportType.FindTransactions || reportType == ReportType.FindSettlementTransactions) && result is IEnumerable<TransactionSummary>) {
+                IEnumerable<JsonDoc> transactions = json.GetArray<JsonDoc>("transactions");
+                foreach (var doc in transactions ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as List<TransactionSummary>).Add(MapTransactionSummary(doc));
+                }
+            }
+            else if (reportType == ReportType.DepositDetail && result is DepositSummary) {
+                result = MapDepositSummary(json) as T;
+            }
+            else if (reportType == ReportType.FindDeposits && result is IEnumerable<DepositSummary>) {
+                IEnumerable<JsonDoc> deposits = json.GetArray<JsonDoc>("deposits");
+                foreach (var doc in deposits ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as List<DepositSummary>).Add(MapDepositSummary(doc));
+                }
+            }
+            else if ((reportType == ReportType.DisputeDetail || reportType == ReportType.SettlementDisputeDetail) && result is DisputeSummary) {
+                result = MapDisputeSummary(json) as T;
+            }
+            else if ((reportType == ReportType.FindDisputes || reportType == ReportType.FindSettlementDisputes) && result is IEnumerable<DisputeSummary>) {
+                IEnumerable<JsonDoc> disputes = json.GetArray<JsonDoc>("disputes");
+                foreach (var doc in disputes ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as List<DisputeSummary>).Add(MapDisputeSummary(doc));
+                }
+            }
+
+            return result;
+        }
+
         public static DepositSummary MapDepositSummary(JsonDoc doc) {
             var summary = new DepositSummary {
                 DepositId = doc.GetValue<string>("id"),
@@ -129,14 +168,60 @@ namespace GlobalPayments.Api.Mapping {
                 TransactionCardType = doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"),
                 ReasonCode = doc.GetValue<string>("reason_code"),
                 Reason = doc.GetValue<string>("reason_description"),
-                RespondByDate = doc.GetValue<DateTime>("time_to_respond_by"),
                 Result = doc.GetValue<string>("result"),
                 LastAdjustmentAmount = doc.GetValue<string>("last_adjustment_amount").ToAmount(),
                 LastAdjustmentCurrency = doc.GetValue<string>("last_adjustment_currency"),
                 LastAdjustmentFunding = doc.GetValue<string>("last_adjustment_funding")
             };
 
+            if (!string.IsNullOrEmpty(doc.GetValue<string>("time_to_respond_by"))) {
+                summary.RespondByDate = doc.GetValue<DateTime>("time_to_respond_by");
+            }
+
             return summary;
+        }
+
+
+        private static Secure3dVersion Parse3DSVersion(string messageVersion) {
+            if (messageVersion.StartsWith("1."))
+                return Secure3dVersion.One;
+            if (messageVersion.StartsWith("2."))
+                return Secure3dVersion.Two;
+            return Secure3dVersion.Any;
+        }
+
+        public static Transaction Map3DSecureData(string rawResponse) {
+            if (!string.IsNullOrEmpty(rawResponse)) {
+                JsonDoc json = JsonDoc.Parse(rawResponse);
+
+                return new Transaction {
+                    ThreeDSecure = new ThreeDSecure {
+                        ServerTransactionId = json.GetValue<string>("id"),
+                        Status = json.GetValue<string>("status"),
+                        Currency = json.GetValue<string>("currency"),
+                        Amount = json.GetValue<string>("amount").ToAmount(),
+
+                        Version = Parse3DSVersion(json.Get("three_ds")?.GetValue<string>("message_version")),
+                        MessageVersion = json.Get("three_ds")?.GetValue<string>("message_version"),
+                        DirectoryServerStartVersion = json.Get("three_ds")?.GetValue<string>("ds_protocol_version_start"),
+                        DirectoryServerEndVersion = json.Get("three_ds")?.GetValue<string>("ds_protocol_version_end"),
+                        DirectoryServerTransactionId = json.Get("three_ds")?.GetValue<string>("ds_trans_ref"),
+                        AcsStartVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_start"),
+                        AcsEndVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_end"),
+                        AcsTransactionId = json.Get("three_ds")?.GetValue<string>("acs_trans_ref"),
+                        Enrolled = json.Get("three_ds")?.GetValue<string>("enrolled_status"),
+                        Eci = json.Get("three_ds")?.GetValue<string>("eci")?.ToInt32(),
+                        AuthenticationValue = json.Get("three_ds")?.GetValue<string>("authentication_value"),
+                        ChallengeMandated = json.Get("three_ds")?.GetValue<string>("challenge_status") == "MANDATED",
+                        IssuerAcsUrl = !string.IsNullOrEmpty(json.Get("three_ds")?.GetValue<string>("method_url")) ?
+                            json.Get("three_ds")?.GetValue<string>("method_url") : json.Get("three_ds")?.GetValue<string>("redirect_url"),
+                        PayerAuthenticationRequest = json.Get("three_ds")?.GetValue<string>("challenge_value"),
+                        StatusReason = json.Get("three_ds")?.GetValue<string>("status_reason"),
+                        MessageCategory = json.Get("three_ds")?.GetValue<string>("message_category"),
+                    }
+                };
+            }
+            return new Transaction();
         }
     }
 }

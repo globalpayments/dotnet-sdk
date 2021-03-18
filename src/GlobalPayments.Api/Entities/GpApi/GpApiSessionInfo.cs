@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 using System.Security.Cryptography;
+using System.Net.Http;
 
 namespace GlobalPayments.Api.Entities {
     internal class GpApiSessionInfo {
@@ -40,6 +41,7 @@ namespace GlobalPayments.Api.Entities {
                 .Set("interval_to_expire", EnumConverter.GetMapping(Target.GP_API, intervalToExpire));
 
             return new GpApiRequest {
+                Verb = HttpMethod.Post,
                 Endpoint = "/accesstoken",
                 RequestBody = request.ToString()
             };

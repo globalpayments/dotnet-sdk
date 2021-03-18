@@ -38,6 +38,14 @@ namespace GlobalPayments.Api {
         /// Access token information
         /// </summary>
         public AccessTokenInfo AccessTokenInfo { get; set; }
+        /// <summary>
+        /// 3DSecure challenge return url
+        /// </summary>
+        public string ChallengeNotificationUrl { get; set; }
+        /// <summary>
+        /// 3DSecure method return url
+        /// </summary>
+        public string MethodNotificationUrl { get; set; }
 
         public GpApiConfig() : base(GatewayProvider.GP_API) { }
 
@@ -64,6 +72,8 @@ namespace GlobalPayments.Api {
                 DisputeManagementAccountName = AccessTokenInfo?.DisputeManagementAccountName,
                 TokenizationAccountName = AccessTokenInfo?.TokenizationAccountName,
                 TransactionProcessingAccountName = AccessTokenInfo?.TransactionProcessingAccountName,
+                ChallengeNotificationUrl = ChallengeNotificationUrl,
+                MethodNotificationUrl = MethodNotificationUrl,
                 RequestLogger = RequestLogger,
                 WebProxy = WebProxy,
             };
@@ -72,7 +82,8 @@ namespace GlobalPayments.Api {
 
             services.ReportingService = gateway;
 
-            services.SetSecure3dProvider(Secure3dVersion.Any, gateway);
+            services.SetSecure3dProvider(Secure3dVersion.One, gateway);
+            services.SetSecure3dProvider(Secure3dVersion.Two, gateway);
         }
 
         internal override void Validate() {

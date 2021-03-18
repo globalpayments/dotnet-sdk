@@ -31,6 +31,27 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void DebitRefundChip()
+        {
+            var track = new DebitTrackData
+            {
+                Value = ";4024720012345671=18125025432198712345?",
+                EntryMethod = EntryMethod.Swipe,
+                PinBlock = "AFEC374574FC90623D010000116001EE"
+            };
+
+            string tagData = "82021C008407A0000002771010950580000000009A031709289C01005F280201245F2A0201245F3401019F02060000000010009F03060000000000009F080200019F090200019F100706010A03A420009F1A0201249F26089CC473F4A4CE18D39F2701809F3303E0F8C89F34030100029F3501229F360200639F370435EFED379F410400000019";
+
+            var response = track.Refund(15.99m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithTagData(tagData)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
+        }
+
+        [TestMethod]
         public void DebitRefundSwipe() {
             var track = new DebitTrackData {
                 Value = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",

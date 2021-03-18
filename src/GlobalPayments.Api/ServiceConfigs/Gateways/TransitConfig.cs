@@ -29,7 +29,8 @@ namespace GlobalPayments.Api {
                 TransactionKey = TransactionKey,
                 ServiceUrl = ServiceUrl,
                 Timeout = Timeout,
-                RequestLogger = RequestLogger
+                RequestLogger = RequestLogger,
+                WebProxy = WebProxy
             };
 
             services.GatewayConnector = gateway;

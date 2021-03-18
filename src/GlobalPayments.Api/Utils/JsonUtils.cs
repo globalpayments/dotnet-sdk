@@ -160,6 +160,10 @@ namespace GlobalPayments.Api.Utils {
             return _dict.ContainsKey(name);
         }
 
+        public bool HasKeys() {
+            return _dict.Keys.Count > 0;
+        }
+
         public static JsonDoc Parse(string json, IRequestEncoder encoder = null) {
             var parsed = JsonConvert.DeserializeObject(json);
             if (parsed is JObject) {

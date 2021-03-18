@@ -2,6 +2,8 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Gateways.BillPay;
+using GlobalPayments.Api.Logging;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways {
     internal class BillPayProvider: IBillingProvider, IPaymentGateway, IRecurringService {
@@ -19,6 +21,10 @@ namespace GlobalPayments.Api.Gateways {
 
         public string ServiceUrl { get; set; }
 
+        public IRequestLogger RequestLogger { get; set; }
+
+        public IWebProxy WebProxy { get; set; }
+
         /// <summary>
         /// Invokes a request against the BillPay gateway using the AuthorizationBuilder
         /// </summary>
@@ -26,6 +32,8 @@ namespace GlobalPayments.Api.Gateways {
         /// <returns>A Transaction response</returns>
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             return new AuthorizationRequest(Credentials, ServiceUrl, Timeout)
+                .WithRequestLogger(RequestLogger)
+                .WithWebProxy(WebProxy)
                 .Execute(builder, IsBillDataHosted);
         }
 
@@ -36,17 +44,23 @@ namespace GlobalPayments.Api.Gateways {
         /// <returns>A Transaction response</returns>
         public Transaction ManageTransaction(ManagementBuilder builder) {
             return new ManagementRequest(Credentials, ServiceUrl, Timeout)
+                .WithRequestLogger(RequestLogger)
+                .WithWebProxy(WebProxy)
                 .Execute(builder, IsBillDataHosted);
         }
 
         public BillingResponse ProcessBillingRequest(BillingBuilder builder) {
             return new BillingRequest(Credentials, ServiceUrl, Timeout)
+                .WithRequestLogger(RequestLogger)
+                .WithWebProxy(WebProxy)
                 .Execute(builder);
         }
 
         public T ProcessRecurring<T>(RecurringBuilder<T> builder) where T : class
         {
             return new RecurringRequest<T>(Credentials, ServiceUrl, Timeout)
+                .WithRequestLogger(RequestLogger)
+                .WithWebProxy(WebProxy)
                 .Execute(builder);
         }
 

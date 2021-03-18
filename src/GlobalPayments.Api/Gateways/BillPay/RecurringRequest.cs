@@ -3,6 +3,8 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.Logging;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     internal sealed class RecurringRequest<T> : GatewayRequestBase where T: class {
@@ -10,6 +12,16 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             this.Credentials = credentials;
             this.ServiceUrl = serviceUrl;
             this.Timeout = timeout;
+        }
+
+        internal RecurringRequest<T> WithRequestLogger(IRequestLogger requestLogger) {
+            RequestLogger = requestLogger;
+            return this;
+        }
+
+        internal RecurringRequest<T> WithWebProxy(IWebProxy webProxy) {
+            WebProxy = webProxy;
+            return this;
         }
 
         internal T Execute(RecurringBuilder<T> builder) {

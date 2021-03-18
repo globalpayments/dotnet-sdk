@@ -56,6 +56,7 @@ namespace GlobalPayments.Api.Builders {
         internal bool OneTimePayment { get; set; }
         internal string OrderId { get; set; }
         internal string PaymentApplicationVersion { get; set; }
+        internal TokenUsageMode? TokenUsageMode { get; set; }
         internal string PosSequenceNumber { get; set; }
         internal string ProductId { get; set; }
         internal RecurringSequence? RecurringSequence { get; set; }
@@ -554,6 +555,11 @@ namespace GlobalPayments.Api.Builders {
 
         public AuthorizationBuilder WithPaymentApplicationVersion(string value) {
             PaymentApplicationVersion = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithTokenUsageMode(TokenUsageMode? value) {
+            TokenUsageMode = value;
             return this;
         }
 

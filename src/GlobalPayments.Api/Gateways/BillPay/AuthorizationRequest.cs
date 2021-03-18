@@ -1,9 +1,10 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
-using System.Linq;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     /// <summary>
@@ -14,6 +15,16 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             this.Credentials = credentials;
             this.ServiceUrl = serviceUrl;
             this.Timeout = timeout;
+        }
+
+        internal AuthorizationRequest WithRequestLogger(IRequestLogger requestLogger) {
+            RequestLogger = requestLogger;
+            return this;
+        }
+
+        internal AuthorizationRequest WithWebProxy(IWebProxy webProxy) {
+            WebProxy = webProxy;
+            return this;
         }
 
         internal Transaction Execute(AuthorizationBuilder builder, bool isBillDataHosted) {

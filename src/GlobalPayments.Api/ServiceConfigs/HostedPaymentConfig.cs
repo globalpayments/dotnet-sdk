@@ -29,7 +29,11 @@
         /// <summary>
         /// Sets the fraud filter to passive mode
         /// </summary>
-        PASSIVE
+        PASSIVE,
+        /// <summary>
+        /// Sets the fraud filter to active mode
+        /// </summary>
+        ACTIVE
     }
 
     /// <summary>

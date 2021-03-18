@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Gateways {
 
             if (webProxy != null) {
                 handler.UseProxy = true;
-                handler.Proxy = webProxy; ;
+                handler.Proxy = webProxy;
             }
 
             return handler;

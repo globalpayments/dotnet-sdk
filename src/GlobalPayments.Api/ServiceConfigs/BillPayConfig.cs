@@ -22,7 +22,9 @@ namespace GlobalPayments.Api {
                 },
                 ServiceUrl = ServiceUrl ?? ServiceEndpoints.BILLPAY_PRODUCTION,
                 Timeout = Timeout,
-                IsBillDataHosted = UseBillRecordlookup
+                IsBillDataHosted = UseBillRecordlookup,
+                RequestLogger = RequestLogger,
+                WebProxy = WebProxy
             };
 
             services.GatewayConnector = gateway;

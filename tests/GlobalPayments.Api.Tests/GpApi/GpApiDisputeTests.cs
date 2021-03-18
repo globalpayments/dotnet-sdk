@@ -34,6 +34,26 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void DisputeAcceptWrongId()
+        {
+            dispute = new DisputeSummary
+            {
+                CaseId = "DIS_SAND_bbbb1111"
+            };
+            try
+            {
+                dispute.Accept()
+                .Execute();
+            } catch(GatewayException ex)
+            {
+                Assert.AreEqual("INVALID_DISPUTE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40067", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - 124," +
+                    "Unable to accept for that id. Please check the Case id again.", ex.Message);
+            }
+        }
+
+        [TestMethod]
         public void DisputeChallenge() {
             var documents = new List<DisputeDocument>();
             documents.Add(new DisputeDocument {
@@ -47,6 +67,34 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(GetMapping(DisputeStatus.Closed), response?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void DisputeChallengeWrongId()
+        {
+            dispute = new DisputeSummary
+            {
+                CaseId = "DIS_SAND_bbbb1111"
+            };
+            var documents = new List<DisputeDocument>();
+            documents.Add(new DisputeDocument
+            {
+                Type = "SALES_RECEIPT",
+                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
+            });
+
+            try
+            {
+                dispute.Challenge(documents)
+                .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                Assert.AreEqual("INVALID_DISPUTE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40060", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - 117," +
+                    "Unable to challenge for that id. Please check the Case id again.", ex.Message);
+            }
         }
     }
 }

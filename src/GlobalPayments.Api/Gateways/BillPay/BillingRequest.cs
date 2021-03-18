@@ -2,7 +2,9 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.Utils;
+using System.Net;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     /// <summary>
@@ -14,6 +16,16 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             this.Credentials = credentials;
             this.ServiceUrl = serviceUrl;
             this.Timeout = timeout;
+        }
+
+        internal BillingRequest WithRequestLogger(IRequestLogger requestLogger) {
+            RequestLogger = requestLogger;
+            return this;
+        }
+
+        internal BillingRequest WithWebProxy(IWebProxy webProxy) {
+            WebProxy = webProxy;
+            return this;
         }
 
         internal BillingResponse Execute(BillingBuilder builder) {
