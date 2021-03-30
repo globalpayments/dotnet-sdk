@@ -6,6 +6,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals;
 using System.Globalization;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace GlobalPayments.Api.Utils {
     public static class Extensions {
@@ -202,6 +203,10 @@ namespace GlobalPayments.Api.Utils {
                 rvalue = rvalue.Substring(0, rvalue.Length - trimLength);
             }
             return rvalue;
+        }
+
+        public static string ExtractDigits(this string str) {
+            return string.IsNullOrEmpty(str) ? str : new string(str.Where(char.IsDigit).ToArray());
         }
     }
 }

@@ -86,6 +86,40 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void GetNumericCodeByTwoDigitCode() {
+            string result = CountryUtils.GetNumericCodeByCountry("US");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("840", result);
+        }
+
+        [TestMethod]
+        public void GetNumericCodeByThreeDigitCode() {
+            string result = CountryUtils.GetNumericCodeByCountry("USA");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("840", result);
+        }
+
+        [TestMethod]
+        public void GetNumericCodeByCountryName() {
+            string result = CountryUtils.GetNumericCodeByCountry("United States of America");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("840", result);
+        }
+
+        [TestMethod]
+        public void GetNumericCodeByNumericCode() {
+            string result = CountryUtils.GetNumericCodeByCountry("840");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("840", result);
+        }
+
+        [TestMethod]
+        public void GetNumericCodeByNonExistingCountryName() {
+            string result = CountryUtils.GetNumericCodeByCountry("Fake Country Name");
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
         public void GetCountryByCodeNullDoesNotError() {
             CountryUtils.GetCountryCodeByCountry(null);
         }

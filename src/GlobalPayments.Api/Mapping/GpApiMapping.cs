@@ -3,7 +3,6 @@ using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace GlobalPayments.Api.Mapping {
     public class GpApiMapping {
@@ -13,7 +12,6 @@ namespace GlobalPayments.Api.Mapping {
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
 
-                // ToDo: Map transaction values
                 transaction.TransactionId = json.GetValue<string>("id");
                 transaction.BalanceAmount = json.GetValue<string>("amount").ToAmount();
                 transaction.Timestamp = json.GetValue<string>("time_created");
@@ -24,8 +22,10 @@ namespace GlobalPayments.Api.Mapping {
                     SequenceNumber = json.GetValue<string>("batch_id")
                 };
                 transaction.ResponseCode = json.Get("action").GetValue<string>("result_code");
-                transaction.Token = json.GetValue<string>("id");
-
+                string id = json.GetValue<string>("id");
+                if ((id ?? string.Empty).StartsWith("PMT_")) {
+                    transaction.Token = id;
+                }
                 if (json.Has("payment_method")) {
                     JsonDoc paymentMethod = json.Get("payment_method");
                     transaction.Token = paymentMethod.GetValue<string>("id");
@@ -93,32 +93,49 @@ namespace GlobalPayments.Api.Mapping {
             if (reportType == ReportType.TransactionDetail && result is TransactionSummary) {
                 result = MapTransactionSummary(json) as T;
             }
-            else if ((reportType == ReportType.FindTransactions || reportType == ReportType.FindSettlementTransactions) && result is IEnumerable<TransactionSummary>) {
-                IEnumerable<JsonDoc> transactions = json.GetArray<JsonDoc>("transactions");
-                foreach (var doc in transactions ?? Enumerable.Empty<JsonDoc>()) {
-                    (result as List<TransactionSummary>).Add(MapTransactionSummary(doc));
+            else if ((reportType == ReportType.FindTransactionsPaged || reportType == ReportType.FindSettlementTransactionsPaged) && result is PagedResult<TransactionSummary>) {
+                SetPagingInfo(result as PagedResult<TransactionSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("transactions") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<TransactionSummary>).Add(MapTransactionSummary(doc));
                 }
             }
             else if (reportType == ReportType.DepositDetail && result is DepositSummary) {
                 result = MapDepositSummary(json) as T;
             }
-            else if (reportType == ReportType.FindDeposits && result is IEnumerable<DepositSummary>) {
-                IEnumerable<JsonDoc> deposits = json.GetArray<JsonDoc>("deposits");
-                foreach (var doc in deposits ?? Enumerable.Empty<JsonDoc>()) {
-                    (result as List<DepositSummary>).Add(MapDepositSummary(doc));
+            else if (reportType == ReportType.FindDepositsPaged && result is PagedResult<DepositSummary>) {
+                SetPagingInfo(result as PagedResult<DepositSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("deposits") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<DepositSummary>).Add(MapDepositSummary(doc));
                 }
             }
-            else if ((reportType == ReportType.DisputeDetail || reportType == ReportType.SettlementDisputeDetail) && result is DisputeSummary) {
+            else if (reportType == ReportType.DisputeDetail && result is DisputeSummary) {
                 result = MapDisputeSummary(json) as T;
             }
-            else if ((reportType == ReportType.FindDisputes || reportType == ReportType.FindSettlementDisputes) && result is IEnumerable<DisputeSummary>) {
-                IEnumerable<JsonDoc> disputes = json.GetArray<JsonDoc>("disputes");
-                foreach (var doc in disputes ?? Enumerable.Empty<JsonDoc>()) {
-                    (result as List<DisputeSummary>).Add(MapDisputeSummary(doc));
+            else if (reportType == ReportType.FindDisputesPaged && result is PagedResult<DisputeSummary>) {
+                SetPagingInfo(result as PagedResult<DisputeSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("disputes") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<DisputeSummary>).Add(MapDisputeSummary(doc));
+                }
+            }
+            else if (reportType == ReportType.SettlementDisputeDetail && result is DisputeSummary) {
+                result = MapSettlementDisputeSummary(json) as T;
+            }
+            else if (reportType == ReportType.FindSettlementDisputesPaged && result is PagedResult<DisputeSummary>) {
+                SetPagingInfo(result as PagedResult<DisputeSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("disputes") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<DisputeSummary>).Add(MapSettlementDisputeSummary(doc));
                 }
             }
 
             return result;
+        }
+
+        private static void SetPagingInfo<T>(PagedResult<T> result, JsonDoc json) where T : class {
+            result.TotalRecordCount = json.GetValue<int>("total_record_count", "total_count");
+            result.PageSize = json.Get("paging")?.GetValue<int>("page_size") ?? default(int);
+            result.Page = json.Get("paging")?.GetValue<int>("page") ?? default(int);
+            result.Order = json.Get("paging")?.GetValue<string>("order");
+            result.OrderBy = json.Get("paging")?.GetValue<string>("order_by");
         }
 
         public static DepositSummary MapDepositSummary(JsonDoc doc) {
@@ -156,28 +173,48 @@ namespace GlobalPayments.Api.Mapping {
         public static DisputeSummary MapDisputeSummary(JsonDoc doc) {
             var summary = new DisputeSummary {
                 CaseId = doc.GetValue<string>("id"),
-                CaseIdTime = doc.GetValue<DateTime>("time_created"),
+                CaseIdTime = doc.GetValue<DateTime?>("time_created"),
                 CaseStatus = doc.GetValue<string>("status"),
                 CaseStage = doc.GetValue<string>("stage"),
                 CaseAmount = doc.GetValue<string>("amount").ToAmount(),
                 CaseCurrency = doc.GetValue<string>("currency"),
-                CaseMerchantId = doc.Get("system")?.GetValue<string>("mid"),
-                MerchantHierarchy = doc.Get("system")?.GetValue<string>("hierarchy"),
-                TransactionMaskedCardNumber = doc.Get("payment_method")?.Get("card")?.GetValue<string>("number"),
-                TransactionARN = doc.Get("payment_method")?.Get("card")?.GetValue<string>("arn"),
-                TransactionCardType = doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"),
                 ReasonCode = doc.GetValue<string>("reason_code"),
                 Reason = doc.GetValue<string>("reason_description"),
                 Result = doc.GetValue<string>("result"),
+                CaseMerchantId = doc.Get("system")?.GetValue<string>("mid"),
+                CaseTerminalId = doc.Get("system")?.GetValue<string>("tid"),
+                MerchantHierarchy = doc.Get("system")?.GetValue<string>("hierarchy"),
+                MerchantName = doc.Get("system")?.GetValue<string>("name"),
+                MerchantDbaName = doc.Get("system")?.GetValue<string>("dba"),
                 LastAdjustmentAmount = doc.GetValue<string>("last_adjustment_amount").ToAmount(),
                 LastAdjustmentCurrency = doc.GetValue<string>("last_adjustment_currency"),
-                LastAdjustmentFunding = doc.GetValue<string>("last_adjustment_funding")
+                LastAdjustmentFunding = doc.GetValue<string>("last_adjustment_funding"),
+                TransactionMaskedCardNumber = doc.Get("payment_method")?.Get("card")?.GetValue<string>("number"),
+                TransactionARN = doc.Get("payment_method")?.Get("card")?.GetValue<string>("arn"),
+                TransactionCardType = doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"),
             };
 
             if (!string.IsNullOrEmpty(doc.GetValue<string>("time_to_respond_by"))) {
-                summary.RespondByDate = doc.GetValue<DateTime>("time_to_respond_by");
+                summary.RespondByDate = doc.GetValue<DateTime?>("time_to_respond_by");
             }
 
+            return summary;
+        }
+
+        public static DisputeSummary MapSettlementDisputeSummary(JsonDoc doc) {
+            var summary = MapDisputeSummary(doc);
+
+            summary.CaseIdTime = doc.GetValue<DateTime?>("stage_time_created");
+            summary.TransactionTime = doc.Get("transaction")?.GetValue<DateTime?>("time_created");
+            summary.TransactionType = doc.Get("transaction")?.GetValue<string>("type");
+            summary.TransactionAmount = doc.Get("transaction")?.GetValue<string>("amount").ToAmount();
+            summary.TransactionCurrency = doc.Get("transaction")?.GetValue<string>("currency");
+            summary.TransactionReferenceNumber = doc.Get("transaction")?.GetValue<string>("reference");
+            summary.TransactionMaskedCardNumber = doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_first6last4");
+            summary.TransactionARN = doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("arn");
+            summary.TransactionCardType = doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("brand");
+            summary.TransactionAuthCode = doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("authcode");
+            
             return summary;
         }
 

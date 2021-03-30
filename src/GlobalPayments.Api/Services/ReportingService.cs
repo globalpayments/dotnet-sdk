@@ -17,33 +17,9 @@ namespace GlobalPayments.Api.Services {
             return new TransactionReportBuilder<List<DisputeSummary>>(ReportType.FindDisputes);
         }
 
-        public static TransactionReportBuilder<List<DisputeSummary>> FindSettlementDisputes() {
-            return new TransactionReportBuilder<List<DisputeSummary>>(ReportType.FindSettlementDisputes);
-        }
-
         public static TransactionReportBuilder<List<TransactionSummary>> Activity() {
             return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.Activity);
         }
-
-        //public static BatchReportBuilder BatchDetail() {
-        //    return new BatchReportBuilder(ReportType.BatchDetail);
-        //}
-
-        //public static BatchReportBuilder BatchHistory() {
-        //    return new BatchReportBuilder(ReportType.BatchHistory);
-        //}
-
-        //public static BatchReportBuilder BatchSummary() {
-        //    return new BatchReportBuilder(ReportType.BatchSummary);
-        //}
-
-        //public static ActivityReportBuilder OpenAuths() {
-        //    return new ActivityReportBuilder(ReportType.OpenAuths);
-        //}
-
-        //public static ActivityReportBuilder Search() {
-        //    return new ActivityReportBuilder(ReportType.Search);
-        //}
 
         public static TransactionReportBuilder<TransactionSummary> TransactionDetail(string transactionId) {
             return new TransactionReportBuilder<TransactionSummary>(ReportType.TransactionDetail)
@@ -65,8 +41,30 @@ namespace GlobalPayments.Api.Services {
                 .WithSettlementDisputeId(settlementDisputeId);
         }
 
-        public static TransactionReportBuilder<List<TransactionSummary>> FindSettlementTransactions() {
-            return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.FindSettlementTransactions);
+        public static TransactionReportBuilder<PagedResult<TransactionSummary>> FindTransactionsPaged(int page, int pageSize, string transactionId = null) {
+            return new TransactionReportBuilder<PagedResult<TransactionSummary>>(ReportType.FindTransactionsPaged)
+                .WithTransactionId(transactionId)
+                .WithPaging(page, pageSize);
+        }
+
+        public static TransactionReportBuilder<PagedResult<TransactionSummary>> FindSettlementTransactionsPaged(int page, int pageSize) {
+            return new TransactionReportBuilder<PagedResult<TransactionSummary>>(ReportType.FindSettlementTransactionsPaged)
+                .WithPaging(page, pageSize);
+        }
+
+        public static TransactionReportBuilder<PagedResult<DepositSummary>> FindDepositsPaged(int page, int pageSize) {
+            return new TransactionReportBuilder<PagedResult<DepositSummary>>(ReportType.FindDepositsPaged)
+                .WithPaging(page, pageSize);
+        }
+
+        public static TransactionReportBuilder<PagedResult<DisputeSummary>> FindDisputesPaged(int page, int pageSize) {
+            return new TransactionReportBuilder<PagedResult<DisputeSummary>>(ReportType.FindDisputesPaged)
+                .WithPaging(page, pageSize);
+        }
+
+        public static TransactionReportBuilder<PagedResult<DisputeSummary>> FindSettlementDisputesPaged(int page, int pageSize) {
+            return new TransactionReportBuilder<PagedResult<DisputeSummary>>(ReportType.FindSettlementDisputesPaged)
+                .WithPaging(page, pageSize);
         }
     }
 }

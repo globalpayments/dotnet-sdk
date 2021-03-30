@@ -141,7 +141,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void MapDisputeSummaryTest() {
             // Arrange
-            string rawJson = "{\"id\":\"DIS_SAND_abcd1234\",\"time_created\":\"2020-11-12T18:50:39.721Z\",\"merchant_id\":\"MER_62251730c5574bbcb268191b5f315de8\",\"merchant_name\":\"TEST MERCHANT\",\"account_id\":\"DIA_882c832d13e04185bb6e213d6303ed98\",\"account_name\":\"testdispute\",\"status\":\"WITH_MERCHANT\",\"status_time_created\":\"2020-11-14T18:50:39.721Z\",\"stage\":\"RETRIEVAL\",\"stage_time_created\":\"2020-11-17T18:50:39.722Z\",\"amount\":\"1000\",\"currency\":\"USD\",\"payer_amount\":\"1000\",\"payer_currency\":\"USD\",\"merchant_amount\":\"1000\",\"merchant_currency\":\"USD\",\"reason_code\":\"104\",\"reason_description\":\"Other Fraud-Card Absent Environment\",\"time_to_respond_by\":\"2020-11-29T18:50:39.722Z\",\"result\":\"PENDING\",\"investigator_comment\":\"WITH_MERCHANT RETRIEVAL PENDING 1000 USD 1000 USD\",\"system\":{\"mid\":\"627384967\",\"hierarchy\":\"111-23-099-001-001\",\"name\":\"ABC INC.\"},\"last_adjustment_amount\":\"\",\"last_adjustment_currency\":\"\",\"last_adjustment_funding\":\"\",\"last_adjustment_time_created\":\"2020-11-20T18:50:39.722Z\",\"net_financial_amount\":\"\",\"net_financial_currency\":\"\",\"net_financial_funding\":\"\",\"payment_method_provider\":[{\"comment\":\"issuer comments 34523\",\"reference\":\"issuer-reference-0001\",\"documents\":[{\"id\":\"DOC_MyEvidence_234234AVCDE-1\"}]}],\"transaction\":{\"time_created\":\"2020-10-05T18:50:39.726Z\",\"type\":\"SALE\",\"amount\":\"1000\",\"currency\":\"USD\",\"reference\":\"my-trans-AAA1\",\"remarks\":\"my-trans-AAA1\",\"payment_method\":{\"card\":{\"number\":\"424242xxxxxx4242\",\"arn\":\"834523482349123\",\"brand\":\"VISA\",\"authcode\":\"234AB\",\"brand_reference\":\"23423421342323A\"}}},\"documents\":[],\"action\":{\"id\":\"ACT_5blBTHnIs4aOCIvGwG7KizYUpsGI0g\",\"type\":\"DISPUTE_SINGLE\",\"time_created\":\"2020-11-24T18:50:39.925Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0\",\"app_name\":\"test_app\"}}";
+            string rawJson = "{\"id\":\"DIS_SAND_abcd1234\",\"time_created\":\"2020-11-12T18:50:39.721Z\",\"merchant_id\":\"MER_62251730c5574bbcb268191b5f315de8\",\"merchant_name\":\"TEST MERCHANT\",\"account_id\":\"DIA_882c832d13e04185bb6e213d6303ed98\",\"account_name\":\"testdispute\",\"status\":\"WITH_MERCHANT\",\"status_time_created\":\"2020-11-14T18:50:39.721Z\",\"stage\":\"RETRIEVAL\",\"stage_time_created\":\"2020-11-17T18:50:39.722Z\",\"amount\":\"1000\",\"currency\":\"USD\",\"payer_amount\":\"1000\",\"payer_currency\":\"USD\",\"merchant_amount\":\"1000\",\"merchant_currency\":\"USD\",\"reason_code\":\"104\",\"reason_description\":\"Other Fraud-Card Absent Environment\",\"time_to_respond_by\":\"2020-11-29T18:50:39.722Z\",\"result\":\"PENDING\",\"investigator_comment\":\"WITH_MERCHANT RETRIEVAL PENDING 1000 USD 1000 USD\",\"system\":{\"mid\":\"11112334\",\"tid\":\"22229876\",\"hierarchy\":\"000-00-000-000-000\",\"name\":\"MERCHANT ABC INC.\",\"dba\":\"MERCHANT XYZ INC.\"},\"last_adjustment_amount\":\"\",\"last_adjustment_currency\":\"\",\"last_adjustment_funding\":\"\",\"last_adjustment_time_created\":\"2020-11-20T18:50:39.722Z\",\"net_financial_amount\":\"\",\"net_financial_currency\":\"\",\"net_financial_funding\":\"\",\"payment_method_provider\":[{\"comment\":\"issuer comments 34523\",\"reference\":\"issuer-reference-0001\",\"documents\":[{\"id\":\"DOC_MyEvidence_234234AVCDE-1\"}]}],\"transaction\":{\"time_created\":\"2020-10-05T18:50:39.726Z\",\"type\":\"SALE\",\"amount\":\"1000\",\"currency\":\"USD\",\"reference\":\"my-trans-AAA1\",\"remarks\":\"my-trans-AAA1\",\"payment_method\":{\"card\":{\"number\":\"424242xxxxxx4242\",\"arn\":\"834523482349123\",\"brand\":\"VISA\",\"authcode\":\"234AB\",\"brand_reference\":\"23423421342323A\"}}},\"documents\":[],\"action\":{\"id\":\"ACT_5blBTHnIs4aOCIvGwG7KizYUpsGI0g\",\"type\":\"DISPUTE_SINGLE\",\"time_created\":\"2020-11-24T18:50:39.925Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0\",\"app_name\":\"test_app\"}}";
 
             JsonDoc doc = JsonDoc.Parse(rawJson);
 
@@ -155,18 +155,60 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("stage"), dispute.CaseStage);
             Assert.AreEqual(doc.GetValue<string>("amount").ToAmount(), dispute.CaseAmount);
             Assert.AreEqual(doc.GetValue<string>("currency"), dispute.CaseCurrency);
-            Assert.AreEqual(doc.Get("system")?.GetValue<string>("mid"), dispute.CaseMerchantId);
-            Assert.AreEqual(doc.Get("system")?.GetValue<string>("hierarchy"), dispute.MerchantHierarchy);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("number"), dispute.TransactionMaskedCardNumber);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("arn"), dispute.TransactionARN);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
             Assert.AreEqual(doc.GetValue<string>("reason_code"), dispute.ReasonCode);
             Assert.AreEqual(doc.GetValue<string>("reason_description"), dispute.Reason);
             Assert.AreEqual(doc.GetValue<DateTime>("time_to_respond_by"), dispute.RespondByDate);
             Assert.AreEqual(doc.GetValue<string>("result"), dispute.Result);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("mid"), dispute.CaseMerchantId);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("tid"), dispute.CaseTerminalId);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("hierarchy"), dispute.MerchantHierarchy);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("name"), dispute.MerchantName);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("dba"), dispute.MerchantDbaName);
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_amount").ToAmount(), dispute.LastAdjustmentAmount);
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_currency"), dispute.LastAdjustmentCurrency);
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_funding"), dispute.LastAdjustmentFunding);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("number"), dispute.TransactionMaskedCardNumber);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("arn"), dispute.TransactionARN);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
+        }
+
+        [TestMethod]
+        public void MapSettlementDisputeSummaryTest() {
+            string rawJson = "{\"id\":\"DIS_812\",\"status\":\"FUNDED\",\"stage\":\"CHARGEBACK\",\"stage_time_created\":\"2021-03-16T14:03:44\",\"amount\":\"200\",\"currency\":\"GBP\",\"reason_code\":\"PM\",\"reason_description\":\"Paid by Other Means\",\"time_to_respond_by\":\"2021-04-02T14:03:44\",\"result\":\"LOST\",\"funding_type\":\"DEBIT\",\"deposit_time_created\":\"2021-03-20\",\"deposit_id\":\"DEP_2342423443\",\"last_adjustment_amount\":\"\",\"last_adjustment_currency\":\"\",\"last_adjustment_funding\":\"\",\"last_adjustment_time_created\":\"\",\"system\":{\"mid\":\"11112334\",\"tid\":\"22229876\",\"hierarchy\":\"000-00-000-000-000\",\"name\":\"MERCHANT ABC INC.\",\"dba\":\"MERCHANT XYZ INC.\"},\"transaction\":{\"time_created\":\"2021-02-21T14:03:44\",\"merchant_time_created\":\"2021-02-21T16:03:44\",\"type\":\"SALE\",\"amount\":\"200\",\"currency\":\"GBP\",\"reference\":\"28012076eb6M\",\"payment_method\":{\"card\":{\"masked_number_first6last4\":\"379132XXXXX1007\",\"arn\":\"71400011203688701393903\",\"brand\":\"AMEX\",\"authcode\":\"129623\",\"brand_reference\":\"MWE1P0JG80110\"}}}}";
+
+            JsonDoc doc = JsonDoc.Parse(rawJson);
+
+            // Act
+            DisputeSummary dispute = GpApiMapping.MapSettlementDisputeSummary(doc);
+
+            // Assert
+            Assert.AreEqual(doc.GetValue<string>("id"), dispute.CaseId);
+            Assert.AreEqual(doc.GetValue<DateTime>("stage_time_created"), dispute.CaseIdTime);
+            Assert.AreEqual(doc.GetValue<string>("status"), dispute.CaseStatus);
+            Assert.AreEqual(doc.GetValue<string>("stage"), dispute.CaseStage);
+            Assert.AreEqual(doc.GetValue<string>("amount").ToAmount(), dispute.CaseAmount);
+            Assert.AreEqual(doc.GetValue<string>("currency"), dispute.CaseCurrency);
+            Assert.AreEqual(doc.GetValue<string>("last_adjustment_amount").ToAmount(), dispute.LastAdjustmentAmount);
+            Assert.AreEqual(doc.GetValue<string>("last_adjustment_currency"), dispute.LastAdjustmentCurrency);
+            Assert.AreEqual(doc.GetValue<string>("last_adjustment_funding"), dispute.LastAdjustmentFunding);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("mid"), dispute.CaseMerchantId);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("tid"), dispute.CaseTerminalId);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("hierarchy"), dispute.MerchantHierarchy);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("name"), dispute.MerchantName);
+            Assert.AreEqual(doc.Get("system")?.GetValue<string>("dba"), dispute.MerchantDbaName);
+            Assert.AreEqual(doc.GetValue<string>("reason_code"), dispute.ReasonCode);
+            Assert.AreEqual(doc.GetValue<string>("reason_description"), dispute.Reason);
+            Assert.AreEqual(doc.GetValue<string>("result"), dispute.Result);
+            Assert.AreEqual(doc.Get("transaction")?.GetValue<DateTime?>("time_created"), dispute.TransactionTime);
+            Assert.AreEqual(doc.Get("transaction")?.GetValue<string>("type"), dispute.TransactionType);
+            Assert.AreEqual(doc.Get("transaction")?.GetValue<string>("amount").ToAmount(), dispute.TransactionAmount);
+            Assert.AreEqual(doc.Get("transaction")?.GetValue<string>("currency"), dispute.TransactionCurrency);
+            Assert.AreEqual(doc.Get("transaction")?.GetValue<string>("reference"), dispute.TransactionReferenceNumber);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_first6last4"), dispute.TransactionMaskedCardNumber);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("arn"), dispute.TransactionARN);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("authcode"), dispute.TransactionAuthCode);
+            Assert.AreEqual(doc.GetValue<DateTime>("time_to_respond_by"), dispute.RespondByDate);
         }
 
         [TestMethod]

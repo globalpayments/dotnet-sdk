@@ -392,8 +392,8 @@ namespace GlobalPayments.Api.Gateways {
             }
             if (builder.ShippingAddress != null) {
                 // FRAUD VALUES
-                request.Set("SHIPPING_CODE", builder.ShippingAddress.PostalCode);
-                request.Set("SHIPPING_CO", builder.ShippingAddress.Country);
+                request.Set("SHIPPING_CODE", GenerateCode(builder.ShippingAddress));
+                request.Set("SHIPPING_CO", CountryUtils.GetCountryCodeByCountry(builder.ShippingAddress.Country));
 
                 // 3DS2 VALUES
                 request.Set("HPP_SHIPPING_STREET1", builder.ShippingAddress.StreetAddress1);
@@ -402,12 +402,12 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_SHIPPING_CITY", builder.ShippingAddress.City);
                 request.Set("HPP_SHIPPING_STATE", builder.ShippingAddress.State);
                 request.Set("HPP_SHIPPING_POSTALCODE", builder.ShippingAddress.PostalCode);
-                request.Set("HPP_SHIPPING_COUNTRY", builder.ShippingAddress.Country);
+                request.Set("HPP_SHIPPING_COUNTRY", CountryUtils.GetNumericCodeByCountry(builder.ShippingAddress.Country));
             }
             if (builder.BillingAddress != null) {
                 // FRAUD VALUES
-                request.Set("BILLING_CODE", builder.BillingAddress.PostalCode);
-                request.Set("BILLING_CO", builder.BillingAddress.Country);
+                request.Set("BILLING_CODE", GenerateCode(builder.BillingAddress));
+                request.Set("BILLING_CO", CountryUtils.GetCountryCodeByCountry(builder.BillingAddress.Country));
 
                 // 3DS2 VALUES
                 request.Set("HPP_BILLING_STREET1", builder.BillingAddress.StreetAddress1);
@@ -416,7 +416,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_BILLING_CITY", builder.BillingAddress.City);
                 request.Set("HPP_BILLING_STATE", builder.BillingAddress.State);
                 request.Set("HPP_BILLING_POSTALCODE", builder.BillingAddress.PostalCode);
-                request.Set("HPP_BILLING_COUNTRY", builder.BillingAddress.Country);
+                request.Set("HPP_BILLING_COUNTRY", CountryUtils.GetNumericCodeByCountry(builder.BillingAddress.Country));
             }
             request.Set("CUST_NUM", builder.CustomerId);
             request.Set("VAR_REF", builder.ClientTransactionId);
@@ -459,6 +459,19 @@ namespace GlobalPayments.Api.Gateways {
 
             request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray()));
             return request.ToString();
+        }
+
+        private string GenerateCode(Address address) {
+            string countryCode = CountryUtils.GetCountryCodeByCountry(address.Country);
+            switch (countryCode) {
+                case "GB":
+                    return $"{address.PostalCode.ExtractDigits()}|{address.StreetAddress1.ExtractDigits()}";
+                case "US":
+                case "CA":
+                    return $"{address.PostalCode}|{address.StreetAddress1}";
+                default:
+                    return null;
+            }
         }
 
         public Transaction ManageTransaction(ManagementBuilder builder) {

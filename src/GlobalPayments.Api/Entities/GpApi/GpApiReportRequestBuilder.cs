@@ -14,7 +14,7 @@ namespace GlobalPayments.Api.Entities {
                             Verb = HttpMethod.Get,
                             Endpoint = $"/transactions/{trb.TransactionId}",
                         };
-                    case ReportType.FindTransactions:
+                    case ReportType.FindTransactionsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = "/transactions",
@@ -46,7 +46,7 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("name", trb.SearchBuilder.Name);
 
                         return request;
-                    case ReportType.FindSettlementTransactions:
+                    case ReportType.FindSettlementTransactionsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = "/settlement/transactions",
@@ -81,7 +81,7 @@ namespace GlobalPayments.Api.Entities {
                             Verb = HttpMethod.Get,
                             Endpoint = $"/settlement/deposits/{trb.SearchBuilder.DepositId}",
                         };
-                    case ReportType.FindDeposits:
+                    case ReportType.FindDepositsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = "/settlement/deposits",
@@ -106,7 +106,7 @@ namespace GlobalPayments.Api.Entities {
                             Verb = HttpMethod.Get,
                             Endpoint = $"/disputes/{trb.SearchBuilder.DisputeId}",
                         };
-                    case ReportType.FindDisputes:
+                    case ReportType.FindDisputesPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = "/disputes",
@@ -133,7 +133,7 @@ namespace GlobalPayments.Api.Entities {
                             Verb = HttpMethod.Get,
                             Endpoint = $"/settlement/disputes/{trb.SearchBuilder.SettlementDisputeId}",
                         };
-                    case ReportType.FindSettlementDisputes:
+                    case ReportType.FindSettlementDisputesPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = "/settlement/disputes",

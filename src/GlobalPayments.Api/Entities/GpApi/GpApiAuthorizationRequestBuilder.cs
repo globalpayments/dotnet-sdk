@@ -78,12 +78,27 @@ namespace GlobalPayments.Api.Entities {
                 var card = new JsonDoc()
                     .Set("track", track.Value)
                     .Set("tag", builder.TagData)
-                    //.Set("cvv", cardData.Cvn)
-                    //.Set("cvv_indicator", "") // [ILLEGIBLE, NOT_PRESENT, PRESENT]
                     .Set("avs_address", builder.BillingAddress?.StreetAddress1)
                     .Set("avs_postal_code", builder.BillingAddress?.PostalCode)
                     .Set("authcode", builder.OfflineAuthCode);
-                    //.Set("brand_reference", "")
+
+                if (builder.TransactionType == TransactionType.Verify) {
+                    paymentMethod.Set("card", card);
+                    
+                    var verificationData = new JsonDoc()
+                        .Set("account_name", gateway.TransactionProcessingAccountName)
+                        .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
+                        .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
+                        .Set("currency", builder.Currency)
+                        .Set("country", builder.BillingAddress?.Country ?? gateway.Country)
+                        .Set("payment_method", paymentMethod);
+
+                    return new GpApiRequest {
+                        Verb = HttpMethod.Post,
+                        Endpoint = "/verifications",
+                        RequestBody = verificationData.ToString(),
+                    };
+                }
 
                 if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Refund) {
                     if (string.IsNullOrEmpty(track.Value)) {

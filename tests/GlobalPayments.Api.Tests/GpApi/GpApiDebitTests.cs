@@ -149,5 +149,18 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
+
+        [TestMethod]
+        public void CreditTrackDataVerify() {
+            var creditTrackData = new CreditTrackData {
+                TrackData = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?"
+            };
+            var response = creditTrackData.Verify()
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace GlobalPayments.Api.Utils {
         private static Dictionary<string, string> countryCodeMapByCountry;
         private static Dictionary<string, string> countryMapByCountryCode;
         private static Dictionary<string, string> countryCodeMapByNumericCode;
+        private static Dictionary<string, string> numericCodeMapByCountryCode;
         private const int significantCountryMatch = 6;
         private const int significantCodeMatch = 3;
 
@@ -519,6 +520,12 @@ namespace GlobalPayments.Api.Utils {
             countryCodeMapByNumericCode.Add("882", "WS");
             countryCodeMapByNumericCode.Add("887", "YE");
             countryCodeMapByNumericCode.Add("894", "ZM");
+
+            // build the inverse
+            numericCodeMapByCountryCode = new Dictionary<string, string>();
+            foreach (var numericCode in countryCodeMapByNumericCode.Keys) {
+                numericCodeMapByCountryCode.Add(countryCodeMapByNumericCode[numericCode], numericCode);
+            }
             #endregion
         }
 
@@ -644,6 +651,19 @@ namespace GlobalPayments.Api.Utils {
                 }
             }
             return score;
+        }
+
+        public static string GetNumericCodeByCountry(string country) {
+            if (countryCodeMapByNumericCode.ContainsKey(country)) {
+                return country;
+            }
+            else {
+                string countryCode = GetCountryCodeByCountry(country);
+                if (countryCode != null && numericCodeMapByCountryCode.ContainsKey(countryCode)) {
+                    return numericCodeMapByCountryCode[countryCode];
+                }
+                return null;
+            }
         }
     }
 }

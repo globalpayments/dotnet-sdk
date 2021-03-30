@@ -430,29 +430,44 @@ namespace GlobalPayments.Api.Entities {
         FindDisputes = 1 << 9,
 
         /// <summary>
-        /// Indicates a settlement dispute report
-        /// </summary>
-        FindSettlementDisputes = 1 << 10,
-
-        /// <summary>
         /// Indicates a Deposit Details report.
         /// </summary>
-        DepositDetail = 1 << 11,
+        DepositDetail = 1 << 10,
 
         /// <summary>
         /// Indicates a Dispute Details report.
         /// </summary>
-        DisputeDetail = 1 << 12,
+        DisputeDetail = 1 << 11,
 
         /// <summary>
         /// Indicates a Settlement Dispute Details report.
         /// </summary>
-        SettlementDisputeDetail = 1 << 13,
+        SettlementDisputeDetail = 1 << 12,
 
         /// <summary>
-        /// Indicates a settlement transactions report
+        /// Indicates a Transactions report paged
         /// </summary>
-        FindSettlementTransactions = 1 << 14,
+        FindTransactionsPaged = 1 << 13,
+
+        /// <summary>
+        /// Indicates a Settlement Transactions report paged
+        /// </summary>
+        FindSettlementTransactionsPaged = 1 << 14,
+
+        /// <summary>
+        /// Indicates a Deposit report paged
+        /// </summary>
+        FindDepositsPaged = 1 << 15,
+
+        /// <summary>
+        /// Indicates a Dispute report paged
+        /// </summary>
+        FindDisputesPaged = 1 << 16,
+
+        /// <summary>
+        /// Indicates a Settlement Dispute report paged
+        /// </summary>
+        FindSettlementDisputesPaged = 1 << 17,
     }
 
     /// <summary>
