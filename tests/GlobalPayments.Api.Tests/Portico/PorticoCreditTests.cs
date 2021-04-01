@@ -1,14 +1,28 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Tests.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace GlobalPayments.Api.Tests {
     [TestClass]
     public class PorticoCreditTests {
+        private IncrementalNumberProvider _generator;
+
         CreditCardData card;
         CreditTrackData track;
+        CreditCardData VisaManual { get; set; }
+        CreditCardData MasterCardManual{ get; set; }
+        Address Address { get; set; }
+        string ClientTransactionId {
+            get {
+                if (_generator == null) {
+                    _generator = IncrementalNumberProvider.GetInstance();
+                }
+                return _generator.GetRequestId().ToString();
+            }
+        }
 
         [TestInitialize]
         public void Init() {
@@ -28,6 +42,25 @@ namespace GlobalPayments.Api.Tests {
                 EncryptionData = new EncryptionData {
                     Version = "01"
                 }
+            };
+
+            Address = new Address {
+                StreetAddress1 = "8320",
+                PostalCode = "85284"
+            };
+
+            MasterCardManual = new CreditCardData {
+                Number = "5146315000000055",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "998"
+            };
+
+            VisaManual = new CreditCardData {
+                Number = "4012000098765439",
+                ExpMonth = 12,
+                ExpYear = 2020,
+                Cvn = "999"
             };
         }
 
@@ -496,5 +529,118 @@ namespace GlobalPayments.Api.Tests {
             var token = card.Tokenize("tokenize");
             Assert.IsNotNull(token);
         }
+
+        #region Step 4: LEVEL 3 Enhanced Data Tests
+
+        [TestMethod]
+        public void Visa_Level3_Sale() {
+
+            var commercialData = new CommercialData(TaxType.SALESTAX, CommercialIndicator.Level_III) {
+                PoNumber = "1784951399984509620",
+                TaxAmount = 0.01m,
+                DestinationPostalCode = "85212",
+                DestinationCountryCode = "USA",
+                OriginPostalCode = "22193",
+                SummaryCommodityCode = "SCC",
+                VAT_InvoiceNumber = "UVATREF162",
+                OrderDate = DateTime.Now,
+                FreightAmount = 0.01m,
+                DutyAmount = 0.01m,
+                AdditionalTaxDetails = new AdditionalTaxDetails {
+                    TaxAmount = 0.01m,
+                    TaxRate = 0.04m
+                }
+            };
+            commercialData.AddLineItems(
+                new CommercialLineItem {
+                    ProductCode = "PRDCD1",
+                    UnitCost = 0.01m,
+                    Quantity = 1m,
+                    UnitOfMeasure = "METER",
+                    Description = "PRODUCT 1 NOTES",
+                    // CommodityCode = "12DIGIT ACCO",
+                    DiscountDetails = new DiscountDetails {
+                        DiscountAmount = 0.50m
+                    }
+                },
+                new CommercialLineItem {
+                    ProductCode = "PRDCD2",
+                    UnitCost = 0.01m,
+                    Quantity = 1m,
+                    UnitOfMeasure = "METER",
+                    Description = "PRODUCT 2 NOTES",
+                    // CommodityCode = "12DIGIT ACCO",
+                    DiscountDetails = new DiscountDetails {
+                        DiscountAmount = 0.50m
+                    }
+                }
+            );
+
+            var response = VisaManual.Charge(0.53m)
+                .WithCurrency("USD")
+                .WithCommercialRequest(true)
+                .WithClientTransactionId(ClientTransactionId)
+                .WithAddress(Address)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var edit = response.Edit()
+                .WithCommercialData(commercialData)
+                .Execute();
+            Assert.IsNotNull(edit);
+            Assert.AreEqual("00", edit.ResponseCode);
+        }
+
+        [TestMethod]
+        public void MasterCard_Level3_Sale() {
+
+            var commercialData = new CommercialData(TaxType.SALESTAX, CommercialIndicator.Level_III) {
+                PoNumber = "9876543210",
+                TaxAmount = 0.01m,
+                DestinationPostalCode = "85212",
+                DestinationCountryCode = "USA",
+                OriginPostalCode = "22193",
+                SummaryCommodityCode = "SCC",
+                VAT_InvoiceNumber = "UVATREF162",
+                OrderDate = DateTime.Now,
+                FreightAmount = 0.01m,
+                DutyAmount = 0.01m,
+                AdditionalTaxDetails = new AdditionalTaxDetails {
+                    TaxAmount = 0.01m,
+                    TaxRate = 0.04m,
+                }
+            };
+            commercialData.AddLineItems(
+                new CommercialLineItem {
+                    ProductCode = "PRDCD1",
+                    UnitCost = 0.01m,
+                    Quantity = 1m,
+                    UnitOfMeasure = "METER",
+                    Description = "PRODUCT 1 NOTES",
+                    // CommodityCode = "12DIGIT ACCO",
+                    DiscountDetails = new DiscountDetails {
+                        DiscountAmount = 0.50m
+                    }
+                }
+            );
+
+            var response = MasterCardManual.Charge(0.53m)
+                .WithCurrency("USD")
+                .WithCommercialRequest(true)
+                .WithClientTransactionId(ClientTransactionId)
+                .WithAddress(Address)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var edit = response.Edit()
+                .WithCommercialData(commercialData)
+                .Execute();
+            Assert.IsNotNull(edit);
+            Assert.AreEqual("00", edit.ResponseCode);
+        }
+
+        #endregion
     }
 }

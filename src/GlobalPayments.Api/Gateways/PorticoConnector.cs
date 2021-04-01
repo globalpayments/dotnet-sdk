@@ -437,12 +437,40 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(root, "AllowDup", "Y");
                 }
 
-                // Level II Data
+                // Level II/III Data
                 if (builder.CommercialData != null) {
-                    var cpc = et.SubElement(root, "CPCData");
-                    et.SubElement(cpc, "CardHolderPONbr", builder.CommercialData.PoNumber);
-                    et.SubElement(cpc, "TaxType", builder.CommercialData.TaxType.ToString());
-                    et.SubElement(cpc, "TaxAmt", builder.CommercialData.TaxAmount);
+                    var cd = builder.CommercialData;
+
+                    if (cd.CommercialIndicator == CommercialIndicator.Level_II || cd.CommercialIndicator == CommercialIndicator.Level_III) {
+                        var cpc = et.SubElement(root, "CPCData");
+                        et.SubElement(cpc, "CardHolderPONbr", cd.PoNumber);
+                        et.SubElement(cpc, "TaxType", cd.TaxType.ToString());
+                        et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
+                    }
+
+                    if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod is Credit) {
+                        var isVisa = (builder.PaymentMethod as Credit).CardType == "Visa";
+                        var cpc = et.SubElement(root, "CorporateData");
+                        var data = et.SubElement(cpc, isVisa ? "Visa" : "MC");
+
+                        BuildLineItems(et, data, isVisa, cd.LineItems);
+
+                        if (isVisa) {
+                            et.SubElement(data, "SummaryCommodityCode", cd.SummaryCommodityCode);
+                            et.SubElement(data, "DiscountAmt", cd.DiscountAmount);
+                            et.SubElement(data, "FreightAmt", cd.FreightAmount);
+                            et.SubElement(data, "DutyAmt", cd.DutyAmount);
+                            et.SubElement(data, "DestinationPostalZipCode", cd.DestinationPostalCode);
+                            et.SubElement(data, "ShipFromPostalZipCode", cd.OriginPostalCode);
+                            et.SubElement(data, "DestinationCountryCode", cd.DestinationCountryCode);
+                            et.SubElement(data, "InvoiceRefNbr", cd.VAT_InvoiceNumber);
+                            et.SubElement(data, "OrderDate", cd.OrderDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+                            et.SubElement(data, "VATTaxAmtFreight", cd.AdditionalTaxDetails?.TaxAmount ?? cd.TaxAmount);
+                            et.SubElement(data, "VATTaxRateFreight", cd.AdditionalTaxDetails?.TaxRate);
+                            // et.SubElement(data, "TaxTreatment", null);
+                            // et.SubElement(data, "DiscountTreatment", null);
+                        }
+                    }
                 }
 
                 // Lodging Data
@@ -940,7 +968,7 @@ namespace GlobalPayments.Api.Gateways {
                         throw new UnsupportedTransactionException();
                     }
                 case TransactionType.Edit: {
-                        if (builder.TransactionModifier.HasFlag(TransactionModifier.Level_II))
+                        if (builder.TransactionModifier.HasFlag(TransactionModifier.Level_II) || builder.TransactionModifier.HasFlag(TransactionModifier.Level_III))
                             return "CreditCPCEdit"; // CreditCPCEdit : Edit (Level II)
                         else return "CreditTxnEdit";  // CreditTxnEdit : Edit (Credit)
                     }
@@ -1043,5 +1071,36 @@ namespace GlobalPayments.Api.Gateways {
             return false;
         }
         #endregion
+
+        private void BuildLineItems(ElementTree et, Element parent, bool isVisa, List<CommercialLineItem> items) {
+            if (items == null || items.Count == 0) {
+                return;
+            }
+
+            var lineItems = et.SubElement(parent, "LineItems");
+
+            foreach (var item in items) {
+                var lineItem = et.SubElement(lineItems, "LineItemDetail");
+                et.SubElement(lineItem, "ItemDescription", item.Description);
+                et.SubElement(lineItem, "ProductCode", item.ProductCode);
+                et.SubElement(lineItem, "Quantity", item.Quantity);
+                et.SubElement(lineItem, "ExtendedItemAmount", item.ExtendedAmount);
+                et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
+
+                if (!isVisa) {
+                    continue;
+                }
+
+                // The schema says this field should exist, but it's not currently allowed.
+                // et.SubElement(lineItem, "ItemCommodityCode", item.CommodityCode);
+                et.SubElement(lineItem, "UnitCost", item.UnitCost);
+                et.SubElement(lineItem, "VATTaxAmt", item.TaxAmount);
+                // et.SubElement(lineItem, "VATTaxRate", null);
+                et.SubElement(lineItem, "ItemTotalAmt", item.TotalAmount);
+                // et.SubElement(lineItem, "ItemTaxTreatment", null);
+                et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails?.DiscountAmount);
+            }
+
+        }
     }
 }
