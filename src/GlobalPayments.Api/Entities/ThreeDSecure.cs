@@ -82,6 +82,12 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string IssuerAcsUrl { get; set; }
 
+        public string ChallengeReturnUrl { get; set; }
+        
+        public string SessionDataFieldName { get; set; }
+        
+        public string MessageType { get; set; }
+
         private MerchantDataCollection _merchantData;
         /// <summary>
         /// A KVP collection of merchant supplied data

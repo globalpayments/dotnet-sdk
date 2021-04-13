@@ -1,5 +1,4 @@
-﻿using GlobalPayments.Api.Builders;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -59,10 +58,15 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Id() {
-            string transactionId = "TRN_Q1PBfsrhwhzvsbkcm9jI5iZ9mHVmvC";
+            string transactionId = ReportingService.FindTransactionsPaged(1, 1)
+                .Execute().Results.Select(t => t.TransactionId).FirstOrDefault();
+
+            Assert.IsNotNull(transactionId);
+            
             PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 10)
                 .WithTransactionId(transactionId)
                 .Execute();
+            
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
             Assert.IsTrue(result.Results.Count == 1);
@@ -235,72 +239,42 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindTransactionsPaged_Order_By_Status() {
+        public void ReportFindTransactionsPaged_By_StartDate_OrderBy_TimeCreated_Ascending() {
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
-            DateTime endDate = DateTime.UtcNow.AddDays(-10);
             PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 10)
-                .OrderBy(TransactionSortProperty.Status, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results.Count > 0);
-            Assert.IsTrue(result.Results is List<TransactionSummary>);
-        }
-
-        [TestMethod]
-        public void ReportFindTransactionsPaged_Order_By_Type() {
-            DateTime startDate = DateTime.UtcNow.AddDays(-30);
-            DateTime endDate = DateTime.UtcNow.AddDays(-10);
-            PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 10)
-                .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results.Count > 0);
-            Assert.IsTrue(result.Results is List<TransactionSummary>);
-        }
-
-        [TestMethod]
-        public void ReportFindTransactionsPaged_Order_By_DepositId() {
-            DateTime startDate = DateTime.UtcNow.AddDays(-30);
-            DateTime endDate = DateTime.UtcNow.AddDays(-10);
-            PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 10)
-                .OrderBy(TransactionSortProperty.DepositId, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results.Count > 0);
-            Assert.IsTrue(result.Results is List<TransactionSummary>);
-        }
-
-        [TestMethod]
-        public void CompareResults_reportFindTransactions_OrderBy_TypeAndTimeCreated() {
-            DateTime startDate = DateTime.UtcNow.AddDays(-30);
-            DateTime endDate = DateTime.UtcNow.AddDays(-10);
-
-            PagedResult<TransactionSummary> resultByTimeCreated = ReportingService.FindTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
-                .WithPaging(1, 10)
                 .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
                 .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results.Count > 0);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionDate)));
+        }
 
-            PagedResult<TransactionSummary> resultByType = ReportingService.FindTransactionsPaged(1, 10)
+        [TestMethod]
+        public void ReportFindTransactionsPaged_By_StartDate_OrderBy_Id_Ascending() {
+            DateTime startDate = DateTime.UtcNow.AddDays(-30);
+            PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 10)
+                .OrderBy(TransactionSortProperty.Id, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, startDate)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results.Count > 0);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionId)));
+        }
+
+        [TestMethod]
+        public void ReportFindTransactionsPaged_By_StartDate_OrderBy_Type_Ascending() {
+            DateTime startDate = DateTime.UtcNow.AddDays(-30);
+            PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
-                .WithPaging(1, 10)
                 .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
                 .Execute();
-
-            Assert.IsNotNull(resultByTimeCreated?.Results);
-            Assert.IsTrue(resultByTimeCreated.Results.Count > 0);
-            Assert.IsNotNull(resultByType?.Results);
-            Assert.IsTrue(resultByType.Results.Count > 0);
-
-            Assert.AreNotEqual(resultByTimeCreated.Results, resultByType.Results);
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results.Count > 0);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionType)));
         }
 
         [TestMethod]
@@ -324,23 +298,23 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindTransactionsPaged_OrderBy_Status_Ascending() {
+        public void ReportFindTransactionsPaged_OrderBy_Id_Ascending() {
             PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 25)
-                .OrderBy(TransactionSortProperty.Status, SortDirection.Ascending)
+                .OrderBy(TransactionSortProperty.Id, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.Status)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionId)));
         }
 
         [TestMethod]
-        public void ReportFindTransactionsPaged_OrderBy_Status_Descending() {
+        public void ReportFindTransactionsPaged_OrderBy_Id_Descending() {
             PagedResult<TransactionSummary> result = ReportingService.FindTransactionsPaged(1, 25)
-                .OrderBy(TransactionSortProperty.Status, SortDirection.Descending)
+                .OrderBy(TransactionSortProperty.Id, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.Status)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionId)));
         }
 
         [TestMethod]
@@ -390,7 +364,19 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_OrderBy_TimeCreated() {
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_TimeCreated_Ascending() {
+            DateTime startDate = DateTime.UtcNow.AddDays(-30);
+            PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
+                .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, startDate)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionDate)));
+        }
+
+        [TestMethod]
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_TimeCreated_Descending() {
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
@@ -398,69 +384,85 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionDate)));
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_OrderBy_Status() {
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Status_Ascending() {
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
+            PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
+                .OrderBy(TransactionSortProperty.Status, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, startDate)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionStatus)));
+        }
 
+        [TestMethod]
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Status_Descending() {
+            DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.Status, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionStatus)));
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_OrderBy_Type() {
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Type_Ascending() {
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
+            PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
+                .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, startDate)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionType)));
+        }
 
+        [TestMethod]
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Type_Descending() {
+            DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionType)));
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_OrderBy_DepositId() {
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_DepositId_Ascending() {
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
+            PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
+                .OrderBy(TransactionSortProperty.DepositId, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, startDate)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.DepositReference)));
+        }
 
+        [TestMethod]
+        public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_DepositId_Descending() {
+            DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.DepositId, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-        }
-
-        [TestMethod]
-        public void CompareResults_reportFindSettlementTransactions_OrderBy_TypeAndTimeCreated() {
-            DateTime startDate = DateTime.UtcNow.AddDays(-30);
-
-            PagedResult<TransactionSummary> resultByType = ReportingService.FindSettlementTransactionsPaged(1, 10)
-                .OrderBy(TransactionSortProperty.Type, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .Execute();
-
-            PagedResult<TransactionSummary> resultByTime = ReportingService.FindSettlementTransactionsPaged(1, 10)
-                .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .Execute();
-
-            Assert.IsNotNull(resultByType?.Results);
-            Assert.IsTrue(resultByType.Results is List<TransactionSummary>);
-            Assert.IsNotNull(resultByTime?.Results);
-            Assert.IsTrue(resultByTime.Results is List<TransactionSummary>);
-            Assert.AreNotEqual(resultByType.Results, resultByTime.Results);
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.DepositReference)));
         }
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_Number_First6_And_Number_Last4() {
-            String firstSix = "543458";
-            String lastFour = "7652";
+            string firstSix = "543458";
+            string lastFour = "7652";
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
@@ -475,7 +477,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_CardBrand() {
-            String cardBrand = "MASTERCARD";
+            string cardBrand = "MASTERCARD";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -490,7 +492,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_InvalidCardBrand() {
-            String cardBrand = "MASTER";
+            string cardBrand = "MASTER";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -518,7 +520,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_ARN() {
-            String arn = "74500010037624410827759";
+            string arn = "74500010037624410827759";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -533,7 +535,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_WrongARN() {
-            String arn = "00000010037624410827527";
+            string arn = "00000010037624410827527";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -548,7 +550,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_BrandReference() {
-            String brandReference = "MCF1CZ5ME5405";
+            string brandReference = "MCF1CZ5ME5405";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -563,7 +565,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_WrongBrandReference() {
-            String brandReference = "MCF1CZ5ME5001";
+            string brandReference = "MCF1CZ5ME5001";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -578,8 +580,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_CardBrand_And_AuthCode() {
-            String cardBrand = "MASTERCARD";
-            String authCode = "028010";
+            string cardBrand = "MASTERCARD";
+            string authCode = "028010";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -596,7 +598,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_Reference() {
-            String reference = "50080513769";
+            string reference = "50080513769";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -611,7 +613,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_RandomReference() {
-            String reference = Guid.NewGuid().ToString();
+            string reference = Guid.NewGuid().ToString();
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -641,29 +643,29 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_By_DepositId() {
-            var depositId = "DEP_2342423429";
+        public void ReportFindSettlementTransactionsPaged_By_DepositReference() {
+            var depositReference = "DEP_2342423429";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
-                .And(DataServiceCriteria.DepositReference, depositId)
+                .And(DataServiceCriteria.DepositReference, depositReference)
                 .Execute();
             Assert.IsNotNull(result.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.DepositReference == depositId));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.DepositReference == depositReference));
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_By_RandomDepositId() {
-            var depositId = Guid.NewGuid().ToString();
+        public void ReportFindSettlementTransactionsPaged_By_RandomDepositReference() {
+            var depositReference = Guid.NewGuid().ToString();
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
-                .And(DataServiceCriteria.DepositReference, depositId)
+                .And(DataServiceCriteria.DepositReference, depositReference)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -705,31 +707,30 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_By_SystemMid_And_SystemHierarchy() {
-            String systemMid = "101023947262";
-            String systemHierarchy = "055-70-024-011-019";
+        public void ReportFindSettlementTransactionsPaged_By_MerchantId_And_SystemHierarchy() {
+            string merchantId = "101023947262";
+            string systemHierarchy = "055-70-024-011-019";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
-                .And(DataServiceCriteria.MerchantId, systemMid)
+                .And(DataServiceCriteria.MerchantId, merchantId)
                 .And(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.MerchantId == systemMid && t.MerchantHierarchy == systemHierarchy));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.MerchantId == merchantId && t.MerchantHierarchy == systemHierarchy));
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_By_NonExistent_SystemMid() {
-            String systemMid = "100023947222";
-
+        public void ReportFindSettlementTransactionsPaged_By_NonExistent_MerchantId() {
+            string merchantId = "100023947222";
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
-                .And(DataServiceCriteria.MerchantId, systemMid)
+                .And(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -757,15 +758,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementTransactionsPaged_By_Invalid_SystemMid() {
-            string systemMid = Guid.NewGuid().ToString();
-
+        public void ReportFindSettlementTransactionsPaged_By_Invalid_MerchantId() {
+            string merchantId = Guid.NewGuid().ToString();
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             try {
                 ReportingService.FindSettlementTransactionsPaged(1, 10)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(SearchCriteria.StartDate, startDate)
-                    .And(DataServiceCriteria.MerchantId, systemMid)
+                    .And(DataServiceCriteria.MerchantId, merchantId)
                     .Execute();
             }
             catch (GatewayException ex) {
@@ -902,7 +902,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindDepositsPaged_FilterBy_RandomUUIDSystemHierarchy() {
+        public void ReportFindDepositsPaged_By_RandomUUIDSystemHierarchy() {
             string systemHierarchy = Guid.NewGuid().ToString();
             try {
                 ReportingService.FindDepositsPaged(1, 10)
@@ -935,23 +935,23 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindDepositsPaged_By_SystemMid() {
-            string systemMid = "101023947262";
+        public void ReportFindDepositsPaged_By_MerchantId() {
+            string merchantId = "101023947262";
             PagedResult<DepositSummary> result = ReportingService.FindDepositsPaged(1, 10)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.MerchantId, systemMid)
+                .Where(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DepositSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(d => d.MerchantNumber == systemMid));
+            Assert.IsTrue(result.Results.TrueForAll(d => d.MerchantNumber == merchantId));
         }
 
         [TestMethod]
-        public void ReportFindDepositsPaged_By_WrongSystemMid() {
-            string systemMid = "000023985843";
+        public void ReportFindDepositsPaged_By_Wrong_MerchantId() {
+            string merchantId = "000023985843";
             var result = ReportingService.FindDepositsPaged(1, 10)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.MerchantId, systemMid)
+                .Where(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DepositSummary>);
@@ -963,7 +963,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var depositId = "DEP_2342423440";
             PagedResult<DepositSummary> result = ReportingService.FindDepositsPaged(1, 10)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
-                .WithDepositId(depositId)
+                .WithDepositReference(depositId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results.Count == 1);
@@ -978,7 +978,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             PagedResult<DepositSummary> result = ReportingService.FindDepositsPaged(1, 10)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
-                .WithDepositId(depositId)
+                .WithDepositReference(depositId)
                 .Where(SearchCriteria.StartDate, startDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -1048,7 +1048,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportDisputeDetailWrongId() {
+        public void ReportDisputeDetail_WrongId() {
             string disputeId = "DIS_SAND_" + Guid.NewGuid().ToString();
             try {
                 ReportingService.DisputeDetail(disputeId)
@@ -1123,42 +1123,27 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindDisputesPaged_Filter_By_From_And_To_Adjustment_Time_Created() {
-            DateTime startDate = new DateTime(2020, 1, 1);
-            DateTime endDate = DateTime.UtcNow;
-            PagedResult<DisputeSummary> result = ReportingService.FindDisputesPaged(1, 10)
-                .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
-                .And(DataServiceCriteria.StartAdjustmentDate, startDate)
-                .And(DataServiceCriteria.EndAdjustmentDate, endDate)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results is List<DisputeSummary>);
-        }
-
-        [TestMethod]
-        public void ReportFindDisputesPaged_By_Adjustment_Funding() {
-            AdjustmentFunding adjustmentFunding = AdjustmentFunding.Credit;
-
-            PagedResult<DisputeSummary> result = ReportingService.FindDisputesPaged(1, 10)
-                .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
-                .And(DataServiceCriteria.AdjustmentFunding, adjustmentFunding)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results is List<DisputeSummary>);
-        }
-
-        [TestMethod]
-        public void ReportFindDisputesPaged_By_MerchantId_And_SystemHierarchy() {
+        public void ReportFindDisputesPaged_By_MerchantId() {
             string merchantId = "8593872";
-            string systemHierarchy = "111-23-099-002-005";
             PagedResult<DisputeSummary> result = ReportingService.FindDisputesPaged(1, 10)
                 .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
                 .And(DataServiceCriteria.MerchantId, merchantId)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<DisputeSummary>);
+            Assert.IsTrue(result.Results.TrueForAll(d => d.CaseMerchantId == merchantId));
+        }
+
+        [TestMethod]
+        public void ReportFindDisputesPaged_By_SystemHierarchy() {
+            string systemHierarchy = "111-23-099-002-005";
+            PagedResult<DisputeSummary> result = ReportingService.FindDisputesPaged(1, 10)
+                .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
                 .And(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(d => d.CaseMerchantId == merchantId && d.MerchantHierarchy == systemHierarchy));
+            Assert.IsTrue(result.Results.TrueForAll(d => d.MerchantHierarchy == systemHierarchy));
         }
 
         [TestMethod]
@@ -1296,10 +1281,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(result.Results is List<DisputeSummary>);
         }
 
-        [TestMethod]
-        public void AcceptLabilityFromDispute() {
-            //var response = TransactionType.DisputeAcceptance
-        }
         #endregion
 
         #region Settlement disputes
@@ -1313,11 +1294,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(settlementDisputeId, response.CaseId);
         }
 
+        [Ignore]
         [TestMethod]
         public void ReportSettlementDisputeDetailWrongId() {
             string settlementDisputeId = "OIS_111";
             try {
-                DisputeSummary response = ReportingService.SettlementDisputeDetail(settlementDisputeId)
+                ReportingService.SettlementDisputeDetail(settlementDisputeId)
                     .Execute();
             }
             catch (GatewayException ex) {
@@ -1409,8 +1391,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_ARN() {
-            String arn = "71400011129688701392096";
+        public void ReportFindSettlementDisputesPaged_By_ARN() {
+            string arn = "71400011129688701392096";
 
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
@@ -1423,8 +1405,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_ARN_NotFound() {
-            String arn = "00000011129654301392121";
+        public void ReportFindSettlementDisputesPaged_By_ARN_NotFound() {
+            string arn = "00000011129654301392121";
 
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
@@ -1437,8 +1419,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_Brand() {
-            String brand = "VISA";
+        public void ReportFindSettlementDisputesPaged_By_Brand() {
+            string brand = "VISA";
 
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
@@ -1450,8 +1432,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_Brand_NotFound() {
-            String brand = "MASTERCAR";
+        public void ReportFindSettlementDisputesPaged_By_Brand_NotFound() {
+            string brand = "MASTERCAR";
 
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
@@ -1464,8 +1446,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_Status() {
-            String status = "WITH_MERCHANT";
+        public void ReportFindSettlementDisputesPaged_By_Status() {
+            string status = "WITH_MERCHANT";
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
                 .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
@@ -1477,8 +1459,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_Stage() {
-            String stage = "CHARGEBACK";
+        public void ReportFindSettlementDisputesPaged_By_Stage() {
+            string stage = "CHARGEBACK";
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
                 .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
@@ -1490,7 +1472,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_FromAndToStageTimeCreated() {
+        public void ReportFindSettlementDisputesPaged_By_From_And_To_Stage_Time_Created() {
             var startDate = new DateTime(2020, 1, 1);
             var endDate = DateTime.Now;
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
@@ -1500,62 +1482,47 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(d => d.CaseTime >= startDate.Date && d.CaseTime <= endDate.Date));
+            Assert.IsTrue(result.Results.TrueForAll(d => d.CaseIdTime >= startDate.Date && d.CaseIdTime <= endDate.Date));
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_AdjustmentFunding() {
-            var adjustmentFunding = AdjustmentFunding.Credit;
-            PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
-                .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
-                .And(DataServiceCriteria.AdjustmentFunding, adjustmentFunding)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results is List<DisputeSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(d => d.LastAdjustmentFunding == adjustmentFunding.ToString()));
-        }
-
-        [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_FromAndToAdjustmentTimeCreated() {
-            var startDate = new DateTime(2020, 1, 1);
-            var endDate = DateTime.Now;
-            PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
-                .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, startDate)
-                .And(DataServiceCriteria.StartAdjustmentDate, startDate)
-                .And(DataServiceCriteria.EndAdjustmentDate, endDate)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results is List<DisputeSummary>);
-        }
-
-        [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_SystemMidAndHierarchy() {
-            String systemMid = "101023947262";
-            String systemHierarchy = "055-70-024-011-019";
+        public void ReportFindSettlementDisputesPaged_By_MerchantId() {
+            string merchantId = "101023947262";
 
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
                 .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
-                .And(DataServiceCriteria.MerchantId, systemMid)
+                .And(DataServiceCriteria.MerchantId, merchantId)
+                .Execute();
+
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<DisputeSummary>);
+            Assert.IsTrue(result.Results.TrueForAll(d => d.CaseMerchantId == merchantId));
+        }
+
+        [TestMethod]
+        public void ReportFindSettlementDisputesPaged_By_SystemHierarchy() {
+            string systemHierarchy = "055-70-024-011-019";
+
+            PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
+                .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
+                .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
                 .And(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
 
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(d => d.CaseMerchantId == systemMid
-            && d.MerchantHierarchy == systemHierarchy));
+            Assert.IsTrue(result.Results.TrueForAll(d => d.MerchantHierarchy == systemHierarchy));
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_WrongSystemMid() {
-            String systemMid = "000023947222";
+        public void ReportFindSettlementDisputesPaged_By_Wrong_MerchantId() {
+            string merchantId = "000023947222";
 
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
                 .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
-                .And(DataServiceCriteria.MerchantId, systemMid)
+                .And(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
 
             Assert.IsNotNull(result?.Results);
@@ -1564,8 +1531,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesPaged_FilterBy_WrongSystemHierarchy() {
-            String systemHierarchy = "000-70-024-011-111";
+        public void ReportFindSettlementDisputesPaged_By_Wrong_SystemHierarchy() {
+            string systemHierarchy = "000-70-024-011-111";
 
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)

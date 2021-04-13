@@ -59,7 +59,6 @@ namespace GlobalPayments.Api.Entities {
     }
 
     public enum DataServiceCriteria {
-        AdjustmentFunding, // Data Services
         Amount, // Data Services
         BankAccountNumber, // Data Services
         CaseId, // Data Services
@@ -69,7 +68,6 @@ namespace GlobalPayments.Api.Entities {
         Country, //Data Services
         Currency, // Data Services
         DepositReference, // Data Services
-        EndAdjustmentDate, // Data Services
         EndBatchDate, // Data Services
         EndDepositDate, // Data Services
         EndStageDate, // Data Services
@@ -78,7 +76,6 @@ namespace GlobalPayments.Api.Entities {
         LocalTransactionStartTime, // Data Services
         MerchantId, // Data Services
         OrderId, // Data Services
-        StartAdjustmentDate, // Data Services
         StartBatchDate, // Data Services
         StartDepositDate, // Data Services
         StartStageDate, // Data Services
@@ -92,8 +89,6 @@ namespace GlobalPayments.Api.Entities {
         internal string AccountName { get; set; }
 
         internal string AccountNumberLastFour { get; set; }
-
-        internal AdjustmentFunding? AdjustmentFunding { get; set; }
 
         internal string AltPaymentStatus { get; set; }
 
@@ -153,8 +148,6 @@ namespace GlobalPayments.Api.Entities {
 
         internal string CustomerId { get; set; }
 
-        internal string DepositId { get; set; }
-
         internal string DepositReference { get; set; }
 
         internal DepositStatus? DepositStatus { get; set; }
@@ -166,8 +159,6 @@ namespace GlobalPayments.Api.Entities {
         internal DisputeStage? DisputeStage { get; set;  }
 
         internal DisputeStatus? DisputeStatus { get; set; }
-
-        internal DateTime? EndAdjustmentDate { get; set; }
 
         internal DateTime? EndBatchDate { get; set; }
 
@@ -222,8 +213,6 @@ namespace GlobalPayments.Api.Entities {
         internal string ScheduleId { get; set; }
 
         internal string SiteTrace { get; set; }
-
-        internal DateTime? StartAdjustmentDate { get; set; }
 
         internal DateTime? StartBatchDate { get; set; }
 

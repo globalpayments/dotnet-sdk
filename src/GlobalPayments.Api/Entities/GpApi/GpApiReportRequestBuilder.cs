@@ -67,7 +67,7 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("status", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.TransactionStatus));
                         request.AddQueryStringParam("from_time_created", trb.StartDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("to_time_created", trb.EndDate?.ToString("yyyy-MM-dd"));
-                        request.AddQueryStringParam("deposit_id", trb.SearchBuilder.DepositId);
+                        request.AddQueryStringParam("deposit_id", trb.SearchBuilder.DepositReference);
                         request.AddQueryStringParam("from_deposit_time_created", trb.SearchBuilder.StartDepositDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("to_deposit_time_created", trb.SearchBuilder.EndDepositDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("from_batch_time_created", trb.SearchBuilder.StartBatchDate?.ToString("yyyy-MM-dd"));
@@ -79,7 +79,7 @@ namespace GlobalPayments.Api.Entities {
                     case ReportType.DepositDetail:
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"/settlement/deposits/{trb.SearchBuilder.DepositId}",
+                            Endpoint = $"/settlement/deposits/{trb.SearchBuilder.DepositReference}",
                         };
                     case ReportType.FindDepositsPaged:
                         request = new GpApiRequest {
@@ -93,7 +93,7 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("account_name", gateway.DataAccountName);
                         request.AddQueryStringParam("from_time_created", trb.StartDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("to_time_created", trb.EndDate?.ToString("yyyy-MM-dd"));
-                        request.AddQueryStringParam("id", trb.SearchBuilder.DepositId);
+                        request.AddQueryStringParam("id", trb.SearchBuilder.DepositReference);
                         request.AddQueryStringParam("status", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.DepositStatus));
                         request.AddQueryStringParam("amount", trb.SearchBuilder.Amount.ToNumericCurrencyString());
                         request.AddQueryStringParam("masked_account_number_last4", trb.SearchBuilder.AccountNumberLastFour);
@@ -121,9 +121,6 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("stage", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.DisputeStage));
                         request.AddQueryStringParam("from_stage_time_created", trb.SearchBuilder.StartStageDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("to_stage_time_created", trb.SearchBuilder.EndStageDate?.ToString("yyyy-MM-dd"));
-                        request.AddQueryStringParam("adjustment_funding", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.AdjustmentFunding));
-                        request.AddQueryStringParam("from_adjustment_time_created", trb.SearchBuilder.StartAdjustmentDate?.ToString("yyyy-MM-dd"));
-                        request.AddQueryStringParam("to_adjustment_time_created", trb.SearchBuilder.EndAdjustmentDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("system.mid", trb.SearchBuilder.MerchantId);
                         request.AddQueryStringParam("system.hierarchy", trb.SearchBuilder.SystemHierarchy);
 
@@ -149,9 +146,6 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("stage", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.DisputeStage));
                         request.AddQueryStringParam("from_stage_time_created", trb.SearchBuilder.StartStageDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("to_stage_time_created", trb.SearchBuilder.EndStageDate?.ToString("yyyy-MM-dd"));
-                        request.AddQueryStringParam("adjustment_funding", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.AdjustmentFunding));
-                        request.AddQueryStringParam("from_adjustment_time_created", trb.SearchBuilder.StartAdjustmentDate?.ToString("yyyy-MM-dd"));
-                        request.AddQueryStringParam("to_adjustment_time_created", trb.SearchBuilder.EndAdjustmentDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("system.mid", trb.SearchBuilder.MerchantId);
                         request.AddQueryStringParam("system.hierarchy", trb.SearchBuilder.SystemHierarchy);
 

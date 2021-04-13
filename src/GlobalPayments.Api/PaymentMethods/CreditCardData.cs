@@ -207,6 +207,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                 .Execute(configName);
 
             var card = this.MemberwiseClone() as CreditCardData;
+            card.Token = null;
             card.Number = transaction.CardNumber;
             card.CardType = transaction.CardType;
             card.ExpMonth = transaction.CardExpMonth;

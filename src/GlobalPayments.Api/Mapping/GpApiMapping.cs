@@ -55,7 +55,6 @@ namespace GlobalPayments.Api.Mapping {
             JsonDoc card = paymentMethod?.Get("card");
 
             var summary = new TransactionSummary {
-                //ToDo: Map all transaction properties
                 TransactionId = doc.GetValue<string>("id"),
                 TransactionDate = doc.GetValue<DateTime>("time_created"),
                 TransactionStatus = doc.GetValue<string>("status"),
@@ -65,11 +64,12 @@ namespace GlobalPayments.Api.Mapping {
                 Currency = doc.GetValue<string>("currency"),
                 ReferenceNumber = doc.GetValue<string>("reference"),
                 ClientTransactionId = doc.GetValue<string>("reference"),
-                // ?? = doc.GetValue<DateTime>("time_created_reference"),
+                TransactionLocalDate = doc.GetValue<DateTime?>("time_created_reference", DateConverter),
                 BatchSequenceNumber = doc.GetValue<string>("batch_id"),
                 Country = doc.GetValue<string>("country"),
-                // ?? = doc.GetValue<string>("action_create_id"),
                 OriginalTransactionId = doc.GetValue<string>("parent_resource_id"),
+                DepositReference = doc.GetValue<string>("deposit_id"),
+                DepositDate = doc.GetValue<DateTime?>("deposit_time_created", DateConverter),
 
                 GatewayResponseMessage = paymentMethod?.GetValue<string>("message"),
                 EntryMode = paymentMethod?.GetValue<string>("entry_mode"),
@@ -80,9 +80,21 @@ namespace GlobalPayments.Api.Mapping {
                 BrandReference = card?.GetValue<string>("brand_reference"),
                 AquirerReferenceNumber = card?.GetValue<string>("arn"),
                 MaskedCardNumber = card?.GetValue<string>("masked_number_first6last4"),
+
+                MerchantId = doc.Get("system")?.GetValue<string>("mid"),
+                MerchantHierarchy = doc.Get("system")?.GetValue<string>("hierarchy"),
+                MerchantName = doc.Get("system")?.GetValue<string>("name"),
+                MerchantDbaName = doc.Get("system")?.GetValue<string>("dba"),
             };
 
             return summary;
+        }
+
+        private static DateTime? DateConverter(object value) {
+            if (value != null && !string.IsNullOrEmpty(value.ToString())) {
+                return DateTime.Parse(value.ToString());
+            }
+            return null;
         }
 
         public static T MapReportResponse<T>(string rawResponse, ReportType reportType) where T : class {
@@ -251,7 +263,11 @@ namespace GlobalPayments.Api.Mapping {
                         AuthenticationValue = json.Get("three_ds")?.GetValue<string>("authentication_value"),
                         ChallengeMandated = json.Get("three_ds")?.GetValue<string>("challenge_status") == "MANDATED",
                         IssuerAcsUrl = !string.IsNullOrEmpty(json.Get("three_ds")?.GetValue<string>("method_url")) ?
-                            json.Get("three_ds")?.GetValue<string>("method_url") : json.Get("three_ds")?.GetValue<string>("redirect_url"),
+                            json.Get("three_ds")?.GetValue<string>("method_url") :
+                            json.Get("three_ds")?.GetValue<string>("acs_challenge_request_url"),
+                        ChallengeReturnUrl = json.Get("notifications")?.GetValue<string>("challenge_return_url"),
+                        SessionDataFieldName = json.Get("three_ds")?.GetValue<string>("session_data_field_name"),
+                        MessageType = json.Get("three_ds")?.GetValue<string>("message_type"),
                         PayerAuthenticationRequest = json.Get("three_ds")?.GetValue<string>("challenge_value"),
                         StatusReason = json.Get("three_ds")?.GetValue<string>("status_reason"),
                         MessageCategory = json.Get("three_ds")?.GetValue<string>("message_category"),

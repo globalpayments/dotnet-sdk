@@ -18,6 +18,7 @@ namespace GlobalPayments.Api.Gateways {
         public Channel Channel { get; set; }
         public Language Language { get; set; }
         public string Country { get; set; }
+        public string[] Permissions { get; set; }
 
         private string _AccessToken;
         public string AccessToken {
@@ -116,7 +117,7 @@ namespace GlobalPayments.Api.Gateways {
         public GpApiTokenResponse GetAccessToken() {
             AccessToken = null;
 
-            GpApiRequest request = GpApiSessionInfo.SignIn(AppId, AppKey, SecondsToExpire, IntervalToExpire);
+            GpApiRequest request = GpApiSessionInfo.SignIn(AppId, AppKey, SecondsToExpire, IntervalToExpire, Permissions);
 
             string response = base.DoTransaction(request.Verb, request.Endpoint, request.RequestBody);
 

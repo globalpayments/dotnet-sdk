@@ -26,7 +26,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
 
             try {
-                tokenizedCard.Verify().Execute();
+                tokenizedCard.Verify()
+                    .WithCurrency("USD")
+                    .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
@@ -59,12 +61,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
 
             try {
-                var response = tokenizedCard.Verify().Execute();
+                var response = tokenizedCard.Verify()
+                    .WithCurrency("USD")
+                    .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
-                Assert.AreEqual("40118", ex.ResponseMessage);
-                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - PAYMENT_METHODS"));
+                Assert.AreEqual("40116", ex.ResponseMessage);
+                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - payment_method"));
             }
         }
 
@@ -106,12 +110,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsFalse(tokenizedCard.DeleteToken());
 
             try {
-                tokenizedCard.Verify().Execute();
+                tokenizedCard.Verify()
+                    .WithCurrency("USD")
+                    .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
-                Assert.AreEqual("40118", ex.ResponseMessage);
-                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - PAYMENT_METHODS"));
+                Assert.AreEqual("40116", ex.ResponseMessage);
+                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - payment_method"));
             }
         }
 
@@ -124,12 +130,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsFalse(tokenizedCard.DeleteToken());
 
             try {
-                tokenizedCard.Verify().Execute();
+                tokenizedCard.Verify()
+                    .WithCurrency("USD")
+                    .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
-                Assert.AreEqual("40118", ex.ResponseMessage);
-                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - PAYMENT_METHODS"));
+                Assert.AreEqual("40116", ex.ResponseMessage);
+                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - payment_method"));
             }
         }
 
@@ -144,7 +152,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsFalse(tokenizedCard.DeleteToken());
 
             try {
-                tokenizedCard.Verify().Execute();
+                tokenizedCard.Verify()
+                    .WithCurrency("USD")
+                    .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);

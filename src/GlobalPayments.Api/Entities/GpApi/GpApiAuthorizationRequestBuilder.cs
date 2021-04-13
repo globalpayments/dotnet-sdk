@@ -32,15 +32,22 @@ namespace GlobalPayments.Api.Entities {
 
                 paymentMethod.Set("card", card);
 
-                if (builder.TransactionType == TransactionType.Verify) {
-                    if (builder.RequestMultiUseToken) {
-                        var tokenizationData = new JsonDoc()
-                            .Set("account_name", gateway.TokenizationAccountName)
-                            .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
-                            .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.TokenUsageMode))
-                            .Set("name", "")
-                            .Set("card", card);
+                var tokenizationData = new JsonDoc()
+                    .Set("account_name", gateway.TokenizationAccountName)
+                    .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
+                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.TokenUsageMode))
+                    .Set("name", "")
+                    .Set("card", card);
 
+                if (builder.TransactionType == TransactionType.Tokenize) {
+                    return new GpApiRequest {
+                        Verb = HttpMethod.Post,
+                        Endpoint = "/payment-methods",
+                        RequestBody = tokenizationData.ToString(),
+                    };
+                }
+                else if (builder.TransactionType == TransactionType.Verify) {
+                    if (builder.RequestMultiUseToken && string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                         return new GpApiRequest {
                             Verb = HttpMethod.Post,
                             Endpoint = "/payment-methods",
@@ -48,27 +55,27 @@ namespace GlobalPayments.Api.Entities {
                         };
                     }
                     else {
-                        if (builder.PaymentMethod is ITokenizable && !string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
-                            return new GpApiRequest {
-                                Verb = HttpMethod.Get,
-                                Endpoint = $"/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
-                            };
-                        }
-                        else {
-                            var verificationData = new JsonDoc()
-                                .Set("account_name", gateway.TransactionProcessingAccountName)
-                                .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
-                                .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
-                                .Set("currency", builder.Currency)
-                                .Set("country", builder.BillingAddress?.Country ?? gateway.Country)
-                                .Set("payment_method", paymentMethod);
+                        var verificationData = new JsonDoc()
+                            .Set("account_name", gateway.TransactionProcessingAccountName)
+                            .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
+                            .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
+                            .Set("currency", builder.Currency)
+                            .Set("country", builder.BillingAddress?.Country ?? gateway.Country)
+                            .Set("payment_method", paymentMethod);
 
-                            return new GpApiRequest {
-                                Verb = HttpMethod.Post,
-                                Endpoint = "/verifications",
-                                RequestBody = verificationData.ToString(),
-                            };
+                        if (builder.PaymentMethod is ITokenizable && !string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
+                            verificationData.Remove("payment_method");
+                            verificationData.Set("payment_method", new JsonDoc()
+                                .Set("entry_mode", GetEntryMode(builder))
+                                .Set("id", (builder.PaymentMethod as ITokenizable).Token)
+                            );
                         }
+
+                        return new GpApiRequest {
+                            Verb = HttpMethod.Post,
+                            Endpoint = "/verifications",
+                            RequestBody = verificationData.ToString(),
+                        };
                     }
                 }
             }
@@ -157,7 +164,7 @@ namespace GlobalPayments.Api.Entities {
                         .Set("ds_trans_ref", secureEcom.DirectoryServerTransactionId);
 
                     var authentication = new JsonDoc().Set("three_ds", three_ds);
-
+                    
                     paymentMethod.Set("authentication", authentication);
                 }
             }

@@ -35,6 +35,10 @@ namespace GlobalPayments.Api {
         /// </summary>
         public string Country { get; set; } = "US";
         /// <summary>
+        /// The list of the permissions the integrator want the access token to have.
+        /// </summary>
+        public string[] Permissions { get; set; }
+        /// <summary>
         /// Access token information
         /// </summary>
         public AccessTokenInfo AccessTokenInfo { get; set; }
@@ -67,6 +71,7 @@ namespace GlobalPayments.Api {
                 Country = Country,
                 ServiceUrl = ServiceUrl,
                 Timeout = Timeout,
+                Permissions = Permissions,
                 AccessToken = AccessTokenInfo?.Token,
                 DataAccountName = AccessTokenInfo?.DataAccountName,
                 DisputeManagementAccountName = AccessTokenInfo?.DisputeManagementAccountName,

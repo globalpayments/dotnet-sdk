@@ -34,6 +34,9 @@ namespace GlobalPayments.Api.Entities {
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("currency", builder.Currency)
                     .Set("country", gateway.Country)
+                    .Set("preference", builder.ChallengeRequestIndicator?.ToString())
+                    .Set("source", builder.AuthenticationSource.ToString())
+                    .Set("initator", EnumConverter.GetMapping(Target.GP_API, builder.TransactionInitiator))
                     .Set("payment_method", paymentMethod)
                     .Set("notifications", notifications);
 
@@ -44,6 +47,29 @@ namespace GlobalPayments.Api.Entities {
                 };
             }
             else if (builder.TransactionType == TransactionType.InitiateAuthentication) {
+                #region Payment method
+                var paymentMethod = new JsonDoc();
+
+                if (builder.PaymentMethod is ITokenizable tokenized && !string.IsNullOrEmpty(tokenized.Token)) {
+                    paymentMethod.Set("id", tokenized.Token);
+                }
+                else if (builder.PaymentMethod is ICardData cardData) {
+                    var card = new JsonDoc()
+                        .Set("number", cardData.Number)
+                        .Set("expiry_month", cardData.ExpMonth?.ToString().PadLeft(2, '0'))
+                        .Set("expiry_year", cardData.ExpYear?.ToString().PadLeft(4, '0').Substring(2, 2));
+
+                    paymentMethod.Set("card", card);
+                }
+                #endregion
+
+                #region Notifications
+                var notifications = new JsonDoc()
+                    .Set("challenge_return_url", gateway.ChallengeNotificationUrl)
+                    .Set("three_ds_method_return_url", gateway.MethodNotificationUrl);
+                #endregion
+
+                #region Order
                 var order = new JsonDoc()
                     .Set("time_created_reference", builder.OrderCreateDate?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -74,21 +100,9 @@ namespace GlobalPayments.Api.Entities {
 
                     order.Set("shipping_address", shippingAddress);
                 }
+                #endregion
 
-                var paymentMethod = new JsonDoc();
-
-                if (builder.PaymentMethod is ITokenizable tokenized && !string.IsNullOrEmpty(tokenized.Token)) {
-                    paymentMethod.Set("id", tokenized.Token);
-                }
-                else if (builder.PaymentMethod is ICardData cardData) {
-                    var card = new JsonDoc()
-                        .Set("number", cardData.Number)
-                        .Set("expiry_month", cardData.ExpMonth?.ToString().PadLeft(2, '0'))
-                        .Set("expiry_year", cardData.ExpYear?.ToString().PadLeft(4, '0').Substring(2, 2));
-
-                    paymentMethod.Set("card", card);
-                }
-
+                #region Payer
                 var homePhone = new JsonDoc()
                     .Set("country_code", builder.HomeCountryCode)
                     .Set("subscriber_number", builder.HomeNumber);
@@ -116,23 +130,31 @@ namespace GlobalPayments.Api.Entities {
                     .Set("provision_attempt_last_24hours_count", builder.NumberOfAddCardAttemptsInLast24Hours)
                     .Set("shipping_address_time_created_reference", builder.ShippingAddressCreateDate?.ToString("yyyy-MM-dd"))
                     .Set("shipping_address_creation_indicator", builder.ShippingAddressUsageIndicator?.ToString());
+                #endregion
 
+                #region Payer prior 3DS authentication data
                 var payerPrior3DSAuthenticationData = new JsonDoc()
                     .Set("authentication_method", builder.PriorAuthenticationMethod?.ToString())
                     .Set("acs_transaction_reference", builder.PriorAuthenticationTransactionId)
                     .Set("authentication_timestamp", builder.PriorAuthenticationTimestamp?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
                     .Set("authentication_data", builder.PriorAuthenticationData);
+                #endregion
 
+                #region Recurring authorization data
                 var recurringAuthorizationData = new JsonDoc()
                     .Set("max_number_of_instalments", builder.MaxNumberOfInstallments)
                     .Set("frequency", builder.RecurringAuthorizationFrequency)
                     .Set("expiry_date", builder.RecurringAuthorizationExpiryDate?.ToString("yyyy-MM-dd"));
+                #endregion
 
+                #region Payer login data
                 var payerLoginData = new JsonDoc()
                     .Set("authentication_data", builder.CustomerAuthenticationData)
                     .Set("authentication_timestamp", builder.CustomerAuthenticationTimestamp?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
                     .Set("authentication_type", builder.CustomerAuthenticationMethod?.ToString());
+                #endregion
 
+                #region Browser data
                 var browserData = new JsonDoc()
                     .Set("accept_header", builder.BrowserData.AcceptHeader)
                     .Set("color_depth", builder.BrowserData.ColorDepth.ToString())
@@ -145,18 +167,20 @@ namespace GlobalPayments.Api.Entities {
                     .Set("challenge_window_size", builder.BrowserData.ChallengeWindowSize.ToString())
                     .Set("timezone", builder.BrowserData.Timezone)
                     .Set("user_agent", builder.BrowserData.UserAgent);
+                #endregion
 
                 var data = new JsonDoc()
+                    .Set("source", builder.AuthenticationSource.ToString())
                     .Set("method_url_completion_status", builder.MethodUrlCompletion.ToString())
-                    .Set("source", builder.AuthenticationSource.ToString()) //BROWSER, MERCHANT_INITIATED, MOBILE_SDK
-                    .Set("merchant_contact_url", "https://enp4qhvjseljg.x.pipedream.net/") //ToDo: Confirm
-                    .Set("order", order.HasKeys() ? order : null)
                     .Set("payment_method", paymentMethod.HasKeys() ? paymentMethod : null)
+                    .Set("notifications", notifications)
+                    .Set("order", order.HasKeys() ? order : null)
                     .Set("payer", payer.HasKeys() ? payer : null)
                     .Set("payer_prior_three_ds_authentication_data", payerPrior3DSAuthenticationData.HasKeys() ? payerPrior3DSAuthenticationData : null)
                     .Set("recurring_authorization_data", recurringAuthorizationData.HasKeys() ? recurringAuthorizationData : null)
                     .Set("payer_login_data", payerLoginData.HasKeys() ? payerLoginData : null)
-                    .Set("browser_data", browserData.HasKeys() ? browserData : null);
+                    .Set("browser_data", browserData.HasKeys() ? browserData : null)
+                    .Set("merchant_contact_url", "https://enp4qhvjseljg.x.pipedream.net/"); //ToDo: Confirm
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
@@ -165,9 +189,17 @@ namespace GlobalPayments.Api.Entities {
                 };
             }
             else if (builder.TransactionType == TransactionType.VerifySignature) {
+                JsonDoc data = null;
+                if (!string.IsNullOrEmpty(builder.PayerAuthenticationResponse)) {
+                    data = new JsonDoc().Set("three_ds",
+                        new JsonDoc().Set("challenge_result_value", builder.PayerAuthenticationResponse)
+                    );
+                }
+
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
                     Endpoint = $"/authentications/{builder.ServerTransactionId}/result",
+                    RequestBody = data?.ToString()
                 };
             }
             return null;

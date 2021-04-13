@@ -18,6 +18,7 @@ namespace GlobalPayments.Api.Builders {
         internal AuthenticationRequestType AuthenticationRequestType { get; set; }
         internal Address BillingAddress { get; set; }
         internal BrowserData BrowserData { get; set; }
+        internal ChallengeRequestIndicator? ChallengeRequestIndicator { get; set; }
         internal string Currency { get; set; }
         internal string CustomerAccountId { get; set; }
         internal string CustomerAuthenticationData { get; set; }
@@ -87,6 +88,7 @@ namespace GlobalPayments.Api.Builders {
         internal ShippingMethod? ShippingMethod { get; set; }
         internal bool? ShippingNameMatchesCardHolderName { get; set; }
         internal ThreeDSecure ThreeDSecure { get; set; }
+        internal StoredCredentialInitiator? TransactionInitiator { get; set; }
         internal TransactionType TransactionType { get; set; }
         internal Secure3dVersion? Version {
             get {
@@ -150,6 +152,10 @@ namespace GlobalPayments.Api.Builders {
         }
         public Secure3dBuilder WithBrowserData(BrowserData value) {
             BrowserData = value;
+            return this;
+        }
+        public Secure3dBuilder WithChallengeRequestIndicator(ChallengeRequestIndicator value) {
+            ChallengeRequestIndicator = value;
             return this;
         }
         public Secure3dBuilder WithCurrency(string value) {
@@ -406,6 +412,10 @@ namespace GlobalPayments.Api.Builders {
             ThreeDSecure = threeDSecure;
             return this;
         }
+        public Secure3dBuilder WithTransactionInitiator(StoredCredentialInitiator value) {
+            TransactionInitiator = value;
+            return this;
+        }
         public Secure3dBuilder WithTransactionType(TransactionType transactionType) {
             TransactionType = transactionType;
             return this;
@@ -512,10 +522,8 @@ namespace GlobalPayments.Api.Builders {
                 }
                 catch (GatewayException exc) {
                     // check for not enrolled
-                    if (exc.ResponseCode != null) {
-                        if (exc.ResponseCode.Equals("110") && provider.Version.Equals(Secure3dVersion.One)) {
-                            return rvalue;
-                        }
+                    if ("110".Equals(exc.ResponseCode) && provider.Version.Equals(Secure3dVersion.One)) {
+                        return rvalue;
                     }
                     // check if we can downgrade
                     else if (canDowngrade && TransactionType.Equals(TransactionType.VerifyEnrolled)) {

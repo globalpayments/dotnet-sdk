@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Country = "GB",
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
+                //WebProxy = new CustomWebProxy("http://localhost:8866"),
             });
 
             // Create card data
@@ -99,6 +101,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
                 .WithCurrency("GBP")
                 .WithAmount(10.01m)
+                .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .WithChallengeRequestIndicator(ChallengeRequestIndicator.CHALLENGE_MANDATED)
+                .WithTransactionInitiator(StoredCredentialInitiator.CardHolder)
                 .Execute();
             
             Assert.IsNotNull(secureEcom);
@@ -108,22 +113,26 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(secureEcom.ChallengeMandated);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);
             Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
+            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
+            Assert.IsNotNull(secureEcom.MessageType);
+            Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
             // Perform ACS authetication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string authResponse = acsClient.Authenticate(secureEcom.PayerAuthenticationRequest);
+            string payerAuthenticationResponse;
+            string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);
             Assert.AreEqual("{\"success\":true}", authResponse);
 
             // Get authentication data
             secureEcom = Secure3dService.GetAuthenticationData()
                 .WithServerTransactionId(secureEcom.ServerTransactionId)
+                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
                 .Execute();
 
             Assert.IsNotNull(secureEcom);
+            Assert.AreEqual(AUTHENTICATION_SUCCESSFUL, secureEcom.Status);
 
             card.ThreeDSecure = secureEcom;
-
-            Assert.AreEqual(AUTHENTICATION_SUCCESSFUL, secureEcom.Status);
 
             // Create transaction
             Transaction response = card.Charge(10.01m)
@@ -164,15 +173,20 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(secureEcom.ChallengeMandated);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);
             Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
+            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
+            Assert.IsNotNull(secureEcom.MessageType);
+            Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
             // Perform ACS authetication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string authResponse = acsClient.Authenticate(secureEcom.PayerAuthenticationRequest);
+            string payerAuthenticationResponse;
+            string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);
             Assert.AreEqual("{\"success\":true}", authResponse);
 
             // Get authentication data
             secureEcom = Secure3dService.GetAuthenticationData()
                 .WithServerTransactionId(secureEcom.ServerTransactionId)
+                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
                 .Execute();
 
             Assert.IsNotNull(secureEcom);
@@ -212,15 +226,20 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(secureEcom.ChallengeMandated);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);
             Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
+            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
+            Assert.IsNotNull(secureEcom.MessageType);
+            Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
             // Perform ACS authetication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string authResponse = acsClient.Authenticate(secureEcom.PayerAuthenticationRequest, AuthenticationResultCode.Unavailable);
+            string payerAuthenticationResponse;
+            string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse, AuthenticationResultCode.Unavailable);
             Assert.AreEqual("{\"success\":true}", authResponse);
 
             // Get authentication data
             secureEcom = Secure3dService.GetAuthenticationData()
                 .WithServerTransactionId(secureEcom.ServerTransactionId)
+                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
                 .Execute();
 
             Assert.IsNotNull(secureEcom);
@@ -249,15 +268,20 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(secureEcom.ChallengeMandated);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);
             Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
+            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
+            Assert.IsNotNull(secureEcom.MessageType);
+            Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
             // Perform ACS authetication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string authResponse = acsClient.Authenticate(secureEcom.PayerAuthenticationRequest, AuthenticationResultCode.AttemptAcknowledge);
+            string payerAuthenticationResponse;
+            string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse, AuthenticationResultCode.AttemptAcknowledge);
             Assert.AreEqual("{\"success\":true}", authResponse);
 
             // Get authentication data
             secureEcom = Secure3dService.GetAuthenticationData()
                 .WithServerTransactionId(secureEcom.ServerTransactionId)
+                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
                 .Execute();
 
             Assert.IsNotNull(secureEcom);
@@ -287,14 +311,19 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(secureEcom.ChallengeMandated);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);
             Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
+            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
+            Assert.IsNotNull(secureEcom.MessageType);
+            Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
             // Perform ACS authetication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string authResponse = acsClient.Authenticate(secureEcom.PayerAuthenticationRequest, AuthenticationResultCode.Failed);
+            string payerAuthenticationResponse = string.Empty;
+            string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse, AuthenticationResultCode.Failed);
             Assert.AreEqual("{\"success\":true}", authResponse);
 
             // Get authentication data
             secureEcom = Secure3dService.GetAuthenticationData()
+                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
                 .WithServerTransactionId(secureEcom.ServerTransactionId)
                 .Execute();
 
@@ -481,7 +510,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             // Perform ACS authetication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(initAuth.IssuerAcsUrl);
-            string authResponse = acsClient.Authenticate(initAuth.PayerAuthenticationRequest);
+            string authResponse = acsClient.Authenticate_v2(initAuth);
             Assert.AreEqual("{\"success\":true}", authResponse);
 
             // Get authentication data
@@ -574,55 +603,64 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         /// <summary>
-        /// Performs ACS authentication
+        /// Performs ACS authentication for 3DS v1
         /// </summary>
-        /// <param name="payerAuthenticationRequest">Payer authentication request</param>
-        /// <param name="authenticationResultCode">Authetincation result code can be
-        /// <returns>Raw html result</returns>
-        public string Authenticate(string payerAuthenticationRequest, AuthenticationResultCode authenticationResultCode = AuthenticationResultCode.Successful) {
+        /// <param name="secureEcom"></param>
+        /// <param name="paRes"></param>
+        /// <param name="authenticationResultCode"></param>
+        /// <returns></returns>
+        public string Authenticate_v1(ThreeDSecure secureEcom, out string paRes, AuthenticationResultCode authenticationResultCode = AuthenticationResultCode.Successful) {
             // Step 1
             var formData = new List<KeyValuePair<string, string>>();
-            formData.Add(new KeyValuePair<string, string>("challenge_value", payerAuthenticationRequest));
-            string rawResponse = SubmitFormData(_redirectUrl, formData);
+            formData.Add(new KeyValuePair<string, string>(secureEcom.MessageType, secureEcom.PayerAuthenticationRequest));
+            formData.Add(new KeyValuePair<string, string>(secureEcom.SessionDataFieldName, secureEcom.ServerTransactionId));
+            formData.Add(new KeyValuePair<string, string>("TermUrl", secureEcom.ChallengeReturnUrl));
+            formData.Add(new KeyValuePair<string, string>("AuthenticationResultCode", authenticationResultCode.ToString("D")));
+            string rawResponse = SubmitFormData(secureEcom.IssuerAcsUrl, formData);
 
-            if (rawResponse.Contains("<title>ACS Authentication Simulator</title>")) {
-                // Step 2
-                formData = new List<KeyValuePair<string, string>>();
-                formData.Add(new KeyValuePair<string, string>("MD", GetInputValue(rawResponse, "MD")));
-                formData.Add(new KeyValuePair<string, string>("TermUrl", GetInputValue(rawResponse, "TermUrl")));
-                formData.Add(new KeyValuePair<string, string>("PaReq", GetInputValue(rawResponse, "PaReq")));
-                formData.Add(new KeyValuePair<string, string>("AuthenticationResultCode", authenticationResultCode.ToString("D")));
-                rawResponse = SubmitFormData(GetFormAction(rawResponse, "PAResFormSim"), formData);
+            paRes = GetInputValue(rawResponse, "PaRes");
 
-                // Step 3
-                formData = new List<KeyValuePair<string, string>>();
-                formData.Add(new KeyValuePair<string, string>("MD", GetInputValue(rawResponse, "MD")));
-                formData.Add(new KeyValuePair<string, string>("PaRes", GetInputValue(rawResponse, "PaRes")));
-                rawResponse = SubmitFormData(GetFormAction(rawResponse, "PAResForm"), formData);
+            // Step 2
+            formData = new List<KeyValuePair<string, string>>();
+            formData.Add(new KeyValuePair<string, string>("MD", GetInputValue(rawResponse, "MD")));
+            formData.Add(new KeyValuePair<string, string>("PaRes", paRes));
+            rawResponse = SubmitFormData(GetFormAction(rawResponse, "PAResForm"), formData);
 
-                return rawResponse;
-            }
-            else if (rawResponse.Contains("<title>Payment verification</title>")) {
-                // Step 2
-                formData = new List<KeyValuePair<string, string>>();
-                formData.Add(new KeyValuePair<string, string>("get-status-type", "true"));
-                do {
-                    rawResponse = SubmitFormData(_redirectUrl, formData);
-                    System.Threading.Thread.Sleep(5000);
-                } while (rawResponse.Trim() == "IN_PROGRESS");
+            return rawResponse;
+        }
 
-                // Step 3
-                formData = new List<KeyValuePair<string, string>>();
-                rawResponse = SubmitFormData(_redirectUrl, formData);
+        /// <summary>
+        /// Performs ACS authentication for 3DS v2
+        /// </summary>
+        /// <param name="secureEcom"></param>
+        /// <returns></returns>
+        public string Authenticate_v2(ThreeDSecure secureEcom) {
+            // Step 1
+            var formData = new List<KeyValuePair<string, string>>();
+            //ToDo: use secureEcom.MessageType instead of "creq"
+            formData.Add(new KeyValuePair<string, string>("creq", secureEcom.PayerAuthenticationRequest));
+            //ToDo: use secureEcom.SessionDataFieldName instead of "threeDSSessionData"
+            formData.Add(new KeyValuePair<string, string>("threeDSSessionData", secureEcom.ServerTransactionId));
+            string rawResponse = SubmitFormData(secureEcom.IssuerAcsUrl, formData);
 
-                // Step 4
-                formData = new List<KeyValuePair<string, string>>();
-                formData.Add(new KeyValuePair<string, string>("cres", GetInputValue(rawResponse, "cres")));
-                rawResponse = SubmitFormData(GetFormAction(rawResponse, "ResForm"), formData);
+            // Step 2
+            formData = new List<KeyValuePair<string, string>>();
+            formData.Add(new KeyValuePair<string, string>("get-status-type", "true"));
+            do {
+                rawResponse = SubmitFormData(secureEcom.IssuerAcsUrl, formData);
+                System.Threading.Thread.Sleep(5000);
+            } while (rawResponse.Trim() == "IN_PROGRESS");
 
-                return rawResponse;
-            }
-            throw new Exception("Cannot perform authentication");
+            // Step 3
+            formData = new List<KeyValuePair<string, string>>();
+            rawResponse = SubmitFormData(secureEcom.IssuerAcsUrl, formData);
+
+            // Step 4
+            formData = new List<KeyValuePair<string, string>>();
+            formData.Add(new KeyValuePair<string, string>("cres", GetInputValue(rawResponse, "cres")));
+            rawResponse = SubmitFormData(GetFormAction(rawResponse, "ResForm"), formData);
+
+            return rawResponse;
         }
     }
 }

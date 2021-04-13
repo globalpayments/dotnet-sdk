@@ -40,11 +40,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Token = _token,
             };
 
-            var response = tokenizedCard.Verify().Execute();
+            var response = tokenizedCard.Verify()
+                .WithCurrency("USD")
+                .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-            Assert.AreEqual("ACTIVE", response.ResponseMessage);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
         }
 
         [TestMethod]
@@ -56,6 +58,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var response = tokenizedCard.Detokenize();
 
             Assert.IsNotNull(response);
+            Assert.IsNull(response.Token);
             Assert.AreEqual(_card.Number, response.Number);
             Assert.AreEqual(_card.ShortExpiry, response.ShortExpiry);
         }
@@ -69,11 +72,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
             Assert.IsTrue(tokenizedCard.UpdateTokenExpiry());
 
-            var response = tokenizedCard.Verify().Execute();
+            var response = tokenizedCard.Verify()
+                .WithCurrency("USD")
+                .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-            Assert.AreEqual("ACTIVE", response.ResponseMessage);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
         }
 
         [TestMethod]
@@ -116,7 +121,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(tokenizedCard.DeleteToken());
 
             try {
-                tokenizedCard.Verify().Execute();
+                tokenizedCard.Verify()
+                    .WithCurrency("USD")
+                    .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);

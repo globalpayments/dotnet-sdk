@@ -378,7 +378,7 @@ namespace GlobalPayments.Api.Gateways {
                 // 3DSv2
                 request.Set("HPP_CUSTOMER_EMAIL", builder.HostedPaymentData.CustomerEmail);
                 request.Set("HPP_CUSTOMER_PHONENUMBER_MOBILE", builder.HostedPaymentData.CustomerPhoneMobile);
-                request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequest);
+                request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequestIndicator);
                 if (builder.HostedPaymentData.AddressesMatch != null) {
                     request.Set("HPP_ADDRESS_MATCH_INDICATOR", builder.HostedPaymentData.AddressesMatch.Value ? "TRUE" : "FALSE");
                 }

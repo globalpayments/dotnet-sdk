@@ -48,6 +48,66 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditAuthorization_CaptureLowerAmount() {
+            var transaction = card.Authorize(5m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction?.ResponseMessage);
+
+            var capture = transaction.Capture(2.99m)
+                .WithGratuity(2m)
+                .Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual(SUCCESS, capture?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), capture?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CreditAuthorization_CaptureHigherAmount() {
+            decimal amount = 10m;
+            var transaction = card.Authorize(amount)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction?.ResponseMessage);
+
+            var capture = transaction.Capture(amount * 1.15m)
+                .WithGratuity(2m)
+                .Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual(SUCCESS, capture?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), capture?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CreditAuthorization_CaptureHigherAmount_WithError() {
+            decimal amount = 10m;
+            var transaction = card.Authorize(amount)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction?.ResponseMessage);
+
+            try {
+                var capture = transaction.Capture(amount * 1.16m)
+                    .WithGratuity(2m)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("50020", ex.ResponseMessage);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("Status Code: BadRequest - Can't settle for more than 115% of that which you authorised.", ex.Message);
+            }
+        }
+
+        [TestMethod]
         public void CreditSale() {
             var address = new Address {
                 StreetAddress1 = "123 Main St.",
@@ -90,7 +150,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditRefundTransaction() {
-            var transaction = card.Charge(10.95m)
+            decimal amount = 10.95m;
+            var transaction = card.Charge(amount)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -98,7 +159,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
 
-            var response = transaction.Refund(10.95m)
+            var response = transaction.Refund(amount)
                 .WithCurrency("USD")
                 .Execute();
             Assert.IsNotNull(response);
@@ -107,23 +168,62 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditRefundTransactionWrongId()
-        {
+        public void CreditRefundTransaction_RefundLowerAmount() {
+            var transaction = card.Charge(5.95m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
+
+            var response = transaction.Refund(3.25m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CreditRefundTransaction_RefundHigherAmount() {
+            decimal amount = 5.95m;
+            var transaction = card.Charge(amount)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
+
+            try {
+                var response = transaction.Refund(amount * 1.1m)
+                    .WithCurrency("USD")
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("40087", ex.ResponseMessage);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("Status Code: BadRequest - You may only refund up to 100% of the original amount.", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CreditRefundTransactionWrongId() {
             var transaction = card.Charge(10.95m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
                 .Execute();
             transaction.TransactionId = "TRN_wrongid3213213";
             transaction.Token = "TRN_wrongid3213213";
-            try
-            {
+
+            try {
                 transaction.Refund(10.95m)
-                .WithCurrency("USD")
-                .WithAllowDuplicates(true)
-                .Execute();
+                    .WithCurrency("USD")
+                    .WithAllowDuplicates(true)
+                    .Execute();
             }
-            catch (GatewayException ex)
-            {
+            catch (GatewayException ex) {
                 Assert.AreEqual("TRANSACTION_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40008", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: NotFound - Transaction to action cannot be found", ex.Message);
@@ -148,23 +248,21 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditReverseTransactionWrongId()
-        {
+        public void CreditReverseTransactionWrongId() {
             var transaction = card.Charge(12.99m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
                 .Execute();
             transaction.TransactionId = "TRN_wrongid3213213";
             transaction.Token = "TRN_wrongid3213213";
-            try
-            {
+
+            try {
                 transaction.Refund(10.95m)
-                .WithCurrency("USD")
-                .WithAllowDuplicates(true)
-                .Execute();
+                    .WithCurrency("USD")
+                    .WithAllowDuplicates(true)
+                    .Execute();
             }
-            catch (GatewayException ex)
-            {
+            catch (GatewayException ex) {
                 Assert.AreEqual("TRANSACTION_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40008", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: NotFound - Transaction to action cannot be found", ex.Message);
@@ -222,8 +320,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditCaptureWrongId()
-        {
+        public void CreditCaptureWrongId() {
             var authorization = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithMultiCapture(true)
@@ -234,13 +331,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), authorization?.ResponseMessage);
             authorization.TransactionId = "TRN_wrongid3213213";
             authorization.Token = "TRN_wrongid3213213";
-            try
-            {
+
+            try {
                 authorization.Capture(3m)
-                .Execute();
+                    .Execute();
             }
-            catch (GatewayException ex)
-            {
+            catch (GatewayException ex) {
                 Assert.AreEqual("TRANSACTION_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40008", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: NotFound - Transaction to action cannot be found", ex.Message);
@@ -248,10 +344,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void SaleWithTokenizedPaymentMethod()
-        {
-            var tokenizedCard = new CreditCardData
-            {
+        public void SaleWithTokenizedPaymentMethod() {
+            var tokenizedCard = new CreditCardData {
                 Token = card.Tokenize(),
             };
 
@@ -275,10 +369,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditVerify_WithAddress()
-        {
-            var address = new Address
-            {
+        public void CreditVerify_WithAddress() {
+            var address = new Address {
                 PostalCode = "750241234",
                 StreetAddress1 = "6860 Dallas Pkwy",
             };
@@ -293,8 +385,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditVerify_WithIdempotencyKey()
-        {
+        public void CreditVerify_WithIdempotencyKey() {
             string idempotencyKey = Guid.NewGuid().ToString();
 
             var response = card.Verify()
@@ -307,43 +398,40 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditVerify_WithoutCurrency()
-        {
-            var response = card.Verify()
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+        public void CreditVerify_WithoutCurrency() {
+            try {
+                var response = card.Verify()
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("40005", ex.ResponseMessage);
+                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields currency", ex.Message);
+            }
         }
 
         [TestMethod]
-        public void CreditVerify_InvalidCVV()
-        {
-            var card = new CreditCardData
-            {
+        public void CreditVerify_InvalidCVV() {
+            var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 05,
                 ExpYear = 2025,
                 Cvn = "SMA",
             };
-            try
-            {
+            try {
                 card.Verify()
                 .WithCurrency("USD")
                 .Execute();
             }
-            catch (GatewayException ex)
-            {
+            catch (GatewayException ex) {
                 Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
                 Assert.AreEqual("50018", ex.ResponseMessage);
             }
         }
 
         [TestMethod]
-        public void CreditVerify_CP()
-        {
-            ServicesContainer.ConfigureService(new GpApiConfig
-            {
+        public void CreditVerify_CP() {
+            ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Entities.Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
@@ -360,10 +448,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditVerify_CP_CVNNotMatched()
-        {
-            ServicesContainer.ConfigureService(new GpApiConfig
-            {
+        public void CreditVerify_CP_CVNNotMatched() {
+            ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Entities.Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
@@ -404,8 +490,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditVerify_WithStoredCredentials()
-        {
+        public void CreditVerify_WithStoredCredentials() {
             var response = card.Verify()
                 .WithCurrency("USD")
                 .Execute();
@@ -413,13 +498,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
         }
 
-            [TestMethod]
-        public void CreditSale_WithStoredCredentials()
-        {
+        [TestMethod]
+        public void CreditSale_WithStoredCredentials() {
             var response = card.Charge(15.25m)
                 .WithCurrency("USD")
-                .WithStoredCredential(new StoredCredential
-                {
+                .WithStoredCredential(new StoredCredential {
                     Initiator = StoredCredentialInitiator.CardHolder,
                     Type = StoredCredentialType.Subscription,
                     Sequence = StoredCredentialSequence.First,

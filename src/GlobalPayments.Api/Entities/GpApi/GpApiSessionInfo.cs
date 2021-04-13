@@ -29,7 +29,7 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
-        internal static GpApiRequest SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null) {
+        internal static GpApiRequest SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null, string[] permissions = null) {
             string nonce = DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
             
             var request = new JsonDoc()
@@ -38,7 +38,8 @@ namespace GlobalPayments.Api.Entities {
                 .Set("grant_type", "client_credentials")
                 .Set("secret", GenerateSecret(nonce, appKey))
                 .Set("seconds_to_expire", secondsToExpire)
-                .Set("interval_to_expire", EnumConverter.GetMapping(Target.GP_API, intervalToExpire));
+                .Set("interval_to_expire", EnumConverter.GetMapping(Target.GP_API, intervalToExpire))
+                .Set("permissions", permissions);
 
             return new GpApiRequest {
                 Verb = HttpMethod.Post,

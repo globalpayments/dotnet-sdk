@@ -38,12 +38,12 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
-        /// Sets the gateway deposit id as criteria for the report.
+        /// Sets the gateway deposit reference as criteria for the report.
         /// </summary>
-        /// <param name="value">The gateway deposit id</param>
+        /// <param name="value">The gateway deposit reference</param>
         /// <returns>TResult</returns>
-        public TransactionReportBuilder<TResult> WithDepositId(string value) {
-            SearchBuilder.DepositId = value;
+        public TransactionReportBuilder<TResult> WithDepositReference(string value) {
+            SearchBuilder.DepositReference = value;
             return this;
         }
 
