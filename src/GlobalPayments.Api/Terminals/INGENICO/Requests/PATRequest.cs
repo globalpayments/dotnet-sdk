@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico.Requests {
         public string XMLData { get; set; }
         public TransactionOutcomeRequest TransactionOutcome { get; set; }
 
-        public override string ToString() => Encoding.UTF8.GetString(_buffer);
+        public override string ToString() => Encoding.GetEncoding(28591).GetString(_buffer);
 
         // Assign passed value of buffer into private variable.
         public PATRequest(byte[] buffer) {
@@ -26,7 +26,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico.Requests {
         }
 
         private void ParseData() {
-            string strBuffer = Encoding.UTF8.GetString(_buffer);
+            string strBuffer = Encoding.GetEncoding(28591).GetString(_buffer);
 
             // XML
             if (strBuffer.Contains(INGENICO_GLOBALS.XML_TAG)) {

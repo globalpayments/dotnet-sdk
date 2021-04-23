@@ -46,7 +46,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         private void ParseBroadcast(byte[] broadBuffer) {
             if (broadBuffer.Length > 0) {
-                var strBroadcast = ASCIIEncoding.UTF8.GetString(broadBuffer);
+                var strBroadcast = Encoding.GetEncoding(28591).GetString(broadBuffer);
                 int findIndex = strBroadcast.IndexOf(INGENICO_GLOBALS.BROADCAST);
                 int findLen = 14 + 2; // additional 2 is for extra char '="'
                 _code = strBroadcast.Substring(findIndex + findLen, 2);

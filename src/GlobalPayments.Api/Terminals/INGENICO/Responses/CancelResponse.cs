@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
 
         public override void ParseResponse(byte[] response) {
             base.ParseResponse(response);
-            Status = ((CancelStatus)Encoding.UTF8.GetString(response.SubArray(2, 1)).ToInt32()).ToString();
+            Status = ((CancelStatus)Encoding.GetEncoding(28591).GetString(response.SubArray(2, 1)).ToInt32()).ToString();
         }
     }
 }

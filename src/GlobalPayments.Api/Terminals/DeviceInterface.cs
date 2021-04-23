@@ -197,6 +197,11 @@ namespace GlobalPayments.Api.Terminals {
 
         #endregion
 
+        public virtual TerminalManageBuilder ReferralConfirmation() {
+            return new TerminalManageBuilder(TransactionType.Referral, PaymentMethodType.Credit)
+                .WithAmount(6.18m);
+        }
+
         #endregion
     }
 }

@@ -33,9 +33,9 @@ namespace GlobalPayments.Api.Utils {
                 int length = 0;
 
                 if (TLVFormat == TLVFormat.Standard) {
-                    length = Convert.ToInt32(Encoding.UTF8.GetString(lengthBuffer, 0, lengthBuffer.Length), 16);
+                    length = Convert.ToInt32(Encoding.GetEncoding(28591).GetString(lengthBuffer, 0, lengthBuffer.Length), 16);
                 } else if (TLVFormat == TLVFormat.State || TLVFormat == TLVFormat.PayAtTable) {
-                    length = Convert.ToInt32(Encoding.UTF8.GetString(lengthBuffer, 0, lengthBuffer.Length));
+                    length = Convert.ToInt32(Encoding.GetEncoding(28591).GetString(lengthBuffer, 0, lengthBuffer.Length));
                 } else {
                     throw new ApiException("Unsupported TLV format.");
                 }
@@ -47,7 +47,7 @@ namespace GlobalPayments.Api.Utils {
 
                 // Remove field that have been parsed and successfully get the value.
                 _data = _data.SubArray(0, typeIndexLocation).Concat(_data.SubArray(endLength, _data.Length - endLength)).ToArray();
-                string strValue = Encoding.ASCII.GetString(value, 0, value.Length);
+                string strValue = Encoding.GetEncoding(28591).GetString(value, 0, value.Length);
 
 
                 if (returnType == typeof(decimal?)) {

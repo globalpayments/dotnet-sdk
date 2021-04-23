@@ -162,5 +162,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder PayAtTableResponse();
 
         #endregion
+
+        TerminalManageBuilder ReferralConfirmation();
     }
 }

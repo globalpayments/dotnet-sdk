@@ -374,7 +374,8 @@ namespace GlobalPayments.Api.Entities {
         DccRateLookup = 1 << 31,
 
         Increment = 1L << 32,
-        PayAtTable = 1L << 33
+        PayAtTable = 1L << 33,
+        Referral = 1L << 34
     }
 
     /// <summary>

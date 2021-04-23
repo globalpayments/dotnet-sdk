@@ -1,12 +1,10 @@
-﻿using System;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.Ingenico;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Threading;
 
 namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
     [TestClass]
@@ -15,15 +13,15 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
 
         public IngenicoTransactionTests() {
             _device = DeviceService.Create(new ConnectionConfig() {
-                DeviceType = Entities.DeviceType.Ingenico_EPOS_Desk5000,
-                ConnectionMode = ConnectionModes.TCP_IP_SERVER,
-                Port = "18101",
-                //BaudRate = BaudRate.r9600,
-                //Parity = System.IO.Ports.Parity.Even,
-                //DataBits = DataBits.Seven,
-                //Handshake = System.IO.Ports.Handshake.None,
-                //StopBits = System.IO.Ports.StopBits.One,
-                Timeout = 10 * 1000
+                DeviceType = DeviceType.Ingenico_EPOS_Desk5000,
+                ConnectionMode = ConnectionModes.SERIAL,
+                Port = "1",
+                BaudRate = BaudRate.r9600,
+                Parity = System.IO.Ports.Parity.Even,
+                DataBits = DataBits.Seven,
+                Handshake = System.IO.Ports.Handshake.None,
+                StopBits = System.IO.Ports.StopBits.One,
+                Timeout = 1 * 1000
             });
             Assert.IsNotNull(_device);
         }
@@ -35,24 +33,45 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
             PreAuthTest();
             CompletionTest();
         }
-        
+
+        [TestMethod]
+        public void Ticket() {
+            try {
+                _device.OnMessageSent += (message) => {
+                    Assert.IsNotNull(message);
+                };
+
+                var ticket = _device.GetLastReceipt(ReceiptType.REPORT)
+                    .Execute();
+
+                Assert.IsNotNull(ticket);
+            } catch (Exception e) {
+                Thread.Sleep(5000);
+                _device.OnMessageSent += (message) => {
+                    Assert.IsNotNull(message);
+                };
+
+                var ticket = _device.GetLastReceipt(ReceiptType.REPORT)
+                    .Execute();
+
+                Assert.IsNotNull(ticket);
+            }
+        }
+
         [TestMethod]
         public void SaleTest() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
 
-            Thread.Sleep(1500);
-            _device.Dispose();
+            var resp = _device.Sale(6.18m)
+                .WithReferenceNumber(1)
+                .WithCurrencyCode("826")
+                .Execute();
 
-            //var resp = _device.Sale(6.18m)
-            //    .WithReferenceNumber(1)
-            //    .WithCurrencyCode("826")
-            //    .Execute();
+            Assert.IsNotNull(resp);
 
-            //Assert.IsNotNull(resp);
-
-            //Thread.Sleep(5000);
+            Thread.Sleep(5000);
         }
 
         public void RefundTest() {
@@ -146,12 +165,10 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                     .Execute();
 
                 Assert.IsNotNull(respone);
-            }
-            catch (ApiException e) {
+            } catch (ApiException e) {
                 Assert.Fail(e.Message);
                 //throw e;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Assert.Fail(e.Message);
                 //throw e;
             }
@@ -166,8 +183,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Ingenico {
                     .Execute();
 
                 Assert.IsNotNull(respone);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Assert.Fail(e.Message);
             }
         }

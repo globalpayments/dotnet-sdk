@@ -147,5 +147,10 @@ namespace GlobalPayments.Api.Terminals.Ingenico {
         public override TerminalAuthBuilder PayAtTableResponse() {
             return base.PayAtTableResponse();
         }
+
+        public override TerminalManageBuilder ReferralConfirmation() {
+            paymentMethod = PaymentType.ReferralConfirmation;
+            return base.ReferralConfirmation();
+        }
     }
 }

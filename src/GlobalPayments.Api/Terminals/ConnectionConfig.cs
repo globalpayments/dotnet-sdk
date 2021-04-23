@@ -47,6 +47,7 @@ namespace GlobalPayments.Api.Terminals {
 
         // Timeout
         int Timeout { get; set; }
+        int TimeDelay { get; set; }
 
         // Associated Gateway
         GatewayConfig GatewayConfig { get; set; }
@@ -64,6 +65,7 @@ namespace GlobalPayments.Api.Terminals {
         public string Port { get; set; }
         public IRequestIdProvider RequestIdProvider { get; set; }
         public GatewayConfig GatewayConfig { get; set; }
+        public int TimeDelay { get; set; }
 
         public ConnectionConfig() {
             Timeout = -1;
