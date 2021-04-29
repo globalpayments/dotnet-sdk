@@ -8,7 +8,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class GpEcomConnector : XmlGateway, IPaymentGateway, IRecurringService, ISecure3dProvider {
+    internal class GpEcomConnector : XmlGateway, IPaymentGateway, IRecurringService, ISecure3dProvider, IReportingService {
         public string MerchantId { get; set; }
         public string AccountId { get; set; }
         public string SharedSecret { get; set; }
@@ -579,7 +579,35 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
-            throw new UnsupportedTransactionException("Reporting functionality is not supported through this gateway.");
+            ElementTree et = new ElementTree();
+            string timestamp = GenerationUtils.GenerateTimestamp();
+
+            // Build Request
+            var request = et.Element("request")
+                .Set("type", MapReportType(builder.ReportType))
+                .Set("timestamp", timestamp);
+            et.SubElement(request, "merchantid").Text(MerchantId);
+            et.SubElement(request, "account", AccountId);
+
+            if (builder is TransactionReportBuilder<T>) {
+                TransactionReportBuilder<T> trb = (TransactionReportBuilder<T>)builder;
+                et.SubElement(request, "orderid", trb.TransactionId);
+
+                String sha1hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, trb.TransactionId, "", "", "");
+                et.SubElement(request, "sha1hash").Text(sha1hash);
+            }
+
+            string response = DoTransaction(et.ToString(request));
+            return MapReportResponse<T>(response, builder.ReportType);
+        }
+
+        private string MapReportType(ReportType reportType) {
+            switch (reportType) {
+                case ReportType.TransactionDetail:
+                    return "query";
+                default:
+                    throw new UnsupportedTransactionException("This reporting call is not supported by your currently configured gateway.");
+            }
         }
 
         public TResult ProcessRecurring<TResult>(RecurringBuilder<TResult> builder) where TResult : class {
@@ -779,6 +807,44 @@ namespace GlobalPayments.Api.Gateways {
                     responseCode,
                     responseMessage
                 );
+            }
+        }
+
+        private T MapReportResponse<T>(string rawResponse, ReportType reportType) where T : class {
+            Element response = ElementTree.Parse(rawResponse).Get("response");
+            CheckResponse(response);
+
+            try {
+                T rvalue = Activator.CreateInstance<T>();
+                if (reportType.Equals(ReportType.TransactionDetail)) {
+                    TransactionSummary summary = new TransactionSummary();
+                    summary.TransactionId = response.GetValue<string>("pasref");
+                    summary.OrderId = response.GetValue<string>("orderid");
+                    summary.AuthCode = response.GetValue<string>("authcode");
+                    summary.MaskedCardNumber = response.GetValue<string>("cardnumber");
+                    summary.AvsResponseCode = response.GetValue<string>("avspostcoderesponse");
+                    summary.CvnResponseCode = response.GetValue<string>("cvnresult");
+                    summary.GatewayResponseCode = response.GetValue<string>("result");
+                    summary.GatewayResponseMessage = response.GetValue<string>("message");
+                    summary.BatchId = response.GetValue<string>("batchid");
+
+                    if (response.Has("fraudresponse")) {
+                        Element fraud = response.Get("fraudresponse");
+                        summary.FraudRuleInfo = fraud.GetValue<string>("result");
+                    }
+
+                    if (response.Has("threedsecure")) {
+                        summary.CavvResponseCode = response.GetValue<string>("cavv");
+                        summary.EciIndicator = response.GetValue<string>("eci");
+                        summary.Xid = response.GetValue<string>("xid");
+                    }
+
+                    rvalue = summary as T;
+                }
+                return rvalue;
+            }
+            catch (Exception ex) {
+                throw new ApiException(ex.Message, ex);
             }
         }
         #endregion

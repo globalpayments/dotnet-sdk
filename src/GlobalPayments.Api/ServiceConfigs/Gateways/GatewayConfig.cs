@@ -5,6 +5,10 @@ namespace GlobalPayments.Api {
     public abstract class GatewayConfig : Configuration {
         public AcceptorConfig AcceptorConfig { get; set; }
         protected GatewayProvider GatewayProvider { get; set; }
+        /// <summary>
+        /// Determines wether to use the data reporting service or not
+        /// </summary>
+        public bool UseDataReportingService { get; set; } = false;
 
         #region GP Data Services
         /// <summary>

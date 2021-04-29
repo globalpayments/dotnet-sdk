@@ -78,7 +78,12 @@ namespace GlobalPayments.Api {
                 WebProxy = WebProxy
             };
             services.GatewayConnector = gateway;
-            services.RecurringConnector = gateway;            
+            services.RecurringConnector = gateway;
+
+            // set reporting gateway
+            if (!UseDataReportingService) {
+                services.ReportingService = gateway;
+            }
 
             // set default
             if (Secure3dVersion == null) {

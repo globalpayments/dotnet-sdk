@@ -34,7 +34,11 @@ namespace GlobalPayments.Api.Entities {
 
         public string AuthCode { get; set; }
 
+        public string AvsResponseCode { get; set; }
+
         public DateTime? BatchCloseDate { get; set; }
+
+        public string BatchId { get; set; }
 
         public string BatchSequenceNumber { get; set; }
 
@@ -82,6 +86,8 @@ namespace GlobalPayments.Api.Entities {
 
         public string CustomerLastName { get; set; }
 
+        public string CvnResponseCode { get; set; }
+
         public bool DebtRepaymentIndicator { get; set; }
 
         public decimal? DepositAmount { get; set; }
@@ -100,6 +106,8 @@ namespace GlobalPayments.Api.Entities {
         /// The device ID where the transaction was ran; where applicable.
         /// </summary>
         public int DeviceId { get; set; }
+
+        public string EciIndicator { get; set; }
 
         public string EmvChipCondition { get; set; }
 
@@ -254,5 +262,7 @@ namespace GlobalPayments.Api.Entities {
         public bool HostTimeout { get; set; }
 
         public string Country { get; set; }
+
+        public string Xid { get; set; }
     }
 }
