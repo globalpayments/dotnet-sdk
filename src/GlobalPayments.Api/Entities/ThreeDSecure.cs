@@ -78,6 +78,11 @@ namespace GlobalPayments.Api.Entities {
         public ExemptStatus? ExemptStatus { get; set; }
 
         /// <summary>
+        /// The exemption optimization service reason
+        /// </summary>
+        public string ExemptReason { get; set; }
+
+        /// <summary>
         /// The URL of the Issuing Bank's ACS.
         /// </summary>
         public string IssuerAcsUrl { get; set; }
@@ -237,6 +242,8 @@ namespace GlobalPayments.Api.Entities {
                 StatusReason = MergeValue(StatusReason, secureEcom.StatusReason);
                 Version = MergeValue(Version, secureEcom.Version);
                 WhitelistStatus = MergeValue(WhitelistStatus, secureEcom.WhitelistStatus);
+                ExemptStatus = MergeValue(ExemptStatus, secureEcom.ExemptStatus);
+                ExemptReason = MergeValue(ExemptReason, secureEcom.ExemptReason);
                 Xid = MergeValue(Xid, secureEcom.Xid);
 
                 //this.merchantData = mergeValue(merchantData, secureEcom.getMerchantData());

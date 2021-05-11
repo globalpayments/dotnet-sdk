@@ -9,6 +9,11 @@ namespace GlobalPayments.Api.Entities {
     internal class GpApiSecure3DRequestBuilder {
         internal static GpApiRequest BuildRequest(Secure3dBuilder builder, GpApiConnector gateway) {
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
+                var storedCredential = new JsonDoc()
+                    .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))
+                    .Set("reason", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Reason))
+                    .Set("sequence", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Sequence));
+
                 var paymentMethod = new JsonDoc();
 
                 if (builder.PaymentMethod is ITokenizable tokenized && !string.IsNullOrEmpty(tokenized.Token)) {
@@ -36,7 +41,8 @@ namespace GlobalPayments.Api.Entities {
                     .Set("country", gateway.Country)
                     .Set("preference", builder.ChallengeRequestIndicator?.ToString())
                     .Set("source", builder.AuthenticationSource.ToString())
-                    .Set("initator", EnumConverter.GetMapping(Target.GP_API, builder.TransactionInitiator))
+                    .Set("initator", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Initiator))
+                    .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("payment_method", paymentMethod)
                     .Set("notifications", notifications);
 
@@ -47,6 +53,13 @@ namespace GlobalPayments.Api.Entities {
                 };
             }
             else if (builder.TransactionType == TransactionType.InitiateAuthentication) {
+                #region Stored credential
+                var storedCredential = new JsonDoc()
+                    .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))
+                    .Set("reason", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Reason))
+                    .Set("sequence", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Sequence));
+                #endregion
+
                 #region Payment method
                 var paymentMethod = new JsonDoc();
 
@@ -171,6 +184,8 @@ namespace GlobalPayments.Api.Entities {
 
                 var data = new JsonDoc()
                     .Set("source", builder.AuthenticationSource.ToString())
+                    .Set("initator", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Initiator))
+                    .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("method_url_completion_status", builder.MethodUrlCompletion.ToString())
                     .Set("payment_method", paymentMethod.HasKeys() ? paymentMethod : null)
                     .Set("notifications", notifications)

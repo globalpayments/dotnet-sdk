@@ -8,7 +8,10 @@ namespace GlobalPayments.Api.Entities {
     public enum SearchCriteria {
         AccountName,
         AccountNumberLastFour,
+        ActionId,
+        ActionType,
         AltPaymentStatus,
+        AppName,
         AquirerReferenceNumber,
         AuthCode,
         BankRoutingNumber,
@@ -36,19 +39,26 @@ namespace GlobalPayments.Api.Entities {
         FullyCaptured,
         GiftCurrency,
         GiftMaskedAlias,
+        HttpResponseCode,
         InvoiceNumber,
         IssuerResult,
         IssuerTransactionId,
+        MerchantName,
         Name,
         OneTime,
         PaymentEntryMode,
         PaymentMethodKey,
         PaymentType,
         ReferenceNumber,
+        Resource,
+        ResourceStatus,
+        ResourceId,
+        ResponseCode,
         SettlementAmount,
         ScheduleId,
         SiteTrace,
         StartDate,
+        StoredPaymentMethodStatus,
         TokenFirstSix,
         TokenLastFour,
         TransactionStatus,
@@ -56,6 +66,7 @@ namespace GlobalPayments.Api.Entities {
         DisputeStatus,
         UniqueDeviceId,
         Username,
+        Version,
     }
 
     public enum DataServiceCriteria {
@@ -70,6 +81,7 @@ namespace GlobalPayments.Api.Entities {
         DepositReference, // Data Services
         EndBatchDate, // Data Services
         EndDepositDate, // Data Services
+        EndLastUpdatedDate, // Data Services
         EndStageDate, // Data Services
         Hierarchy, // Data Services
         LocalTransactionEndTime, // Data Services
@@ -78,7 +90,9 @@ namespace GlobalPayments.Api.Entities {
         OrderId, // Data Services
         StartBatchDate, // Data Services
         StartDepositDate, // Data Services
+        StartLastUpdatedDate, // Data Services
         StartStageDate, // Data Services
+        StoredPaymentMethodId, //Data Services
         SystemHierarchy, // Data Services
         Timezone // Data Services
     }
@@ -90,9 +104,15 @@ namespace GlobalPayments.Api.Entities {
 
         internal string AccountNumberLastFour { get; set; }
 
+        internal string ActionId { get; set; }
+
+        internal string ActionType { get; set; }
+
         internal string AltPaymentStatus { get; set; }
 
         internal decimal? Amount { get; set; }
+
+        internal string AppName { get; set; }
 
         internal string AquirerReferenceNumber { get; set; }
 
@@ -166,6 +186,8 @@ namespace GlobalPayments.Api.Entities {
 
         internal DateTime? EndDepositDate { get; set; }
 
+        internal DateTime? EndLastUpdatedDate { get; set; }
+
         internal DateTime? EndStageDate { get; set; }
 
         internal bool? FullyCaptured { get; set; }
@@ -175,6 +197,8 @@ namespace GlobalPayments.Api.Entities {
         internal string GiftMaskedAlias { get; set; }
 
         internal string Hierarchy { get; set; }
+
+        internal string HttpResponseCode { get; set; }
 
         internal string InvoiceNumber { get; set; }
 
@@ -187,6 +211,8 @@ namespace GlobalPayments.Api.Entities {
         internal DateTime? LocalTransactionStartTime { get; set; }
 
         internal string MerchantId { get; set; }
+
+        internal string MerchantName { get; set; }
 
         internal string Name { get; set; }
 
@@ -204,6 +230,14 @@ namespace GlobalPayments.Api.Entities {
 
         internal string ReferenceNumber { get; set; }
 
+        internal string Resource { get; set; }
+
+        internal string ResourceStatus { get; set; }
+
+        internal string ResourceId { get; set; }
+
+        internal string ResponseCode { get; set; }
+
         internal IEnumerable<TransactionType> TransactionType { get; set; }
 
         internal decimal? SettlementAmount { get; set; }
@@ -220,7 +254,13 @@ namespace GlobalPayments.Api.Entities {
 
         internal DateTime? StartDepositDate { get; set; }
 
+        internal DateTime? StartLastUpdatedDate { get; set; }
+
         internal DateTime? StartStageDate { get; set; }
+
+        internal string StoredPaymentMethodId { get; set; }
+
+        internal StoredPaymentMethodStatus? StoredPaymentMethodStatus { get; set; }
 
         internal string SystemHierarchy { get; set; }
 
@@ -235,6 +275,8 @@ namespace GlobalPayments.Api.Entities {
         internal string Username { get; set; }
 
         internal string Timezone { get; set; }
+
+        internal string Version { get; set; }
 
         internal SearchCriteriaBuilder(TransactionReportBuilder<TResult> reportBuilder) {
             _reportBuilder = reportBuilder;

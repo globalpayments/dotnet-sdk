@@ -125,5 +125,15 @@ namespace GlobalPayments.Api.Services {
                         .Execute(configName);
             return response.BatchSummary;
         }
+
+        public static BatchSummary CloseBatch(string batchReference) {
+            return CloseBatch(batchReference, "default");
+        }
+        public static BatchSummary CloseBatch(string batchReference, string configName) {
+            Transaction response = new ManagementBuilder(TransactionType.BatchClose)
+                .WithBatchReference(batchReference)
+                .Execute(configName);
+            return response.BatchSummary;
+        }
     }
 }

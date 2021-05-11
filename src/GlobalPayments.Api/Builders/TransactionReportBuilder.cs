@@ -21,12 +21,12 @@ namespace GlobalPayments.Api.Builders {
         internal string TransactionId { get; set; }
         internal int? Page { get; set; }
         internal int? PageSize { get; set; }
+        internal SortDirection? Order { get; set; }
         internal TransactionSortProperty? TransactionOrderBy { get; set; }
-        internal SortDirection? TransactionOrder { get; set; }
         internal DepositSortProperty? DepositOrderBy { get; set; }
-        internal SortDirection? DepositOrder { get; set; }
         internal DisputeSortProperty? DisputeOrderBy { get; set; }
-        internal SortDirection? DisputeOrder { get; set; }
+        internal StoredPaymentMethodSortProperty? StoredPaymentMethodOrderBy { get; set; }
+        internal ActionSortProperty? ActionOrderBy { get; set; }
 
         private SearchCriteriaBuilder<TResult> _searchBuilder;
         internal SearchCriteriaBuilder<TResult> SearchBuilder {
@@ -36,6 +36,17 @@ namespace GlobalPayments.Api.Builders {
                 return _searchBuilder;
             }
         }
+
+        /// <summary>
+        /// Sets the gateway action id as criteria for the report.
+        /// </summary>
+        /// <param name="value">The gateway action id</param>
+        /// <returns>TResult</returns>
+        public TransactionReportBuilder<TResult> WithActionId(string value) {
+            SearchBuilder.ActionId = value;
+            return this;
+        }
+
 
         /// <summary>
         /// Sets the gateway deposit reference as criteria for the report.
@@ -125,6 +136,16 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Sets the gateway stored payment method id as a critria for the report.
+        /// </summary>
+        /// <param name="value">The stored payment method id</param>
+        /// <returns></returns>
+        public TransactionReportBuilder<TResult> WithStoredPaymentMethodId(string value) {
+            SearchBuilder.StoredPaymentMethodId = value;
+            return this;
+        }
+
+        /// <summary>
         /// Set the gateway transaction order by criteria for the report.
         /// </summary>
         /// <param name="orderBy">Order by property</param>
@@ -132,7 +153,7 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>TResult</returns>
         public TransactionReportBuilder<TResult> OrderBy(TransactionSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             TransactionOrderBy = orderBy;
-            TransactionOrder = direction;
+            Order = direction;
             return this;
         }
 
@@ -144,7 +165,7 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>TResult</returns>
         public TransactionReportBuilder<TResult> OrderBy(DepositSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             DepositOrderBy = orderBy;
-            DepositOrder = direction;
+            Order = direction;
             return this;
         }
 
@@ -156,7 +177,31 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>TResult</returns>
         public TransactionReportBuilder<TResult> OrderBy(DisputeSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             DisputeOrderBy = orderBy;
-            DisputeOrder = direction;
+            Order = direction;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the gateway stored payment method order by criteria for the report.
+        /// </summary>
+        /// <param name="orderBy">Order by property</param>
+        /// <param name="direction">Order by direction</param>
+        /// <returns></returns>
+        public TransactionReportBuilder<TResult> OrderBy(StoredPaymentMethodSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
+            StoredPaymentMethodOrderBy = orderBy;
+            Order = direction;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the gateway action order by criteria for the report.
+        /// </summary>
+        /// <param name="orderBy">Order by property</param>
+        /// <param name="direction">Order by direction</param>
+        /// <returns></returns>
+        public TransactionReportBuilder<TResult> OrderBy(ActionSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
+            ActionOrderBy = orderBy;
+            Order = direction;
             return this;
         }
 

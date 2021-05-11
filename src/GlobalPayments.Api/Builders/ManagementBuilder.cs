@@ -21,6 +21,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal string BatchReference { get; set; }
         internal IEnumerable<Bill> Bills { get; set; }
         internal string ClientTransactionId {
             get {
@@ -94,6 +95,16 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>ManagementBuilder</returns>
         public ManagementBuilder WithAuthAmount(decimal? value) {
             AuthAmount = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the current batch reference
+        /// </summary>
+        /// <param name="value">The batch reference</param>
+        /// <returns></returns>
+        public ManagementBuilder WithBatchReference(string value) {
+            BatchReference = value;
             return this;
         }
 

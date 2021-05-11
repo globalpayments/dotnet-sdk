@@ -5,6 +5,7 @@ using System.Collections.Generic;
 namespace GlobalPayments.Api.Entities {
     public class BatchSummary {
         public int Id { get; set; }
+        public string BatchReference { get; set; }
         public string CloseTransactionId { get; set; }
         public int CloseCount { get; set; }
         public decimal? CreditAmount { get; set; }

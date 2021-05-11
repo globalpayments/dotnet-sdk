@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
@@ -161,6 +162,37 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CreditCardReauthorizeTransaction() {
+            var card = new CreditCardData {
+                Number = "5425230000004415",
+                ExpMonth = DateTime.Now.Month,
+                ExpYear = DateTime.Now.Year + 1,
+                Cvn = "123",
+                CardHolderName = "John Smith"
+            };
+
+            Transaction chargeTransaction = card.Charge(1.25m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(chargeTransaction);
+            Assert.AreEqual(SUCCESS, chargeTransaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), chargeTransaction?.ResponseMessage);
+
+            Transaction reverseTransaction = chargeTransaction.Reverse(1.25m)
+                .Execute();
+            Assert.IsNotNull(reverseTransaction);
+            Assert.AreEqual(SUCCESS, reverseTransaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverseTransaction?.ResponseMessage);
+
+            Transaction reauthTransaction = chargeTransaction.Reauthorize()
+                .Execute();
+            Assert.IsNotNull(reauthTransaction);
+            Assert.AreEqual(SUCCESS, reauthTransaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), reauthTransaction?.ResponseMessage);
+            Assert.AreEqual("00", reauthTransaction.AuthorizationCode);
         }
     }
 }

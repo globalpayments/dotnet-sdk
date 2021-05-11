@@ -421,6 +421,16 @@ namespace GlobalPayments.Api.Entities {
         }
 
         /// <summary>
+        /// Reauthorize the original transaction.
+        /// </summary>
+        /// <param name="amount">The original authorization amount</param>
+        public ManagementBuilder Reauthorize(decimal? amount = null) {
+            return new ManagementBuilder(TransactionType.Reauth)
+                .WithPaymentMethod(TransactionReference)
+                .WithAmount(amount ?? BalanceAmount);
+        }
+
+        /// <summary>
         /// Voids the original transaction.
         /// </summary>
         public ManagementBuilder Void(VoidReason? reason = null, decimal? amount = null, bool force = false) {

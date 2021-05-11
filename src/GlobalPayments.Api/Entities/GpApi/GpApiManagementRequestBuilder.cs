@@ -82,6 +82,22 @@ namespace GlobalPayments.Api.Entities {
                     RequestBody = data.ToString(),
                 };
             }
+            else if (builder.TransactionType == TransactionType.BatchClose) {
+                return new GpApiRequest {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"/batches/{builder.BatchReference}",
+                };
+            }
+            else if (builder.TransactionType == TransactionType.Reauth) {
+                var data = new JsonDoc()
+                    .Set("amount", builder.Amount.ToNumericCurrencyString());
+
+                return new GpApiRequest {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"/transactions/{builder.TransactionId}/reauthorization",
+                    RequestBody = data.ToString(),
+                };
+            }
             return null;
         }
     }

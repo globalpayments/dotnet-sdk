@@ -7,6 +7,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiAuthenticationTests : BaseGpApiTests {
         CreditCardData card;
+        private const Environment ENVIRONMENT = Environment.TEST;
+        private const string APP_ID = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0";
+        private const string APP_KEY = "y7vALnUtFulORlTV";
 
         [TestInitialize]
         public void TestInitialize() {
@@ -20,32 +23,20 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void GenerateAccessTokenManual() {
-            var environment = Entities.Environment.TEST;
-            string appId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0";
-            string appKey = "y7vALnUtFulORlTV";
-
-            AccessTokenInfo info = GpApiService.GenerateTransactionKey(environment, appId, appKey);
-
-            Assert.IsNotNull(info);
-            Assert.IsNotNull(info.Token);
-            Assert.IsNotNull(info.DataAccountName);
-            Assert.IsNotNull(info.DisputeManagementAccountName);
-            Assert.IsNotNull(info.TokenizationAccountName);
-            Assert.IsNotNull(info.TransactionProcessingAccountName);
+            AccessTokenInfo info = GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY);
+            assertAccessTokenResponse(info);
         }
 
         [TestMethod]
         public void GenerateAccessTokenManualWithPermissions() {
-            var environment = Entities.Environment.TEST;
-            string appId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0";
-            string appKey = "y7vALnUtFulORlTV";
             string[] permissions = new string[] { "PMT_POST_Create", "PMT_POST_Detokenize" };
 
-            AccessTokenInfo info = GpApiService.GenerateTransactionKey(environment, appId, appKey, permissions: permissions);
+            AccessTokenInfo info =
+                GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY, permissions: permissions);
 
             Assert.IsNotNull(info);
             Assert.IsNotNull(info.Token);
-            Assert.IsNotNull(info.TokenizationAccountName);
+            Assert.AreEqual("Tokenization", info.TokenizationAccountName);
             Assert.IsNull(info.DataAccountName);
             Assert.IsNull(info.DisputeManagementAccountName);
             Assert.IsNull(info.TransactionProcessingAccountName);
@@ -53,13 +44,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void GenerateAccessTokenManualWithWrongPermissions() {
-            var environment = Entities.Environment.TEST;
-            string appId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0";
-            string appKey = "y7vALnUtFulORlTV";
             string[] permissions = new string[] { "TEST_1", "TEST_2" };
 
             try {
-                AccessTokenInfo info = GpApiService.GenerateTransactionKey(environment, appId, appKey, permissions: permissions);
+                GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY, permissions: permissions);
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
@@ -71,7 +59,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void GenerateAccessTokenManualWithSecondsToExpire() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                Environment = Entities.Environment.TEST,
+                Environment = Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
                 SecondsToExpire = 60
@@ -89,7 +77,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void GenerateAccessTokenManualWithIntervalToExpire() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                Environment = Entities.Environment.TEST,
+                Environment = Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
                 IntervalToExpire = IntervalToExpire.THREE_HOURS
@@ -107,7 +95,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void GenerateAccessTokenManualWithSecondsToExpireAndIntervalToExpire() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                Environment = Entities.Environment.TEST,
+                Environment = Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
                 SecondsToExpire = 6000,
@@ -124,22 +112,31 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void GenerateAccessTokenManualWrongCredentials() {
-            var environment = Entities.Environment.TEST;
-            string appId = "T53SFpeCrOivkBGs84FtlpkdKp32FkYl";
-            string appKey = "j8rTLnUtFulOU7VL";
+        public void GenerateAccessTokenWithWrongCredentials() {
             try {
-                GpApiService.GenerateTransactionKey(environment, appId, appKey);
+                GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID + "a", APP_KEY);
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
                 Assert.AreEqual("40004", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: Forbidden - Credentials not recognized to create access token.", ex.Message);
+                Assert.AreEqual("Status Code: Forbidden - App credentials not recognized", ex.Message);
             }
         }
 
         [TestMethod]
-        public void UseInvalidAccessToken() {
+        public void GenerateAccessTokenWithWrongAppKeyCredentials() {
+            try {
+                GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY + "a");
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
+                Assert.AreEqual("40004", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: Forbidden - App credentials not recognized", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void UseInvalidAccessTokenInfo() {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AccessTokenInfo = new AccessTokenInfo {
                     Token = "INVALID_Token_w23e9sd93w3d",
@@ -156,15 +153,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
             }
             catch (GatewayException ex) {
-                //Because of the automatic retry this is the final error
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields app_id", ex.Message);
+                Assert.AreEqual("NOT_AUTHENTICATED", ex.ResponseCode);
+                Assert.AreEqual("40001", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: Unauthorized - Invalid access token", ex.Message);
             }
         }
 
         [TestMethod]
-        public void UseExpiredAccessToken() {
+        public void UseExpiredAccessTokenInfo() {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AccessTokenInfo = new AccessTokenInfo {
                     Token = "r1SzGAx2K9z5FNiMHkrapfRh8BC8",
@@ -181,11 +177,19 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
             }
             catch (GatewayException ex) {
-                //Because of the automatic retry this is the final error
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields app_id", ex.Message);
+                Assert.AreEqual("NOT_AUTHENTICATED", ex.ResponseCode);
+                Assert.AreEqual("40001", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: Unauthorized - Invalid access token", ex.Message);
             }
+        }
+
+        private void assertAccessTokenResponse(AccessTokenInfo accessTokenInfo) {
+            Assert.IsNotNull(accessTokenInfo);
+            Assert.IsNotNull(accessTokenInfo.Token);
+            Assert.AreEqual("Tokenization", accessTokenInfo.TokenizationAccountName);
+            Assert.AreEqual("Settlement Reporting", accessTokenInfo.DataAccountName);
+            Assert.AreEqual("Dispute Management", accessTokenInfo.DisputeManagementAccountName);
+            Assert.AreEqual("Transaction_Processing", accessTokenInfo.TransactionProcessingAccountName);
         }
     }
 }

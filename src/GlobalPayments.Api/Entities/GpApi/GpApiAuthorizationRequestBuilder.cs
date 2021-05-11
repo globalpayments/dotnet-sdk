@@ -60,7 +60,7 @@ namespace GlobalPayments.Api.Entities {
                             .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                             .Set("currency", builder.Currency)
-                            .Set("country", builder.BillingAddress?.Country ?? gateway.Country)
+                            .Set("country", gateway.Country)
                             .Set("payment_method", paymentMethod);
 
                         if (builder.PaymentMethod is ITokenizable && !string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
@@ -97,7 +97,7 @@ namespace GlobalPayments.Api.Entities {
                         .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
                         .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                         .Set("currency", builder.Currency)
-                        .Set("country", builder.BillingAddress?.Country ?? gateway.Country)
+                        .Set("country", gateway.Country)
                         .Set("payment_method", paymentMethod);
 
                     return new GpApiRequest {
@@ -208,7 +208,7 @@ namespace GlobalPayments.Api.Entities {
                 .Set("cashback_amount", builder.CashBackAmount.ToNumericCurrencyString())
                 .Set("surcharge_amount", builder.SurchargeAmount.ToNumericCurrencyString())
                 .Set("convenience_amount", builder.ConvenienceAmount.ToNumericCurrencyString())
-                .Set("country", builder.BillingAddress?.Country ?? gateway.Country)
+                .Set("country", gateway.Country)
                 //.Set("language", EnumConverter.GetMapping(Target.GP_API, Language))
                 .Set("ip_address", builder.CustomerIpAddress)
                 //.Set("site_reference", "") //

@@ -6,11 +6,48 @@ using System.Linq;
 
 namespace GlobalPayments.Api.Mapping {
     public class GpApiMapping {
+        private const string BATCH_CLOSE = "CLOSE";
+        private const string PAYMENT_METHOD_CREATE = "PAYMENT_METHOD_CREATE";
+        private const string PAYMENT_METHOD_DETOKENIZE = "PAYMENT_METHOD_DETOKENIZE";
+        private const string PAYMENT_METHOD_EDIT = "PAYMENT_METHOD_EDIT";
+        private const string PAYMENT_METHOD_DELETE = "PAYMENT_METHOD_DELETE";
+
+
         public static Transaction MapResponse(string rawResponse) {
             Transaction transaction = new Transaction();
 
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
+
+                transaction.ResponseCode = json.Get("action")?.GetValue<string>("result_code");
+
+                string actionType = json.Get("action")?.GetValue<string>("type");
+
+                switch (actionType) {
+                    case BATCH_CLOSE:
+                        transaction.BatchSummary = new BatchSummary {
+                            BatchReference = json.GetValue<string>("id"),
+                            Status = json.GetValue<string>("status"),
+                            TotalAmount = json.GetValue<string>("amount").ToAmount(),
+                            TransactionCount = json.GetValue<int>("transaction_count"),
+                        };
+                        return transaction;
+                    case PAYMENT_METHOD_CREATE:
+                    case PAYMENT_METHOD_DETOKENIZE:
+                    case PAYMENT_METHOD_EDIT:
+                    case PAYMENT_METHOD_DELETE:
+                        transaction.Token = json.GetValue<string>("id");
+                        transaction.Timestamp = json.GetValue<string>("time_created");
+                        transaction.ReferenceNumber = json.GetValue<string>("reference");
+                        transaction.CardType = json.Get("card")?.GetValue<string>("brand");
+                        transaction.CardNumber = json.Get("card")?.GetValue<string>("number");
+                        transaction.CardLast4 = json.Get("card")?.GetValue<string>("masked_number_last4");
+                        transaction.CardExpMonth = json.Get("card")?.GetValue<int>("expiry_month");
+                        transaction.CardExpYear = json.Get("card")?.GetValue<int>("expiry_year");
+                        return transaction;
+                    default:
+                        break;
+                }
 
                 transaction.TransactionId = json.GetValue<string>("id");
                 transaction.BalanceAmount = json.GetValue<string>("amount").ToAmount();
@@ -19,31 +56,13 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.ReferenceNumber = json.GetValue<string>("reference");
                 transaction.ClientTransactionId = json.GetValue<string>("reference");
                 transaction.BatchSummary = new BatchSummary {
-                    SequenceNumber = json.GetValue<string>("batch_id")
+                    BatchReference = json.GetValue<string>("batch_id")
                 };
-                transaction.ResponseCode = json.Get("action").GetValue<string>("result_code");
-                string id = json.GetValue<string>("id");
-                if ((id ?? string.Empty).StartsWith("PMT_")) {
-                    transaction.Token = id;
-                }
-                if (json.Has("payment_method")) {
-                    JsonDoc paymentMethod = json.Get("payment_method");
-                    transaction.Token = paymentMethod.GetValue<string>("id");
-                    transaction.AuthorizationCode = paymentMethod.GetValue<string>("result");
-                    if (paymentMethod.Has("card")) {
-                        JsonDoc card = paymentMethod.Get("card");
-                        transaction.CardType = card.GetValue<string>("brand");
-                        transaction.CardLast4 = card.GetValue<string>("masked_number_last4");
-                        transaction.CvnResponseMessage = card.GetValue<string>("cvv_result");
-                    }
-                }
-                if (json.Has("card")) {
-                    JsonDoc card = json.Get("card");
-                    transaction.CardNumber = card.GetValue<string>("number");
-                    transaction.CardType = card.GetValue<string>("brand");
-                    transaction.CardExpMonth = card.GetValue<int>("expiry_month");
-                    transaction.CardExpYear = card.GetValue<int>("expiry_year");
-                }
+                transaction.Token = json.Get("payment_method")?.GetValue<string>("id");
+                transaction.AuthorizationCode = json.Get("payment_method")?.GetValue<string>("result");
+                transaction.CardType = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand");
+                transaction.CardLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4");
+                transaction.CvnResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result");
             }
 
             return transaction;
@@ -138,6 +157,24 @@ namespace GlobalPayments.Api.Mapping {
                     (result as PagedResult<DisputeSummary>).Add(MapSettlementDisputeSummary(doc));
                 }
             }
+            else if (reportType == ReportType.StoredPaymentMethodDetail && result is StoredPaymentMethodSummary) {
+                result = MapStoredPaymentMethodSummary(json) as T;
+            }
+            else if (reportType == ReportType.FindStoredPaymentMethodsPaged && result is PagedResult<StoredPaymentMethodSummary>) {
+                SetPagingInfo(result as PagedResult<StoredPaymentMethodSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("payment_methods") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<StoredPaymentMethodSummary>).Add(MapStoredPaymentMethodSummary(doc));
+                }
+            }
+            else if (reportType == ReportType.ActionDetail && result is ActionSummary) {
+                result = MapActionSummary(json) as T;
+            }
+            else if (reportType == ReportType.FindActionsPaged && result is PagedResult<ActionSummary>) {
+                SetPagingInfo(result as PagedResult<ActionSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("actions") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<ActionSummary>).Add(MapActionSummary(doc));
+                }
+            }
 
             return result;
         }
@@ -228,6 +265,39 @@ namespace GlobalPayments.Api.Mapping {
             summary.TransactionAuthCode = doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("authcode");
             
             return summary;
+        }
+
+        public static StoredPaymentMethodSummary MapStoredPaymentMethodSummary(JsonDoc doc) {
+            return new StoredPaymentMethodSummary {
+                Id = doc.GetValue<string>("id"),
+                TimeCreated = doc.GetValue<DateTime>("time_created"),
+                Status = doc.GetValue<string>("status"),
+                Reference = doc.GetValue<string>("reference"),
+                Name = doc.GetValue<string>("name"),
+                CardLast4 = doc.Get("card")?.GetValue<string>("number_last4"),
+                CardType = doc.Get("card")?.GetValue<string>("brand"),
+                CardExpMonth = doc.Get("card")?.GetValue<string>("expiry_month"),
+                CardExpYear = doc.Get("card")?.GetValue<string>("expiry_year"),
+            };
+        }
+
+        public static ActionSummary MapActionSummary(JsonDoc doc) {
+            return new ActionSummary {
+                Id = doc.GetValue<string>("id"),
+                Type = doc.GetValue<string>("type"),
+                TimeCreated = doc.GetValue<DateTime>("time_created"),
+                Resource = doc.GetValue<string>("resource"),
+                Version = doc.GetValue<string>("version"),
+                ResourceId = doc.GetValue<string>("resource_id"),
+                ResourceStatus = doc.GetValue<string>("resource_status"),
+                HttpResponseCode = doc.GetValue<string>("http_response_code"),
+                ResponseCode = doc.GetValue<string>("response_code"),
+                AppId = doc.GetValue<string>("app_id"),
+                AppName = doc.GetValue<string>("app_name"),
+                AccountId = doc.GetValue<string>("account_id"),
+                AccountName = doc.GetValue<string>("account_name"),
+                MerchantName = doc.GetValue<string>("merchant_name"),
+            };
         }
 
 

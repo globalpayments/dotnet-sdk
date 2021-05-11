@@ -83,6 +83,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("decoupled_flow_request", builder.DecoupledFlowRequest);
                 request.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout);
                 request.Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
+                request.Set("enable_exemption_optimization", builder.EnableExemptionOptimization);
 
                 // card details
                 string hashValue = string.Empty;
@@ -312,6 +313,10 @@ namespace GlobalPayments.Api.Gateways {
             secureEcom.AcsInfoIndicator = doc.GetArray<string>("acs_info_indicator");
             secureEcom.DecoupledResponseIndicator = doc.GetValue<string>("decoupled_response_indicator");
             secureEcom.WhitelistStatus = doc.GetValue<string>("whitelist_status");
+            secureEcom.ExemptReason = doc.GetValue<string>("eos_reason");
+            if (secureEcom.ExemptReason == ExemptReason.APPLY_EXEMPTION.ToString()) {
+                secureEcom.ExemptStatus = ExemptStatus.TRANSACTION_RISK_ANALYSIS;
+            }
 
             // challenge mandated
             if (doc.Has("challenge_mandated")) {

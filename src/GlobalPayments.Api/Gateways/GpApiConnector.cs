@@ -144,7 +144,7 @@ namespace GlobalPayments.Api.Gateways {
                 return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
             }
             catch (GatewayException ex) {
-                if (ex.ResponseCode == "NOT_AUTHENTICATED") {
+                if (ex.ResponseCode == "NOT_AUTHENTICATED" && !string.IsNullOrEmpty(AppId) && !string.IsNullOrEmpty(AppKey)) {
                     SignIn();
                     return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
                 }

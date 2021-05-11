@@ -41,6 +41,16 @@ namespace GlobalPayments.Api.Services {
                 .WithSettlementDisputeId(settlementDisputeId);
         }
 
+        public static TransactionReportBuilder<StoredPaymentMethodSummary> StoredPaymentMethodDetail(string storedPaymentMethodId) {
+            return new TransactionReportBuilder<StoredPaymentMethodSummary>(ReportType.StoredPaymentMethodDetail)
+                .WithStoredPaymentMethodId(storedPaymentMethodId);
+        }
+
+        public static TransactionReportBuilder<ActionSummary> ActionDetail(string actionId) {
+            return new TransactionReportBuilder<ActionSummary>(ReportType.ActionDetail)
+                .WithActionId(actionId);
+        }
+
         public static TransactionReportBuilder<PagedResult<TransactionSummary>> FindTransactionsPaged(int page, int pageSize, string transactionId = null) {
             return new TransactionReportBuilder<PagedResult<TransactionSummary>>(ReportType.FindTransactionsPaged)
                 .WithTransactionId(transactionId)
@@ -64,6 +74,16 @@ namespace GlobalPayments.Api.Services {
 
         public static TransactionReportBuilder<PagedResult<DisputeSummary>> FindSettlementDisputesPaged(int page, int pageSize) {
             return new TransactionReportBuilder<PagedResult<DisputeSummary>>(ReportType.FindSettlementDisputesPaged)
+                .WithPaging(page, pageSize);
+        }
+
+        public static TransactionReportBuilder<PagedResult<StoredPaymentMethodSummary>> FindStoredPaymentMethodsPaged(int page, int pageSize) {
+            return new TransactionReportBuilder<PagedResult<StoredPaymentMethodSummary>>(ReportType.FindStoredPaymentMethodsPaged)
+                .WithPaging(page, pageSize);
+        }
+
+        public static TransactionReportBuilder<PagedResult<ActionSummary>> FindActionsPaged(int page, int pageSize) {
+            return new TransactionReportBuilder<PagedResult<ActionSummary>>(ReportType.FindActionsPaged)
                 .WithPaging(page, pageSize);
         }
     }

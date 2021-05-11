@@ -312,5 +312,10 @@ namespace GlobalPayments.Api.Entities {
         /// ProPay: Get Account balance
         /// </summary>
         GetAccountBalance = 1L << 59,
+
+        /// <summary>
+        /// Indicates a transaction reauthorization
+        /// </summary>
+        Reauth = 1L << 60,
     }
 }

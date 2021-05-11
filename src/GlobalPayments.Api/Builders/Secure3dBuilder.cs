@@ -30,6 +30,7 @@ namespace GlobalPayments.Api.Builders {
         internal string DecoupledNotificationUrl { get; set; }
         internal string DeliveryEmail { get; set; }
         internal DeliveryTimeFrame? DeliveryTimeframe { get; set; }
+        internal bool? EnableExemptionOptimization { get; set; }
         internal string EncodedData { get; set; }
         internal JsonDoc EphemeralPublicKey { get; set; }
         internal int? GiftCardCount { get; set; }
@@ -87,8 +88,8 @@ namespace GlobalPayments.Api.Builders {
         internal AgeIndicator? ShippingAddressUsageIndicator { get; set; }
         internal ShippingMethod? ShippingMethod { get; set; }
         internal bool? ShippingNameMatchesCardHolderName { get; set; }
+        internal StoredCredential StoredCredential { get; set; }
         internal ThreeDSecure ThreeDSecure { get; set; }
-        internal StoredCredentialInitiator? TransactionInitiator { get; set; }
         internal TransactionType TransactionType { get; set; }
         internal Secure3dVersion? Version {
             get {
@@ -200,6 +201,10 @@ namespace GlobalPayments.Api.Builders {
         }
         public Secure3dBuilder WithDeliveryTimeFrame(DeliveryTimeFrame deliveryTimeframe) {
             DeliveryTimeframe = deliveryTimeframe;
+            return this;
+        }
+        public Secure3dBuilder WithEnableExemptionOptimization(bool enableExemptionOptimization) {
+            EnableExemptionOptimization = enableExemptionOptimization;
             return this;
         }
         public Secure3dBuilder WithEncodedData(string encodedData) {
@@ -408,12 +413,12 @@ namespace GlobalPayments.Api.Builders {
             ShippingNameMatchesCardHolderName = shippingNameMatchesCardHolderName;
             return this;
         }
-        public Secure3dBuilder WithThreeDSecure(ThreeDSecure threeDSecure) {
-            ThreeDSecure = threeDSecure;
+        public Secure3dBuilder WithStoredCredential(StoredCredential storedCredential) {
+            StoredCredential = storedCredential;
             return this;
         }
-        public Secure3dBuilder WithTransactionInitiator(StoredCredentialInitiator value) {
-            TransactionInitiator = value;
+        public Secure3dBuilder WithThreeDSecure(ThreeDSecure threeDSecure) {
+            ThreeDSecure = threeDSecure;
             return this;
         }
         public Secure3dBuilder WithTransactionType(TransactionType transactionType) {

@@ -261,7 +261,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results.Count > 0);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionId)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionId, StringComparer.Ordinal)));
         }
 
         [TestMethod]
@@ -274,7 +274,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results.Count > 0);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionType)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionType, StringComparer.Ordinal)));
         }
 
         [TestMethod]
@@ -304,7 +304,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionId)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionId, StringComparer.Ordinal)));
         }
 
         [TestMethod]
@@ -314,7 +314,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionId)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionId, StringComparer.Ordinal)));
         }
 
         [TestMethod]
@@ -324,7 +324,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionType)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderBy(t => t.TransactionType, StringComparer.Ordinal)));
         }
 
         [TestMethod]
@@ -334,7 +334,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionType)));
+            Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(t => t.TransactionType, StringComparer.Ordinal)));
         }
 
         [TestMethod]
@@ -1294,19 +1294,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(settlementDisputeId, response.CaseId);
         }
 
-        [Ignore]
         [TestMethod]
         public void ReportSettlementDisputeDetailWrongId() {
-            string settlementDisputeId = "OIS_111";
+            string disputeId = "DIS_666";
             try {
-                ReportingService.SettlementDisputeDetail(settlementDisputeId)
+                ReportingService.SettlementDisputeDetail(disputeId)
                     .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40118", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: NotFound - Disputes OIS_111 not found at this " +
-                    "/ucp/settlement/disputes/OIS_111?account_name=Settlement%20Reporting", ex.Message);
+                Assert.AreEqual($"Status Code: NotFound - Disputes {disputeId} not found at this /ucp/settlement/disputes/{disputeId}", ex.Message);
             }
         }
 

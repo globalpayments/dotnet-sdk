@@ -212,7 +212,56 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void MapResponseTest() {
+        public void MapMapStoredPaymentMethodSummaryTest() {
+            // Arrange
+            string rawJson = "{\"id\":\"PMT_3502a05c-0a79-469b-bff9-994b665ce9d9\",\"time_created\":\"2021-04-23T18:46:57.000Z\",\"status\":\"ACTIVE\",\"merchant_id\":\"MER_c4c0df11039c48a9b63701adeaa296c3\",\"merchant_name\":\"Sandbox_merchant_2\",\"account_id\":\"TKA_eba30a1b5c4a468d90ceeef2ffff7f5e\",\"account_name\":\"Tokenization\",\"reference\":\"faed4ae3-1dd6-414a-bd7e-3a585715d9cc\",\"card\":{\"number_last4\":\"xxxxxxxxxxxx1111\",\"brand\":\"VISA\",\"expiry_month\":\"12\",\"expiry_year\":\"25\"},\"action\":{\"id\":\"ACT_wFGcHivudqleji9jA7S4MTapAHCTkp\",\"type\":\"PAYMENT_METHOD_SINGLE\",\"time_created\":\"2021-04-23T18:47:01.057Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg\",\"app_name\":\"colleens_app\"}}";
+
+            JsonDoc doc = JsonDoc.Parse(rawJson);
+
+            // Act
+            StoredPaymentMethodSummary paymentMethod = GpApiMapping.MapStoredPaymentMethodSummary(doc);
+
+            // Assert
+            Assert.AreEqual(doc.GetValue<string>("id"), paymentMethod.Id);
+            Assert.AreEqual(doc.GetValue<DateTime>("time_created"), paymentMethod.TimeCreated);
+            Assert.AreEqual(doc.GetValue<string>("status"), paymentMethod.Status);
+            Assert.AreEqual(doc.GetValue<string>("reference"), paymentMethod.Reference);
+            Assert.AreEqual(doc.GetValue<string>("name"), paymentMethod.Name);
+            Assert.AreEqual(doc.Get("card")?.GetValue<string>("number_last4"), paymentMethod.CardLast4);
+            Assert.AreEqual(doc.Get("card")?.GetValue<string>("brand"), paymentMethod.CardType);
+            Assert.AreEqual(doc.Get("card")?.GetValue<string>("expiry_month"), paymentMethod.CardExpMonth);
+            Assert.AreEqual(doc.Get("card")?.GetValue<string>("expiry_year"), paymentMethod.CardExpYear);
+        }
+
+        [TestMethod]
+        public void MapActionSummaryTest() {
+            // Arrange
+            string rawJson = "{\"id\":\"ACT_PJiFWTaNcLW8aVBo2fA8E5Dqd8ZyrH\",\"type\":\"CREATE_TOKEN\",\"time_created\":\"2021-03-24T02:02:27.158Z\",\"resource\":\"ACCESS_TOKENS\",\"resource_request_url\":\"http://localhost:8998/v7/unifiedcommerce/accesstoken\",\"version\":\"2020-12-22\",\"resource_parent_id\":\"\",\"resource_id\":\"ACT_PJiFWTaNcLW8aVBo2fA8E5Dqd8ZyrH\",\"resource_status\":\"\",\"http_response_code\":\"200\",\"http_response_message\":\"OK\",\"response_code\":\"SUCCESS\",\"response_detailed_code\":\"\",\"response_detailed_message\":\"\",\"app_id\":\"P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg\",\"app_name\":\"colleens_app\",\"app_developer\":\"colleen.mcgloin@globalpay.com\",\"merchant_id\":\"MER_c4c0df11039c48a9b63701adeaa296c3\",\"merchant_name\":\"Sandbox_merchant_2\",\"account_id\":\"\",\"account_name\":\"\",\"source_location\":\"63.241.252.2\",\"destination_location\":\"74.125.196.153\",\"metrics\":{\"X-GP-Version\":\"2020-12-22\"},\"action\":{\"id\":\"ACT_qOTwHG38UvuWwjcI6DBNu0uqbg8eoR\",\"type\":\"ACTION_SINGLE\",\"time_created\":\"2021-04-23T18:23:05.824Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg\",\"app_name\":\"colleens_app\"}}";
+
+            JsonDoc doc = JsonDoc.Parse(rawJson);
+
+            // Act
+            ActionSummary action = GpApiMapping.MapActionSummary(doc);
+
+            // Assert
+            Assert.AreEqual(doc.GetValue<string>("id"), action.Id);
+            Assert.AreEqual(doc.GetValue<string>("type"), action.Type);
+            Assert.AreEqual(doc.GetValue<DateTime>("time_created"), action.TimeCreated);
+            Assert.AreEqual(doc.GetValue<string>("resource"), action.Resource);
+            Assert.AreEqual(doc.GetValue<string>("version"), action.Version);
+            Assert.AreEqual(doc.GetValue<string>("resource_id"), action.ResourceId);
+            Assert.AreEqual(doc.GetValue<string>("resource_status"), action.ResourceStatus);
+            Assert.AreEqual(doc.GetValue<string>("http_response_code"), action.HttpResponseCode);
+            Assert.AreEqual(doc.GetValue<string>("response_code"), action.ResponseCode);
+            Assert.AreEqual(doc.GetValue<string>("app_id"), action.AppId);
+            Assert.AreEqual(doc.GetValue<string>("app_name"), action.AppName);
+            Assert.AreEqual(doc.GetValue<string>("account_id"), action.AccountId);
+            Assert.AreEqual(doc.GetValue<string>("account_name"), action.AccountName);
+            Assert.AreEqual(doc.GetValue<string>("merchant_name"), action.MerchantName);
+        }
+
+        [TestMethod]
+        public void MapResponseTest_CreateTransaction() {
             // Arrange
             string rawJson = "{\"id\":\"TRN_BHZ1whvNJnMvB6dPwf3znwWTsPjCn0\",\"time_created\":\"2020-12-04T12:46:05.235Z\",\"type\":\"SALE\",\"status\":\"PREAUTHORIZED\",\"channel\":\"CNP\",\"capture_mode\":\"LATER\",\"amount\":\"1400\",\"currency\":\"USD\",\"country\":\"US\",\"merchant_id\":\"MER_c4c0df11039c48a9b63701adeaa296c3\",\"merchant_name\":\"Sandbox_merchant_2\",\"account_id\":\"TRA_6716058969854a48b33347043ff8225f\",\"account_name\":\"Transaction_Processing\",\"reference\":\"15fbcdd9-8626-4e29-aae8-050f823f995f\",\"payment_method\":{\"id\":\"PMT_9a8f1b66-58e3-409d-86df-ed5fb14ad2f6\",\"result\":\"00\",\"message\":\"[ test system ] AUTHORISED\",\"entry_mode\":\"ECOM\",\"card\":{\"brand\":\"VISA\",\"masked_number_last4\":\"XXXXXXXXXXXX5262\",\"authcode\":\"12345\",\"brand_reference\":\"PSkAnccWLNMTcRmm\",\"brand_time_created\":\"\",\"cvv_result\":\"MATCHED\"}},\"batch_id\":\"\",\"action\":{\"id\":\"ACT_BHZ1whvNJnMvB6dPwf3znwWTsPjCn0\",\"type\":\"PREAUTHORIZE\",\"time_created\":\"2020-12-04T12:46:05.235Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"Uyq6PzRbkorv2D4RQGlldEtunEeGNZll\",\"app_name\":\"sample_app_CERT\"}}";
 
@@ -227,22 +276,50 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("time_created"), transaction.Timestamp);
             Assert.AreEqual(doc.GetValue<string>("status"), transaction.ResponseMessage);
             Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ReferenceNumber);
-            Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSummary?.SequenceNumber);
+            Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSummary?.BatchReference);
             Assert.AreEqual(doc.Get("action").GetValue<string>("result_code"), transaction.ResponseCode);
+            Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("id"), transaction.Token);
+            Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.AuthorizationCode);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), transaction.CardType);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4"), transaction.CardLast4);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result"), transaction.CvnResponseMessage);
+        }
 
-            if (doc.Has("payment_method")) {
-                Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("id"), transaction.Token);
-                Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.AuthorizationCode);
-                Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), transaction.CardType);
-                Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4"), transaction.CardLast4);
-            }
+        [TestMethod]
+        public void MapResponseTest_BatchClose() {
+            // Arrange
+            string rawJson = "{\"id\":\"BAT_631762-460\",\"time_last_updated\":\"2021-04-23T18:54:52.467Z\",\"status\":\"CLOSED\",\"amount\":\"869\",\"currency\":\"USD\",\"country\":\"US\",\"transaction_count\":2,\"action\":{\"id\":\"ACT_QUuw7OPd9Rw8n72oaVOmVlQXpuhLUZ\",\"type\":\"CLOSE\",\"time_created\":\"2021-04-23T18:54:52.467Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg\",\"app_name\":\"colleens_app\"}}";
 
-            if (doc.Has("card")) {
-                Assert.AreEqual(doc.Get("card")?.GetValue<string>("number"), transaction.CardNumber);
-                Assert.AreEqual(doc.Get("card")?.GetValue<string>("brand"), transaction.CardType);
-                Assert.AreEqual(doc.Get("card")?.GetValue<int>("expiry_month"), transaction.CardExpMonth);
-                Assert.AreEqual(doc.Get("card")?.GetValue<int>("expiry_year"), transaction.CardExpYear);
-            }
+            // Act
+            Transaction transaction = GpApiMapping.MapResponse(rawJson);
+
+            // Assert
+            Assert.IsNotNull(transaction?.BatchSummary);
+            JsonDoc doc = JsonDoc.Parse(rawJson);
+            Assert.AreEqual(doc.GetValue<string>("id"), transaction?.BatchSummary?.BatchReference);
+            Assert.AreEqual(doc.GetValue<string>("status"), transaction?.BatchSummary?.Status);
+            Assert.AreEqual(doc.GetValue<string>("amount").ToAmount(), transaction?.BatchSummary?.TotalAmount);
+            Assert.AreEqual(doc.GetValue<int>("transaction_count"), transaction?.BatchSummary?.TransactionCount);
+        }
+
+        [TestMethod]
+        public void MapResponseTest_CreateStoredPaymentMethod() {
+            // Arrange
+            string rawJson = "{\"id\":\"PMT_e150ba7c-bbbd-41fe-bc04-f21d18def2a1\",\"time_created\":\"2021-04-26T14:59:00.813Z\",\"status\":\"ACTIVE\",\"usage_mode\":\"MULTIPLE\",\"merchant_id\":\"MER_c4c0df11039c48a9b63701adeaa296c3\",\"merchant_name\":\"Sandbox_merchant_2\",\"account_id\":\"TKA_eba30a1b5c4a468d90ceeef2ffff7f5e\",\"account_name\":\"Tokenization\",\"reference\":\"9486a9e8-d8bd-4fd2-877c-796d07f3a2ce\",\"card\":{\"masked_number_last4\":\"XXXXXXXXXXXX1111\",\"brand\":\"VISA\",\"expiry_month\":\"12\",\"expiry_year\":\"25\"},\"action\":{\"id\":\"ACT_jFOurWcX9CvA8UKtEywVpxArNEryvZ\",\"type\":\"PAYMENT_METHOD_CREATE\",\"time_created\":\"2021-04-26T14:59:00.813Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg\",\"app_name\":\"colleens_app\"}}";
+
+            // Act
+            Transaction transaction = GpApiMapping.MapResponse(rawJson);
+
+            // Assert
+            JsonDoc doc = JsonDoc.Parse(rawJson);
+            Assert.AreEqual(doc.GetValue<string>("id"), transaction.Token);
+            Assert.AreEqual(doc.GetValue<string>("time_created"), transaction.Timestamp);
+            Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ReferenceNumber);
+            Assert.AreEqual(doc.Get("card")?.GetValue<string>("brand"), transaction.CardType);
+            Assert.AreEqual(doc.Get("card")?.GetValue<string>("number"), transaction.CardNumber);
+            Assert.AreEqual(doc.Get("card")?.GetValue<string>("masked_number_last4"), transaction.CardLast4);
+            Assert.AreEqual(doc.Get("card")?.GetValue<int>("expiry_month"), transaction.CardExpMonth);
+            Assert.AreEqual(doc.Get("card")?.GetValue<int>("expiry_year"), transaction.CardExpYear);
         }
     }
 }

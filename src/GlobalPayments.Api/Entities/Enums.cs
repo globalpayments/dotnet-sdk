@@ -468,6 +468,26 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a Settlement Dispute report paged
         /// </summary>
         FindSettlementDisputesPaged = 1 << 17,
+
+        /// <summary>
+        /// Indicates a Stored Payment Method details report
+        /// </summary>
+        StoredPaymentMethodDetail = 1 << 18,
+
+        /// <summary>
+        /// Indicates a Stored Payment Methods report paged
+        /// </summary>
+        FindStoredPaymentMethodsPaged = 1 << 19,
+
+        /// <summary>
+        /// Indcates an action details report
+        /// </summary>
+        ActionDetail = 1 << 20,
+
+        /// <summary>
+        /// Indicates an actions report paged
+        /// </summary>
+        FindActionsPaged = 1 << 21,
     }
 
     /// <summary>
