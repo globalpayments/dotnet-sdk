@@ -56,6 +56,7 @@ namespace GlobalPayments.Api.Gateways {
             #region card holder
             if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring
                 && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift
+                && builder.TransactionType != TransactionType.Tokenize
             ) {
                 var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
                 var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
@@ -869,6 +870,8 @@ namespace GlobalPayments.Api.Gateways {
         #region transaction mapping
         private string MapTransactionType<T>(T builder) where T : TransactionBuilder<Transaction> {
             switch (builder.TransactionType) {
+                case TransactionType.Tokenize:
+                    return "Tokenize";
                 case TransactionType.BatchClose:
                     return "BatchClose";
                 case TransactionType.Decline: {

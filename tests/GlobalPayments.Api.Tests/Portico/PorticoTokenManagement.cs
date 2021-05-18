@@ -54,8 +54,22 @@ namespace GlobalPayments.Api.Tests.Portico {
                 token.Verify().Execute();
             }
             catch (GatewayException exc) {
-                Assert.AreEqual("27", exc.ResponseCode);
+                Assert.AreEqual("23", exc.ResponseCode);
             }
+        }
+
+        [TestMethod]
+        public void TokenizeWithoutVerification() {
+            CreditCardData card = new CreditCardData {
+                Number = "5454545454545454",
+                ExpMonth = 12,
+                ExpYear = 2015,
+                Cvn = "123"
+            };
+
+            string mut = card.Tokenize(false);
+            Assert.IsNotNull(mut);
+            Assert.IsTrue(mut.Contains("5454"));
         }
     }
 }

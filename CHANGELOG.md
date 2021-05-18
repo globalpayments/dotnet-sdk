@@ -1,6 +1,14 @@
 # Changelog
 
-## Latest
+## v1.7.26 (05/13/2021)
+
+#### Enhancements:
+
+- Add support for Tokenize transaction type with Portico Gateway
+
+---
+
+## v1.7.24 (05/11/2021)
 
 #### Enhancements:
 
