@@ -314,6 +314,15 @@ namespace GlobalPayments.Api.Gateways {
             }
             #endregion
 
+            #region DYNAMIC DESCRIPTOR
+            if (builder.TransactionType == TransactionType.Auth || builder.TransactionType == TransactionType.Capture || builder.TransactionType == TransactionType.Refund) {
+                if (!string.IsNullOrWhiteSpace(builder.DynamicDescriptor)) {
+                    var narrative = et.SubElement(request, "narrative");
+                    et.SubElement(narrative, "chargedescription", builder.DynamicDescriptor);
+                }
+            }
+            #endregion
+
             var response = DoTransaction(et.ToString(request));
             return MapResponse(response, builder);
         }
@@ -457,6 +466,7 @@ namespace GlobalPayments.Api.Gateways {
                 toHash.Add(HostedPaymentConfig.FraudFilterMode.ToString());
             }
 
+            request.Set("CHARGE_DESCRIPTION", builder.DynamicDescriptor); 
             request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray()));
             return request.ToString();
         }
@@ -562,6 +572,14 @@ namespace GlobalPayments.Api.Gateways {
                             et.SubElement(item, "field" + i.ToString().PadLeft(2, '0'), data[i - 1]);
                         }
                     }
+                }
+            }
+
+            // dynamic descriptor
+            if (builder.TransactionType == TransactionType.Capture || builder.TransactionType == TransactionType.Refund) {
+                if (!string.IsNullOrWhiteSpace(builder.DynamicDescriptor)) {
+                    var narrative = et.SubElement(request, "narrative");
+                    et.SubElement(narrative, "chargedescription", builder.DynamicDescriptor);
                 }
             }
 

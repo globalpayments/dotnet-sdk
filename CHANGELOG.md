@@ -1,10 +1,11 @@
 # Changelog
 
-## v1.7.26 (05/13/2021)
+## Latest
 
-#### Enhancements:
+#### Enhancements
 
 - Add support for Tokenize transaction type with Portico Gateway
+- Add GP ECOM dynamic descriptor field
 
 ---
 

@@ -46,6 +46,25 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void CreditAuthorization_WithDynamicDescriptor() {
+            string dynamicDescriptor = "MyCompany LLC";
+
+            var authorization = card.Authorize(5m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithDynamicDescriptor(dynamicDescriptor)
+                .Execute();
+            Assert.IsNotNull(authorization);
+            Assert.AreEqual("00", authorization.ResponseCode, authorization.ResponseMessage);
+
+            var capture = authorization.Capture(5m)
+                .WithDynamicDescriptor(dynamicDescriptor)
+                .Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("00", capture.ResponseCode, capture.ResponseMessage);
+        }
+
+        [TestMethod]
         public void CreditAuthorizationForMultiCapture() {
             var authorization = card.Authorize(14m)
                 .WithCurrency("USD")
