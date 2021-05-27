@@ -24,6 +24,15 @@ namespace GlobalPayments.Api.Tests.Portico {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
+
+            ServicesContainer.ConfigureService(new PorticoConfig {
+                DeviceId = 5315938,
+                SiteId = 101436,
+                LicenseId = 101433,
+                Username = "777700857994R",
+                Password = "summer%1151",
+                Environment = Entities.Environment.TEST
+            }, "LegacyCreds");
         }
 
         [TestMethod]
@@ -513,6 +522,31 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(response);
             Assert.AreEqual("51", response.ResponseCode);
 
+        }
+
+        [TestMethod]
+        public void Test_999_CreateCustomerWithLegacyCreds() {
+            var customer = new Customer {
+                Id = "LegacyCustomer",
+                Status = "Active",
+                FirstName = "Bill",
+                LastName = "Johnson",
+                Company = "Heartland Payment Systems",
+                Address = new Address {
+                    StreetAddress1 = "987 Elm St",
+                    City = "Princeton",
+                    Province = "NJ",
+                    PostalCode = "12345",
+                    Country = "USA"
+                },
+                HomePhone = "9876543210",
+                WorkPhone = "9876543210",
+                Fax = "9876543210",
+                MobilePhone = "9876543210",
+                Email = "text@example.com"
+            }.Create("LegacyCreds");
+            Assert.IsNotNull(customer);
+            Assert.IsNotNull(customer.Key);
         }
     }
 }

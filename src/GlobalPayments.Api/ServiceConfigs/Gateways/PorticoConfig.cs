@@ -78,7 +78,10 @@ namespace GlobalPayments.Api {
 
         private string PayPlanEndpoint {
             get {
-                if (SecretApiKey.ToLower().Contains("cert") || (String.IsNullOrEmpty(SecretApiKey) && Environment == Entities.Environment.TEST)) {
+                if (
+                    (!String.IsNullOrEmpty(SecretApiKey) && SecretApiKey.ToLower().Contains("cert")) ||
+                    (String.IsNullOrEmpty(SecretApiKey) && Environment == Entities.Environment.TEST)
+                ) {
                     return "/Portico.PayPlan.v2/";
                 }
                 return "/PayPlan.v2/";
