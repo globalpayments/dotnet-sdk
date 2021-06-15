@@ -27,6 +27,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             
             Assert.IsNotNull(response);
             Assert.AreEqual(orderId, response.OrderId);
+            Assert.AreEqual("0QApOb88ngvBrZF8", response.SchemeReferenceData);
         }
 
         [TestMethod]

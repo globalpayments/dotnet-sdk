@@ -857,6 +857,10 @@ namespace GlobalPayments.Api.Gateways {
                         summary.Xid = response.GetValue<string>("xid");
                     }
 
+                    if (response.Has("srd")) {
+                        summary.SchemeReferenceData = response.GetValue<string>("srd");
+                    }
+
                     rvalue = summary as T;
                 }
                 return rvalue;
