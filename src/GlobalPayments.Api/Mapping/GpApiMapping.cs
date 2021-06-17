@@ -254,6 +254,8 @@ namespace GlobalPayments.Api.Mapping {
             var summary = MapDisputeSummary(doc);
 
             summary.CaseIdTime = doc.GetValue<DateTime?>("stage_time_created");
+            summary.DepositDate = doc.GetValue<string>("deposit_time_created")?.ToDateTime("yyyy-MM-dd");
+            summary.DepositReference = doc.GetValue<string>("deposit_id");
             summary.TransactionTime = doc.Get("transaction")?.GetValue<DateTime?>("time_created");
             summary.TransactionType = doc.Get("transaction")?.GetValue<string>("type");
             summary.TransactionAmount = doc.Get("transaction")?.GetValue<string>("amount").ToAmount();

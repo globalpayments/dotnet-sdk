@@ -335,11 +335,16 @@ namespace GlobalPayments.Api.Gateways {
 
             // message_extension
             if (doc.Has("message_extension")) {
+                secureEcom.MessageExtensions = new List<MessageExtension>();
                 foreach (JsonDoc messageExtension in doc.GetEnumerator("message_extension")) {
-                    secureEcom.CriticalityIndicator = messageExtension.GetValue<string>("criticality_indicator");
-                    secureEcom.MessageExtensionData = messageExtension.GetValue<string>("data");
-                    secureEcom.MessageExtensionId = messageExtension.GetValue<string>("id");
-                    secureEcom.MessageExtensionName = messageExtension.GetValue<string>("name");
+                    MessageExtension msgExtension = new MessageExtension
+                    {
+                        CriticalityIndicator = messageExtension.GetValue<string>("criticality_indicator"),
+                        MessageExtensionData = messageExtension.GetValue<JsonDoc>("data")?.ToString(),
+                        MessageExtensionId = messageExtension.GetValue<string>("id"),
+                        MessageExtensionName = messageExtension.GetValue<string>("name")
+                    };
+                    secureEcom.MessageExtensions.Add(msgExtension);
                 }
             }
 

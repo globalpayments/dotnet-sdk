@@ -152,6 +152,17 @@ namespace GlobalPayments.Api.Utils {
             return null;
         }
 
+        public static DateTime? ToDateTime(this string str, string format)
+        {
+            if (string.IsNullOrEmpty(str))
+                return null;
+
+            DateTime rvalue;
+            if (DateTime.TryParseExact(str, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out rvalue))
+                return rvalue;
+            return null;
+        }
+
         public static byte[] GetKey(this Rfc2898DeriveBytes bytes) {
             return bytes.GetBytes(32);
         }

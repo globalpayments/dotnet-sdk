@@ -209,6 +209,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
             Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("authcode"), dispute.TransactionAuthCode);
             Assert.AreEqual(doc.GetValue<DateTime>("time_to_respond_by"), dispute.RespondByDate);
+            Assert.AreEqual(doc.GetValue<string>("deposit_time_created")?.ToDateTime("yyyy-MM-dd"), dispute.DepositDate);
+            Assert.AreEqual(doc.GetValue<String>("deposit_id"), dispute.DepositReference);
         }
 
         [TestMethod]

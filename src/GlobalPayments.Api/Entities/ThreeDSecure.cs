@@ -43,8 +43,6 @@ namespace GlobalPayments.Api.Entities {
 
         public bool ChallengeMandated { get; set; }
 
-        public string CriticalityIndicator { get; set; }
-
         private string _currency;
         internal string Currency {
             get { return _currency; }
@@ -127,13 +125,7 @@ namespace GlobalPayments.Api.Entities {
         }
 
         public string MessageCategory { get; set; }
-
-        public string MessageExtensionData { get; set; }
-
-        public string MessageExtensionId { get; set; }
-
-        public string MessageExtensionName { get; set; }
-
+        public List<MessageExtension> MessageExtensions { get; set; }
         public string MessageVersion { get; set; }
 
         private string _orderId;
@@ -217,7 +209,7 @@ namespace GlobalPayments.Api.Entities {
                 CardHolderResponseInfo = MergeValue(CardHolderResponseInfo, secureEcom.CardHolderResponseInfo);
                 Cavv = MergeValue(Cavv, secureEcom.Cavv);
                 ChallengeMandated = MergeValue(ChallengeMandated, secureEcom.ChallengeMandated);
-                CriticalityIndicator = MergeValue(CriticalityIndicator, secureEcom.CriticalityIndicator);
+                MessageExtensions = MergeValue(MessageExtensions, secureEcom.MessageExtensions);
                 Currency = MergeValue(Currency, secureEcom.Currency);
                 DecoupledResponseIndicator = MergeValue(DecoupledResponseIndicator, secureEcom.DecoupledResponseIndicator);
                 DirectoryServerTransactionId = MergeValue(DirectoryServerTransactionId, secureEcom.DirectoryServerTransactionId);
@@ -227,9 +219,6 @@ namespace GlobalPayments.Api.Entities {
                 Enrolled = MergeValue(Enrolled, secureEcom.Enrolled);
                 IssuerAcsUrl = MergeValue(IssuerAcsUrl, secureEcom.IssuerAcsUrl);
                 MessageCategory = MergeValue(MessageCategory, secureEcom.MessageCategory);
-                MessageExtensionData = MergeValue(MessageExtensionData, secureEcom.MessageExtensionData);
-                MessageExtensionId = MergeValue(MessageExtensionId, secureEcom.MessageExtensionId);
-                MessageExtensionName = MergeValue(MessageExtensionName, secureEcom.MessageExtensionName);
                 MessageVersion = MergeValue(MessageVersion, secureEcom.MessageVersion);
                 OrderId = MergeValue(OrderId, secureEcom.OrderId);
                 PayerAuthenticationRequest = MergeValue(PayerAuthenticationRequest, secureEcom.PayerAuthenticationRequest);
