@@ -34,8 +34,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
-                AppKey = "ockJr6pv6KFoGiZA",
+                AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
+                AppKey = "6gFzVGf40S7ZpjJs",
                 Country = "GB",
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",

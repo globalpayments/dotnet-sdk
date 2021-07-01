@@ -75,7 +75,7 @@ namespace GlobalPayments.Api.Mapping {
 
             var summary = new TransactionSummary {
                 TransactionId = doc.GetValue<string>("id"),
-                TransactionDate = doc.GetValue<DateTime>("time_created"),
+                TransactionDate = doc.GetValue<DateTime?>("time_created", DateConverter),
                 TransactionStatus = doc.GetValue<string>("status"),
                 TransactionType = doc.GetValue<string>("type"),
                 Channel = doc.GetValue<string>("channel"),
@@ -111,7 +111,7 @@ namespace GlobalPayments.Api.Mapping {
 
         private static DateTime? DateConverter(object value) {
             if (value != null && !string.IsNullOrEmpty(value.ToString())) {
-                return DateTime.Parse(value.ToString());
+                return Convert.ToDateTime(value);
             }
             return null;
         }
@@ -190,7 +190,7 @@ namespace GlobalPayments.Api.Mapping {
         public static DepositSummary MapDepositSummary(JsonDoc doc) {
             var summary = new DepositSummary {
                 DepositId = doc.GetValue<string>("id"),
-                DepositDate = doc.GetValue<DateTime>("time_created"),
+                DepositDate = doc.GetValue<DateTime?>("time_created", DateConverter),
                 Status = doc.GetValue<string>("status"),
                 Type = doc.GetValue<string>("funding_type"),
                 Amount = doc.GetValue<string>("amount").ToAmount(),
@@ -222,7 +222,7 @@ namespace GlobalPayments.Api.Mapping {
         public static DisputeSummary MapDisputeSummary(JsonDoc doc) {
             var summary = new DisputeSummary {
                 CaseId = doc.GetValue<string>("id"),
-                CaseIdTime = doc.GetValue<DateTime?>("time_created"),
+                CaseIdTime = doc.GetValue<DateTime?>("time_created", DateConverter),
                 CaseStatus = doc.GetValue<string>("status"),
                 CaseStage = doc.GetValue<string>("stage"),
                 CaseAmount = doc.GetValue<string>("amount").ToAmount(),
@@ -244,7 +244,7 @@ namespace GlobalPayments.Api.Mapping {
             };
 
             if (!string.IsNullOrEmpty(doc.GetValue<string>("time_to_respond_by"))) {
-                summary.RespondByDate = doc.GetValue<DateTime?>("time_to_respond_by");
+                summary.RespondByDate = doc.GetValue<DateTime?>("time_to_respond_by", DateConverter);
             }
 
             return summary;
@@ -253,10 +253,10 @@ namespace GlobalPayments.Api.Mapping {
         public static DisputeSummary MapSettlementDisputeSummary(JsonDoc doc) {
             var summary = MapDisputeSummary(doc);
 
-            summary.CaseIdTime = doc.GetValue<DateTime?>("stage_time_created");
-            summary.DepositDate = doc.GetValue<string>("deposit_time_created")?.ToDateTime("yyyy-MM-dd");
+            summary.CaseIdTime = doc.GetValue<DateTime?>("stage_time_created", DateConverter);
+            summary.DepositDate = doc.GetValue<DateTime?>("deposit_time_created",DateConverter);
             summary.DepositReference = doc.GetValue<string>("deposit_id");
-            summary.TransactionTime = doc.Get("transaction")?.GetValue<DateTime?>("time_created");
+            summary.TransactionTime = doc.Get("transaction")?.GetValue<DateTime?>("time_created", DateConverter);
             summary.TransactionType = doc.Get("transaction")?.GetValue<string>("type");
             summary.TransactionAmount = doc.Get("transaction")?.GetValue<string>("amount").ToAmount();
             summary.TransactionCurrency = doc.Get("transaction")?.GetValue<string>("currency");
@@ -340,7 +340,9 @@ namespace GlobalPayments.Api.Mapping {
                         ChallengeReturnUrl = json.Get("notifications")?.GetValue<string>("challenge_return_url"),
                         SessionDataFieldName = json.Get("three_ds")?.GetValue<string>("session_data_field_name"),
                         MessageType = json.Get("three_ds")?.GetValue<string>("message_type"),
-                        PayerAuthenticationRequest = json.Get("three_ds")?.GetValue<string>("challenge_value"),
+                        PayerAuthenticationRequest = (!string.IsNullOrEmpty(json.Get("three_ds")?.Get("method_data")?.GetValue<string>("encoded_method_data"))) ?
+                            json.Get("three_ds")?.Get("method_data")?.GetValue<string>("encoded_method_data") :
+                            json.Get("three_ds")?.GetValue<string>("challenge_value"),
                         StatusReason = json.Get("three_ds")?.GetValue<string>("status_reason"),
                         MessageCategory = json.Get("three_ds")?.GetValue<string>("message_category"),
                     }
