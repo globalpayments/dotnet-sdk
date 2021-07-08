@@ -2,10 +2,70 @@
 
 ## Latest
 
-#### Enhancements
+#### Enhancements:
+
+- Changelog updates
+
+---
+
+## v1.7.33 (07/01/2021)
+
+#### Enhancements:
+
+- Add "encoded_method_data" field mapping to PayerAuthenticationRequest in Map3DSecureData
+
+#### Bug Fixes:
+
+- Fix GpApi response mapping for null dates
+
+---
+
+## v1.7.31 (06/24/2021)
+
+#### Enhancements:
+
+- Add Itokenizable implementation to eCheck class
+
+---
+
+## v1.7.30 (06/17/2021)
+
+#### Enhancements:
+
+- Add MessageExtension property to ThreeDSecure class
+- Add DepositDate and DepositReference to Settlement Dispute Summary response mapping
+
+---
+
+## v1.7.29 (06/15/2021)
+
+#### Enhancements:
+
+- Add SchemeReferenceData to GPEcom Transaction Detail Response mapping
+
+---
+
+## v1.7.28 (05/27/2021)
+
+#### Enhancements:
+
+- Add support for portico create customer functionallity with legacy credentials
+
+---
+
+## v1.7.27 (05/13/2021)
+
+#### Enhancements:
+
+- Add GP ECOM dynamic descriptor field
+
+---
+
+## v1.7.26 (05/11/2021)
+
+#### Enhancements:
 
 - Add support for Tokenize transaction type with Portico Gateway
-- Add GP ECOM dynamic descriptor field
 
 ---
 
