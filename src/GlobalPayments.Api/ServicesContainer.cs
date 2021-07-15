@@ -106,8 +106,10 @@ namespace GlobalPayments.Api {
             ConfigureService(config.GatewayConfig, configName);
         }
 
-        public static void ConfigureService<T>(T config, string configName = "default") where T : Configuration {
-            if (config != null) {
+        public static void ConfigureService<T>(T config, string configName = "default") where T: Configuration {
+            if (config == null) {
+                Instance.removeConfiguration(configName);
+            } else {
                 if (!config.Validated)
                     config.Validate();
 
@@ -206,6 +208,12 @@ namespace GlobalPayments.Api {
             }
 
             throw new ApiException("The specified configuration has not been configured for gateway processing.");
+        }
+
+        internal void removeConfiguration(String configName) {
+            if(_configurations.ContainsKey(configName)) {
+                _configurations.Remove(configName);
+            }
         }
 
         /// <summary>

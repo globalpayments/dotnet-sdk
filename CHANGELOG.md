@@ -1,10 +1,10 @@
 # Changelog
 
-## Latest
+## v1.7.35 (07/15/2021)
 
 #### Enhancements:
 
-- Changelog updates
+- Add ability to remove gateway configurations by config name
 
 ---
 
