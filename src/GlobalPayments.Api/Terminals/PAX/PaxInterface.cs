@@ -54,7 +54,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 ControlCodes.FS,
                 300
             ));
-            var signatureResponse = new SignatureResponse(response);
+            var signatureResponse = new SignatureResponse(response, _controller.DeviceType.Value);
             if (signatureResponse.DeviceResponseCode == "000000")
                 return GetSignatureFile();
             return signatureResponse;
