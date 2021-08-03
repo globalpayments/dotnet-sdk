@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Tests.Logging;
 using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -8,12 +9,14 @@ using System.Linq;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
-    public class GpApiReportingTests {
+    public class GpApiReportingTests : BaseGpApiTests{
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
+                RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt"),
+                EnableLogging = true
             });
         }
 
@@ -492,7 +495,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_InvalidCardBrand() {
-            string cardBrand = "MASTER";
+            string cardBrand = "MIT";
 
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             PagedResult<TransactionSummary> result = ReportingService.FindSettlementTransactionsPaged(1, 10)
@@ -639,7 +642,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.Status == status.ToString()));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.TransactionStatus == EnumConverter.GetMapping(Target.GP_API, status)));
         }
 
         [TestMethod]
@@ -1065,8 +1068,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDisputesPaged_By_ARN() {
             string arn = "135091790340196";
             PagedResult<DisputeSummary> result = ReportingService.FindDisputesPaged(1, 10)
-                .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
-                .And(SearchCriteria.AquirerReferenceNumber, arn)
+                .Where(SearchCriteria.AquirerReferenceNumber, arn)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -1086,6 +1088,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        [Ignore]
+        // Although requests are done with &STATUS set properly, the real endpoint returns disputes with other statuses.
+        // Apart from this, the request param: STATUS is accepted, but status is not.
+        // TODO: Reported error to GP-API team. Enable it when fixed.
         public void ReportFindDisputesPaged_By_Status() {
             DisputeStatus disputeStatus = DisputeStatus.UnderReview;
             PagedResult<DisputeSummary> result = ReportingService.FindDisputesPaged(1, 10)
@@ -1199,6 +1205,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        [Ignore]
+        // orderBy FromStageTimeCreated is not supported anymore
         public void ReportFindDisputesPaged_Order_By_FromStageTimeCreated() {
             PagedResult<DisputeSummary> result = ReportingService.FindDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.FromStageTimeCreated, SortDirection.Descending)
@@ -1445,15 +1453,30 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_By_Status() {
-            string status = "WITH_MERCHANT";
+            string status = "FUNDED";
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
                 .Where(DataServiceCriteria.StartStageDate, new DateTime(2020, 1, 1))
-                .And(SearchCriteria.DisputeStatus, DisputeStatus.WithMerchant)
+                .And(SearchCriteria.DisputeStatus, DisputeStatus.Funded)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
             Assert.IsTrue(result.Results.TrueForAll(d => d.CaseStatus == status));
+        }
+
+        [TestMethod]
+        public void ReportFindSettlementDisputesPaged_By_DepositDate()
+        {
+            DateTime startDepositDate = new DateTime(2021, 1, 1);
+            DateTime endDepositDate = new DateTime(2021, 7, 30);
+            PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
+                .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
+                .Where(DataServiceCriteria.StartDepositDate, startDepositDate)
+                .And(DataServiceCriteria.EndDepositDate, endDepositDate)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<DisputeSummary>);
+            Assert.IsTrue(result.Results.TrueForAll(d => d.DepositDate >= startDepositDate && d.DepositDate <= endDepositDate));
         }
 
         [TestMethod]

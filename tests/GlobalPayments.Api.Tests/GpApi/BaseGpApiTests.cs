@@ -7,6 +7,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         protected const string VERIFIED = "VERIFIED";
         protected const string CLOSED = "CLOSED";
 
+        public static string APP_ID = "yDkdruxQ7hUjm8p76SaeBVAUnahESP5P";
+        public static string APP_KEY = "o8C8CYrgXNELI46x";
         protected string GetMapping<T>(T value, Target target = Target.GP_API) where T : Enum {
             return EnumConverter.GetMapping(target, value);
         }

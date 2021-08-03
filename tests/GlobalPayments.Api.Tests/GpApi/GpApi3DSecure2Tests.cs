@@ -26,8 +26,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
-                AppKey = "ockJr6pv6KFoGiZA",
+                AppId = APP_ID,
+                AppKey = APP_KEY,
                 Country = "GB",
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
@@ -188,19 +188,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
 
-        //TODO - refund not working
-        [TestMethod]
-        [Ignore]
-        public void CardHolderEnrolled_ChallengeRequired_v2_Refund() {
-            var secureEcom = Secure3dService.CheckEnrollment(card)
-                .WithCurrency(Currency)
-                .WithAmount(Amount)
-                .WithTransactionType(TransactionType.Refund)
-                .Execute();
-
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
-        }
-
         [TestMethod]
         public void CardHolderEnrolled_ChallengeRequired_v2_WithNullPaymentMethod() {
             card = new CreditCardData();
@@ -322,22 +309,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     Sequence = StoredCredentialSequence.First,
                     Reason = StoredCredentialReason.NoShow
                 })
-                .Execute();
-
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
-            Assert.IsFalse(secureEcom.ChallengeMandated);
-        }
-
-        //TODO - refund not working
-        [TestMethod]
-        [Ignore]
-        public void CardHolderEnrolled_Frictionless_v2_Refund() {
-            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
-
-            var secureEcom = Secure3dService.CheckEnrollment(card)
-                .WithCurrency(Currency)
-                .WithAmount(Amount)
-                .WithTransactionType(TransactionType.Refund)
                 .Execute();
 
             AssertThreeDSResponse(secureEcom, AVAILABLE);
@@ -494,29 +465,30 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
-        [TestMethod]
-        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_AllSources() {
-            foreach (AuthenticationSource source in Enum.GetValues(typeof(AuthenticationSource))) {
-                var secureEcom = Secure3dService.CheckEnrollment(card)
-                    .WithCurrency(Currency)
-                    .WithAmount(Amount)
-                    .Execute();
+        [DataTestMethod]
+        [DataRow(AuthenticationSource.BROWSER)]
+        //[DataRow(AuthenticationSource.MERCHANT_INITIATED)]
+        //[DataRow(AuthenticationSource.MOBILE_SDK)]
+        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_AllSources(AuthenticationSource source) {
+            var secureEcom = Secure3dService.CheckEnrollment(card)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .Execute();
 
-                AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, AVAILABLE);
 
-                var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
-                    .WithAmount(Amount)
-                    .WithCurrency(Currency)
-                    .WithAuthenticationSource(source)
-                    .WithMethodUrlCompletion(MethodUrlCompletion.YES)
-                    .WithOrderCreateDate(DateTime.Now)
-                    .WithAddress(shippingAddress, AddressType.Shipping)
-                    .WithBrowserData(browserData)
-                    .Execute();
+            var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithAuthenticationSource(source)
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithBrowserData(browserData)
+                .Execute();
 
-                AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
-                Assert.IsTrue(initAuth.ChallengeMandated);
-            }
+            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
         [TestMethod]
@@ -705,22 +677,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
             Assert.IsTrue(initAuth.ChallengeMandated);
 
-            var exceptionCaught = false;
-            try {
-                Secure3dService.GetAuthenticationData()
-                    .WithServerTransactionId(initAuth.ServerTransactionId)
-                    .Execute();
-            }
-            catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("50027", ex.ResponseMessage);
-                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - Undefined element in Message before PARes", ex.Message);
-            }
-            finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var getAuthData = Secure3dService.GetAuthenticationData()
+                .WithServerTransactionId(initAuth.ServerTransactionId)
+                .Execute();
+
+            Assert.AreEqual(CHALLENGE_REQUIRED, getAuthData.Status);
         }
 
         [TestMethod]
@@ -804,40 +765,75 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(5, initAuth.Eci);
         }
 
-        [TestMethod]
-        public void CardHolderEnrolled_Frictionless_v2_Initiate_AllPreferenceValues() {
+        [DataTestMethod]
+        [DataRow(ChallengeRequestIndicator.NO_PREFERENCE)]
+        [DataRow(ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED)]
+        [DataRow(ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED_TRANSACTION_RISK_ANALYSIS_PERFORMED)]
+        [DataRow(ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED_DATA_SHARE_ONLY)]
+        [DataRow(ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED_SCA_ALREADY_PERFORMED)]
+        [DataRow(ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED_WHITELIST)]
+        public void CardHolderEnrolled_Frictionless_v2_Initiate_AllPreferenceValues(ChallengeRequestIndicator preference) {
             card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
 
-            foreach (ChallengeRequestIndicator preference in Enum.GetValues(typeof(ChallengeRequestIndicator))) {
-                var secureEcom = Secure3dService.CheckEnrollment(card)
+            var secureEcom = Secure3dService.CheckEnrollment(card)
                     .WithCurrency(Currency)
                     .WithAmount(Amount)
                     .Execute();
 
-                AssertThreeDSResponse(secureEcom, AVAILABLE);
-                Assert.IsFalse(secureEcom.ChallengeMandated);
+            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            Assert.IsFalse(secureEcom.ChallengeMandated);
 
-                var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
-                    .WithAmount(Amount)
+            var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithChallengeRequestIndicator(preference)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithBrowserData(browserData)
+                .Execute();
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual(ENROLLED, initAuth.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.IsFalse(initAuth.ChallengeMandated);
+            Assert.IsNotNull(initAuth.IssuerAcsUrl);
+            Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
+            Assert.IsNotNull(initAuth.ChallengeReturnUrl);
+            Assert.IsNotNull(initAuth.MessageType);
+            Assert.IsNotNull(initAuth.SessionDataFieldName);
+            Assert.AreEqual(5, initAuth.Eci);
+        }
+
+        [DataTestMethod]
+        [DataRow(ChallengeRequestIndicator.CHALLENGE_PREFERRED)]
+        [DataRow(ChallengeRequestIndicator.CHALLENGE_MANDATED)]
+        [DataRow(ChallengeRequestIndicator.CHALLENGE_REQUESTED_PROMPT_FOR_WHITELIST)]
+        public void CardHolderEnrolled_Frictionless_v2_Initiate_AllPreferenceValues_ChallengeRequired(ChallengeRequestIndicator preference) {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+
+            var secureEcom = Secure3dService.CheckEnrollment(card)
                     .WithCurrency(Currency)
-                    .WithChallengeRequestIndicator(preference)
-                    .WithOrderCreateDate(DateTime.Now)
-                    .WithAddress(shippingAddress, AddressType.Shipping)
-                    .WithBrowserData(browserData)
+                    .WithAmount(Amount)
                     .Execute();
 
-                Assert.IsNotNull(initAuth);
-                Assert.AreEqual(ENROLLED, initAuth.Enrolled, "Card not enrolled");
-                Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
-                Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
-                Assert.IsFalse(initAuth.ChallengeMandated);
-                Assert.IsNotNull(initAuth.IssuerAcsUrl);
-                Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
-                Assert.IsNotNull(initAuth.ChallengeReturnUrl);
-                Assert.IsNotNull(initAuth.MessageType);
-                Assert.IsNotNull(initAuth.SessionDataFieldName);
-                Assert.AreEqual(5, initAuth.Eci);
-            }
+            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            Assert.IsFalse(secureEcom.ChallengeMandated);
+
+            var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithChallengeRequestIndicator(preference)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithBrowserData(browserData)
+                .Execute();
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual(ENROLLED, initAuth.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
+            Assert.AreEqual(CHALLENGE_REQUIRED, initAuth.Status);
+            Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
         #endregion

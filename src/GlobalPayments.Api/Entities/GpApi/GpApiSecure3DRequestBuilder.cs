@@ -182,8 +182,15 @@ namespace GlobalPayments.Api.Entities {
                     .Set("user_agent", builder.BrowserData.UserAgent);
                 #endregion
 
-                var data = new JsonDoc()
+                #region ThreeDS
+                var threeDS = new JsonDoc()
                     .Set("source", builder.AuthenticationSource.ToString())
+                    .Set("preference", builder.ChallengeRequestIndicator.ToString())
+                    .Set("message_version", builder.MessageVersion);
+                #endregion
+
+                var data = new JsonDoc()
+                    .Set("three_ds", threeDS.HasKeys() ? threeDS : null)
                     .Set("initator", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Initiator))
                     .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("method_url_completion_status", builder.MethodUrlCompletion.ToString())

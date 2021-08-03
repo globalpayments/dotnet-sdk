@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public EbtCardType EbtCardType { get; set; }
         public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.EBT; } }
         public string PinBlock { get; set; }
-
+        public string CardHolderName { get; set; }
         public AuthorizationBuilder BalanceInquiry(InquiryType? inquiry = InquiryType.FOODSTAMP) {
             return new AuthorizationBuilder(TransactionType.Balance, this).WithBalanceInquiryType(inquiry).WithAmount(0m);
         }

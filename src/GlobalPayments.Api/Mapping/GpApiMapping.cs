@@ -88,6 +88,7 @@ namespace GlobalPayments.Api.Mapping {
                 Country = doc.GetValue<string>("country"),
                 OriginalTransactionId = doc.GetValue<string>("parent_resource_id"),
                 DepositReference = doc.GetValue<string>("deposit_id"),
+                BatchCloseDate = doc.GetValue<DateTime?>("batch_time_created", DateConverter),
                 DepositDate = doc.GetValue<DateTime?>("deposit_time_created", DateConverter),
 
                 GatewayResponseMessage = paymentMethod?.GetValue<string>("message"),
@@ -311,42 +312,73 @@ namespace GlobalPayments.Api.Mapping {
             return Secure3dVersion.Any;
         }
 
-        public static Transaction Map3DSecureData(string rawResponse) {
-            if (!string.IsNullOrEmpty(rawResponse)) {
+        public static Transaction Map3DSecureData(string rawResponse)
+        {
+            if (!string.IsNullOrEmpty(rawResponse))
+            {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
 
-                return new Transaction {
-                    ThreeDSecure = new ThreeDSecure {
-                        ServerTransactionId = json.GetValue<string>("id"),
-                        Status = json.GetValue<string>("status"),
-                        Currency = json.GetValue<string>("currency"),
-                        Amount = json.GetValue<string>("amount").ToAmount(),
-
-                        Version = Parse3DSVersion(json.Get("three_ds")?.GetValue<string>("message_version")),
+                var transaction = new Transaction
+                {
+                    ThreeDSecure = new ThreeDSecure
+                    {
+                        ServerTransactionId = !string.IsNullOrEmpty(json.GetValue<string>("id")) ?
+                            json.GetValue<string>("id") :
+                            json.Get("three_ds")?.GetValue<string>("server_trans_ref"),
                         MessageVersion = json.Get("three_ds")?.GetValue<string>("message_version"),
+                        Version = Parse3DSVersion(json.Get("three_ds")?.GetValue<string>("message_version")),
+                        Status = json.GetValue<string>("status"),
                         DirectoryServerStartVersion = json.Get("three_ds")?.GetValue<string>("ds_protocol_version_start"),
                         DirectoryServerEndVersion = json.Get("three_ds")?.GetValue<string>("ds_protocol_version_end"),
-                        DirectoryServerTransactionId = json.Get("three_ds")?.GetValue<string>("ds_trans_ref"),
                         AcsStartVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_start"),
                         AcsEndVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_end"),
-                        AcsTransactionId = json.Get("three_ds")?.GetValue<string>("acs_trans_ref"),
                         Enrolled = json.Get("three_ds")?.GetValue<string>("enrolled_status"),
                         Eci = json.Get("three_ds")?.GetValue<string>("eci")?.ToInt32(),
-                        AuthenticationValue = json.Get("three_ds")?.GetValue<string>("authentication_value"),
+                        AcsInfoIndicator = json.Get("three_ds")?.GetArray<string>("acs_info_indicator"),
                         ChallengeMandated = json.Get("three_ds")?.GetValue<string>("challenge_status") == "MANDATED",
-                        IssuerAcsUrl = !string.IsNullOrEmpty(json.Get("three_ds")?.GetValue<string>("method_url")) ?
-                            json.Get("three_ds")?.GetValue<string>("method_url") :
-                            json.Get("three_ds")?.GetValue<string>("acs_challenge_request_url"),
-                        ChallengeReturnUrl = json.Get("notifications")?.GetValue<string>("challenge_return_url"),
-                        SessionDataFieldName = json.Get("three_ds")?.GetValue<string>("session_data_field_name"),
-                        MessageType = json.Get("three_ds")?.GetValue<string>("message_type"),
-                        PayerAuthenticationRequest = (!string.IsNullOrEmpty(json.Get("three_ds")?.Get("method_data")?.GetValue<string>("encoded_method_data"))) ?
-                            json.Get("three_ds")?.Get("method_data")?.GetValue<string>("encoded_method_data") :
-                            json.Get("three_ds")?.GetValue<string>("challenge_value"),
+                        PayerAuthenticationRequest = (!string.IsNullOrEmpty(json.Get("three_ds").GetValue<string>("acs_challenge_request_url")) && json.GetValue<string>("status") == "CHALLENGE_REQUIRED") ?
+                            json.Get("three_ds")?.GetValue<string>("challenge_value") :
+                            json.Get("three_ds")?.Get("method_data")?.GetValue<string>("encoded_method_data"),
+                        IssuerAcsUrl = (!string.IsNullOrEmpty(json.Get("three_ds").GetValue<string>("acs_challenge_request_url")) && json.GetValue<string>("status") == "CHALLENGE_REQUIRED") ?
+                            json.Get("three_ds")?.GetValue<string>("acs_challenge_request_url") :
+                            json.Get("three_ds")?.GetValue<string>("method_url"),
+                        Currency = json.GetValue<string>("currency"),
+                        Amount = json.GetValue<string>("amount").ToAmount(),
+                        AuthenticationValue = json.Get("three_ds")?.GetValue<string>("authentication_value"),
+                        DirectoryServerTransactionId = json.Get("three_ds")?.GetValue<string>("ds_trans_ref"),
+                        AcsTransactionId = json.Get("three_ds")?.GetValue<string>("acs_trans_ref"),
                         StatusReason = json.Get("three_ds")?.GetValue<string>("status_reason"),
                         MessageCategory = json.Get("three_ds")?.GetValue<string>("message_category"),
+                        MessageType = json.Get("three_ds")?.GetValue<string>("message_type"),
+                        SessionDataFieldName = json.Get("three_ds")?.GetValue<string>("session_data_field_name"),
+                        ChallengeReturnUrl = json.Get("notifications")?.GetValue<string>("challenge_return_url"),
+                        LiabilityShift = json.Get("three_ds")?.GetValue<string>("liability_shift"),
+                        AuthenticationSource = json.Get("three_ds")?.GetValue<string>("authentication_source"),
+                        AuthenticationType = json.Get("three_ds")?.GetValue<string>("authentication_request_type"),
+                        //AcsInfoIndicator = json.Get("three_ds")?.GetArray<string>("acs_decoupled_response_indicator"),
+                        WhitelistStatus = json.Get("three_ds")?.GetValue<string>("whitelist_status"),
+                        MessageExtensions = new List<MessageExtension>()
                     }
                 };
+
+                var messageExtensions = json.Get("three_ds")?.GetEnumerator("message_extension");
+
+                if (messageExtensions != null)
+                {
+                    foreach (JsonDoc messageExtension in messageExtensions)
+                    {
+                        MessageExtension msgExtension = new MessageExtension
+                        {
+                            CriticalityIndicator = messageExtension.GetValue<string>("criticality_indicator"),
+                            MessageExtensionData = messageExtension.GetValue<JsonDoc>("data")?.ToString(),
+                            MessageExtensionId = messageExtension.GetValue<string>("id"),
+                            MessageExtensionName = messageExtension.GetValue<string>("name")
+                        };
+                        transaction.ThreeDSecure.MessageExtensions.Add(msgExtension);
+                    }
+                }
+
+                return transaction;
             }
             return new Transaction();
         }

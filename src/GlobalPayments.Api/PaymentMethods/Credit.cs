@@ -44,6 +44,8 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// </summary>
         public string MobileType { get; set; }
 
+        public string Cryptogram { get; set; }
+
         public bool FleetCard { get; set; }
 
         public bool PurchaseCard { get; set; }
@@ -126,36 +128,17 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// with the issuer in the process.
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
-        public string Tokenize(string configName = "default") {
-            return Tokenize(true, configName);
+        public string Tokenize(string configName = "default", PaymentMethodUsageMode paymentMethodUsageMode = PaymentMethodUsageMode.Multiple) {
+            return Tokenize(true, configName, paymentMethodUsageMode);
         }
-        public string Tokenize(bool verifyCard, string configName = "default") {
+        public string Tokenize(bool verifyCard, string configName = "default", PaymentMethodUsageMode paymentMethodUsageMode = PaymentMethodUsageMode.Multiple) {
             TransactionType type = verifyCard ? TransactionType.Verify : TransactionType.Tokenize;
 
             var response =  new AuthorizationBuilder(type, this)
                 .WithRequestMultiUseToken(verifyCard)
-                .WithTokenUsageMode(TokenUsageMode.Multiple)
+                .WithPaymentMethodUsageMode(paymentMethodUsageMode)
                 .Execute(configName);
             return response.Token;
-        }
-
-        /// <summary>
-        /// Detokenizes payment method
-        /// </summary>
-        /// <param name="configName"></param>
-        /// <returns></returns>
-        ITokenizable ITokenizable.Detokenize(string configName) {
-            if (string.IsNullOrEmpty(Token)) {
-                throw new BuilderException("Token cannot be null");
-            }
-
-            var transaction = new ManagementBuilder(TransactionType.Detokenize)
-                .WithPaymentMethod(this)
-                .Execute(configName);
-
-            CardType = transaction.CardType;
-
-            return this;
         }
 
         /// <summary>
@@ -193,7 +176,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                     .Execute(configName);
                 return true;
             }
-            catch (ApiException) {
+            catch (ApiException ex) {
                 return false;
             }
         }

@@ -12,34 +12,34 @@ namespace GlobalPayments.Api.Entities {
                 .Set("entry_mode", GetEntryMode(builder)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
 
             if (builder.PaymentMethod is ICardData) {
-                var cardData = builder.PaymentMethod as ICardData;
+            var cardData = builder.PaymentMethod as ICardData;
 
                 var card = new JsonDoc()
-                    .Set("number", cardData.Number)
-                    .Set("expiry_month", cardData.ExpMonth.HasValue ? cardData.ExpMonth.ToString().PadLeft(2, '0') : null)
-                    .Set("expiry_year", cardData.ExpYear.HasValue ? cardData.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : null)
-                    //.Set("track", "")
-                    .Set("tag", builder.TagData)
-                    .Set("cvv", cardData.Cvn)
-                    .Set("cvv_indicator", EnumConverter.GetMapping(Target.GP_API, cardData.CvnPresenceIndicator)) // [ILLEGIBLE, NOT_PRESENT, PRESENT]
-                    .Set("avs_address", builder.BillingAddress?.StreetAddress1)
-                    .Set("avs_postal_code", builder.BillingAddress?.PostalCode)
-                    .Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT") // [DEBIT, CREDIT]
-                    .Set("authcode", builder.OfflineAuthCode);
-                    //.Set("brand_reference", "")
+                .Set("number", cardData.Number)
+                .Set("expiry_month", cardData.ExpMonth.HasValue ? cardData.ExpMonth.ToString().PadLeft(2, '0') : null)
+                .Set("expiry_year", cardData.ExpYear.HasValue ? cardData.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : null)
+                //.Set("track", "")
+                .Set("tag", builder.TagData)
+                .Set("cvv", cardData.Cvn)
+                .Set("cvv_indicator", cardData.CvnPresenceIndicator != 0 ? EnumConverter.GetMapping(Target.GP_API, cardData.CvnPresenceIndicator) : null) // [ILLEGIBLE, NOT_PRESENT, PRESENT]
+                .Set("avs_address", builder.BillingAddress?.StreetAddress1)
+                .Set("avs_postal_code", builder.BillingAddress?.PostalCode)
+                .Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT") // [DEBIT, CREDIT]
+                .Set("authcode", builder.OfflineAuthCode);
+                //.Set("brand_reference", "")
 
                 card.Set("chip_condition", EnumConverter.GetMapping(Target.GP_API, builder.EmvChipCondition)); // [PREV_SUCCESS, PREV_FAILED]
 
                 paymentMethod.Set("card", card);
 
-                var tokenizationData = new JsonDoc()
-                    .Set("account_name", gateway.TokenizationAccountName)
-                    .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
-                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.TokenUsageMode))
-                    .Set("name", "")
-                    .Set("card", card);
-
                 if (builder.TransactionType == TransactionType.Tokenize) {
+                    var tokenizationData = new JsonDoc()
+                        .Set("account_name", gateway.TokenizationAccountName)
+                        .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
+                        .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
+                        //.Set("name", "")
+                        .Set("card", card);
+
                     return new GpApiRequest {
                         Verb = HttpMethod.Post,
                         Endpoint = "/payment-methods",
@@ -48,6 +48,13 @@ namespace GlobalPayments.Api.Entities {
                 }
                 else if (builder.TransactionType == TransactionType.Verify) {
                     if (builder.RequestMultiUseToken && string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
+                        var tokenizationData = new JsonDoc()
+                            .Set("account_name", gateway.TokenizationAccountName)
+                            .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
+                            .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
+                            //.Set("name", "")
+                            .Set("card", card);
+
                         return new GpApiRequest {
                             Verb = HttpMethod.Post,
                             Endpoint = "/payment-methods",
@@ -125,12 +132,6 @@ namespace GlobalPayments.Api.Entities {
                 paymentMethod.Set("card", card);
             }
 
-            // payment method storage mode
-            if (builder.RequestMultiUseToken) {
-                //ToDo: there might be a typo: should be storage_mode
-                paymentMethod.Set("storage_model", "ON_SUCCESS");
-            }
-
             // tokenized payment method
             if (builder.PaymentMethod is ITokenizable) {
                 string token = ((ITokenizable)builder.PaymentMethod).Token;
@@ -139,54 +140,60 @@ namespace GlobalPayments.Api.Entities {
                 }
             }
 
+            // payment method storage mode
+            if (builder.RequestMultiUseToken) {
+                //ToDo: there might be a typo: should be storage_mode
+                paymentMethod.Set("storage_mode", "ON_SUCCESS");
+            }
+
             // pin block
-            if (builder.PaymentMethod is IPinProtected) {
+            if (builder.PaymentMethod is IPinProtected)
+            {
                 paymentMethod.Get("card")?.Set("pin_block", ((IPinProtected)builder.PaymentMethod).PinBlock);
             }
 
             // authentication
-            if (builder.PaymentMethod is CreditCardData) {
+            if (builder.PaymentMethod is CreditCardData)
+            {
                 paymentMethod.Set("name", (builder.PaymentMethod as CreditCardData).CardHolderName);
 
                 var secureEcom = (builder.PaymentMethod as CreditCardData).ThreeDSecure;
-                if (secureEcom != null) {
-                    var three_ds = new JsonDoc()
-                        // Indicates the version of 3DS
-                        .Set("message_version", secureEcom.MessageVersion)
-                        // An indication of the degree of the authentication and liability shift obtained for this transaction.
-                        // It is determined during the 3D Secure process.
-                        .Set("eci", secureEcom.Eci)
-                        // The authentication value created as part of the 3D Secure process.
-                        .Set("value", secureEcom.AuthenticationValue)
-                        // The reference created by the 3DSecure provider to identify the specific authentication attempt.
-                        .Set("server_trans_ref", secureEcom.ServerTransactionId)
-                        // The reference created by the 3DSecure Directory Server to identify the specific authentication attempt.
-                        .Set("ds_trans_ref", secureEcom.DirectoryServerTransactionId);
+                if (secureEcom != null)
+                {
+                    var authentication = new JsonDoc().Set("id", secureEcom.ServerTransactionId);
 
-                    var authentication = new JsonDoc().Set("three_ds", three_ds);
-                    
                     paymentMethod.Set("authentication", authentication);
                 }
             }
 
+            if(builder.PaymentMethod is EBT)
+            {
+                paymentMethod.Set("name", (builder.PaymentMethod as EBT).CardHolderName);
+            }
+
             // encryption
-            if (builder.PaymentMethod is IEncryptable) {
+            if (builder.PaymentMethod is IEncryptable)
+            {
                 var encryptionData = ((IEncryptable)builder.PaymentMethod).EncryptionData;
 
-                if (encryptionData != null) {
+                if (encryptionData != null)
+                {
                     var encryption = new JsonDoc()
                         .Set("version", encryptionData.Version);
 
-                    if (!string.IsNullOrEmpty(encryptionData.KTB)) {
+                    if (!string.IsNullOrEmpty(encryptionData.KTB))
+                    {
                         encryption.Set("method", "KTB");
                         encryption.Set("info", encryptionData.KTB);
                     }
-                    else if (!string.IsNullOrEmpty(encryptionData.KSN)) {
+                    else if (!string.IsNullOrEmpty(encryptionData.KSN))
+                    {
                         encryption.Set("method", "KSN");
                         encryption.Set("info", encryptionData.KSN);
                     }
 
-                    if (encryption.Has("info")) {
+                    if (encryption.Has("info"))
+                    {
                         paymentMethod.Set("encryption", encryption);
                     }
                 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## Latest
+
+#### Enhancements
+
+- Upgrade GpApi to March version 
+- Add support for single and multiple usage mode for tokenized cards
+- Remove detokenization endpoint
+- 3DSecure mapping updated to support liability shift to GpApi
+- Add deposit date filter for find settlement disputes search to GpApi
+- Add EBT functionallity to GpApi
+
+---
+
 ## v1.7.35 (07/15/2021)
 
 #### Enhancements:

@@ -9,11 +9,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private CreditCardData _card;
         private string _token;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context) {
+        [TestInitialize]
+        public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
-                AppKey = "ockJr6pv6KFoGiZA",
+                AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
+                AppKey = "6gFzVGf40S7ZpjJs",
             });
         }
 
@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("40006", ex.ResponseMessage);
+                Assert.AreEqual("40213", ex.ResponseMessage);
                 Assert.AreEqual($"Status Code: BadRequest - payment_method.id: {token} contains unexpected data", ex.Message);
             }
         }
@@ -93,7 +93,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        [Ignore]
+        // The used credentials on this test have not permissions to delete a tokenized card
         public void DeleteTokenizedPaymentMethod_WithNonExistingId() {
+
+            ServicesContainer.ConfigureService(new GpApiConfig
+            {
+                AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
+                AppKey = "6gFzVGf40S7ZpjJs",
+            });
+
             _card = new CreditCardData {
                 Number = "4111111111111111",
                 ExpMonth = 12,
@@ -115,9 +124,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
             }
             catch (GatewayException ex) {
-                Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
-                Assert.AreEqual("40116", ex.ResponseMessage);
-                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - payment_method"));
+                Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
+                Assert.AreEqual("40212", ex.ResponseMessage);
+                Assert.IsTrue(ex.Message.StartsWith("Status Code: Forbidden - Permission not enabled to execute action"));
             }
         }
 
@@ -158,7 +167,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("40006", ex.ResponseMessage);
+                Assert.AreEqual("40213", ex.ResponseMessage);
                 Assert.AreEqual($"Status Code: BadRequest - payment_method.id: {token} contains unexpected data", ex.Message);
             }
         }

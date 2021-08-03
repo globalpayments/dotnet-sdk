@@ -228,6 +228,21 @@ namespace GlobalPayments.Api.Tests {
             Assert.AreEqual("00", response.ResponseCode);
         }
 
+        [TestMethod, Ignore]
+        public void AuthMobileApplePay() {
+            var token = new CreditCardData {
+                Token = "{\"version\":\"EC_v1\",\"data\":\"dvMNzlcy6WNB\",\"header\":{\"ephemeralPublicKey\":\"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWdNhNAHy9kO2Kol33kIh7k6wh6E\",\"transactionId\":\"fd88874954acdb299c285f95a3202ad1f330d3fd4ebc22a864398684198644c3\",\"publicKeyHash\":\"h7WnNVz2gmpTSkHqETOWsskFPLSj31e3sPTS2cBxgrk\"}}",
+                MobileType = MobilePaymentMethodType.APPLEPAY
+            };
+
+            var response = token.Charge(19.99m)
+                .WithCurrency("EUR")
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
         [TestMethod]
         public void StoredCredential_Sale() {
             StoredCredential storedCredential = new StoredCredential {

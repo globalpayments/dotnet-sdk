@@ -95,7 +95,7 @@ namespace GlobalPayments.Api.Gateways {
 
         internal GpApiConnector() {
             // Set required api version header
-            Headers["X-GP-Version"] = "2020-12-22";
+            Headers["X-GP-Version"] = "2021-03-22";
             Headers["Accept"] = "application/json";
             Headers["Accept-Encoding"] = "gzip";
         }

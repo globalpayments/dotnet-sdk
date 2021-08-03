@@ -192,6 +192,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string Xid { get; set; }
 
+        public string LiabilityShift { get; set; }
+
         public ThreeDSecure() {
             PaymentDataType = "3DSecure";
         }
@@ -234,7 +236,7 @@ namespace GlobalPayments.Api.Entities {
                 ExemptStatus = MergeValue(ExemptStatus, secureEcom.ExemptStatus);
                 ExemptReason = MergeValue(ExemptReason, secureEcom.ExemptReason);
                 Xid = MergeValue(Xid, secureEcom.Xid);
-
+                LiabilityShift = MergeValue(LiabilityShift, secureEcom.LiabilityShift);
                 //this.merchantData = mergeValue(merchantData, secureEcom.getMerchantData());
             }
         }

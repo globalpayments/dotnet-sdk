@@ -198,11 +198,6 @@ namespace GlobalPayments.Api.Entities {
         CashAdvance = 1L << 36,
 
         /// <summary>
-        /// Indicates a detokenization transaction
-        /// </summary>
-        Detokenize = 1L << 37,
-
-        /// <summary>
         /// Indicates a dispute acceptance
         /// </summary>
         DisputeAcceptance = 1L << 38,

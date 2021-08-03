@@ -9,18 +9,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
     public class GpApiCreditTests : BaseGpApiTests {
         CreditCardData card;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
+        [TestInitialize]
+        public void TestInitialize() {
+            ServicesContainer.ConfigureService(new GpApiConfig
+            {
+                AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
+                AppKey = "6gFzVGf40S7ZpjJs",
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
             });
-        }
 
-        [TestInitialize]
-        public void TestInitialize() {
             card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 05,
@@ -103,7 +101,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             catch (GatewayException ex) {
                 Assert.AreEqual("50020", ex.ResponseMessage);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Can't settle for more than 115% of that which you authorised.", ex.Message);
+                Assert.AreEqual("Status Code: BadRequest - Can't settle for more than 115% of that which you authorised ", ex.Message);
             }
         }
 
@@ -168,6 +166,46 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditRefundTransaction_WithIdempotencyKey() {
+            decimal amount = 10.95m;
+            string idempotencyKey = Guid.NewGuid().ToString();
+
+            var transaction = card.Charge(amount)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
+
+            var response = transaction.Refund(amount)
+                .WithCurrency("USD")
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+
+            var exceptionCaught = false;
+            try {
+                transaction.Refund(amount)
+                    .WithCurrency("USD")
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}, status=CAPTURED",
+                    ex.Message);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
         public void CreditRefundTransaction_RefundLowerAmount() {
             var transaction = card.Charge(5.95m)
                 .WithCurrency("USD")
@@ -204,7 +242,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             catch (GatewayException ex) {
                 Assert.AreEqual("40087", ex.ResponseMessage);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - You may only refund up to 100% of the original amount.", ex.Message);
+                Assert.AreEqual("Status Code: BadRequest - You may only refund up to 100% of the original amount ", ex.Message);
             }
         }
 
@@ -224,9 +262,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
             }
             catch (GatewayException ex) {
-                Assert.AreEqual("TRANSACTION_NOT_FOUND", ex.ResponseCode);
+                Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40008", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: NotFound - Transaction to action cannot be found", ex.Message);
+                Assert.AreEqual($"Status Code: NotFound - Transaction {transaction.TransactionId} not found at this location.", ex.Message);
             }
         }
 
@@ -248,6 +286,43 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditReverseTransaction_WithIdempotencyKey() {
+            string idempotencyKey = Guid.NewGuid().ToString();
+
+            var transaction = card.Authorize(12.99m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction?.ResponseMessage);
+
+            var response = transaction.Reverse(12.99m)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), response?.ResponseMessage);
+
+            var exceptionCaught = false;
+            try {
+                transaction.Reverse(12.99m)
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}, status=REVERSED",
+                    ex.Message);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
         public void CreditReverseTransactionWrongId() {
             var transaction = card.Charge(12.99m)
                 .WithCurrency("USD")
@@ -263,9 +338,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
             }
             catch (GatewayException ex) {
-                Assert.AreEqual("TRANSACTION_NOT_FOUND", ex.ResponseCode);
+                Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40008", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: NotFound - Transaction to action cannot be found", ex.Message);
+                Assert.AreEqual($"Status Code: NotFound - Transaction {transaction.TransactionId} not found at this location.", ex.Message);
             }
         }
 
@@ -284,7 +359,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("40006", ex.ResponseMessage);
+                Assert.AreEqual("40214", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - partial reversal not supported", ex.Message);
             }
         }
@@ -320,6 +395,44 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditAuthorizationAndCapture_WithIdempotencyKey() {
+            string idempotencyKey = Guid.NewGuid().ToString();
+
+            var authorization = card.Authorize(14m)
+                .WithCurrency("USD")
+                .WithMultiCapture(true)
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(authorization);
+            Assert.AreEqual(SUCCESS, authorization?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), authorization?.ResponseMessage);
+
+            var capture = authorization.Capture(14m)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual(SUCCESS, capture?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), capture?.ResponseMessage);
+
+            var exceptionCaught = false;
+            try {
+                authorization.Capture(14m)
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={capture.TransactionId}, status=CAPTURED",
+                    ex.Message);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
         public void CreditCaptureWrongId() {
             var authorization = card.Authorize(14m)
                 .WithCurrency("USD")
@@ -337,9 +450,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
             }
             catch (GatewayException ex) {
-                Assert.AreEqual("TRANSACTION_NOT_FOUND", ex.ResponseCode);
+                Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40008", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: NotFound - Transaction to action cannot be found", ex.Message);
+                Assert.AreEqual($"Status Code: NotFound - Transaction {authorization.TransactionId} not found at this location.", ex.Message);
             }
         }
 
@@ -353,6 +466,40 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
                 .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CardTokenizationThenPayingWithToken_SingleToMultiUse()
+        {
+
+            var token = card.Tokenize(paymentMethodUsageMode: PaymentMethodUsageMode.Single);
+
+            Assert.IsNotNull(token);
+
+            var tokenizedCard = new CreditCardData
+            {
+                Token = token,
+                CardHolderName = "James Mason"
+            };
+
+            var response = tokenizedCard.Charge(17.01m)
+                .WithCurrency("USD")
+                .WithRequestMultiUseToken(true)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.IsTrue(response.Token.StartsWith("PMT_"));
+
+            tokenizedCard.Token = response.Token;
+            tokenizedCard.Charge(10)
+                .WithCurrency("USD")
+                .Execute();
+
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
@@ -395,6 +542,24 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+
+            var exceptionCaught = false;
+            try {
+                card.Verify()
+                    .WithCurrency("USD")
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}, status=VERIFIED",
+                    ex.Message);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         [TestMethod]
@@ -412,20 +577,43 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditVerify_InvalidCVV() {
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 05,
-                ExpYear = 2025,
-                Cvn = "SMA",
-            };
+            card.Cvn = "1234";
+
+            var exceptionCaught = false;
             try {
                 card.Verify()
                 .WithCurrency("USD")
                 .Execute();
             }
             catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40085", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Security Code/CVV2/CVC must be 3 digits", ex.Message);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void CreditVerify_NotNumericCVV() {
+            card.Cvn = "SMA";
+
+            var exceptionCaught = false;
+            try {
+                card.Verify()
+                    .WithCurrency("USD")
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
                 Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
                 Assert.AreEqual("50018", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadGateway - The line number 12 which contains '         [number] XXX [/number] ' does not conform to the schema", ex.Message);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
             }
         }
 
@@ -486,6 +674,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             catch (GatewayException ex) {
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={transaction1.TransactionId}, status=CAPTURED", ex.Message);
             }
         }
 
@@ -493,6 +682,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CreditVerify_WithStoredCredentials() {
             var response = card.Verify()
                 .WithCurrency("USD")
+                .WithStoredCredential(new StoredCredential {
+                    Initiator = StoredCredentialInitiator.CardHolder,
+                    Type = StoredCredentialType.Subscription,
+                    Sequence = StoredCredentialSequence.First,
+                    Reason = StoredCredentialReason.Incremental
+                })
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);

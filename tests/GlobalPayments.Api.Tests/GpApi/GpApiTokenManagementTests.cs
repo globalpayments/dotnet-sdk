@@ -18,8 +18,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
-                AppKey = "ockJr6pv6KFoGiZA",
+                AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
+                AppKey = "6gFzVGf40S7ZpjJs",
             });
 
             try {
@@ -47,17 +47,35 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void DetokenizePaymentMethod() {
+        public void VerifyTokenizedPaymentMethod_withIdempotencyKey() {
+            string idempotencyKey = Guid.NewGuid().ToString();
+
             CreditCardData tokenizedCard = new CreditCardData {
                 Token = Token,
             };
 
-            CreditCardData response = tokenizedCard.Detokenize();
+            Transaction response = tokenizedCard.Verify()
+                .WithCurrency("USD")
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
 
             Assert.IsNotNull(response);
-            Assert.IsNull(response.Token);
-            Assert.AreEqual(Card.Number, response.Number);
-            Assert.AreEqual(Card.ShortExpiry, response.ShortExpiry);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
+
+            try {
+                tokenizedCard.Verify()
+                    .WithCurrency("USD")
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual(
+                    $"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}, status=VERIFIED",
+                    ex.Message);
+            }
         }
 
         [TestMethod]
@@ -87,7 +105,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Transaction response = tokenizedCard.Charge(19.99m)
                 .WithCurrency("USD")
                 .Execute();
-            
+
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
@@ -108,7 +126,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     Reason = StoredCredentialReason.Incremental
                 })
                 .Execute();
-            
+
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);

@@ -60,12 +60,6 @@ namespace GlobalPayments.Api.Entities {
                     Endpoint = $"/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
                 };
             }
-            else if (builder.TransactionType == TransactionType.Detokenize && builder.PaymentMethod is ITokenizable) {
-                return new GpApiRequest {
-                    Verb = HttpMethod.Post,
-                    Endpoint = $"/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}/detokenize",
-                };
-            }
             else if (builder.TransactionType == TransactionType.DisputeAcceptance) {
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,

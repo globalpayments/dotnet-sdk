@@ -15,22 +15,53 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private const string TAG_DATA =
             "82021C008407A0000002771010950580000000009A031709289C01005F280201245F2A0201245F3401019F02060000000010009F03060000000000009F080200019F090200019F100706010A03A420009F1A0201249F26089CC473F4A4CE18D39F2701809F3303E0F8C89F34030100029F3501229F360200639F370435EFED379F410400000019";
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
+        [TestInitialize]
+        public void TestInitialize() {
+            ServicesContainer.ConfigureService(new GpApiConfig
+            {
                 AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
                 AppKey = "ockJr6pv6KFoGiZA",
                 Channel = Channel.CardPresent
             });
-        }
 
-        [TestInitialize]
-        public void TestInitialize() {
             creditCard = new CreditTrackData() {
                 Value =
                     "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
                 EntryMethod = EntryMethod.Swipe,
             };
+        }
+
+        [TestMethod]
+        public void CloseBatch_ActionNotAuthorized()
+        {
+            ServicesContainer.ConfigureService(new GpApiConfig
+            {
+                AppId = "OWTP5ptQZKGj7EnvPt3uqO844XDBt8Oj",
+                AppKey = "qM31FmlFiyXRHGYh",
+                Channel = Channel.CardPresent
+            });
+
+            Transaction transaction = creditCard
+                            .Charge(1.99m)
+                            .WithCurrency("USD")
+                            .Execute();
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            Thread.Sleep(1000);
+
+            bool exceptionCaught = false;
+            try {
+                BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
+                Assert.AreEqual("40212", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: Forbidden - Permission not enabled to execute action", ex.Message);
+            } 
+            finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         [TestMethod]

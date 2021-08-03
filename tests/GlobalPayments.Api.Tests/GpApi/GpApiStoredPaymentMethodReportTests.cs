@@ -1,15 +1,15 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
-    public class GpApiStoredPaymentMethodReportTests {
+    public class GpApiStoredPaymentMethodReportTests : BaseGpApiTests {
         private static string Token;
 
         private static CreditCardData Card = new CreditCardData {
@@ -22,8 +22,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
-                AppKey = "ockJr6pv6KFoGiZA",
+                AppId = APP_ID,
+                AppKey = APP_KEY
             });
 
             try {
@@ -45,7 +45,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportStoredPaymentMethodDetailWithRandomId() {
+        public void ReportStoredPaymentMethodDetailWithNonExistentId() {
             string storedPaymentMethodId = $"PMT_{Guid.NewGuid()}";
             try {
                 ReportingService.StoredPaymentMethodDetail(storedPaymentMethodId)
@@ -55,6 +55,20 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40118", ex.ResponseMessage);
                 Assert.AreEqual($"Status Code: NotFound - PAYMENT_METHODS {storedPaymentMethodId} not found at this /ucp/payment-methods/{storedPaymentMethodId}", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void ReportStoredPaymentMethodDetailWithRandomId() {
+            string storedPaymentMethodId = Guid.NewGuid().ToString();
+            try {
+                ReportingService.StoredPaymentMethodDetail(storedPaymentMethodId)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40213", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: BadRequest - payment_method.id: {storedPaymentMethodId} contains unexpected data", ex.Message);
             }
         }
 
@@ -69,14 +83,41 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void ReportFindStoredPaymentMethodsPaged_By_RandomId() {
+            string storedPaymentMethodId = $"PMT_{Guid.NewGuid()}";
+
+            PagedResult<StoredPaymentMethodSummary> result = ReportingService.FindStoredPaymentMethodsPaged(1, 25)
+                .Where(DataServiceCriteria.StoredPaymentMethodId, storedPaymentMethodId)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.AreEqual(0, result?.Results.Count);
+        }
+
+        [TestMethod]
+        [Ignore]
+        // TODO: Reported the the GP API team
+        // Endpoint is retrieving not filtered results
         public void ReportFindStoredPaymentMethodsPaged_By_NumberLast4() {
             string numberLast4 = Card.Number.Substring(Card.Number.Length - 4);
-            PagedResult<StoredPaymentMethodSummary> result = ReportingService.FindStoredPaymentMethodsPaged(1, 25)
+            PagedResult<StoredPaymentMethodSummary> result = ReportingService.FindStoredPaymentMethodsPaged(1, 10)
                 .Where(DataServiceCriteria.CardNumberLastFour, numberLast4)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<StoredPaymentMethodSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(r => r.CardLast4 == numberLast4));
+            Assert.IsTrue(result.Results.TrueForAll(r => r.CardLast4 == "xxxxxxxxxxxx"+numberLast4));
+        }
+
+        [TestMethod]
+        [Ignore]
+        // TODO: Reported the the GP API team
+        // Endpoint is retrieving not filtered results
+        public void ReportFindStoredPaymentMethodsPaged_By_NumberLast4_Set0000() {
+            string numberLast4 = "0000";
+            PagedResult<StoredPaymentMethodSummary> result = ReportingService.FindStoredPaymentMethodsPaged(1, 10)
+                .Where(DataServiceCriteria.CardNumberLastFour, numberLast4)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.AreEqual(0, result?.Results.Count);
         }
 
         [TestMethod]
@@ -118,6 +159,19 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void ReportFindStoredPaymentMethodsPaged_By_StartDate_And_EndDate_CurrentDay() {
+            DateTime currentDay = DateTime.UtcNow;
+
+            PagedResult<StoredPaymentMethodSummary> result = ReportingService.FindStoredPaymentMethodsPaged(1, 25)
+                .Where(SearchCriteria.StartDate, currentDay)
+                .And(SearchCriteria.EndDate, currentDay)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<StoredPaymentMethodSummary>);
+            Assert.IsTrue(result.Results.TrueForAll(r => r.TimeCreated.Date >= currentDay.Date && r.TimeCreated.Date <= currentDay.Date));
+        }
+
+        [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_By_StartLastUpdatedDate_And_EndLastUpdatedDate() {
             DateTime startLastUpdatedDate = DateTime.UtcNow.AddDays(-30);
             DateTime endLastUpdatedDate = DateTime.UtcNow.AddDays(-10);
@@ -150,8 +204,35 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(result.Results.SequenceEqual(result.Results.OrderByDescending(r => r.TimeCreated)));
         }
 
-        [ClassCleanup]
+        [TestMethod]
+        public void ReportFindStoredPaymentMethodsPaged_OrderBy_TimeCreated() {
+            PagedResult<StoredPaymentMethodSummary> resultAsc = ReportingService.FindStoredPaymentMethodsPaged(1, 25)
+                .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Ascending)
+                .Execute();
+            Assert.IsNotNull(resultAsc?.Results);
+            Assert.IsTrue(resultAsc.Results is List<StoredPaymentMethodSummary>);
+            Assert.IsTrue(resultAsc.Results.SequenceEqual(resultAsc.Results.OrderBy(r => r.TimeCreated)));
+
+            PagedResult<StoredPaymentMethodSummary> resultDesc = ReportingService.FindStoredPaymentMethodsPaged(1, 25)
+                .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)
+                .Execute();
+            Assert.IsNotNull(resultDesc?.Results);
+            Assert.IsTrue(resultDesc.Results is List<StoredPaymentMethodSummary>);
+            Assert.IsTrue(resultDesc.Results.SequenceEqual(resultDesc.Results.OrderByDescending(r => r.TimeCreated)));
+
+            Assert.IsFalse(resultAsc.Results.SequenceEqual(resultDesc.Results));
+        }
+
+        //[ClassCleanup]
+        // The used credentials have not permissions to delete a tokenized card
         public static void Cleanup() {
+
+            ServicesContainer.ConfigureService(new GpApiConfig
+            {
+                AppId = APP_ID,
+                AppKey = APP_KEY
+            });
+
             CreditCardData tokenizedCard = new CreditCardData {
                 Token = Token
             };

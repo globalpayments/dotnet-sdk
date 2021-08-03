@@ -191,29 +191,5 @@ namespace GlobalPayments.Api.PaymentMethods {
                 return false;
             }
         }
-
-        /// <summary>
-        /// Detokenizes payment method
-        /// </summary>
-        /// <param name="configName"></param>
-        /// <returns></returns>
-        public CreditCardData Detokenize(string configName = "default") {
-            if (string.IsNullOrEmpty(Token)) {
-                throw new BuilderException("Token cannot be null");
-            }
-
-            var transaction = new ManagementBuilder(TransactionType.Detokenize)
-                .WithPaymentMethod(this)
-                .Execute(configName);
-
-            var card = this.MemberwiseClone() as CreditCardData;
-            card.Token = null;
-            card.Number = transaction.CardNumber;
-            card.CardType = transaction.CardType;
-            card.ExpMonth = transaction.CardExpMonth;
-            card.ExpYear = transaction.CardExpYear;
-
-            return card;
-        }
     }
 }

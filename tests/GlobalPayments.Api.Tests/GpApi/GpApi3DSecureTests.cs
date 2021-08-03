@@ -14,9 +14,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         #region Constants
 
         private const string AVAILABLE = "AVAILABLE";
-        private const string AUTHENTICATION_COULD_NOT_BE_PERFORMED = "AUTHENTICATION_COULD_NOT_BE_PERFORMED";
-        private const string AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED";
-        private const string AUTHENTICATION_SUCCESSFUL = "AUTHENTICATION_SUCCESSFUL";
+        private const string FAILED = "FAILED";
+        private const string NOT_AUTHENTICATED = "NOT_AUTHENTICATED";
+        private const string SUCCESS_ATTEMPT_MADE = "SUCCESS_ATTEMPT_MADE";
         private const string CHALLENGE_REQUIRED = "CHALLENGE_REQUIRED";
         private const string ENROLLED = "ENROLLED";
         private const string NOT_ENROLLED = "NOT_ENROLLED";
@@ -120,7 +120,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(AUTHENTICATION_SUCCESSFUL, secureEcom.Status);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
 
             card.ThreeDSecure = secureEcom;
 
@@ -175,7 +176,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(AUTHENTICATION_SUCCESSFUL, secureEcom.Status);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
 
             tokenizedCard.ThreeDSecure = secureEcom;
 
@@ -190,9 +192,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [DataTestMethod]
-        [DataRow(AuthenticationResultCode.Unavailable, AUTHENTICATION_COULD_NOT_BE_PERFORMED)]
-        [DataRow(AuthenticationResultCode.Failed, AUTHENTICATION_FAILED)]
-        [DataRow(AuthenticationResultCode.AttemptAcknowledge, AUTHENTICATION_FAILED)]
+        [DataRow(AuthenticationResultCode.Unavailable, FAILED)]
+        [DataRow(AuthenticationResultCode.Failed, NOT_AUTHENTICATED)]
+        [DataRow(AuthenticationResultCode.AttemptAcknowledge, SUCCESS_ATTEMPT_MADE)]
         public void CardHolderEnrolled_ChallengeRequired_AuthenticationFailed_v1(
             AuthenticationResultCode authenticationResultCode, string status) {
             card.Number = GpApi3DSTestCards.CARDHOLDER_ENROLLED_V1;
@@ -229,6 +231,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(status, secureEcom.Status);
+            string liabilityShift = status == "SUCCESS_ATTEMPT_MADE" ? "YES" : "NO";
+            Assert.AreEqual(liabilityShift, secureEcom.LiabilityShift);
         }
 
         [TestMethod]
@@ -270,8 +274,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 exceptionCaught = true;
                 Assert.AreEqual("50020", ex.ResponseMessage);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - Unable to decompress the PARes.", ex.Message);
+                Assert.AreEqual("Status Code: BadRequest - Unable to decompress the PARes.", ex.Message);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -291,6 +294,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
             Assert.AreEqual(NOT_ENROLLED, secureEcom.Enrolled);
             Assert.AreEqual(NOT_ENROLLED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
 
             card.ThreeDSecure = secureEcom;
 
@@ -346,6 +350,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual(secureEcom.LiabilityShift, "YES");
 
             card.ThreeDSecure = secureEcom;
 
@@ -415,14 +420,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [DataTestMethod]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_1, "NOT_AUTHENTICATED")]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_1, "FAILED")]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_1, "FAILED")]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_1, "FAILED")]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_2, "NOT_AUTHENTICATED")]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_2, "FAILED")]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_2, "FAILED")]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_2, "FAILED")]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_1, SUCCESS_ATTEMPT_MADE)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_1, NOT_AUTHENTICATED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_1, FAILED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_1, FAILED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_2, SUCCESS_ATTEMPT_MADE)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_2, NOT_AUTHENTICATED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_2, FAILED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_2, FAILED)]
         public void FrictionlessFullCycle_v2_Failed(string cardNumber, string status) {
             card.Number = cardNumber;
 
@@ -457,6 +462,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.AreEqual(status, secureEcom.Status);
+            string liabilityShift = status == "SUCCESS_ATTEMPT_MADE" ? "YES" : "NO";
+            Assert.AreEqual(liabilityShift, secureEcom.LiabilityShift);
 
             card.ThreeDSecure = secureEcom;
 
@@ -516,6 +523,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
 
             card.ThreeDSecure = secureEcom;
 
@@ -558,6 +566,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(initAuth);
             Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
             // Assert.AreEqual(1500, secureEcom.Amount);
             // Assert.AreEqual(Currency, secureEcom.Currency);
 
@@ -567,6 +576,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
             // Assert.AreEqual(1500, secureEcom.Amount);
             // Assert.AreEqual(Currency, secureEcom.Currency);
 
@@ -630,6 +640,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
 
             card.ThreeDSecure = secureEcom;
 
@@ -668,7 +679,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private string SubmitFormData(string formUrl, List<KeyValuePair<string, string>> formData) {
             HttpClient httpClient = new HttpClient() {
-                Timeout = TimeSpan.FromMilliseconds(2000)
+                Timeout = TimeSpan.FromMilliseconds(6000)
             };
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, formUrl);
@@ -756,10 +767,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public string Authenticate_v2(ThreeDSecure secureEcom) {
             // Step 1
             var formData = new List<KeyValuePair<string, string>>();
-            //ToDo: use secureEcom.MessageType instead of "creq"
-            formData.Add(new KeyValuePair<string, string>("creq", secureEcom.PayerAuthenticationRequest));
-            //ToDo: use secureEcom.SessionDataFieldName instead of "threeDSSessionData"
-            formData.Add(new KeyValuePair<string, string>("threeDSSessionData", secureEcom.ServerTransactionId));
+            formData.Add(new KeyValuePair<string, string>(secureEcom.MessageType, secureEcom.PayerAuthenticationRequest));
+            //formData.Add(new KeyValuePair<string, string>(secureEcom.SessionDataFieldName, secureEcom.ServerTransactionId));
             string rawResponse = SubmitFormData(secureEcom.IssuerAcsUrl, formData);
 
             // Step 2

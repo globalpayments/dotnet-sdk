@@ -56,7 +56,7 @@ namespace GlobalPayments.Api.Builders {
         internal bool OneTimePayment { get; set; }
         internal string OrderId { get; set; }
         internal string PaymentApplicationVersion { get; set; }
-        internal TokenUsageMode? TokenUsageMode { get; set; }
+        internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
         internal string PosSequenceNumber { get; set; }
         internal string ProductId { get; set; }
         internal RecurringSequence? RecurringSequence { get; set; }
@@ -558,8 +558,8 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithTokenUsageMode(TokenUsageMode? value) {
-            TokenUsageMode = value;
+        public AuthorizationBuilder WithPaymentMethodUsageMode(PaymentMethodUsageMode? value) {
+            PaymentMethodUsageMode = value;
             return this;
         }
 
@@ -708,7 +708,7 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        internal AuthorizationBuilder WithModifier(TransactionModifier value) {
+        public AuthorizationBuilder WithModifier(TransactionModifier value) {
             TransactionModifier = value;
             return this;
         }

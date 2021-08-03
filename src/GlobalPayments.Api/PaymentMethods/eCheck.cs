@@ -67,8 +67,14 @@ namespace GlobalPayments.Api.PaymentMethods {
             throw new UnsupportedTransactionException();
         }
 
-        ITokenizable ITokenizable.Detokenize(string configName){
-            throw new UnsupportedTransactionException();
-        }        
+        string ITokenizable.Tokenize(string configName, PaymentMethodUsageMode paymentMethodUsageMode)
+        {
+            throw new NotImplementedException();
+        }
+
+        string ITokenizable.Tokenize(bool validateCard, string configName, PaymentMethodUsageMode paymentMethodUsageMode)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

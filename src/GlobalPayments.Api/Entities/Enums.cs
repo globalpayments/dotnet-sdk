@@ -260,7 +260,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a level II transaction
         /// </summary>
-        Level_III = 1 << 13
+        Level_III = 1 << 13,
+
+        /// <summary>
+        /// Indicates a mobile transaction.
+        /// </summary>
+        DecryptedMobile = 1 << 14
     }
 
     /// <summary>
@@ -650,15 +655,23 @@ namespace GlobalPayments.Api.Entities {
         public const string APPLEPAY = "apple-pay";
         public const string GOOGLEPAY = "pay-with-google";
 
+        public static class GPApiGatewayProvider{
+            public const string APPLE_PAY = "APPLEPAY";
+            public const string GOOGLE_PAY = "PAY_BY_GOOGLE";
+        }
     }
 
-    /// <summary>
-    /// Indicates a reason for the transaction.
-    /// </summary>
-    /// <remarks>
-    /// This is typically used for returns/reversals.
-    /// </remarks>
-    public enum ReasonCode {
+    public static class DigitalWalletTokenFormat{
+        public const string CARD_NUMBER = "CARD_NUMBER";
+        public const string CARD_TOKEN = "CARD_TOKEN";
+    }
+/// <summary>
+/// Indicates a reason for the transaction.
+/// </summary>
+/// <remarks>
+/// This is typically used for returns/reversals.
+/// </remarks>
+public enum ReasonCode {
         /// <summary>
         /// Indicates fraud.
         /// </summary>

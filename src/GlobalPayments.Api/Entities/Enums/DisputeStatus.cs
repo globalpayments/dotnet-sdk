@@ -11,5 +11,9 @@ namespace GlobalPayments.Api.Entities {
 
         [Map(Target.GP_API, "CLOSED")]
         Closed,
+
+        //Only for Settlement disputes
+        [Map(Target.GP_API, "FUNDED")]
+        Funded,
     }
 }

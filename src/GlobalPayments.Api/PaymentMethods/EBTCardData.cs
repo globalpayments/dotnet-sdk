@@ -22,8 +22,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                 return year + month;
             }
         }
-        public EBTCardData() {
-        }
+        public EBTCardData() {  }
         public EBTCardData(EbtCardType cardType) {
             EbtCardType = cardType;
         }

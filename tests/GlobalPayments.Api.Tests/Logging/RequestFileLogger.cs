@@ -11,6 +11,11 @@ namespace GlobalPayments.Api.Tests.Logging {
         public RequestFileLogger(string fileName, string initializationString = null, params string[] args) {
             try {
                 _fileName = fileName;
+                string directory = Path.GetDirectoryName(_fileName);
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
                 if (!File.Exists(_fileName)) {
                     using (var sw = File.CreateText(_fileName)) {
                         if (!string.IsNullOrEmpty(initializationString)) {
@@ -19,7 +24,7 @@ namespace GlobalPayments.Api.Tests.Logging {
                     }
                 }
             }
-            catch (Exception) { /* NOM NOM */ }
+            catch (Exception ex) { /* NOM NOM */ }
         }
 
         public void RequestSent(string request) {
@@ -42,7 +47,7 @@ namespace GlobalPayments.Api.Tests.Logging {
                     }
                 }
             }
-            catch (Exception) { /* NOM NOM */ }
+            catch (Exception ex) { /* NOM NOM */ }
         }
     }
 }

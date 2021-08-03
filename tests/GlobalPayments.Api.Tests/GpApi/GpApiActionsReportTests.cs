@@ -13,8 +13,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
-                AppKey = "ockJr6pv6KFoGiZA",
+                AppId = "yDkdruxQ7hUjm8p76SaeBVAUnahESP5P",
+                AppKey = "o8C8CYrgXNELI46x",
             });
 
             SampleAction = ReportingService.FindActionsPaged(1, 1)
@@ -120,6 +120,15 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindActionsPaged_By_ResourceId() {
             string resourceId = SampleAction.ResourceId;
+
+            if (string.IsNullOrWhiteSpace(resourceId))
+            {
+                resourceId = ReportingService.FindActionsPaged(1, 25)
+               .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-5))
+               .Execute().Results?.FirstOrDefault(x=> !string.IsNullOrWhiteSpace(x.ResourceId))?.ResourceId;
+
+            }
+
             PagedResult<ActionSummary> result = ReportingService.FindActionsPaged(1, 25)
                 .Where(SearchCriteria.ResourceId, resourceId)
                 .Execute();
@@ -302,12 +311,21 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindActionsPaged_By_MultipleFilters() {
+            var sampleAction = SampleAction;
+            if (string.IsNullOrWhiteSpace(sampleAction.AccountName) || string.IsNullOrWhiteSpace(sampleAction.MerchantName) || string.IsNullOrWhiteSpace(sampleAction.Version))
+            {
+                sampleAction = ReportingService.FindActionsPaged(1, 25)
+               .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-5))
+               .Execute().Results?.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.AccountName) && !string.IsNullOrWhiteSpace(x.MerchantName) && !string.IsNullOrWhiteSpace(x.Version));
+
+            }
+
             string actionType = "AUTHORIZE";
             string resource = "TRANSACTIONS";
             string resourceStatus = "DECLINED";
-            string accountName = "Transaction_Processing";
-            string merchantName = "Sandbox_merchant_2";
-            string version = "2020-12-22";
+            string accountName = sampleAction.AccountName;
+            string merchantName = sampleAction.MerchantName;
+            string version = sampleAction.Version;
             var startDate = DateTime.UtcNow.AddDays(-30);
             var endDate = DateTime.UtcNow.AddDays(-20);
 

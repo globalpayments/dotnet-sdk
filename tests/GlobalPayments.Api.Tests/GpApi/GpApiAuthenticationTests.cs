@@ -57,6 +57,54 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void ChargeCard_WithLimitedPermissions() {
+            string[] permissions = new string[] { "TRN_POST_Capture" };
+
+            ServicesContainer.ConfigureService(new GpApiConfig {
+                Environment = Environment.TEST,
+                AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
+                AppKey = "y7vALnUtFulORlTV",
+                Permissions = permissions,
+                SecondsToExpire = 60
+            });
+
+            var exceptionCaught = false;
+            try {
+                card.Charge()
+                    .WithAmount(1.00m)
+                    .WithCurrency("USD")
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
+                Assert.AreEqual("40212", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: Forbidden - Permission not enabled to execute action", ex.Message);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
+        [TestMethod]
+        public void GenerateAccessTokenManual_AccessToken() {
+            AccessTokenInfo info =
+                GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY);
+            
+            ServicesContainer.ConfigureService(new GpApiConfig {
+                AccessTokenInfo = info
+            });
+            
+            var response = card.Verify()
+                .WithCurrency("USD")
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+        }
+
+        [TestMethod]
         public void GenerateAccessTokenManualWithSecondsToExpire() {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Environment.TEST,
@@ -98,7 +146,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Environment = Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
-                SecondsToExpire = 6000,
+                SecondsToExpire = 60,
                 IntervalToExpire = IntervalToExpire.FIVE_MINUTES
             });
 
@@ -112,7 +160,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void GenerateAccessTokenWithWrongCredentials() {
+        public void GenerateAccessTokenWithWrongAppId() {
             try {
                 GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID + "a", APP_KEY);
             }
@@ -124,14 +172,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void GenerateAccessTokenWithWrongAppKeyCredentials() {
+        public void GenerateAccessTokenWithWrongAppKey() {
             try {
                 GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY + "a");
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
                 Assert.AreEqual("40004", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: Forbidden - App credentials not recognized", ex.Message);
+                Assert.AreEqual("Status Code: Forbidden - Credentials not recognized to create access token.", ex.Message);
             }
         }
 
