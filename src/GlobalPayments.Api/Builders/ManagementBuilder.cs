@@ -78,6 +78,11 @@ namespace GlobalPayments.Api.Builders {
         internal string Timestamp { get; set; }
         internal VoidReason? VoidReason { get; set; }
         internal bool AllowDuplicates { get; set; }
+        internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
+        internal string TagData { get; set; }
+
+        //internal string EWICIssuingEntity { get; set; }
+        //internal CustomerData AuthorizationCustomerData { get; set; }
 
         /// <summary>
         /// Sets the current transaction's amount.
@@ -460,6 +465,21 @@ namespace GlobalPayments.Api.Builders {
         }
         public ManagementBuilder WithForceGatewayTimeout(bool value) {
             ForceGatewayTimeout = value;
+            return this;
+        }
+
+        public ManagementBuilder WithAuthenticatioNMethod(CardHolderAuthenticationMethod value) {
+            AuthenticationMethod = value;
+            return this;
+        }
+
+        public ManagementBuilder WithTagData(string value) {
+            TagData = value;
+            return this;
+        }
+
+        public ManagementBuilder WithEWICIssuingEntity(string value) {
+            EWICIssuingEntity = value;
             return this;
         }
     }

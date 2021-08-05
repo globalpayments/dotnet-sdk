@@ -13,7 +13,7 @@ namespace GlobalPayments.Api.Network.Elements{
         public DE22_CardHolderPresence CardHolderPresence { get; set; }
         public DE22_CardPresence CardPresence { get; set; }
         public DE22_CardDataInputMode CardDataInputMode { get; set; }
-        public DE22_CardHolderAuthenticationMethod CardHolderAuthenticationMethod { get; set; }
+        public CardHolderAuthenticationMethod CardHolderAuthenticationMethod { get; set; }
         public CardHolderAuthenticationEntity CardHolderAuthenticationEntity { get; set; }
         public CardDataOutputCapability CardDataOutputCapability { get; set; }
         public TerminalOutputCapability TerminalOutputCapability { get; set; }
@@ -27,7 +27,7 @@ namespace GlobalPayments.Api.Network.Elements{
             CardHolderPresence = DE22_CardHolderPresence.CardHolder_Present;
             CardPresence = DE22_CardPresence.CardPresent;
             CardDataInputMode = DE22_CardDataInputMode.MagStripe;
-            CardHolderAuthenticationMethod = DE22_CardHolderAuthenticationMethod.NotAuthenticated;
+            CardHolderAuthenticationMethod = CardHolderAuthenticationMethod.NotAuthenticated;
             CardHolderAuthenticationEntity = CardHolderAuthenticationEntity.NotAuthenticated;
             CardDataOutputCapability = CardDataOutputCapability.None;
             TerminalOutputCapability = TerminalOutputCapability.None;
@@ -45,7 +45,7 @@ namespace GlobalPayments.Api.Network.Elements{
             CardHolderPresence = EnumConverter.FromMapping<DE22_CardHolderPresence>(Target.NWS, sp.ReadString(1));
             CardPresence = EnumConverter.FromMapping<DE22_CardPresence>(Target.NWS, sp.ReadString(1));
             CardDataInputMode = EnumConverter.FromMapping<DE22_CardDataInputMode>(Target.NWS, sp.ReadString(1));
-            CardHolderAuthenticationMethod = EnumConverter.FromMapping<DE22_CardHolderAuthenticationMethod>(Target.NWS, sp.ReadString(1));
+            CardHolderAuthenticationMethod = EnumConverter.FromMapping<CardHolderAuthenticationMethod>(Target.NWS, sp.ReadString(1));
             CardHolderAuthenticationEntity = EnumConverter.FromMapping<CardHolderAuthenticationEntity>(Target.NWS, sp.ReadString(1));
             CardDataOutputCapability = EnumConverter.FromMapping<CardDataOutputCapability>(Target.NWS, sp.ReadString(1));
             TerminalOutputCapability = EnumConverter.FromMapping<TerminalOutputCapability>(Target.NWS, sp.ReadString(1));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
+using GlobalPayments.Api.Network.Elements;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 
@@ -18,6 +19,7 @@ namespace GlobalPayments.Api.Builders {
         internal bool AllowPartialAuth { get; set; }
         internal decimal? Amount { get; set; }
         internal bool AmountEstimated { get; set; }
+        internal decimal? AmountTaxed { get; set; }
         internal decimal? AuthAmount { get; set; }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal InquiryType? BalanceInquiryType { get; set; }
@@ -76,6 +78,10 @@ namespace GlobalPayments.Api.Builders {
         internal string ShiftNumber { get; set; }
         internal string ClerkId { get; set; }
         internal string TransportData { get; set; }
+        internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
+        internal RecordDataEntry POSSiteConfigRecord { get; set; }
+        internal string CheckCustomerId { get; set; }
+        internal string RawMICRData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
 
         internal bool HasEmvFallbackData {
@@ -156,6 +162,12 @@ namespace GlobalPayments.Api.Builders {
             AmountEstimated = value;
             return this;
         }
+
+        public AuthorizationBuilder WithAmountTaxed(decimal? value) {
+            AmountTaxed = value;
+            return this;
+        }
+
 
         /// <summary>
         /// Sets the transaction's authorization amount; where applicable.
@@ -324,6 +336,11 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithCvn(string value) {
             Cvn = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithPOSSiteConfigRecord(RecordDataEntry value) {
+            POSSiteConfigRecord = value;
             return this;
         }
 
@@ -866,45 +883,80 @@ namespace GlobalPayments.Api.Builders {
             ShiftNumber = value;
             return this;
         }
+
         public AuthorizationBuilder WithTransportData(string value) {
             TransportData = value;
             return this;
         }
+
         public AuthorizationBuilder WithBatchNumber(int value) {
             BatchNumber = value;
             return this;
         }
+
         public AuthorizationBuilder WithBatchNumber(int batchNumber, int sequenceNumber) {
             BatchNumber = batchNumber;
             SequenceNumber = sequenceNumber;
             return this;
         }
+
         public AuthorizationBuilder WithCompanyId(string value) {
             CompanyId = value;
             return this;
         }
+
         public AuthorizationBuilder WithFleetData(FleetData value) {
             FleetData = value;
             return this;
         }
+
         public AuthorizationBuilder WithIssuerData(Dictionary<DE62_CardIssuerEntryTag, string> value) {
             IssuerData = value;
             return this;
         }
+
         public AuthorizationBuilder WithSystemTraceAuditNumber(int value) {
             SystemTraceAuditNumber = value;
             return this;
-        }
+        }        
+
         public AuthorizationBuilder WithTransactionMatchingData(TransactionMatchingData value) {
             TransactionMatchingData = value;
             return this;
         }
+
         public AuthorizationBuilder WithChipCondition(EmvLastChipRead value) {
             EmvChipCondition = value;
             return this;
         }
+
         public AuthorizationBuilder WithProductData(ProductData value) {
             ProductData = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithEWICData(EWICData eWicData) {
+            EwicData = eWicData;
+            return this;
+        }
+
+        public AuthorizationBuilder WithAuthenticationMethod(CardHolderAuthenticationMethod value) {
+            AuthenticationMethod = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithEWICIssuingEntity(string value) {
+            EWICIssuingEntity = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithCheckCustomerId(string value) {
+            CheckCustomerId = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithRawMICRData(string value) {
+            RawMICRData = value;
             return this;
         }
     }

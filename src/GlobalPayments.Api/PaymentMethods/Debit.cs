@@ -22,6 +22,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.Debit; } }
 
         public string PinBlock { get; set; }
+        public bool ReadyLinkCard { get; set; }
 
         public Debit() {
             CardType = "Unknown";

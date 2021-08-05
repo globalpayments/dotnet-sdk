@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GlobalPayments.Api.Utils {
     public class EmvUtils {
@@ -122,6 +123,68 @@ namespace GlobalPayments.Api.Utils {
             knownTags["FFC6"] = "Terminal Action Code (TAC) Default";
             knownTags["FFC7"] = "Terminal Action Code (TAC) Denial";
             knownTags["FFC8"] = "Terminal Action Code (TAC) Online";
+
+            // WEX EMV
+            knownTags["42"] = "Issuer Identification Number (IIN or BIN)";
+            knownTags["61"] = "Directory entry Template";
+            knownTags["70"] = "Record Template";
+            knownTags["73"] = "Directory Discretionary Template";
+            knownTags["9F4D"] = "Log Entry";
+            knownTags["9F4F"] = "Transaction Log Format";
+            knownTags["9F52"] = "Card Verification Results (CVR)";
+            knownTags["9F7E"] = "Issuer Life Cycle Data";
+            knownTags["A5"] = "FCI Proprietary Template";
+            knownTags["BF0C"] = "FCI Issuer Discretionary Data";
+            knownTags["BF20"] = "PRO 00";
+            knownTags["BF27"] = "PRO 07";
+            knownTags["BF2E"] = "PRO 14";
+            knownTags["C1"] = "Application Control";
+            knownTags["C4"] = "Default Contact Profile31";
+            knownTags["CA"] = "Previous Transaction History";
+            knownTags["CB"] = "CRM Country Code";
+            knownTags["CD"] = "CRM Currency Code";
+            knownTags["D3"] = "PDOL Related data Length";
+            knownTags["D8"] = "CAFL";
+            knownTags["DF01"] = "Proprietary Data Element n°1";
+            knownTags["DF02"] = "Proprietary Data Element n°2";
+            knownTags["DF03"] = "Proprietary Data Element n°3";
+            knownTags["DF04"] = "Proprietary Data Element n°4";
+            knownTags["DF05"] = "Proprietary Data Element n°5";
+            knownTags["DF06"] = "Proprietary Data Element n°6";
+            knownTags["DF07"] = "Proprietary Data Element n°7";
+            knownTags["DF08"] = "Proprietary Data Element n°8";
+            knownTags["DF10"] = "Profile Selection Table";
+            knownTags["DF11"] = "Currency Conversion Code 1";
+            knownTags["DF12"] = "Currency Conversion Code 2";
+            knownTags["DF13"] = "COTN counter";
+            knownTags["DF14"] = "COTA accumulator";
+
+            knownTags["DF15"] = "CIAC – Denial";
+            knownTags["DF16"] = "CIAC – Default";
+            knownTags["DF17"] = "CIAC – Online";
+            knownTags["DF18"] = "LCOTA limit ";
+            knownTags["DF19"] = "UCOTA limit";
+            knownTags["DF1A"] = "MTAL limit ";
+            knownTags["DF1B"] = "LCOL limit";
+
+            knownTags["DF1C"] = "Upper Consecutive Offline Limit (UCOL)";
+            knownTags["DF1D"] = "IADOL";
+
+            knownTags["DF1E"] = "Derivation key Index";
+            knownTags["DF30"] = "Fuel Card usage bitmap [Prompting], ATC Limit";
+            knownTags["DF31"] = "Encrypted PIN cryptography failure limit";
+            knownTags["DF32"] = "Purchase Restrictions (WEX refers to this as Chip Offline Purchase Restriction), Failed MAC limit";
+            knownTags["DF33"] = "Lifetime MAC Limit";
+            knownTags["DF34"] = "Chip Offline Purchase Restrictions Amount for Fuel*, Session MAC Limit";
+            knownTags["DF35"] = "Chip Offline Purchase Restrictions Amount for non-Fuel*";
+
+            knownTags["DF36"] = "Relationship Codes*";
+            knownTags["DF37"] = "3rd Party Reference Data Generation 2*";
+            knownTags["DF38"] = "Loyalty ID*";
+            knownTags["DF39"] = "Purchase Device Sequence Number (with the suffix)* ";
+            knownTags["DF40"] = "DDOL Related Data Length";
+            knownTags["DF41"] = "CCDOL2 Related Data Length";
+            knownTags["DF4D"] = "Transaction Log Setting parameter31";
 
             dataTypes = new Dictionary<string, string>();
             dataTypes["82"] = "b";

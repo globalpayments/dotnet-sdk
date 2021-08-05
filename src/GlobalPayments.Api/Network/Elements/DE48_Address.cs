@@ -72,17 +72,28 @@ namespace GlobalPayments.Api.Network.Elements {
                     if (Address.StreetAddress1 != null) {
                         rvalue = string.Concat(rvalue, Address.StreetAddress1);
                     }
-                    rvalue = string.Concat(rvalue, "\\");
                     // street 2
                     if (Address.StreetAddress2 != null) {
+                        if (!string.IsNullOrEmpty(rvalue)) {
+                            rvalue = string.Concat(rvalue, "\\");
+                        }
+
                         rvalue = string.Concat(rvalue, Address.StreetAddress2);
                     }
-                    rvalue = string.Concat(rvalue, ("\\"));
+
                     // city
                     if (Address.City != null) {
+                        if (!string.IsNullOrEmpty(rvalue)) {
+                            rvalue = string.Concat(rvalue, "\\");
+                        }
+
                         rvalue = string.Concat(rvalue, Address.City);
                     }
-                    rvalue = string.Concat(rvalue, "\\");
+
+                    if (!string.IsNullOrEmpty(rvalue)) {
+                        rvalue = string.Concat(rvalue, "\\");
+                    }
+
                     rvalue = string.Concat(rvalue, (StringUtils.PadRight(Address.State, 3, ' '))
                             , (StringUtils.PadRight(Address.PostalCode, 10, paddingChar))
                             , (StringUtils.PadRight(Address.Country, 3, paddingChar)));

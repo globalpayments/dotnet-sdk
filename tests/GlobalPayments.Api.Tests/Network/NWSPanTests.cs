@@ -23,7 +23,7 @@ namespace GlobalPayments.Api.Tests.Network {
             config.SecondaryEndpoint = "test.txns-e.secureexchange.net";
             config.SecondaryPort = 15031;
             config.CompanyId = "SPSA";
-            config.TerminalId = "NWSBATCH122";
+            config.TerminalId = "NWSDOTNET01";
             config.AcceptorConfig = acceptorConfig;
             config.StanProvider = StanGenerator.GetInstance();
             config.BatchProvider = BatchProvider.GetInstance();

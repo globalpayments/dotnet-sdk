@@ -24,6 +24,7 @@ namespace GlobalPayments.Api.Gateways {
         public string CompanyId { get; set; }
         public ConnectionType ConnectionType { get; set; }
         public string MerchantType { get; set; }
+        public string EWICMerchantId { get; set; }
         public MessageType MessageType { get; set; }
         public string NodeIdentification { get; set; }
         public ProtocolType ProtocolType { get; set; }

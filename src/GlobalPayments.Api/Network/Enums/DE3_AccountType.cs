@@ -38,6 +38,6 @@ namespace GlobalPayments.Api.Network.Entities {
         [Map(Target.NWS, "91")]
         AchAccount,
         [Map(Target.NWS, "97")]
-        eWIC
+        EWIC
     }
 }

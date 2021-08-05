@@ -1,15 +1,16 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Utils;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace GlobalPayments.Api.PaymentMethods {
-    /// <summary>
-    /// Use PIN debit track data as a payment method.
-    /// </summary>
-    public class DebitTrackData : Debit, ITrackData {
+    public class EwicTrackData : Ewic, ITrackData {
         private string _trackData;
         private string _value;
 
         public string DiscretionaryData { get; set; }
+        public EncryptionData EncryptionData { get; set; }
         public EntryMethod EntryMethod { get; set; }
         public string Expiry { get; set; }
         public string Pan { get; set; }
@@ -29,11 +30,10 @@ namespace GlobalPayments.Api.PaymentMethods {
             set {
                 _value = value;
                 CardUtils.ParseTrackData(this);
-                CardType = CardUtils.MapCardType(Pan);
-                ReadyLinkCard = CardUtils.IsReadyLink(CardType, Pan);
             }
         }
 
-        public DebitTrackData() : base() { }
+        public EwicTrackData() {
+        }
     }
 }

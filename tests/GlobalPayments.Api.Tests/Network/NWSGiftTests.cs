@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Network {
             AcceptorConfig acceptorConfig = new AcceptorConfig();
 
             // data code values
-            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_ContactlessMsd_MagStripe_KeyEntry;
+            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry;
             acceptorConfig.CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.PIN;
             acceptorConfig.TerminalOutputCapability = TerminalOutputCapability.Printing_Display;
             acceptorConfig.CardDataOutputCapability = CardDataOutputCapability.Unknown;
@@ -41,7 +41,7 @@ namespace GlobalPayments.Api.Tests.Network {
             config.SecondaryEndpoint = "test.txns-e.secureexchange.net";
             config.SecondaryPort = 15031;
             config.CompanyId = "SPSA";
-            config.TerminalId = "NWSBATCH122";
+            config.TerminalId = "NWSDOTNET01";
             config.AcceptorConfig = acceptorConfig;
             config.EnableLogging = true;
             config.StanProvider = StanGenerator.GetInstance();
@@ -56,18 +56,26 @@ namespace GlobalPayments.Api.Tests.Network {
             ServicesContainer.ConfigureService(config, "ValueLink");
 
             // VALUE LINK
-            giftCard = TestCards.ValueLinkManual();
+            //giftCard = TestCards.ValueLinkManual();
             //giftCard = TestCards.ValueLinkSwipe();
 
             // SVS
             //giftCard = TestCards.SvsManual();
+            giftCard = TestCards.SvsSwipe();
+
+            //GIFT CARD
+            //giftCard = TestCards.GiftCardManual();
+            //giftCard = TestCards.GiftCardSwipe();
         }
+
         [TestMethod]
         public void Test_000_batch_close() {
             BatchSummary summary = BatchService.CloseBatch();
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.IsBalanced);
         }
+
+        // Test 172
         [TestMethod]
         public void giftCard_activate() {
             Transaction response = giftCard.Activate(25m)
@@ -76,12 +84,13 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.IsNotNull(response);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
-            Assert.AreEqual("000", response.ResponseCode);            
+            Assert.AreEqual("000", response.ResponseCode);      
         }
 
+        // Test 170
         [TestMethod]
         public void giftCard_add_value() {
-            Transaction response = giftCard.AddValue(25m)
+            Transaction response = giftCard.AddValue(100m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
@@ -90,17 +99,21 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
         }
 
+        // Test 165 (manual)
+        // Test 168 (swipe)
         [TestMethod]
         public void giftCard_sale() {
-            Transaction response = giftCard.Charge(1m)
+            Transaction response = giftCard.Charge(10m)
                         .WithCurrency("USD")
-                        .Execute("ValueLink");
+                        .Execute();
             Assert.IsNotNull(response);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);            
         }
 
+        // Test 175 (Reverse Sale)
+        // Test 176 (Reverse Return)
         [TestMethod]
         public void giftCard_reversal() {
             try {
@@ -127,6 +140,7 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
         }
 
+        // Test 171
         [TestMethod]
         public void giftCard_cash_out() {
             Transaction response = giftCard.CashOut()
@@ -138,18 +152,21 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
         }
 
+        // Test 167
+        // Test 177 (ICR) & 178 (ICR Auth-Capture)
         [TestMethod]
         public void giftCard_auth_capture() {
             Transaction response = giftCard.Authorize(50m, true)
                         .WithCurrency("USD")
-                        .Execute("ICR");
+                        .Execute();
+                        //.Execute("ICR");
             Assert.IsNotNull(response);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
 
             Transaction transaction = Transaction.FromNetwork(
-                    new Decimal(50),
+                    50m,
                     response.AuthorizationCode,
                     response.NTSData,
                     giftCard,
@@ -167,6 +184,7 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", captureResponse.ResponseCode);
         }
 
+        // Test 166
         [TestMethod]
         public void giftCard_balance_inquiry() {
             Transaction response = giftCard.BalanceInquiry()
@@ -177,11 +195,11 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
         }
 
+        // Test 169
         [TestMethod]
         public void giftCard_return() {
-            Transaction response = giftCard.Refund(new Decimal(35.24))
+            Transaction response = giftCard.Refund(10m)
                         .WithCurrency("USD")
-                        .WithClerkId("41256")
                         .Execute();
             Assert.IsNotNull(response);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
@@ -189,6 +207,7 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
         }
 
+        // Test 174
         [TestMethod]
         public void giftCard_void() {
             Transaction response = giftCard.Charge(10m)
@@ -201,15 +220,16 @@ namespace GlobalPayments.Api.Tests.Network {
 
             Transaction voidResponse = response.Void().Execute();
             Assert.IsNotNull(voidResponse);
-            Assert.AreEqual("000", voidResponse.ResponseCode);
+            Assert.AreEqual("400", voidResponse.ResponseCode);
             System.Diagnostics.Debug.WriteLine(voidResponse.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(voidResponse.SystemTraceAuditNumber);
         }
 
+        // Test 173
         [TestMethod]
         public void giftCard_voice_capture() {
             Transaction trans = Transaction.FromNetwork(
-                    new Decimal(10),
+                    10m,
                     "TYPE04",
                     NtsData.VoiceAuthorized(),
                     giftCard

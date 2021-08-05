@@ -28,6 +28,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
                 // data code values
                 CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry,
+                CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.PIN,
                 TerminalOutputCapability = TerminalOutputCapability.Printing_Display,
                 CardHolderAuthenticationEntity = CardHolderAuthenticationEntity.AuthorizingAgent,
                 //OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended,
@@ -51,7 +52,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 SecondaryEndpoint = "test.txns-e.secureexchange.net",
                 SecondaryPort = 15031,
                 CompanyId = "SPSA",
-                TerminalId = "NWSDOTNET02",
+                TerminalId = "NWSDOTNET01",
                 UniqueDeviceId = "0001",
                 MerchantType = "5541",
                 AcceptorConfig = acceptorConfig,
@@ -109,7 +110,8 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_214_manual_balance_inquiry() {
-            try {
+            try
+            {
                 EBTCardData ebtCard = new EBTCardData(EbtCardType.CashBenefit);
                 ebtCard.Number = "4012002000060016";
                 ebtCard.ExpMonth = 12;
@@ -120,7 +122,8 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithUniqueDeviceId("0001")
                         .Execute();
             }
-            catch (BuilderException) {
+            catch (BuilderException)
+            {
 
             }
         }
@@ -430,6 +433,8 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
             Assert.AreEqual("200080", pmi.ProcessingCode);
             Assert.AreEqual("200", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
 
             // check result
             Assert.AreEqual("000", response.ResponseCode);
@@ -462,6 +467,9 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("008000", pmi.ProcessingCode);
             Assert.AreEqual("201", pmi.FunctionCode);
             Assert.AreEqual("1378", pmi.MessageReasonCode);
+
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
 
             // check result
             Assert.AreEqual("000", response.ResponseCode);

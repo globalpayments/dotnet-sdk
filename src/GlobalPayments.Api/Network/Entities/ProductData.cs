@@ -36,6 +36,8 @@ namespace GlobalPayments.Api.Network.Entities {
             };
             productData.Add(entry);
         }
+        public int Count { get { return productData.ProductCount; } }
+
         public DE63_ProductData ToDataElement() {
             return productData;
         }

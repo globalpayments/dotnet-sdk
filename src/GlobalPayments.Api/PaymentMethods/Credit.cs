@@ -5,7 +5,7 @@ namespace GlobalPayments.Api.PaymentMethods {
     /// <summary>
     /// Use credit as a payment method.
     /// </summary>
-    public abstract class Credit : IPaymentMethod, IEncryptable, ITokenizable, IChargable, IAuthable, IRefundable, IReversable, IVerifiable, IPrePaid, IBalanceable, ISecure3d {
+    public abstract class Credit : IPaymentMethod, IEncryptable, ITokenizable, IChargable, IAuthable, IRefundable, IReversable, IVerifiable, IPrePaid, IBalanceable, ISecure3d, IPinProtected {
         /// <summary>
         /// The name of the issuing Bank
         /// </summary>
@@ -49,6 +49,8 @@ namespace GlobalPayments.Api.PaymentMethods {
         public bool FleetCard { get; set; }
 
         public bool PurchaseCard { get; set; }
+        public bool ReadyLinkCard { get; set; }
+        public string PinBlock { get; set; }
 
         public Credit() {
             CardType = "Unknown";
@@ -95,6 +97,14 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder BalanceInquiry(InquiryType? inquiry = null) {
             return new AuthorizationBuilder(TransactionType.Balance, this).WithBalanceInquiryType(inquiry);
+        }
+
+        public AuthorizationBuilder CashAdvance(decimal? amount = null) {
+            return new AuthorizationBuilder(TransactionType.CashAdvance, this).WithAmount(amount);
+        }
+
+        public AuthorizationBuilder Payment(decimal? amount = null) {
+            return new AuthorizationBuilder(TransactionType.Payment, this).WithAmount(amount);
         }
 
         /// <summary>

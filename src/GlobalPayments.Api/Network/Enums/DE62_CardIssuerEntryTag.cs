@@ -19,12 +19,24 @@ namespace GlobalPayments.Api.Network.Entities {
         Bank_CreditCards,
         [Map(Target.NWS, "Cxx")]
         Checks,
+        [Map(Target.NWS, "C00")]
+        CheckInformation,
+        [Map(Target.NWS, "C02")]
+        CheckExpandedOrRawMICRData,
         [Map(Target.NWS, "Dxx")]
         PIN_DebitCards,
         [Map(Target.NWS, "Exx")]
         ElectronicBenefitsTransfer,
+        [Map(Target.NWS, "EIS")]
+        EwicIssuingEntity,
+        [Map(Target.NWS, "EWN")]
+        EwicMerchantId,
         [Map(Target.NWS, "Fxx")]
         FleetCards,
+        [Map(Target.NWS, "F00")]
+        Wex_SpecVersionSupport,
+        [Map(Target.NWS, "F01")]
+        Wex_PurchaseDeviceSequenceNumber,
         [Map(Target.NWS, "Gxx")]
         PrepaidServiceSystem,
             //Removed the tags as part of v19.1 compliance updates

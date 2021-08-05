@@ -30,6 +30,7 @@ namespace GlobalPayments.Api.Entities {
         public decimal? TotalAmount { get; set; }
         public int TransactionCount { get; set; }
         public string TransactionToken { get; set; }
+        public string SystemTraceAuditNumber { get; set; }
         public bool IsBalanced {
             get {
                 if (ResponseCode != null) {

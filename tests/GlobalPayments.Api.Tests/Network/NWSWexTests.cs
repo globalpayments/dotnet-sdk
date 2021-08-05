@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Tests.Network {
             AcceptorConfig acceptorConfig = new AcceptorConfig();
 
             // data code values
-            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactEmv_ContactlessMsd_MagStripe_KeyEntry;
+            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry;
             acceptorConfig.TerminalOutputCapability = TerminalOutputCapability.Printing_Display;
 
             // hardware software config values
@@ -38,7 +38,7 @@ namespace GlobalPayments.Api.Tests.Network {
             config.SecondaryEndpoint = "test.txns-e.secureexchange.net";
             config.SecondaryPort = 15031;
             config.CompanyId = "SPSA";
-            config.TerminalId = "NWSBATCH122";
+            config.TerminalId = "JOSHUA3";
             config.AcceptorConfig = acceptorConfig;
             config.EnableLogging = true;
             config.StanProvider = StanGenerator.GetInstance();
@@ -52,7 +52,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_000_batch_close() {
-            BatchSummary summary = BatchService.CloseBatch();
+            BatchSummary summary = BatchService.CloseBatch(BatchCloseType.Forced);
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.IsBalanced);
         }
@@ -64,25 +64,30 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_001_3000_V202_MA_I_WX2_1200() {
             CreditCardData card = new CreditCardData();
-            card.Number = "6900460430006149231";
-            card.ExpMonth = 11;
-            card.ExpYear = 2022;
+            card.Number = "6900460430001234566";
+            card.ExpMonth = 12;
+            card.ExpYear = 2021;
 
-            FleetData fleetData = new FleetData();
-            fleetData.PurchaseDeviceSequenceNumber = "30002";
-            fleetData.ServicePrompt = "1";
-            fleetData.DriverId = "5555";
-            fleetData.OdometerReading = "123456";
+            FleetData fleetData = new FleetData
+            {
+                PurchaseDeviceSequenceNumber = "30002",
+                ServicePrompt = "0",
+                DriverId = "273368",
+                //OdometerReading = "123456",
+                VehicleNumber = "22001"
+            };
 
             ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Conexxus_3_Digit);
-            productData.Add("400", Api.Network.Entities.UnitOfMeasure.Units, 1, 10);
+            productData.Add("400", Api.Network.Entities.UnitOfMeasure.Units, 1, 3);
 
-            Transaction response = card.Charge(10m)
+            Transaction response = card.Charge(3m)
                     .WithCurrency("USD")
                     .WithProductData(productData)
                     .WithFleetData(fleetData)
                     .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
@@ -95,33 +100,53 @@ namespace GlobalPayments.Api.Tests.Network {
         */
         [TestMethod]
         public void Test_002_3000_V202_ON_O_WX2_1100() {
-            CreditTrackData card = new CreditTrackData();
-            card.Value = "6900460420006149231=19020013000200000";
+            CreditTrackData track = new CreditTrackData();
+            track.Value = ";6900460430001234566=21121002200100000?";
+            //card.Value = ";6900460420006149231=19023013031200001?";
 
-            FleetData fleetData = new FleetData();
-            fleetData.ServicePrompt = "00";
+            CreditCardData card = new CreditCardData();
+            card.CardPresent = true;
+            card.ReaderPresent = true;
+            card.Number = "6900460430001234566";
+            card.ExpMonth = 12;
+            card.ExpYear = 2021;
+            card.Cvn = "123";
+
+            FleetData fleetData = new FleetData
+            {
+                PurchaseDeviceSequenceNumber = "22001",
+                ServicePrompt = "0",
+                DriverId = "273368",
+                OdometerReading = "123456",
+                VehicleNumber = "22001"
+            };
 
             ProductData productData = new ProductData(ServiceLevel.SelfServe, ProductCodeSet.Conexxus_3_Digit);
-            productData.Add("074", Api.Network.Entities.UnitOfMeasure.Units, 1m, 10m, 10m);
+            productData.Add("001", UnitOfMeasure.Gallons, 1m, 3m, 3m);
 
-            Transaction response = card.Authorize(1m, true)
+            Transaction response = card.Charge(3m)
                     .WithCurrency("USD")
                     .WithProductData(productData)
                     .WithFleetData(fleetData)
+                    //.Execute();
                     .Execute("outside");
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
 
-            productData = new ProductData(ServiceLevel.SelfServe, ProductCodeSet.Conexxus_3_Digit);
-            productData.Add("001", UnitOfMeasure.Gallons, 1m, 10m, 10m);
+            //productData = new ProductData(ServiceLevel.SelfServe, ProductCodeSet.Conexxus_3_Digit);
+            //productData.Add("001", UnitOfMeasure.Gallons, 1m, 3m, 3m);
 
-            Transaction capture = response.Capture(10m)
-                    .WithCurrency("USD")
-                    .WithProductData(productData)
-                    .WithFleetData(fleetData)
-                    .Execute("outside");
-            Assert.IsNotNull(capture);
-            Assert.AreEqual("000", capture.ResponseCode);
+            //Transaction capture = response.Capture(3m)
+            //        .WithCurrency("USD")
+            //        .WithProductData(productData)
+            //        .WithFleetData(fleetData)
+            //        .Execute("outside");
+            //Assert.IsNotNull(capture);
+            //System.Diagnostics.Debug.WriteLine(capture.HostResponseDate);
+            //System.Diagnostics.Debug.WriteLine(capture.SystemTraceAuditNumber);
+            //Assert.AreEqual("000", capture.ResponseCode);
         }
 
 
@@ -132,12 +157,14 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_003_3010_V202_ON_I_WX2_1200() {
             CreditTrackData card = new CreditTrackData();
-            card.Value = "6900460420006149231=19021013010200000";
+            //card.Value = ";6900460430001234566=21121012202100000?";
+            card.Value = ";6900460420006149231=19023013031200001?";
 
             FleetData fleetData = new FleetData();
-            fleetData.ServicePrompt = "10";
-            fleetData.OdometerReading = "125630";
-            fleetData.DriverId = "5500";
+            fleetData.ServicePrompt = "0";
+            //fleetData.OdometerReading = "125630";
+            fleetData.DriverId = "273368";
+            fleetData.VehicleNumber = "22021";
 
             ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Conexxus_3_Digit);
             productData.Add("102", UnitOfMeasure.Units, 1m, 10m, 10m);
@@ -148,6 +175,8 @@ namespace GlobalPayments.Api.Tests.Network {
                     .WithFleetData(fleetData)
                     .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
@@ -161,12 +190,13 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_004_3010_V202_ON_O_WX2_1100() {
             CreditTrackData card = new CreditTrackData();
-            card.Value = "6900460420006149231=19021013010200000";
+            card.Value = ";6900460430001234566=21121012202100000?";
 
             FleetData fleetData = new FleetData();
-            fleetData.ServicePrompt = "10";
-            fleetData.OdometerReading = "125630";
-            fleetData.DriverId = "5500";
+            fleetData.ServicePrompt = "0";
+            //fleetData.OdometerReading = "125630";
+            fleetData.DriverId = "273368";
+            fleetData.VehicleNumber = "22021";
 
             ProductData productData = new ProductData(ServiceLevel.SelfServe, ProductCodeSet.Conexxus_3_Digit);
             productData.Add("074", UnitOfMeasure.Units, 1m, 10m, 10m);
@@ -533,14 +563,19 @@ namespace GlobalPayments.Api.Tests.Network {
         */
         [TestMethod]
         public void Test_016_3016_V202_ON_I_WX2_1220() {
-            CreditTrackData card = new CreditTrackData();
-            card.Value = "6900460420006149231=1902";
+            //CreditTrackData card = new CreditTrackData();
+            //card.Value = "6900460420006149231=1902";
+
+            CreditTrackData track = new CreditTrackData();
+            track.Value = ";6900460430001234566=21121002200100000?";
 
             FleetData fleetData = new FleetData();
-            fleetData.PurchaseDeviceSequenceNumber = "30162";
-            fleetData.ServicePrompt = "16";
-            fleetData.DriverId = "456320";
-            fleetData.JobNumber = "123456";
+            fleetData.PurchaseDeviceSequenceNumber = "22001";
+            fleetData.ServicePrompt = "0";
+            fleetData.DriverId = "273368";
+            fleetData.VehicleNumber = "22001";
+            fleetData.OdometerReading = "12345";
+            //fleetData.JobNumber = "123456";
 
             ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Conexxus_3_Digit);
             productData.Add("001", UnitOfMeasure.Units, 1m, 10m, 10m);
@@ -548,8 +583,8 @@ namespace GlobalPayments.Api.Tests.Network {
             Transaction trans = Transaction.FromNetwork(
                     10m,
                     "TYPE04",
-                    new NtsData(FallbackCode.None, AuthorizerCode.Host_Authorized),
-                    card
+                    new NtsData(FallbackCode.None, AuthorizerCode.Voice_Authorized),
+                    track
             );
 
             Transaction response = trans.Capture(10m)
@@ -558,6 +593,8 @@ namespace GlobalPayments.Api.Tests.Network {
                     .WithFleetData(fleetData)
                     .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 

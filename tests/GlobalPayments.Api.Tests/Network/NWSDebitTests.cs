@@ -3,6 +3,7 @@ using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.Network.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,8 @@ namespace GlobalPayments.Api.Tests.Network {
                 // data code values
                 CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry,
                 TerminalOutputCapability = TerminalOutputCapability.Printing_Display,
+                CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.PIN,
+
                 //CardHolderAuthenticationEntity = CardHolderAuthenticationEntity.AuthorizingAgent,
                 //OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended,
 
@@ -50,7 +53,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 SecondaryEndpoint = "test.txns-e.secureexchange.net",
                 SecondaryPort = 15031,
                 CompanyId = "SPSA",
-                TerminalId = "NWSDOTNET02",
+                TerminalId = "NWSDOTNET01",
                 UniqueDeviceId = "0001",
                 AcceptorConfig = acceptorConfig,
                 EnableLogging = true,
@@ -69,7 +72,9 @@ namespace GlobalPayments.Api.Tests.Network {
             ServicesContainer.ConfigureService(config, "timeout");
 
             // debit card
-            track = new DebitTrackData {
+            
+            track = new DebitTrackData
+            {
                 Value = "4355567063338=2012101HJNw/ewskBgnZqkL",
                 PinBlock = "62968D2481D231E1A504010024A00014",
                 EncryptionData = EncryptionData.Version2("/wECAQEEAoFGAgEH4gcOTDT6jRZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0m+/d4SO9TEshhRGUUQzVBrBvP/Os1qFx+6zdQp1ejjUCoDmzoUMbil9UG73zBxxTOy25f3Px0p8joyCh8PEWhADz1BkROJT3q6JnocQE49yYBHuFK0obm5kqUcYPfTY09vPOpmN+wp45gJY9PhkJF5XvPsMlcxX4/JhtCshegz4AYrcU/sFnI+nDwhy295BdOkVN1rn00jwCbRcE900kj3UsFfyc", "2")
@@ -78,9 +83,33 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_000_batch_close() {
-            BatchSummary summary = BatchService.CloseBatch();
+            BatchSummary summary = BatchService.CloseBatch(BatchCloseType.Forced);
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.IsBalanced);
+        }
+
+        [TestMethod]
+        public void WFRC_Response_Tests_Auth()
+        {
+            Transaction response = track.Authorize(10m, true)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.ResponseMessage);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void WFRC_Response_Tests_Sale()
+        {
+            Transaction response = track.Charge(10m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.ResponseMessage);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
         }
 
         [TestMethod]
@@ -308,17 +337,50 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_161_ICR_reverse_authorization() {
-            try {
-                track.Authorize(10m)
+            //try {
+            //    track.Authorize(10m)
+            //            .WithCurrency("USD")
+            //            .WithForceGatewayTimeout(true)
+            //            .Execute("ICR");
+            //    Assert.Fail("Did not throw a timeout");
+            //}
+            //catch (GatewayTimeoutException exc) {
+            //    Assert.AreEqual(1, exc.ReversalCount);
+            //    Assert.AreEqual("400", exc.ReversalResponseCode);
+            //}
+
+            Transaction response = track.Authorize(10m, true)
                         .WithCurrency("USD")
-                        .WithForceGatewayTimeout(true)
                         .Execute("ICR");
-                Assert.Fail("Did not throw a timeout");
-            }
-            catch (GatewayTimeoutException exc) {
-                Assert.AreEqual(1, exc.ReversalCount);
-                Assert.AreEqual("400", exc.ReversalResponseCode);
-            }
+            Assert.IsNotNull(response);
+
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1100", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000800", pmi.ProcessingCode);
+            Assert.AreEqual("101", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction reversal = response.Reverse(10m)
+                    .WithCurrency("USD")
+                    .Execute("ICR");
+            Assert.IsNotNull(reversal);
+
+            // check message data
+            pmi = reversal.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000800", pmi.ProcessingCode);
+            Assert.AreEqual("400", pmi.FunctionCode);
+            Assert.AreEqual("4021", pmi.MessageReasonCode);
+            System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
+            // check response
+            //Assert.AreEqual("400", reversal.ResponseCode);
         }
 
         [TestMethod]
@@ -341,7 +403,7 @@ namespace GlobalPayments.Api.Tests.Network {
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
 
-            // test case 160
+            // test case 163
             Transaction capture = response.Capture(response.AuthorizedAmount)
                     .Execute("ICR");
             Assert.IsNotNull(capture);
@@ -358,6 +420,35 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", capture.ResponseCode);
             System.Diagnostics.Debug.WriteLine(capture.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(capture.SystemTraceAuditNumber);
+        }
+
+        //[TestMethod]
+        //public void Test_164_ICR_void_authorization() {
+
+        //}
+
+        [TestMethod]
+        public void ReadyLinkLoad() {
+            track = new DebitTrackData {
+                Value = ";4110651122223331=21121010000012345678?"
+            };
+
+            Transaction response = track.AddValue(50m)
+                    .WithCurrency("USD")
+                    .Execute();
+            Assert.IsNotNull(response);
+
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("600008", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
         }
 
         //[TestMethod]
@@ -388,7 +479,7 @@ namespace GlobalPayments.Api.Tests.Network {
         //    Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
         //    Assert.AreEqual("000800", pmi.ProcessingCode);
         //    Assert.AreEqual("400", pmi.FunctionCode);
-        //    Assert.AreEqual("4351", pmi.MessageReasonCode);
+        //    Assert.AreEqual("4021", pmi.MessageReasonCode);
 
         //    // check response
         //    Assert.AreEqual("400", reversal.ResponseCode);

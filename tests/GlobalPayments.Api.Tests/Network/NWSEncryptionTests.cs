@@ -30,7 +30,7 @@ namespace GlobalPayments.Api.Tests.Network {
             acceptorConfig.Address = address;
 
             // data code values
-            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactEmv_ContactlessMsd_MagStripe_KeyEntry;
+            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry;
             acceptorConfig.TerminalOutputCapability = TerminalOutputCapability.Printing_Display;
 
             // hardware software config values
@@ -52,7 +52,7 @@ namespace GlobalPayments.Api.Tests.Network {
             config.SecondaryEndpoint = "test.txns-e.secureexchange.net";
             config.SecondaryPort = 15031;
             config.CompanyId = "SPSA";
-            config.TerminalId = "NWSBATCH122";
+            config.TerminalId = "NWSDOTNET01";
             config.AcceptorConfig = acceptorConfig;
             config.EnableLogging = true;
             config.StanProvider = StanGenerator.GetInstance();
@@ -61,32 +61,32 @@ namespace GlobalPayments.Api.Tests.Network {
             ServicesContainer.ConfigureService(config);
 
             // AMEX
-            card = TestCards.AmexManualEncrypted();
-            cardWithCvn = TestCards.AmexManualEncrypted();
-            cardWithCvn.Cvn = "9072488";
-            track = TestCards.AmexSwipeEncrypted();
+            //card = TestCards.AmexManualEncrypted();
+            ////cardWithCvn = TestCards.AmexManualEncrypted();
+            ////cardWithCvn.Cvn = "9072488";
+            //track = TestCards.AmexSwipeEncrypted();
 
             // DISCOVER
-            //        card = TestCards.DiscoverManualEncrypted();
-            //        cardWithCvn = TestCards.DiscoverManualEncrypted();
-            //        cardWithCvn.setCvn("7803754");
-            //        cashCard = TestCards.DiscoverSwipeEncryptedV2();
+            card = TestCards.DiscoverManualEncrypted();
+            //cardWithCvn = TestCards.DiscoverManualEncrypted();
+            //cardWithCvn.Cvn = "703";
+            track = TestCards.DiscoverSwipeEncryptedV2();
 
             // MASTERCARD
-            //        card = TestCards.MasterCardManualEncrypted();
-            //        cardWithCvn = TestCards.MasterCardManualEncrypted();
-            //        cardWithCvn.setCvn("7803754");
-            //        cashCard = TestCards.MasterCardSwipeEncryptedV2();
+            //card = TestCards.MasterCardManualEncrypted();
+            ////cardWithCvn = TestCards.MasterCardManualEncrypted();
+            ////cardWithCvn.Cvn = "7803754";
+            //track = TestCards.MasterCardSwipeEncryptedV2();
 
             // VISA
-            //        card = TestCards.VisaManualEncrypted();
-            //        cardWithCvn = TestCards.VisaManualEncrypted();
-            //        cardWithCvn.setCvn("7803754");
-            //        cashCard = TestCards.VisaSwipeEncryptedV2();
+            //card = TestCards.VisaManualEncrypted(true, true);
+            ////cardWithCvn = TestCards.VisaManualEncrypted();
+            ////cardWithCvn.Cvn = "7803754";
+            //track = TestCards.VisaSwipeEncryptedV2();
 
             // DEBIT
             debit = new DebitTrackData();
-            debit.Value = "4355567063338=2012101HJNw/ewskBgnZqkL";
+            debit.Value = ";6090001234567891=2112120000000000001?";
             debit.PinBlock = "62968D2481D231E1A504010024A00014";
             debit.EncryptionData = EncryptionData.Version2("/wECAQEEAoFGAgEH4gcOTDT6jRZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0m+/d4SO9TEshhRGUUQzVBrBvP/Os1qFx+6zdQp1ejjUCoDmzoUMbil9UG73zBxxTOy25f3Px0p8joyCh8PEWhADz1BkROJT3q6JnocQE49yYBHuFK0obm5kqUcYPfTY09vPOpmN+wp45gJY9PhkJF5XvPsMlcxX4/JhtCshegz4AYrcU/sFnI+nDwhy295BdOkVN1rn00jwCbRcE900kj3UsFfyc", "2");
         }
@@ -104,6 +104,8 @@ namespace GlobalPayments.Api.Tests.Network {
                     .WithCurrency("USD")
                     .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
@@ -113,6 +115,8 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
@@ -122,11 +126,15 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
 
             // void the transaction test case #7
             Transaction voidResponse = response.Void().Execute();
             Assert.IsNotNull(voidResponse);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("400", voidResponse.ResponseCode);
         }
 
@@ -136,11 +144,15 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
 
             // void the transaction test case #8
-            Transaction reverseResponse = response.Reverse().Execute();
+            Transaction reverseResponse = response.Void().Execute();
             Assert.IsNotNull(reverseResponse);
+            System.Diagnostics.Debug.WriteLine("Void: " + reverseResponse.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine("Void: " + reverseResponse.SystemTraceAuditNumber);
             Assert.AreEqual("400", reverseResponse.ResponseCode);
         }
 
@@ -150,6 +162,8 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
@@ -159,6 +173,8 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
@@ -168,26 +184,34 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
         [TestMethod]
         public void Test_036_credit_swipe_sale() {
-            Transaction response = track.Charge(10m)
+            Transaction response = card.Charge(10m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
 
             // reverse the transaction test case #40
             Transaction voidResponse = response.Void().Execute();
             Assert.IsNotNull(voidResponse);
+            System.Diagnostics.Debug.WriteLine("Void: " + voidResponse.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine("Void: " + voidResponse.SystemTraceAuditNumber);
             Assert.AreEqual("400", voidResponse.ResponseCode);
 
             // reverse the transaction test case #39
-            Transaction reverseResponse = response.Reverse().Execute();
-            Assert.IsNotNull(reverseResponse);
-            Assert.AreEqual("400", reverseResponse.ResponseCode);
+            //Transaction reverseResponse = response.Reverse().Execute();
+            //Assert.IsNotNull(reverseResponse);
+            //System.Diagnostics.Debug.WriteLine("Reverse: " + reverseResponse.HostResponseDate);
+            //System.Diagnostics.Debug.WriteLine("Reverse: " + reverseResponse.SystemTraceAuditNumber);
+            //Assert.AreEqual("400", reverseResponse.ResponseCode);
         }
 
         [TestMethod]
@@ -196,6 +220,8 @@ namespace GlobalPayments.Api.Tests.Network {
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
     }

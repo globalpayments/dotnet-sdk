@@ -74,7 +74,7 @@ namespace GlobalPayments.Api.Utils {
                 return "";
             }
             int numberPlaces = BitConverter.GetBytes(decimal.GetBits(amount)[3])[2];            
-            string rvalue = TrimStart(amount.ToString().Replace("[^0-9]", ""), "0");
+            string rvalue = TrimStart(amount.ToString().Replace(".", ""), "0");
             return numberPlaces + rvalue;
         }
         public static string Join(string separator, Object[] fields) {

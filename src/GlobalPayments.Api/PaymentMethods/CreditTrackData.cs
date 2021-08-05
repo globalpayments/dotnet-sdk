@@ -32,13 +32,13 @@ namespace GlobalPayments.Api.PaymentMethods {
                 CardType = CardUtils.MapCardType(Pan);
                 FleetCard = CardUtils.IsFleet(CardType, Pan);
                 PurchaseCard = CardUtils.IsPurchase(CardType, Pan);
+                ReadyLinkCard = CardUtils.IsReadyLink(CardType, Pan);
 
                 if (CardType.Equals("WexFleet") && DiscretionaryData != null && DiscretionaryData.Length >= 8) {
                     PurchaseDeviceSequenceNumber = DiscretionaryData.Substring(3, 5);
                 }
             }
         }
-        public string PinBlock { get; set; }
 
         public CreditTrackData() : base() { }
     }

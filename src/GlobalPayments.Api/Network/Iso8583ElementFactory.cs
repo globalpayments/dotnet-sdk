@@ -106,6 +106,31 @@ namespace GlobalPayments.Api.Network {
                 factory.AddElementMapping(DataElementId.DE_048, DataElementType.LLVAR, "Address 9", 99);
                 factory.AddElementMapping(DataElementId.DE_049, DataElementType.LLVAR, "Address 10", 99);
             }
+            else if (messageType.Equals(Iso8583MessageType.SubElement_DE_0117_EA)) {
+                factory.AddElementMapping(DataElementId.DE_002, DataElementType.NUMERIC, "UPC_PLU Data", 17);
+                factory.AddElementMapping(DataElementId.DE_003, DataElementType.ALPHA_NUMERIC_PAD, "Item Description", 50);
+                factory.AddElementMapping(DataElementId.DE_004, DataElementType.NUMERIC, "Category Code", 2);
+                factory.AddElementMapping(DataElementId.DE_005, DataElementType.ALPHA_NUMERIC_PAD, "Category Description", 50);
+                factory.AddElementMapping(DataElementId.DE_006, DataElementType.NUMERIC, "Sub-Category Code", 3);
+                factory.AddElementMapping(DataElementId.DE_007, DataElementType.ALPHA_NUMERIC_PAD, "Sub-Category Description", 50);
+                factory.AddElementMapping(DataElementId.DE_008, DataElementType.ALPHA_NUMERIC, "Unit Of Measure", 10);
+                factory.AddElementMapping(DataElementId.DE_009, DataElementType.NUMERIC, "Package Size", 5);
+                factory.AddElementMapping(DataElementId.DE_011, DataElementType.NUMERIC, "Benefit Quantity", 5);
+                factory.AddElementMapping(DataElementId.DE_012, DataElementType.ALPHA_NUMERIC_SPECIAL, "Benefit Unit Description", 50);
+                factory.AddElementMapping(DataElementId.DE_013, DataElementType.NUMERIC, "UPC_PLU Data Length", 2);
+            }
+            else if (messageType.Equals(Iso8583MessageType.SubElement_DE_0117_PS)) {
+                factory.AddElementMapping(DataElementId.DE_002, DataElementType.NUMERIC, "UPC_PLU Data", 17);
+                factory.AddElementMapping(DataElementId.DE_003, DataElementType.NUMERIC, "Category Code", 2);
+                factory.AddElementMapping(DataElementId.DE_004, DataElementType.NUMERIC, "Sub-Category Code", 3);
+                factory.AddElementMapping(DataElementId.DE_005, DataElementType.NUMERIC, "Units", 5);
+                factory.AddElementMapping(DataElementId.DE_006, DataElementType.NUMERIC, "Item Price", 6);
+                factory.AddElementMapping(DataElementId.DE_007, DataElementType.NUMERIC, "Purchase Quantity", 5);
+                factory.AddElementMapping(DataElementId.DE_008, DataElementType.NUMERIC, "Item Action Code", 2);
+                factory.AddElementMapping(DataElementId.DE_009, DataElementType.NUMERIC, "Original Item Price", 6);
+                factory.AddElementMapping(DataElementId.DE_010, DataElementType.NUMERIC, "original Purchase Quantity", 5);
+                factory.AddElementMapping(DataElementId.DE_011, DataElementType.NUMERIC, "UPC_PLU Data Length", 2);
+            }
 
             return factory;
         }

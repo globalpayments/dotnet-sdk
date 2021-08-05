@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GlobalPayments.Api.Utils;
+using System;
 
 namespace GlobalPayments.Api.Entities {
     internal enum AliasAction {
@@ -145,7 +146,9 @@ namespace GlobalPayments.Api.Entities {
 
         Other = 1 << 8,
 
-        AltPayment = 1 << 9
+        AltPayment = 1 << 9,
+
+        Ewic = 1 << 10
     }
 
     /// <summary>
@@ -331,16 +334,19 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a personal check.
         /// </summary>
+        [Map(Target.NWS, "0")]
         PERSONAL,
 
         /// <summary>
         /// Indicates a business check.
         /// </summary>
+        [Map(Target.NWS, "3")]
         BUSINESS,
 
         /// <summary>
         /// Indicates a payroll check.
         /// </summary>
+        [Map(Target.NWS, "1")]
         PAYROLL
     }
 

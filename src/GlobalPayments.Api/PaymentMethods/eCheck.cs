@@ -6,7 +6,7 @@ namespace GlobalPayments.Api.PaymentMethods {
     /// <summary>
     /// Use eCheck/ACH as a payment method.
     /// </summary>
-    public class eCheck : IPaymentMethod, IChargable, ITokenizable {
+    public class eCheck : IPaymentMethod, IChargable, ITokenizable, IAuthable {
         public string AccountNumber { get; set; }
         public AccountType? AccountType { get; set; }
         public bool AchVerify { get; set; }
@@ -30,6 +30,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string SecCode { get; set; }
         public string SsnLast4 { get; set; }
         public string Token { get; set; }
+        public bool CheckGuarantee { get; set; }
 
         /// <summary>
         /// Set to `PaymentMethodType.ACH` for internal methods.
@@ -65,15 +66,18 @@ namespace GlobalPayments.Api.PaymentMethods {
 
         public bool UpdateTokenExpiry(string configName = "default") {
             throw new UnsupportedTransactionException();
-        }
+        }       
 
-        string ITokenizable.Tokenize(string configName, PaymentMethodUsageMode paymentMethodUsageMode)
-        {
+        public AuthorizationBuilder Authorize(decimal? amount = null, bool isEstimated = false) {
+            return new AuthorizationBuilder(TransactionType.Auth, this)
+                    .WithAmount(amount);
+        }
+      
+        string ITokenizable.Tokenize(string configName, PaymentMethodUsageMode paymentMethodUsageMode) {
             throw new NotImplementedException();
         }
 
-        string ITokenizable.Tokenize(bool validateCard, string configName, PaymentMethodUsageMode paymentMethodUsageMode)
-        {
+        string ITokenizable.Tokenize(bool validateCard, string configName, PaymentMethodUsageMode paymentMethodUsageMode) {
             throw new NotImplementedException();
         }
     }

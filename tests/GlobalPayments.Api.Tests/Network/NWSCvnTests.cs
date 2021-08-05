@@ -39,7 +39,7 @@ namespace GlobalPayments.Api.Tests.Network {
             config.SecondaryEndpoint = "test.txns-e.secureexchange.net";
             config.SecondaryPort = 15031;
             config.CompanyId = "SPSA";
-            config.TerminalId = "NWSDOTNET02 ";
+            config.TerminalId = "NWSDOTNET01";
             config.AcceptorConfig = acceptorConfig;
             config.EnableLogging = true;
             config.StanProvider = StanGenerator.GetInstance();
@@ -58,19 +58,22 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_001_amex_match() {
             CreditCardData card = TestCards.AmexManual(false, false);
-            card.Cvn = "0101";
+            card.Cvn = "7101";
 
-            Transaction response = card.Charge(10m)
+            Transaction response = card.Authorize(10m)
                     .WithCurrency("USD")
                     .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("Y", response.CvnResponseCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
         }
 
         [TestMethod]
-        public void Test_002_amex_match() {
+        public void Test_002_amex_mismatch() {
             CreditCardData card = TestCards.AmexManual(false, false);
-            card.Cvn = "0101";
+            card.Cvn = "8102";
 
             Transaction response = card.Authorize(10m)
                         .WithCurrency("USD")
@@ -79,18 +82,21 @@ namespace GlobalPayments.Api.Tests.Network {
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("N", response.CvnResponseCode);
+
         }
 
         [TestMethod]
         public void Test_003_discover_match() {
             CreditCardData card = TestCards.DiscoverManual(false, false);
-            card.Cvn = "103";
+            card.Cvn = "703";
 
             Transaction response = card.Charge(10m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("M", response.CvnResponseCode);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
         }
@@ -98,13 +104,14 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_004_discover_mismatch() {
             CreditCardData card = TestCards.DiscoverManual(false, false);
-            card.Cvn = "106";
+            card.Cvn = "804";
 
             Transaction response = card.Authorize(10m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("N", response.CvnResponseCode);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
         }
@@ -136,19 +143,22 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_007_mastercard_match() {
             CreditCardData card = TestCards.MasterCardManual(false, false);
-            card.Cvn = "107";
+            card.Cvn = "707";
 
             Transaction response = card.Charge(10m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("M", response.CvnResponseCode);
         }
 
         [TestMethod]
         public void Test_008_mastercard_mismatch() {
             CreditCardData card = TestCards.MasterCardManual(false, false);
-            card.Cvn = "109";
+            card.Cvn = "808";
 
             Transaction response = card.Authorize(10m)
                         .WithCurrency("USD")
@@ -157,6 +167,7 @@ namespace GlobalPayments.Api.Tests.Network {
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("N", response.CvnResponseCode);
         }
 
         [TestMethod]
@@ -174,25 +185,29 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_010_visa_match() {
             CreditCardData card = TestCards.VisaManual(false, false);
-            card.Cvn = "110";
+            card.Cvn = "710";
 
             Transaction response = card.Charge(10m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("M", response.CvnResponseCode);
         }
 
         [TestMethod]
         public void Test_011_visa_mismatch() {
             CreditCardData card = TestCards.VisaManual(false, false);
-            card.Cvn = "113";
+            card.Cvn = "811";
 
             Transaction response = card.Authorize(10m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
+            Assert.AreEqual("N", response.CvnResponseCode);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
         }

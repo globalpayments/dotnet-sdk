@@ -19,7 +19,12 @@ namespace GlobalPayments.Api.Network.Elements {
         }
 
         public byte[] ToByteArray() {
-            string rvalue = string.Concat(((bool)PerformDateCheck ? "1" : "0"),((bool)EchoSettlementData ? "1" : "0"),((bool)IncludeLoyaltyData ? "1" : "0"));
+            string rvalue = string.Concat(
+                PerformDateCheck != null ? (bool)PerformDateCheck ? "1" : "0" : "0",
+                EchoSettlementData != null ? (bool)EchoSettlementData ? "1" : "0" : "0",
+                IncludeLoyaltyData != null ? (bool)IncludeLoyaltyData ? "1" : "0" : "0"
+            );
+
             if (!string.IsNullOrEmpty(TransactionGroupId)) {
                 rvalue = string.Concat(rvalue,TransactionGroupId);
             }

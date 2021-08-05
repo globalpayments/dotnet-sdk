@@ -4,7 +4,6 @@ using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.TestData;
-using System;
 using GlobalPayments.Api.Network.Enums;
 
 namespace GlobalPayments.Api.Tests.Network {
@@ -12,26 +11,46 @@ namespace GlobalPayments.Api.Tests.Network {
     public class NWSCreditTests {
         private CreditCardData card;
         private CreditTrackData track;
+        //private CreditCardData readylinkCard;
+        private DebitTrackData readylinkTrack;
+
         public NWSCreditTests() {
+            Address address = new Address
+            {
+                Name = "My STORE",
+                StreetAddress1 = "1 MY STREET",
+                City = "MYTOWN",
+                PostalCode = "90210",
+                State = "KY",
+                Country = "USA"
+            };
+
             AcceptorConfig acceptorConfig = new AcceptorConfig {
+                Address = address,
+
                 // data code values
-                CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry,
+                CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry, // Inside
+                //CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe, // Outside
+
                 CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.PIN,
                 CardHolderAuthenticationEntity = CardHolderAuthenticationEntity.ByMerchant,
                 TerminalOutputCapability = TerminalOutputCapability.Printing_Display,
                 //OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended,
-
+                //
                 // hardware software config values
                 HardwareLevel = "34",
                 SoftwareLevel = "21205710",
 
                 // pos configuration values
-                SupportsPartialApproval = true,
+                SupportsPartialApproval = false,
                 SupportsShutOffAmount = true,
                 SupportsReturnBalance = true,
                 SupportsDiscoverNetworkReferenceId = true,
                 SupportsAvsCnvVoidReferrals = true,
-                SupportsEmvPin = true
+                SupportsEmvPin = true,
+
+                // DE 43-34 Message Data
+                EchoSettlementData = true
             };
 
             // gateway config
@@ -42,7 +61,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 SecondaryEndpoint = "test.txns-e.secureexchange.net",
                 SecondaryPort = 15031,
                 CompanyId = "SPSA",
-                TerminalId = "NWSDOTNET02",
+                TerminalId = "NWSDOTNET21",
                 UniqueDeviceId = "0001",
                 AcceptorConfig = acceptorConfig,
                 EnableLogging = true,
@@ -87,13 +106,19 @@ namespace GlobalPayments.Api.Tests.Network {
             // DISCOVER
             //card = TestCards.DiscoverManual(true, true);
             //track = TestCards.DiscoverSwipe();
+
+            //Visa ReadyLink
+            //readylinkCard = TestCards.VisaReadyLinkManual(true, true);
+            readylinkTrack = TestCards.VisaReadyLinkSwipe();
         }
+
         [TestMethod]
         public void Test_000_batch_close() {
-            BatchSummary summary = BatchService.CloseBatch();
+            BatchSummary summary = BatchService.CloseBatch(BatchCloseType.Forced);
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.IsBalanced);
         }
+
         [TestMethod]
         public void Test_003_manual_authorization() {
             Transaction response = card.Authorize(10m, true)
@@ -113,6 +138,7 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
             
         }
+
         [TestMethod]
         public void Test_004_manual_sale() {
             Transaction response = card.Charge(10m)
@@ -127,10 +153,20 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("200", pmi.FunctionCode);
-
+            
             // check response
             Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction reversal = response.Reverse(10m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(reversal);
+            System.Diagnostics.Debug.WriteLine("Reversal:");
+            System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
+
         }
+
         [TestMethod]
         public void Test_005_swipe_verify() {
             Transaction response = track.Verify().Execute();
@@ -143,14 +179,18 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("313000", pmi.ProcessingCode);
             Assert.AreEqual("108", pmi.FunctionCode);
 
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+
             // check response
             Assert.AreEqual("000", response.ResponseCode);
         }
+
         [TestMethod]
         public void Test_006_swipe_authorization() {
-            Transaction response = track.Authorize(10m, true)
-                    .WithCurrency("USD")
-                    .Execute();
+            Transaction response = track.Authorize(10m, false)
+                .WithCurrency("USD")
+                .Execute();
             Assert.IsNotNull(response);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
@@ -158,26 +198,30 @@ namespace GlobalPayments.Api.Tests.Network {
             PriorMessageInformation pmi = response.MessageInformation;
             Assert.IsNotNull(pmi);
             Assert.AreEqual("1100", pmi.MessageTransactionIndicator);
-            Assert.AreEqual("003000", pmi.ProcessingCode);
-            Assert.AreEqual("101", pmi.FunctionCode);
+            //Assert.AreEqual("003000", pmi.ProcessingCode);
+            //Assert.AreEqual("000", response.ResponseCode);
 
-            Transaction recreated = Transaction.FromNetwork(
-                response.AuthorizedAmount,
-                response.AuthorizationCode,
-                response.NTSData,
-                track,
-                response.MessageTypeIndicator,
-                response.SystemTraceAuditNumber,
-                response.OriginalTransactionTime,
-                response.ProcessingCode
-            );
-            // check response
-            Assert.AreEqual("000", response.ResponseCode);            
+            //Assert.AreEqual("101", pmi.FunctionCode);
+
+            //Transaction recreated = Transaction.FromNetwork(
+            //    response.AuthorizedAmount,
+            //    response.AuthorizationCode,
+            //    response.NTSData,
+            //    track,
+            //    response.MessageTypeIndicator,
+            //    response.SystemTraceAuditNumber,
+            //    response.OriginalTransactionTime,
+            //    response.ProcessingCode
+            //);
+            //// check response
+            //Assert.AreEqual("000", response.ResponseCode);
         }
+
         [TestMethod]
         public void Test_007_swipe_sale() {
             Transaction response = track.Charge(100m)
                 .WithCurrency("USD")
+                .WithAmountTaxed(1m)
                 .Execute();
             Assert.IsNotNull(response);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
@@ -190,6 +234,26 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("200", pmi.FunctionCode);
             // check response
             Assert.AreEqual("000", response.ResponseCode);            
+        }
+
+        [TestMethod]
+        public void Test_008_refund()
+        {
+            Transaction response = track.Refund(10m)
+                    .WithCurrency("USD")
+                    .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("200030", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
         }
 
         [TestMethod]
@@ -271,10 +335,12 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_012_swipe_partial_void() {
-            Transaction sale = track.Charge(40m)
+            Transaction sale = track.Charge(100m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(sale);
+            System.Diagnostics.Debug.WriteLine(sale.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(sale.SystemTraceAuditNumber);
             Assert.AreEqual("002", sale.ResponseCode);
 
             Transaction response = sale.Void(amount: sale.AuthorizedAmount)
@@ -294,6 +360,32 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("400", response.ResponseCode);
         }
 
+        //[TestMethod]
+        //public void Test_013_swipe_reverse_force_draft_capture() {
+        //    Transaction transaction = Transaction.FromNetwork(
+        //            10m,
+        //            "TYPE04",
+        //            new NtsData(FallbackCode.None, AuthorizerCode.Voice_Authorized),
+        //            track
+        //    );
+
+        //    try
+        //    {
+        //        Transaction response = transaction.Capture(10m)
+        //                .WithCurrency("USD")
+        //                //.WithForceGatewayTimeout(true)
+        //                .Execute();
+
+        //        //Assert.IsNotNull(response);
+
+        //    }
+        //    catch (GatewayTimeoutException exc)
+        //    {
+        //        Assert.AreEqual(1, exc.ReversalCount);
+        //        Assert.AreEqual("400", exc.ReversalResponseCode);
+        //    }
+        //}
+
         [TestMethod]
         public void Test_014_swipe_reverse_sale() {
             try {
@@ -308,6 +400,21 @@ namespace GlobalPayments.Api.Tests.Network {
                 Assert.AreEqual("400", exc.ReversalResponseCode);
             }
         }
+
+        //[TestMethod]
+        //public void Test_015_swipe_reverse_return() {
+        //    try {
+        //        track.Refund(10m)
+        //            .WithCurrency("USD")
+        //            .WithForceGatewayTimeout(true)
+        //            .Execute();
+        //        Assert.Fail("Did not throw a timeout");
+        //    }
+        //    catch (GatewayTimeoutException exc) {
+        //        Assert.AreEqual(1, exc.ReversalCount);
+        //        Assert.AreEqual("400", exc.ReversalResponseCode);
+        //    }
+        //}
 
         [TestMethod]
         public void Test_016_ICR_authorization() {
@@ -412,26 +519,83 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("400", pmi.FunctionCode);
-            Assert.AreEqual("4351", pmi.MessageReasonCode);
+            Assert.AreEqual("4021", pmi.MessageReasonCode);
             System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
             // check response
             //Assert.AreEqual("400", reversal.ResponseCode);
         }
 
-        //[TestMethod]
-        //public void Test_021_EMV_sale() {
-        //    CreditTrackData track = new CreditTrackData {
-        //        Value = "372700699251018=2512990502700"
-        //    };
+        [TestMethod]
+        public void Test_021_EMV_sale() {
+            CreditCardData card = TestCards.MasterCardFleetManual(true, true);
 
-        //    Transaction response = track.Charge(6m)
-        //            .WithCurrency("USD")
-        //            .WithTagData("4F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
-        //            .Execute();
-        //    Assert.IsNotNull(response);
-        //    Assert.AreEqual("000", response.ResponseCode);
-        //}
+            CreditTrackData track = TestCards.AmexSwipe();
+            track.Value = ";374245002741006=241222117101234500000?";
+
+            //track.Value = ";5567630000088409=49126010793608000024?"; //MTip40 Test 01 Scenario 01
+            track.PinBlock = "62968D2481D231E1A504010024A00014";
+
+            FleetData fleetData = new FleetData {
+                //ServicePrompt = "0",
+                //DriverId = "11411",
+                VehicleNumber = "987654",
+                OdometerReading = "123456"
+            };
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 4m, 5m, 20m);
+
+            Transaction response = track.Charge(31m)
+                    .WithCurrency("USD")
+                    //.WithFleetData(fleetData)
+                    //.WithProductData(productData)
+                    .WithTagData("4F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                    .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void WFRC_Response_Tests_Auth() {
+            Transaction response = track.Authorize(10m, true)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.ResponseMessage);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void WFRC_Response_Tests_Sale()
+        {
+            Transaction response = track.Charge(10m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.ResponseMessage);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void WFRC_Response_Tests_Void()
+        {
+            Transaction sale = track.Charge(10m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(sale);
+
+            // Run up to this point and break - Wait for analyst to set response before continuing
+            Transaction response = sale.Void().Execute();
+            Assert.IsNotNull(response);
+
+            System.Diagnostics.Debug.WriteLine(response.ResponseMessage);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
 
         //[TestMethod]
         //public void Test_021_EMV_Proximity_sale() {
@@ -553,6 +717,42 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
         }
 
+        [TestMethod]
+        public void SwipeCashAdvance() {
+            Transaction response = track.CashAdvance(10m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("013000", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void SwipePayment() {
+            Transaction response = track.Payment(10m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("500039", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
         //[TestMethod]
         //public void Test_tor_on_stand_in_capture() {
         //    Transaction transaction = Transaction.FromNetwork(
@@ -575,8 +775,36 @@ namespace GlobalPayments.Api.Tests.Network {
         //}
 
         [TestMethod]
-        public void Test_008_refund() {
-            Transaction response = track.Refund(10m)
+        public void Test_ReadyLink_Load() {
+            Transaction response = readylinkTrack.AddValue(750m)
+                .WithFee(FeeType.TransactionFee, 2m)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("600008", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_WFRC_001_bank_card_swipe_inside_standin_capture_1220()
+        {
+            track = TestCards.VisaSwipe(EntryMethod.Swipe);
+
+            Transaction transaction = Transaction.FromNetwork(
+                10m,
+                "TYPE04",
+                new NtsData(FallbackCode.Received_IssuerTimeout, AuthorizerCode.Host_Authorized),
+                track);
+
+            Transaction response = transaction.Capture(10m)
                     .WithCurrency("USD")
                     .Execute();
             Assert.IsNotNull(response);
@@ -586,95 +814,174 @@ namespace GlobalPayments.Api.Tests.Network {
             PriorMessageInformation pmi = response.MessageInformation;
             Assert.IsNotNull(pmi);
             Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
-            Assert.AreEqual("200030", pmi.ProcessingCode);
-            Assert.AreEqual("200", pmi.FunctionCode);
+            Assert.AreEqual("003000", pmi.ProcessingCode);
+            Assert.AreEqual("201", pmi.FunctionCode);
 
             // check response
             Assert.AreEqual("000", response.ResponseCode);
         }
 
-        //[TestMethod]
-        //public void Test_015_refund_reverse() {
-        //    try {
-        //        var response = track.Refund(10m)
-        //                .WithCurrency("USD")
-        //                //.WithForceGatewayTimeout(true)
-        //                .Execute();
-        //        //Assert.Fail("Did not throw a timeout");
-        //        Assert.AreEqual("911", response.ResponseCode);
+        [TestMethod]
+        public void Test_WFRC_002_fleet_card_swipe_inside_voice_capture_1220()
+        {
+            CreditTrackData fleetTrack = TestCards.VoyagerFleetSwipe(EntryMethod.Swipe);
 
-        //        var reverse = response.Reverse().Execute();
+            Transaction transaction = Transaction.FromNetwork(
+                        10m,
+                        "TYPE04",
+                        new NtsData(FallbackCode.None, AuthorizerCode.Voice_Authorized),
+                        fleetTrack
+                );
 
-        //    }
-        //    catch (GatewayTimeoutException exc) {
-        //        Assert.AreEqual(1, exc.ReversalCount);
-        //        Assert.AreEqual("400", exc.ReversalResponseCode);
-        //    }
-        //}
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 1m, 10m, 10m);
 
-        //[TestMethod]
-        //public void Test_009_voice_Capture_Reverse() {
-        //    try
-        //    {
-        //        Transaction transaction = Transaction.FromNetwork(
-        //            10m,
-        //            "TYPE04",
-        //            new NtsData(FallbackCode.None, AuthorizerCode.Voice_Authorized),
-        //            track
-        //    );
+            FleetData fleetData = new FleetData
+            {
+                //ServicePrompt = "0",
+                DriverId = "11411",
+                //VehicleNumber = "22031",
+                OdometerReading = "1256"
+            };
 
-        //        Transaction response = transaction.Capture(10m)
-        //                .WithCurrency("USD")
-        //                .WithForceGatewayTimeout(true)
-        //                .Execute();
+            Transaction response = transaction.Capture(10m)
+                    .WithCurrency("USD")
+                    .WithProductData(productData)
+                    .WithFleetData(fleetData)
+                    .WithAuthenticatioNMethod(CardHolderAuthenticationMethod.ManualSignatureVerification)
+                    .Execute();
+            Assert.IsNotNull(response);
 
-        //        //Transaction reversal = response.Reverse(10m)
-        //        //    .WithCurrency("USD")
-        //        //    .Execute();
-        //        //Assert.IsNotNull(reversal);
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            Assert.AreEqual("201", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
 
-        //        //// check message data
-        //        //var pmi = reversal.MessageInformation;
-        //        //Assert.IsNotNull(pmi);
-        //        //Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
-        //        //Assert.AreEqual("003000", pmi.ProcessingCode);
-        //        //Assert.AreEqual("400", pmi.FunctionCode);
-        //        //Assert.AreEqual("4351", pmi.MessageReasonCode);
-        //        //System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
-        //        //System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
-        //    }
-        //    catch (GatewayTimeoutException exc) {
-        //        Assert.AreEqual(1, exc.ReversalCount);
-        //        Assert.AreEqual("400", exc.ReversalResponseCode);
-        //    }
-        //}
+        [TestMethod]
+        public void Test_WFRC_003_discover_swipe_inside_sale_1220_cash_over()
+        {
+     
+        }
 
-        //[TestMethod]
-        //public void Test_007_swipe_sale_Reverse() {
-        //    Transaction sale = track.Charge(10m)
-        //        .WithCurrency("USD")
-        //        .Execute();
-        //    Assert.IsNotNull(sale);
+        [TestMethod]
+        public void Test_WFRC_004_discover_swipe_inside_sale_1220_partial_approval_cash_over()
+        {
 
-        //    // check message data
-        //    PriorMessageInformation pmi = sale.MessageInformation;
-        //    Assert.IsNotNull(pmi);
-        //    Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
-        //    Assert.AreEqual("003000", pmi.ProcessingCode);
-        //    Assert.AreEqual("200", pmi.FunctionCode);
-        //    System.Diagnostics.Debug.WriteLine(sale.HostResponseDate);
-        //    System.Diagnostics.Debug.WriteLine(sale.SystemTraceAuditNumber);
-        //    // check response
-        //    Assert.AreEqual("911", sale.ResponseCode);
+        }
 
-        //    //var response = Transaction.FromId(null, PaymentMethodType.Credit);
+        [TestMethod]
+        public void Test_WFRC_005_bank_card_swipe_inside_void_1420()
+        {
+            track = TestCards.VisaSwipe(EntryMethod.Swipe);
 
-        //    var response = Transaction.FromNetwork(10m, "1200", null, null, "1200", "001666", "200529104317", "003000");
+            Transaction sale = track.Charge(10m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(sale);
+            Assert.AreEqual("000", sale.ResponseCode);
 
-        //    Transaction reversal = response.Reverse(10m)
-        //            .WithCurrency("USD")
-        //            .Execute();
-        //    Assert.IsNotNull(reversal);
-        //}
+            Transaction response = sale.Void()
+                    .Execute();
+            Assert.IsNotNull(response);
+
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("003000", pmi.ProcessingCode);
+            Assert.AreEqual("441", pmi.FunctionCode);
+            Assert.AreEqual("4351", pmi.MessageReasonCode);
+
+            // check response
+            Assert.AreEqual("400", response.ResponseCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void Test_WFRC_006_visa_chargeback_considerations()
+        {
+            track = new CreditTrackData
+            {
+                Value = ";4761739001010143=241222111478183?",
+                EntryMethod = EntryMethod.Swipe
+            };
+
+            Transaction response = track.Charge(1m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void Test_WFRC_007_visa_balance_return ()
+        {
+            track = TestCards.VisaSwipe(EntryMethod.Swipe);
+
+            Transaction response = track.Charge(100m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            //Assert.AreEqual("000", response.ResponseCode);
+
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void Test_WFRC_008_MC_balance_return()
+        {
+            track = TestCards.MasterCardSwipe(EntryMethod.Swipe);
+
+            Transaction response = track.Charge(100m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            //Assert.AreEqual("000", response.ResponseCode);
+
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void Test_WFRC_009_amex_balance_return()
+        {
+            track = TestCards.AmexSwipe(EntryMethod.Swipe);
+
+            Transaction response = track.Charge(100m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            //Assert.AreEqual("000", response.ResponseCode);
+
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
+
+        [TestMethod]
+        public void Test_WFRC_010_discover_balance_return()
+        {
+            track = TestCards.DiscoverSwipe(EntryMethod.Swipe);
+
+            Transaction response = track.Charge(100m)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            //Assert.AreEqual("000", response.ResponseCode);
+
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        }
     }
 }

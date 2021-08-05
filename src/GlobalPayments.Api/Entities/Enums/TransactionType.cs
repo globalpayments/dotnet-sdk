@@ -312,5 +312,15 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a transaction reauthorization
         /// </summary>
         Reauth = 1L << 60,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        SiteConfig = 1L << 61,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        TimeRequest = 1L << 62
     }
 }

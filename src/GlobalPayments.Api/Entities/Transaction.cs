@@ -298,6 +298,11 @@ namespace GlobalPayments.Api.Entities {
         public string TransactionDescriptor { get; set; }
 
         /// <summary>
+        /// The result of an administrative Time Request
+        /// </summary>
+        public string TimeResponseFromHeartland { get; set; }
+
+        /// <summary>
         /// The gateway transaction ID of the transaction.
         /// </summary>
         public string TransactionId {

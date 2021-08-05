@@ -8,6 +8,7 @@ namespace GlobalPayments.Api.Network.Elements {
     public class DE48_8_CustomerData : IDataElement<DE48_8_CustomerData> {
         private int fieldCount;
         public Dictionary<DE48_CustomerDataType, string> Fields { get; }
+        public bool EmvFlag { get; set; }
 
         public int GetFieldCount() {
             return Fields.Count;
@@ -49,7 +50,7 @@ namespace GlobalPayments.Api.Network.Elements {
                 rvalue = string.Concat(rvalue, EnumConverter.GetMapping(Target.NWS, type),value,"\\");
             }
             // strip the final '\\'
-            rvalue = StringUtils.TrimEnd(rvalue, "\\");
+            rvalue = !EmvFlag ?  StringUtils.TrimEnd(rvalue, "\\") : rvalue;
             return Encoding.ASCII.GetBytes(rvalue);
         }
 

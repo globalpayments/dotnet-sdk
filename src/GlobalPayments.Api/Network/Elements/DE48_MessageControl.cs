@@ -57,8 +57,11 @@ namespace GlobalPayments.Api.Network.Elements {
             HardwareSoftwareConfig = nm.GetDataElement<DE48_2_HardwareSoftwareConfig>(DataElementId.DE_002);
             LanguageCode = nm.GetString(DataElementId.DE_003);
             string _batchNumber = nm.GetString(DataElementId.DE_004);
-            SequenceNumber = int.Parse(_batchNumber.Substring(0, 6));
-            BatchNumber = int.Parse(_batchNumber.Substring(6));
+            if (!string.IsNullOrEmpty(_batchNumber))
+            {
+                SequenceNumber = int.Parse(_batchNumber.Substring(0, 6));
+                BatchNumber = int.Parse(_batchNumber.Substring(6));
+            }
             ShiftNumber = nm.GetString(DataElementId.DE_005);
             ClerkId = nm.GetString(DataElementId.DE_006);
             CustomerData = nm.GetDataElement<DE48_8_CustomerData>(DataElementId.DE_008);

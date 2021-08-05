@@ -12,11 +12,11 @@ namespace GlobalPayments.Api.Network.Entities {
         [Map(Target.NWS, "1379")]
         PinDebit_EBT_Acknowledgement,
         [Map(Target.NWS, "4021")]
-        TimeoutWaitingForResponse,
+        TimeoutWaitingForResponse_Reversal,
         [Map(Target.NWS, "4351")]
-        MerchantInitiatedReversal,
+        MerchantInitiatedVoid,
         [Map(Target.NWS, "4352")]
-        CustomerInitiatedReversal,
+        CustomerInitiatedVoid,
         [Map(Target.NWS, "4353")]
         CustomerInitiated_PartialApproval,
         [Map(Target.NWS, "4354")]

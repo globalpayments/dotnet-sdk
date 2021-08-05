@@ -22,6 +22,7 @@ namespace GlobalPayments.Api.Tests.Network {
             AcceptorConfig acceptorConfig = new AcceptorConfig {
                 // data code values
                 CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry,
+                CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.None,
                 TerminalOutputCapability = TerminalOutputCapability.Printing_Display,
                 CardHolderAuthenticationEntity = CardHolderAuthenticationEntity.ByMerchant,
                 //OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended,
@@ -30,7 +31,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 SoftwareLevel = "21205710",
 
                 // pos configuration values
-                SupportsPartialApproval = true,
+                SupportsPartialApproval = false,
                 SupportsShutOffAmount = true,
                 SupportsReturnBalance = true,
                 SupportsDiscoverNetworkReferenceId = true,
@@ -45,7 +46,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 SecondaryEndpoint = "test.txns-e.secureexchange.net",
                 SecondaryPort = 15031,
                 CompanyId = "SPSA",
-                TerminalId = "NWSDOTNET02",
+                TerminalId = "NWSDOTNET01",
                 UniqueDeviceId = "0001",
                 AcceptorConfig = acceptorConfig,
                 EnableLogging = true,
@@ -59,44 +60,55 @@ namespace GlobalPayments.Api.Tests.Network {
             ServicesContainer.ConfigureService(config, "ICR");
 
             // MASTERCARD FLEET
-            card = TestCards.MasterCardFleetManual(true, true);
-            track = TestCards.MasterCardFleetSwipe();
-            productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
-            productData.Add("03", UnitOfMeasure.Gallons, 1, 10);
+            //card = TestCards.MasterCardFleetManual(true, true);
+            //track = TestCards.MasterCardFleetSwipe();
+            //productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            //productData.Add("03", UnitOfMeasure.Gallons, 1, 10);
 
             // VOYAGER FLEET
-            //card = TestCards.VoyagerManual(true, true);
-            //track = TestCards.VoyagerSwipe();
+            //card = TestCards.VoyagerFleetManual(true, true);
+            //track = TestCards.VoyagerFleetSwipe();
 
             fleetData = new FleetData {
-                ServicePrompt = "0",
-                //fleetData.DriverId = "5500";
-                //fleetData.VehicleNumber = "1111";
+                //ServicePrompt = "0",
+                DriverId = "11411",
+                VehicleNumber = "22031",
                 OdometerReading = "1256"
             };
 
             // VISA
-            //card = TestCards.VisaFleetManual(true, true);
-            //track = TestCards.VisaFleetSwipe();
+            card = TestCards.VisaFleetManual(true, true);
+            track = TestCards.VisaFleetSwipe();
             //productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
             //productData.Add("01", UnitOfMeasure.Gallons, 1, 10);
 
             //FleetOne
             //card = TestCards.FleetOneManual(true, true);
             //track = TestCards.FleetOneSwipe();
+
+            //FleetCor Fuelman
+            //card = TestCards.FuelmanManual(true, true);
+            //track = TestCards.FuelmanSwipe();
+
+            // FleetCor Fleetwide
+            //card = TestCards.FleetWideManual(true, true);
+            //track = TestCards.FleetWideSwipe();
         }
 
         [TestMethod]
         public void Test_000_batch_close() {
-            BatchSummary summary = BatchService.CloseBatch();
+            BatchSummary summary = BatchService.CloseBatch(BatchCloseType.Forced);
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.IsBalanced);
         }
 
         [TestMethod]
         public void Test_001_manual_authorization() {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = card.Authorize(10m)
                     .WithCurrency("USD")
+                    .WithProductData(productData)
                     .WithFleetData(fleetData)
                     .Execute();
             Assert.IsNotNull(response);
@@ -116,9 +128,8 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_002_manual_sale() {
-            //ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-            //productData.Add("01", UnitOfMeasure.Gallons, 1m, 10m, 10m);
-
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = card.Charge(10m)
                     .WithCurrency("USD")
                     .WithProductData(productData)
@@ -141,6 +152,8 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_003_swipe_refund() {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = track.Refund(10m)
                         .WithCurrency("USD")
                         .WithFleetData(fleetData)
@@ -162,8 +175,8 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_004_swipe_stand_in_capture() {
-            //ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-            //productData.Add("01", UnitOfMeasure.Gallons, 1m, 10m, 10m);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
 
             Transaction transaction = Transaction.FromNetwork(
                     10m,
@@ -176,6 +189,7 @@ namespace GlobalPayments.Api.Tests.Network {
                     .WithCurrency("USD")
                     .WithProductData(productData)
                     .WithFleetData(fleetData)
+                    .WithAuthenticatioNMethod(CardHolderAuthenticationMethod.ManualSignatureVerification)
                     .Execute();
             Assert.IsNotNull(response);
 
@@ -200,13 +214,14 @@ namespace GlobalPayments.Api.Tests.Network {
                         track
                 );
 
-            //ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-            //productData.Add("01", UnitOfMeasure.Gallons, 1m, 10m, 10m);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
 
             Transaction response = transaction.Capture(10m)
                     .WithCurrency("USD")
                     .WithProductData(productData)
                     .WithFleetData(fleetData)
+                    .WithAuthenticatioNMethod(CardHolderAuthenticationMethod.ManualSignatureVerification)
                     .Execute();
             Assert.IsNotNull(response);
 
@@ -224,8 +239,8 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_006_swipe_void() {
-            //ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-            //productData.Add("01", UnitOfMeasure.Gallons, 1m, 10m, 10m);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
 
             Transaction sale = track.Charge(10m)
                     .WithCurrency("USD")
@@ -238,6 +253,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
             Transaction response = sale.Void(amount: sale.AuthorizedAmount)
                     .WithReferenceNumber("12345")
+                    .WithAuthenticatioNMethod(CardHolderAuthenticationMethod.ManualSignatureVerification)
                     .Execute();
             Assert.IsNotNull(response);
 
@@ -271,13 +287,14 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_008_ICR_authorization() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-            productData.Add("01", UnitOfMeasure.Gallons, 1, 2.999);
-            Transaction response = track.Authorize(2.999m, true)
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
+            Transaction response = track.Authorize(10m, false)
                         .WithCurrency("USD")
                         .WithProductData(productData)
                         .WithFleetData(fleetData)
-                        .Execute();
+                        //.Execute();
+                        .Execute("ICR");
             Assert.IsNotNull(response);
 
             // check message data
@@ -285,7 +302,7 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.IsNotNull(pmi);
             Assert.AreEqual("1100", pmi.MessageTransactionIndicator);
             Assert.AreEqual("000900", pmi.ProcessingCode);
-            Assert.AreEqual("101", pmi.FunctionCode);
+            //Assert.AreEqual("101", pmi.FunctionCode);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             // check response
@@ -307,13 +324,14 @@ namespace GlobalPayments.Api.Tests.Network {
             //System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
             //System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
             // Test_009
-            
 
-            Transaction captureResponse = response.Capture(response.AuthorizedAmount)
+
+            Transaction captureResponse = response.Capture(10m)
                     .WithCurrency("USD")
                     .WithProductData(productData)
                     .WithFleetData(fleetData)
-                    .Execute();
+                    //.Execute();
+                    .Execute("ICR");
             Assert.IsNotNull(captureResponse);
 
             // check message data
@@ -321,18 +339,19 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.IsNotNull(pmi);
             Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
             Assert.AreEqual("000900", pmi.ProcessingCode);
-            Assert.AreEqual("202", pmi.FunctionCode);
-
+            //Assert.AreEqual("201", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(captureResponse.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(captureResponse.SystemTraceAuditNumber);
             // check response
             Assert.AreEqual("000", captureResponse.ResponseCode);
         }
 
         [TestMethod]
         public void Test_009_swipe_sale_product_01() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-            productData.Add("01", UnitOfMeasure.Gallons, 1m, 2.999m, 2.999m);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 1m, 3.99m, 3.99m);
 
-            Transaction response = track.Charge(2.999m)
+            Transaction response = track.Charge(3.99m)
                     .WithCurrency("USD")
                     .WithProductData(productData)
                     .WithFleetData(fleetData)
@@ -354,9 +373,9 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Test_010_swipe_sale_product_02() {
             ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-            productData.Add("02", UnitOfMeasure.Gallons, 1m, 1m, 1m);
+            productData.Add("02", UnitOfMeasure.Gallons, 1m, 5m, 5m);
 
-            Transaction response = track.Charge(1m)
+            Transaction response = track.Charge(5m)
                     .WithCurrency("USD")
                     .WithProductData(productData)
                     .WithFleetData(fleetData)
@@ -399,75 +418,91 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("000", response.ResponseCode);
         }
 
-        //[TestMethod]
-        //public void Test_012_swipe_sale_voyager_product_04() {
-        //    ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-        //    productData.Add("04", UnitOfMeasure.Gallons, 1m, 10m, 10m);
+        [TestMethod]
+        public void Test_012_swipe_sale_voyager_product_04()
+        {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
+            productData.Add("01", UnitOfMeasure.Gallons, 1m, 24m, 24m);
+            productData.Add("59", UnitOfMeasure.Pounds, 1m, 10m, 10m);
+            productData.Add("09", UnitOfMeasure.Quarts, 1m, 5m, 5m);
+            productData.Add("27", UnitOfMeasure.Units, 1m, 6m, 6m);
+            productData.Add("23", UnitOfMeasure.Units, 1m, 50m, 50m);
+            productData.Add("14", UnitOfMeasure.Pounds, 1m, 3m, 3m);
+            productData.Add("33", UnitOfMeasure.OtherOrUnknown, 1m, 2m, 2m);
 
-        //    Transaction response = track.Charge(10m)
-        //            .WithCurrency("USD")
-        //            .WithProductData(productData)
-        //            .WithFleetData(fleetData)
-        //            .Execute();
-        //    Assert.IsNotNull(response);
+            fleetData = new FleetData()
+            {
+                VehicleNumber = "22031",
+                DriverId = "11411",
+                OdometerReading = "1256"
+            };
 
-        //    // check message data
-        //    PriorMessageInformation pmi = response.MessageInformation;
-        //    Assert.IsNotNull(pmi);
-        //    Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
-        //    Assert.AreEqual("000900", pmi.ProcessingCode);
-        //    Assert.AreEqual("200", pmi.FunctionCode);
-        //    System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
-        //    System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
-        //    // check response
-        //    Assert.AreEqual("000", response.ResponseCode);
-        //}
+            Transaction response = track.Charge(100m)
+                    .WithCurrency("USD")
+                    .WithProductData(productData)
+                    .WithFleetData(fleetData)
+                    .Execute();
+            Assert.IsNotNull(response);
 
-        //[TestMethod]
-        //public void Test_013_swipe_sale_voyager_product_09() {
-        //    ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-        //    productData.Add("09", UnitOfMeasure.Quarts, 1m, 10m, 10m);
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
 
-        //    Transaction response = track.Charge(10m)
-        //            .WithCurrency("USD")
-        //            .WithProductData(productData)
-        //            .WithFleetData(fleetData)
-        //            .Execute();
-        //    Assert.IsNotNull(response);
+        [TestMethod]
+        public void Test_013_swipe_sale_voyager_product_09()
+        {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
+            productData.Add("09", UnitOfMeasure.Quarts, 1m, 100m, 100m);
 
-        //    // check message data
-        //    PriorMessageInformation pmi = response.MessageInformation;
-        //    Assert.IsNotNull(pmi);
-        //    Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
-        //    Assert.AreEqual("000900", pmi.ProcessingCode);
-        //    Assert.AreEqual("200", pmi.FunctionCode);
+            Transaction response = track.Charge(100m)
+                    .WithCurrency("USD")
+                    .WithProductData(productData)
+                    .WithFleetData(fleetData)
+                    .Execute();
+            Assert.IsNotNull(response);
 
-        //    // check response
-        //    Assert.AreEqual("000", response.ResponseCode);
-        //}
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
 
-        //[TestMethod]
-        //public void Test_014_swipe_sale_voyager_product_14() {
-        //    ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
-        //    productData.Add("14", UnitOfMeasure.Units, 1m, 10m, 10m);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
 
-        //    Transaction response = track.Charge(10m)
-        //            .WithCurrency("USD")
-        //            .WithProductData(productData)
-        //            .WithFleetData(fleetData)
-        //            .Execute();
-        //    Assert.IsNotNull(response);
+        [TestMethod]
+        public void Test_014_swipe_sale_voyager_product_14()
+        {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
+            productData.Add("14", UnitOfMeasure.Units, 1m, 100m, 100m);
 
-        //    // check message data
-        //    PriorMessageInformation pmi = response.MessageInformation;
-        //    Assert.IsNotNull(pmi);
-        //    Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
-        //    Assert.AreEqual("000900", pmi.ProcessingCode);
-        //    Assert.AreEqual("200", pmi.FunctionCode);
+            Transaction response = track.Charge(100m)
+                    .WithCurrency("USD")
+                    .WithProductData(productData)
+                    .WithFleetData(fleetData)
+                    .Execute();
+            Assert.IsNotNull(response);
 
-        //    // check response
-        //    Assert.AreEqual("000", response.ResponseCode);
-        //}
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
 
         [TestMethod]
         public void Test_015_swipe_sale_mc_product_16() {

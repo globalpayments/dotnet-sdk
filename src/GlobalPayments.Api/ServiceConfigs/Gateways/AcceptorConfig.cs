@@ -28,6 +28,9 @@ namespace GlobalPayments.Api {
         public bool? SupportsEmvPin { get; set; }
         public EncryptionType SupportedEncryptionType { get; set; }
         public Address Address { get; set; }
+        public bool? PerformDateCheck { get; set; }
+        public bool? EchoSettlementData { get; set; }
+        public bool? IncludeLoyaltyData { get; set; }
 
         public AcceptorConfig() {
             CardDataInputCapability = CardDataInputCapability.MagStripe_KeyEntry;
@@ -44,7 +47,7 @@ namespace GlobalPayments.Api {
             var props = GetType().GetRuntimeProperties();
             foreach (var prop in props) {
                 var attrib = prop.PropertyType.GetTypeInfo().GetCustomAttribute<MapTargetAttribute>();
-                if(attrib != null && attrib.Target.HasFlag(target)) {
+                if (attrib != null && attrib.Target.HasFlag(target)) {
                     object enumValue = prop.GetValue(this);
                     string value = EnumConverter.GetMapping(target, enumValue);
 
@@ -70,6 +73,13 @@ namespace GlobalPayments.Api {
                     || SupportsEmvPin != null
                     || MobileDevice != null);
         }
+
+        public bool HasPosConfiguration_MessageData() {
+            return (PerformDateCheck != null
+                    || EchoSettlementData != null
+                    || IncludeLoyaltyData != null);
+        }
+
         public string GetPosConfigForIssuerData()        {
             string rvalue = SupportsPartialApproval != null ? (bool)SupportsPartialApproval ? "Y" : "N" : "N";
             rvalue = string.Concat(rvalue, (SupportsShutOffAmount != null ? (bool)SupportsShutOffAmount ? "Y" : "N" : "N")

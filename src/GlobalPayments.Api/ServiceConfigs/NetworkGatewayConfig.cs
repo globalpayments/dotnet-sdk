@@ -35,6 +35,7 @@ namespace GlobalPayments.Api {
         public string CompanyId { get; set; }
         public ConnectionType ConnectionType { get; set; }
         public string MerchantType { get; set; }
+        public string EWICMerchantID { get; set; }
         public MessageType MessageType { get; set; }
         private string nodeIdentification;
         public string NodeIdentification {
@@ -82,6 +83,7 @@ namespace GlobalPayments.Api {
             gateway.ProtocolType = protocolType;
             gateway.TerminalId = TerminalId;
             gateway.MerchantType = MerchantType;
+            gateway.EWICMerchantId = EWICMerchantID;
             gateway.UniqueDeviceId = UniqueDeviceId;
 
             // acceptor config

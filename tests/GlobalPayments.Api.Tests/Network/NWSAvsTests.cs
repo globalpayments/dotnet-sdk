@@ -16,7 +16,6 @@ namespace GlobalPayments.Api.Tests.Network {
 
             // data code values
             acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry;
-            acceptorConfig.CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.PIN;
             acceptorConfig.CardHolderAuthenticationEntity = CardHolderAuthenticationEntity.ByMerchant;
             acceptorConfig.TerminalOutputCapability = TerminalOutputCapability.Printing_Display;
             acceptorConfig.OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended;
@@ -40,7 +39,7 @@ namespace GlobalPayments.Api.Tests.Network {
             config.SecondaryEndpoint = "test.txns-e.secureexchange.net";
             config.SecondaryPort = 15031;
             config.CompanyId = "SPSA";
-            config.TerminalId = "NWSDOTNET02";
+            config.TerminalId = "NWSDOTNET01";
             config.AcceptorConfig = acceptorConfig;
             config.EnableLogging = true;
             config.StanProvider = StanGenerator.GetInstance();
@@ -95,7 +94,7 @@ namespace GlobalPayments.Api.Tests.Network {
         public void Test_007_amex_sale() {
             CreditCardData card = TestCards.AmexManual(true, true);
 
-            Transaction response = card.Charge(0m)
+            Transaction response = card.Authorize(0m)
                         .WithCurrency("USD")
                         .WithAddress(new Address("90078"))
                         .Execute();
@@ -108,7 +107,7 @@ namespace GlobalPayments.Api.Tests.Network {
         public void Test_008_discover_sale() {
             CreditCardData card = TestCards.DiscoverManual(true, true);
 
-            Transaction response = card.Charge(0m)
+            Transaction response = card.Authorize(0m)
                         .WithCurrency("USD")
                         .WithAddress(new Address("90050"))
                         .Execute();
@@ -123,7 +122,7 @@ namespace GlobalPayments.Api.Tests.Network {
         public void Test_009_mastercard_sale() {
             CreditCardData card = TestCards.MasterCardManual(true, true);
 
-            Transaction response = card.Charge(0m)
+            Transaction response = card.Authorize(0m)
                         .WithCurrency("USD")
                         .WithAddress(new Address("90031"))
                         .Execute();
@@ -136,11 +135,13 @@ namespace GlobalPayments.Api.Tests.Network {
         public void Test_010_visa_sale() {
             CreditCardData card = TestCards.VisaManual(true, true);
 
-            Transaction response = card.Charge(0m)
+            Transaction response = card.Authorize(0m)
                         .WithCurrency("USD")
                         .WithAddress(new Address("90001"))
                         .Execute();
             Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
 
@@ -345,5 +346,18 @@ namespace GlobalPayments.Api.Tests.Network {
         //    Assert.IsNotNull(response);
         //    Assert.AreEqual("000", response.ResponseCode);
         //}
+
+        [TestMethod]
+        public void Test_Visa_Account_Verification() {
+            CreditTrackData track = TestCards.VisaSwipe(EntryMethod.Swipe);
+
+            Transaction response = track.Authorize(0m, false)
+                        .WithCurrency("USD")
+                        .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
     }
 }
