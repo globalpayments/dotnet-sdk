@@ -851,7 +851,8 @@ public enum ReasonCode {
         WEBPAY,
         WECHAT_PAY,
         ZIMPLER,
-        UK_DIRECT_DEBIT
+        UK_DIRECT_DEBIT,
+        PAY_BY_BANK_APP
     }
 
     public enum CardType {

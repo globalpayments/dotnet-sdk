@@ -1037,5 +1037,53 @@ namespace GlobalPayments.Api.Tests.Realex {
             var expectedJson = "{ \"MERCHANT_ID\": \"heartlandgpsandbox\", \"ACCOUNT\": \"hpp\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"AUTO_SETTLE_FLAG\": \"1\", \"HPP_CUSTOMER_COUNTRY\": \"DE\", \"HPP_CUSTOMER_FIRSTNAME\": \"James\", \"HPP_CUSTOMER_LASTNAME\": \"Mason\", \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/returnUrl\", \"HPP_TX_STATUS_URL\": \"https://www.example.com/statusUrl\", \"PM_METHODS\": \"ASTROPAY_DIRECT|AURA|BALOTO_CASH|BANAMEX\", \"HPP_VERSION\":\"2\", \"SHA1HASH\":\"647d071bdcb8d9da5f29688a787863a39dc51ef3\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
+
+        [TestMethod]
+        public void NetherlandsAntillesCountry()
+        {
+            var service = new HostedService(new GpEcomConfig
+            {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "hpp",
+                SharedSecret = "secret",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    Version = "2",
+                },
+            });
+
+            var testHostedPaymentData = new HostedPaymentData
+            {
+                Country = "DE",
+                CustomerFirstName = "James",
+                CustomerLastName = "Mason",
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                PresetPaymentMethods = new AlternativePaymentType[] { AlternativePaymentType.ASTROPAY_DIRECT, AlternativePaymentType.AURA, AlternativePaymentType.BALOTO_CASH, AlternativePaymentType.BANAMEX }
+            };
+
+            Address billingAddress = new Address
+            {
+                StreetAddress1 = "Flat 123",
+                StreetAddress2 = "House 456",
+                StreetAddress3 = "Unit 4",
+                City = "Halifax",
+                PostalCode = "W5 9HR",
+                Country = "AN"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .WithAddress(billingAddress)
+                .Serialize();
+
+            Assert.IsNotNull(hppJson);
+            Assert.IsTrue(hppJson.Contains("\"HPP_BILLING_COUNTRY\":\"530\""));
+            Assert.IsTrue(hppJson.Contains("\"BILLING_CO\":\"AN\""));
+        }
     }
 }

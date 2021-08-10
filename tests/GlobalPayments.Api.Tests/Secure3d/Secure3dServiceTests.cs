@@ -155,6 +155,51 @@ namespace GlobalPayments.Api.Tests.Secure3d {
         }
 
         [TestMethod]
+        public void FullCycle_v2_with_phone_number_validation()
+        {
+            // check enrollment
+            ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
+                    .Execute(Secure3dVersion.Two);
+            Assert.IsNotNull(secureEcom);
+
+            if (secureEcom.Enrolled.Equals("True"))
+            {
+                Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+
+                // initiate authentication
+                ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                        .WithAmount(10.01m)
+                        .WithCurrency("USD")
+                        .WithMobileNumber("+54", "(0341) 156-123456")
+                        .WithHomeNumber("+54", "(0341) 156-456789")
+                        .WithWorkNumber("+54", "(0341) 156-654321")
+                        .WithOrderCreateDate(DateTime.Now)
+                        .WithAddress(billingAddress, AddressType.Billing)
+                        .WithAddress(shippingAddress, AddressType.Shipping)
+                        .WithBrowserData(browserData)
+                        .Execute();
+                Assert.IsNotNull(initAuth);
+
+                // get authentication data
+                secureEcom = Secure3dService.GetAuthenticationData()
+                        .WithServerTransactionId(initAuth.ServerTransactionId)
+                        .Execute();
+                card.ThreeDSecure = secureEcom;
+
+                if (secureEcom.Status.Equals("AUTHENTICATION_SUCCESSFUL"))
+                {
+                    Transaction response = card.Charge(10.01m)
+                            .WithCurrency("USD")
+                            .Execute();
+                    Assert.IsNotNull(response);
+                    Assert.AreEqual("00", response.ResponseCode);
+                }
+                else Assert.Fail("Signature verification Assert.Failed.");
+            }
+            else Assert.Fail("Card not enrolled.");
+        }
+
+        [TestMethod]
         public void FullCycle_Any() {
             ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
                     .WithAmount(1m)

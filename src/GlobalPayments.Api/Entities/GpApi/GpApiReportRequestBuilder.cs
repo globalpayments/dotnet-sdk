@@ -136,6 +136,7 @@ namespace GlobalPayments.Api.Entities {
                             Endpoint = "/settlement/disputes",
                         };
                         request.AddQueryStringParam("account_name", gateway.DataAccountName);
+                        request.AddQueryStringParam("deposit_id", trb.SearchBuilder.DepositReference);
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
                         request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, trb.DisputeOrderBy));

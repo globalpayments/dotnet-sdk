@@ -4,7 +4,36 @@
 
 #### Enhancements
 
-- Upgrade GpApi to March version 
+- Add "Netherlands Antilles" country codes
+- Add phone and subscriber number validation for 3DS2
+- Add search by deposit ID for settlement disputes on GpApi
+- Add PAY_BY_BANK_APP as an alternative payment type
+
+#### Bug Fixes:
+
+- Fix alternative payment method for charge on GPEcom
+
+---
+
+## v1.7.37 (08/05/2021)
+
+#### Enhancements
+
+- NWS second phase:
+	- NWS Credit card transactions
+	- Giftcard and Fleet tested
+	- Changes specifically for Purchase cards, EWIC, ECheck, ReadyLink and Fleet
+	- Added DE 72 for POS site config
+	- Fixed issues with formatting and test data
+	- Update AVS tests
+
+---
+
+## v1.7.36 (08/03/2021)
+
+#### Enhancements
+
+- Upgrade GpApi to March version
 - Add support for single and multiple usage mode for tokenized cards
 - Remove detokenization endpoint
 - 3DSecure mapping updated to support liability shift to GpApi

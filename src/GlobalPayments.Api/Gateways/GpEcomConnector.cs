@@ -50,15 +50,23 @@ namespace GlobalPayments.Api.Gateways {
 
             // Build Request
             var request = et.Element("request")
-                .Set("timestamp", timestamp)
-                .Set("type", MapAuthRequestType(builder));
+                .Set("type", MapAuthRequestType(builder))
+                .Set("timestamp", timestamp);
             et.SubElement(request, "merchantid").Text(MerchantId);
             et.SubElement(request, "account", AccountId);
-            et.SubElement(request, "channel", Channel);
-            et.SubElement(request, "orderid", orderId);
             if (builder.Amount.HasValue) {
                 et.SubElement(request, "amount").Text(builder.Amount.ToNumericCurrencyString()).Set("currency", builder.Currency);
             }
+
+            #region AUTO/MULTI SETTLE
+            if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Auth)
+            {
+                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI" : "0";
+                et.SubElement(request, "autosettle").Set("flag", autoSettle);
+            }
+
+            et.SubElement(request, "channel", Channel);
+            et.SubElement(request, "orderid", orderId);
 
             // Hydrate the payment data fields
             if (builder.PaymentMethod is CreditCardData) {
@@ -134,11 +142,6 @@ namespace GlobalPayments.Api.Gateways {
                 // TODO: Token Processing
             }
 
-            #region AUTO/MULTI SETTLE
-            if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Auth) {
-                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI" : "0";
-                et.SubElement(request, "autosettle").Set("flag", autoSettle);
-            }
             #endregion
 
             #region CUSTOM DATA

@@ -114,6 +114,22 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
+        public void GetNetherlandsAntillesNumericCodeByCountryCode()
+        {
+            string result = CountryUtils.GetNumericCodeByCountry("AN");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("530", result);
+        }
+
+        [TestMethod]
+        public void GetNetherlandsAntillesCountryCodeByCountryName()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("Netherlands Antilles");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("AN", result);
+        }
+
+        [TestMethod]
         public void GetNumericCodeByNonExistingCountryName() {
             string result = CountryUtils.GetNumericCodeByCountry("Fake Country Name");
             Assert.IsNull(result);

@@ -171,15 +171,15 @@ namespace GlobalPayments.Api.Gateways {
                 // home phone
                 if (!string.IsNullOrEmpty(builder.HomeNumber)) {
                     payer.SubElement("home_phone")
-                        .Set("country_code", builder.HomeCountryCode)
-                        .Set("subscriber_number", builder.HomeNumber);
+                        .Set("country_code", builder.HomeCountryCode.ToNumeric())
+                        .Set("subscriber_number", builder.HomeNumber.ToNumeric());
                 }
 
                 // work phone
                 if (!string.IsNullOrEmpty(builder.WorkNumber)) {
                     payer.SubElement("work_phone")
-                        .Set("country_code", builder.WorkCountryCode)
-                        .Set("subscriber_number", builder.WorkNumber);
+                        .Set("country_code", builder.WorkCountryCode.ToNumeric())
+                        .Set("subscriber_number", builder.WorkNumber.ToNumeric());
                 }
 
                 // payer login data
@@ -223,8 +223,8 @@ namespace GlobalPayments.Api.Gateways {
                 // mobile phone
                 if (!string.IsNullOrEmpty(builder.MobileNumber)) {
                     JsonDoc mobilePhone = payer.SubElement("mobile_phone");
-                    mobilePhone.Set("country_code", builder.MobileCountryCode);
-                    mobilePhone.Set("subscriber_number", builder.MobileNumber);
+                    mobilePhone.Set("country_code", builder.MobileCountryCode.ToNumeric());
+                    mobilePhone.Set("subscriber_number", builder.MobileNumber.ToNumeric());
                 }
 
                 // browser_data

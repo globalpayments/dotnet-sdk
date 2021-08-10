@@ -169,7 +169,7 @@ namespace GlobalPayments.Api.Entities {
         internal string CustomerId { get; set; }
 
         internal string DepositReference { get; set; }
-
+        
         internal DepositStatus? DepositStatus { get; set; }
 
         internal string DisplayName { get; set; }
