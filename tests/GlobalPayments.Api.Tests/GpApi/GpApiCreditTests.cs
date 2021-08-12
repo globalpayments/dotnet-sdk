@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -16,6 +17,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
                 AppKey = "6gFzVGf40S7ZpjJs",
                 Channel = Channel.CardNotPresent,
+                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
+                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
             });
 
@@ -707,6 +710,100 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CreditSale_WithStoredCredentials_RecurringPayment()
+        {
+            var amount = 15.00m;
+            var currency = "USD";
+            var card = new CreditCardData
+            {
+                Number = "4263970000005262",
+                ExpMonth = 05,
+                ExpYear = 2025,
+            };
+
+            var tokenizedCard = new CreditCardData
+            {
+                Token = card.Tokenize(),
+            };
+
+            var secureEcom = Secure3dService.CheckEnrollment(tokenizedCard)
+                .WithCurrency(currency)
+                .WithAmount(amount)
+                .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .Execute();
+
+            Assert.IsNotNull(secureEcom);
+            Assert.AreEqual("ENROLLED", secureEcom.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual("AVAILABLE", secureEcom.Status);
+            Assert.IsNotNull(secureEcom.IssuerAcsUrl);
+            Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
+            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
+            Assert.IsNotNull(secureEcom.MessageType);
+            Assert.IsNotNull(secureEcom.SessionDataFieldName);
+            Assert.IsNull(secureEcom.Eci);
+
+            var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
+                .WithAmount(amount)
+                .WithCurrency(currency)
+                .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .WithBrowserData(new BrowserData
+                {
+                    AcceptHeader = "text/html,application/xhtml+xml,application/xml;q=9,image/webp,img/apng,*/*;q=0.8",
+                    ColorDepth = ColorDepth.TWENTY_FOUR_BITS,
+                    IpAddress = "123.123.123.123",
+                    JavaEnabled = true,
+                    Language = "en",
+                    ScreenHeight = 1080,
+                    ScreenWidth = 1920,
+                    ChallengeWindowSize = ChallengeWindowSize.WINDOWED_600X400,
+                    Timezone = "0",
+                    UserAgent =
+                    "Mozilla/5.0 (Windows NT 6.1; Win64, x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+                })
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .Execute();
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual("ENROLLED", initAuth.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
+            Assert.AreEqual("SUCCESS_AUTHENTICATED", initAuth.Status);
+            Assert.IsNotNull(initAuth.IssuerAcsUrl);
+            Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
+            Assert.IsNotNull(initAuth.ChallengeReturnUrl);
+            Assert.IsNotNull(initAuth.MessageType);
+            Assert.IsNotNull(initAuth.SessionDataFieldName);
+
+            tokenizedCard.ThreeDSecure = initAuth;
+
+            var response = tokenizedCard.Charge(amount)
+                .WithCurrency(currency)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.IsNotNull(response.CardBrandTransactionId);
+
+            var response2 = tokenizedCard.Charge(amount)
+                .WithCurrency(currency)
+                .WithStoredCredential(new StoredCredential
+                {
+                    Initiator = StoredCredentialInitiator.Merchant,
+                    Type = StoredCredentialType.Recurring,
+                    Sequence = StoredCredentialSequence.Subsequent,
+                    Reason = StoredCredentialReason.Incremental
+                })
+                .WithCardBrandStorage(StoredCredentialInitiator.Merchant, response.CardBrandTransactionId)
+                .Execute();
+
+            Assert.IsNotNull(response2);
+            Assert.AreEqual(SUCCESS, response2?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response2?.ResponseMessage);
         }
     }
 }

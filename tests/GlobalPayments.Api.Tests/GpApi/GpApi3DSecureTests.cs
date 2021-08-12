@@ -39,6 +39,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Country = "GB",
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
+                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/"
             });
         }
 

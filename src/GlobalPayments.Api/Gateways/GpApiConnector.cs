@@ -19,6 +19,8 @@ namespace GlobalPayments.Api.Gateways {
         public Language Language { get; set; }
         public string Country { get; set; }
         public string[] Permissions { get; set; }
+        public string MerchantContactUrl { get; set; }
+
 
         private string _AccessToken;
         public string AccessToken {

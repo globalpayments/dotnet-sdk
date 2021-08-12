@@ -4,6 +4,15 @@
 
 #### Enhancements
 
+- Add recurring payment with stored credentials functionallity to GpApi
+- Add MerchantContactUrl to GpApiConfig
+
+---
+
+## v1.7.38 (08/10/2021)
+
+#### Enhancements
+
 - Add "Netherlands Antilles" country codes
 - Add phone and subscriber number validation for 3DS2
 - Add search by deposit ID for settlement disputes on GpApi

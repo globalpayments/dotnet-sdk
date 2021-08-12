@@ -202,7 +202,7 @@ namespace GlobalPayments.Api.Entities {
                     .Set("recurring_authorization_data", recurringAuthorizationData.HasKeys() ? recurringAuthorizationData : null)
                     .Set("payer_login_data", payerLoginData.HasKeys() ? payerLoginData : null)
                     .Set("browser_data", browserData.HasKeys() ? browserData : null)
-                    .Set("merchant_contact_url", "https://enp4qhvjseljg.x.pipedream.net/"); //ToDo: Confirm
+                    .Set("merchant_contact_url", gateway.MerchantContactUrl);
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,

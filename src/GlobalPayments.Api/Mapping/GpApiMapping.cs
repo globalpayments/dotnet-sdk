@@ -63,6 +63,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.CardType = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand");
                 transaction.CardLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4");
                 transaction.CvnResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result");
+                transaction.CardBrandTransactionId = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand_reference");
             }
 
             return transaction;
