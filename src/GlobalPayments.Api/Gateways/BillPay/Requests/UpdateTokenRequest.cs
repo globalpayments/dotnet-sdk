@@ -8,8 +8,8 @@ namespace GlobalPayments.Api.Gateways.BillPay {
 
         public string Build(Element envelope, CreditCardData card, Credentials credentials) {
             var body = et.SubElement(envelope, "soapenv:Body");
-            var methodElement = et.SubElement(body, "bil:ReversePayment");
-            var requestElement = et.SubElement(methodElement, "bil:ReversePaymentRequest");
+            var methodElement = et.SubElement(body, "bil:UpdateTokenExpirationDate");
+            var requestElement = et.SubElement(methodElement, "bil:UpdateTokenExpirationDateRequest");
 
             BuildCredentials(requestElement, credentials);
 

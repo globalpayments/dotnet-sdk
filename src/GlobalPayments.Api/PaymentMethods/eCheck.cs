@@ -1,6 +1,7 @@
 ﻿using System;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Billing;
 
 namespace GlobalPayments.Api.PaymentMethods {
     /// <summary>
@@ -41,6 +42,14 @@ namespace GlobalPayments.Api.PaymentMethods {
             return new AuthorizationBuilder(TransactionType.Sale, this).WithAmount(amount);
         }
 
+        /// <summary>
+        /// Gets token information for the specified token
+        /// </summary>
+        public Transaction GetTokenInformation(string configName = "default") {
+            var response = new AuthorizationBuilder(TransactionType.GetTokenInfo, this).Execute(configName);
+            return response;
+        }
+
         public bool DeleteToken(string configName = "default") {
             try {
                 new ManagementBuilder(TransactionType.TokenDelete)
@@ -61,6 +70,24 @@ namespace GlobalPayments.Api.PaymentMethods {
             var response = new AuthorizationBuilder(type, this)
                 .WithRequestMultiUseToken(true)
                 .Execute(configName);
+            return response.Token;
+        }
+
+        public string Tokenize(bool validateCard, Address billingAddress, Customer customerData, string configName = "default") {
+            TransactionType type = validateCard ? TransactionType.Verify : TransactionType.Tokenize;
+
+            var builder = new AuthorizationBuilder(type, this)
+                .WithRequestMultiUseToken(validateCard)
+                .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Multiple);
+
+            if (billingAddress != null) {
+                builder = builder.WithAddress(billingAddress);
+            }
+            if (customerData != null) {
+                builder = builder.WithCustomerData(customerData);
+            }
+
+            var response = builder.Execute(configName);
             return response.Token;
         }
 

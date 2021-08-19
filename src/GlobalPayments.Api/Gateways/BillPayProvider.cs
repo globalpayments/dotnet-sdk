@@ -6,7 +6,7 @@ using GlobalPayments.Api.Logging;
 using System.Net;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class BillPayProvider: IBillingProvider, IPaymentGateway, IRecurringService {
+    internal class BillPayProvider : IBillingProvider, IPaymentGateway, IRecurringService, IReportingService {
         /// <summary>
         /// Gets or sets the merchant credentials to be used in each SOAP request
         /// </summary>
@@ -56,9 +56,15 @@ namespace GlobalPayments.Api.Gateways {
                 .Execute(builder);
         }
 
-        public T ProcessRecurring<T>(RecurringBuilder<T> builder) where T : class
-        {
+        public T ProcessRecurring<T>(RecurringBuilder<T> builder) where T : class {
             return new RecurringRequest<T>(Credentials, ServiceUrl, Timeout)
+                .WithRequestLogger(RequestLogger)
+                .WithWebProxy(WebProxy)
+                .Execute(builder);
+        }
+
+        public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
+            return new ReportRequest<T>(Credentials, ServiceUrl, Timeout)
                 .WithRequestLogger(RequestLogger)
                 .WithWebProxy(WebProxy)
                 .Execute(builder);

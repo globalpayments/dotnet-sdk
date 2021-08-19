@@ -5,43 +5,48 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
-    internal sealed class MakeBlindPaymentReturnTokenRequest : BillPayRequestBase {
-        public MakeBlindPaymentReturnTokenRequest(ElementTree et) : base(et) { }
+    internal sealed class MakeQuickPayBlindPaymentReturnTokenRequest : BillPayRequestBase {
+        public MakeQuickPayBlindPaymentReturnTokenRequest(ElementTree et) : base(et) { }
 
         public string Build(Element envelope, AuthorizationBuilder builder, Credentials credentials) {
-            // If TokenUsageMode is null, we assume Multi Use token.
-            string methodElementName = (builder.PaymentMethodUsageMode == PaymentMethodUsageMode.Single) ? "bil:MakeQuickPayBlindPaymentReturnToken" : "bil:MakeBlindPaymentReturnToken";
-            string requestElementName = (builder.PaymentMethodUsageMode == PaymentMethodUsageMode.Single) ? "bil:request" : "bil:MakePaymentReturnTokenRequest";
-
             var body = et.SubElement(envelope, "soapenv:Body");
-            var methodElement = et.SubElement(body, methodElementName);
-            var requestElement = et.SubElement(methodElement, requestElementName);
+            var methodElement = et.SubElement(body, "bil:MakeQuickPayBlindPaymentReturnToken");
+            var requestElement = et.SubElement(methodElement, "bil:request");
 
             bool hasToken = (builder.PaymentMethod is ITokenizable tokenData && !string.IsNullOrWhiteSpace(tokenData.Token));
             // Would EntryMethod.Manual be clear Swipe?
             bool hasCardData = (builder.PaymentMethod is ICardData cardData && !string.IsNullOrWhiteSpace(cardData.Number));
             bool hasACHData = (builder.PaymentMethod is eCheck && !string.IsNullOrWhiteSpace(((eCheck)builder.PaymentMethod).AccountNumber));
 
-            // Only allow token, card, and ACH data at this time
-            if (!hasToken && !hasCardData && !hasACHData) {
-                throw new UnsupportedTransactionException("Payment method not accepted");
+            // Quick Pay token MUST be present
+            if (!hasToken) {
+                throw new UnsupportedTransactionException("Quick Pay token must be provided for this transaction");
             }
 
             ValidateTransaction(builder);
 
             BuildCredentials(requestElement, credentials);
 
-            if (!hasToken && builder.PaymentMethod is eCheck eCheck) {
-                BuildACHAccount(requestElement, eCheck, builder.Amount ?? 0, builder.ConvenienceAmount);
+            if (builder.PaymentMethod is eCheck eCheck) {
+                if (!string.IsNullOrWhiteSpace(eCheck.Token)) {
+                    BuildQuickPayACHAccount(requestElement, eCheck, builder.Amount ?? 0, builder.ConvenienceAmount);
+                }
+                else {
+                    throw new UnsupportedTransactionException("Quick Pay token must be provided for this transaction");
+                }
             }
 
             var billTransactions = et.SubElement(requestElement, "bdms:BillTransactions");
             BuildBillTransactions(billTransactions, builder.Bills, "bdms:BillTransaction", "bdms:AmountToApplyToBill");
             // PLACEHOLDER: ClearSwipe
 
-            // ClearTextCredit
-            if (hasCardData && builder.PaymentMethod is CreditCardData creditCard) {
-                BuildClearTextCredit(requestElement, creditCard, builder.Amount ?? 0, builder.ConvenienceAmount, builder.EmvFallbackCondition, builder.EmvLastChipRead, builder.BillingAddress);
+            if (builder.PaymentMethod is CreditCardData creditCard) {
+                if (!string.IsNullOrWhiteSpace(creditCard.Token)) {
+                    BuildQuickPayCardToCharge(requestElement, creditCard, builder.Amount ?? 0, builder.ConvenienceAmount, builder.BillingAddress);
+                }
+                else {
+                    throw new UnsupportedTransactionException("Quick Pay token must be provided for this transaction");
+                }
             }
 
             // PLACEHOLDER: E3Credit
@@ -51,9 +56,6 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             et.SubElement(requestElement, "bdms:OrderID", builder.OrderId);
             // PLACEHOLDER: PAXDevices
             // PLACEHOLDER: TimeoutInSeconds
-            if (hasToken) {
-                BuildTokenToCharge(requestElement, builder.PaymentMethod, builder.Amount ?? 0, builder.ConvenienceAmount);
-            }
 
             BuildTransaction(requestElement, builder);
 

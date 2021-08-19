@@ -60,6 +60,32 @@ namespace GlobalPayments.Api.Gateways.BillPay {
         }
 
         /// <summary>
+        /// Builds the Quick Pay ACH Account section of the request
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="eCheck"></param>
+        /// <param name="amountToCharge"></param>
+        /// <param name="feeAmount"></param>
+        protected void BuildQuickPayACHAccount(Element parent, eCheck eCheck, decimal amountToCharge, decimal? feeAmount) {
+            var achAccount = et.SubElement(parent, "bdms:QuickPayACHAccountToCharge");
+            et.SubElement(achAccount, "bdms:Amount", amountToCharge);
+            et.SubElement(achAccount, "bdms:ExpectedFeeAmount", feeAmount ?? 0M);
+            // PLACEHOLDER: ACHReturnEmailAddress
+            et.SubElement(achAccount, "bdms:ACHStandardEntryClass", eCheck.SecCode);
+            et.SubElement(achAccount, "bdms:AccountNumber", eCheck.AccountNumber);
+            et.SubElement(achAccount, "bdms:AccountType", GetDepositType(eCheck.CheckType.Value));
+            et.SubElement(achAccount, "bdms:DepositType", GetACHAccountType(eCheck.AccountType.Value));
+            // PLACEHOLDER: DocumentID
+            // PLACEHOLDER: InternalAccountNumber
+            et.SubElement(achAccount, "bdms:PayorName", eCheck.CheckHolderName);
+            et.SubElement(achAccount, "bdms:RoutingNumber", eCheck.RoutingNumber);
+            // PLACEHOLDER: SendEmailOnReturn
+            // PLACEHOLDER: SubmitDate
+            // PLACEHOLDER: TrackingNumber
+            et.SubElement(achAccount, "bdms:QuickPayToken", eCheck.Token);
+        }
+
+        /// <summary>
         /// Builds a list of BillPay Bill Transactions from a list of Bills
         /// </summary>
         /// <param name="parent"></param>
@@ -106,6 +132,30 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             et.SubElement(clearTextCredit, "pos:IsEmvFallback", isEmvFallback);
             et.SubElement(clearTextCredit, "pos:PreviousEmvAlsoFallback", isPreviousEmvFallback);
             et.SubElement(clearTextCredit, "pos:VerificationCode", card.Cvn);
+        }
+
+        /// <summary>
+        /// Builds a Quick Pay BillPay ClearTextCredit card from CreditCardData
+        /// </summary>
+        /// <param name="et"></param>
+        /// <param name="parent"></param>
+        /// <param name="card"></param>
+        /// <param name="amountToCharge"></param>
+        protected void BuildQuickPayCardToCharge(Element parent, CreditCardData card, decimal amountToCharge, decimal? feeAmount, Address address) {
+            var cardToCharge = et.SubElement(parent, "bdms:QuickPayCardToCharge");
+            et.SubElement(cardToCharge, "bdms:Amount", amountToCharge);
+            et.SubElement(cardToCharge, "bdms:CardProcessingMethod", "Credit");
+            et.SubElement(cardToCharge, "bdms:ExpectedFeeAmount", feeAmount ?? 0);
+
+            var cardHolder = et.SubElement(cardToCharge, "pos:CardHolderData");
+            BuildAccountHolderData(cardHolder,
+                address,
+                card.CardHolderName);
+
+            et.SubElement(cardToCharge, "bdms:ExpirationMonth", card.ExpMonth);
+            et.SubElement(cardToCharge, "bdms:ExpirationYear", card.ExpYear);
+            et.SubElement(cardToCharge, "bdms:VerificationCode", card.Cvn);
+            et.SubElement(cardToCharge, "bdms:QuickPayToken", card.Token);
         }
 
         /// <summary>

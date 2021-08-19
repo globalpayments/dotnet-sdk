@@ -745,6 +745,15 @@ namespace GlobalPayments.Api.Gateways {
                     TransactionId = root.GetValue<string>("pasref"),
                     AlternativePaymentType = root.GetValue<string>("paymentmethod"),
                     BatchNumber = root.GetValue<string>("batchid")
+                },
+                AlternativePaymentResponse = new AlternativePaymentResponse
+                {
+                    BankAccount = root.Get("paymentmethoddetails")?.GetValue<string>("bankaccount"),
+                    AccountHolderName = root.Get("paymentmethoddetails")?.GetValue<string>("accountholdername"),
+                    Country = root.Get("paymentmethoddetails")?.GetValue<string>("country"),
+                    RedirectUrl = root.Get("paymentmethoddetails")?.GetValue<string>("redirecturl"),
+                    PaymentPurpose = root.Get("paymentmethoddetails")?.GetValue<string>("paymentpurpose"),
+                    PaymentMethod = root.Get("paymentmethoddetails")?.GetValue<string>("paymentmethod"),
                 }
             };
 

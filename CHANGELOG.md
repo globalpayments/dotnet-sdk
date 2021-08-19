@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- Add Alternative payment method response mapping to GpEcom
+
+---
+
+## v1.7.39.1 (08/12/2021)
+
 - Add recurring payment with stored credentials functionallity to GpApi
 - Add MerchantContactUrl to GpApiConfig
 

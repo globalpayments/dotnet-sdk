@@ -38,10 +38,10 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                         return MakePayment(builder);
                     } else {
                         if (builder.RequestMultiUseToken) {
-                            return MakeBlindPaymentReturnToken(builder);
+                            return (builder.PaymentMethodUsageMode == PaymentMethodUsageMode.Single) ? MakeQuickPayBlindPaymentReturnToken(builder) : MakeBlindPaymentReturnToken(builder);
                         }
 
-                        return MakeBlindPayment(builder);
+                        return (builder.PaymentMethodUsageMode == PaymentMethodUsageMode.Single) ? MakeQuickPayBlindPayment(builder) : MakeBlindPayment(builder);
                     }
                 case TransactionType.Verify:
                     if (!builder.RequestMultiUseToken) {
@@ -53,6 +53,8 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                     }
 
                     return GetToken(builder);
+                case TransactionType.GetTokenInfo:
+                    return GetTokenInformation(builder);
                 default:
                     throw new UnsupportedTransactionException();
             }
@@ -95,6 +97,24 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             throw new GatewayException(message: "An error occurred attempting to make the payment", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
 
+        private Transaction MakeQuickPayBlindPaymentReturnToken(AuthorizationBuilder builder) {
+            var et = new ElementTree();
+            var envelope = CreateSOAPEnvelope(et, "MakeQuickPayBlindPaymentReturnToken");
+            var request = new MakeQuickPayBlindPaymentReturnTokenRequest(et)
+                .Build(envelope, builder, Credentials);
+            var response = DoTransaction(request, publicEndpoint);
+            var result = new TransactionResponse()
+                .WithResponseTagName("MakeQuickPayBlindPaymentReturnTokenResponse")
+                .WithResponse(response)
+                .Map();
+
+            if (result.ResponseCode == "0") {
+                return result;
+            }
+
+            throw new GatewayException(message: "An error occurred attempting to make the payment", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
+        }
+
         private Transaction MakeBlindPayment(AuthorizationBuilder builder) {
             var et = new ElementTree();
             var envelope = CreateSOAPEnvelope(et, "MakeBlindPayment");
@@ -103,6 +123,24 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             var response = DoTransaction(request, publicEndpoint);
             var result = new TransactionResponse()
                 .WithResponseTagName("MakeBlindPaymentResponse")
+                .WithResponse(response)
+                .Map();
+
+            if (result.ResponseCode == "0") {
+                return result;
+            }
+
+            throw new GatewayException(message: "An error occurred attempting to make the payment", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
+        }
+
+        private Transaction MakeQuickPayBlindPayment(AuthorizationBuilder builder) {
+            var et = new ElementTree();
+            var envelope = CreateSOAPEnvelope(et, "MakeQuickPayBlindPayment");
+            var request = new MakeQuickPayBlindPaymentRequest(et)
+                .Build(envelope, builder, Credentials);
+            var response = DoTransaction(request, publicEndpoint);
+            var result = new TransactionResponse()
+                .WithResponseTagName("MakeQuickPayBlindPaymentResponse")
                 .WithResponse(response)
                 .Map();
 
@@ -165,6 +203,38 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             }
 
             throw new GatewayException(message: "An error occurred attempting to create the token", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
+        }
+
+        private Transaction GetTokenInformation(AuthorizationBuilder builder) {
+            string request;
+
+            var et = new ElementTree();
+            var envelope = CreateSOAPEnvelope(et, "GetTokenInformation");
+
+            if (builder.PaymentMethod is ITokenizable tokenizablePayment) {
+                if (string.IsNullOrEmpty(tokenizablePayment.Token)) {
+                    throw new BuilderException("Payment method has not been tokenized");
+                }
+
+                request = new GetTokenInformationRequest(et)
+                    .Build(envelope, builder, Credentials);
+            }
+            else {
+                throw new BuilderException("Token Information is currently only retrievable for Credit and eCheck payment methods.");
+            }
+
+            var response = DoTransaction(request, publicEndpoint);
+            var result = new TokenInformationRequestResponse()
+                .WithResponseTagName("GetTokenInformationResponse")
+                .WithResponse(response)
+                .Map();
+
+            if (result.ResponseCode == "0")
+            {
+                return result;
+            }
+
+            throw new GatewayException(message: "An error occurred attempting to retrieve token information", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
     }
 }

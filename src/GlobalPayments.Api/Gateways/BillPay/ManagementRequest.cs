@@ -35,7 +35,7 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                         return ReversePayment(builder);
                 case TransactionType.TokenUpdate:
                     if (builder.PaymentMethod is CreditCardData card) {
-                        return UpdateToken(card);
+                        return UpdateTokenExpirationDate(card);
                     }
 
                     throw new UnsupportedTransactionException();
@@ -63,7 +63,7 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             throw new GatewayException(message: "There was an error attempting to reverse the payment", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
 
-        private Transaction UpdateToken(CreditCardData card) {
+        private Transaction UpdateTokenExpirationDate(CreditCardData card) {
             var et = new ElementTree();
             var envelope = CreateSOAPEnvelope(et, "UpdateTokenExpirationDate");
             var request = new UpdateTokenRequest(et)

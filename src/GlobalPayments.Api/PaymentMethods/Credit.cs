@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Billing;
 
 namespace GlobalPayments.Api.PaymentMethods {
     /// <summary>
@@ -134,6 +135,14 @@ namespace GlobalPayments.Api.PaymentMethods {
         }
 
         /// <summary>
+        /// Gets token information for the specified token
+        /// </summary>
+        public Transaction GetTokenInformation(string configName = "default") {
+            var response = new AuthorizationBuilder(TransactionType.GetTokenInfo, this).Execute(configName);
+            return response;
+        }
+
+        /// <summary>
         /// Tokenizes the payment method, verifying the payment method
         /// with the issuer in the process.
         /// </summary>
@@ -148,6 +157,24 @@ namespace GlobalPayments.Api.PaymentMethods {
                 .WithRequestMultiUseToken(verifyCard)
                 .WithPaymentMethodUsageMode(paymentMethodUsageMode)
                 .Execute(configName);
+            return response.Token;
+        }
+
+        public string Tokenize(bool verifyCard, Address billingAddress, Customer customerData, string configName = "default") {
+            TransactionType type = verifyCard ? TransactionType.Verify : TransactionType.Tokenize;
+
+            var builder = new AuthorizationBuilder(type, this)
+                .WithRequestMultiUseToken(verifyCard)
+                .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Multiple);
+
+            if (billingAddress != null) {
+                builder = builder.WithAddress(billingAddress);
+            }
+            if (customerData != null) {
+                builder = builder.WithCustomerData(customerData);
+            }
+
+            var response = builder.Execute(configName);
             return response.Token;
         }
 

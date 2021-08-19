@@ -6,6 +6,7 @@ using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GlobalPayments.Api.Tests.BillPay {
@@ -42,7 +43,7 @@ namespace GlobalPayments.Api.Tests.BillPay {
                 AccountType = AccountType.CHECKING,
                 CheckType = CheckType.BUSINESS,
                 SecCode = "WEB",
-                CheckHolderName = "Tester",
+                CheckHolderName = "Test Tester",
                 BankName = "Regions"
             };
 
@@ -51,7 +52,7 @@ namespace GlobalPayments.Api.Tests.BillPay {
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year,
                 Cvn = "123",
-                CardHolderName = "Test Tester"
+                CardHolderName = "Test Tester",
             };
 
             address = new Address() {
@@ -69,6 +70,8 @@ namespace GlobalPayments.Api.Tests.BillPay {
                 FirstName = "Test",
                 LastName = "Tester",
                 HomePhone = "555-555-4444",
+                Company = "Test Company",
+                MiddleName = "Testing",
             };
 
             bill = new Bill() {
@@ -146,6 +149,21 @@ namespace GlobalPayments.Api.Tests.BillPay {
         }
 
         [TestMethod]
+        public void Tokenize_UsingCreditCard_ReturnsTokenInformation() {
+            var tokenResponse = clearTextCredit.Verify()
+                .WithAddress(address)
+                .WithCustomerData(customer)
+                .WithRequestMultiUseToken(true)
+                .Execute();
+
+            clearTextCredit.Token = tokenResponse.Token;
+            var tokenInfoResponse = clearTextCredit.GetTokenInformation();
+
+            Assert.IsNotNull(tokenInfoResponse);
+            Assert.IsNotNull(tokenInfoResponse.TokenData);
+        }
+
+        [TestMethod]
         public void Tokenize_UsingCreditCard_ReturnsToken() {
             var response = clearTextCredit.Verify()
                 .WithAddress(new Address { PostalCode = "12345" })
@@ -153,6 +171,23 @@ namespace GlobalPayments.Api.Tests.BillPay {
                 .Execute();
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(response.Token));
+        }
+
+        [TestMethod]
+        public void Tokenize_UsingCreditCard_WithCustomerData_ReturnsToken() {
+            var token = clearTextCredit.Tokenize(true, address, customer);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(token));
+
+            // Tokenize via Verify() call
+            //var response = clearTextCredit.Verify()
+            //    // Billing address will be prioritized if specified separately
+            //    .WithAddress(address)
+            //    // or Customer.Address will be used as a backup if a billing address isn't provided via builder method
+            //    .WithCustomerData(customer)
+            //    .WithRequestMultiUseToken(true)
+            //    .Execute();
+
+            //Assert.IsFalse(string.IsNullOrWhiteSpace(response.Token));
         }
 
         [TestMethod]
@@ -180,6 +215,25 @@ namespace GlobalPayments.Api.Tests.BillPay {
             var token = ach.Tokenize();
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(token));
+        }
+
+        [TestMethod]
+        public void Tokenize_UsingACH_WithCustomerData_ReturnsToken() {
+            var token = ach.Tokenize(true, address, customer);
+
+            Assert.IsFalse(string.IsNullOrWhiteSpace(token));
+        }
+
+        [TestMethod]
+        public void Tokenize_UsingACH_ReturnsTokenInformation() {
+            var token = ach.Tokenize();
+
+            ach.Token = token;
+
+            var tokenInfoResponse = ach.GetTokenInformation();
+
+            Assert.IsNotNull(tokenInfoResponse);
+            Assert.IsNotNull(tokenInfoResponse.TokenData);
         }
 
         [TestMethod]
@@ -212,6 +266,58 @@ namespace GlobalPayments.Api.Tests.BillPay {
                     .WithCurrency("USD")
                     .Execute();
             });
+        }
+
+        [TestMethod]
+        public void Charge_UsingSingleUseToken_ReturnsSuccessfulTransaction() {
+            var service = new BillPayService();
+            var fee = service.CalculateConvenienceAmount(clearTextCredit, bill.Amount);
+
+            var paymentMethod = new CreditCardData()
+            {
+                Token = "ENTER SINGLE USE TOKEN VALUE",
+                ExpMonth = 01,
+                ExpYear = 2025
+            };
+
+            RunAndValidateTransaction(() => {
+                return paymentMethod
+                    .Charge(bill.Amount)
+                    .WithAddress(address)
+                    .WithBills(bill)
+                    .WithConvenienceAmount(fee)
+                    .WithCurrency("USD")
+                    .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Single)
+                    .Execute();
+            });
+        }
+
+        [TestMethod]
+        public void Charge_UsingSingleUseToken_ReturnsSuccessfulTransactionWithToken()
+        {
+            var service = new BillPayService();
+            var fee = service.CalculateConvenienceAmount(clearTextCredit, bill.Amount);
+
+            var paymentMethod = new CreditCardData()
+            {
+                Token = "ENTER SINGLE USE TOKEN VALUE",
+                ExpMonth = 01,
+                ExpYear = 25
+            };
+
+            var transaction = RunAndValidateTransaction(() => {
+                return paymentMethod
+                    .Charge(bill.Amount)
+                    .WithAddress(address)
+                    .WithBills(bill)
+                    .WithConvenienceAmount(fee)
+                    .WithCurrency("USD")
+                    .WithRequestMultiUseToken(true)
+                    .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Single)
+                    .Execute();
+            });
+
+            Assert.IsNotNull(transaction.Token);
         }
 
         [TestMethod]
@@ -678,6 +784,69 @@ namespace GlobalPayments.Api.Tests.BillPay {
             });
         }
 
+        #endregion
+
+        #region Report Builder Cases
+        [TestMethod]
+        public void GetTransactionByOrderID_SingleBill() {
+            var service = new BillPayService();
+            var response = clearTextCredit.Verify()
+                .WithAddress(new Address { PostalCode = "12345" })
+                .WithRequestMultiUseToken(true)
+                .Execute();
+
+            Assert.IsFalse(string.IsNullOrWhiteSpace(response.Token));
+
+            var token = response.Token;
+            var fee = service.CalculateConvenienceAmount(clearTextCredit, bill.Amount);
+
+            var paymentMethod = new CreditCardData()
+            {
+                Token = token,
+                ExpMonth = clearTextCredit.ExpMonth,
+                ExpYear = clearTextCredit.ExpYear
+            };
+
+            Assert.IsFalse(string.IsNullOrWhiteSpace(token));
+
+            var orderID = Guid.NewGuid().ToString();
+            var transactionResponse = RunAndValidateTransaction(() => {
+                return paymentMethod
+                    .Charge(bill.Amount)
+                    .WithAddress(address)
+                    .WithBills(bill)
+                    .WithConvenienceAmount(fee)
+                    .WithOrderId(orderID)
+                    .WithCurrency("USD")
+                    .Execute();
+            });
+
+            TransactionSummary summary = ReportingService.TransactionDetail(orderID).Execute();
+            Assert.IsNotNull(summary);
+        }
+
+        [TestMethod]
+        public void GetTransactionByOrderID_MultipleBills()
+        {
+            var service = new BillPayService();
+            var totalAmount = bills.Sum(x => x.Amount);
+            var fee = service.CalculateConvenienceAmount(clearTextCredit, totalAmount);
+
+            var orderID = Guid.NewGuid().ToString();
+            var transactionResponse = RunAndValidateTransaction(() => {
+                return clearTextCredit
+                    .Charge(totalAmount)
+                    .WithAddress(address)
+                    .WithBills(bills)
+                    .WithConvenienceAmount(fee)
+                    .WithOrderId(orderID)
+                    .WithCurrency("USD")
+                    .Execute();
+            });
+
+            TransactionSummary summary = ReportingService.TransactionDetail(orderID).Execute();
+            Assert.IsNotNull(summary);
+        }
         #endregion
 
         #region Helpers

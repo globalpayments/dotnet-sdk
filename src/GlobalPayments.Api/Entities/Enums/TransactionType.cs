@@ -321,6 +321,11 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// 
         /// </summary>
-        TimeRequest = 1L << 62
+        TimeRequest = 1L << 62,
+
+        /// <summary>
+        /// Get Token Information for the given token
+        /// </summary>
+        GetTokenInfo = 1L << 63,
     }
 }
