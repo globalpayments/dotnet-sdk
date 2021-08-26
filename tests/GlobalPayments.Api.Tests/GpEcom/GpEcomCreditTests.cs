@@ -1,6 +1,8 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace GlobalPayments.Api.Tests {
     [TestClass]
@@ -14,7 +16,8 @@ namespace GlobalPayments.Api.Tests {
                 AccountId = "api",
                 SharedSecret = "secret",
                 RebatePassword = "rebate",
-                RefundPassword = "refund"
+                RefundPassword = "refund",
+                RequestLogger = new RequestConsoleLogger()
             };
             ServicesContainer.ConfigureService(config);
 
@@ -229,14 +232,15 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod, Ignore]
+        //Ignored because the token expires after 60 seconds and it will fail with the current token due to this fact
         public void AuthMobileApplePay() {
             var token = new CreditCardData {
-                Token = "{\"version\":\"EC_v1\",\"data\":\"dvMNzlcy6WNB\",\"header\":{\"ephemeralPublicKey\":\"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWdNhNAHy9kO2Kol33kIh7k6wh6E\",\"transactionId\":\"fd88874954acdb299c285f95a3202ad1f330d3fd4ebc22a864398684198644c3\",\"publicKeyHash\":\"h7WnNVz2gmpTSkHqETOWsskFPLSj31e3sPTS2cBxgrk\"}}",
+                Token = "{\"version\":\"EC_v1\",\"data\":\"VHHTScEN6Ody3/iZ9wjDpIdDxtfhZi/LoMi3JJDuU+2T89xx3gSk0S2eUb0qHfBDpcXy47xloFxmuuug5w18lbSukaDnDKOmBRehApysrXROQyTsJHqFtjT78D/EnSLEcWg/0dLk9P9smS7lZCNNf6ys57k6VnT9CNZ5S8JGlW/2aj/V3vc/64T/9H75kihnShIYTVkBAuC+hgIavHuvPrwRiO5OjwXEkHhn2yAokoQuzu63nxhWOk8D4ecwC/1zDOwsuxvGqCqyNeoDW1NgckE64bE5FZYMfqGFHxnd1d+bc7ddG53AQS/m2H+dx3RQr/QG1gru1ICZKRvjRYH00nhS3mkmrnnco50mYWy2Q6GKbJVdIX4NprYEzs3uFXSM52v7IbK9NSwJIE+Qq4dq/c1wcbhdESERHB/ah1K0s64=\",\"signature\":\"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\",\"header\":{\"ephemeralPublicKey\":\"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhT7kTBXZPFnR0Em4O510OaV9OGf1pIXoCWO45qNTcD6n+iWTsuw9+k8hqsre6POpEzJnO/QgTsxKoZ7XodBocw==\",\"publicKeyHash\":\"lYM2CUctbz7n9Be2kWdhmGvm0WM8pi8jtBYf5rI5KGo=\",\"transactionId\":\"da9d497fd310fad44b72fb513784aed3a143c4306173acefbd3fc2326ad18d18\"}}",
                 MobileType = MobilePaymentMethodType.APPLEPAY
             };
 
-            var response = token.Charge(19.99m)
-                .WithCurrency("EUR")
+            var response = token.Charge(10m)
+                .WithCurrency("USD")
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -386,6 +390,25 @@ namespace GlobalPayments.Api.Tests {
                     .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void FraudManagement_withFraudRules()
+        {
+            string ruleId = "853c1d37-6e9f-467e-9ffc-182210b40c6b";
+            FraudFilterMode mode = FraudFilterMode.OFF;
+            FraudRuleCollection fraudRuleCollection = new FraudRuleCollection();
+            fraudRuleCollection.AddRule(ruleId, mode);
+
+            Transaction response = card.Charge(199.99m)
+                    .WithCurrency("EUR")
+                    .WithFraudFilter(FraudFilterMode.ACTIVE, fraudRuleCollection)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            var rule = response?.FraudResponse?.Rules?.FirstOrDefault(x => x.Id == ruleId);
+            Assert.IsNotNull(rule);
+            Assert.AreEqual(rule.Action,"NOT_EXECUTED");
         }
 
         [TestMethod]

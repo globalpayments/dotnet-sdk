@@ -1,6 +1,14 @@
 # Changelog
 
 ## Latest
+#### Enhancements
+
+- Add Fraud Dynamic Rules to GpEcom
+- Add amount and currency into Apple Pay hash generation for GpEcom
+
+---
+
+## v1.7.40 (08/19/2021)
 
 #### Enhancements
 

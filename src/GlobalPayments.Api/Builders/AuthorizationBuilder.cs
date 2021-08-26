@@ -44,6 +44,7 @@ namespace GlobalPayments.Api.Builders {
         internal EmvFallbackCondition? EmvFallbackCondition { get; set; }
         internal EmvLastChipRead? EmvLastChipRead { get; set; }
         internal FraudFilterMode FraudFilterMode { get; set; }
+        internal FraudRuleCollection FraudRules { get; set; }
         internal decimal? Gratuity { get; set; }
         internal decimal? ConvenienceAmount { get; set; }
         internal decimal? ShippingAmt { get; set; }
@@ -287,6 +288,14 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithCurrency(string value) {
             Currency = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithFraudFilter(FraudFilterMode fraudFilter, FraudRuleCollection fraudRules = null)
+        {
+            FraudFilterMode = fraudFilter;
+            if(fraudRules != null)
+                FraudRules = fraudRules;
             return this;
         }
 

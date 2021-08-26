@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Tests.Logging;
 using GlobalPayments.Api.Tests.Realex.Hpp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,7 +19,7 @@ namespace GlobalPayments.Api.Tests.Realex {
                 HostedPaymentConfig = new HostedPaymentConfig {
                     Language = "GB",
                     ResponseUrl = "http://requestb.in/10q2bjb1"
-                }
+                },
             });
         }
 
@@ -613,6 +614,40 @@ namespace GlobalPayments.Api.Tests.Realex {
 
             var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"fff944d4da9a5dfd64d142448d5dcf6168b3b77f\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"HPP_FRAUDFILTER_MODE\": \"PASSIVE\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void FraudWithFraudRules()
+        {
+
+            string ruleId = "853c1d37-6e9f-467e-9ffc-182210b40c6b";
+            FraudFilterMode mode = FraudFilterMode.OFF;
+            FraudRuleCollection fraudRuleCollection = new FraudRuleCollection();
+            fraudRuleCollection.AddRule(ruleId, mode);
+
+            var service = new HostedService(new GpEcomConfig
+            {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "hpp",
+                SharedSecret = "secret",
+
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
+                    ResponseUrl = "https://www.example.com/response",
+                    FraudFilterMode = FraudFilterMode.PASSIVE,
+                    FraudFilterRules = fraudRuleCollection
+                },
+                RequestLogger = new RequestConsoleLogger()
+            });
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .Serialize();
+
+            var response = _client.SendRequest(hppJson);
+            var parsedResponse = _service.ParseResponse(response, true);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", parsedResponse.ResponseCode);
         }
 
         [TestMethod]

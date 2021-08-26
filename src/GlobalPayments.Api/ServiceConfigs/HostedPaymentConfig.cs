@@ -1,4 +1,6 @@
-﻿namespace GlobalPayments.Api {
+﻿using GlobalPayments.Api.Entities;
+
+namespace GlobalPayments.Api {
     /// <summary>
     /// Options when specifying HPP versions.
     /// Useful with `HostedPaymentConfig`.
@@ -60,6 +62,10 @@
         /// Manner in which the fraud filter should operate
         /// </summary>
         public FraudFilterMode FraudFilterMode { get; set; }
+        /// <summary>
+        /// Fraud filter rules collection
+        /// </summary>
+        public FraudRuleCollection FraudFilterRules { get; set; }
         /// <summary>
         /// The desired language for the HPP
         /// </summary>

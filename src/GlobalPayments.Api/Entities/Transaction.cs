@@ -217,6 +217,10 @@ namespace GlobalPayments.Api.Entities {
         public string EmvIssuerResponse { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public FraudResponse FraudResponse;
+        /// <summary>
         /// The host response date
         /// </summary>
         public DateTime? HostResponseDate { get; set; }
