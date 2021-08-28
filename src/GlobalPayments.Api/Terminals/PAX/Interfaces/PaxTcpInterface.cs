@@ -21,10 +21,20 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         public void Connect() { 
             if (_client == null) {
-                _client = new TcpClient();
-                _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
-                _stream = _client.GetStream();
-                _stream.ReadTimeout = _settings.Timeout;
+                try
+                {
+                    _client = new TcpClient();
+                    _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
+                    _stream = _client.GetStream();
+                    _stream.ReadTimeout = _settings.Timeout;
+                }
+                catch (Exception)
+                {
+                    // don't leave _client set without a _stream
+                    _client?.Dispose();
+                    _client = null;
+                    throw;
+                }
             }
             _connectionCount++;
         }
@@ -44,7 +54,17 @@ namespace GlobalPayments.Api.Terminals.PAX {
             byte[] buffer = message.GetSendBuffer();
 
             Connect();
+
             try {
+                if (_stream == null)
+                {
+                    // can be null if another thread is opening and waiting for connection.
+                    // typical when Cancel is called. We've increased the connection
+                    // count but cannot actually use it.
+                    throw new MessageException("Terminal is not yet ready.");
+                }
+
+
                 for (int i = 0; i < 3; i++) {
                     _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
 
