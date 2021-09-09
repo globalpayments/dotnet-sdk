@@ -57,6 +57,11 @@ namespace GlobalPayments.Api.Entities {
         public string AvsResponseMessage { get; set; }
 
         /// <summary>
+        /// The address verification service (AVS) address response.
+        /// </summary>
+        public string AvsAddressResponse { get; set; }
+
+        /// <summary>
         /// The balance on the account after the transaction.
         /// </summary>
         public decimal? BalanceAmount { get; set; }

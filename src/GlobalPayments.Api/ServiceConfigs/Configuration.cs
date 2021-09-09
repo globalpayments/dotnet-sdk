@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Logging;
+using System.Collections.Generic;
 using System.Net;
 
 namespace GlobalPayments.Api {
@@ -28,6 +29,7 @@ namespace GlobalPayments.Api {
         internal abstract void ConfigureContainer(ConfiguredServices services);
         public bool EnableLogging { get; set; }
         public bool ForceGatewayTimeout { get; set; }
+        public Dictionary<string, string> DynamicHeaders { get; set; }
 
         internal virtual void Validate() {
             Validated = true;

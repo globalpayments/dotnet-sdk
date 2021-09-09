@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
     internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider {
@@ -100,6 +101,20 @@ namespace GlobalPayments.Api.Gateways {
             Headers["X-GP-Version"] = "2021-03-22";
             Headers["Accept"] = "application/json";
             Headers["Accept-Encoding"] = "gzip";
+            Headers["x-gp-sdk"] = "net;version="+getReleaseVersion();
+        }
+
+        //Get the SDK release version
+        private string getReleaseVersion()
+        {
+            try
+            {
+                return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
+            }
+            catch(Exception ex)
+            {
+                return "0.0.0.0";
+            }
         }
 
         public void SignIn() {

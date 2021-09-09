@@ -3,6 +3,7 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.Logging;
 using GlobalPayments.Api.Tests.Realex.Hpp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace GlobalPayments.Api.Tests.Realex {
     [TestClass]
@@ -617,7 +618,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         }
 
         [TestMethod]
-        public void FraudWithFraudRules()
+        public void FraudFilterWithFraudRules()
         {
 
             string ruleId = "853c1d37-6e9f-467e-9ffc-182210b40c6b";
@@ -647,6 +648,20 @@ namespace GlobalPayments.Api.Tests.Realex {
             var response = _client.SendRequest(hppJson);
             var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
+            Assert.AreEqual("00", parsedResponse.ResponseCode);
+            Assert.AreEqual(parsedResponse.ResponseValues["HPP_FRAUDFILTER_MODE"], FraudFilterMode.PASSIVE.ToString());
+            Assert.AreEqual(parsedResponse.ResponseValues["HPP_FRAUDFILTER_RESULT"], "PASS");
+            var rule = parsedResponse.ResponseValues.FirstOrDefault(x => x.Key.EndsWith(ruleId));
+            Assert.IsNotNull(rule);
+            Assert.AreEqual("NOT_EXECUTED", rule.Value);
+        }
+
+        [TestMethod]
+        public void FraudFilterParseResponseWithoutFraudRules()
+        {
+            var json = "{  \"MERCHANT_ID\": \"aGVhcnRsYW5kZ3BzYW5kYm94\",  \"ACCOUNT\": \"aHBw\",  \"ORDER_ID\": \"VHdWZGVpU1ZlMHFJb05DMG1OVjJyZw==\",  \"TIMESTAMP\": \"MjAyMTA4MjYyMTU1MjU=\",  \"RESULT\": \"MDA=\",  \"PASREF\": \"MTYzMDAxMTMyNTg5NzM4OTI=\",  \"AUTHCODE\": \"MTIzNDU=\",  \"AVSPOSTCODERESULT\": \"TQ==\",  \"CVNRESULT\": \"TQ==\",  \"MERCHANT_RESPONSE_URL\": \"aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vcmVzcG9uc2U=\",  \"MESSAGE\": \"WyB0ZXN0IHN5c3RlbSBdIEF1dGhvcmlzZWQ=\",  \"SHA1HASH\": \"MjM5NGFmZjNlZDgzNTUwYWEwOTZmMGMzZWJkMjUyYzBlOGUzN2ZmYQ==\",}";
+            var parsedResponse = _service.ParseResponse(json, true);
+            Assert.IsNotNull(parsedResponse);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
         }
 

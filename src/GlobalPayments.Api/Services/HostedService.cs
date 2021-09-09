@@ -35,7 +35,6 @@ namespace GlobalPayments.Api.Services {
             var message = response.GetValue<string>("MESSAGE");
             var transactionId = response.GetValue<string>("PASREF");
             var authCode = response.GetValue<string>("AUTHCODE");
-
             var sha1Hash = response.GetValue<string>("SHA1HASH");
             var hash = GenerationUtils.GenerateHash(_config.SharedSecret, timestamp, merchantId, orderId, result, message, transactionId, authCode);
             if (!hash.Equals(sha1Hash))

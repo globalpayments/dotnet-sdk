@@ -178,6 +178,13 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             response.Set("DCC_INFO_REQUST", request.GetValue<string>("DCC_INFO"));
             response.Set("HPP_FRAUDFILTER_MODE", request.GetValue<string>("HPP_FRAUDFILTER_MODE"));
             response.Set("HPP_FRAUDFILTER_RESULT", trans.FraudResponse?.Result);
+            if(trans?.FraudResponse?.Rules != null)
+            {
+                foreach (var rule in trans.FraudResponse.Rules)
+                {
+                    response.Set("HPP_FRAUDFILTER_RULE_" + rule.Id, rule.Action);
+                }
+            }
 
             return response.ToString();
         }

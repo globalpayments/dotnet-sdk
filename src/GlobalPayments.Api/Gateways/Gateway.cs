@@ -18,10 +18,12 @@ namespace GlobalPayments.Api.Gateways {
         public Dictionary<string, string> Headers { get; set; }
         public int Timeout { get; set; }
         public string ServiceUrl { get; set; }
+        public Dictionary<string, string> DynamicHeaders;
 
         public Gateway(string contentType) {
             Headers = new Dictionary<string, string>();
             _contentType = contentType;
+            DynamicHeaders = new Dictionary<string, string>();
         }
 
         private string GenerateRequestLog(HttpRequestMessage request) {
@@ -48,6 +50,14 @@ namespace GlobalPayments.Api.Gateways {
             HttpRequestMessage request = new HttpRequestMessage(verb, ServiceUrl + endpoint + queryString);
             foreach (var item in Headers) {
                 request.Headers.Add(item.Key, item.Value);
+            }
+
+            if(DynamicHeaders != null)
+            {
+                foreach (var item in DynamicHeaders)
+                {
+                    request.Headers.Add(item.Key, item.Value);
+                }
             }
 
             HttpResponseMessage response = null;

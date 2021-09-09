@@ -660,11 +660,15 @@ namespace GlobalPayments.Api.Entities {
     public static class MobilePaymentMethodType {
         public const string APPLEPAY = "apple-pay";
         public const string GOOGLEPAY = "pay-with-google";
+    }
 
-        public static class GPApiGatewayProvider{
-            public const string APPLE_PAY = "APPLEPAY";
-            public const string GOOGLE_PAY = "PAY_BY_GOOGLE";
-        }
+    /// <summary>
+    /// Indicates the GooglePay and ApplePay.
+    /// </summary>
+    public static class EncyptedMobileType
+    {
+        public const string APPLE_PAY = "APPLEPAY";
+        public const string GOOGLE_PAY = "PAY_BY_GOOGLE";
     }
 
     public static class DigitalWalletTokenFormat{

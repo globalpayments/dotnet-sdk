@@ -1,6 +1,18 @@
 # Changelog
 
 ## Latest
+
+#### Enhancements
+
+- Add Dynamic Headers to GpApi
+- Add Digital Wallet to GpApi
+- Add AvsResponse mappings to GpApi
+- Add Fraud rules response to RealexHppClient
+
+---
+
+## v1.7.41 (08/26/2021)
+
 #### Enhancements
 
 - Add Fraud Dynamic Rules to GpEcom

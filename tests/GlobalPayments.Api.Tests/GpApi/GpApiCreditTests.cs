@@ -4,6 +4,7 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
@@ -20,7 +21,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
+                RequestLogger = new RequestConsoleLogger(),
+                // DO NO DELETE - usage example for some settings
+                //DynamicHeaders = new Dictionary<string, string>
+                //{
+                //    ["x-gp-platform"] = "prestashop;version=1.7.2",
+                //    ["x-gp-extension"] = "coccinet;version=2.4.1"
+                //}
             });
 
             card = new CreditCardData {

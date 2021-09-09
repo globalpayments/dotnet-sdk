@@ -86,6 +86,7 @@ namespace GlobalPayments.Api {
                 RequestLogger = RequestLogger,
                 MerchantContactUrl = MerchantContactUrl,
                 WebProxy = WebProxy,
+                DynamicHeaders = DynamicHeaders,
             };
 
             services.GatewayConnector = gateway;
