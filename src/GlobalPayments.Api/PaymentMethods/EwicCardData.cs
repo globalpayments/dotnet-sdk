@@ -15,6 +15,7 @@ namespace GlobalPayments.Api.PaymentMethods
         public int? ExpMonth { get; set ; }
         public int? ExpYear { get; set; }
         public bool ReaderPresent { get; set; }
+        public ManualEntryMethod? EntryMethod { get; set; }
 
         public string ShortExpiry => throw new NotImplementedException();
     }

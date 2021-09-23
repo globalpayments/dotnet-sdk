@@ -35,6 +35,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = 05,
                 ExpYear = 2025,
                 Cvn = "852",
+                CardPresent = true
             };
         }
 
@@ -647,13 +648,79 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditSaleWithManualEntryMethod()
+        {
+            foreach (Channel channel in Enum.GetValues(typeof(Channel))) 
+            {
+                foreach (ManualEntryMethod entryMethod in Enum.GetValues(typeof(ManualEntryMethod)))
+                {
+                    ServicesContainer.ConfigureService(new GpApiConfig
+                    {
+                        Environment = Entities.Environment.TEST,
+                        AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
+                        AppKey = "y7vALnUtFulORlTV",
+                        SecondsToExpire = 60,
+                        Channel = channel,
+                        RequestLogger = new RequestConsoleLogger()
+                    });
+                    card.Cvn = "123";
+                    card.EntryMethod = entryMethod;
+
+                    var response = card.Charge(11m)
+                        .WithCurrency("USD")
+                        .Execute();
+
+                    Assert.IsNotNull(response);
+                    Assert.AreEqual(SUCCESS, response?.ResponseCode);
+                    Assert.AreEqual("CAPTURED", response?.ResponseMessage);
+
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CreditSaleWithEntryMethod()
+        {
+            foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod)))
+            {
+                ServicesContainer.ConfigureService(new GpApiConfig
+                {
+                    Environment = Entities.Environment.TEST,
+                    AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
+                    AppKey = "y7vALnUtFulORlTV",
+                    SecondsToExpire = 60,
+                    Channel = Channel.CardPresent,
+                    RequestLogger = new RequestConsoleLogger()
+                });
+
+                var creditTrackData = new CreditTrackData
+                {
+                    TrackData =
+                        "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
+                    EntryMethod = entryMethod
+                };
+
+                var response = creditTrackData.Charge(11m)
+                    .WithCurrency("USD")
+                    .Execute();
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual(SUCCESS, response?.ResponseCode);
+                Assert.AreEqual("CAPTURED", response?.ResponseMessage);
+
+            }
+        }
+
+        [TestMethod, Ignore]
+        //To be removed
         public void CreditVerify_CP_CVNNotMatched() {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Entities.Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
                 SecondsToExpire = 60,
-                Channel = Channel.CardPresent
+                Channel = Channel.CardPresent,
+                RequestLogger = new RequestConsoleLogger(),
             });
             var response = card.Verify()
                 .WithCurrency("USD")

@@ -236,6 +236,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = 05,
                 ExpYear = 2025,
                 Cvn = "123",
+                CardPresent = true
             };
 
             var chargeTransaction = card.Charge(1.99m)
@@ -257,6 +258,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = 05,
                 ExpYear = 2025,
                 Cvn = "852",
+                CardPresent = true
             };
 
             var chargeTransaction = card.Charge(1.99m)

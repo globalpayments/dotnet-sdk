@@ -168,7 +168,28 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates proximity/contactless entry.
         /// </summary>
-        Proximity
+        Proximity,
+    }
+
+    /// <summary>
+    /// Indicates how the payment method data was obtained.
+    /// </summary>
+    public enum ManualEntryMethod
+    {
+        /// <summary>
+        /// Indicates manual entry.
+        /// </summary>
+        Moto,
+
+        /// <summary>
+        /// Indicates swipe entry.
+        /// </summary>
+        Mail,
+
+        /// <summary>
+        /// Indicates proximity/contactless entry.
+        /// </summary>
+        Phone
     }
 
     /// <summary>

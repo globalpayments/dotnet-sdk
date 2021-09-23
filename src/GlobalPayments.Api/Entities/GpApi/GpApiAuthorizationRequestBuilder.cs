@@ -9,7 +9,7 @@ namespace GlobalPayments.Api.Entities {
     internal class GpApiAuthorizationRequestBuilder {
         internal static GpApiRequest BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
             var paymentMethod = new JsonDoc()
-                .Set("entry_mode", GetEntryMode(builder)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
+                .Set("entry_mode", GetEntryMode(builder, gateway.Channel)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
             if (builder.PaymentMethod is CreditCardData && (builder.TransactionModifier == TransactionModifier.EncryptedMobile || builder.TransactionModifier == TransactionModifier.DecryptedMobile))
             {
                 var digitalWallet = new JsonDoc();
@@ -100,7 +100,7 @@ namespace GlobalPayments.Api.Entities {
                             if (builder.PaymentMethod is ITokenizable && !string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                                 verificationData.Remove("payment_method");
                                 verificationData.Set("payment_method", new JsonDoc()
-                                    .Set("entry_mode", GetEntryMode(builder))
+                                    .Set("entry_mode", GetEntryMode(builder, gateway.Channel))
                                     .Set("id", (builder.PaymentMethod as ITokenizable).Token)
                                 );
                             }
@@ -273,6 +273,57 @@ namespace GlobalPayments.Api.Entities {
             };
         }
 
+        private static string GetEntryMode(AuthorizationBuilder builder,Channel channel)
+        {
+            if (channel == Channel.CardPresent)
+            {
+                if (builder.PaymentMethod is ITrackData) {
+                    var paymentMethod = (ITrackData)builder.PaymentMethod;
+                    if (builder.TagData != null)
+                    {
+                        if (paymentMethod.EntryMethod == EntryMethod.Proximity)
+                        {
+                            return "CONTACTLESS_CHIP";
+                        }
+                        return "CHIP";
+                    }
+                    if (paymentMethod.EntryMethod == EntryMethod.Swipe) 
+                    {
+                        return "SWIPE";
+                    }
+                }
+                if (builder.PaymentMethod is ICardData && ((ICardData)builder.PaymentMethod).CardPresent)
+                {
+                    return "MANUAL";
+                }
+                return "SWIPE";
+            } else
+            {
+                if (builder.PaymentMethod is ICardData) 
+                {
+                    var paymentMethod = (ICardData)builder.PaymentMethod;
+                    if (paymentMethod.ReaderPresent) 
+                    {
+                        return "ECOM";
+                    }
+                    else
+                    {
+                        switch (paymentMethod?.EntryMethod) {
+                        case ManualEntryMethod.Phone:
+                            return "PHONE";
+                        case ManualEntryMethod.Moto:
+                            return "MOTO";
+                        case ManualEntryMethod.Mail:
+                            return "MAIL";
+                            default:
+                            break;
+                        }
+                    }
+                }
+                return "ECOM";
+            }
+        }
+
         private static string GetEci(CreditCardData creditCardData)
         {
 
@@ -298,27 +349,6 @@ namespace GlobalPayments.Api.Entities {
 
             return eciCode;
 
-        }
-
-        private static string GetEntryMode(AuthorizationBuilder builder) {
-            if (builder.PaymentMethod is ICardData card) {
-                if (card.ReaderPresent) {
-                    return card.CardPresent ? "MANUAL" : "IN_APP";
-                }
-                else {
-                    return card.CardPresent ? "MANUAL" : "ECOM";
-                }
-            }
-            else if (builder.PaymentMethod is ITrackData track) {
-                if (builder.TagData != null) {
-                    return track.EntryMethod.Equals(EntryMethod.Swipe) ? "CHIP" : "CONTACTLESS_CHIP";
-                }
-                else if (builder.HasEmvFallbackData) {
-                    return "CONTACTLESS_SWIPE";
-                }
-                return "SWIPE";
-            }
-            return "ECOM";
         }
 
         private static string GetCaptureMode(AuthorizationBuilder builder) {

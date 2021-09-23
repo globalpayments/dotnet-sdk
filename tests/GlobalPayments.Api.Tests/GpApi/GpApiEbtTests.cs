@@ -27,7 +27,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = 12,
                 ExpYear = 2025,
                 PinBlock = "32539F50C245A6A93D123412324000AA",
-                CardHolderName = "Jane Doe"
+                CardHolderName = "Jane Doe",
+                CardPresent = true
             };
 
             ebtTrackData = new EBTTrackData {

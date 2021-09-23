@@ -294,7 +294,8 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // set token flag
-            if (builder.PaymentMethod is ITokenizable) {
+            // eCheck cannot be tokenized w/Portico Gateway
+            if (builder.PaymentMethod is ITokenizable && !(builder.PaymentMethod is eCheck)) {
                 et.SubElement(cardData, "TokenRequest").Text(builder.RequestMultiUseToken ? "Y" : "N");
             }
 

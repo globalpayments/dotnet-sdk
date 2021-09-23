@@ -387,7 +387,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
                 Cvn = "123",
-                CardHolderName = "John Smith"
+                CardHolderName = "John Smith",
+                CardPresent = true
             };
 
             return card;

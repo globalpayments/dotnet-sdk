@@ -69,6 +69,8 @@ namespace GlobalPayments.Api.PaymentMethods {
             }
         }
 
+       public ManualEntryMethod? EntryMethod { get; set; }
+
         /// <summary>
         /// The card's expiration month.
         /// </summary>

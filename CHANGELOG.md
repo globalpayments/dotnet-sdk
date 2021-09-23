@@ -2,6 +2,22 @@
 
 ## Latest
 
+#### Bug Fixes:
+
+- Fix issue in v1.7.31 and up for eCheck auths on Portico/Heartland
+
+---
+
+## v1.7.42 (09/09/2021)
+
+#### Enhancements
+
+- Add Entry Mode to GpApi
+
+---
+
+## v1.7.42 (09/09/2021)
+
 #### Enhancements
 
 - Add Dynamic Headers to GpApi
