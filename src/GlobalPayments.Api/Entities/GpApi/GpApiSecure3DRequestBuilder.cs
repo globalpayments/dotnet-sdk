@@ -8,6 +8,7 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiSecure3DRequestBuilder {
         internal static GpApiRequest BuildRequest(Secure3dBuilder builder, GpApiConnector gateway) {
+            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
                 var storedCredential = new JsonDoc()
                     .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))
@@ -48,7 +49,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = "/authentications",
+                    Endpoint = $"{merchantUrl}/authentications",
                     RequestBody = data.ToString(),
                 };
             }
@@ -206,7 +207,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"/authentications/{builder.ServerTransactionId}/initiate",
+                    Endpoint = $"{merchantUrl}/authentications/{builder.ServerTransactionId}/initiate",
                     RequestBody = data.ToString(),
                 };
             }
@@ -220,7 +221,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"/authentications/{builder.ServerTransactionId}/result",
+                    Endpoint = $"{merchantUrl}/authentications/{builder.ServerTransactionId}/result",
                     RequestBody = data?.ToString()
                 };
             }

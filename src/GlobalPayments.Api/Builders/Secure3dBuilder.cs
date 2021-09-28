@@ -102,7 +102,6 @@ namespace GlobalPayments.Api.Builders {
         internal bool? WhitelistStatus { get; set; }
         internal string WorkCountryCode { get; set; }
         internal string WorkNumber { get; set; }
-
         public Secure3dBuilder WithAddress(Address address) {
             return WithAddress(address, AddressType.Billing);
         }

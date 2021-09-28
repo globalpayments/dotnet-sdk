@@ -80,7 +80,6 @@ namespace GlobalPayments.Api.Builders {
         internal bool AllowDuplicates { get; set; }
         internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
         internal string TagData { get; set; }
-
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
 

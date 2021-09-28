@@ -12,6 +12,14 @@
 
 #### Enhancements
 
+- Add Multiple merchants to GpApi
+
+---
+
+## v1.7.43 (09/23/2021)
+
+#### Enhancements
+
 - Add Entry Mode to GpApi
 
 ---

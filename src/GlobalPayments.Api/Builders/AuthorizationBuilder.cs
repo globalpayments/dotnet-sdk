@@ -85,7 +85,6 @@ namespace GlobalPayments.Api.Builders {
         internal string CheckCustomerId { get; set; }
         internal string RawMICRData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
-
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));

@@ -147,30 +147,36 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// with the issuer in the process.
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
-        public string Tokenize(string configName = "default", PaymentMethodUsageMode paymentMethodUsageMode = PaymentMethodUsageMode.Multiple) {
+        public string Tokenize(string configName = "default", PaymentMethodUsageMode paymentMethodUsageMode = PaymentMethodUsageMode.Multiple)
+        {
             return Tokenize(true, configName, paymentMethodUsageMode);
         }
-        public string Tokenize(bool verifyCard, string configName = "default", PaymentMethodUsageMode paymentMethodUsageMode = PaymentMethodUsageMode.Multiple) {
+
+        public string Tokenize(bool verifyCard, string configName = "default", PaymentMethodUsageMode paymentMethodUsageMode = PaymentMethodUsageMode.Multiple)
+        {
             TransactionType type = verifyCard ? TransactionType.Verify : TransactionType.Tokenize;
 
-            var response =  new AuthorizationBuilder(type, this)
+            var response = new AuthorizationBuilder(type, this)
                 .WithRequestMultiUseToken(verifyCard)
                 .WithPaymentMethodUsageMode(paymentMethodUsageMode)
                 .Execute(configName);
             return response.Token;
         }
 
-        public string Tokenize(bool verifyCard, Address billingAddress, Customer customerData, string configName = "default") {
+        public string Tokenize(bool verifyCard, Address billingAddress, Customer customerData, string configName = "default")
+        {
             TransactionType type = verifyCard ? TransactionType.Verify : TransactionType.Tokenize;
 
             var builder = new AuthorizationBuilder(type, this)
                 .WithRequestMultiUseToken(verifyCard)
                 .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Multiple);
 
-            if (billingAddress != null) {
+            if (billingAddress != null)
+            {
                 builder = builder.WithAddress(billingAddress);
             }
-            if (customerData != null) {
+            if (customerData != null)
+            {
                 builder = builder.WithCustomerData(customerData);
             }
 

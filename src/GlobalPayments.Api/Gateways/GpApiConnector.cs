@@ -21,7 +21,7 @@ namespace GlobalPayments.Api.Gateways {
         public string Country { get; set; }
         public string[] Permissions { get; set; }
         public string MerchantContactUrl { get; set; }
-
+        public string MerchantId { get; set; }
 
         private string _AccessToken;
         public string AccessToken {
@@ -118,13 +118,21 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         public void SignIn() {
-            var response = GetAccessToken();
+            if (string.IsNullOrEmpty(_AccessToken))
+            {
+                var response = GetAccessToken();
 
-            AccessToken = response.Token;
-            DataAccountName = response.DataAccountName;
-            DisputeManagementAccountName = response.DisputeManagementAccountName;
-            TokenizationAccountName = response.TokenizationAccountName;
-            TransactionProcessingAccountName = response.TransactionProcessingAccountName;
+                AccessToken = response.Token;
+
+                if (string.IsNullOrEmpty(_DataAccountName))
+                    DataAccountName = response.DataAccountName;
+                if (string.IsNullOrEmpty(_DisputeManagementAccountName))
+                    DisputeManagementAccountName = response.DisputeManagementAccountName;
+                if (string.IsNullOrEmpty(_TokenizationAccountName))
+                    TokenizationAccountName = response.TokenizationAccountName;
+                if (string.IsNullOrEmpty(_TransactionProcessingAccountName))
+                    TransactionProcessingAccountName = response.TransactionProcessingAccountName;
+            }
         }
 
         public void SignOut() {

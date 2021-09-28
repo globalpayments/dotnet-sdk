@@ -8,6 +8,7 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiAuthorizationRequestBuilder {
         internal static GpApiRequest BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
+            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
             var paymentMethod = new JsonDoc()
                 .Set("entry_mode", GetEntryMode(builder, gateway.Channel)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
             if (builder.PaymentMethod is CreditCardData && (builder.TransactionModifier == TransactionModifier.EncryptedMobile || builder.TransactionModifier == TransactionModifier.DecryptedMobile))
@@ -69,7 +70,7 @@ namespace GlobalPayments.Api.Entities {
 
                         return new GpApiRequest {
                             Verb = HttpMethod.Post,
-                            Endpoint = "/payment-methods",
+                            Endpoint = $"{merchantUrl}/payment-methods",
                             RequestBody = tokenizationData.ToString(),
                         };
                     }
@@ -84,7 +85,7 @@ namespace GlobalPayments.Api.Entities {
 
                             return new GpApiRequest {
                                 Verb = HttpMethod.Post,
-                                Endpoint = "/payment-methods",
+                                Endpoint = $"{merchantUrl}/payment-methods",
                                 RequestBody = tokenizationData.ToString(),
                             };
                         }
@@ -107,7 +108,7 @@ namespace GlobalPayments.Api.Entities {
 
                             return new GpApiRequest {
                                 Verb = HttpMethod.Post,
-                                Endpoint = "/verifications",
+                                Endpoint = $"{merchantUrl}/verifications",
                                 RequestBody = verificationData.ToString(),
                             };
                         }
@@ -136,7 +137,7 @@ namespace GlobalPayments.Api.Entities {
 
                         return new GpApiRequest {
                             Verb = HttpMethod.Post,
-                            Endpoint = "/verifications",
+                            Endpoint = $"{merchantUrl}/verifications",
                             RequestBody = verificationData.ToString(),
                         };
                     }
@@ -268,7 +269,7 @@ namespace GlobalPayments.Api.Entities {
 
             return new GpApiRequest {
                 Verb = HttpMethod.Post,
-                Endpoint = "/transactions",
+                Endpoint = $"{merchantUrl}/transactions",
                 RequestBody = data.ToString(),
             };
         }
