@@ -2,23 +2,21 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace GlobalPayments.Api.Utils {
-    public class GenerationUtils {
-        class DigestUtils {
-            static HashAlgorithm _hasher;
+namespace GlobalPayments.Api.Utils
+{
+    public static class GenerationUtils
+    {
+        internal static class DigestUtils
+        {
+            internal static string Sha1Hex(string toHash)
+            {
+                var stringBuilder = new StringBuilder();
 
-            static DigestUtils() {
-                _hasher = SHA1.Create();
-            }
-            public static string Sha1Hex(string toHash) {
-                byte[] buffer = _hasher.ComputeHash(Encoding.UTF8.GetBytes(toHash));
-                var sb = new StringBuilder();
-                foreach (byte b in buffer)
-                    sb.Append(b.ToString("X2"));
-                return sb.ToString().ToLower();
+                foreach (byte @byte in SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(toHash))) stringBuilder.Append(@byte.ToString("X2"));
+
+                return stringBuilder.ToString().ToLower();
             }
         }
-
 
         /// <summary>Each message sent to Realex should have a hash, attached. For a message using the remote 
         /// interface this is generated using the This is generated from the TIMESTAMP, MERCHANT_ID, 
@@ -69,32 +67,29 @@ namespace GlobalPayments.Api.Utils {
         /// <param name="toHash"></param>
         /// <param name="secret"></param>
         ///<returns>string</returns>
-        public static string GenerateHash(string toHash, string secret = null) {
-            if (toHash == null)
-                return toHash;
+        public static string GenerateHash(string toHash, string secret = null)
+        {
+            if (toHash == null) return toHash;
 
             string toHashFirstPass = DigestUtils.Sha1Hex(toHash);
 
-            if (secret != null) {
+            if (secret != null)
+            {
                 string toHashSecondPass = new StringBuilder(toHashFirstPass).Append(".").Append(secret).ToString();
                 return DigestUtils.Sha1Hex(toHashSecondPass);
             }
+
             return toHashFirstPass;
         }
 
-        public static string GenerateHash(string secret, params string[] fields) {
-            var toHash = string.Join(".", fields);
-            return GenerateHash(toHash, secret);
-        }
+        public static string GenerateHash(string secret, params string[] fields) => GenerateHash(string.Join(".", fields), secret);
 
         /// <summary>
         /// Generate the current datetimestamp in the string formaat (YYYYMMDDHHSS) required in a  
-	    /// request to Realex.
+        /// request to Realex.
         /// </summary>
         /// <returns>string</returns>
-        public static string GenerateTimestamp() {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
-        }
+        public static string GenerateTimestamp() => DateTime.Now.ToString("yyyyMMddHHmmss");
 
         /// <summary>
         ///  Order Id for a initial request should be unique per client ID. This method generates a unique 
@@ -107,12 +102,8 @@ namespace GlobalPayments.Api.Utils {
         ///  http://en.wikipedia.org/wiki/Universally_unique_identifier#Random_UUID_probability_of_duplicates)
         /// </summary>
         /// <returns>string</returns>
-        public static string GenerateOrderId() {
-            var uuid = Guid.NewGuid();
-            return Convert.ToBase64String(uuid.ToByteArray()).TrimEnd('=').Replace("+", "-").Replace("/", "_");
-        }
-        public static string GenerateRecurringKey() {
-            return Guid.NewGuid().ToString().ToLower();
-        }
+        public static string GenerateOrderId() => Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=').Replace("+", "-").Replace("/", "_");
+
+        public static string GenerateRecurringKey() => Guid.NewGuid().ToString().ToLower();
     }
 }
