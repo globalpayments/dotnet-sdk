@@ -1,5 +1,4 @@
 ﻿using GlobalPayments.Api.Utils;
-using System;
 
 namespace GlobalPayments.Api.Network.Entities {
     public class PriorMessageInformation {

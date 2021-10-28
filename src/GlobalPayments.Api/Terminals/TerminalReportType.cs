@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GlobalPayments.Api.Terminals {
+﻿namespace GlobalPayments.Api.Terminals {
     public enum TerminalReportType {
         LocalDetailReport
     }

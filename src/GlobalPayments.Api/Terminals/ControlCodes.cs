@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GlobalPayments.Api.Terminals {
+﻿namespace GlobalPayments.Api.Terminals {
     public enum ControlCodes : byte {
         STX = 0x02,
         ETX = 0x03,

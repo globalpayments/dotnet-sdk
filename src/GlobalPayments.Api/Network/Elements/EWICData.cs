@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GlobalPayments.Api.Network.Elements {
+﻿namespace GlobalPayments.Api.Network.Elements {
     public class EWICData {
         private DE117_WIC_Data_Fields ewicData;
         public EWICData() {

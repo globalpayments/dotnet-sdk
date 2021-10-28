@@ -1,5 +1,4 @@
 ﻿using GlobalPayments.Api.Network.Entities;
-using System;
 
 namespace GlobalPayments.Api.Network.Elements {
     public class DE63_ProductDataEntry {

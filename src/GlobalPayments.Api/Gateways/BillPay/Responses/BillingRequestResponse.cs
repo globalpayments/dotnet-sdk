@@ -1,5 +1,4 @@
 ﻿using GlobalPayments.Api.Entities.Billing;
-using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     internal sealed class BillingRequestResponse : BillPayResponseBase<BillingResponse> {

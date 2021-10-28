@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Tests.TestData {

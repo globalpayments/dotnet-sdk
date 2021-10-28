@@ -1,15 +1,11 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways.Events;
 using GlobalPayments.Api.Terminals.Abstractions;
-using GlobalPayments.Api.Terminals.Extensions;
-using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 
 namespace GlobalPayments.Api.Gateways {
     public class NetworkGateway {

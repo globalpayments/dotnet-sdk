@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Utils;
+﻿using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Entities.Payroll {
     internal class SessionInfo : PayrollEntity {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GlobalPayments.Api.Entities.PayFac
+﻿namespace GlobalPayments.Api.Entities.PayFac
 {
     public class SignificantOwnerData {
         /// <summary>

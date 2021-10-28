@@ -1,12 +1,8 @@
 ﻿using GlobalPayments.Api.Builders;
-using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.Utils;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace GlobalPayments.Api.Gateways.BillPay
 {

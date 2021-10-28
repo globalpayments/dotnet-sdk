@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GlobalPayments.Api.Entities {
+﻿namespace GlobalPayments.Api.Entities {
     public class BrowserData {
         public string AcceptHeader { get; set; }
         public ColorDepth ColorDepth { get; set; }

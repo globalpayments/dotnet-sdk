@@ -1,5 +1,4 @@
-﻿using GlobalPayments.Api.Entities;
-using System;
+﻿using System;
 
 namespace GlobalPayments.Api.Entities {
     public class DccRateData {

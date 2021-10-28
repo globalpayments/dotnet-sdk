@@ -1,7 +1,4 @@
-﻿using GlobalPayments.Api.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Utils {
     public class MessageWriter {

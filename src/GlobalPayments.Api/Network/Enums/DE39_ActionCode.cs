@@ -1,5 +1,4 @@
-﻿using GlobalPayments.Api.Utils;
-using System;
+﻿using System;
 
 namespace GlobalPayments.Api.Network.Entities {
     public enum DE39_ActionCode { }

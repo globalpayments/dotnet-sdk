@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GlobalPayments.Api.Terminals.HPA {
+﻿namespace GlobalPayments.Api.Terminals.HPA {
     public enum MessageFormat {
         HPA,
         Visa2nd

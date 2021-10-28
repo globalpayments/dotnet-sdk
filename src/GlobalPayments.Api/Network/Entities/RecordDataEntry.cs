@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GlobalPayments.Api.Network.Entities {
+﻿namespace GlobalPayments.Api.Network.Entities {
     public class RecordDataEntry {
         public string MessageVersion { get; set; }
         public string TransactionDate { get; set; }

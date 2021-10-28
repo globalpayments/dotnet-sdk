@@ -1,7 +1,4 @@
 ﻿using GlobalPayments.Api.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Network.Entities
 {

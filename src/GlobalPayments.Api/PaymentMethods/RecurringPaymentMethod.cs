@@ -1,6 +1,5 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Services;
 
 namespace GlobalPayments.Api.PaymentMethods
 {

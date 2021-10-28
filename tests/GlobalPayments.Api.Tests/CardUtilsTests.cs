@@ -1,5 +1,4 @@
 ﻿using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests {

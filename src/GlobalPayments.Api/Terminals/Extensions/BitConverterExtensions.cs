@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace System {
+﻿namespace System {
     public static partial class BitConverterX {
         public static short ToInt16(byte[] buffer, int startIndex) {
             byte[] lengthBuffer = new byte[2];

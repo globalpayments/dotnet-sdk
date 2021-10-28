@@ -1,7 +1,4 @@
-﻿using GlobalPayments.Api.Terminals.HPA.Responses;
-using System.Collections.Generic;
-
-namespace GlobalPayments.Api.Terminals.Abstractions {
+﻿namespace GlobalPayments.Api.Terminals.Abstractions {
     public interface IEODResponse : IDeviceResponse {
         IDeviceResponse AttachmentResponse { get; }
         IDeviceResponse BatchCloseResponse { get; }

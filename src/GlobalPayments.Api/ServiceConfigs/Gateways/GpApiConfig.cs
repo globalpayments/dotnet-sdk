@@ -1,8 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
-using GlobalPayments.Api.Utils;
-using System;
-using System.Globalization;
 
 namespace GlobalPayments.Api {
     public class GpApiConfig : GatewayConfig {

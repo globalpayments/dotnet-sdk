@@ -5,7 +5,6 @@ using System.Text;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.HPA;
 using System.IO;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace GlobalPayments.Api.Terminals {

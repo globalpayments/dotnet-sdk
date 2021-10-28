@@ -1,5 +1,3 @@
-using GlobalPayments.Api.Utils;
-
 namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Alternative payment response data

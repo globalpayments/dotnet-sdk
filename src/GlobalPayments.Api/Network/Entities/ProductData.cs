@@ -1,6 +1,5 @@
 ﻿using GlobalPayments.Api.Network.Elements;
 using GlobalPayments.Api.Utils;
-using System.Linq;
 
 namespace GlobalPayments.Api.Network.Entities {
     public class ProductData {

@@ -1,12 +1,10 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Network.Abstractions;
-using GlobalPayments.Api.Network.Elements;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace GlobalPayments.Api.Tests {
     public class BatchProvider : IBatchProvider {

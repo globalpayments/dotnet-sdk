@@ -1,6 +1,4 @@
-﻿using GlobalPayments.Api.Utils;
-using System;
-using System.Text;
+﻿using System.Text;
 
 namespace GlobalPayments.Api.Entities {
     public class PhoneNumber {

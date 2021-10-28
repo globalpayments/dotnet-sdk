@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GlobalPayments.Api.Terminals.Abstractions {
+﻿namespace GlobalPayments.Api.Terminals.Abstractions {
     internal interface IRequestSubGroup {
         string GetElementString();
     }
