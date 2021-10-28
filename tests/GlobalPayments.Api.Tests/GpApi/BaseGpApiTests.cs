@@ -4,6 +4,7 @@ using System;
 namespace GlobalPayments.Api.Tests.GpApi {
     public abstract class BaseGpApiTests {
         protected const string SUCCESS = "SUCCESS";
+        protected const string DECLINED = "DECLINED";
         protected const string VERIFIED = "VERIFIED";
         protected const string CLOSED = "CLOSED";
 

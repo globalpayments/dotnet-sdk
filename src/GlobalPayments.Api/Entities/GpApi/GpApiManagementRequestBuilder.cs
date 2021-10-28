@@ -86,6 +86,32 @@ namespace GlobalPayments.Api.Entities {
             else if (builder.TransactionType == TransactionType.Reauth) {
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString());
+                if(builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH)
+                {
+                    data.Set("description", builder.Description);
+                    if(builder.ECheck != null)
+                    {
+                        var eCheck = builder.ECheck;
+
+                        var paymentMethod = new JsonDoc()
+                            .Set("narrative", eCheck.MerchantNotes);
+
+                        var bankTransfer = new JsonDoc()
+                            .Set("account_number", eCheck.AccountNumber)
+                            .Set("account_type", (eCheck.AccountType != null) ? EnumConverter.GetMapping(Target.GP_API, eCheck.AccountType) : null)
+                            .Set("check_reference", eCheck.CheckReference);
+
+                        var bank = new JsonDoc()
+                            .Set("code", eCheck.RoutingNumber)
+                            .Set("name", eCheck.BankName);
+
+                        bankTransfer.Set("bank", bank);
+
+                        paymentMethod.Set("bank_transfer", bankTransfer);
+
+                        data.Set("payment_method", paymentMethod);
+                    }
+                }
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,

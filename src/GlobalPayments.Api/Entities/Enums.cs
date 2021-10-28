@@ -340,12 +340,20 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a checking account.
         /// </summary>
+        [Map(Target.GP_API, "CHECKING")] 
         CHECKING,
 
         /// <summary>
         /// Indicates a savings account.
         /// </summary>
-        SAVINGS
+        [Map(Target.GP_API, "SAVING")]
+        SAVINGS,
+
+        /// <summary>
+        /// Indicates a credit account.
+        /// </summary>
+        [Map(Target.GP_API, "CREDIT")]
+        CREDIT
     }
 
     /// <summary>

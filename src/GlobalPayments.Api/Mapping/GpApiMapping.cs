@@ -67,6 +67,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
                 transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
                 transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
+                transaction.PaymentMethodType = (json.Get("payment_method")?.Has("bank_transfer") ?? false) ? PaymentMethodType.ACH : transaction.PaymentMethodType;
             }
 
             return transaction;

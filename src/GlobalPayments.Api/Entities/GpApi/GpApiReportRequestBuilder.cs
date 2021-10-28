@@ -45,6 +45,7 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("batch_id", trb.SearchBuilder.BatchId);
                         request.AddQueryStringParam("entry_mode", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.PaymentEntryMode));
                         request.AddQueryStringParam("name", trb.SearchBuilder.Name);
+                        request.AddQueryStringParam("payment_method", EnumConverter.GetMapping(Target.GP_API,trb.SearchBuilder.PaymentMethod));
 
                         return request;
                     case ReportType.FindSettlementTransactionsPaged:

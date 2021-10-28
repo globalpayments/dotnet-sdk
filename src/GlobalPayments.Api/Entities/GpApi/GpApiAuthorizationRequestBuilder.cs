@@ -199,6 +199,39 @@ namespace GlobalPayments.Api.Entities {
                 paymentMethod.Set("name", (builder.PaymentMethod as EBT).CardHolderName);
             }
 
+            if (builder.PaymentMethod is eCheck)
+            {
+                eCheck check = (builder.PaymentMethod as eCheck);
+                paymentMethod.Set("name", check.CheckHolderName);
+
+                var bankTransfer = new JsonDoc()
+                    .Set("account_number", check.AccountNumber)
+                    .Set("account_type", (check.AccountType != null) ? EnumConverter.GetMapping(Target.GP_API, check.AccountType) : null)
+                    .Set("check_reference", check.CheckReference)
+                    .Set("sec_code", check.SecCode)
+                    .Set("narrative", check.MerchantNotes);
+
+                var bank = new JsonDoc()
+                    .Set("code", check.RoutingNumber)
+                    .Set("name", check.BankName);
+
+                var address = new JsonDoc()
+                    .Set("line_1", check.BankAddress?.StreetAddress1)
+                    .Set("line_2", check.BankAddress?.StreetAddress2)
+                    .Set("line_3", check.BankAddress?.StreetAddress3)
+                    .Set("city", check.BankAddress?.City)
+                    .Set("postal_code", check.BankAddress?.PostalCode)
+                    .Set("state", check.BankAddress?.State)
+                    .Set("country", check.BankAddress?.CountryCode);
+
+                bank.Set("address", address);
+
+                bankTransfer.Set("bank", bank);
+
+                paymentMethod.Set("bank_transfer", bankTransfer);
+
+            }
+
             // encryption
             if (builder.PaymentMethod is IEncryptable)
             {
@@ -249,6 +282,10 @@ namespace GlobalPayments.Api.Entities {
                 //.Set("site_reference", "") //
                 .Set("payment_method", paymentMethod);
 
+                if (builder.PaymentMethod is eCheck) {
+                    data.Set("payer", setPayerInformation(builder));
+                }
+
             // set order reference
             if (!string.IsNullOrEmpty(builder.OrderId)) {
                 var order = new JsonDoc()
@@ -280,11 +317,16 @@ namespace GlobalPayments.Api.Entities {
             {
                 if (builder.PaymentMethod is ITrackData) {
                     var paymentMethod = (ITrackData)builder.PaymentMethod;
-                    if (builder.TagData != null)
+                    if (!string.IsNullOrEmpty(builder.TagData))
                     {
                         if (paymentMethod.EntryMethod == EntryMethod.Proximity)
                         {
                             return "CONTACTLESS_CHIP";
+                        }
+                        var emvData = EmvUtils.ParseTagData(builder.TagData);
+                        if (emvData.isContactlessMsd())
+                        {
+                            return "CONTACTLESS_SWIPE";
                         }
                         return "CHIP";
                     }
@@ -323,6 +365,34 @@ namespace GlobalPayments.Api.Entities {
                 }
                 return "ECOM";
             }
+        }
+
+        private static JsonDoc setPayerInformation(AuthorizationBuilder builder)
+        {
+            JsonDoc payer = new JsonDoc();
+            payer.Set("reference", builder.CustomerId ?? builder.CustomerData?.Id);
+            if(builder.PaymentMethod is eCheck)
+            {
+                JsonDoc billingAddress = new JsonDoc();
+                    
+                billingAddress.Set("line_1", builder.BillingAddress?.StreetAddress1)
+                        .Set("line_2", builder.BillingAddress?.StreetAddress2)
+                        .Set("city", builder.BillingAddress?.City)
+                        .Set("postal_code", builder.BillingAddress?.PostalCode)
+                        .Set("state", builder.BillingAddress?.State)
+                        .Set("country", builder.BillingAddress.CountryCode);
+
+                payer.Set("billing_address", billingAddress);
+
+                if (builder.CustomerData != null) 
+                {
+                    payer.Set("name", builder.CustomerData.FirstName + " " + builder.CustomerData.LastName);
+                    payer.Set("date_of_birth", builder.CustomerData.DateOfBirth);
+                    payer.Set("landline_phone", builder.CustomerData.HomePhone?.ToNumeric());
+                    payer.Set("mobile_phone", builder.CustomerData.MobilePhone?.ToNumeric());
+                }
+            }
+            return payer;
         }
 
         private static string GetEci(CreditCardData creditCardData)

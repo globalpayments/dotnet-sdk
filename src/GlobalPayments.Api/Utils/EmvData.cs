@@ -48,6 +48,22 @@ namespace GlobalPayments.Api.Utils {
         public byte[] GetSendBuffer() {
             return StringUtils.BytesFromHex(GetAcceptedTagData());
         }
+        public bool isContactlessMsd()
+        {
+            var entryMode = GetEntryMode();
+            return entryMode != null ? entryMode == "91" : false;
+        }
+
+        public string GetEntryMode()
+        {
+            var posEntryMode = GetTag("9F39");
+            if (posEntryMode!= null)
+            {
+                return posEntryMode.GetValue();
+            }
+            return null;
+        }
+
         internal EmvData() {
             tlvData = new Dictionary<string, TlvData>();
             removedTags = new Dictionary<string, TlvData>();
