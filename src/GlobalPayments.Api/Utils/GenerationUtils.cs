@@ -77,7 +77,7 @@ namespace GlobalPayments.Api.Utils
 
             if (secret != null)
             {
-                string toHashSecondPass = new StringBuilder(toHashFirstPass).Append(".").Append(secret).ToString();
+                string toHashSecondPass = new StringBuilder(toHashFirstPass).Append('.').Append(secret).ToString();
                 return DigestUtils.Sha1Hex(toHashSecondPass);
             }
 
