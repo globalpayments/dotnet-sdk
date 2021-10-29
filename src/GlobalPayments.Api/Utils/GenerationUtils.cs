@@ -11,9 +11,11 @@ namespace GlobalPayments.Api.Utils
             internal static string Sha1Hex(string toHash)
             {
                 var stringBuilder = new StringBuilder();
-
-                foreach (byte @byte in SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(toHash))) stringBuilder.Append(@byte.ToString("X2"));
-
+                using (var hasher = SHA1.Create())
+                {
+                    foreach (byte @byte in hasher.ComputeHash(Encoding.UTF8.GetBytes(toHash))) stringBuilder.Append(@byte.ToString("X2"));
+                }
+                
                 return stringBuilder.ToString().ToLower();
             }
         }
