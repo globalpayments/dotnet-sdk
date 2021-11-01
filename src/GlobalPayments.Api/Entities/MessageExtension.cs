@@ -1,9 +1,3 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using System.Collections;
-
 namespace GlobalPayments.Api.Entities {
     public class MessageExtension
     {

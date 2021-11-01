@@ -1,7 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Network.Entities;
-using GlobalPayments.Api.Utils;
-using System;
 
 namespace GlobalPayments.Api.ServiceConfigs {
     public class AcceptorConfig {

@@ -2,8 +2,6 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Tests.TestData;
 using GlobalPayments.Api.Network.Enums;
 
 namespace GlobalPayments.Api.Tests.Network

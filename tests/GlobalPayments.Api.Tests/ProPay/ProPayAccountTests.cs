@@ -1,12 +1,10 @@
-﻿using System.Linq;
-using GlobalPayments.Api.Services;
+﻿using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GlobalPayments.Api.Entities;
 using System;
 using Environment = GlobalPayments.Api.Entities.Environment;
 using GlobalPayments.Api.Tests.ProPay.TestData;
 using GlobalPayments.Api.Entities.PayFac;
-using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Tests.ProPay {
     [TestClass]

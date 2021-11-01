@@ -3,7 +3,6 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.HPA.Responses;
-using GlobalPayments.Api.Terminals.Messaging;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;

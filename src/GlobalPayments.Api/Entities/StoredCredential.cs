@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GlobalPayments.Api.Entities {
+﻿namespace GlobalPayments.Api.Entities {
     public class StoredCredential {
         public StoredCredentialType Type { get; set; }
         public StoredCredentialInitiator Initiator { get; set; }

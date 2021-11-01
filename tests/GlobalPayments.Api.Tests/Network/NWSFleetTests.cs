@@ -5,9 +5,6 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UnitOfMeasure = GlobalPayments.Api.Network.Entities.UnitOfMeasure;
 
 namespace GlobalPayments.Api.Tests.Network {

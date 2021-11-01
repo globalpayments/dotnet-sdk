@@ -1,5 +1,4 @@
 ﻿using System;
-using GlobalPayments.Api.Entities;
 
 namespace GlobalPayments.Api.Entities {
     /// <summary>

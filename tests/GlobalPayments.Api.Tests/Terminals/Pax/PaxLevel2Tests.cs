@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,7 +1,4 @@
 ﻿using GlobalPayments.Api.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api {
     public class PayrollConfig : Configuration {

@@ -2,8 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Environment = GlobalPayments.Api.Entities.Environment;
-using System.Collections.Generic;
-using System.Text;
 using GlobalPayments.Api.Tests.ProPay.TestData;
 
 namespace GlobalPayments.Api.Tests.ProPay

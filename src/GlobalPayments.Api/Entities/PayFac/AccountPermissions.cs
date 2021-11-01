@@ -1,7 +1,4 @@
 ﻿using GlobalPayments.Api.Entities.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Entities.PayFac
 {

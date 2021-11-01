@@ -3,7 +3,6 @@ using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
-using System.Xml;
 
 namespace GlobalPayments.Api.Gateways.BillPay {
     internal sealed class TransactionByOrderIDRequestResponse : BillPayResponseBase<TransactionSummary> {

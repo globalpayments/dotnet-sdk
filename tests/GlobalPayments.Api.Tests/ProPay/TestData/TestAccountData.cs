@@ -3,7 +3,6 @@ using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.PaymentMethods;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Tests.ProPay.TestData
 {

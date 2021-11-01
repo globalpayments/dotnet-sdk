@@ -1,8 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.PaymentMethods {
     public class EwicTrackData : Ewic, ITrackData {

@@ -1,7 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Network.Abstractions;
 using GlobalPayments.Api.Utils;
-using System;
 using System.Text;
 
 namespace GlobalPayments.Api.Network.Elements {

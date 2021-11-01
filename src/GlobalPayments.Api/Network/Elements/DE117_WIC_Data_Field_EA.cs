@@ -1,9 +1,4 @@
-﻿using GlobalPayments.Api.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GlobalPayments.Api.Network.Elements {
+﻿namespace GlobalPayments.Api.Network.Elements {
     public class DE117_WIC_Data_Field_EA {
         public string UPCData { get; set; }
         public string ItemDesciption { get; set; }

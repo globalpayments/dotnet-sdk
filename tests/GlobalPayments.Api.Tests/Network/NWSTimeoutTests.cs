@@ -1,10 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Gateways.Events;
 using GlobalPayments.Api.Network.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace GlobalPayments.Api.Tests.Network {

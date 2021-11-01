@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GlobalPayments.Api.Entities.Billing {
+﻿namespace GlobalPayments.Api.Entities.Billing {
     public class BillingResponse {
         /// <summary>
         /// Indicates if the action was succesful

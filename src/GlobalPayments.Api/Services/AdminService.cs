@@ -1,9 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Network.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Services {
     public class AdminService {

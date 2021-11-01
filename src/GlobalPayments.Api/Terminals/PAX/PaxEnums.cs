@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GlobalPayments.Api.Terminals.PAX {
+﻿namespace GlobalPayments.Api.Terminals.PAX {
     internal class PAX_MSG_ID {
         // ADMIN REQUESTS
         public const string A00_INITIALIZE = "A00";

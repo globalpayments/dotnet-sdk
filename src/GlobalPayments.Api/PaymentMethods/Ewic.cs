@@ -1,8 +1,5 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.PaymentMethods {
     public class Ewic : IPaymentMethod, IBalanceable, IChargable, IPinProtected {

@@ -2,7 +2,6 @@
 using GlobalPayments.Api.Terminals.PAX;
 using GlobalPayments.Api.Terminals.HPA;
 using GlobalPayments.Api.Terminals.Abstractions;
-using GlobalPayments.Api.Terminals.Genius;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {

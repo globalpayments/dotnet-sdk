@@ -1,5 +1,4 @@
-﻿using GlobalPayments.Api.Builders;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Network.Abstractions;
 using GlobalPayments.Api.Network.Entities;

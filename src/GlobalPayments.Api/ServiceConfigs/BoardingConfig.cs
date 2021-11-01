@@ -1,5 +1,4 @@
 ﻿using GlobalPayments.Api.Gateways;
-using System;
 
 namespace GlobalPayments.Api {
     public class BoardingConfig : Configuration {
