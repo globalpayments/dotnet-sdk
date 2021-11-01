@@ -2,13 +2,19 @@
 
 ## Latest
 
+#### Enhancements
+
+- Add Contactless Swipe entry mode
+- Add ACH functionality
+- Add Thread safe add/remove configuration on ServicesContainer
+
 #### Bug Fixes:
 
 - Fix issue in v1.7.31 and up for eCheck auths on Portico/Heartland
 
 ---
 
-## v1.7.42 (09/09/2021)
+## v1.7.44 (09/28/2021)
 
 #### Enhancements
 

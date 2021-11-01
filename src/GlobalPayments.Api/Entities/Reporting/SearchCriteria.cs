@@ -49,6 +49,7 @@ namespace GlobalPayments.Api.Entities {
         PaymentEntryMode,
         PaymentMethodKey,
         PaymentType,
+        PaymentMethod,
         ReferenceNumber,
         Resource,
         ResourceStatus,
@@ -226,6 +227,7 @@ namespace GlobalPayments.Api.Entities {
 
         internal PaymentType? PaymentType { get; set; }
 
+        internal PaymentMethodName? PaymentMethod { get; set; }
         internal IEnumerable<PaymentMethodType> PaymentTypes { get; set; }
 
         internal string ReferenceNumber { get; set; }

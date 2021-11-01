@@ -1,5 +1,7 @@
-﻿namespace GlobalPayments.Api.Tests.GpApi {
-    public static class GpApi3DSTestCards {
+﻿namespace GlobalPayments.Api.Tests.GpApi
+{
+    public static class GpApi3DSTestCards
+    {
         public const string CARDHOLDER_NOT_ENROLLED_V1 = "4917000000000087";
         public const string CARDHOLDER_ENROLLED_V1 = "4012001037141112";
 

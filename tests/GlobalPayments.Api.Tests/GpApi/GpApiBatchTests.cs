@@ -21,7 +21,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             {
                 AppId = "P3LRVjtGRGxWQQJDE345mSkEh2KfdAyg",
                 AppKey = "ockJr6pv6KFoGiZA",
-                Channel = Channel.CardPresent
+                Channel = Channel.CardPresent,
+                EnableLogging = true
             });
 
             creditCard = new CreditTrackData() {
@@ -266,21 +267,64 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(chargeTransaction);
-            Assert.AreEqual("DECLINED", chargeTransaction?.ResponseCode);
+            Assert.AreEqual(DECLINED, chargeTransaction?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), chargeTransaction?.ResponseMessage);
+
+            //TODO - remove when api fix polling issue
+            Thread.Sleep(1000);
+
+            var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
+            Assert.IsNotNull(batchSummary);
+            Assert.AreEqual(CLOSED, batchSummary?.Status);
+            Assert.AreEqual(0, batchSummary?.TransactionCount);
+            Assert.AreEqual(0, batchSummary?.TotalAmount);
+        }
+        
+        [TestMethod]
+        public void CloseBatch_ReverseTransaction() {
+            var chargeTransaction = creditCard.Charge(1.99m)
+                .WithCurrency(CURRENCY)
+                .Execute();
+
+            Assert.IsNotNull(chargeTransaction);
+            Assert.AreEqual(SUCCESS, chargeTransaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), chargeTransaction?.ResponseMessage);
+            
+            var response = chargeTransaction.Reverse()
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), response?.ResponseMessage);
+
+            //TODO - remove when api fix polling issue
+            Thread.Sleep(1000);
+
+            var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
+            Assert.IsNotNull(batchSummary);
+            Assert.AreEqual(CLOSED, batchSummary?.Status);
+            Assert.AreEqual(0, batchSummary?.TransactionCount);
+            Assert.AreEqual(0, batchSummary?.TotalAmount);
+        }
+        
+        [TestMethod]
+        public void CloseBatch_Auth_CreditCardData() {
+            var transaction = creditCard.Authorize(1.99m)
+                .WithCurrency(CURRENCY)
+                .Execute();
+            AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
 
             //TODO - remove when api fix polling issue
             Thread.Sleep(1000);
 
             var exceptionCaught = false;
             try {
-                BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
+                BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("INVALID_BATCH_ACTION", ex.ResponseCode);
-                Assert.AreEqual("40017", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadRequest - 9,No transaction associated with batch", ex.Message);
+                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
+                Assert.AreEqual("40223", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the batch_id", ex.Message);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
