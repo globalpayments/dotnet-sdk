@@ -27,12 +27,11 @@ namespace GlobalPayments.Api.Entities {
                     var tokenFormat = DigitalWalletTokenFormat.CARD_NUMBER;
                     digitalWallet
                         .Set("token", creditCardData.Token)
-                        //@TODO determine token format based on token
-                        .Set("token_format", tokenFormat)
+                        .Set("token_format", DigitalWalletTokenFormat.CARD_NUMBER)
                         .Set("expiry_month", creditCardData.ExpMonth.HasValue ? creditCardData.ExpMonth.ToString().PadLeft(2, '0') : null)
                         .Set("expiry_year", creditCardData.ExpYear.HasValue ? creditCardData.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : null)
                         .Set("cryptogram", creditCardData.Cryptogram)
-                        .Set("eci", tokenFormat == DigitalWalletTokenFormat.CARD_NUMBER ? GetEci(creditCardData) : creditCardData.ThreeDSecure?.Eci?.ToString());
+                        .Set("eci", creditCardData.Eci);
                 }
                 digitalWallet.Set("provider", (builder.PaymentMethod as CreditCardData).MobileType);
                 paymentMethod.Set("digital_wallet", digitalWallet);
@@ -49,14 +48,18 @@ namespace GlobalPayments.Api.Entities {
                     //.Set("track", "")
                     .Set("tag", builder.TagData)
                     .Set("cvv", cardData.Cvn)
-                    .Set("cvv_indicator", cardData.CvnPresenceIndicator != 0 ? EnumConverter.GetMapping(Target.GP_API, cardData.CvnPresenceIndicator) : null) // [ILLEGIBLE, NOT_PRESENT, PRESENT]
                     .Set("avs_address", builder.BillingAddress?.StreetAddress1)
                     .Set("avs_postal_code", builder.BillingAddress?.PostalCode)
-                    .Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT") // [DEBIT, CREDIT]
                     .Set("authcode", builder.OfflineAuthCode)
                     .Set("brand_reference", builder.CardBrandTransactionId);
 
                     card.Set("chip_condition", EnumConverter.GetMapping(Target.GP_API, builder.EmvChipCondition)); // [PREV_SUCCESS, PREV_FAILED]
+
+                    if (!(builder.TransactionType == TransactionType.Tokenize || builder.TransactionType == TransactionType.Verify))
+                    {
+                        card.Set("cvv_indicator", cardData.CvnPresenceIndicator != 0 ? EnumConverter.GetMapping(Target.GP_API, cardData.CvnPresenceIndicator) : null); // [ILLEGIBLE, NOT_PRESENT, PRESENT]
+                        card.Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT"); // [DEBIT, CREDIT]
+                    }
 
                     paymentMethod.Set("card", card);
 
@@ -393,33 +396,6 @@ namespace GlobalPayments.Api.Entities {
                 }
             }
             return payer;
-        }
-
-        private static string GetEci(CreditCardData creditCardData)
-        {
-
-            if (creditCardData.ThreeDSecure?.Eci != null)
-            {
-                return creditCardData.ThreeDSecure.Eci.ToString();
-            }
-
-            var cardType = CardUtils.MapCardType(creditCardData.Token);
-            string eciCode = null;
-            switch (cardType)
-            {
-                case "Visa":
-                case "Amex":
-                    eciCode = "5";
-                    break;
-                case "MC":
-                    eciCode = "2";
-                    break;
-                default:
-                    break;
-            }
-
-            return eciCode;
-
         }
 
         private static string GetCaptureMode(AuthorizationBuilder builder) {

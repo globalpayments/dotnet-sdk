@@ -84,7 +84,11 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void PayWithGooglePayEncrypted()
         {
-            card.Token = "{\"signature\": \"MEUCIA2qsciCz8TbEip0DQj+MlepsY4c+lPviHZKDGiXjXA7AiEAqT4VMRuBaCbUBg+3VKNsT8wMk4JMH0grQfs+FvUfh7g=\",\"protocolVersion\":\"ECv1\",\"signedMessage\":\"{\\\"encryptedMessage\\\":\\\"W95GDp6cr6EdVF/636k7WwGDE7OnckY8BvDSREcuBknWklR2OQ18m0ep56XvnZ5WE+Fxeux5bYbJ2so0uhg2v831eyZ+JAMPTdtZnYBKaYa6Sb5/yMPXxqgxyxJTDzGf4jK6MCS2ZNd3ixNjAJEJlO2h0IstbMTkosaqLwpBu8ccXiCiX7aKOJlJvocNz6ZdMEvutg6D/NeCTbXPp+rg6CFCdM5WT83QBudKCys9cczVky+UKe482o+BBVcPFkkTXeobp1pfN+6C2W/afLwRev7KMaio5cu1xxnoWZp+NhXqGCGK0CP93cP/KwIx8WcPl9JgwVLbxhRvBuwuMn3HRiJOQtPTMvK7qhlb2D8fjRqucrtbkANUJ5oSvq93KYLeZCVL+q0lEmeTkQT6ijnecw0uZJux3FEWNPr9z7t3CFRPZxKDaBU94J6MCaiA4Ab6LyD8\\\",\\\"ephemeralPublicKey\\\":\\\"BGCfvboHSFYyWBHQGmAe9HU3os4yESDytXEBLDqocF6EFx6P2tqMve+wIgg31dNAv4PMg1S0ccv8JLPQMxsIeLE\\\\u003d\\\",\\\"tag\\\":\\\"lglkIFne4g8KFQep85vO6wSzzw+olmJ3aUTqy98k7HE\\\\u003d\\\"}\"}";
+            card.Token = "{\n" +
+                            "  \"signature\": \"MEQCIG5NDTGsgPrltVuuJQ0NYJnLUm1mo8JOW8vfLvt+ZtW6AiAZXJgnszos88b06ujEKubOMQNIuFdOgU+6ArRDGlZPoQ==\",\n" +
+                            "  \"protocolVersion\": \"ECv1\",\n" +
+                            "  \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"t+8CD+SWUl7VflMnwOqJedp7ZK71qnKX2tabp7px4C3d97ki1eb8vySoZoD8wbp7B2FDZPVGPDtUSUxz67JfwJ04sncw4KyDQiyShlxxdOakK/bnn+ooGHZ3jWA97hXVjtf1YecOCppzQIVk7F4RZZNgfIImQr4nDX5nm4BLN+TGsI4/m542xix45h+5e7y/xtyY/GFm8YwEfHQFCNY5edOr7h4nanDi/k//oQQG+ChOCKHtcmv4LpwtR2W737t5bTj+5mxXWu2sdAx6EnQGFOnmMKbNd1phcw4fdAHGtmxkW2LDUamXq5hnY99ECcl+Iqe75S6d3vQ3Lidk3k2lVVRtXTkxtCGvBOUy8okp4hndQL0665YOOIgEPengKfv3CIgUcKahKPyRVekaybDUalYpvyBvX2xIq+ilOo703z7pdL+FkILe7PC7RrEbnKLLJEv6\\\",\\\"ephemeralPublicKey\\\":\\\"BMLc+beu32XtPnrQ6D2z7IuICWl0gg9XmnKEync31BZ7NAvCa0BXTpLkyii+dDMPahj6xUoI0m7YES2UncrVkS8\\\\u003d\\\",\\\"tag\\\":\\\"QlvO9HQqmHXnlew8IzEWqr1AFSNL2wSc+HEb2IAd4YE\\\\u003d\\\"}\"\n" +
+                        "}";
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)
@@ -101,7 +105,11 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void GooglePayEncrypted_LinkedRefund()
         {
-            card.Token = "{\"signature\": \"MEUCIA2qsciCz8TbEip0DQj+MlepsY4c+lPviHZKDGiXjXA7AiEAqT4VMRuBaCbUBg+3VKNsT8wMk4JMH0grQfs+FvUfh7g=\",\"protocolVersion\":\"ECv1\",\"signedMessage\":\"{\\\"encryptedMessage\\\":\\\"W95GDp6cr6EdVF/636k7WwGDE7OnckY8BvDSREcuBknWklR2OQ18m0ep56XvnZ5WE+Fxeux5bYbJ2so0uhg2v831eyZ+JAMPTdtZnYBKaYa6Sb5/yMPXxqgxyxJTDzGf4jK6MCS2ZNd3ixNjAJEJlO2h0IstbMTkosaqLwpBu8ccXiCiX7aKOJlJvocNz6ZdMEvutg6D/NeCTbXPp+rg6CFCdM5WT83QBudKCys9cczVky+UKe482o+BBVcPFkkTXeobp1pfN+6C2W/afLwRev7KMaio5cu1xxnoWZp+NhXqGCGK0CP93cP/KwIx8WcPl9JgwVLbxhRvBuwuMn3HRiJOQtPTMvK7qhlb2D8fjRqucrtbkANUJ5oSvq93KYLeZCVL+q0lEmeTkQT6ijnecw0uZJux3FEWNPr9z7t3CFRPZxKDaBU94J6MCaiA4Ab6LyD8\\\",\\\"ephemeralPublicKey\\\":\\\"BGCfvboHSFYyWBHQGmAe9HU3os4yESDytXEBLDqocF6EFx6P2tqMve+wIgg31dNAv4PMg1S0ccv8JLPQMxsIeLE\\\\u003d\\\",\\\"tag\\\":\\\"lglkIFne4g8KFQep85vO6wSzzw+olmJ3aUTqy98k7HE\\\\u003d\\\"}\"}";
+            card.Token = "{\n" +
+                            "  \"signature\": \"MEQCIG5NDTGsgPrltVuuJQ0NYJnLUm1mo8JOW8vfLvt+ZtW6AiAZXJgnszos88b06ujEKubOMQNIuFdOgU+6ArRDGlZPoQ==\",\n" +
+                            "  \"protocolVersion\": \"ECv1\",\n" +
+                            "  \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"t+8CD+SWUl7VflMnwOqJedp7ZK71qnKX2tabp7px4C3d97ki1eb8vySoZoD8wbp7B2FDZPVGPDtUSUxz67JfwJ04sncw4KyDQiyShlxxdOakK/bnn+ooGHZ3jWA97hXVjtf1YecOCppzQIVk7F4RZZNgfIImQr4nDX5nm4BLN+TGsI4/m542xix45h+5e7y/xtyY/GFm8YwEfHQFCNY5edOr7h4nanDi/k//oQQG+ChOCKHtcmv4LpwtR2W737t5bTj+5mxXWu2sdAx6EnQGFOnmMKbNd1phcw4fdAHGtmxkW2LDUamXq5hnY99ECcl+Iqe75S6d3vQ3Lidk3k2lVVRtXTkxtCGvBOUy8okp4hndQL0665YOOIgEPengKfv3CIgUcKahKPyRVekaybDUalYpvyBvX2xIq+ilOo703z7pdL+FkILe7PC7RrEbnKLLJEv6\\\",\\\"ephemeralPublicKey\\\":\\\"BMLc+beu32XtPnrQ6D2z7IuICWl0gg9XmnKEync31BZ7NAvCa0BXTpLkyii+dDMPahj6xUoI0m7YES2UncrVkS8\\\\u003d\\\",\\\"tag\\\":\\\"QlvO9HQqmHXnlew8IzEWqr1AFSNL2wSc+HEb2IAd4YE\\\\u003d\\\"}\"\n" +
+                        "}";
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)
@@ -124,7 +132,11 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void GooglePayEncrypted_Reverse()
         {
-            card.Token = "{\"signature\": \"MEUCIA2qsciCz8TbEip0DQj+MlepsY4c+lPviHZKDGiXjXA7AiEAqT4VMRuBaCbUBg+3VKNsT8wMk4JMH0grQfs+FvUfh7g=\",\"protocolVersion\":\"ECv1\",\"signedMessage\":\"{\\\"encryptedMessage\\\":\\\"W95GDp6cr6EdVF/636k7WwGDE7OnckY8BvDSREcuBknWklR2OQ18m0ep56XvnZ5WE+Fxeux5bYbJ2so0uhg2v831eyZ+JAMPTdtZnYBKaYa6Sb5/yMPXxqgxyxJTDzGf4jK6MCS2ZNd3ixNjAJEJlO2h0IstbMTkosaqLwpBu8ccXiCiX7aKOJlJvocNz6ZdMEvutg6D/NeCTbXPp+rg6CFCdM5WT83QBudKCys9cczVky+UKe482o+BBVcPFkkTXeobp1pfN+6C2W/afLwRev7KMaio5cu1xxnoWZp+NhXqGCGK0CP93cP/KwIx8WcPl9JgwVLbxhRvBuwuMn3HRiJOQtPTMvK7qhlb2D8fjRqucrtbkANUJ5oSvq93KYLeZCVL+q0lEmeTkQT6ijnecw0uZJux3FEWNPr9z7t3CFRPZxKDaBU94J6MCaiA4Ab6LyD8\\\",\\\"ephemeralPublicKey\\\":\\\"BGCfvboHSFYyWBHQGmAe9HU3os4yESDytXEBLDqocF6EFx6P2tqMve+wIgg31dNAv4PMg1S0ccv8JLPQMxsIeLE\\\\u003d\\\",\\\"tag\\\":\\\"lglkIFne4g8KFQep85vO6wSzzw+olmJ3aUTqy98k7HE\\\\u003d\\\"}\"}";
+            card.Token = "{\n" +
+                            "  \"signature\": \"MEQCIG5NDTGsgPrltVuuJQ0NYJnLUm1mo8JOW8vfLvt+ZtW6AiAZXJgnszos88b06ujEKubOMQNIuFdOgU+6ArRDGlZPoQ==\",\n" +
+                            "  \"protocolVersion\": \"ECv1\",\n" +
+                            "  \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"t+8CD+SWUl7VflMnwOqJedp7ZK71qnKX2tabp7px4C3d97ki1eb8vySoZoD8wbp7B2FDZPVGPDtUSUxz67JfwJ04sncw4KyDQiyShlxxdOakK/bnn+ooGHZ3jWA97hXVjtf1YecOCppzQIVk7F4RZZNgfIImQr4nDX5nm4BLN+TGsI4/m542xix45h+5e7y/xtyY/GFm8YwEfHQFCNY5edOr7h4nanDi/k//oQQG+ChOCKHtcmv4LpwtR2W737t5bTj+5mxXWu2sdAx6EnQGFOnmMKbNd1phcw4fdAHGtmxkW2LDUamXq5hnY99ECcl+Iqe75S6d3vQ3Lidk3k2lVVRtXTkxtCGvBOUy8okp4hndQL0665YOOIgEPengKfv3CIgUcKahKPyRVekaybDUalYpvyBvX2xIq+ilOo703z7pdL+FkILe7PC7RrEbnKLLJEv6\\\",\\\"ephemeralPublicKey\\\":\\\"BMLc+beu32XtPnrQ6D2z7IuICWl0gg9XmnKEync31BZ7NAvCa0BXTpLkyii+dDMPahj6xUoI0m7YES2UncrVkS8\\\\u003d\\\",\\\"tag\\\":\\\"QlvO9HQqmHXnlew8IzEWqr1AFSNL2wSc+HEb2IAd4YE\\\\u003d\\\"}\"\n" +
+                        "}";
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)

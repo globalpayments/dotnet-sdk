@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -14,6 +15,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
                 AppKey = "6gFzVGf40S7ZpjJs",
+                RequestLogger = new RequestConsoleLogger()
             });
         }
 
@@ -79,7 +81,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = 12,
                 ExpYear = 2030
             };
-            Assert.IsFalse(tokenizedCard.UpdateTokenExpiry());
+            try {
+                tokenizedCard.UpdateTokenExpiry();
+            } catch (GatewayException ex) {
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40213", ex.ResponseMessage);
+                Assert.IsTrue(ex.Message.StartsWith("Status Code: BadRequest - payment_method.id: This_is_not_a_payment_id contains unexpected data"));
+            }
         }
 
         [TestMethod]
@@ -89,7 +97,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = 12,
                 ExpYear = 2030
             };
-            Assert.IsFalse(tokenizedCard.UpdateTokenExpiry());
+            try {
+                tokenizedCard.UpdateTokenExpiry();
+            } catch (GatewayException ex) {
+                Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
+                Assert.AreEqual("40116", ex.ResponseMessage);
+                Assert.IsTrue(ex.Message.StartsWith("Status Code: NotFound - payment_method"));
+            }
         }
 
         [TestMethod]
@@ -130,7 +144,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
+        // The used credentials on this test have not permissions to delete a tokenized card
         public void DeleteTokenizedPaymentMethod_WithRandomId() {
             var tokenizedCard = new CreditCardData {
                 Token = "PMT_" + Guid.NewGuid().ToString()
@@ -150,7 +165,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
+        // The used credentials on this test have not permissions to delete a tokenized card
         public void DeleteTokenizedPaymentMethod_WithMalformedId() {
             string token = "This_is_not_a_payment_id";
 

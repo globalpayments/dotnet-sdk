@@ -47,6 +47,8 @@ namespace GlobalPayments.Api.PaymentMethods {
 
         public string Cryptogram { get; set; }
 
+        public string Eci { get; set; }
+
         public bool FleetCard { get; set; }
 
         public bool PurchaseCard { get; set; }
@@ -193,15 +195,10 @@ namespace GlobalPayments.Api.PaymentMethods {
                 throw new BuilderException("Token cannot be null");
             }
 
-            try {
-                new ManagementBuilder(TransactionType.TokenUpdate)
-                    .WithPaymentMethod(this)
-                    .Execute(configName);
-                return true;
-            }
-            catch (ApiException) {
-                return false;
-            }
+            new ManagementBuilder(TransactionType.TokenUpdate)
+                .WithPaymentMethod(this)
+                .Execute(configName);
+            return true;
         }
 
         /// <summary>
@@ -213,15 +210,10 @@ namespace GlobalPayments.Api.PaymentMethods {
                 throw new BuilderException("Token cannot be null");
             }
 
-            try {
-                new ManagementBuilder(TransactionType.TokenDelete)
-                    .WithPaymentMethod(this)
-                    .Execute(configName);
-                return true;
-            }
-            catch (ApiException ex) {
-                return false;
-            }
+            new ManagementBuilder(TransactionType.TokenDelete)
+                .WithPaymentMethod(this)
+                .Execute(configName);
+            return true;
         }
     }
 }

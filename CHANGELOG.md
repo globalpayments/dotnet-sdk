@@ -4,6 +4,17 @@
 
 #### Enhancements
 
+- Update default GpApi version header
+- Add Eci field to DigitalWallet
+- Add Throw Exception on error to UpdateTokenExpiry and DeleteToken methods on Credit class
+- Removed funding and cvv_indicator fields when not needed when calling GpApi
+
+---
+
+## v1.7.45 (10/28/2021)
+
+#### Enhancements
+
 - Add Contactless Swipe entry mode
 - Add ACH functionality
 - Add Thread safe add/remove configuration on ServicesContainer

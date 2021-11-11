@@ -113,7 +113,7 @@ namespace GlobalPayments.Api.Gateways {
             }
             catch(Exception ex)
             {
-                return "0.0.0.0";
+                return string.Empty;
             }
         }
 
