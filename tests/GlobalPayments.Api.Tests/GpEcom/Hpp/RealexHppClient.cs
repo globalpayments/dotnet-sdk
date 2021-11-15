@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -41,31 +40,8 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             var autoSettle = json.GetValue<int>("AUTO_SETTLE_FLAG") == 1;
             var requestHash = json.GetValue<string>("SHA1HASH");
 
-            List<string> hashParam = new List<string>
-            {
-                timestamp,
-                merchantId,
-                orderId,
-                amount,
-                currency
-            };
-
-            //for stored card
-            if (json.Has("OFFER_SAVE_CARD"))
-            {
-                if(json.Has("PAYER_REF"))
-                    hashParam.Add(json.GetValue<string>("PAYER_REF"));
-                if(json.Has("PMT_REF"))
-                    hashParam.Add(json.GetValue<string>("PMT_REF"));
-            }
-
-            if (json.Has("HPP_FRAUDFILTER_MODE"))
-            {
-                hashParam.Add(json.GetValue<string>("HPP_FRAUDFILTER_MODE"));
-            }
-
             // check hash
-            var newhash = GenerationUtils.GenerateHash(_sharedSecret, hashParam.ToArray());
+            var newhash = GenerationUtils.GenerateHash(_sharedSecret, timestamp, merchantId, orderId, amount, currency);
             if (!newhash.Equals(requestHash)) {
                 return BadRequest("Incorrect hash. Please check your code and the Developers Documentation.");
             }
@@ -82,7 +58,6 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             var shippingCountry = json.GetValue<string>("SHIPPING_CO");
             var billingCode = json.GetValue<string>("BILLING_CODE");
             var billingCountry = json.GetValue<string>("BILLING_CO");
-            var fraudFilterMode = json.GetValue<string>("HPP_FRAUDFILTER_MODE");
 
             // build request
             AuthorizationBuilder gatewayRequest = null;
@@ -107,11 +82,6 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
                     gatewayRequest.WithAddress(new Address { PostalCode = shippingCode, Country = shippingCountry }, AddressType.Shipping);
                 }
 
-                if(fraudFilterMode != null)
-                {
-                    gatewayRequest.WithFraudFilter((FraudFilterMode)Enum.Parse(typeof(FraudFilterMode), fraudFilterMode), getFraudFilterRules(json));
-                }
-
                 var gatewayResponse = gatewayRequest.Execute("realexResponder");
                 if (gatewayResponse.ResponseCode.Equals("00"))
                     return BuildResponse(HttpStatusCode.OK, ConvertResponse(json, gatewayResponse));
@@ -120,19 +90,6 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             catch (ApiException exc) {
                 return ServerError(exc.Message);
             }
-        }
-
-        private FraudRuleCollection getFraudFilterRules(JsonDoc json)
-        {
-            var hppKeys = json.Keys.Where(x => x.StartsWith("HPP_FRAUDFILTER_RULE_")).ToList();
-            if (hppKeys == null || !hppKeys.Any())
-                return null;
-            FraudRuleCollection rules = new FraudRuleCollection();
-            foreach (var key in hppKeys) 
-            {
-                rules.AddRule(key.Replace("HPP_FRAUDFILTER_RULE_", ""), (FraudFilterMode) Enum.Parse(typeof(FraudFilterMode),json.GetValue<string>(key)));
-            }
-            return rules;
         }
 
         private HttpResponseMessage BuildResponse(HttpStatusCode code, string reason) {
@@ -175,16 +132,6 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             response.Set("MESSAGE", trans.ResponseMessage);
             response.Set("AMOUNT", trans.AuthorizedAmount);
             response.Set("SHA1HASH", GenerationUtils.GenerateHash(_sharedSecret, trans.Timestamp, merchantId, trans.OrderId, trans.ResponseCode, trans.ResponseMessage, trans.TransactionId, trans.AuthorizationCode));
-            response.Set("DCC_INFO_REQUST", request.GetValue<string>("DCC_INFO"));
-            response.Set("HPP_FRAUDFILTER_MODE", request.GetValue<string>("HPP_FRAUDFILTER_MODE"));
-            response.Set("HPP_FRAUDFILTER_RESULT", trans.FraudResponse?.Result);
-            if(trans?.FraudResponse?.Rules != null)
-            {
-                foreach (var rule in trans.FraudResponse.Rules)
-                {
-                    response.Set("HPP_FRAUDFILTER_RULE_" + rule.Id, rule.Action);
-                }
-            }
 
             return response.ToString();
         }

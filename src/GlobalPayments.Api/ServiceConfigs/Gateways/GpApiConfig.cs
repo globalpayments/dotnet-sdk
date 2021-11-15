@@ -50,12 +50,6 @@ namespace GlobalPayments.Api {
         /// 3DSecure method return url
         /// </summary>
         public string MethodNotificationUrl { get; set; }
-        /// <summary>
-        /// MerchantContactUrl
-        /// </summary>
-        public string MerchantContactUrl { get; set; }
-
-        public string MerchantId { get; set; }
 
         public GpApiConfig() : base(GatewayProvider.GP_API) { }
 
@@ -86,10 +80,7 @@ namespace GlobalPayments.Api {
                 ChallengeNotificationUrl = ChallengeNotificationUrl,
                 MethodNotificationUrl = MethodNotificationUrl,
                 RequestLogger = RequestLogger,
-                MerchantContactUrl = MerchantContactUrl,
                 WebProxy = WebProxy,
-                DynamicHeaders = DynamicHeaders,
-                MerchantId = MerchantId
             };
 
             services.GatewayConnector = gateway;

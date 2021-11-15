@@ -61,7 +61,13 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a genius terminal
         /// </summary>
-        GENIUS
+        GENIUS,
+
+        /// <summary>
+        /// Indicates a Nucleus terminal
+        /// </summary>
+        NUCLEUS_SATURN_1000
+
     }
 
     /// <summary>
@@ -168,28 +174,7 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates proximity/contactless entry.
         /// </summary>
-        Proximity,
-    }
-
-    /// <summary>
-    /// Indicates how the payment method data was obtained.
-    /// </summary>
-    public enum ManualEntryMethod
-    {
-        /// <summary>
-        /// Indicates manual entry.
-        /// </summary>
-        Moto,
-
-        /// <summary>
-        /// Indicates swipe entry.
-        /// </summary>
-        Mail,
-
-        /// <summary>
-        /// Indicates proximity/contactless entry.
-        /// </summary>
-        Phone
+        Proximity
     }
 
     /// <summary>
@@ -340,20 +325,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a checking account.
         /// </summary>
-        [Map(Target.GP_API, "CHECKING")] 
         CHECKING,
 
         /// <summary>
         /// Indicates a savings account.
         /// </summary>
-        [Map(Target.GP_API, "SAVING")]
-        SAVINGS,
-
-        /// <summary>
-        /// Indicates a credit account.
-        /// </summary>
-        [Map(Target.GP_API, "CREDIT")]
-        CREDIT
+        SAVINGS
     }
 
     /// <summary>
@@ -689,15 +666,11 @@ namespace GlobalPayments.Api.Entities {
     public static class MobilePaymentMethodType {
         public const string APPLEPAY = "apple-pay";
         public const string GOOGLEPAY = "pay-with-google";
-    }
 
-    /// <summary>
-    /// Indicates the GooglePay and ApplePay.
-    /// </summary>
-    public static class EncyptedMobileType
-    {
-        public const string APPLE_PAY = "APPLEPAY";
-        public const string GOOGLE_PAY = "PAY_BY_GOOGLE";
+        public static class GPApiGatewayProvider{
+            public const string APPLE_PAY = "APPLEPAY";
+            public const string GOOGLE_PAY = "PAY_BY_GOOGLE";
+        }
     }
 
     public static class DigitalWalletTokenFormat{
@@ -884,8 +857,7 @@ public enum ReasonCode {
         WEBPAY,
         WECHAT_PAY,
         ZIMPLER,
-        UK_DIRECT_DEBIT,
-        PAYBYBANKAPP
+        UK_DIRECT_DEBIT
     }
 
     public enum CardType {
@@ -1027,5 +999,10 @@ public enum ReasonCode {
         Forced,	
         EndOfShift,	
         //EndOfDay	
+    }
+
+    public enum ReportOutput {
+        Print,
+        ReturnData
     }
 }

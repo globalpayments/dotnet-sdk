@@ -323,9 +323,29 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         TimeRequest = 1L << 62,
 
-        /// <summary>
-        /// Get Token Information for the given token
+        ///<summary>
+        /// To add a tip to a sale without reauthorizing the card
+        ///</summary>
+        TipAdjust = 1L << 63,
+
+        ///<summary>
+        /// Initiate the end of day processing from the POS
         /// </summary>
-        GetTokenInfo = 1L << 63,
+        EodProcessing = 2L << 64,
+
+        ///<summary>
+        /// Cancels the current command being processed.
+        ///</summary>
+        CancelTransaction = 2L << 65,
+
+        ///<summary>
+        /// Command is used to reboot the device
+        ///</summary>
+        Reboot = 3L << 66,
+
+        ///<summary>
+        /// Used to display a line of text before a financial transaction.
+        ///</summary>
+        LineItemDisplay = 3L << 67
     }
 }

@@ -3,6 +3,7 @@ using GlobalPayments.Api.Terminals.PAX;
 using GlobalPayments.Api.Terminals.HPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Genius;
+using GlobalPayments.Api.Terminals.UPA;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
@@ -84,8 +85,11 @@ namespace GlobalPayments.Api.Terminals {
                     services.DeviceController = new HpaController(this);
                     break;
                 //case DeviceType.GENIUS:
-                    //services.DeviceController = new GeniusController(this);
-                    //break;
+                //services.DeviceController = new GeniusController(this);
+                //break;
+                case DeviceType.NUCLEUS_SATURN_1000:
+                    services.DeviceController = new UpaController(this);
+                    break;
                 default:
                     break;
             }

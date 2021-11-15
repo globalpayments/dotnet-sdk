@@ -8,7 +8,6 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiSecure3DRequestBuilder {
         internal static GpApiRequest BuildRequest(Secure3dBuilder builder, GpApiConnector gateway) {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
                 var storedCredential = new JsonDoc()
                     .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))
@@ -49,7 +48,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/authentications",
+                    Endpoint = "/authentications",
                     RequestBody = data.ToString(),
                 };
             }
@@ -203,11 +202,11 @@ namespace GlobalPayments.Api.Entities {
                     .Set("recurring_authorization_data", recurringAuthorizationData.HasKeys() ? recurringAuthorizationData : null)
                     .Set("payer_login_data", payerLoginData.HasKeys() ? payerLoginData : null)
                     .Set("browser_data", browserData.HasKeys() ? browserData : null)
-                    .Set("merchant_contact_url", gateway.MerchantContactUrl);
+                    .Set("merchant_contact_url", "https://enp4qhvjseljg.x.pipedream.net/"); //ToDo: Confirm
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/authentications/{builder.ServerTransactionId}/initiate",
+                    Endpoint = $"/authentications/{builder.ServerTransactionId}/initiate",
                     RequestBody = data.ToString(),
                 };
             }
@@ -221,7 +220,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/authentications/{builder.ServerTransactionId}/result",
+                    Endpoint = $"/authentications/{builder.ServerTransactionId}/result",
                     RequestBody = data?.ToString()
                 };
             }

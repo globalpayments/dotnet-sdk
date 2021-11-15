@@ -1,11 +1,8 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using static GlobalPayments.Api.Tests.GpApi.GpApiAvsCheckTestCards;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
@@ -19,17 +16,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
                 AppKey = "6gFzVGf40S7ZpjJs",
                 Channel = Channel.CardNotPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-                // DO NO DELETE - usage example for some settings
-                // DynamicHeaders = new Dictionary<string, string>
-                // {
-                //     ["x-gp-platform"] = "prestashop;version=1.7.2",
-                //     ["x-gp-extension"] = "coccinet;version=2.4.1"
-                // }
+                RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
             });
 
             card = new CreditCardData {
@@ -37,7 +24,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ExpMonth = 05,
                 ExpYear = 2025,
                 Cvn = "852",
-                CardPresent = true
             };
         }
 
@@ -131,34 +117,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var response = card.Charge(19.99m)
                 .WithCurrency("USD")
                 .WithAddress(address)
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
-            Assert.AreEqual(19.99m, response.BalanceAmount);
-        }
-
-        [TestMethod]
-        public void CreditSaleContactlessSwipe()
-        {
-            ServicesContainer.ConfigureService(new GpApiConfig
-            {
-                Environment = Entities.Environment.TEST,
-                AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
-                AppKey = "y7vALnUtFulORlTV",
-                SecondsToExpire = 60,
-                Channel = Channel.CardPresent
-            });
-
-            var card = new CreditTrackData
-            {
-                TrackData = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?"
-            };
-            var tagData = "9F4005F000F0A0019F02060000000025009F03060000000000009F2608D90A06501B48564E82027C005F3401019F360200029F0702FF009F0802008C9F0902008C9F34030403029F2701809F0D05F0400088009F0E0508000000009F0F05F0400098005F280208409F390191FFC605DC4000A800FFC7050010000000FFC805DC4004F8009F3303E0B8C89F1A0208409F350122950500000080005F2A0208409A031409109B02E8009F21030811539C01009F37045EED3A8E4F07A00000000310109F0607A00000000310108407A00000000310109F100706010A03A400029F410400000001";
-            var response = card.Charge(10m)
-                .WithCurrency("USD")
-                .WithAllowDuplicates(true)
-                .WithTagData(tagData)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
@@ -267,29 +225,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditRefundTransaction_RefundHigherAmount() {
-            const decimal amount = 5.95m;
-            const decimal refundAmount = amount * 1.1m;
-
-            var transaction = card.Charge(amount)
-                .WithCurrency("USD")
-                .WithAllowDuplicates(true)
-                .Execute();
-            Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
-
-            var response = transaction.Refund(refundAmount)
-                .WithCurrency("USD")
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
-            Assert.AreEqual(decimal.Round(refundAmount, 2, MidpointRounding.AwayFromZero), response.BalanceAmount);
-        }
-
-        [TestMethod]
-        public void CreditRefundTransaction_RefundHigherAmountThen115() {
             decimal amount = 5.95m;
             var transaction = card.Charge(amount)
                 .WithCurrency("USD")
@@ -300,15 +235,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
 
             try {
-                transaction.Refund(amount * 1.5m)
+                var response = transaction.Refund(amount * 1.1m)
                     .WithCurrency("USD")
                     .Execute();
             }
             catch (GatewayException ex) {
                 Assert.AreEqual("40087", ex.ResponseMessage);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - You may only refund up to 115% of the original amount ",
-                    ex.Message);
+                Assert.AreEqual("Status Code: BadRequest - You may only refund up to 100% of the original amount ", ex.Message);
             }
         }
 
@@ -702,79 +636,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditSaleWithManualEntryMethod()
-        {
-            foreach (Channel channel in Enum.GetValues(typeof(Channel))) 
-            {
-                foreach (ManualEntryMethod entryMethod in Enum.GetValues(typeof(ManualEntryMethod)))
-                {
-                    ServicesContainer.ConfigureService(new GpApiConfig
-                    {
-                        Environment = Entities.Environment.TEST,
-                        AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
-                        AppKey = "y7vALnUtFulORlTV",
-                        SecondsToExpire = 60,
-                        Channel = channel,
-                        RequestLogger = new RequestConsoleLogger()
-                    });
-                    card.Cvn = "123";
-                    card.EntryMethod = entryMethod;
-
-                    var response = card.Charge(11m)
-                        .WithCurrency("USD")
-                        .Execute();
-
-                    Assert.IsNotNull(response);
-                    Assert.AreEqual(SUCCESS, response?.ResponseCode);
-                    Assert.AreEqual("CAPTURED", response?.ResponseMessage);
-
-                }
-            }
-        }
-
-        [TestMethod]
-        public void CreditSaleWithEntryMethod()
-        {
-            foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod)))
-            {
-                ServicesContainer.ConfigureService(new GpApiConfig
-                {
-                    Environment = Entities.Environment.TEST,
-                    AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
-                    AppKey = "y7vALnUtFulORlTV",
-                    SecondsToExpire = 60,
-                    Channel = Channel.CardPresent,
-                    RequestLogger = new RequestConsoleLogger()
-                });
-
-                var creditTrackData = new CreditTrackData
-                {
-                    TrackData =
-                        "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
-                    EntryMethod = entryMethod
-                };
-
-                var response = creditTrackData.Charge(11m)
-                    .WithCurrency("USD")
-                    .Execute();
-
-                Assert.IsNotNull(response);
-                Assert.AreEqual(SUCCESS, response?.ResponseCode);
-                Assert.AreEqual("CAPTURED", response?.ResponseMessage);
-
-            }
-        }
-
-        [TestMethod, Ignore]
-        //To be removed
         public void CreditVerify_CP_CVNNotMatched() {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Entities.Environment.TEST,
                 AppId = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0",
                 AppKey = "y7vALnUtFulORlTV",
                 SecondsToExpire = 60,
-                Channel = Channel.CardPresent,
-                RequestLogger = new RequestConsoleLogger(),
+                Channel = Channel.CardPresent
             });
             var response = card.Verify()
                 .WithCurrency("USD")
@@ -839,155 +707,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(SUCCESS, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
-        }
-
-        [TestMethod]
-        public void CreditSale_WithStoredCredentials_RecurringPayment()
-        {
-            var amount = 15.00m;
-            var currency = "USD";
-            var card = new CreditCardData
-            {
-                Number = "4263970000005262",
-                ExpMonth = 05,
-                ExpYear = 2025,
-            };
-
-            var tokenizedCard = new CreditCardData
-            {
-                Token = card.Tokenize(),
-            };
-
-            var secureEcom = Secure3dService.CheckEnrollment(tokenizedCard)
-                .WithCurrency(currency)
-                .WithAmount(amount)
-                .WithAuthenticationSource(AuthenticationSource.BROWSER)
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual("ENROLLED", secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
-            Assert.AreEqual("AVAILABLE", secureEcom.Status);
-            Assert.IsNotNull(secureEcom.IssuerAcsUrl);
-            Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
-            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
-            Assert.IsNotNull(secureEcom.MessageType);
-            Assert.IsNotNull(secureEcom.SessionDataFieldName);
-            Assert.IsNull(secureEcom.Eci);
-
-            var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
-                .WithAmount(amount)
-                .WithCurrency(currency)
-                .WithAuthenticationSource(AuthenticationSource.BROWSER)
-                .WithBrowserData(new BrowserData
-                {
-                    AcceptHeader = "text/html,application/xhtml+xml,application/xml;q=9,image/webp,img/apng,*/*;q=0.8",
-                    ColorDepth = ColorDepth.TWENTY_FOUR_BITS,
-                    IpAddress = "123.123.123.123",
-                    JavaEnabled = true,
-                    Language = "en",
-                    ScreenHeight = 1080,
-                    ScreenWidth = 1920,
-                    ChallengeWindowSize = ChallengeWindowSize.WINDOWED_600X400,
-                    Timezone = "0",
-                    UserAgent =
-                    "Mozilla/5.0 (Windows NT 6.1; Win64, x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
-                })
-                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
-                .WithOrderCreateDate(DateTime.Now)
-                .Execute();
-
-            Assert.IsNotNull(initAuth);
-            Assert.AreEqual("ENROLLED", initAuth.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
-            Assert.AreEqual("SUCCESS_AUTHENTICATED", initAuth.Status);
-            Assert.IsNotNull(initAuth.IssuerAcsUrl);
-            Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
-            Assert.IsNotNull(initAuth.ChallengeReturnUrl);
-            Assert.IsNotNull(initAuth.MessageType);
-            Assert.IsNotNull(initAuth.SessionDataFieldName);
-
-            tokenizedCard.ThreeDSecure = initAuth;
-
-            var response = tokenizedCard.Charge(amount)
-                .WithCurrency(currency)
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
-            Assert.IsNotNull(response.CardBrandTransactionId);
-
-            var response2 = tokenizedCard.Charge(amount)
-                .WithCurrency(currency)
-                .WithStoredCredential(new StoredCredential
-                {
-                    Initiator = StoredCredentialInitiator.Merchant,
-                    Type = StoredCredentialType.Recurring,
-                    Sequence = StoredCredentialSequence.Subsequent,
-                    Reason = StoredCredentialReason.Incremental
-                })
-                .WithCardBrandStorage(StoredCredentialInitiator.Merchant, response.CardBrandTransactionId)
-                .Execute();
-
-            Assert.IsNotNull(response2);
-            Assert.AreEqual(SUCCESS, response2?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response2?.ResponseMessage);
-        }
-
-        [DataTestMethod]
-        [DataRow(AVS_MASTERCARD_1, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_2, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_3, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_4, "MATCHED", "MATCHED", "MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_5, "MATCHED", "MATCHED", "NOT_MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_6, "MATCHED", "NOT_MATCHED", "MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_7, "MATCHED", "NOT_MATCHED", "NOT_MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_8, "NOT_MATCHED", "NOT_MATCHED", "MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_9, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_10, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_11, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_12, "NOT_MATCHED", "MATCHED", "MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_13, "NOT_MATCHED", "MATCHED", "NOT_MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_MASTERCARD_14, "NOT_MATCHED", "NOT_MATCHED", "NOT_MATCHED", SUCCESS, TransactionStatus.Captured)]
-        [DataRow(AVS_VISA_1, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_2, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_3, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_4, "NOT_CHECKED", "MATCHED", "MATCHED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_5, "NOT_CHECKED", "MATCHED", "NOT_MATCHED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_6, "NOT_CHECKED", "NOT_MATCHED", "MATCHED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_7, "NOT_CHECKED", "NOT_MATCHED", "NOT_MATCHED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_8, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_9, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_10, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_11, "NOT_CHECKED", "MATCHED", "MATCHED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_12, "NOT_CHECKED", "MATCHED", "NOT_MATCHED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_13, "NOT_CHECKED", "NOT_MATCHED", "MATCHED", DECLINED, TransactionStatus.Declined)]
-        [DataRow(AVS_VISA_14, "NOT_CHECKED", "NOT_MATCHED", "NOT_MATCHED", DECLINED, TransactionStatus.Declined)]
-        public void CreditSale_CvvResult(string cardNumber, string cvnResponseMessage, 
-            string avsResponseCode, string avsAddressResponse, string status, TransactionStatus transactionStatus) {
-            
-            var address = new Address {
-                StreetAddress1 = "123 Main St.",
-                City = "Downtown",
-                State = "NJ",
-                Country = "US",
-                PostalCode = "12345"
-            };
-
-            card.Number = cardNumber;
-
-            var response = card.Charge(1.25m)
-                .WithCurrency("USD")
-                .WithAddress(address)
-                .Execute();
-            
-            Assert.IsNotNull(response);
-            Assert.AreEqual(status, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(transactionStatus), response?.ResponseMessage);
-            Assert.AreEqual(cvnResponseMessage, response.CvnResponseMessage);
-            Assert.AreEqual(avsResponseCode, response.AvsResponseCode);
-            Assert.AreEqual(avsAddressResponse, response.AvsAddressResponse);
         }
     }
 }

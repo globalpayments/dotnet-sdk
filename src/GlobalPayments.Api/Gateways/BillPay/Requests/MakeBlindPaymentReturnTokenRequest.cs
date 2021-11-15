@@ -9,13 +9,9 @@ namespace GlobalPayments.Api.Gateways.BillPay {
         public MakeBlindPaymentReturnTokenRequest(ElementTree et) : base(et) { }
 
         public string Build(Element envelope, AuthorizationBuilder builder, Credentials credentials) {
-            // If TokenUsageMode is null, we assume Multi Use token.
-            string methodElementName = (builder.PaymentMethodUsageMode == PaymentMethodUsageMode.Single) ? "bil:MakeQuickPayBlindPaymentReturnToken" : "bil:MakeBlindPaymentReturnToken";
-            string requestElementName = (builder.PaymentMethodUsageMode == PaymentMethodUsageMode.Single) ? "bil:request" : "bil:MakePaymentReturnTokenRequest";
-
             var body = et.SubElement(envelope, "soapenv:Body");
-            var methodElement = et.SubElement(body, methodElementName);
-            var requestElement = et.SubElement(methodElement, requestElementName);
+            var methodElement = et.SubElement(body, "bil:MakeBlindPaymentReturnToken");
+            var requestElement = et.SubElement(methodElement, "bil:MakePaymentReturnTokenRequest");
 
             bool hasToken = (builder.PaymentMethod is ITokenizable tokenData && !string.IsNullOrWhiteSpace(tokenData.Token));
             // Would EntryMethod.Manual be clear Swipe?

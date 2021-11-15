@@ -63,11 +63,6 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.CardType = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand");
                 transaction.CardLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4");
                 transaction.CvnResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result");
-                transaction.CardBrandTransactionId = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand_reference");
-                transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
-                transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
-                transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
-                transaction.PaymentMethodType = (json.Get("payment_method")?.Has("bank_transfer") ?? false) ? PaymentMethodType.ACH : transaction.PaymentMethodType;
             }
 
             return transaction;

@@ -30,7 +30,6 @@ namespace GlobalPayments.Api {
             services.GatewayConnector = gateway;
             services.BillingProvider = gateway;
             services.RecurringConnector = gateway;
-            services.ReportingService = gateway;
         }
 
         internal override void Validate() {

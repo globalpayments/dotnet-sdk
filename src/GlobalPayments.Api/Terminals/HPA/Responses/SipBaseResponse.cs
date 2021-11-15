@@ -250,7 +250,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
         public string TerminalVerificationResults { get; set; }
 
         public decimal? MerchantFee { get; set; }
-
+        public int TranNo { get; set; }
         internal SipTerminalResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
     }
 

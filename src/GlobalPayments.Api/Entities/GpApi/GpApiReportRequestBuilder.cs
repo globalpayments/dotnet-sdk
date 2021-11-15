@@ -6,19 +6,18 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiReportRequestBuilder {
         internal static GpApiRequest BuildRequest<T>(ReportBuilder<T> builder, GpApiConnector gateway) where T : class {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
             if (builder is TransactionReportBuilder<T> trb) {
                 var request = new GpApiRequest();
                 switch (builder.ReportType) {
                     case ReportType.TransactionDetail:
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/transactions/{trb.TransactionId}",
+                            Endpoint = $"/transactions/{trb.TransactionId}",
                         };
                     case ReportType.FindTransactionsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/transactions",
+                            Endpoint = "/transactions",
                         };
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
@@ -45,13 +44,12 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("batch_id", trb.SearchBuilder.BatchId);
                         request.AddQueryStringParam("entry_mode", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.PaymentEntryMode));
                         request.AddQueryStringParam("name", trb.SearchBuilder.Name);
-                        request.AddQueryStringParam("payment_method", EnumConverter.GetMapping(Target.GP_API,trb.SearchBuilder.PaymentMethod));
 
                         return request;
                     case ReportType.FindSettlementTransactionsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/settlement/transactions",
+                            Endpoint = "/settlement/transactions",
                         };
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
@@ -81,12 +79,12 @@ namespace GlobalPayments.Api.Entities {
                     case ReportType.DepositDetail:
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/settlement/deposits/{trb.SearchBuilder.DepositReference}",
+                            Endpoint = $"/settlement/deposits/{trb.SearchBuilder.DepositReference}",
                         };
                     case ReportType.FindDepositsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/settlement/deposits",
+                            Endpoint = "/settlement/deposits",
                         };
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
@@ -106,12 +104,12 @@ namespace GlobalPayments.Api.Entities {
                     case ReportType.DisputeDetail:
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/disputes/{trb.SearchBuilder.DisputeId}",
+                            Endpoint = $"/disputes/{trb.SearchBuilder.DisputeId}",
                         };
                     case ReportType.FindDisputesPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/disputes",
+                            Endpoint = "/disputes",
                         };
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
@@ -130,15 +128,14 @@ namespace GlobalPayments.Api.Entities {
                     case ReportType.SettlementDisputeDetail:
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/settlement/disputes/{trb.SearchBuilder.SettlementDisputeId}",
+                            Endpoint = $"/settlement/disputes/{trb.SearchBuilder.SettlementDisputeId}",
                         };
                     case ReportType.FindSettlementDisputesPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/settlement/disputes",
+                            Endpoint = "/settlement/disputes",
                         };
                         request.AddQueryStringParam("account_name", gateway.DataAccountName);
-                        request.AddQueryStringParam("deposit_id", trb.SearchBuilder.DepositReference);
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
                         request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, trb.DisputeOrderBy));
@@ -158,12 +155,12 @@ namespace GlobalPayments.Api.Entities {
                     case ReportType.StoredPaymentMethodDetail:
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/payment-methods/{trb.SearchBuilder.StoredPaymentMethodId}",
+                            Endpoint = $"/payment-methods/{trb.SearchBuilder.StoredPaymentMethodId}",
                         };
                     case ReportType.FindStoredPaymentMethodsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/payment-methods",
+                            Endpoint = "/payment-methods",
                         };
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
@@ -182,12 +179,12 @@ namespace GlobalPayments.Api.Entities {
                     case ReportType.ActionDetail:
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/actions/{trb.SearchBuilder.ActionId}",
+                            Endpoint = $"/actions/{trb.SearchBuilder.ActionId}",
                         };
                     case ReportType.FindActionsPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/actions",
+                            Endpoint = "/actions",
                         };
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());

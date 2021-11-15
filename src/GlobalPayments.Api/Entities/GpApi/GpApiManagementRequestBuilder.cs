@@ -7,7 +7,6 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiManagementRequestBuilder {
         internal static GpApiRequest BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.Capture) {
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -15,7 +14,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/capture",
+                    Endpoint = $"/transactions/{builder.TransactionId}/capture",
                     RequestBody = data.ToString(),
                 };
             }
@@ -25,7 +24,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/refund",
+                    Endpoint = $"/transactions/{builder.TransactionId}/refund",
                     RequestBody = data.ToString(),
                 };
             }
@@ -35,7 +34,7 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/reversal",
+                    Endpoint = $"/transactions/{builder.TransactionId}/reversal",
                     RequestBody = data.ToString(),
                 };
             }
@@ -51,20 +50,20 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = new HttpMethod("PATCH"),
-                    Endpoint = $"{merchantUrl}/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
+                    Endpoint = $"/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
                     RequestBody = data.ToString(),
                 };
             }
             else if (builder.TransactionType == TransactionType.TokenDelete && builder.PaymentMethod is ITokenizable) {
                 return new GpApiRequest {
                     Verb = HttpMethod.Delete,
-                    Endpoint = $"{merchantUrl}/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
+                    Endpoint = $"/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
                 };
             }
             else if (builder.TransactionType == TransactionType.DisputeAcceptance) {
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/disputes/{builder.DisputeId}/acceptance",
+                    Endpoint = $"/disputes/{builder.DisputeId}/acceptance",
                 };
             }
             else if (builder.TransactionType == TransactionType.DisputeChallenge) {
@@ -73,49 +72,23 @@ namespace GlobalPayments.Api.Entities {
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/disputes/{builder.DisputeId}/challenge",
+                    Endpoint = $"/disputes/{builder.DisputeId}/challenge",
                     RequestBody = data.ToString(),
                 };
             }
             else if (builder.TransactionType == TransactionType.BatchClose) {
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/batches/{builder.BatchReference}",
+                    Endpoint = $"/batches/{builder.BatchReference}",
                 };
             }
             else if (builder.TransactionType == TransactionType.Reauth) {
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString());
-                if(builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH)
-                {
-                    data.Set("description", builder.Description);
-                    if(builder.ECheck != null)
-                    {
-                        var eCheck = builder.ECheck;
-
-                        var paymentMethod = new JsonDoc()
-                            .Set("narrative", eCheck.MerchantNotes);
-
-                        var bankTransfer = new JsonDoc()
-                            .Set("account_number", eCheck.AccountNumber)
-                            .Set("account_type", (eCheck.AccountType != null) ? EnumConverter.GetMapping(Target.GP_API, eCheck.AccountType) : null)
-                            .Set("check_reference", eCheck.CheckReference);
-
-                        var bank = new JsonDoc()
-                            .Set("code", eCheck.RoutingNumber)
-                            .Set("name", eCheck.BankName);
-
-                        bankTransfer.Set("bank", bank);
-
-                        paymentMethod.Set("bank_transfer", bankTransfer);
-
-                        data.Set("payment_method", paymentMethod);
-                    }
-                }
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/reauthorization",
+                    Endpoint = $"/transactions/{builder.TransactionId}/reauthorization",
                     RequestBody = data.ToString(),
                 };
             }

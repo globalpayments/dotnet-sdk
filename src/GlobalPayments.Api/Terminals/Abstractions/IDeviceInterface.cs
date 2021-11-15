@@ -7,7 +7,7 @@ using GlobalPayments.Api.Terminals.Messaging;
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
-
+        string EcrId { get; set; }
         #region Admin Calls
         void Cancel();
         IDeviceResponse CloseLane();
@@ -28,6 +28,8 @@ namespace GlobalPayments.Api.Terminals {
 
         #region reporting
         TerminalReportBuilder LocalDetailReport();
+        TerminalReportBuilder GetSAFReport();
+        TerminalReportBuilder GetBatchReport();
         #endregion
 
         #region Batch Calls
@@ -73,6 +75,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Verify();
         TerminalManageBuilder Void();
         TerminalAuthBuilder Withdrawal(decimal? amount = null);
+        TerminalAuthBuilder TipAdjust();
         #endregion
     }
 }

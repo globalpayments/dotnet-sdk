@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
     internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider {
@@ -20,8 +19,6 @@ namespace GlobalPayments.Api.Gateways {
         public Language Language { get; set; }
         public string Country { get; set; }
         public string[] Permissions { get; set; }
-        public string MerchantContactUrl { get; set; }
-        public string MerchantId { get; set; }
 
         private string _AccessToken;
         public string AccessToken {
@@ -101,38 +98,16 @@ namespace GlobalPayments.Api.Gateways {
             Headers["X-GP-Version"] = "2021-03-22";
             Headers["Accept"] = "application/json";
             Headers["Accept-Encoding"] = "gzip";
-            Headers["x-gp-sdk"] = "net;version="+getReleaseVersion();
-        }
-
-        //Get the SDK release version
-        private string getReleaseVersion()
-        {
-            try
-            {
-                return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
-            }
-            catch(Exception ex)
-            {
-                return string.Empty;
-            }
         }
 
         public void SignIn() {
-            if (string.IsNullOrEmpty(_AccessToken))
-            {
-                var response = GetAccessToken();
+            var response = GetAccessToken();
 
-                AccessToken = response.Token;
-
-                if (string.IsNullOrEmpty(_DataAccountName))
-                    DataAccountName = response.DataAccountName;
-                if (string.IsNullOrEmpty(_DisputeManagementAccountName))
-                    DisputeManagementAccountName = response.DisputeManagementAccountName;
-                if (string.IsNullOrEmpty(_TokenizationAccountName))
-                    TokenizationAccountName = response.TokenizationAccountName;
-                if (string.IsNullOrEmpty(_TransactionProcessingAccountName))
-                    TransactionProcessingAccountName = response.TransactionProcessingAccountName;
-            }
+            AccessToken = response.Token;
+            DataAccountName = response.DataAccountName;
+            DisputeManagementAccountName = response.DisputeManagementAccountName;
+            TokenizationAccountName = response.TokenizationAccountName;
+            TransactionProcessingAccountName = response.TransactionProcessingAccountName;
         }
 
         public void SignOut() {

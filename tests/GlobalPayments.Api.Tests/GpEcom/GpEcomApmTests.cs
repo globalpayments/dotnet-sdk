@@ -1,6 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests {
@@ -14,8 +13,7 @@ namespace GlobalPayments.Api.Tests {
                 AccountId = "hpp",
                 SharedSecret = "secret",
                 RebatePassword = "rebate",
-                RefundPassword = "refund",
-                RequestLogger = new RequestConsoleLogger()
+                RefundPassword = "refund"
             });
         }
 
@@ -35,30 +33,6 @@ namespace GlobalPayments.Api.Tests {
                      .Execute();
                 Assert.IsNotNull(response);
                 Assert.AreEqual("01", response.ResponseCode, response.ResponseMessage);  
-        }
-
-        [TestMethod]
-        public void TestAlternativePaymentMethodForCharge_withAlternativePaymentMethodResponse()
-        {
-            var PaymentMethodDetails = new AlternatePaymentMethod
-            {
-                AlternativePaymentMethodType = AlternativePaymentType.TESTPAY,
-                ReturnUrl = "https://www.example.com/returnUrl",
-                StatusUpdateUrl = "https://www.example.com/statusUrl",
-                Descriptor = "Test Transaction",
-                Country = "DE",
-                AccountHolderName = "James Mason"
-            };
-
-            var response = PaymentMethodDetails.Charge(15m)
-                 .WithCurrency("EUR")
-                 .Execute();
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(response?.AlternativePaymentResponse.AccountHolderName);
-            Assert.IsNotNull(response?.AlternativePaymentResponse.Country);
-            Assert.IsNotNull(response?.AlternativePaymentResponse.PaymentPurpose);
-            Assert.IsNotNull(response?.AlternativePaymentResponse.RedirectUrl);
-            Assert.AreEqual("01", response.ResponseCode, response.ResponseMessage);
         }
 
         [TestMethod]

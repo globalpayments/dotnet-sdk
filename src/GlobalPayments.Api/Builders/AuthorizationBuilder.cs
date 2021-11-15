@@ -44,7 +44,6 @@ namespace GlobalPayments.Api.Builders {
         internal EmvFallbackCondition? EmvFallbackCondition { get; set; }
         internal EmvLastChipRead? EmvLastChipRead { get; set; }
         internal FraudFilterMode FraudFilterMode { get; set; }
-        internal FraudRuleCollection FraudRules { get; set; }
         internal decimal? Gratuity { get; set; }
         internal decimal? ConvenienceAmount { get; set; }
         internal decimal? ShippingAmt { get; set; }
@@ -68,7 +67,6 @@ namespace GlobalPayments.Api.Builders {
         internal GiftCard ReplacementCard { get; set; }
         internal ReversalReasonCode? ReversalReasonCode { get; set; }
         internal string ScheduleId { get; set; }
-        internal bool? ShareTokenWithGroup { get; set; } = null;
         internal Address ShippingAddress { get; set; }
         internal StoredCredential StoredCredential { get; set; }
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
@@ -85,6 +83,7 @@ namespace GlobalPayments.Api.Builders {
         internal string CheckCustomerId { get; set; }
         internal string RawMICRData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
+
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
@@ -287,14 +286,6 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithCurrency(string value) {
             Currency = value;
-            return this;
-        }
-
-        public AuthorizationBuilder WithFraudFilter(FraudFilterMode fraudFilter, FraudRuleCollection fraudRules = null)
-        {
-            FraudFilterMode = fraudFilter;
-            if(fraudRules != null)
-                FraudRules = fraudRules;
             return this;
         }
 
@@ -680,16 +671,6 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithScheduleId(string value) {
             ScheduleId = value;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the ShareTokenWithGroup value to be used for updating the BillPay token.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithShareTokenWithGroup(bool? value) {
-            ShareTokenWithGroup = value;
             return this;
         }
 

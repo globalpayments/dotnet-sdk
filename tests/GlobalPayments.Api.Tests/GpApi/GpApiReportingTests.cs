@@ -1327,23 +1327,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ReportFindSettlementDisputesByDpositIdPaged_Order_By_Id()
-        {
-            string DEPOSIT_ID = "DEP_2342423423";
-
-            PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
-                .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.DepositReference, DEPOSIT_ID)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results is List<DisputeSummary>);
-            foreach(var disputes in result.Results)
-            {
-                Assert.AreEqual(disputes.DepositReference, DEPOSIT_ID);
-            }
-        }
-
-        [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_Brand() {
             PagedResult<DisputeSummary> result = ReportingService.FindSettlementDisputesPaged(1, 10)
                 .OrderBy(DisputeSortProperty.Brand, SortDirection.Descending)

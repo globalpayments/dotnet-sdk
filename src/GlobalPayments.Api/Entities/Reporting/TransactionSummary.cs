@@ -1,6 +1,4 @@
-﻿using GlobalPayments.Api.Entities.Billing;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace GlobalPayments.Api.Entities {
     /// <summary>
@@ -23,11 +21,7 @@ namespace GlobalPayments.Api.Entities {
 
         //public unknown AttachmentInfo { get; set; }
 
-        public string Application { get; set; }
-
         public string AquirerReferenceNumber { get; set; }
-
-        public List<AuthorizationRecord> AuthorizationRecords { get; set; }
 
         /// <summary>
         /// The authorized amount.
@@ -49,7 +43,6 @@ namespace GlobalPayments.Api.Entities {
         public string BatchSequenceNumber { get; set; }
 
         public Address BillingAddress { get; set; }
-        public List<Bill> BillTransactions { get; set; }
 
         public string BrandReference { get; set; }
 
@@ -119,7 +112,6 @@ namespace GlobalPayments.Api.Entities {
         public string EmvChipCondition { get; set; }
 
         public string EntryMode { get; set; }
-        public decimal FeeAmount { get; set; }
 
         public string FraudRuleInfo { get; set; }
 
@@ -178,12 +170,6 @@ namespace GlobalPayments.Api.Entities {
         public string MerchantName { get; set; }
 
         public string MerchantNumber { get; set; }
-        public string MerchantInvoiceNumber { get; set; }
-        public string MerchantPONumber { get; set; }
-        public string MerchantTransactionDescription { get; set; }
-        public string MerchantTransactionID { get; set; }
-        public decimal NetAmount { get; set; }
-        public decimal NetFeeAmount { get; set; }
 
         public bool OneTimePayment { get; set; }
 
@@ -197,7 +183,6 @@ namespace GlobalPayments.Api.Entities {
         public string PaymentMethodKey { get; set; }
 
         public string PaymentType { get; set; }
-        public Customer PayorData { get; set; }
 
         public string PoNumber { get; set; }
 
@@ -245,6 +230,8 @@ namespace GlobalPayments.Api.Entities {
         public string TaxType { get; set; }
 
         public string TerminalId { get; set; }
+
+        public string TerminalRefNumber { get; set; }
 
         public string TokenPanLastFour { get; set; }
 

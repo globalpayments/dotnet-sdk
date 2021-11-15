@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
@@ -77,7 +76,7 @@ namespace GlobalPayments.Api {
     /// internally by exposed APIs throughout the SDK.
     /// </remarks>
     public class ServicesContainer : IDisposable {
-        private ConcurrentDictionary<string, ConfiguredServices> _configurations;
+        private Dictionary<string, ConfiguredServices> _configurations;
         private static ServicesContainer _instance;
 
         internal static ServicesContainer Instance {
@@ -122,7 +121,7 @@ namespace GlobalPayments.Api {
         }
 
         private ServicesContainer() {
-            _configurations = new ConcurrentDictionary<string, ConfiguredServices>();
+            _configurations = new Dictionary<string, ConfiguredServices>();
         }
 
         private ConfiguredServices GetConfiguration(string configName) {
@@ -134,9 +133,7 @@ namespace GlobalPayments.Api {
         private void AddConfiguration(string configName, ConfiguredServices config) {
             if (_configurations.ContainsKey(configName))
                 _configurations[configName] = config;
-            else if(!_configurations.TryAdd(configName, config)) {
-                throw new ConfigurationException($"Failed to add configuration: {configName}.");
-            }
+            else _configurations.Add(configName, config);
         }
 
         internal IPaymentGateway GetClient(string configName) {
@@ -215,10 +212,7 @@ namespace GlobalPayments.Api {
 
         internal void removeConfiguration(String configName) {
             if(_configurations.ContainsKey(configName)) {
-                ConfiguredServices config = new ConfiguredServices();
-                if(!_configurations.TryRemove(configName,out config)) {
-                    throw new ConfigurationException($"Failed to remove configuration: {configName}.");
-                }
+                _configurations.Remove(configName);
             }
         }
 

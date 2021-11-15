@@ -50,31 +50,23 @@ namespace GlobalPayments.Api.Gateways {
 
             // Build Request
             var request = et.Element("request")
-                .Set("type", MapAuthRequestType(builder))
-                .Set("timestamp", timestamp);
+                .Set("timestamp", timestamp)
+                .Set("type", MapAuthRequestType(builder));
             et.SubElement(request, "merchantid").Text(MerchantId);
             et.SubElement(request, "account", AccountId);
+            et.SubElement(request, "channel", Channel);
+            et.SubElement(request, "orderid", orderId);
             if (builder.Amount.HasValue) {
                 et.SubElement(request, "amount").Text(builder.Amount.ToNumericCurrencyString()).Set("currency", builder.Currency);
             }
-
-            #region AUTO/MULTI SETTLE
-            if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Auth)
-            {
-                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI" : "0";
-                et.SubElement(request, "autosettle").Set("flag", autoSettle);
-            }
-
-            et.SubElement(request, "channel", Channel);
-            et.SubElement(request, "orderid", orderId);
 
             // Hydrate the payment data fields
             if (builder.PaymentMethod is CreditCardData) {
                 var card = builder.PaymentMethod as CreditCardData;
 
                 if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
-                    et.SubElement(request, "token", card.Token);
                     et.SubElement(request, "mobile", card.MobileType);
+                    et.SubElement(request, "token", card.Token);
                 }
                 else {
                     var cardElement = et.SubElement(request, "card");
@@ -95,7 +87,7 @@ namespace GlobalPayments.Api.Gateways {
                     hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, card.Number);
                 else {
                     if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.APPLEPAY)
-                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
+                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, "", "", card.Token);
                     else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.GOOGLEPAY)
                         hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
                     else
@@ -142,6 +134,11 @@ namespace GlobalPayments.Api.Gateways {
                 // TODO: Token Processing
             }
 
+            #region AUTO/MULTI SETTLE
+            if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Auth) {
+                var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI" : "0";
+                et.SubElement(request, "autosettle").Set("flag", autoSettle);
+            }
             #endregion
 
             #region CUSTOM DATA
@@ -199,18 +196,8 @@ namespace GlobalPayments.Api.Gateways {
 
             #region FRAUD
             // fraud filter mode
-            if (builder.FraudFilterMode != FraudFilterMode.NONE) {
-                var fraudFilter = et.SubElement(request, "fraudfilter").Set("mode", builder.FraudFilterMode.ToString());
-                if(builder.FraudRules != null)
-                {
-                    var rules = et.SubElement(fraudFilter, "rules");
-                    foreach (var fraudRule in builder.FraudRules.Rules)
-                    {
-                        et.SubElement(rules, "rule")
-                            .Set("id",fraudRule.Key)
-                            .Set("mode", fraudRule.Mode.ToString());
-                    }
-                }
+            if (builder.FraudFilterMode == FraudFilterMode.PASSIVE) {
+                et.SubElement(request, "fraudfilter").Set("mode", builder.FraudFilterMode.ToString());
             }
 
             // recurring fraud filter
@@ -453,13 +440,6 @@ namespace GlobalPayments.Api.Gateways {
             }
             if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE) {
                 request.Set("HPP_FRAUDFILTER_MODE", HostedPaymentConfig.FraudFilterMode.ToString());
-                if(HostedPaymentConfig.FraudFilterRules != null)
-                {
-                    foreach(var rule in HostedPaymentConfig.FraudFilterRules.Rules)
-                    {
-                        request.Set("HPP_FRAUDFILTER_RULE_"+rule.Key, rule.Mode.ToString());
-                    }
-                }
             }
             if (builder.RecurringType != null || builder.RecurringSequence != null) {
                 request.Set("RECURRING_TYPE", builder.RecurringType.ToString().ToLower());
@@ -762,43 +742,8 @@ namespace GlobalPayments.Api.Gateways {
                     TransactionId = root.GetValue<string>("pasref"),
                     AlternativePaymentType = root.GetValue<string>("paymentmethod"),
                     BatchNumber = root.GetValue<string>("batchid")
-                },
-                AlternativePaymentResponse = new AlternativePaymentResponse
-                {
-                    BankAccount = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("bankaccount"):null,
-                    AccountHolderName = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("accountholdername"): null,
-                    Country = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("country"):null,
-                    RedirectUrl = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("redirecturl"):null,
-                    PaymentPurpose = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("paymentpurpose"):null,
-                    PaymentMethod = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("paymentmethod"):null,
-                },
-            };
-
-            // fraud response
-            if (root.Has("fraudresponse"))
-            {
-                Element fraudResponseElement = root.Get("fraudresponse");
-
-                FraudResponse fraudResponse = new FraudResponse
-                {
-                    mode = (FraudFilterMode) Enum.Parse(typeof(FraudFilterMode),fraudResponseElement.GetAttribute<string>("mode")),
-                    Result = fraudResponseElement.GetValue<string>("result"),
-                };
-
-                if (fraudResponseElement.Has("rules"))
-                {
-                    foreach (Element rule in fraudResponseElement.Get("rules").GetAll("rule"))
-                    {
-                        fraudResponse.Rules.Add(new FraudResponse.Rule
-                        {
-                            Id = rule.GetAttribute<string>("id"),
-                            Name = rule.GetAttribute<string>("name"),
-                            Action = rule.GetValue<string>("action"),
-                        });
-                    }
                 }
-                result.FraudResponse = fraudResponse;
-            }
+            };
 
             if (builder is ManagementBuilder mb && mb.MultiCapture) {
                 result.MultiCapturePaymentCount = mb.MultiCapturePaymentCount;
