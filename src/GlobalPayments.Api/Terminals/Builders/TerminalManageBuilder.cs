@@ -8,12 +8,23 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal string ClientTransactionId { get; set; }
         internal CurrencyType? Currency { get; set; }
         internal decimal? Gratuity { get; set; }
+        public string TerminalRefNumber { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
                     return (PaymentMethod as TransactionReference).TransactionId;
                 return null;
             }
+        }
+
+        public TerminalManageBuilder WithTerminalRefNumber(string terminalRefNumber) {
+            TerminalRefNumber = terminalRefNumber;
+            return this;
+        }
+
+        public TerminalManageBuilder WithEcrId(int ecrId) {
+            EcrId = ecrId;
+            return this;
         }
 
         public TerminalManageBuilder WithAmount(decimal? amount) {

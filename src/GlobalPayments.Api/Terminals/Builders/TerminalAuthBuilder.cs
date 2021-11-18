@@ -25,9 +25,13 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal string PoNumber { get; set; }
         internal bool RequestMultiUseToken { get; set; }
         internal bool SignatureCapture { get; set; }
-        internal decimal? TaxAmount { get; set; }
+        internal decimal TaxAmount { get; set; }
         internal string TaxExempt { get; set; }
         internal string TaxExemptId { get; set; }
+        internal int TerminalRefNumber { get; set; }
+        internal int? ClerkId { get; set; }
+        internal string LineItemLeft { get; set; }
+        internal string LineItemRight { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -36,10 +40,26 @@ namespace GlobalPayments.Api.Terminals.Builders {
             }
         }
 
+        public TerminalAuthBuilder WithLineItemLeft(string lineItemLeft) {
+            LineItemLeft = lineItemLeft;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithLineItemRight(string lineItemRight) {
+            LineItemRight = lineItemRight;
+            return this;
+        }
+
         public TerminalAuthBuilder WithAddress(Address address) {
             Address = address;
             return this;
         }
+
+        public TerminalAuthBuilder WithEcrId(int ecrId) {
+            EcrId = ecrId;
+            return this;
+        }
+
         public TerminalAuthBuilder WithAllowDuplicates(bool allowDuplicates) {
             AllowDuplicates = allowDuplicates;
             return this;
@@ -108,6 +128,17 @@ namespace GlobalPayments.Api.Terminals.Builders {
             TaxAmount = taxAmount;
             return this;
         }
+
+        public TerminalAuthBuilder WithClerkId(short clerkId) {
+            ClerkId = clerkId;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithTerminalRefNumber(int terminalRefNumber) {
+            TerminalRefNumber = terminalRefNumber;
+            return this;
+        }
+
         public TerminalAuthBuilder WithTaxType(TaxType taxType, string taxExemptId = null) {
             TaxExempt = taxType == TaxType.TAXEXEMPT ? "1" : "0";
             TaxExemptId = taxExemptId;

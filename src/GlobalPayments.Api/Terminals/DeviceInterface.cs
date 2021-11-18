@@ -9,7 +9,7 @@ namespace GlobalPayments.Api.Terminals {
         protected IRequestIdProvider _requestIdProvider;
 
         public event MessageSentEventHandler OnMessageSent;
-
+        public string EcrId { get; set; }
         internal DeviceInterface(T controller) {
             _controller = controller;
             _controller.OnMessageSent += (message) => {
@@ -23,6 +23,9 @@ namespace GlobalPayments.Api.Terminals {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
+        public virtual IDeviceResponse Cancel(int? displayOption = null) {
+            throw new System.NotImplementedException();
+        }
         public virtual IDeviceResponse CloseLane() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
@@ -78,6 +81,11 @@ namespace GlobalPayments.Api.Terminals {
         public virtual IDeviceResponse StartCard(PaymentMethodType paymentMethodType) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+
+        public virtual IDeviceResponse SendSaf() {
+            throw new System.NotImplementedException();
+        }
+
         #endregion
 
         #region Batching
@@ -92,6 +100,14 @@ namespace GlobalPayments.Api.Terminals {
 
         #region Reporting Methods
         public virtual TerminalReportBuilder LocalDetailReport() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
+        public virtual TerminalReportBuilder GetSAFReport() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
+        public virtual TerminalReportBuilder GetBatchReport() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
         #endregion
@@ -129,6 +145,13 @@ namespace GlobalPayments.Api.Terminals {
         public virtual TerminalAuthBuilder Withdrawal(decimal? amount = null) {
             return new TerminalAuthBuilder(TransactionType.BenefitWithdrawal, PaymentMethodType.EBT)
                 .WithAmount(amount);
+        }
+
+        public virtual TerminalAuthBuilder TipAdjust() {
+            throw new System.NotImplementedException();
+        }
+        public virtual TerminalAuthBuilder EodProcessing() {
+            throw new System.NotImplementedException();
         }
         #endregion
 

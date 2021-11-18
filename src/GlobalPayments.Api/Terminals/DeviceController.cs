@@ -43,6 +43,7 @@ namespace GlobalPayments.Api.Terminals {
         }
 
         public byte[] Send(IDeviceMessage message) {
+            message.AwaitResponse = true;
             return _connector?.Send(message);
         }
 

@@ -246,6 +246,8 @@ namespace GlobalPayments.Api.Entities {
 
         public string TerminalId { get; set; }
 
+        public string TerminalRefNumber { get; set; }
+
         public string TokenPanLastFour { get; set; }
 
         /// <summary>

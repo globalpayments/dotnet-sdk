@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.PAX;
+using GlobalPayments.Api.Terminals.UPA;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +27,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return SearchBuilder.And(criteria, value);
         }
 
+        public TerminalSearchBuilder Where<T>(UpaSearchCriteria criteria, T value) {
+            return SearchBuilder.And(criteria, value);
+        }
         public ITerminalReport Execute(string configName = "default") {
             var device = ServicesContainer.Instance.GetDeviceController(configName);
             return device.ProcessReport(this);
@@ -43,12 +47,19 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal string ReferenceNumber { get; set; }
         internal int? MerchantId { get; set; }
         internal string MerchantName { get; set; }
-
+        internal int Batch { get; set; }
+        public string EcrId { get; set; }
+        internal string ReportOutput { get; set; }
         internal TerminalSearchBuilder(TerminalReportBuilder reportBuilder) {
             _reportBuilder = reportBuilder;
         }
 
         public TerminalSearchBuilder And<T>(PaxSearchCriteria criteria, T value) {
+            SetProperty(criteria.ToString(), value);
+            return this;
+        }
+
+        public TerminalSearchBuilder And<T>(UpaSearchCriteria criteria, T value) {
             SetProperty(criteria.ToString(), value);
             return this;
         }

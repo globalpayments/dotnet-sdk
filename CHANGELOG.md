@@ -4,6 +4,14 @@
 
 #### Enhancements
 
+- Added initial support for Unified Payments Application
+
+---
+
+## v1.9.0 (11/10/2021)
+
+#### Enhancements
+
 - Update default GpApi version header
 - Add Eci field to DigitalWallet
 - Add Throw Exception on error to UpdateTokenExpiry and DeleteToken methods on Credit class

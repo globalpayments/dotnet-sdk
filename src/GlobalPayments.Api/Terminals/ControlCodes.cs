@@ -20,6 +20,7 @@ namespace GlobalPayments.Api.Terminals {
         RS = 0x1E,
         COMMA = 0x2C,
         COLON = 0x3A,
-        PTGS = 0x7C
-   }
+        PTGS = 0x7C,
+        LF = 0x0A
+    }
 }

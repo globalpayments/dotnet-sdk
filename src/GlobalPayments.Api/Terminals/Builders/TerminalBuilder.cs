@@ -6,6 +6,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
     public abstract class TerminalBuilder<T> : TransactionBuilder<ITerminalResponse> where T : TerminalBuilder<T> {
         internal PaymentMethodType PaymentMethodType { get; set; }
         internal int ReferenceNumber { get; set; }
+        internal int EcrId { get; set; }
 
         public T WithPaymentMethodType(PaymentMethodType value) {
             PaymentMethodType = value;

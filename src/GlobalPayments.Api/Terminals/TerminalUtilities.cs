@@ -5,8 +5,9 @@ using System.Text;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.HPA;
 using System.IO;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using GlobalPayments.Api.Terminals.UPA;
+using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals {
     public class TerminalUtilities {
@@ -86,9 +87,59 @@ namespace GlobalPayments.Api.Terminals {
             return new DeviceMessage(buffer.ToArray());
         }
 
+        public static DeviceMessage BuildUpaAdminRequest(int requestId, string ecrId, string txnType, string lineItemLeft = null, string lineItemRight = null, int? displayOption = null)
+        {
+            var doc = new JsonDoc();
+            doc.Set("message", UpaMessageType.Msg);
+            var data = doc.SubElement("data");
+            data.Set("command", txnType);
+            data.Set("EcrId", ecrId);
+            data.Set("requestId", requestId);
+
+            if ((!string.IsNullOrEmpty(lineItemLeft) || !string.IsNullOrEmpty(lineItemRight)) || displayOption.HasValue) {
+                var request = data.SubElement("data");
+                var requestParams = request.SubElement("params");
+                requestParams.Set("lineItemLeft", lineItemLeft);
+                requestParams.Set("lineItemRight", lineItemRight);
+                if (displayOption.HasValue) {
+                    requestParams.Set("displayOption", displayOption);
+                }
+            }
+
+            return BuildUpaRequest(doc.ToString());
+        }
+
         public static DeviceMessage BuildRequest(string messageId, params object[] elements) {
             var message = GetElementString(elements);
             return BuildMessage(messageId, message);
+        }
+
+        public static DeviceMessage BuildUpaRequest(string jsonRequest)
+        {
+            jsonRequest = jsonRequest.Replace("ecrId", "EcrId");
+
+            jsonRequest = jsonRequest.Replace("<LF>", "\r\n");
+            jsonRequest = jsonRequest.Replace("{", "{\r\n");
+            jsonRequest = jsonRequest.Replace("}", "}\r\n");
+            jsonRequest = jsonRequest.Replace(",", ",\r\n");
+            var buffer = new List<byte>();
+
+            // Begin Message
+            buffer.Add((byte)ControlCodes.STX);
+            buffer.Add(0x0A);
+
+            // Add the Message
+            if (!string.IsNullOrEmpty(jsonRequest))
+            {
+                foreach (char c in jsonRequest)
+                    buffer.Add((byte)c);
+            }
+
+            // End the Message
+            buffer.Add((byte)ControlCodes.LF);
+            buffer.Add((byte)ControlCodes.ETX);
+            buffer.Add((byte)ControlCodes.LF);
+            return new DeviceMessage(buffer.ToArray());
         }
 
         public static byte CalculateLRC(byte[] buffer) {

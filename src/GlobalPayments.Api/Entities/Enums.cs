@@ -61,7 +61,13 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a genius terminal
         /// </summary>
-        GENIUS
+        GENIUS,
+
+        /// <summary>
+        /// Indicates a Nucleus terminal
+        /// </summary>
+        NUCLEUS_SATURN_1000
+
     }
 
     /// <summary>
@@ -1027,5 +1033,10 @@ public enum ReasonCode {
         Forced,	
         EndOfShift,	
         //EndOfDay	
+    }
+
+    public enum ReportOutput {
+        Print,
+        ReturnData
     }
 }
