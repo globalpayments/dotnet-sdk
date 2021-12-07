@@ -71,9 +71,14 @@ namespace GlobalPayments.Api.Gateways {
                 if (isCheck) {
                     var check = builder.PaymentMethod as eCheck;
                     if (!string.IsNullOrEmpty(check.CheckHolderName)) {
-                        var names = check.CheckHolderName.Split(new char[] {' '}, 2);
-                        et.SubElement(holder, "FirstName", names[0]);
-                        et.SubElement(holder, "LastName", names[1]);
+                        if (check.CheckHolderName.Contains(' ')) {
+                            var names = check.CheckHolderName.Split(new char[] { ' ' }, 2);
+                            et.SubElement(holder, "FirstName", names[0]);
+                            et.SubElement(holder, "LastName", names[1]);
+                        }
+                        else { 
+                            et.SubElement(holder, "FirstName", check.CheckHolderName); 
+                        }
                     }
                     et.SubElement(holder, "CheckName", check.CheckName);
                     et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
@@ -619,6 +624,7 @@ namespace GlobalPayments.Api.Gateways {
         #region response mapping
         private Transaction MapResponse(string rawResponse, IPaymentMethod payment) {
             var result = new Transaction();
+            result.CheckResponseErrorMessages = new List<CheckResponseErrorMessage>();
 
             var root = new ElementTree(rawResponse).Get("PosResponse");
             var acceptedCodes = new List<string>() { "00", "0", "85", "10" };
@@ -661,6 +667,19 @@ namespace GlobalPayments.Api.Gateways {
                         TransactionId = root.GetValue<string>("GatewayTxnId"),
                         AuthCode = root.GetValue<string>("AuthCode")
                     };
+                }
+                // Add additional error messages
+                if (root.Has("CheckSale")) {
+                    foreach (Element checkResponse in root.GetAll("CheckSale")) {
+                        if (checkResponse.GetValue<string>("Type") == "Error") {
+                            var errorMessage = new CheckResponseErrorMessage();
+                            errorMessage.RspMessage = checkResponse.GetValue<string>("RspMessage");
+                            errorMessage.Type = checkResponse.GetValue<string>("Type");
+                            errorMessage.Code = checkResponse.GetValue<string>("Code");
+                            errorMessage.Message = checkResponse.GetValue<string>("Message");
+                            result.CheckResponseErrorMessages.Add(errorMessage);
+                        }
+                    }
                 }
 
                 // gift card create data

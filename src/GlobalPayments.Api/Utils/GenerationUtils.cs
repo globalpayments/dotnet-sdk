@@ -5,16 +5,14 @@ using System.Text;
 namespace GlobalPayments.Api.Utils {
     public class GenerationUtils {
         class DigestUtils {
-            static HashAlgorithm _hasher;
-
-            static DigestUtils() {
-                _hasher = SHA1.Create();
-            }
             public static string Sha1Hex(string toHash) {
-                byte[] buffer = _hasher.ComputeHash(Encoding.UTF8.GetBytes(toHash));
                 var sb = new StringBuilder();
-                foreach (byte b in buffer)
-                    sb.Append(b.ToString("X2"));
+                using (var hasher = SHA1.Create())
+                {
+                    byte[] buffer = hasher.ComputeHash(Encoding.UTF8.GetBytes(toHash));
+                    foreach (byte b in buffer) 
+                        sb.Append(b.ToString("X2"));
+                }
                 return sb.ToString().ToLower();
             }
         }

@@ -549,6 +549,6 @@ namespace GlobalPayments.Api.Entities {
 
             return trans;
         }
-
+        public List<CheckResponseErrorMessage> CheckResponseErrorMessages { get; set; }
     }
 }

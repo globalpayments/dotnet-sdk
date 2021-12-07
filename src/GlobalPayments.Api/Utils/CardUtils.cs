@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace GlobalPayments.Api.Utils {
     public class CardUtils {
         private static readonly Regex AmexRegex = new Regex(@"^3[47]", RegexOptions.None);
-        private static readonly Regex MasterCardRegex = new Regex(@"^(?:5[1-5]|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)", RegexOptions.None);
+        private static readonly Regex MasterCardRegex = new Regex(@"^(?:5[1-6]|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)", RegexOptions.None);
         private static readonly Regex VisaRegex = new Regex(@"^4", RegexOptions.None);
         private static readonly Regex DinersClubRegex = new Regex(@"^3(?:0[0-5]|[68][0-9])", RegexOptions.None);
         private static readonly Regex RouteClubRegex = new Regex(@"^(2014|2149)", RegexOptions.None);

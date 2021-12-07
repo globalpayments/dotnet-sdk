@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GlobalPayments.Api.Utils {
     public class CountryUtils {
@@ -618,7 +619,7 @@ namespace GlobalPayments.Api.Utils {
             }
 
             if (matches.Count > 1)
-                return null;
+                return matches.First().Value;
             return rvalue;
         }
 

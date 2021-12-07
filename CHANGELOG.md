@@ -2,6 +2,15 @@
 
 ## Latest
 
+#### Bug Fixes:
+
+- Fix Mater Card automatic card type detection
+- Fix thread safe hash generation
+
+---
+
+## v1.10.0 (11/18/2021)
+
 #### Enhancements
 
 - Added initial support for Unified Payments Application
