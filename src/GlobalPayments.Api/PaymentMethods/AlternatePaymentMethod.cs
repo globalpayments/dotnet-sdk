@@ -6,7 +6,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <summary>
         /// Returns Payment Method Type.
         /// </summary>
-        public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.Credit; } }
+        public PaymentMethodType PaymentMethodType { get { return PaymentMethodType.APM; } }
 
         /// <summary>
         /// A AlternativePaymentMethodType value representing the
@@ -46,6 +46,16 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string AccountHolderName { get; set; }
 
         /// <summary>
+        /// The reference from the payment provider: from PayPal etc
+        /// </summary>
+        public string ProviderReference { get; set; }
+
+        /// <summary>
+        /// Accepted values ENABLE/DISABLE
+        /// </summary>
+        public string AddressOverrideMode { get; set; }
+
+        /// <summary>
         /// Creates a charge (sale) against the payment method.
         /// </summary>
         /// <param name="amount">The amount of the transaction</param>
@@ -54,5 +64,18 @@ namespace GlobalPayments.Api.PaymentMethods {
             return new AuthorizationBuilder(TransactionType.Sale, this)
                  .WithAmount(amount);
         }
+
+        /// <summary>
+        /// Authorizes the payment method
+        /// </summary>
+        /// <param name="amount">Amount to authorize</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder Authorize(decimal? amount = null)
+        {
+            return new AuthorizationBuilder(TransactionType.Auth, this)
+                .WithModifier(TransactionModifier.AlternativePaymentMethod)
+                .WithAmount(amount);
+        }
+
     }
 }

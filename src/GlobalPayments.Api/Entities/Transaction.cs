@@ -73,7 +73,20 @@ namespace GlobalPayments.Api.Entities {
 
         public string CardBrandTransactionId { get; set; }
 
-        public AlternativePaymentResponse AlternativePaymentResponse { get; set; }
+        public AlternativePaymentResponse AlternativePaymentResponse {
+            get
+            {
+                return TransactionReference?.AlternativePaymentResponse;
+            }
+            set
+            {
+                if(TransactionReference == null)
+                {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.AlternativePaymentResponse = value;
+            }
+        }
 
         /// <summary>
         /// The type of card used in the transaction.
@@ -477,6 +490,15 @@ namespace GlobalPayments.Api.Entities {
                 .WithVoidReason(reason)
                 .WithAmount(amount)
                 .WithForcedReversal(force);
+        }
+
+        /// <summary>
+        /// Confirm an original transaction. For now it is used for the APM transactions with PayPal
+        /// </summary>
+        public ManagementBuilder Confirm()
+        {
+            return new ManagementBuilder(TransactionType.Confirm)
+                .WithPaymentMethod(this.TransactionReference);
         }
 
         public ManagementBuilder Increment(decimal? amount = null) {

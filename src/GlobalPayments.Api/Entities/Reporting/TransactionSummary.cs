@@ -281,5 +281,11 @@ namespace GlobalPayments.Api.Entities {
         public string Country { get; set; }
 
         public string Xid { get; set; }
+
+        public string AccountNumberLast4 { get; set; }
+
+        public string AccountType { get; set; }
+
+        public AlternativePaymentResponse AlternativePaymentResponse { get; set; }
     }
 }

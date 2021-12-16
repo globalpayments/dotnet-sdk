@@ -2,6 +2,7 @@
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GlobalPayments.Api.Tests {
@@ -378,14 +379,37 @@ namespace GlobalPayments.Api.Tests {
                 ItemVelocityHedge = Risk.High,
             };
 
+            var products = new List<Product>
+            {
+                new Product
+                        {
+                            ProductId = "SKU251584",
+                            ProductName = "Magazine Subscription",
+                            Quantity = 12,
+                            UnitPrice = 12,
+                            Gift = true,
+                            Type = "subscription",
+                            Risk = "Low"
+                        },
+                new Product
+                        {
+                            ProductId = "SKU8884784",
+                            ProductName = "Charger",
+                            Quantity = 10,
+                            UnitPrice = 12,
+                            Gift = false,
+                            Type = "electronic_good",
+                            Risk = "High"
+                        }
+            };
+
             Transaction response = card.Charge(199.99m)
                     .WithCurrency("EUR")
                     .WithAddress(billingAddress, AddressType.Billing)
                     .WithAddress(shippingAddress, AddressType.Shipping)
                     .WithDecisionManager(decisionManager)
                     .WithCustomerData(customer)
-                    .WithMiscProductData("SKU251584", "Magazine Subscription", "12", "1200", "true", "subscription", "Low")
-                    .WithMiscProductData("SKU8884784", "Charger", "10", "1200", "false", "electronic_good", "High")
+                    .WithMiscProductData(products)
                     .WithCustomData("fieldValue01", "fieldValue02", "fieldValue03", "fieldValue04")
                     .Execute();
             Assert.IsNotNull(response);

@@ -119,6 +119,30 @@ namespace GlobalPayments.Api.Entities {
                     RequestBody = data.ToString(),
                 };
             }
+            else if (builder.TransactionType == TransactionType.Confirm)
+            {
+                if (builder.PaymentMethod is TransactionReference && builder.PaymentMethod.PaymentMethodType == PaymentMethodType.APM)
+                {
+                    var transactionReference = (TransactionReference) builder.PaymentMethod;
+                    var apmResponse = transactionReference.AlternativePaymentResponse;
+                    var apm = new JsonDoc()
+                        .Set("provider", apmResponse?.ProviderName)
+                        .Set("provider_payer_reference", apmResponse?.ProviderReference);
+
+                    var payment_method = new JsonDoc()
+                        .Set("apm", apm);
+
+                    var data = new JsonDoc()
+                        .Set("payment_method", payment_method);
+
+                    return new GpApiRequest
+                    {
+                        Verb = HttpMethod.Post,
+                        Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/confirmation",
+                        RequestBody = data.ToString(),
+                    };
+                }
+            }
             return null;
         }
     }

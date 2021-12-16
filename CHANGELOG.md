@@ -2,6 +2,14 @@
 
 ## Latest
 
+#### Enhancements
+
+- Add Paypal alternative payment method to GpApi
+
+---
+
+## v1.10.0 (12/07/2021)
+
 #### Bug Fixes:
 
 - Fix Mater Card automatic card type detection

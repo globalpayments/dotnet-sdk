@@ -152,7 +152,7 @@ namespace GlobalPayments.Api.Entities {
 
         Other = 1 << 8,
 
-        AltPayment = 1 << 9,
+        APM = 1 << 9,
 
         Ewic = 1 << 10
     }
@@ -295,7 +295,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a mobile transaction.
         /// </summary>
-        DecryptedMobile = 1 << 14
+        DecryptedMobile = 1 << 14,
+
+        /// <summary>
+        /// Indicates an alternative payment method transaction.
+        /// </summary>
+        AlternativePaymentMethod = 1 << 15
     }
 
     /// <summary>
@@ -846,6 +851,7 @@ public enum ReasonCode {
         OSUUSPANKKI,
         OXXO,
         PAGO_FACIL,
+        PAYPAL,
         PAYPOST_LIETUVOS_PASTAS,
         PAYSAFECARD,
         PAYSBUY_CASH,

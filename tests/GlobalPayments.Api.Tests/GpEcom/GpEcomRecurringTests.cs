@@ -1,6 +1,7 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Tests.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Realex {
@@ -23,7 +24,7 @@ namespace GlobalPayments.Api.Tests.Realex {
                 AccountId = "api",
                 RefundPassword = "refund",
                 SharedSecret = "secret"
-            });
+            },"test");
 
             new_customer = new Customer {
                 Key = CustomerId,
@@ -51,7 +52,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 5,
-                ExpYear = 2019,
+                ExpYear = DateTime.Now.AddYears(2).Year,
                 CardHolderName = "James Mason"
             };
         }
@@ -59,7 +60,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void Test_001a_CreateCustomer() {
             try {
-                var customer = new_customer.Create();
+                var customer = new_customer.Create("test");
                 Assert.IsNotNull(customer);
             }
             catch (GatewayException exc) {
@@ -75,9 +76,9 @@ namespace GlobalPayments.Api.Tests.Realex {
                 var paymentMethod = new_customer.AddPaymentMethod(PaymentId("Credit"), new CreditCardData {
                     Number = "4263970000005262",
                     ExpMonth = 5,
-                    ExpYear = 2025,
+                    ExpYear = DateTime.Now.AddYears(2).Year,
                     CardHolderName = "James Mason"
-                }).Create();
+                }).Create("test");
                 Assert.IsNotNull(paymentMethod);
             }
             catch (GatewayException exc) {
@@ -91,7 +92,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         public void Test_002a_EditCustomer() {
             var customer = new Customer { Key = CustomerId };
             customer.FirstName = "Perry";
-            customer.SaveChanges();
+            customer.SaveChanges("test");
         }
 
         [TestMethod]
@@ -100,10 +101,10 @@ namespace GlobalPayments.Api.Tests.Realex {
             paymentMethod.PaymentMethod = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = 10,
-                ExpYear = 2020,
+                ExpYear = DateTime.Now.AddYears(2).Year,
                 CardHolderName = "Philip Marlowe"
             };
-            paymentMethod.SaveChanges();
+            paymentMethod.SaveChanges("test");
         }
 
         [TestMethod]
@@ -112,15 +113,15 @@ namespace GlobalPayments.Api.Tests.Realex {
             paymentMethod.PaymentMethod = new CreditCardData {
                 CardType = "MC",
                 ExpMonth = 10,
-                ExpYear = 2020,
+                ExpYear = DateTime.Now.AddYears(2).Year,
                 CardHolderName = "Philip Marlowe"
             };
-            paymentMethod.SaveChanges();
+            paymentMethod.SaveChanges("test");
         }
 
         [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
         public void Test_003_FindOnRealex() {
-            Customer.Find(CustomerId);
+            Customer.Find(CustomerId, "test");
         }
 
         [TestMethod]
@@ -129,7 +130,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var response = paymentMethod.Charge(10m)
                 .WithCurrency("USD")
                 .WithCvn("123")
-                .Execute();
+                .Execute("test");
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -139,7 +140,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
             var response = paymentMethod.Verify()
                 .WithCvn("123")
-                .Execute();
+                .Execute("test");
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -149,7 +150,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
             var response = paymentMethod.Refund(10.01m)
                 .WithCurrency("USD")
-                .Execute();
+                .Execute("test");
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -160,7 +161,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var response = paymentMethod.Charge(12m)
                 .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
                 .WithCurrency("USD")
-                .Execute();
+                .Execute("test");
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
@@ -168,7 +169,57 @@ namespace GlobalPayments.Api.Tests.Realex {
         [TestMethod]
         public void Test_006_DeletePaymentMethod() {
             var paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
-            paymentMethod.Delete();
+            paymentMethod.Delete(configName:"test");
+        }
+
+        [TestMethod]
+        public void Test_007_ChargeStoredCard_from_different_configs()
+        {
+
+            ServicesContainer.ConfigureService(new GpEcomConfig
+            {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "3dsecure",
+                RefundPassword = "refund",
+                SharedSecret = "secret",
+                RequestLogger = new RequestConsoleLogger()
+            });
+
+            var paymentMethod = new_customer.AddPaymentMethod(PaymentId("Credit"), new CreditCardData
+            {
+                Number = "4263970000005262",
+                ExpMonth = 5,
+                ExpYear = DateTime.Now.AddYears(2).Year,
+                CardHolderName = "James Mason"
+            }).Create("test");
+            Assert.IsNotNull(paymentMethod);
+            var response = paymentMethod.Charge(12m)
+                .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
+                .WithCurrency("USD")
+                .Execute("test");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var pm = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
+            pm.Delete(configName: "test");
+
+            var paymentMethod2 = new_customer.AddPaymentMethod(PaymentId("Credit"), new CreditCardData
+            {
+                Number = "4263970000005262",
+                ExpMonth = 5,
+                ExpYear = DateTime.Now.AddYears(2).Year,
+                CardHolderName = "James Mason 2"
+            }).Create();
+            Assert.IsNotNull(paymentMethod2);
+            var response2 = paymentMethod2.Charge(12m)
+                .WithRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response2);
+            Assert.AreEqual("00", response2.ResponseCode);
+
+            var pm2 = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
+            pm2.Delete();
         }
     }
 }

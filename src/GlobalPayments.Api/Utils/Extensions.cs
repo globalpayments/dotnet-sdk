@@ -44,6 +44,19 @@ namespace GlobalPayments.Api.Utils {
             return null;
         }
 
+        public static decimal? ToDecimal(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return null;
+
+            decimal amount = 0m;
+            if (decimal.TryParse(str, out amount))
+            {
+                return amount;
+            }
+            return null;
+        }
+
         public static string ToInitialCase(this Enum value) {
             var initial = value.ToString();
             return initial.Substring(0, 1).ToUpper() + initial.Substring(1).ToLower();

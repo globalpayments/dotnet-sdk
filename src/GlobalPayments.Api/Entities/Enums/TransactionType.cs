@@ -147,9 +147,9 @@ namespace GlobalPayments.Api.Entities {
         TokenDelete = 1 << 26,
 
         /// <summary>
-        /// Indicates a verify authentication 3DS2 call
+        /// Indicates a confirm call
         /// </summary>
-        VerifyAuthentication = 1 << 27,
+        Confirm = 1 << 27,
 
         /// <summary>
         /// Indicates an Initiate Authentication 3DS2 call

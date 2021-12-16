@@ -28,6 +28,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public int SequenceNumber{ get; set; }
         public string SystemTraceAuditNumber{ get; set; }
         public NtsData NtsData { get; set; }
+        public AlternativePaymentResponse AlternativePaymentResponse { get; set; }
         public void SetNtsData(string value) {
             this.NtsData = NtsData.FromString(value);
         }

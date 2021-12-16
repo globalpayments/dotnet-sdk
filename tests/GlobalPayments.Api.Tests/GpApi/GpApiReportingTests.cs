@@ -228,6 +228,51 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(result.Results is List<TransactionSummary>);
             Assert.IsTrue(result.Results.TrueForAll(t => t.TokenPanLastFour.Contains(lastFour)));
         }
+        
+        [TestMethod]
+        public void ReportFindTransactionsPaged_By_Token_First6_And_Last4_And_PaymentMethod() {
+            const string firstSix = "426397";
+            const string lastFour = "5262";
+            var result = ReportingService.FindTransactionsPaged(1, 10)
+                .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
+                .Where(SearchCriteria.TokenFirstSix, firstSix)
+                .And(SearchCriteria.TokenLastFour, lastFour)
+                .And(SearchCriteria.PaymentMethod, PaymentMethodName.DigitalWallet)
+                .Execute();
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.TrueForAll(t => t.TokenPanLastFour.Contains(lastFour)));
+        }
+        
+        [TestMethod]
+        public void ReportFindTransactionsPaged_By_Token_First6_And_Last4_And_WrongPaymentMethod() {
+            const string firstSix = "426397";
+            const string lastFour = "5262";
+            try {
+            ReportingService.FindTransactionsPaged(1, 10)
+                    .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
+                    .Where(SearchCriteria.TokenFirstSix, firstSix)
+                    .And(SearchCriteria.TokenLastFour, lastFour)
+                    .And(SearchCriteria.PaymentMethod, PaymentMethodName.Card)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40043", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request contains unexpected fields: payment_method", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void ReportFindTransactionsPaged_By_PaymentMethod() {
+            foreach (PaymentMethodName paymentMethodName in Enum.GetValues(typeof(PaymentMethodName))) {
+                var result = ReportingService.FindTransactionsPaged(1, 10)
+                    .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
+                    .Where(SearchCriteria.PaymentMethod, paymentMethodName)
+                    .Execute();
+                Assert.IsNotNull(result?.Results);
+            }
+        }
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Name() {

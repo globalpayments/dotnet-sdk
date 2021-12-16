@@ -67,16 +67,77 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
                 transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
                 transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
-                transaction.PaymentMethodType = (json.Get("payment_method")?.Has("bank_transfer") ?? false) ? PaymentMethodType.ACH : transaction.PaymentMethodType;
+                transaction.PaymentMethodType = getPaymentMehodType(json) ?? transaction.PaymentMethodType;
             }
 
             return transaction;
         }
 
-        public static TransactionSummary MapTransactionSummary(JsonDoc doc) {
-            JsonDoc paymentMethod = doc.Get("payment_method");
+        private static PaymentMethodType? getPaymentMehodType(JsonDoc json)
+        {
+            if (json.Get("payment_method")?.Has("bank_transfer") ?? false)
+            {
+                return PaymentMethodType.ACH;
+            }
+            else if (json.Get("payment_method")?.Has("apm") ?? false)
+            {
+                return PaymentMethodType.APM;
+            }
+            return null;
+        }
 
-            JsonDoc card = paymentMethod?.Get("card");
+
+        /// <summary>
+        /// Map response for an APM transaction
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns>Transaction</returns>
+        public static Transaction MapResponseAPM(string rawResponse)
+        {
+            var apm = new AlternativePaymentResponse();
+            var transaction = MapResponse(rawResponse);
+
+            JsonDoc json = JsonDoc.Parse(rawResponse);
+
+            var paymentMethodApm = json.Get("payment_method")?.Get("apm");
+            apm.RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url");
+            apm.ProviderName = paymentMethodApm?.GetValue<string>("provider");
+            apm.Ack = paymentMethodApm?.GetValue<string>("ack");
+            apm.SessionToken = paymentMethodApm?.GetValue<string>("session_token");
+            apm.CorrelationReference = paymentMethodApm?.GetValue<string>("correlation_reference");
+            apm.VersionReference = paymentMethodApm?.GetValue<string>("version_reference");
+            apm.BuildReference = paymentMethodApm?.GetValue<string>("build_reference");
+            apm.TimeCreatedReference = paymentMethodApm?.GetValue<DateTime?>("time_created_reference", DateConverter);
+            apm.TransactionReference = paymentMethodApm?.GetValue<string>("transaction_reference");
+            apm.SecureAccountReference = paymentMethodApm?.GetValue<string>("secure_account_reference");
+            apm.ReasonCode = paymentMethodApm?.GetValue<string>("reason_code");
+            apm.PendingReason = paymentMethodApm?.GetValue<string>("pending_reason");
+            apm.GrossAmount = paymentMethodApm?.GetValue<string>("gross_amount")?.ToAmount();
+            apm.PaymentTimeReference = paymentMethodApm?.GetValue<DateTime?>("payment_time_reference", DateConverter);
+            apm.PaymentType = paymentMethodApm?.GetValue<string>("payment_type");
+            apm.PaymentStatus = paymentMethodApm?.GetValue<string>("payment_status");
+            apm.Type = paymentMethodApm?.GetValue<string>("type");
+            apm.ProtectionEligibility = paymentMethodApm?.GetValue<string>("protection_eligibilty");
+            apm.FeeAmount = paymentMethodApm?.GetValue<string>("fee_amount")?.ToAmount();
+
+            var authorization = json.Get("payment_method")?.Get("authorization");
+            apm.AuthStatus = authorization?.GetValue<string>("status");
+            apm.AuthAmount = authorization?.GetValue<string>("amount")?.ToAmount();
+            apm.AuthAck = authorization?.GetValue<string>("ack");
+            apm.AuthCorrelationReference = authorization?.GetValue<string>("correlation_reference");
+            apm.AuthVersionReference = authorization?.GetValue<string>("version_reference");
+            apm.AuthBuildReference = authorization?.GetValue<string>("build_reference");
+            apm.AuthPendingReason = authorization?.GetValue<string>("pending_reason");
+            apm.AuthProtectionEligibility = authorization?.GetValue<string>("protection_eligibilty");
+            apm.AuthProtectionEligibilityType = authorization?.GetValue<string>("protection_eligibilty_type");
+            apm.AuthReference = authorization?.GetValue<string>("reference");
+
+            transaction.AlternativePaymentResponse = apm;
+
+            return transaction;
+        }
+
+        public static TransactionSummary MapTransactionSummary(JsonDoc doc) {
 
             var summary = new TransactionSummary {
                 TransactionId = doc.GetValue<string>("id"),
@@ -96,22 +157,53 @@ namespace GlobalPayments.Api.Mapping {
                 BatchCloseDate = doc.GetValue<DateTime?>("batch_time_created", DateConverter),
                 DepositDate = doc.GetValue<DateTime?>("deposit_time_created", DateConverter),
 
-                GatewayResponseMessage = paymentMethod?.GetValue<string>("message"),
-                EntryMode = paymentMethod?.GetValue<string>("entry_mode"),
-                CardHolderName = paymentMethod?.GetValue<string>("name"),
-
-                CardType = card?.GetValue<string>("brand"),
-                AuthCode = card?.GetValue<string>("authcode"),
-                BrandReference = card?.GetValue<string>("brand_reference"),
-                AquirerReferenceNumber = card?.GetValue<string>("arn"),
-                MaskedCardNumber = card?.GetValue<string>("masked_number_first6last4"),
-
                 MerchantId = doc.Get("system")?.GetValue<string>("mid"),
                 MerchantHierarchy = doc.Get("system")?.GetValue<string>("hierarchy"),
                 MerchantName = doc.Get("system")?.GetValue<string>("name"),
                 MerchantDbaName = doc.Get("system")?.GetValue<string>("dba"),
             };
 
+            if (doc.Has("payment_method"))
+            {
+                JsonDoc paymentMethod = doc.Get("payment_method");
+                summary.GatewayResponseMessage = paymentMethod?.GetValue<string>("message");
+                summary.EntryMode = paymentMethod?.GetValue<string>("entry_mode");
+                summary.CardHolderName = paymentMethod?.GetValue<string>("name");
+
+                if (paymentMethod.Has("card"))
+                {
+                    JsonDoc card = paymentMethod?.Get("card");
+                    summary.CardType = card?.GetValue<string>("brand");
+                    summary.AuthCode = card?.GetValue<string>("authcode");
+                    summary.BrandReference = card?.GetValue<string>("brand_reference");
+                    summary.AquirerReferenceNumber = card?.GetValue<string>("arn");
+                    summary.MaskedCardNumber = card?.GetValue<string>("masked_number_first6last4");
+                    summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.Card);
+                }
+                else if(paymentMethod.Has("digital_wallet")) 
+                {
+                    JsonDoc digitalWallet = paymentMethod?.Get("digital_wallet");
+                    summary.MaskedCardNumber = digitalWallet?.GetValue<string>("masked_token_first6last4");
+                    summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.DigitalWallet);
+                }
+                else if(paymentMethod.Has("bank_transfer")) 
+                {
+                    JsonDoc bankTransfer = paymentMethod?.Get("bank_transfer");
+                    summary.AccountNumberLast4 = bankTransfer?.GetValue<string>("masked_account_number_last4");
+                    summary.AccountType = bankTransfer?.GetValue<string>("account_type");
+                    summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BankTransfer);
+                }
+                else if(paymentMethod.Has("apm")) 
+                {
+                    JsonDoc apm = paymentMethod?.Get("apm");
+                    var alternativePaymentResponse = new AlternativePaymentResponse();
+                    alternativePaymentResponse.RedirectUrl = apm?.GetValue<string>("redirect_url");
+                    alternativePaymentResponse.ProviderName = apm?.GetValue<string>("provider");
+                    alternativePaymentResponse.ProviderReference = apm?.GetValue<string>("provider_reference");
+                    summary.AlternativePaymentResponse = alternativePaymentResponse;
+                    summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.APM);
+                }
+            }
             return summary;
         }
 

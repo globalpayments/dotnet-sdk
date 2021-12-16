@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Mapping;
+using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
@@ -201,7 +202,9 @@ namespace GlobalPayments.Api.Gateways {
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
-
+                if (builder.PaymentMethod is AlternatePaymentMethod) {
+                    return GpApiMapping.MapResponseAPM(response);
+                }
                 return GpApiMapping.MapResponse(response);
             }
             return null;
@@ -216,7 +219,9 @@ namespace GlobalPayments.Api.Gateways {
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
-
+                if (builder.PaymentMethod is TransactionReference && builder.PaymentMethod.PaymentMethodType == PaymentMethodType.APM) {
+                    return GpApiMapping.MapResponseAPM(response);
+                }
                 return GpApiMapping.MapResponse(response);
             }
             return null;

@@ -48,18 +48,24 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? Gratuity { get; set; }
         internal decimal? ConvenienceAmount { get; set; }
         internal decimal? ShippingAmt { get; set; }
+        internal decimal? ShippingDiscount { get; set; }
+        internal OrderDetails OrderDetails { get; set; }
         internal HostedPaymentData HostedPaymentData { get; set; }
         internal string IdempotencyKey { get; set; }
         internal string InvoiceNumber { get; set; }
         internal bool Level2Request { get; set; }
         internal LodgingData LodgingData { get; set; }
         internal string MessageAuthenticationCode { get; set; }
-        internal List<string[]> MiscProductData { get; set; }
+        internal List<Product> MiscProductData { get; set; }
         internal string OfflineAuthCode { get; set; }
         internal bool OneTimePayment { get; set; }
         internal string OrderId { get; set; }
         internal string PaymentApplicationVersion { get; set; }
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
+        public PhoneNumber HomePhone { get; set; }
+        public PhoneNumber WorkPhone { get; set; }
+        public PhoneNumber ShippingPhone { get; set; }
+        public PhoneNumber MobilePhone { get; set; }
         internal string PosSequenceNumber { get; set; }
         internal string ProductId { get; set; }
         internal RecurringSequence? RecurringSequence { get; set; }
@@ -461,6 +467,28 @@ namespace GlobalPayments.Api.Builders {
         }
 
         /// <summary>
+        /// Set the request shippingDiscount; where applicable.
+        /// </summary>
+        /// <param name="value">The shippingDiscount</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithShippingDiscount(decimal? value)
+        {
+            ShippingDiscount = value;
+            return this;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value">The OrderDetails</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithOrderDetails(OrderDetails value)
+        {
+            OrderDetails = value;
+            return this;
+        }
+
+        /// <summary>
         /// Additional hosted payment specific information for Realex HPP implementation.
         /// </summary>
         /// <param name="value">The hosted payment data</param>
@@ -530,12 +558,8 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithMiscProductData(params string[] values) {
-            if (MiscProductData == null) {
-                MiscProductData = new List<string[]>();
-            }
-            MiscProductData.Add(values);
-
+        public AuthorizationBuilder WithMiscProductData(List<Product> values) {
+            MiscProductData = values;
             return this;
         }
 
@@ -874,6 +898,39 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => PaymentMethod).IsNotNull();
 
             Validations.For(PaymentMethodType.Recurring).Check(() => ShippingAmt).IsNull();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="phoneCountryCode"></param>
+        /// <param name="number"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public AuthorizationBuilder WithPhoneNumber(string phoneCountryCode, string number, PhoneNumberType type)
+        {
+            var phoneNumber = new PhoneNumber
+            {
+                CountryCode = phoneCountryCode,
+                Number = number
+            };
+            switch (type) {
+                case PhoneNumberType.Home:
+                    HomePhone = phoneNumber;
+                    break;
+                case PhoneNumberType.Work:
+                    WorkPhone = phoneNumber;
+                    break;
+                case PhoneNumberType.Shipping:
+                    ShippingPhone = phoneNumber;
+                    break;
+                case PhoneNumberType.Mobile:
+                    MobilePhone = phoneNumber;
+                    break;
+                default:
+                    break;
+            }
+            return this;
         }
 
         public AuthorizationBuilder WithForceGatewayTimeout(bool value) {

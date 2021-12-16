@@ -123,6 +123,30 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void GenerateAccessTokenManualWithMaximumSecondsToExpire() {
+            try {
+                GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY, 604801);
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40213", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - seconds_to_expire contains unexpected data", ex.Message);
+            }
+        }
+        
+        [TestMethod]
+        public void GenerateAccessTokenManualWithInvalidSecondsToExpire() {
+            try {
+                GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY, 10);
+            }
+            catch (GatewayException ex) {
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40213", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - seconds_to_expire contains unexpected data", ex.Message);
+            }
+        }
+
+        [TestMethod]
         public void GenerateAccessTokenManualWithIntervalToExpire() {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Environment.TEST,

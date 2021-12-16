@@ -266,15 +266,18 @@ namespace GlobalPayments.Api.Gateways {
 
             #region PRODUCT DATA
             if (builder.MiscProductData != null) {
-                List<string[]> productValues = builder.MiscProductData;
+                List<Product> productValues = builder.MiscProductData;
 
                 Element products = et.SubElement(request, "products");
-                string[] str = { "productid", "productname", "quantity", "unitprice", "gift", "type", "risk" };
-                foreach (string[] values in productValues) {
+                foreach (Product values in productValues) {
                     Element product = et.SubElement(products, "product");
-                    for (int x = 0; x < values.Length; x++) {
-                        et.SubElement(product, str[x], values[x]);
-                    }
+                    et.SubElement(product, "productid", values.ProductId);
+                    et.SubElement(product, "productname", values.ProductName);
+                    et.SubElement(product, "quantity", values.Quantity?.ToString());
+                    et.SubElement(product, "unitprice", values.UnitPrice?.ToNumericCurrencyString());
+                    et.SubElement(product, "gift", values.Gift == true ? "true" : "false");
+                    et.SubElement(product, "type", values.Type);
+                    et.SubElement(product, "risk", values.Risk);
                 }
             }
             #endregion

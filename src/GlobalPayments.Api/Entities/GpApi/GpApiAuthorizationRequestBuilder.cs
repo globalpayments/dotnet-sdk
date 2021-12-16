@@ -3,6 +3,7 @@ using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 
 namespace GlobalPayments.Api.Entities {
@@ -235,6 +236,18 @@ namespace GlobalPayments.Api.Entities {
 
             }
 
+            if (builder.PaymentMethod is AlternatePaymentMethod)
+            {
+                var alternatepaymentMethod = (AlternatePaymentMethod)builder.PaymentMethod;
+                
+                paymentMethod.Set("name", alternatepaymentMethod.AccountHolderName);
+
+                var apm = new JsonDoc()
+                    .Set("provider", alternatepaymentMethod.AlternativePaymentMethodType?.ToString()?.ToLower())
+                    .Set("address_override_mode", alternatepaymentMethod.AddressOverrideMode);
+                paymentMethod.Set("apm", apm);
+            }
+
             // encryption
             if (builder.PaymentMethod is IEncryptable)
             {
@@ -285,16 +298,30 @@ namespace GlobalPayments.Api.Entities {
                 //.Set("site_reference", "") //
                 .Set("payment_method", paymentMethod);
 
-                if (builder.PaymentMethod is eCheck) {
-                    data.Set("payer", setPayerInformation(builder));
-                }
+            if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternatePaymentMethod) {
+                data.Set("payer", setPayerInformation(builder));
+            }
 
             // set order reference
-            if (!string.IsNullOrEmpty(builder.OrderId)) {
+            if (!string.IsNullOrEmpty(builder.OrderId))
+            {
                 var order = new JsonDoc()
                     .Set("reference", builder.OrderId);
 
                 data.Set("order", order);
+            }
+
+            if (builder.PaymentMethod is AlternatePaymentMethod) {
+                setOrderInformation(builder, ref data);
+
+                var alternatepaymentMethod = (AlternatePaymentMethod)builder.PaymentMethod;
+
+                var notifications = new JsonDoc()
+                   .Set("return_url", alternatepaymentMethod?.ReturnUrl)
+                   .Set("status_url", alternatepaymentMethod?.StatusUpdateUrl)
+                   .Set("cancel_url", alternatepaymentMethod?.CancelUrl);
+
+                data.Set("notifications", notifications);
             }
 
             // stored credential
@@ -391,9 +418,25 @@ namespace GlobalPayments.Api.Entities {
                 {
                     payer.Set("name", builder.CustomerData.FirstName + " " + builder.CustomerData.LastName);
                     payer.Set("date_of_birth", builder.CustomerData.DateOfBirth);
-                    payer.Set("landline_phone", builder.CustomerData.HomePhone?.ToNumeric());
-                    payer.Set("mobile_phone", builder.CustomerData.MobilePhone?.ToNumeric());
                 }
+                payer.Set("landline_phone", builder.CustomerData?.HomePhone?.ToNumeric() ?? builder.HomePhone?.ToString());
+                payer.Set("mobile_phone", builder.CustomerData?.MobilePhone?.ToNumeric() ?? builder.MobilePhone?.ToString());
+            }
+            else if(builder.PaymentMethod is AlternatePaymentMethod)
+            {
+                JsonDoc homePhone = new JsonDoc();
+
+                homePhone.Set("country_code", builder.HomePhone?.CountryCode)
+                        .Set("subscriber_number", builder.HomePhone?.Number);
+
+                payer.Set("home_phone", homePhone);
+
+                JsonDoc workPhone = new JsonDoc();
+
+                workPhone.Set("country_code", builder.WorkPhone?.CountryCode)
+                        .Set("subscriber_number", builder.WorkPhone?.Number);
+
+                payer.Set("work_phone", workPhone);
             }
             return payer;
         }
@@ -406,6 +449,87 @@ namespace GlobalPayments.Api.Entities {
                 return "LATER";
             }
             return "AUTO";
+        }
+
+        private static JsonDoc setOrderInformation(AuthorizationBuilder builder, ref JsonDoc requestBody)
+        {
+            JsonDoc order;
+            if (requestBody.Has("order"))
+            {
+                order = requestBody.Get("order");
+            }
+            else
+            {
+                order = new JsonDoc();
+            }
+            order.Set("description", builder.OrderDetails?.Description);
+
+            if (builder.ShippingAddress != null)
+            {
+                var shippingAddress = new JsonDoc()
+                    .Set("line1", builder.ShippingAddress.StreetAddress1)
+                    .Set("line2", builder.ShippingAddress.StreetAddress2)
+                    .Set("line3", builder.ShippingAddress.StreetAddress3)
+                    .Set("city", builder.ShippingAddress.City)
+                    .Set("postal_code", builder.ShippingAddress.PostalCode)
+                    .Set("state", builder.ShippingAddress.State)
+                    .Set("country", builder.ShippingAddress.CountryCode);
+
+                order.Set("shipping_address", shippingAddress);
+            }
+
+            var shippingPhone = new JsonDoc()
+                .Set("country_code", builder.ShippingPhone?.CountryCode)
+                .Set("subscriber_number", builder.ShippingPhone?.Number);
+
+            order.Set("shipping_phone", shippingPhone);
+
+            decimal taxTotalAmount = 0;
+            decimal itemsAmount = 0;
+            decimal? orderAmount = null;
+            if (builder.MiscProductData != null)
+            {
+                var items = new List<Dictionary<string,object>>();
+                foreach (var product in builder.MiscProductData)
+                {
+                    var qta = product.Quantity ?? 0;
+                    var taxAmount = product.TaxAmount ?? 0;
+                    var unitAmount = product.UnitPrice ?? 0;
+                    var item = new Dictionary<string, object>();
+                    item.Add("reference", product.ProductId);
+                    item.Add("label", product.ProductName);
+                    item.Add("description", product.Description);
+                    item.Add("quantity", qta);
+                    item.Add("unit_amount", unitAmount.ToNumericCurrencyString());
+                    item.Add("unit_currency", product.UnitCurrency);
+                    item.Add("tax_amount", taxAmount.ToNumericCurrencyString());
+                    item.Add("amount", (qta * unitAmount).ToNumericCurrencyString());
+                    items.Add(item);
+                    taxTotalAmount += taxAmount;
+                    itemsAmount += unitAmount;
+                }
+
+                order.Set("tax_amount", taxTotalAmount.ToNumericCurrencyString());
+                order.Set("item_amount", itemsAmount.ToNumericCurrencyString());
+                var shippingAmount = builder.ShippingAmt ?? 0;
+                order.Set("shipping_amount", builder.ShippingAmt.ToNumericCurrencyString());
+                order.Set("insurance_offered", builder.OrderDetails != null ? (builder.OrderDetails.HasInsurance ? "YES" : "NO") : null);
+                order.Set("shipping_discount", builder.ShippingDiscount?.ToNumericCurrencyString());
+                order.Set("insurance_amount", builder.OrderDetails?.InsuranceAmount?.ToNumericCurrencyString());
+                order.Set("handling_amount", builder.OrderDetails?.HandlingAmount?.ToNumericCurrencyString());
+                var insuranceAmount = builder.OrderDetails?.InsuranceAmount ?? 0;
+                var handlingAmount = builder.OrderDetails?.HandlingAmount ?? 0;
+                orderAmount = itemsAmount + taxTotalAmount + handlingAmount + insuranceAmount + shippingAmount;
+                order.Set("amount", orderAmount.ToNumericCurrencyString());
+                order.Set("currency", builder.Currency);
+                order.Set("items", items);
+            }
+            if (!requestBody.Has("order"))
+            {
+                requestBody.Set("order", order);
+            }
+
+            return requestBody;
         }
     }
 }
