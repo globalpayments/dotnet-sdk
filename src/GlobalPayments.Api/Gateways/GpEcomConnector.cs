@@ -81,7 +81,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(cardElement, "number", card.Number);
                     et.SubElement(cardElement, "expdate", card.ShortExpiry);
                     et.SubElement(cardElement, "chname").Text(card.CardHolderName);
-                    et.SubElement(cardElement, "type", card.CardType.ToUpper());
+                    et.SubElement(cardElement, "type", CardUtils.GetBaseCardType(card.CardType).ToUpper());
 
                     if (card.Cvn != null) {
                         var cvnElement = et.SubElement(cardElement, "cvn");
@@ -682,7 +682,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(cardElement, "number").Text(card.Number);
                         et.SubElement(cardElement, "expdate").Text(expiry);
                         et.SubElement(cardElement, "chname").Text(card.CardHolderName);
-                        et.SubElement(cardElement, "type").Text(card.CardType);
+                        et.SubElement(cardElement, "type").Text(CardUtils.GetBaseCardType(card.CardType));
 
                         string sha1hash = string.Empty;
                         if (builder.TransactionType == TransactionType.Create)

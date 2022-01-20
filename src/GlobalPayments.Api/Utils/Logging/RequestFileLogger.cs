@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using GlobalPayments.Api.Logging;
 
-namespace GlobalPayments.Api.Tests.Logging {
+namespace GlobalPayments.Api.Utils.Logging {
     public class RequestFileLogger : IRequestLogger {
         private object _fileLock = new object();
         private string _fileName;

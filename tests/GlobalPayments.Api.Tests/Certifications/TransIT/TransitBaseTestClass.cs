@@ -1,6 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Tests.Logging;
+using GlobalPayments.Api.Utils.Logging;
 using GlobalPayments.Api.Tests.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

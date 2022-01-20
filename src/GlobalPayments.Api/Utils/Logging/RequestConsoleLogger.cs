@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using GlobalPayments.Api.Logging;
 
-namespace GlobalPayments.Api.Tests.Logging {
+namespace GlobalPayments.Api.Utils.Logging {
     public class RequestConsoleLogger : IRequestLogger {
         private object _lock = new object();
 

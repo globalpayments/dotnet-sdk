@@ -1,7 +1,7 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Tests.Logging;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Realex {

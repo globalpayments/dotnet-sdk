@@ -34,7 +34,7 @@ namespace GlobalPayments.Api.Gateways {
                 string hashValue = string.Empty;
                 if (paymentMethod is CreditCardData cardData) {
                     request.Set("number", cardData.Number);
-                    request.Set("scheme", MapCardScheme(cardData.CardType.ToUpper()));
+                    request.Set("scheme", MapCardScheme(CardUtils.GetBaseCardType(cardData.CardType).ToUpper()));
                     hashValue = cardData.Number;
                 }
                 else if (paymentMethod is RecurringPaymentMethod storedCard) {
@@ -91,7 +91,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (paymentMethod is CreditCardData cardData) {
                     hashValue = cardData.Number;
                     cardDetail.Set("number", cardData.Number);
-                    cardDetail.Set("scheme", cardData.CardType.ToUpper());
+                    cardDetail.Set("scheme", CardUtils.GetBaseCardType(cardData.CardType).ToUpper());
                     cardDetail.Set("expiry_month", cardData.ExpMonth.ToString());
                     cardDetail.Set("expiry_year", cardData.ExpYear.ToString().Substring(2));
                     cardDetail.Set("full_name", cardData.CardHolderName);

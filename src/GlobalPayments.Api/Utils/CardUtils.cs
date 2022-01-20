@@ -199,6 +199,20 @@ namespace GlobalPayments.Api.Utils {
             return rvalue;
         }
 
+        public static string GetBaseCardType(string cardType)
+        {
+            var resultCardType = cardType;
+            foreach (string cardTypeKey in _regexMap.Keys)
+            {
+                if (cardType.ToUpper().StartsWith(cardTypeKey.ToUpper()))
+                {
+                    resultCardType = cardTypeKey;
+                    break;
+                }
+            }
+            return resultCardType;
+        }
+
         public static T ParseTrackData<T>(T paymentMethod) where T : ITrackData {
             string trackData = Regex.Replace(paymentMethod.Value, @"(?<=\d)\p{Zs}(?=\d)", "");
             //string trackData = paymentMethod.Value;

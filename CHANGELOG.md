@@ -4,6 +4,18 @@
 
 #### Enhancements
 
+- move RequestLogger to new structure
+
+#### Bug Fixes:
+
+- fix FLEET card types on GP-ECOM
+
+---
+
+## v2.0.0 (12/16/2021)
+
+#### Enhancements
+
 - Add Paypal alternative payment method to GpApi
 
 ---
