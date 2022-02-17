@@ -165,7 +165,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var resp = transaction.Reauthorize()
                 .WithDescription("Resubmitting " + transaction.ReferenceNumber)
-                .WithBankTransferData(eCheckReauth)
+                .WithBankTransferDetails(eCheckReauth)
                 .Execute();
 
             assertResponse(resp, TransactionStatus.Captured);

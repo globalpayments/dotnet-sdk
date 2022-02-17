@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Mapping {
         private const string PAYMENT_METHOD_CREATE = "PAYMENT_METHOD_CREATE";
         private const string PAYMENT_METHOD_DETOKENIZE = "PAYMENT_METHOD_DETOKENIZE";
         private const string PAYMENT_METHOD_EDIT = "PAYMENT_METHOD_EDIT";
-        private const string PAYMENT_METHOD_DELETE = "PAYMENT_METHOD_DELETE";
+        private const string PAYMENT_METHOD_DELETE = "PAYMENT_METHOD_DELETE";        
 
 
         public static Transaction MapResponse(string rawResponse) {
@@ -68,6 +68,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
                 transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
                 transaction.PaymentMethodType = getPaymentMehodType(json) ?? transaction.PaymentMethodType;
+                transaction.DccRateData = MapDccInfo(json);
             }
 
             return transaction;
@@ -400,6 +401,31 @@ namespace GlobalPayments.Api.Mapping {
             };
         }
 
+        public static DccRateData MapDccInfo(JsonDoc response)
+        {
+            var currencyConversion = response;
+
+            if((!response.Get("action").GetValue("type").Equals("RATE_LOOKUP")) && !response.Has("currency_conversion")) {
+                return null;
+            }
+            if (response.Has("currency_conversion")) {
+                currencyConversion = response.Get("currency_conversion");
+            }
+            
+            return new DccRateData
+            { 
+                CardHolderCurrency = currencyConversion.GetValue<string>("payer_currency") ?? null,
+                CardHolderAmount = currencyConversion.GetValue<string>("payer_amount").ToAmount() ?? null,
+                CardHolderRate = currencyConversion.GetValue<string>("exchange_rate").ToDecimal() ?? null,
+                MerchantCurrency = currencyConversion.GetValue<string>("currency") ?? null,
+                MerchantAmount = currencyConversion.GetValue<string>("amount").ToAmount() ?? null,
+                MarginRatePercentage = currencyConversion.GetValue<string>("margin_rate_percentage") ??  null,
+                ExchangeRateSourceName = currencyConversion.GetValue<string>("exchange_rate_source") ?? null,
+                CommissionPercentage = currencyConversion.GetValue<string>("commission_percentage") ?? null,
+                ExchangeRateSourceTimestamp = currencyConversion.GetValue<DateTime?>("exchange_rate_time_created", DateConverter),
+                DccId = currencyConversion.GetValue<string>("id") ?? null
+            };
+        }
 
         private static Secure3dVersion Parse3DSVersion(string messageVersion) {
             if (messageVersion.StartsWith("1."))

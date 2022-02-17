@@ -40,7 +40,8 @@ namespace GlobalPayments.Api.Builders {
         internal IEnumerable<DisputeDocument> DisputeDocuments { get; set; }
         internal string DisputeId { get; set; }
         internal string DynamicDescriptor { get; set; }
-        internal eCheck ECheck { get; set; }
+        internal eCheck BankTransferDetails { get; set; }
+        internal DccRateData DccRateData { get; set; }
         internal decimal? Gratuity { get; set; }
         internal string IdempotencyKey { get; set;  }
         internal string InvoiceNumber { get; set; }
@@ -230,8 +231,8 @@ namespace GlobalPayments.Api.Builders {
         /// </remarks>
         /// <param name="value">eCheck</param>
         /// <returns>AuthorizationBuilder</returns>
-        public ManagementBuilder WithBankTransferData(eCheck value) {
-            ECheck = value;
+        public ManagementBuilder WithBankTransferDetails(eCheck value) {
+            BankTransferDetails = value;
             return this;
         }
 
@@ -498,6 +499,11 @@ namespace GlobalPayments.Api.Builders {
 
         public ManagementBuilder WithEWICIssuingEntity(string value) {
             EWICIssuingEntity = value;
+            return this;
+        }
+
+        public ManagementBuilder WithDccRateData(DccRateData value){
+            DccRateData = value;
             return this;
         }
     }

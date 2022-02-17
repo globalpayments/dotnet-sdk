@@ -78,6 +78,34 @@ namespace GlobalPayments.Api.Entities {
                             RequestBody = tokenizationData.ToString(),
                         };
                     }
+                    else if (builder.TransactionType == TransactionType.DccRateLookup)
+                    {
+                        // tokenized payment method
+                        if (builder.PaymentMethod is ITokenizable)
+                        {
+                            string token = ((ITokenizable)builder.PaymentMethod).Token;
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                paymentMethod.Set("id", token);
+                            }
+                        }
+
+                        var RequestData = new JsonDoc()
+                           .Set("account_name", gateway.TransactionProcessingAccountName)
+                           .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
+                           .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
+                           .Set("amount", builder.Amount.ToNumericCurrencyString())
+                           .Set("currency", builder.Currency)
+                           .Set("country", gateway.Country)
+                           .Set("payment_method", paymentMethod);
+
+                        return new GpApiRequest
+                        {
+                            Verb = HttpMethod.Post,
+                            Endpoint = $"{merchantUrl}/currency-conversions",
+                            RequestBody = RequestData.ToString(),
+                        };
+                    }
                     else if (builder.TransactionType == TransactionType.Verify) {
                         if (builder.RequestMultiUseToken && string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                             var tokenizationData = new JsonDoc()
@@ -92,7 +120,7 @@ namespace GlobalPayments.Api.Entities {
                                 Endpoint = $"{merchantUrl}/payment-methods",
                                 RequestBody = tokenizationData.ToString(),
                             };
-                        }
+                        }                    
                         else {
                             var verificationData = new JsonDoc()
                                 .Set("account_name", gateway.TransactionProcessingAccountName)
@@ -170,7 +198,7 @@ namespace GlobalPayments.Api.Entities {
                     if (!string.IsNullOrEmpty(token)) {
                         paymentMethod.Set("id", token);
                     }
-                }
+                }                
             }
             // payment method storage mode
             if (builder.RequestMultiUseToken) {
@@ -296,7 +324,10 @@ namespace GlobalPayments.Api.Entities {
                 //.Set("language", EnumConverter.GetMapping(Target.GP_API, Language))
                 .Set("ip_address", builder.CustomerIpAddress)
                 //.Set("site_reference", "") //
-                .Set("payment_method", paymentMethod);
+                .Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
+                .Set("payment_method", paymentMethod)
+                .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
+                            .Set("id", builder.PaymentLinkId) : null );
 
             if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternatePaymentMethod) {
                 data.Set("payer", setPayerInformation(builder));

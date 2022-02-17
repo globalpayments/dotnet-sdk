@@ -60,6 +60,19 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditAuthorizationWithPaymentLinkId()
+        {
+            var transaction = card.Authorize(14m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithPaymentLinkId("LNK_W1xgWehivDP8P779cFDDTZwzL01EEw4")
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction?.ResponseMessage);           
+        }
+
+        [TestMethod]
         public void CreditAuthorization_CaptureLowerAmount() {
             var transaction = card.Authorize(5m)
                 .WithCurrency("USD")

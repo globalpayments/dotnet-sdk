@@ -65,6 +65,7 @@ namespace GlobalPayments.Api.Builders {
         public PhoneNumber HomePhone { get; set; }
         public PhoneNumber WorkPhone { get; set; }
         public PhoneNumber ShippingPhone { get; set; }
+        public string PaymentLinkId { get; set; }
         public PhoneNumber MobilePhone { get; set; }
         internal string PosSequenceNumber { get; set; }
         internal string ProductId { get; set; }
@@ -1033,6 +1034,11 @@ namespace GlobalPayments.Api.Builders {
 
         public AuthorizationBuilder WithRawMICRData(string value) {
             RawMICRData = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithPaymentLinkId(string value) {
+            PaymentLinkId = value;
             return this;
         }
     }

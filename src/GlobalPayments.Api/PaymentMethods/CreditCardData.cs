@@ -116,7 +116,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             CvnPresenceIndicator = CvnPresenceIndicator.NotRequested;
         }
 
-        public AuthorizationBuilder GetDccRate(DccRateType dccRateType, DccProcessor dccProcessor) {
+        public AuthorizationBuilder GetDccRate(DccRateType dccRateType = DccRateType.None, DccProcessor dccProcessor = DccProcessor.None) {
             DccRateData dccRateData = new DccRateData {
                 DccRateType = dccRateType,
                 DccProcessor = dccProcessor

@@ -4,6 +4,15 @@
 
 #### Enhancements
 
+- Add Payment Link Id in the request for authorize (GP-API)
+- Add Dynamic Currency Conversion feature for GP-API
+
+#### Bug Fixes:
+
+- Fix issue for Diners card type (GP-ECOM)
+
+## v2.0.1 (01/20/2022)
+
 - move RequestLogger to new structure
 
 #### Bug Fixes:

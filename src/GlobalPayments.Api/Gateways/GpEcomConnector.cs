@@ -9,6 +9,8 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
     internal class GpEcomConnector : XmlGateway, IPaymentGateway, IRecurringService, ISecure3dProvider, IReportingService {
+               
+        private static Dictionary<string, string> mapCardType = new Dictionary<string, string> { { "DinersClub", "Diners" } };
         public string MerchantId { get; set; }
         public string AccountId { get; set; }
         public string SharedSecret { get; set; }
@@ -81,7 +83,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(cardElement, "number", card.Number);
                     et.SubElement(cardElement, "expdate", card.ShortExpiry);
                     et.SubElement(cardElement, "chname").Text(card.CardHolderName);
-                    et.SubElement(cardElement, "type", CardUtils.GetBaseCardType(card.CardType).ToUpper());
+                    et.SubElement(cardElement, "type", MapCardType(CardUtils.GetBaseCardType(card.CardType)).ToUpper());
 
                     if (card.Cvn != null) {
                         var cvnElement = et.SubElement(cardElement, "cvn");
@@ -682,7 +684,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(cardElement, "number").Text(card.Number);
                         et.SubElement(cardElement, "expdate").Text(expiry);
                         et.SubElement(cardElement, "chname").Text(card.CardHolderName);
-                        et.SubElement(cardElement, "type").Text(CardUtils.GetBaseCardType(card.CardType));
+                        et.SubElement(cardElement, "type").Text(MapCardType(CardUtils.GetBaseCardType(card.CardType)));
 
                         string sha1hash = string.Empty;
                         if (builder.TransactionType == TransactionType.Create)
@@ -817,7 +819,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 dccRateData.CardHolderCurrency = root.GetValue<string>("cardholdercurrency");
                 dccRateData.CardHolderAmount = root.GetValue<decimal>("cardholderamount");
-                dccRateData.CardHolderRate = root.GetValue<string>("cardholderrate");
+                dccRateData.CardHolderRate = root.GetValue<string>("cardholderrate").ToDecimal();
                 dccRateData.MerchantCurrency = root.GetValue<string>("merchantcurrency");
                 dccRateData.MerchantAmount = root.GetValue<decimal>("merchantamount");
                 dccRateData.MarginRatePercentage = root.GetValue<string>("marginratepercentage");
@@ -1041,6 +1043,21 @@ namespace GlobalPayments.Api.Gateways {
                 default:
                     throw new UnsupportedTransactionException();
             }
+        }
+
+        private string MapCardType(string cardType)
+        {
+            var returnCardType = cardType;
+
+            foreach (var map in mapCardType.Keys)
+            {
+                if(cardType.Equals(map))
+                {
+                    returnCardType = mapCardType.GetValue<string>(map);
+                    break;
+                }
+            }
+            return returnCardType;
         }
 
         private List<string> MapAcceptedCodes(string transactionType) {

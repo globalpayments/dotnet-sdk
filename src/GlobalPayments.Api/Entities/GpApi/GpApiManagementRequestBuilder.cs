@@ -11,7 +11,8 @@ namespace GlobalPayments.Api.Entities {
             if (builder.TransactionType == TransactionType.Capture) {
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
-                    .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString());
+                    .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
+                    .Set("currency_conversion", builder.DccRateData?.DccId ?? null);
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
@@ -21,7 +22,9 @@ namespace GlobalPayments.Api.Entities {
             }
             else if (builder.TransactionType == TransactionType.Refund) {
                 var data = new JsonDoc()
-                    .Set("amount", builder.Amount.ToNumericCurrencyString());
+                    .Set("amount", builder.Amount.ToNumericCurrencyString())
+                    .Set("currency_conversion", builder.DccRateData == null ? null : new JsonDoc()
+                        .Set("id", builder.DccRateData?.DccId));
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
@@ -31,7 +34,8 @@ namespace GlobalPayments.Api.Entities {
             }
             else if (builder.TransactionType == TransactionType.Reversal) {
                 var data = new JsonDoc()
-                    .Set("amount", builder.Amount.ToNumericCurrencyString());
+                    .Set("amount", builder.Amount.ToNumericCurrencyString())
+                    .Set("currency_conversion", builder.DccRateData?.DccId ?? null);
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
@@ -89,9 +93,9 @@ namespace GlobalPayments.Api.Entities {
                 if(builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH)
                 {
                     data.Set("description", builder.Description);
-                    if(builder.ECheck != null)
+                    if(builder.BankTransferDetails != null)
                     {
-                        var eCheck = builder.ECheck;
+                        var eCheck = builder.BankTransferDetails;
 
                         var paymentMethod = new JsonDoc()
                             .Set("narrative", eCheck.MerchantNotes);
