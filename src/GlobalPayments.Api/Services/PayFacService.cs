@@ -83,9 +83,14 @@ namespace GlobalPayments.Api.Services
             return new PayFacBuilder(TransactionType.GetAccountDetails);
         }
 
+        public PayFacBuilder GetAccountDetailsEnhanced() {
+            return new PayFacBuilder(TransactionType.GetAccountDetails, TransactionModifier.Additional);
+        }
+
         public PayFacBuilder GetAccountBalance() {
             return new PayFacBuilder(TransactionType.GetAccountBalance);
         }
+
         public void Dispose() {
         }
     }

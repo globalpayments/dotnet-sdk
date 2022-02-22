@@ -71,6 +71,11 @@ namespace GlobalPayments.Api {
         public string X509CertificatePath { get; set; }
 
         /// <summary>
+        /// ProPay X509 Certificate Base64 String (Optional: Can be used instead of X509CertificatePath)
+        /// </summary>
+        public string X509CertificateBase64String { get; set; }
+
+        /// <summary>
         /// If true (default), use the US ProPay endpoints.
         /// If false, use the Canadian ProPay endpoints
         /// </summary>
@@ -147,6 +152,7 @@ namespace GlobalPayments.Api {
                     Timeout = Timeout,
                     ServiceUrl = ServiceUrl,
                     X509CertPath = X509CertificatePath,
+                    X509Base64String = X509CertificateBase64String,
                     RequestLogger = RequestLogger,
                     WebProxy = WebProxy
                 };

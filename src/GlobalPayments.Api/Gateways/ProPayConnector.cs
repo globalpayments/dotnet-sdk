@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Gateways {
         public string CertStr { get; internal set; }
         public string TermID { get; internal set; }
         public string X509CertPath { get; internal set; }
+        public string X509Base64String { get; internal set; }
 
         #region Transaction Handling
         public Transaction ProcessPayFac(PayFacBuilder builder) {
@@ -53,8 +54,15 @@ namespace GlobalPayments.Api.Gateways {
 
         private string SetX509Certificate() {
             try {
-                var cert = new X509Certificate2(X509CertPath);
-                return Convert.ToBase64String(cert.Export(X509ContentType.Cert));
+                if (!string.IsNullOrEmpty(X509CertPath)) {
+                    var cert = new X509Certificate2(X509CertPath);
+                    return Convert.ToBase64String(cert.Export(X509ContentType.Cert));
+                }
+                else if (!string.IsNullOrEmpty(X509Base64String)) {
+                    return X509Base64String;
+                }
+                else
+                    throw new BuilderException("X509 Certificate was not provided.");
             }
             catch (Exception e) {
                 throw new GatewayException("X509 Certificate Error", e);
@@ -100,6 +108,10 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.SplitFunds:
                     return "16";
                 case TransactionType.GetAccountDetails:
+                    // We are using the Additional TransactionModifier to differentiate between GetAccountDetails and GetAccountDetailsEnhanced
+                    if (builder.TransactionModifier == TransactionModifier.Additional)
+                        return "19";
+                    // If the TransactionModifier isn't "Additional" then it is either "None" or an unsupported value that should be treated as "None"
                     return "13";
                 case TransactionType.GetAccountBalance:
                     return "14";
@@ -118,7 +130,7 @@ namespace GlobalPayments.Api.Gateways {
                 throw new GatewayException($"Unexpected Gateway Response: {responseCode}");
             }
 
-            var proPayResponse = PopulateProPayResponse(root);
+            var proPayResponse = PopulateProPayResponse(builder, root);
 
             var response = new Transaction() {
                 PayFacData = proPayResponse,
@@ -128,44 +140,156 @@ namespace GlobalPayments.Api.Gateways {
             return response;
         }
 
-        private PayFacResponseData PopulateProPayResponse(Element root)
+        private PayFacResponseData PopulateProPayResponse(PayFacBuilder builder, Element root)
         {
-            return new PayFacResponseData()
-            {
+            if (builder.TransactionType == TransactionType.GetAccountDetails && builder.TransactionModifier == TransactionModifier.Additional) {
+                return PopulateResponseWithEnhancedAccountDetails(root);
+            }
+            else {
+                return new PayFacResponseData() {
+                    AccountNumber = GetAccountNumberFromResponse(root),
+                    RecAccountNum = root.GetValue<string>("recAccntNum"),
+                    Password = root.GetValue<string>("password"),
+                    Amount = root.GetValue<string>("amount"),
+                    TransNum = root.GetValue<string>("transNum"),
+                    Pending = root.GetValue<string>("pending"),
+                    SecondaryAmount = root.GetValue<string>("secondaryAmount"),
+                    SecondaryTransNum = root.GetValue<string>("secondaryTransNum"),
+                    SourceEmail = root.GetValue<string>("sourceEmail"),
+                    AuthToken = root.GetValue<string>("AuthToken"),
+                    BeneficialOwnerDataResults = GetBeneficialOwnerDataResultsFromResponse(root),
+                    AccountStatus = root.GetValue<string>("accntStatus"),
+                    PhysicalAddress = GetPhysicalAddressFromResponse(root),
+                    Affiliation = root.GetValue<string>("affiliation"),
+                    APIReady = root.GetValue<string>("apiReady"),
+                    CurrencyCode = root.GetValue<string>("currencyCode"),
+                    Expiration = root.GetValue<string>("expiration"),
+                    SignupDate = root.GetValue<string>("signupDate"),
+                    Tier = root.GetValue<string>("tier"),
+                    VisaCheckoutMerchantID = root.GetValue<string>("visaCheckoutMerchantId"),
+                    CreditCardTransactionLimit = root.GetValue<string>("CreditCardTransactionLimit"),
+                    CreditCardMonthLimit = root.GetValue<string>("CreditCardMonthLimit"),
+                    ACHPaymentPerTranLimit = root.GetValue<string>("ACHPaymentPerTranLimit"),
+                    ACHPaymentMonthLimit = root.GetValue<string>("ACHPaymentMonthLimit"),
+                    CreditCardMonthlyVolume = root.GetValue<string>("CreditCardMonthlyVolume"),
+                    ACHPaymentMonthlyVolume = root.GetValue<string>("ACHPaymentMonthlyVolume"),
+                    ReserveBalance = root.GetValue<string>("ReserveBalance"),
+                    MasterPassCheckoutMerchantID = root.GetValue<string>("MasterPassCheckoutMerchantId"),
+                    PendingAmount = root.GetValue<string>("pendingAmount"),
+                    ReserveAmount = root.GetValue<string>("reserveAmount>"),
+                    ACHOut = GetACHOutBalanceInfoFromResponse(root),
+                    FlashFunds = GetFlashFundsBalanceInfoFromResponse(root)
+                };
+            }
+        }
+
+        private PayFacResponseData PopulateResponseWithEnhancedAccountDetails(Element root) {
+            return new PayFacResponseData() {
                 AccountNumber = GetAccountNumberFromResponse(root),
-                RecAccountNum = root.GetValue<string>("recAccntNum"),
-                Password = root.GetValue<string>("password"),
-                Amount = root.GetValue<string>("amount"),
-                TransNum = root.GetValue<string>("transNum"),
-                Pending = root.GetValue<string>("pending"),
-                SecondaryAmount = root.GetValue<string>("secondaryAmount"),
-                SecondaryTransNum = root.GetValue<string>("secondaryTransNum"),
-                SourceEmail = root.GetValue<string>("sourceEmail"),
-                AuthToken = root.GetValue<string>("AuthToken"),
-                BeneficialOwnerDataResults = GetBeneficialOwnerDataResultsFromResponse(root),
-                AccountStatus = root.GetValue<string>("accntStatus"),
-                PhysicalAddress = GetPhysicalAddressFromResponse(root),
-                Affiliation = root.GetValue<string>("affiliation"),
-                APIReady = root.GetValue<string>("apiReady"),
-                CurrencyCode = root.GetValue<string>("currencyCode"),
-                Expiration = root.GetValue<string>("expiration"),
-                SignupDate = root.GetValue<string>("signupDate"),
-                Tier = root.GetValue<string>("tier"),
-                VisaCheckoutMerchantID = root.GetValue<string>("visaCheckoutMerchantId"),
-                CreditCardTransactionLimit = root.GetValue<string>("CreditCardTransactionLimit"),
-                CreditCardMonthLimit = root.GetValue<string>("CreditCardMonthLimit"),
-                ACHPaymentPerTranLimit = root.GetValue<string>("ACHPaymentPerTranLimit"),
-                ACHPaymentMonthLimit = root.GetValue<string>("ACHPaymentMonthLimit"),
-                CreditCardMonthlyVolume = root.GetValue<string>("CreditCardMonthlyVolume"),
-                ACHPaymentMonthlyVolume = root.GetValue<string>("ACHPaymentMonthlyVolume"),
-                ReserveBalance = root.GetValue<string>("ReserveBalance"),
-                MasterPassCheckoutMerchantID = root.GetValue<string>("MasterPassCheckoutMerchantId"),
-                PendingAmount = root.GetValue<string>("pendingAmount"),
-                ReserveAmount = root.GetValue<string>("reserveAmount>"),
-                ACHOut = GetACHOutBalanceInfoFromResponse(root),
-                FlashFunds = GetFlashFundsBalanceInfoFromResponse(root)
+                PersonalData = new UserPersonalData()
+                {
+                    SourceEmail = root.GetValue<string>("sourceEmail"),
+                    FirstName = root.GetValue<string>("firstName"),
+                    MiddleInitial = root.GetValue<string>("middleInitial"),
+                    LastName = root.GetValue<string>("lastName"),
+                    DayPhone = root.GetValue<string>("dayPhone"),
+                    EveningPhone = root.GetValue<string>("evenPhone"),
+                    ExternalID = root.GetValue<string>("externalId"),
+                    Tier = root.GetValue<string>("tier"),
+                    CurrencyCode = root.GetValue<string>("currencyCode"),
+                    NotificationEmail = root.GetValue<string>("notificationEmail")
+                },
+                HomeAddress = new Address()
+                {
+                    StreetAddress1 = root.GetValue<string>("addr"),
+                    StreetAddress2 = root.GetValue<string>("aptNum"),
+                    City = root.GetValue<string>("city"),
+                    State = root.GetValue<string>("state"),
+                    PostalCode = root.GetValue<string>("postalCode"),
+                    Country = root.GetValue<string>("country")
+                },
+                MailAddress = new Address()
+                {
+                    StreetAddress1 = root.GetValue<string>("mailAddr"),
+                    StreetAddress2 = root.GetValue<string>("mailApt"),
+                    City = root.GetValue<string>("mailCity"),
+                    State = root.GetValue<string>("mailState"),
+                    PostalCode = root.GetValue<string>("mailPostalCode"),
+                    Country = root.GetValue<string>("mailCountry")
+                },
+                BusinessData = new BusinessData()
+                {
+                    BusinessLegalName = root.GetValue<string>("businessLegalName"),
+                    DoingBusinessAs = root.GetValue<string>("doingBusinessAs"),
+                    EmployerIdentificationNumber = root.GetValue<string>("ein"),
+                    BusinessAddress = new Address()
+                    {
+                        StreetAddress1 = root.GetValue<string>("businessAddress"),
+                        StreetAddress2 = root.GetValue<string>("businessAddress2"),
+                        City = root.GetValue<string>("businessCity"),
+                        State = root.GetValue<string>("businessState"),
+                        PostalCode = root.GetValue<string>("businessZip")
+                    },
+                    WebsiteURL = root.GetValue<string>("websiteURL"),
+                    AverageTicket = root.GetValue<string>("averageTicket"),
+                    HighestTicket = root.GetValue<string>("highestTicket")
+                },
+                AccountLimits = new AccountPermissions()
+                {
+                    CreditCardTransactionLimit = root.GetValue<string>("creditCardTransactionLimit"),
+                    CreditCardMonthLimit = root.GetValue<string>("creditCardMonthLimit"),
+                    ACHPaymentSoftLimitEnabled = root.GetValue<string>("achPaymentSoftLimitEnabled")?.ToUpper() == "Y" ? true : false,
+                    ACHPaymentACHOffPercent = root.GetValue<string>("achPaymentAchOffPercent"),
+                    SoftLimitEnabled = root.GetValue<string>("softLimitEnabled")?.ToUpper() == "Y" ? true : false,
+                    SoftLimitACHOffPercent = root.GetValue<string>("softLimitAchOffPercent")
+                },
+                ACHPaymentPerTranLimit = root.GetValue<string>("achPaymentPerTranLimit"),
+                ACHPaymentMonthLimit = root.GetValue<string>("achPaymentMonthLimit"),
+                ACHPaymentMonthlyVolume = root.GetValue<string>("achPaymentMonthlyVolume"),
+                CreditCardMonthlyVolume = root.GetValue<string>("creditCardMonthlyVolume"),
+
+                AvailableBalance = root.GetValue<string>("availableBalance"),
+                PendingBalance = root.GetValue<string>("pendingBalance"),
+                ReserveBalance = root.GetValue<string>("reserveBalance"),
+                PrimaryBankAccountData = new BankAccountData()
+                {
+                    AccountCountryCode = root.GetValue<string>("primaryAccountCountryCode"),
+                    AccountType = root.GetValue<string>("primaryAccountType"),
+                    AccountOwnershipType = root.GetValue<string>("primaryAccountOwnershipType"),
+                    BankName = root.GetValue<string>("primaryBankName"),
+                    AccountNumber = root.GetValue<string>("primaryAccountNumberLast4"),
+                    RoutingNumber = root.GetValue<string>("primaryRoutingNumber")
+                },
+                SecondaryBankAccountData = new BankAccountData()
+                {
+                    AccountCountryCode = root.GetValue<string>("secondaryAccountCountryCode"),
+                    AccountType = root.GetValue<string>("secondaryAccountType"),
+                    AccountOwnershipType = root.GetValue<string>("secondaryAccountOwnershipType"),
+                    BankName = root.GetValue<string>("secondaryBankName"),
+                    AccountNumber = root.GetValue<string>("secondaryAccountNumberLast4"),
+                    RoutingNumber = root.GetValue<string>("secondaryRoutingNumber")
+                },
+                GrossBillingInformation = new GrossBillingInformation()
+                {
+                    GrossSettleBankData = new BankAccountData()
+                    {
+                        AccountHolderName = root.GetValue<string>("grossSettleAccountHolderName"),
+                        AccountNumber = root.GetValue<string>("grossSettleAccountNumberLast4"),
+                        RoutingNumber = root.GetValue<string>("grossSettleRoutingNumber"),
+                        AccountType = root.GetValue<string>("grossSettleAccountType")
+                    },
+                    GrossSettleAddress = new Address()
+                    {
+                        StreetAddress1 = root.GetValue<string>("grossSettleAccountAddress"),
+                        City = root.GetValue<string>("grossSettleAccountCity"),
+                        State = root.GetValue<string>("grossSettleAccountState"),
+                        CountryCode = root.GetValue<string>("grossSettleAccountCountryCode"),
+                        PostalCode = root.GetValue<string>("grossSettleAccountZipCode")
+                    }
+                }
             };
         }
+
         private string GetAccountNumberFromResponse(Element root) {
             // ProPay API 4.1 (Create an account) has the account number specified in the response as "accntNum"
             // All other methods specify it as "accountNum" in the response

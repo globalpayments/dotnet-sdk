@@ -424,6 +424,12 @@ namespace GlobalPayments.Api.Entities {
                         }
                     }
                 }
+                if(builder.TransactionModifier == TransactionModifier.EncryptedMobile &&
+                    builder.PaymentMethod is CreditCardData &&
+                    ((CreditCardData)builder.PaymentMethod).HasInAppPaymentData()) {
+                    return "IN_APP";
+                }
+
                 return "ECOM";
             }
         }

@@ -68,9 +68,9 @@ namespace GlobalPayments.Api.Builders
 
         public FlashFundsPaymentCardData FlashFundsPaymentCardData { get; set; }
 
-        public PayFacBuilder(TransactionType type) {
+        public PayFacBuilder(TransactionType type, TransactionModifier modifer = TransactionModifier.None) {
             TransactionType = type;
-            TransactionModifier = TransactionModifier.None;
+            TransactionModifier = modifer;
         }
 
         public override Transaction Execute(string configName = "default") {
@@ -207,6 +207,10 @@ namespace GlobalPayments.Api.Builders
                 .Check(() => ExternalID).IsNull()
                 .When(() => SourceEmail).IsNotNull()
                 .Check(() => AccountNumber).IsNull();
+
+            Validations.For(TransactionType.GetAccountDetails)
+                .With(TransactionModifier.Additional)
+                .Check(() => AccountNumber).IsNotNull();
 
             Validations.For(TransactionType.GetAccountBalance)
                 .With(TransactionModifier.None)

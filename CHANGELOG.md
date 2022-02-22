@@ -4,6 +4,15 @@
 
 #### Enhancements
 
+- use "IN_APP" entry_mode when creating a transaction with digital wallets (GP-API)
+- Refactor reporting unit test (GP-API)
+- Pass X509 Certificate by Base64 string (ProPay)
+- Added ProPay transaction type 19, Get Enhanced Account Details (ProPay)
+
+## v2.0.2 (02/17/2022)
+
+#### Enhancements
+
 - Add Payment Link Id in the request for authorize (GP-API)
 - Add Dynamic Currency Conversion feature for GP-API
 

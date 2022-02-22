@@ -194,5 +194,9 @@ namespace GlobalPayments.Api.PaymentMethods {
                 return false;
             }
         }
+        public bool HasInAppPaymentData()
+        {
+            return (!string.IsNullOrEmpty(this.Token) && !string.IsNullOrEmpty(this.MobileType));
+        }
     }
 }

@@ -36,6 +36,19 @@ namespace GlobalPayments.Api.Entities.PayFac
         public string ReserveBalance { get; set; }
         public string MasterPassCheckoutMerchantID { get; set; }
 
+        // Enhanced Account Details
+        public UserPersonalData PersonalData { get; set; }
+        public Address HomeAddress { get; set; }
+        public Address MailAddress { get; set; }
+        public BusinessData BusinessData { get; set; }
+        public AccountPermissions AccountLimits { get; set; }
+        public string AvailableBalance { get; set; }
+        public string PendingBalance { get; set; }
+        public AccountBalanceResponseData AccountBalance { get; set; }
+        public BankAccountData PrimaryBankAccountData { get; set; }
+        public BankAccountData SecondaryBankAccountData { get; set; }
+        public GrossBillingInformation GrossBillingInformation { get; set; }
+
         // Account balance
         public string PendingAmount { get; set; }
         public string ReserveAmount { get; set; }
