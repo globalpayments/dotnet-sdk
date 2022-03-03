@@ -518,11 +518,11 @@ namespace GlobalPayments.Api.Gateways {
                         var setElement = et.SubElement(tokenActions, "Set");
 
                         var expMonth = et.SubElement(setElement, "Attribute");
-                        et.SubElement(expMonth, "Name", "expmonth");
+                        et.SubElement(expMonth, "Name", "ExpMonth");
                         et.SubElement(expMonth, "Value", card.ExpMonth);
 
                         var expYear = et.SubElement(setElement, "Attribute");
-                        et.SubElement(expYear, "Name", "expyear");
+                        et.SubElement(expYear, "Name", "ExpYear");
                         et.SubElement(expYear, "Value", card.ExpYear);
                     }
                     else {

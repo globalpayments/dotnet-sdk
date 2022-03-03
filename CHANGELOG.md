@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Bug Fixes:
+
+- fix for set attributes exp month and exp year when updating a token
+
+## v2.0.4 (03/02/2022)
+
 #### Enhancements
 
 - use "IN_APP" entry_mode when creating a transaction with digital wallets (GP-API)
