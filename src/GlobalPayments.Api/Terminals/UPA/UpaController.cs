@@ -183,7 +183,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             var txnParams = txnData.SubElement("params");
 
             var transaction = txnData.SubElement("transaction");
-            transaction.Set("tranNo", StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0'));
+            transaction.Set("referenceNumber", StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0'));
 
             return TerminalUtilities.BuildUpaRequest(doc.ToString());
         }
