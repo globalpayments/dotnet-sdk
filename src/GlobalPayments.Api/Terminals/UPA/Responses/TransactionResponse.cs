@@ -80,6 +80,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             }
             CardHolderName = payment.GetValue<string>("cardHolderName");
             // CardType = payment.GetValue<string>("cardType");
+            PaymentType = payment.GetValue<string>("cardType");
             // CardGroup = payment.GetValue<string>("cardGroup");
             // EbtType = payment.GetValue<string>("ebtType");
             EntryMethod = payment.GetValue<string>("cardAcquisition");
