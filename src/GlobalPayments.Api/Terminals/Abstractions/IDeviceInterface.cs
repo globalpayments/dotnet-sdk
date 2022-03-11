@@ -74,6 +74,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Sale(decimal? amount = null);
         TerminalAuthBuilder Verify();
         TerminalManageBuilder Void();
+        TerminalManageBuilder DeletePreAuth();
         TerminalAuthBuilder Withdrawal(decimal? amount = null);
         TerminalAuthBuilder TipAdjust();
         #endregion
