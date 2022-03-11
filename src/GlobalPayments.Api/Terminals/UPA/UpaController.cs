@@ -96,6 +96,10 @@ namespace GlobalPayments.Api.Terminals.UPA
                 if (!isTipAdjust && transType != TransactionType.Refund) {
                     txnParams.Set("tokenRequest", builder.RequestMultiUseToken ? "1" : "0");
                 }
+                if (builder.RequestMultiUseToken ) {                   
+                    txnParams.Set("cardOnFileIndicator", builder.CardOnFileIndicator);
+                }
+                
                 if (builder.PaymentMethod is CreditCardData) {
                     txnParams.Set("tokenValue", ((CreditCardData)builder.PaymentMethod).Token);
                 }
