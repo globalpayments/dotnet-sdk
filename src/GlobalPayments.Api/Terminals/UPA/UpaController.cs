@@ -109,13 +109,20 @@ namespace GlobalPayments.Api.Terminals.UPA
 
                 if (transType != TransactionType.Verify && transType != TransactionType.Refund && !isTipAdjust) {
                     var transaction = txnData.SubElement("transaction");
-                    transaction.Set("baseAmount", ToCurrencyString(builder.Amount));
-                    transaction.Set("cashBackAmount", ToCurrencyString(builder.CashBackAmount));
-                    transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
-                    transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
-                    transaction.Set("taxIndicator", builder.TaxExempt);
-                    transaction.Set("invoiceNbr", builder.InvoiceNumber);
-                    transaction.Set("tranNo", builder.TerminalRefNumber);
+                    if (transType == TransactionType.Auth)
+                    {
+                        transaction.Set("amount", ToCurrencyString(builder.Amount));
+                    } else
+                    {
+                        transaction.Set("baseAmount", ToCurrencyString(builder.Amount));
+                        transaction.Set("cashBackAmount", ToCurrencyString(builder.CashBackAmount));
+                        transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
+                        transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
+                        transaction.Set("taxIndicator", builder.TaxExempt);
+                        transaction.Set("invoiceNbr", builder.InvoiceNumber);
+                        transaction.Set("referenceNumber", builder.TerminalRefNumber);
+                    }
+
                 }
 
                 if (transType == TransactionType.Refund) {
