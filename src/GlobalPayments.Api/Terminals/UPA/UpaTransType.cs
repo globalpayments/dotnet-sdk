@@ -15,5 +15,9 @@
         public const string SendSAF = "SendSAF";
         public const string GetSAFReport = "GetSAFReport";
         public const string GetBatchReport = "GetBatchReport";
+        public const string PreAuth = "PreAuth";
+        public const string PreAuthComplete = "AuthCompletion";
+        public const string DeletePreAuth = "DeletePreAuth";
+        
     }
 }
