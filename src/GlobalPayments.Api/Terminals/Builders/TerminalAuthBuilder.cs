@@ -32,12 +32,18 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal int? ClerkId { get; set; }
         internal string LineItemLeft { get; set; }
         internal string LineItemRight { get; set; }
+        internal string CardOnFileIndicator { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
                     return (PaymentMethod as TransactionReference).TransactionId;
                 return null;
             }
+        }
+        public TerminalAuthBuilder WithCardOnFileIndicator(string indicator)
+        {
+            CardOnFileIndicator = indicator;
+            return this;
         }
 
         public TerminalAuthBuilder WithLineItemLeft(string lineItemLeft) {
