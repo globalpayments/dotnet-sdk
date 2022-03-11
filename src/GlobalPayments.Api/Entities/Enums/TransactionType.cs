@@ -327,5 +327,9 @@ namespace GlobalPayments.Api.Entities {
         /// Get Token Information for the given token
         /// </summary>
         GetTokenInfo = 1L << 63,
+        /// <summary>
+        /// Delete PreAuth
+        /// </summary>        
+        DeletePreAuth = 3L << 1
     }
 }
