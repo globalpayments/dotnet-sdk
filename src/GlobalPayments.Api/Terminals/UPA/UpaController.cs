@@ -184,6 +184,10 @@ namespace GlobalPayments.Api.Terminals.UPA
 
             var transaction = txnData.SubElement("transaction");
             transaction.Set("referenceNumber", StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0'));
+            if (transType == TransactionType.Capture || transType == TransactionType.DeletePreAuth)
+            {
+                transaction.Set("amount", ToCurrencyString(builder.Amount));
+            }
 
             return TerminalUtilities.BuildUpaRequest(doc.ToString());
         }
