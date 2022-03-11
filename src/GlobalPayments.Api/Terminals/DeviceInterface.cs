@@ -146,6 +146,10 @@ namespace GlobalPayments.Api.Terminals {
             return new TerminalAuthBuilder(TransactionType.BenefitWithdrawal, PaymentMethodType.EBT)
                 .WithAmount(amount);
         }
+        public virtual  TerminalManageBuilder DeletePreAuth()
+        {
+            return new TerminalManageBuilder(TransactionType.DeletePreAuth, PaymentMethodType.Credit);
+        }
 
         public virtual TerminalAuthBuilder TipAdjust() {
             throw new System.NotImplementedException();
