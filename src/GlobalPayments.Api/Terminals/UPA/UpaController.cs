@@ -249,6 +249,15 @@ namespace GlobalPayments.Api.Terminals.UPA
                     }
                 case TransactionType.Verify:
                     return UpaTransType.CardVerify;
+                case TransactionType.Auth:
+                    return UpaTransType.PreAuth;
+
+                case TransactionType.Capture:
+                    return UpaTransType.PreAuthComplete;
+
+                case TransactionType.DeletePreAuth:
+                    return UpaTransType.DeletePreAuth;
+                    
                 default:
                     throw new UnsupportedTransactionException();
             }
