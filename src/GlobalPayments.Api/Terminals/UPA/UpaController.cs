@@ -93,7 +93,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
                 var txnParams = txnData.SubElement("params");
                 txnParams.Set("clerkId", builder.ClerkId);
-                if (!isTipAdjust) {
+                if (!isTipAdjust && transType != TransactionType.Refund) {
                     txnParams.Set("tokenRequest", builder.RequestMultiUseToken ? "1" : "0");
                 }
                 if (builder.PaymentMethod is CreditCardData) {
