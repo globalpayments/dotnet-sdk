@@ -7,7 +7,7 @@ namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Data collection to supplement a hosted payment page.
     /// </summary>
-    public class HostedPaymentData: AlternatePaymentMethod {
+    public class HostedPaymentData {
         /// <summary>
         /// A value indicating to the issuer that the shipping and billing addresses
         /// are expected to be the same. Used as a fraud prevention.
@@ -45,6 +45,30 @@ namespace GlobalPayments.Api.Entities {
         public string CustomerPhoneMobile { get; set; }
 
         /// <summary>
+        /// A Country value representing the Country.
+        /// </summary>
+        public string CustomerCountry { get; set; }
+
+        /// <summary>
+        /// A StatusUpdateUrl is representing after the transaction
+        /// Where the status response will come like SUCCESS/PENDING
+        ///.
+        /// </summary>
+        public string TransactionStatusUrl { get; set; }
+
+        /// <summary>
+        /// A CancelUrl is representing during the payment
+        /// Where the transaction cancels to .
+        /// </summary>
+        public string CancelUrl { get; set; }
+
+        /// <summary>
+        /// A ReturnUrl is representing after the payment
+        /// Where the transaction return to.
+        /// </summary>
+        public string MerchantResponseUrl { get; set; }
+
+        /// <summary>
         /// Indicates if the customer should be prompted to store their card.
         /// </summary>
         public bool? OfferToSaveCard { get; set; }
@@ -64,7 +88,7 @@ namespace GlobalPayments.Api.Entities {
         /// of the merchant/application.
         /// </summary>
         public Dictionary<string, string> SupplementaryData { get; set; }
-
+       
         /// <summary>
         /// The customer's FirstName.
         /// </summary>

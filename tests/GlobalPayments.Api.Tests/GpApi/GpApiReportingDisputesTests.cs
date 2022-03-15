@@ -77,20 +77,17 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         [TestMethod]
-        [Ignore]
-        // Although requests are done with &STATUS set properly, the real endpoint returns disputes with other statuses.
-        // Apart from this, the request param: STATUS is accepted, but status is not.
-        // TODO: Reported error to GP-API team. Enable it when fixed.
         public void ReportFindDisputesPaged_By_Status() {
-            const DisputeStatus disputeStatus = DisputeStatus.UnderReview;
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
-                .And(SearchCriteria.DisputeStatus, disputeStatus)
-                .Execute();
-            Assert.IsNotNull(result?.Results);
-            Assert.IsTrue(result.Results is List<DisputeSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(d =>
-                d.CaseStatus == EnumConverter.GetMapping(Target.GP_API, disputeStatus)));
+            foreach (DisputeStatus disputeStatus in Enum.GetValues(typeof(DisputeStatus))) {
+                var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+                    .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                    .And(SearchCriteria.DisputeStatus, disputeStatus)
+                    .Execute();
+                Assert.IsNotNull(result?.Results);
+                Assert.IsTrue(result.Results is List<DisputeSummary>);
+                Assert.IsTrue(result.Results.TrueForAll(d =>
+                    d.CaseStatus == EnumConverter.GetMapping(Target.GP_API, disputeStatus)));
+            }
         }
 
         [TestMethod]

@@ -1,12 +1,13 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiEbtTests : BaseGpApiTests {
-        EBTCardData ebtCardData;
-        EBTTrackData ebtTrackData;
+        private EBTCardData ebtCardData;
+        private EBTTrackData ebtTrackData;
 
         private const string CURRENCY = "USD";
         private const decimal AMOUNT = 10m;
@@ -14,9 +15,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
+                AppId = APP_ID,
+                AppKey = APP_KEY,
                 Channel = Channel.CardPresent,
+                RequestLogger = new RequestConsoleLogger()
             });
         }
 
@@ -24,8 +26,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void TestInitialize() {
             ebtCardData = new EBTCardData {
                 Number = "4012002000060016",
-                ExpMonth = 12,
-                ExpYear = 2025,
+                ExpMonth = expMonth,
+                ExpYear = expYear,
                 PinBlock = "32539F50C245A6A93D123412324000AA",
                 CardHolderName = "Jane Doe",
                 CardPresent = true
@@ -54,7 +56,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Captured);
+            AssertEbtResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -63,7 +65,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Captured);
+            AssertEbtResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -72,7 +74,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Captured);
+            AssertEbtResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -81,7 +83,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Captured);
+            AssertEbtResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -90,13 +92,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(transaction, TransactionStatus.Captured);
+            AssertEbtResponse(transaction, TransactionStatus.Captured);
 
             var response = transaction.Refund()
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Captured);
+            AssertEbtResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -105,13 +107,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(transaction, TransactionStatus.Captured);
+            AssertEbtResponse(transaction, TransactionStatus.Captured);
 
             var response = transaction.Refund()
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Captured);
+            AssertEbtResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -120,13 +122,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(transaction, TransactionStatus.Captured);
+            AssertEbtResponse(transaction, TransactionStatus.Captured);
 
             var response = transaction.Reverse()
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Reversed);
+            AssertEbtResponse(response, TransactionStatus.Reversed);
         }
 
         [TestMethod]
@@ -135,19 +137,19 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(transaction, TransactionStatus.Captured);
+            AssertEbtResponse(transaction, TransactionStatus.Captured);
 
             var response = transaction.Reverse()
                 .WithCurrency(CURRENCY)
                 .Execute();
 
-            assertEbtResponse(response, TransactionStatus.Reversed);
+            AssertEbtResponse(response, TransactionStatus.Reversed);
         }
 
-        private void assertEbtResponse(Transaction response, TransactionStatus transactionStatus) {
+        private void AssertEbtResponse(Transaction response, TransactionStatus transactionStatus) {
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(transactionStatus), response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(GetMapping(transactionStatus), response.ResponseMessage);
         }
     }
 }

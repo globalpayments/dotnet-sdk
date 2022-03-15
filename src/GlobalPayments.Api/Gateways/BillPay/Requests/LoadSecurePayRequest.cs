@@ -52,7 +52,7 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             et.SubElement(requestElement, "bdms:PayorPostalCodeIsEditable", customerIsEditable);
             et.SubElement(requestElement, "bdms:PayorState", builder.HostedPaymentData.CustomerAddress.State);
             et.SubElement(requestElement, "bdms:PayorStateIsEditable", customerIsEditable);
-            et.SubElement(requestElement, "bdms:ReturnURL", builder.HostedPaymentData.ReturnUrl);
+            et.SubElement(requestElement, "bdms:ReturnURL", builder.HostedPaymentData.MerchantResponseUrl);
             et.SubElement(requestElement, "bdms:SecurePayPaymentType_ID", (int)builder.HostedPaymentData.HostedPaymentType);
 
             return et.ToString(envelope);

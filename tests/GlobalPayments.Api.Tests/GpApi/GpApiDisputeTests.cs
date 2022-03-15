@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiDisputeTests : BaseGpApiTests {
-        DisputeSummary dispute;
+        private DisputeSummary dispute;
+        private List<DisputeDocument> document;
+        private List<DisputeDocument> documents;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
+                AppId = APP_ID,
+                AppKey = APP_KEY,
+                RequestLogger = new RequestConsoleLogger()
             });
         }
 
@@ -20,16 +24,32 @@ namespace GlobalPayments.Api.Tests.GpApi {
             dispute = new DisputeSummary {
                 CaseId = "DIS_SAND_abcd1234"
             };
+            
+            document = new List<DisputeDocument> {
+                new DisputeDocument{
+                    Type = "SALES_RECEIPT",
+                    Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
+                    }
+            };
+            
+            documents = new List<DisputeDocument> {
+                new DisputeDocument {
+                    Type = "SALES_RECEIPT",
+                    Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
+                },
+                new DisputeDocument {
+                    Type = "TERMS_AND_CONDITIONS",
+                    Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
+                }
+            };
         }
 
         [TestMethod]
         public void DisputeAccept() {
             var response = dispute.Accept()
                 .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(DisputeStatus.Closed), response?.ResponseMessage);
+            
+            AssertDisputeResponse(response, DisputeStatus.Closed);
         }
 
         [TestMethod]
@@ -48,62 +68,31 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("40067", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - 124," +
                                 "Unable to accept for that id. Please check the Case id again.", ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
 
         [TestMethod]
         public void DisputeChallenge() {
-            var documents = new List<DisputeDocument>();
-            documents.Add(new DisputeDocument {
-                Type = "SALES_RECEIPT",
-                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
-            });
-
-            var response = dispute.Challenge(documents)
+            var response = dispute.Challenge(document)
                 .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(DisputeStatus.Closed), response?.ResponseMessage);
+            
+            AssertDisputeResponse(response, DisputeStatus.Closed);
         }
 
         [TestMethod]
         public void DisputeChallenge_MultipleDocuments() {
             dispute.CaseId = "DIS_SAND_abcd1241";
 
-            var documents = new List<DisputeDocument>();
-            documents.Add(new DisputeDocument {
-                Type = "SALES_RECEIPT",
-                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
-            });
-            documents.Add(new DisputeDocument {
-                Type = "TERMS_AND_CONDITIONS",
-                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
-            });
-
             var response = dispute.Challenge(documents)
                 .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(DisputeStatus.UnderReview), response?.ResponseMessage);
+            
+            AssertDisputeResponse(response, DisputeStatus.UnderReview);
         }
 
         [TestMethod]
         public void DisputeChallenge_MultipleDocuments_ClosedStatus() {
-            var documents = new List<DisputeDocument>();
-            documents.Add(new DisputeDocument {
-                Type = "SALES_RECEIPT",
-                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
-            });
-            documents.Add(new DisputeDocument {
-                Type = "TERMS_AND_CONDITIONS",
-                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
-            });
-
             var exceptionCaught = false;
             try {
                 dispute.Challenge(documents)
@@ -116,25 +105,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("Status Code: BadRequest - 131," +
                                 "The dispute stage, Retrieval, can be challenged with a single document only. Please correct the request and resubmit",
                     ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
 
         [TestMethod]
         public void DisputeChallenge_MissingOptional_Type() {
-            var documents = new List<DisputeDocument>();
-            documents.Add(new DisputeDocument {
-                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
-            });
-
-            var response = dispute.Challenge(documents)
+            var response = dispute.Challenge(document)
                 .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(DisputeStatus.Closed), response?.ResponseMessage);
+            
+            AssertDisputeResponse(response, DisputeStatus.Closed);
         }
 
         [TestMethod]
@@ -142,15 +123,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             dispute = new DisputeSummary {
                 CaseId = "DIS_SAND_bbbb1111"
             };
-            var documents = new List<DisputeDocument>();
-            documents.Add(new DisputeDocument {
-                Type = "SALES_RECEIPT",
-                Base64Content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv",
-            });
 
             var exceptionCaught = false;
             try {
-                dispute.Challenge(documents)
+                dispute.Challenge(document)
                     .Execute();
             }
             catch (GatewayException ex) {
@@ -159,8 +135,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("40060", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - 117," +
                                 "Unable to challenge for that id. Please check the Case id again.", ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -180,10 +155,15 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual(
                     "Status Code: BadRequest - Unable to challenge as No document provided with the request",
                     ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
+        }
+        
+        private void AssertDisputeResponse(Transaction transaction, DisputeStatus disputeStatus) {
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual(SUCCESS, transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(disputeStatus), transaction.ResponseMessage);
         }
     }
 }

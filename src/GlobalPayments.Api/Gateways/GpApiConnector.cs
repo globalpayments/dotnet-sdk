@@ -202,7 +202,7 @@ namespace GlobalPayments.Api.Gateways {
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
-                if (builder.PaymentMethod is AlternatePaymentMethod) {
+                if (builder.PaymentMethod is AlternativePaymentMethod) {
                     return GpApiMapping.MapResponseAPM(response);
                 }
                 return GpApiMapping.MapResponse(response);

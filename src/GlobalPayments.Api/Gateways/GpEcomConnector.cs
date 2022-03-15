@@ -43,8 +43,8 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // apm validations
-            if (builder.PaymentMethod is AlternatePaymentMethod) {
-                var apm = builder.PaymentMethod as AlternatePaymentMethod;
+            if (builder.PaymentMethod is AlternativePaymentMethod) {
+                var apm = builder.PaymentMethod as AlternativePaymentMethod;
                 if (apm.ReturnUrl == null || apm.StatusUpdateUrl == null || apm.AccountHolderName == null || apm.Country == null || apm.Descriptor == null) {
                     throw new BuilderException("PaymentMethod, ReturnUrl, StatusUpdateUrl, AccountHolderName, Country, Descriptor can not be null ");
                 }
@@ -67,7 +67,9 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(request, "autosettle").Set("flag", autoSettle);
             }
 
-            et.SubElement(request, "channel", Channel);
+            if (!(builder.PaymentMethod is AlternativePaymentMethod)) {
+                et.SubElement(request, "channel", Channel);
+            }
             et.SubElement(request, "orderid", orderId);
 
             // Hydrate the payment data fields
@@ -105,21 +107,19 @@ namespace GlobalPayments.Api.Gateways {
                 }
                 et.SubElement(request, "sha1hash").Text(hash);
             }
-            else if (builder.PaymentMethod is AlternatePaymentMethod) {
-                var apm = builder.PaymentMethod as AlternatePaymentMethod;
-
-                et.SubElement(request, "paymentmethod", apm.AlternativePaymentMethodType);
-
-                var paymentmethoddetails = et.SubElement(request, "paymentmethoddetails");
-                et.SubElement(paymentmethoddetails, "returnurl", apm.ReturnUrl);
-                et.SubElement(paymentmethoddetails, "statusupdateurl", apm.StatusUpdateUrl);
-                et.SubElement(paymentmethoddetails, "descriptor", apm.Descriptor);
-                et.SubElement(paymentmethoddetails, "country", apm.Country);
-                et.SubElement(paymentmethoddetails, "accountholdername", apm.AccountHolderName);
-
+            else if (builder.PaymentMethod is AlternativePaymentMethod) { 
+                BuildAlternativePaymentMethod(builder, request, ref et);
+               
+                #region DESCRIPTION           
+                if (builder.Description != null)
+                {
+                    var comments = et.SubElement(request, "comments");
+                    et.SubElement(comments, "comment", builder.Description).Set("id", "1");
+                }
+                #endregion
                 // issueno
                 string hash = string.Empty;
-                hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, apm.AlternativePaymentMethodType.ToString());
+                hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, ((AlternativePaymentMethod)builder.PaymentMethod).AlternativePaymentMethodType.ToString().ToLower());
                 et.SubElement(request, "sha1hash").Text(hash);
             }
             if (builder.PaymentMethod is RecurringPaymentMethod) {
@@ -193,7 +193,9 @@ namespace GlobalPayments.Api.Gateways {
             #endregion
 
             #region DESCRIPTION
-            if (builder.Description != null) {
+            
+            if (builder.Description != null && !(builder.PaymentMethod is AlternativePaymentMethod))
+            {
                 var comments = et.SubElement(request, "comments");
                 et.SubElement(comments, "comment", builder.Description).Set("id", "1");
             }
@@ -395,11 +397,11 @@ namespace GlobalPayments.Api.Gateways {
                 }
                 request.Set("PMT_REF", builder.HostedPaymentData.PaymentKey);
                 request.Set("PROD_ID", builder.HostedPaymentData.ProductId);
-                request.Set("HPP_CUSTOMER_COUNTRY", builder.HostedPaymentData.Country);
+                request.Set("HPP_CUSTOMER_COUNTRY", builder.HostedPaymentData.CustomerCountry);
                 request.Set("HPP_CUSTOMER_FIRSTNAME", builder.HostedPaymentData.CustomerFirstName);
                 request.Set("HPP_CUSTOMER_LASTNAME", builder.HostedPaymentData.CustomerLastName);
-                request.Set("MERCHANT_RESPONSE_URL", builder.HostedPaymentData.ReturnUrl);
-                request.Set("HPP_TX_STATUS_URL", builder.HostedPaymentData.StatusUpdateUrl);
+                request.Set("MERCHANT_RESPONSE_URL", builder.HostedPaymentData.MerchantResponseUrl);
+                request.Set("HPP_TX_STATUS_URL", builder.HostedPaymentData.TransactionStatusUrl);
                 request.Set("PM_METHODS", PaymentValues);
 
                 // 3DSv2
@@ -491,7 +493,9 @@ namespace GlobalPayments.Api.Gateways {
                 toHash.Add(HostedPaymentConfig.FraudFilterMode.ToString());
             }
 
-            request.Set("CHARGE_DESCRIPTION", builder.DynamicDescriptor); 
+            if (builder.DynamicDescriptor != null) {
+                request.Set("CHARGE_DESCRIPTION", builder.DynamicDescriptor);
+            }
             request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray()));
             return request.ToString();
         }
@@ -520,18 +524,23 @@ namespace GlobalPayments.Api.Gateways {
                 .Set("type", MapManageRequestType(builder));
             et.SubElement(request, "merchantid").Text(MerchantId);
             et.SubElement(request, "account", AccountId);
-            et.SubElement(request, "channel", Channel);
-            et.SubElement(request, "orderid", orderId);
-            et.SubElement(request, "pasref", builder.TransactionId);
-            if (builder.Amount.HasValue) {
+            if (builder.Amount.HasValue)
+            {
                 var amtElement = et.SubElement(request, "amount", builder.Amount.ToNumericCurrencyString());
-                if (!builder.MultiCapture) {
+                if (!builder.MultiCapture)
+                {
                     amtElement.Set("currency", builder.Currency);
                 }
             }
-            else if (builder.TransactionType == TransactionType.Capture) {
+            else if (builder.TransactionType == TransactionType.Capture)
+            {
                 throw new BuilderException("Amount cannot be null for capture.");
             }
+            if (!(builder.PaymentMethod is AlternativePaymentMethod)) {
+                et.SubElement(request, "channel", Channel);
+            }
+            et.SubElement(request, "orderid", orderId);
+            et.SubElement(request, "pasref", builder.TransactionId);           
 
             // DCC
             if (builder.DccRateData != null) {
@@ -554,12 +563,7 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.TransactionType == TransactionType.Capture && builder.MultiCapture == true) {
                 et.SubElement(request, "authcode").Text(builder.AuthorizationCode);
             }
-
-            // Check is APM for Refund
-            if (builder.AlternativePaymentType != null) {
-                et.SubElement(request, "paymentmethod", builder.AlternativePaymentType);
-            }
-
+                       
             // payer authentication response
             if (builder.TransactionType == TransactionType.VerifySignature) {
                 et.SubElement(request, "pares", builder.PayerAuthenticationResponse);
@@ -568,6 +572,24 @@ namespace GlobalPayments.Api.Gateways {
             // reason code
             if (builder.ReasonCode != null) {
                 et.SubElement(request, "reasoncode").Text(builder.ReasonCode.ToString());
+            }
+
+            // Check is APM for Refund
+            if (builder.AlternativePaymentType != null)
+            {
+                et.SubElement(request, "paymentmethod", builder.AlternativePaymentType.ToString().ToLower());
+                if (builder.TransactionType == TransactionType.Confirm)
+                {
+                    Element paymentMethodDetails = et.SubElement(request, "paymentmethoddetails");                    
+
+                    var apmResponse = ((TransactionReference)builder.PaymentMethod).AlternativePaymentResponse;
+                    if (builder.AlternativePaymentType == AlternativePaymentType.PAYPAL)
+                    {
+                        et.SubElement(paymentMethodDetails, "Token", apmResponse.SessionToken);
+                        et.SubElement(paymentMethodDetails, "PayerID", apmResponse.ProviderReference);                        
+                    }
+                    
+                }
             }
 
             // description
@@ -608,7 +630,7 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
 
-            et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, builder.AlternativePaymentType != null ? builder.AlternativePaymentType.ToString() : null));
+            et.SubElement(request, "sha1hash", GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, builder.AlternativePaymentType != null ? builder.AlternativePaymentType.ToString().ToLower() : null));
 
             // rebate hash
             if (builder.TransactionType == TransactionType.Refund) {
@@ -767,17 +789,57 @@ namespace GlobalPayments.Api.Gateways {
                     TransactionId = root.GetValue<string>("pasref"),
                     AlternativePaymentType = root.GetValue<string>("paymentmethod"),
                     BatchNumber = root.GetValue<string>("batchid")
-                },
-                AlternativePaymentResponse = new AlternativePaymentResponse
-                {
-                    BankAccount = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("bankaccount"):null,
-                    AccountHolderName = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("accountholdername"): null,
-                    Country = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("country"):null,
-                    RedirectUrl = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("redirecturl"):null,
-                    PaymentPurpose = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("paymentpurpose"):null,
-                    PaymentMethod = root.Has("paymentmethoddetails") ? root.Get("paymentmethoddetails")?.GetValue<string>("paymentmethod"):null,
-                },
+                }              
             };
+            
+            var paymentMethodDetails = root.Get("paymentmethoddetails");
+            if (paymentMethodDetails != null) {
+
+                AlternativePaymentResponse alternativePaymentResponse = new AlternativePaymentResponse
+                {
+                    BankAccount = paymentMethodDetails?.GetValue<string>("bankaccount"),
+                    AccountHolderName = paymentMethodDetails?.GetValue<string>("accountholdername"),
+                    Country = paymentMethodDetails?.GetValue<string>("country"),
+                    RedirectUrl = paymentMethodDetails?.GetValue<string>("redirecturl"),
+                    PaymentPurpose = paymentMethodDetails?.GetValue<string>("paymentpurpose"),
+                    PaymentMethod = paymentMethodDetails?.GetValue<string>("paymentmethod"),
+                };
+
+                Element apmResponseDetails = null;
+
+                if (paymentMethodDetails.Has("SetExpressCheckoutResponse")) {
+                    apmResponseDetails = paymentMethodDetails.Get("SetExpressCheckoutResponse");
+                }
+                else if(paymentMethodDetails.Has("DoExpressCheckoutPaymentResponse")) {
+                    apmResponseDetails = paymentMethodDetails.Get("DoExpressCheckoutPaymentResponse");
+                }
+
+                if (apmResponseDetails != null) {
+                    alternativePaymentResponse.SessionToken = apmResponseDetails.GetValue<string>("Token");
+                    alternativePaymentResponse.Ack = apmResponseDetails.GetValue<string>("Ack");
+                    alternativePaymentResponse.TimeCreatedReference = apmResponseDetails.GetValue<string>("Timestamp").ToDateTime();
+                    alternativePaymentResponse.CorrelationReference = apmResponseDetails.GetValue<string>("CorrelationID");
+                    alternativePaymentResponse.VersionReference = apmResponseDetails.GetValue<string>("Version");
+                    alternativePaymentResponse.BuildReference = apmResponseDetails.GetValue<string>("Build");
+
+                    if (apmResponseDetails.Has("PaymentInfo")) {
+                        Element paymentInfo = apmResponseDetails.Get("PaymentInfo");                        
+                        alternativePaymentResponse.TransactionReference = paymentInfo.GetValue<string>("TransactionID");
+                        alternativePaymentResponse.PaymentType = paymentInfo.GetValue<string>("PaymentType");
+                        alternativePaymentResponse.PaymentTimeReference = paymentInfo.GetValue<string>("PaymentDate").ToDateTime();
+                        alternativePaymentResponse.GrossAmount = paymentInfo.GetValue<string>("GrossAmount").ToAmount();
+                        alternativePaymentResponse.FeeAmount = paymentInfo.GetValue<string>("TaxAmount").ToAmount();
+                        alternativePaymentResponse.PaymentStatus = paymentInfo.GetValue<string>("PaymentStatus");
+                        alternativePaymentResponse.PendingReason = paymentInfo.GetValue<string>("PendingReason");
+                        alternativePaymentResponse.ReasonCode = paymentInfo.GetValue<string>("ReasonCode");
+                        alternativePaymentResponse.AuthProtectionEligibility = paymentInfo.GetValue<string>("ProtectionElegibility");
+                        alternativePaymentResponse.AuthProtectionEligibilityType = paymentInfo.GetValue<string>("ProtectionElegibi");                        
+                    }
+                }
+
+                result.AlternativePaymentResponse = alternativePaymentResponse;
+            }
+            
 
             // fraud response
             if (root.Has("fraudresponse"))
@@ -950,7 +1012,7 @@ namespace GlobalPayments.Api.Gateways {
                             }
                             return "auth";
                         }
-                        else if (payment is AlternatePaymentMethod) {
+                        else if (payment is AlternativePaymentMethod) {
                             return "payment-set";
                         }
                         else return "receipt-in";
@@ -972,7 +1034,7 @@ namespace GlobalPayments.Api.Gateways {
                         if (payment is Credit) {
                             return "credit";
                         }
-                        else if (payment is AlternatePaymentMethod) {
+                        else if (payment is AlternativePaymentMethod) {
                             return "payment-credit";
                         }
                         else { return "payment-out"; }
@@ -988,6 +1050,10 @@ namespace GlobalPayments.Api.Gateways {
                             return "dccrate";
                         }
                         return "realvault-dccrate";
+                    }
+                case TransactionType.Confirm:
+                    {                        
+                        return "payment-do";
                     }
                 default: {
                         throw new UnsupportedTransactionException();
@@ -1016,6 +1082,8 @@ namespace GlobalPayments.Api.Gateways {
                     return "void";
                 case TransactionType.VerifySignature:
                     return "3ds-verifysig";
+                case TransactionType.Confirm:
+                    return "payment-do";
                 default:
                     return "unknown";
             }
@@ -1066,9 +1134,44 @@ namespace GlobalPayments.Api.Gateways {
                 case "3ds-verifyenrolled":
                     return new List<string> { "00", "110" };
                 case "payment-set":
-                    return new List<string> { "01" };
+                    return new List<string> { "01", "00" };
                 default:
                     return new List<string> { "00" };
+            }
+        }
+
+        public void BuildAlternativePaymentMethod(AuthorizationBuilder builder, Element request, ref ElementTree et)
+        {
+            AlternativePaymentMethod apm = (AlternativePaymentMethod)builder.PaymentMethod;
+
+            et.SubElement(request, "paymentmethod", apm.AlternativePaymentMethodType.ToString().ToLower());
+
+            Element paymentMethodDetails = et.SubElement(request, "paymentmethoddetails");
+
+            List<string> apmUrls = MapAPMUrls(apm.AlternativePaymentMethodType.Value);
+
+            string returnUrl = apmUrls[0];
+            string statusUpdateUrl = apmUrls[1];
+            string cancelUrl = apmUrls[2];
+
+            et.SubElement(paymentMethodDetails, returnUrl, apm.ReturnUrl);
+            et.SubElement(paymentMethodDetails, statusUpdateUrl, apm.StatusUpdateUrl);
+            et.SubElement(paymentMethodDetails, cancelUrl, apm.CancelUrl);
+
+            et.SubElement(paymentMethodDetails, "descriptor", apm.Descriptor);
+            et.SubElement(paymentMethodDetails, "country", apm.Country);
+            et.SubElement(paymentMethodDetails, "accountholdername", apm.AccountHolderName);
+        }
+
+        private List<string> MapAPMUrls(AlternativePaymentType alternativePaymentType)
+        {
+            switch (alternativePaymentType)
+            {
+                case AlternativePaymentType.PAYPAL:                
+                    return new List<string> { "ReturnURL", "StatusUpdateUrl", "CancelURL" };
+               
+                default:
+                    return new List<string> { "returnurl", "statusupdateurl", "cancelurl" };
             }
         }
         #endregion

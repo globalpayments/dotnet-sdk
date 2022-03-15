@@ -9,9 +9,9 @@ using System.Linq;
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiAchTest : BaseGpApiTests {
-        eCheck eCheck;
-        Address address;
-        Customer customer;
+        private eCheck eCheck;
+        private Address address;
+        private Customer customer;
 
         private const string CURRENCY = "USD";
         private const decimal AMOUNT = 10m;
@@ -28,8 +28,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestInitialize]
         public void TestInitialize() {
-            address = new Address
-            {
+            address = new Address {
                 StreetAddress1 = "Apartment 852",
                 StreetAddress2 = "Complex 741",
                 StreetAddress3 = "no",
@@ -39,8 +38,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 CountryCode = "US"
             };
 
-            Address bankAddress = new Address
-            { 
+            var bankAddress = new Address { 
                 StreetAddress1 = "12000 Smoketown Rd",
                 StreetAddress2 = "Apt 3B",
                 StreetAddress3 = "no",
@@ -50,8 +48,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 CountryCode = "US"
             };
 
-            eCheck = new eCheck
-            {
+            eCheck = new eCheck {
                 AccountNumber = "1234567890",
                 RoutingNumber = "122000030",
                 AccountType = AccountType.SAVINGS,
@@ -63,9 +60,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 BankAddress = bankAddress
             };
 
-
-            customer = new Customer
-            {
+            customer = new Customer {
                 Id = "e193c21a-ce64-4820-b5b6-8f46715de931",
                 FirstName = "James",
                 LastName = "Mason",
@@ -101,7 +96,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
         //GP-API sandbox limitation
         public void CheckRefundExistingSale()
         {
-
             var amount = 1.29m;
 
             var response = ReportingService.FindTransactionsPaged(1, 10)
@@ -118,8 +112,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transactionSummary = response.Results.FirstOrDefault();
             Assert.IsNotNull(transactionSummary);
             Assert.AreEqual(amount, transactionSummary.Amount);
-            var transaction = new Transaction
-            {
+            var transaction = new Transaction {
                 TransactionId = transactionSummary.TransactionId,
                 PaymentMethodType = PaymentMethodType.ACH
             };
@@ -132,10 +125,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CheckReauthorize()
-        {
-            var eCheckReauth = new eCheck 
-            { 
+        public void CheckReauthorize() {
+            var eCheckReauth = new eCheck { 
                 SecCode = SecCode.PPD,
                 AccountNumber = "051904524",
                 RoutingNumber = "123456780",
@@ -157,8 +148,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transactionSummary = response.Results.FirstOrDefault();
             Assert.IsNotNull(transactionSummary);
             Assert.AreEqual(amount, transactionSummary.Amount);
-            var transaction = new Transaction
-            {
+            var transaction = new Transaction {
                 TransactionId = transactionSummary.TransactionId,
                 PaymentMethodType = PaymentMethodType.ACH
             };
@@ -170,7 +160,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             assertResponse(resp, TransactionStatus.Captured);
         }
-
 
         private void assertResponse(Transaction response, TransactionStatus transactionStatus) {
             Assert.IsNotNull(response);

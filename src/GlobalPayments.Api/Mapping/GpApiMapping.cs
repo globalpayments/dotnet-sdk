@@ -55,6 +55,8 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.ResponseMessage = json.GetValue<string>("status");
                 transaction.ReferenceNumber = json.GetValue<string>("reference");
                 transaction.ClientTransactionId = json.GetValue<string>("reference");
+                transaction.FingerPrint = json.Get("payment_method")?.GetValue<string>("fingerprint") ?? null;
+                transaction.FingerPrintIndicator = json.Get("payment_method")?.GetValue<string>("fingerprint_presence_indicator") ?? null;
                 transaction.BatchSummary = new BatchSummary {
                     BatchReference = json.GetValue<string>("batch_id")
                 };
@@ -483,6 +485,24 @@ namespace GlobalPayments.Api.Mapping {
                         MessageExtensions = new List<MessageExtension>()
                     }
                 };
+
+                // Mobile data
+                if (!string.IsNullOrEmpty(json.GetValue<string>("source")) && json.GetValue<string>("source").Equals("MOBILE_SDK"))
+                {
+                    if (json.Get("three_ds")?.Get("mobile_data") != null)
+                    {
+                        JsonDoc mobile_data = json.Get("three_ds").Get("mobile_data");
+
+                        transaction.ThreeDSecure.PayerAuthenticationRequest = mobile_data.GetValue<string>("acs_signed_content");
+
+                        if (mobile_data.Get("acs_rendering_type").HasKeys())
+                        {
+                            JsonDoc acs_rendering_type = mobile_data.Get("acs_rendering_type");
+                            transaction.ThreeDSecure.AcsInterface = acs_rendering_type.GetValue<string>("acs_interface");
+                            transaction.ThreeDSecure.AcsUiTemplate = acs_rendering_type.GetValue<string>("acs_ui_template");
+                        }
+                    }
+                }
 
                 var messageExtensions = json.Get("three_ds")?.GetEnumerator("message_extension");
 

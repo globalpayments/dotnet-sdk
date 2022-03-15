@@ -1,6 +1,4 @@
-using GlobalPayments.Api.Utils;
 using System;
-using System.Threading;
 
 namespace GlobalPayments.Api.Tests.GpApi
 {
@@ -10,7 +8,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         protected DateTime REPORTING_END_DATE = DateTime.UtcNow;
         protected DateTime REPORTING_LAST_MONTH_DATE = DateTime.UtcNow.AddMonths(-1);
 
-        protected int FIRST_PAGE = 1;
-        protected int PAGE_SIZE = 10;
+        protected readonly int FIRST_PAGE = 1;
+        protected readonly int PAGE_SIZE = 10;
     }
 }

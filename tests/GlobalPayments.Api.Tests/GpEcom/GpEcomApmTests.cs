@@ -2,6 +2,8 @@
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Threading;
 
 namespace GlobalPayments.Api.Tests {
     [TestClass]
@@ -11,18 +13,20 @@ namespace GlobalPayments.Api.Tests {
         public void Init() {
             ServicesContainer.ConfigureService(new GpEcomConfig {
                 MerchantId = "heartlandgpsandbox",
-                AccountId = "hpp",
+                AccountId = "api",
                 SharedSecret = "secret",
+                //Channel = "ECOM",
                 RebatePassword = "rebate",
                 RefundPassword = "refund",
                 RequestLogger = new RequestConsoleLogger()
-            });
+        });
         }
 
+        
         [TestMethod]
-        public void TestAlternativePaymentMethodForCharge() {
-                var PaymentMethodDetails = new AlternatePaymentMethod {
-                    AlternativePaymentMethodType = AlternativePaymentType.TESTPAY,
+        public void APMForCharge() {
+                var PaymentMethodDetails = new AlternativePaymentMethod {
+                    AlternativePaymentMethodType = AlternativePaymentType.SOFORT,
                     ReturnUrl = "https://www.example.com/returnUrl",
                     StatusUpdateUrl = "https://www.example.com/statusUrl",
                     Descriptor = "Test Transaction",
@@ -40,7 +44,7 @@ namespace GlobalPayments.Api.Tests {
         [TestMethod]
         public void TestAlternativePaymentMethodForCharge_withAlternativePaymentMethodResponse()
         {
-            var PaymentMethodDetails = new AlternatePaymentMethod
+            var PaymentMethodDetails = new AlternativePaymentMethod
             {
                 AlternativePaymentMethodType = AlternativePaymentType.TESTPAY,
                 ReturnUrl = "https://www.example.com/returnUrl",
@@ -50,8 +54,9 @@ namespace GlobalPayments.Api.Tests {
                 AccountHolderName = "James Mason"
             };
 
-            var response = PaymentMethodDetails.Charge(15m)
+            var response = PaymentMethodDetails.Charge(10m)
                  .WithCurrency("EUR")
+                 .WithDescription("New APM")
                  .Execute();
             Assert.IsNotNull(response);
             Assert.IsNotNull(response?.AlternativePaymentResponse.AccountHolderName);
@@ -62,7 +67,203 @@ namespace GlobalPayments.Api.Tests {
         }
 
         [TestMethod]
-        public void TestAlternativePaymentMethodForRefund() {
+        public void APMWithoutAmount()
+        {
+            var PaymentMethod = new AlternativePaymentMethod
+            {
+                AlternativePaymentMethodType = AlternativePaymentType.SOFORTUBERWEISUNG,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "DE",
+                AccountHolderName = "James Mason"
+            };
+            try
+            {
+                var response = PaymentMethod.Charge()
+                     .WithCurrency("EUR")
+                     .WithDescription("New APM")
+                     .Execute();
+            }
+            catch (BuilderException ex)
+            {
+                Assert.AreEqual("Amount cannot be null for this transaction type.", ex.Message);
+            }   
+        }
+
+        [TestMethod]
+        public void APMWithoutCurrency()
+        {
+            var PaymentMethod = new AlternativePaymentMethod
+            {
+                AlternativePaymentMethodType = AlternativePaymentType.SOFORTUBERWEISUNG,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "DE",
+                AccountHolderName = "James Mason"
+            };
+            try
+            {
+                var response = PaymentMethod.Charge(10m)                     
+                     .WithDescription("New APM")
+                     .Execute();
+            }
+            catch (BuilderException ex)
+            {
+                Assert.AreEqual("Currency cannot be null for this transaction type.", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void APMWithoutReturnUrl()
+        {
+            var PaymentMethod = new AlternativePaymentMethod
+            {
+                AlternativePaymentMethodType = AlternativePaymentType.SOFORTUBERWEISUNG,
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "DE",
+                AccountHolderName = "James Mason"
+            };
+            try
+            {
+                var response = PaymentMethod.Charge(10m)
+                    .WithCurrency("EUR")
+                     .WithDescription("New APM")
+                     .Execute();
+            }
+            catch (BuilderException ex)
+            {
+                Assert.AreEqual("PaymentMethod, ReturnUrl, StatusUpdateUrl, AccountHolderName, Country, Descriptor can not be null ", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void APMWithoutStatusUpdateUrl()
+        {
+            var PaymentMethod = new AlternativePaymentMethod
+            {
+                AlternativePaymentMethodType = AlternativePaymentType.SOFORTUBERWEISUNG,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                Descriptor = "Test Transaction",
+                Country = "DE",
+                AccountHolderName = "James Mason"
+            };
+            try
+            {
+                var response = PaymentMethod.Charge(10m)
+                    .WithCurrency("EUR")
+                     .WithDescription("New APM")
+                     .Execute();
+            }
+            catch (BuilderException ex)
+            {
+                Assert.AreEqual("PaymentMethod, ReturnUrl, StatusUpdateUrl, AccountHolderName, Country, Descriptor can not be null ", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void APMRefundPendingTransaction()
+        {
+            var PaymentMethod = new AlternativePaymentMethod
+            {
+                AlternativePaymentMethodType = AlternativePaymentType.TESTPAY,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "DE",
+                AccountHolderName = "James Mason"
+            };
+
+            try
+            {
+                var response = PaymentMethod.Charge(10m)
+                    .WithCurrency("EUR")
+                     .WithDescription("New APM")
+                     .Execute();
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual("01", response.ResponseCode);
+
+                var refund = response.Refund(10m)
+                    .WithCurrency("EUR")
+                    .WithAlternativePaymentType(AlternativePaymentType.TESTPAY)
+                    .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                Assert.AreEqual("FAILED", ex.ResponseMessage);
+            }
+        }
+               
+
+        [TestMethod]
+        public void APMPayByBanckApp()
+        {
+            var paymentMethod = new AlternativePaymentMethod
+            {
+                AlternativePaymentMethodType = AlternativePaymentType.PAYBYBANKAPP,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "GB",
+                AccountHolderName = "James Mason"
+            };
+
+            var response = paymentMethod.Charge(10m)
+                .WithCurrency("GBP")
+                 .WithDescription("New APM")
+                 .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("01", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void APMPayPal()
+        {
+            var paymentMethod = new AlternativePaymentMethod
+            {
+                AlternativePaymentMethodType = AlternativePaymentType.PAYPAL,
+                ReturnUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
+                StatusUpdateUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
+                CancelUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
+                Descriptor = "Test Transaction",
+                Country = "US",
+                AccountHolderName = "James Mason"
+            };
+
+            Decimal amount = 10m;
+            string currency = "USD";
+           
+            var transaction = paymentMethod.Charge(amount)
+                .WithCurrency(currency)
+                .WithDescription("New APM")
+                .Execute();
+
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.IsNotNull(transaction.AlternativePaymentResponse.SessionToken);
+
+            Console.WriteLine("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token="+ transaction.AlternativePaymentResponse.SessionToken);
+
+            Thread.Sleep(30000);
+
+            transaction.AlternativePaymentResponse.ProviderReference = "SMKGK7K2BLEUA";
+
+            var response = transaction.Confirm(amount)
+                .WithCurrency(currency)
+                .WithAlternativePaymentType(AlternativePaymentType.PAYPAL)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);            
+        }
+
+        [TestMethod]
+        public void APMForRefund()
+        {
             // a refund request requires the original order id
             string orderId = "20180614113445-5b2252d5aa6f9";
             // and the payments reference (pasref) from the authorization response
@@ -70,14 +271,22 @@ namespace GlobalPayments.Api.Tests {
             // create the refund transaction object
             Transaction transaction = Transaction.FromId(paymentsReference, orderId);
 
-            // send the refund request for payment-credit an APM, we must specify the amount,currency and alternative payment method
-            var response = transaction.Refund(10m)
-                        .WithCurrency("EUR")
-                        .WithAlternativePaymentType(AlternativePaymentType.TESTPAY) // set the APM method 
-                        .Execute();
+            try
+            {
+             var response = transaction.Refund(10m)
+                                    .WithCurrency("EUR")
+                                    .WithAlternativePaymentType(AlternativePaymentType.TESTPAY) // set the APM method 
+                                    .Execute();
 
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+                        Assert.IsNotNull(response);
+                        Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+            }
+            catch (GatewayException ex)
+            {
+                Assert.AreEqual("FAILED", ex.ResponseMessage);
+            }
+            // send the refund request for payment-credit an APM, we must specify the amount,currency and alternative payment method
+           
         }
     }
 }

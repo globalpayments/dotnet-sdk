@@ -1,25 +1,29 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using GlobalPayments.Api.Utils.Logging;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiTokenManagementTests : BaseGpApiTests {
         private static string Token;
+        private const string CURRENCY = "USD";
 
         private static CreditCardData Card = new CreditCardData {
             Number = "4111111111111111",
-            ExpMonth = 12,
-            ExpYear = 2025,
+            ExpMonth = expMonth,
+            ExpYear = expYear,
             Cvn = "123"
         };
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
-                AppKey = "6gFzVGf40S7ZpjJs",
+                AppId = APP_ID,
+                AppKey = APP_KEY,
+                RequestLogger = new RequestConsoleLogger()
             });
 
             try {
@@ -33,77 +37,81 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void VerifyTokenizedPaymentMethod() {
-            CreditCardData tokenizedCard = new CreditCardData {
+            var tokenizedCard = new CreditCardData {
                 Token = Token,
             };
 
-            Transaction response = tokenizedCard.Verify()
-                .WithCurrency("USD")
+            var response = tokenizedCard.Verify()
+                .WithCurrency(CURRENCY)
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
-            Assert.AreEqual("VERIFIED", response.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(VERIFIED, response.ResponseMessage);
         }
 
         [TestMethod]
         public void VerifyTokenizedPaymentMethod_withIdempotencyKey() {
-            string idempotencyKey = Guid.NewGuid().ToString();
+            var idempotencyKey = Guid.NewGuid().ToString();
 
-            CreditCardData tokenizedCard = new CreditCardData {
+            var tokenizedCard = new CreditCardData {
                 Token = Token,
             };
 
-            Transaction response = tokenizedCard.Verify()
-                .WithCurrency("USD")
+            var response = tokenizedCard.Verify()
+                .WithCurrency(CURRENCY)
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
-            Assert.AreEqual("VERIFIED", response.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(VERIFIED, response.ResponseMessage);
 
+            var exceptionCaught = false;
             try {
                 tokenizedCard.Verify()
-                    .WithCurrency("USD")
+                    .WithCurrency(CURRENCY)
                     .WithIdempotencyKey(idempotencyKey)
                     .Execute();
             }
             catch (GatewayException ex) {
+                exceptionCaught = true;
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual(
                     $"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}, status=VERIFIED",
                     ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
             }
         }
 
         [TestMethod]
         public void UpdateTokenizedPaymentMethod() {
-            CreditCardData tokenizedCard = new CreditCardData {
+            var tokenizedCard = new CreditCardData {
                 Token = Token,
                 ExpMonth = 12,
                 ExpYear = 2030
             };
             Assert.IsTrue(tokenizedCard.UpdateTokenExpiry());
 
-            Transaction response = tokenizedCard.Verify()
-                .WithCurrency("USD")
+            var response = tokenizedCard.Verify()
+                .WithCurrency(CURRENCY)
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
-            Assert.AreEqual("VERIFIED", response.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(VERIFIED, response.ResponseMessage);
         }
 
         [TestMethod]
         public void CreditSaleWithTokenizedPaymentMethod() {
-            CreditCardData tokenizedCard = new CreditCardData {
+            var tokenizedCard = new CreditCardData {
                 Token = Token,
             };
 
-            Transaction response = tokenizedCard.Charge(19.99m)
-                .WithCurrency("USD")
+            var response = tokenizedCard.Charge(19.99m)
+                .WithCurrency(CURRENCY)
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -113,11 +121,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditSaleWithTokenizedPaymentMethod_WithStoredCredentials() {
-            CreditCardData tokenizedCard = new CreditCardData {
+            var tokenizedCard = new CreditCardData {
                 Token = Token,
             };
 
-            Transaction response = tokenizedCard.Charge(15.25m)
+            var response = tokenizedCard.Charge(15.25m)
                 .WithCurrency("USD")
                 .WithStoredCredential(new StoredCredential {
                     Initiator = StoredCredentialInitiator.Merchant,
@@ -134,18 +142,22 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [ClassCleanup]
         public static void Cleanup() {
-            CreditCardData tokenizedCard = new CreditCardData {
+            var tokenizedCard = new CreditCardData {
                 Token = Token
             };
             Assert.IsTrue(tokenizedCard.DeleteToken());
 
+            var exceptionCaught = false;
             try {
                 tokenizedCard.Verify()
                     .WithCurrency("USD")
                     .Execute();
             }
             catch (GatewayException ex) {
+                exceptionCaught = true;
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
             }
         }
     }

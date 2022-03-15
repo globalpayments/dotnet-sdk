@@ -31,7 +31,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt"),
+                // RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt"),
+                RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
             });
         }
@@ -39,8 +40,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public GpApi3DSecure1Tests() {
             card = new CreditCardData {
                 Number = CARDHOLDER_ENROLLED_V1,
-                ExpMonth = 12,
-                ExpYear = 2025,
+                ExpMonth = expMonth,
+                ExpYear = expYear,
                 CardHolderName = "John Smith"
             };
         }
@@ -95,7 +96,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CardHolderEnrolled_ChallengeRequired_v1_TokenizedCard() {
-            var tokenizedCard = new CreditCardData() {
+            var tokenizedCard = new CreditCardData {
                 Token = card.Tokenize()
             };
 
@@ -213,7 +214,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             AssertThreeDSResponse(secureEcom, CHALLENGE_REQUIRED);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             var acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
             string payerAuthenticationResponse;
             string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);
@@ -241,7 +242,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             AssertThreeDSResponse(secureEcom, CHALLENGE_REQUIRED);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             var acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
             string payerAuthenticationResponse;
             string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);

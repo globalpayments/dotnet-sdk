@@ -14,17 +14,10 @@ using GlobalPayments.Api.Utils;
 namespace GlobalPayments.Api.Tests.Realex.Hpp {
     public class RealexResponseHandler : DelegatingHandler {
         private string _sharedSecret;
-        private CreditCardData _card;
+        private IPaymentMethod paymentMethod;
 
         public RealexResponseHandler(string sharedSecret) {
-            _sharedSecret = sharedSecret;
-            _card = new CreditCardData {
-                Number = "4111111111111111",
-                ExpMonth = 12,
-                ExpYear = 2025,
-                Cvn = "123",
-                CardHolderName = "John Smithe"
-            };
+            _sharedSecret = sharedSecret;           
         }
 
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
@@ -41,6 +34,14 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             var autoSettle = json.GetValue<int>("AUTO_SETTLE_FLAG") == 1;
             var requestHash = json.GetValue<string>("SHA1HASH");
 
+            // gather additional information
+            var shippingCode = json.GetValue<string>("SHIPPING_CODE");
+            var shippingCountry = json.GetValue<string>("SHIPPING_CO");
+            var billingCode = json.GetValue<string>("BILLING_CODE");
+            var billingCountry = json.GetValue<string>("BILLING_CO");
+            var fraudFilterMode = json.GetValue<string>("HPP_FRAUDFILTER_MODE");
+
+
             List<string> hashParam = new List<string>
             {
                 timestamp,
@@ -49,6 +50,38 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
                 amount,
                 currency
             };
+
+            //create the card/APM/LPM object
+            if (json.Has("PM_METHODS")) {
+                string[] apmTypes = json.GetValue<string>("PM_METHODS").Split("\\|");
+                string apmType = apmTypes[0];
+
+                AlternativePaymentMethod apm = new AlternativePaymentMethod();
+                apm.AlternativePaymentMethodType = (AlternativePaymentType)(Enum.Parse(typeof(AlternativePaymentType), apmType));
+                apm.ReturnUrl = json.GetValue<string>("MERCHANT_RESPONSE_URL");
+                apm.StatusUpdateUrl = json.GetValue<string>("HPP_TX_STATUS_URL");
+
+                if(apmType == AlternativePaymentType.PAYPAL.ToString()) {
+                    //cancelUrl for Paypal example
+                    apm.CancelUrl = "https://www.example.com/failure/cancelUrl";
+                }
+
+                apm.Country = json.GetValue<string>("HPP_CUSTOMER_COUNTRY");
+                apm.AccountHolderName = json.GetValue<string>("HPP_CUSTOMER_FIRSTNAME") + " " + json.GetValue<string>("HPP_CUSTOMER_LASTNAME");
+
+                paymentMethod = apm;
+            }
+            else {
+                CreditCardData card = new CreditCardData {
+                    Number = "4111111111111111",
+                    ExpMonth = 12,
+                    ExpYear = 2025,
+                    Cvn = "123",
+                    CardHolderName = "John Smithe"
+                };
+
+                paymentMethod = card;
+            }
 
             //for stored card
             if (json.Has("OFFER_SAVE_CARD"))
@@ -76,26 +109,32 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
                 AccountId = account,
                 SharedSecret = _sharedSecret
             }, "realexResponder");
-
-            // gather additional information
-            var shippingCode = json.GetValue<string>("SHIPPING_CODE");
-            var shippingCountry = json.GetValue<string>("SHIPPING_CO");
-            var billingCode = json.GetValue<string>("BILLING_CODE");
-            var billingCountry = json.GetValue<string>("BILLING_CO");
-            var fraudFilterMode = json.GetValue<string>("HPP_FRAUDFILTER_MODE");
+                       
 
             // build request
             AuthorizationBuilder gatewayRequest = null;
             if (amount == null) {
                 var validate = json.GetValue<int>("VALIDATE_CARD_ONLY") == 1;
                 if (validate)
-                    gatewayRequest = _card.Verify();
-                else gatewayRequest = _card.Verify().WithRequestMultiUseToken(true);
+                    gatewayRequest = ((CreditCardData)paymentMethod).Verify();
+                else gatewayRequest = ((CreditCardData)paymentMethod).Verify().WithRequestMultiUseToken(true);
             }
             else {
                 if (autoSettle)
-                    gatewayRequest = _card.Charge(amount.ToAmount());
-                else gatewayRequest = _card.Authorize(amount.ToAmount());
+                {
+                    if (paymentMethod is CreditCardData)
+                    {
+                        gatewayRequest = ((CreditCardData)paymentMethod).Charge(amount.ToAmount());
+                    }
+                    if (paymentMethod is AlternativePaymentMethod)
+                    {
+                        gatewayRequest = ((AlternativePaymentMethod)paymentMethod).Charge(amount.ToAmount());
+                    }
+                }
+                else
+                {
+                    gatewayRequest = ((CreditCardData)paymentMethod).Authorize(amount.ToAmount());
+                }
             }
 
             try {
@@ -113,7 +152,7 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
                 }
 
                 var gatewayResponse = gatewayRequest.Execute("realexResponder");
-                if (gatewayResponse.ResponseCode.Equals("00"))
+                if (gatewayResponse.ResponseCode.Equals("00") || gatewayResponse.ResponseCode.Equals("01"))
                     return BuildResponse(HttpStatusCode.OK, ConvertResponse(json, gatewayResponse));
                 else return BadRequest(gatewayResponse.ResponseMessage);
             }
@@ -176,14 +215,24 @@ namespace GlobalPayments.Api.Tests.Realex.Hpp {
             response.Set("AMOUNT", trans.AuthorizedAmount);
             response.Set("SHA1HASH", GenerationUtils.GenerateHash(_sharedSecret, trans.Timestamp, merchantId, trans.OrderId, trans.ResponseCode, trans.ResponseMessage, trans.TransactionId, trans.AuthorizationCode));
             response.Set("DCC_INFO_REQUST", request.GetValue<string>("DCC_INFO"));
-            response.Set("HPP_FRAUDFILTER_MODE", request.GetValue<string>("HPP_FRAUDFILTER_MODE"));
-            response.Set("HPP_FRAUDFILTER_RESULT", trans.FraudResponse?.Result);
+            response.Set("HPP_FRAUDFILTER_MODE", request.GetValue<string>("HPP_FRAUDFILTER_MODE"));            
             if(trans?.FraudResponse?.Rules != null)
             {
+                response.Set("HPP_FRAUDFILTER_RESULT", trans.FraudResponse?.Result);
+
                 foreach (var rule in trans.FraudResponse.Rules)
                 {
                     response.Set("HPP_FRAUDFILTER_RULE_" + rule.Id, rule.Action);
                 }
+            }
+            if(trans?.AlternativePaymentResponse != null) {
+                AlternativePaymentResponse alternativePaymentResponse = trans.AlternativePaymentResponse;
+                response.Set("HPP_CUSTOMER_FIRSTNAME", request.GetValue<string>("HPP_CUSTOMER_FIRSTNAME"));
+                response.Set("HPP_CUSTOMER_LASTNAME", request.GetValue<string>("HPP_CUSTOMER_LASTNAME"));
+                response.Set("HPP_CUSTOMER_COUNTRY", request.GetValue<string>("HPP_CUSTOMER_COUNTRY"));
+                response.Set("PAYMENTMETHOD", alternativePaymentResponse.ProviderName);
+                response.Set("PAYMENTPURPOSE", alternativePaymentResponse.PaymentPurpose);
+                response.Set("HPP_CUSTOMER_BANK_ACCOUNT", alternativePaymentResponse.BankAccount);
             }
 
             return response.ToString();

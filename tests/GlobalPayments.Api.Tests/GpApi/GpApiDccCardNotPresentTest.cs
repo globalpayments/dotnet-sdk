@@ -26,8 +26,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             card = new CreditCardData {
                 Number = "4006097467207025",
-                ExpMonth = DateTime.Now.Month,
-                ExpYear = DateTime.Now.Year + 1,
+                ExpMonth = expMonth,
+                ExpYear = expYear,
                 CardPresent = true
             };
         }
@@ -46,7 +46,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            AssertTransactionResponse(transaction, TransactionStatus.Captured, expectedDccAmountValue);
         }
 
         [TestMethod]
@@ -63,7 +63,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(response, TransactionStatus.Preauthorized);
+            AssertTransactionResponse(response, TransactionStatus.Preauthorized, expectedDccAmountValue);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(response, TransactionStatus.Captured);
+            AssertTransactionResponse(response, TransactionStatus.Captured, expectedDccAmountValue);
         }
 
         [TestMethod]
@@ -97,12 +97,12 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            AssertTransactionResponse(transaction, TransactionStatus.Captured, expectedDccAmountValue);
 
             var reverse = transaction.Reverse(Amount)
                 .WithDccRateData(transaction.DccRateData)
                 .Execute();
-            AssertTransactionResponse(reverse, TransactionStatus.Reversed);
+            AssertTransactionResponse(reverse, TransactionStatus.Reversed, expectedDccAmountValue);
         }
 
         [TestMethod]
@@ -119,13 +119,13 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            AssertTransactionResponse(transaction, TransactionStatus.Captured, expectedDccAmountValue);
 
             var refund = transaction.Refund()
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(refund, TransactionStatus.Captured);
+            AssertTransactionResponse(refund, TransactionStatus.Captured, expectedDccAmountValue);
         }
 
         [TestMethod]
@@ -142,12 +142,12 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
+            AssertTransactionResponse(transaction, TransactionStatus.Preauthorized, expectedDccAmountValue);
 
             var capture = transaction.Capture()
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(capture, TransactionStatus.Captured);
+            AssertTransactionResponse(capture, TransactionStatus.Captured, expectedDccAmountValue);
         }
 
         [TestMethod]
@@ -168,7 +168,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(response, TransactionStatus.Captured);
+            AssertTransactionResponse(response, TransactionStatus.Captured, expectedDccAmountValue);
         }
 
         [TestMethod]
@@ -221,7 +221,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            AssertTransactionResponse(transaction, TransactionStatus.Captured, Amount);
         }
 
         [TestMethod]
@@ -241,8 +241,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.AreEqual(
                     "Status Code: BadRequest - card.number value is invalid. Please check the format and data provided is correct.",
                     ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -262,8 +261,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.AreEqual("40005", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following fields : amount",
                     ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -283,8 +281,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.AreEqual("40005", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following fields : currency",
                     ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -297,15 +294,17 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual(expectedDccAmountValue, dccDetails.DccRateData.CardHolderAmount);
         }
 
-        private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
+        private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus, decimal expectedDccAmountValue) {
             Assert.IsNotNull(transaction);
             Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction?.ResponseMessage);
+            if (!transactionStatus.Equals(TransactionStatus.Reversed)) {
+                Assert.AreEqual(expectedDccAmountValue, transaction.DccRateData.CardHolderAmount);
+            }
         }
 
         private decimal GetDccAmount(Transaction dccDetails) {
-            var rate = decimal.Parse(dccDetails.DccRateData.CardHolderRate.ToString(),
-                new NumberFormatInfo() { NumberDecimalSeparator = "." });
+            var rate = dccDetails.DccRateData.CardHolderRate.Value;
             return Amount * rate;
         }
     }

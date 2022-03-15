@@ -2,11 +2,23 @@
 
 ## Latest
 
+#### Enhancements
+
+- Added fingerprint_mode in the create transaction request
+- MOBILE_SDK source in the 3DS flow
+- Alternative Payment Method (PayPal) for GPEcom
+- Added expMonth and expYear on test classes
+- DCC tests updates
+- Added more tests for fingerprint
+- Added test for expiry card
+
+## v2.0.4 (03/02/2022)
+
 #### Bug Fixes:
 
 - fix for set attributes exp month and exp year when updating a token
 
-## v2.0.4 (03/02/2022)
+## v2.0.3 (2/22/2022)
 
 #### Enhancements
 

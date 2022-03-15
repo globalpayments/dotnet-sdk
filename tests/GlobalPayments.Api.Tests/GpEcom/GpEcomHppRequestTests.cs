@@ -1057,7 +1057,7 @@ namespace GlobalPayments.Api.Tests.Realex {
         }
         
         [TestMethod]
-        public void BasicChargeAlertnativePayment() {
+        public void BasicChargeAlternativePayment() {
             var service = new HostedService(new GpEcomConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "hpp",
@@ -1069,11 +1069,11 @@ namespace GlobalPayments.Api.Tests.Realex {
             });
 
             var testHostedPaymentData = new HostedPaymentData {
-                Country = "DE",
+                CustomerCountry = "DE",
                 CustomerFirstName = "James",
                 CustomerLastName = "Mason",
-                ReturnUrl = "https://www.example.com/returnUrl",
-                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                MerchantResponseUrl = "https://www.example.com/returnUrl",
+                TransactionStatusUrl = "https://www.example.com/statusUrl",
                 PresetPaymentMethods = new AlternativePaymentType[]{ AlternativePaymentType.ASTROPAY_DIRECT,AlternativePaymentType.AURA,AlternativePaymentType.BALOTO_CASH,AlternativePaymentType.BANAMEX }
             };
 
@@ -1105,11 +1105,11 @@ namespace GlobalPayments.Api.Tests.Realex {
 
             var testHostedPaymentData = new HostedPaymentData
             {
-                Country = "DE",
+                CustomerCountry = "DE",
                 CustomerFirstName = "James",
                 CustomerLastName = "Mason",
-                ReturnUrl = "https://www.example.com/returnUrl",
-                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                MerchantResponseUrl = "https://www.example.com/returnUrl",
+                TransactionStatusUrl = "https://www.example.com/statusUrl",
                 PresetPaymentMethods = new AlternativePaymentType[] { AlternativePaymentType.ASTROPAY_DIRECT, AlternativePaymentType.AURA, AlternativePaymentType.BALOTO_CASH, AlternativePaymentType.BANAMEX }
             };
 

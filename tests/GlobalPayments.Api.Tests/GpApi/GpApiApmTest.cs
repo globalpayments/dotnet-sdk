@@ -13,24 +13,21 @@ namespace GlobalPayments.Api.Tests.GpApi
     [TestClass]
     public class GpApiApmTest : BaseGpApiTests
     {
-        private AlternatePaymentMethod paymentMethod;
+        private AlternativePaymentMethod paymentMethod;
         private string currency;
         private Address shippingAddress;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            ServicesContainer.ConfigureService(new GpApiConfig
-            {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
+            ServicesContainer.ConfigureService(new GpApiConfig {
+                AppId = APP_ID,
+                AppKey = APP_KEY,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestConsoleLogger()
             });
 
-
-            paymentMethod = new AlternatePaymentMethod
-            {
+            paymentMethod = new AlternativePaymentMethod {
                 AlternativePaymentMethodType = AlternativePaymentType.PAYPAL,
                 ReturnUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
                 StatusUpdateUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
@@ -43,8 +40,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             currency = "USD";
 
             // shipping address
-            shippingAddress = new Address
-            {
+            shippingAddress = new Address {
                 StreetAddress1 = "Apartment 852",
                 StreetAddress2 = "Complex 741",
                 StreetAddress3 = "no",
@@ -64,8 +60,7 @@ namespace GlobalPayments.Api.Tests.GpApi
          */
 
         [TestMethod]
-        public void PayPalCharge_fullCycle()
-        {
+        public void PayPalCharge_fullCycle() {
             var response = paymentMethod.Charge(1.34m)
                 .WithCurrency(currency)
                 .WithDescription("New APM")
@@ -107,8 +102,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         [TestMethod]
-        public void PayPalCapture_fullCycle()
-        {
+        public void PayPalCapture_fullCycle() {
             var response = paymentMethod.Authorize(1.34m)
                 .WithCurrency(currency)
                 .WithDescription("New APM")
@@ -158,8 +152,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         [TestMethod]
-        public void PayPalFullCycle_Refund()
-        {
+        public void PayPalFullCycle_Refund() {
             var trn = paymentMethod.Charge(1.22m)
                 .WithCurrency(currency)
                 .WithDescription("New APM")
@@ -208,8 +201,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod, Ignore]
         //Sandbox returning: Can't CAPTURE a Transaction that is already CAPTURED
-        public void PayPalFullCycle_Reverse()
-        {
+        public void PayPalFullCycle_Reverse() {
             var trn = paymentMethod.Charge(1.22m)
                 .WithCurrency(currency)
                 .WithDescription("New APM")
@@ -257,8 +249,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         [TestMethod]
-        public void PayPalMultiCapture_fullCycle()
-        {
+        public void PayPalMultiCapture_fullCycle() {
             var response = paymentMethod.Authorize(3m)
                 .WithCurrency(currency)
                 .WithMultiCapture(true)
@@ -314,20 +305,16 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         // unit_amount is actually the total amount for the item; waiting info about the shipping_discount
-        public void PayPalChargeWithoutConfirm()
-        {
-            var order = new OrderDetails
-            {
+        public void PayPalChargeWithoutConfirm() {
+            var order = new OrderDetails {
                 InsuranceAmount = 10,
                 HandlingAmount = 2,
                 Description = "Order description",
                 HasInsurance = true
             };
 
-            var products = new List<Product>
-            {
-                new Product
-                {
+            var products = new List<Product> {
+                new Product {
                     ProductId = "SKU251584",
                     ProductName = "Magazine Subscription",
                     Description = "Product description 1",
@@ -336,8 +323,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     UnitCurrency = currency,
                     TaxAmount = 0.5m
                 },
-                new Product
-                {
+                new Product {
                     ProductId = "SKU8884784",
                     ProductName = "Charger",
                     Description = "Product description 2",

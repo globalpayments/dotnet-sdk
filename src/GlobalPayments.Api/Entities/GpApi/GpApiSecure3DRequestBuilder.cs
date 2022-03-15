@@ -45,7 +45,7 @@ namespace GlobalPayments.Api.Entities {
                     .Set("initator", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Initiator))
                     .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("payment_method", paymentMethod)
-                    .Set("notifications", notifications);
+                    .Set("notifications", notifications.HasKeys() ? notifications : null);
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
@@ -170,24 +170,46 @@ namespace GlobalPayments.Api.Entities {
 
                 #region Browser data
                 var browserData = new JsonDoc()
-                    .Set("accept_header", builder.BrowserData.AcceptHeader)
-                    .Set("color_depth", builder.BrowserData.ColorDepth.ToString())
-                    .Set("ip", builder.BrowserData.IpAddress)
-                    .Set("java_enabled", builder.BrowserData.JavaEnabled)
-                    .Set("javascript_enabled", builder.BrowserData.JavaScriptEnabled)
-                    .Set("language", builder.BrowserData.Language)
-                    .Set("screen_height", builder.BrowserData.ScreenHeight)
-                    .Set("screen_width", builder.BrowserData.ScreenWidth)
-                    .Set("challenge_window_size", builder.BrowserData.ChallengeWindowSize.ToString())
-                    .Set("timezone", builder.BrowserData.Timezone)
-                    .Set("user_agent", builder.BrowserData.UserAgent);
+                    .Set("accept_header", builder.BrowserData?.AcceptHeader)
+                    .Set("color_depth", builder.BrowserData?.ColorDepth.ToString())
+                    .Set("ip", builder.BrowserData?.IpAddress)
+                    .Set("java_enabled", builder.BrowserData?.JavaEnabled)
+                    .Set("javascript_enabled", builder.BrowserData?.JavaScriptEnabled)
+                    .Set("language", builder.BrowserData?.Language)
+                    .Set("screen_height", builder.BrowserData?.ScreenHeight)
+                    .Set("screen_width", builder.BrowserData?.ScreenWidth)
+                    .Set("challenge_window_size", builder.BrowserData?.ChallengeWindowSize.ToString())
+                    .Set("timezone", builder.BrowserData?.Timezone)
+                    .Set("user_agent", builder.BrowserData?.UserAgent);
+                #endregion
+
+                #region MobileData
+                string[] ModifySdkUiTypes() {                    
+                    string[] result = new string[(int)builder.MobileData?.SdkUiTypes.Length];
+                    for (int i = 0; i < builder.MobileData?.SdkUiTypes.Length; i++)
+                    {
+                        result[i] = EnumConverter.GetMapping(Target.GP_API, builder.MobileData?.SdkUiTypes[i]);
+                        
+                    }
+                    return result;
+                }
+
+                var mobileData = new JsonDoc()
+                    .Set("encoded_data", builder.MobileData?.EncodedData)
+                    .Set("application_reference", builder.MobileData?.ApplicationReference)
+                    .Set("sdk_interface", builder.MobileData?.SdkInterface.ToString())
+                    .Set("sdk_ui_type", builder.MobileData != null && builder.MobileData?.SdkUiTypes.Length > 0 ? ModifySdkUiTypes() : null)
+                    .Set("ephemeral_public_key", builder.MobileData?.EphemeralPublicKey)
+                    .Set("maximum_timeout", builder.MobileData?.MaximumTimeout)
+                    .Set("reference_number", builder.MobileData?.ReferenceNumber)
+                    .Set("sdk_trans_reference", builder.MobileData?.SdkTransReference);
                 #endregion
 
                 #region ThreeDS
                 var threeDS = new JsonDoc()
                     .Set("source", builder.AuthenticationSource.ToString())
-                    .Set("preference", builder.ChallengeRequestIndicator.ToString())
-                    .Set("message_version", builder.MessageVersion);
+                    .Set("preference", builder.ChallengeRequestIndicator?.ToString())
+                    .Set("message_version", builder.MessageVersion?.ToString());
                 #endregion
 
                 var data = new JsonDoc()
@@ -196,13 +218,14 @@ namespace GlobalPayments.Api.Entities {
                     .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("method_url_completion_status", builder.MethodUrlCompletion.ToString())
                     .Set("payment_method", paymentMethod.HasKeys() ? paymentMethod : null)
-                    .Set("notifications", notifications)
+                    .Set("notifications", notifications.HasKeys() ? notifications : null)
                     .Set("order", order.HasKeys() ? order : null)
                     .Set("payer", payer.HasKeys() ? payer : null)
                     .Set("payer_prior_three_ds_authentication_data", payerPrior3DSAuthenticationData.HasKeys() ? payerPrior3DSAuthenticationData : null)
                     .Set("recurring_authorization_data", recurringAuthorizationData.HasKeys() ? recurringAuthorizationData : null)
                     .Set("payer_login_data", payerLoginData.HasKeys() ? payerLoginData : null)
-                    .Set("browser_data", browserData.HasKeys() ? browserData : null)
+                    .Set("browser_data", browserData.HasKeys() && builder.AuthenticationSource != AuthenticationSource.MOBILE_SDK ? browserData : null)
+                    .Set("mobile_data", mobileData.HasKeys() && builder.AuthenticationSource == AuthenticationSource.MOBILE_SDK ? mobileData : null)
                     .Set("merchant_contact_url", gateway.MerchantContactUrl);
 
                 return new GpApiRequest {

@@ -2,7 +2,7 @@
 using GlobalPayments.Api.Builders;
 
 namespace GlobalPayments.Api.PaymentMethods {
-    public class AlternatePaymentMethod: IPaymentMethod, IChargable {
+    public class AlternativePaymentMethod: IPaymentMethod, IChargable {
         /// <summary>
         /// Returns Payment Method Type.
         /// </summary>

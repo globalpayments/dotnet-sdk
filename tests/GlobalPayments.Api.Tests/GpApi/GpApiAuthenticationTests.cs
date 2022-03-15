@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
@@ -15,23 +16,23 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void TestInitialize() {
             card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = 05,
-                ExpYear = 2025,
-                Cvn = "852",
+                ExpMonth = expMonth,
+                ExpYear = expYear,
+                Cvn = "123",
             };
         }
 
         [TestMethod]
         public void GenerateAccessTokenManual() {
-            AccessTokenInfo info = GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY);
+            var info = GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY);
             assertAccessTokenResponse(info);
         }
 
         [TestMethod]
         public void GenerateAccessTokenManualWithPermissions() {
-            string[] permissions = new string[] { "PMT_POST_Create", "PMT_POST_Detokenize" };
+            var permissions = new[] { "PMT_POST_Create", "PMT_POST_Detokenize" };
 
-            AccessTokenInfo info =
+            var info =
                 GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY, permissions: permissions);
 
             Assert.IsNotNull(info);
@@ -44,7 +45,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void GenerateAccessTokenManualWithWrongPermissions() {
-            string[] permissions = new string[] { "TEST_1", "TEST_2" };
+            var permissions = new[] { "TEST_1", "TEST_2" };
 
             try {
                 GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY, permissions: permissions);
@@ -58,7 +59,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ChargeCard_WithLimitedPermissions() {
-            string[] permissions = new string[] { "TRN_POST_Capture" };
+            var permissions = new[] { "TRN_POST_Capture" };
 
             ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Environment.TEST,
@@ -88,7 +89,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         
         [TestMethod]
         public void GenerateAccessTokenManual_AccessToken() {
-            AccessTokenInfo info =
+            var info =
                 GpApiService.GenerateTransactionKey(ENVIRONMENT, APP_ID, APP_KEY);
             
             ServicesContainer.ConfigureService(new GpApiConfig {

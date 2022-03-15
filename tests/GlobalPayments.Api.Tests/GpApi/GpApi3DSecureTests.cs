@@ -6,6 +6,7 @@ using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
@@ -34,20 +35,21 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "rkiYguPfTurmGcVhkDbIGKn2IJe2t09M",
-                AppKey = "6gFzVGf40S7ZpjJs",
+                AppId = APP_ID,
+                AppKey = APP_KEY,
                 Country = "GB",
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/"
+                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
+                RequestLogger = new RequestConsoleLogger()
             });
         }
 
         public GpApi3DSecureTests() {
             // Create card data
             card = new CreditCardData {
-                ExpMonth = 12,
-                ExpYear = 2025,
+                ExpMonth = expMonth,
+                ExpYear = expYear,
                 CardHolderName = "John Smith"
             };
 
@@ -108,7 +110,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(secureEcom.MessageType);
             Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
             string payerAuthenticationResponse;
             string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);
@@ -141,7 +143,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             card.Number = GpApi3DSTestCards.CARDHOLDER_ENROLLED_V1;
 
             // Tokenize payment method
-            var tokenizedCard = new CreditCardData() {
+            var tokenizedCard = new CreditCardData {
                 Token = card.Tokenize()
             };
 
@@ -164,7 +166,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(secureEcom.MessageType);
             Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
             string payerAuthenticationResponse;
             string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);
@@ -217,7 +219,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(secureEcom.MessageType);
             Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
             string payerAuthenticationResponse;
             string authResponse =
@@ -257,7 +259,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(secureEcom.MessageType);
             Assert.IsNotNull(secureEcom.SessionDataFieldName);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
             string authResponse =
                 acsClient.Authenticate_v1(secureEcom, out var payerAuthenticationResponse,
@@ -370,7 +372,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
 
             // Tokenize payment method
-            var tokenizedCard = new CreditCardData() {
+            var tokenizedCard = new CreditCardData {
                 Token = card.Tokenize()
             };
 
@@ -411,7 +413,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             tokenizedCard.ThreeDSecure = secureEcom;
 
             // Create transaction
-            Transaction response = tokenizedCard.Charge(Amount)
+            var response = tokenizedCard.Charge(Amount)
                 .WithCurrency(Currency)
                 .Execute();
 
@@ -422,11 +424,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [DataTestMethod]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_1, SUCCESS_ATTEMPT_MADE)]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_1, NOT_AUTHENTICATED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_1, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_1, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_1, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_2, SUCCESS_ATTEMPT_MADE)]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_2, NOT_AUTHENTICATED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_2, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_2, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_2, FAILED)]
         public void FrictionlessFullCycle_v2_Failed(string cardNumber, string status) {
@@ -512,7 +514,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(initAuth.IssuerAcsUrl);
             Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(initAuth.IssuerAcsUrl);
             string authResponse = acsClient.Authenticate_v2(initAuth);
             Assert.AreEqual("{\"success\":true}", authResponse);
@@ -625,7 +627,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(initAuth.IssuerAcsUrl);
             Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
 
-            // Perform ACS authetication
+            // Perform ACS authentication
             GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(initAuth.IssuerAcsUrl);
             string authResponse = acsClient.Authenticate_v2(initAuth);
             Assert.AreEqual("{\"success\":true}", authResponse);

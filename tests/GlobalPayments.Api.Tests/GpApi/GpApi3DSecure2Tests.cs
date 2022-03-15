@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -20,6 +21,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private CreditCardData card;
         private readonly Address shippingAddress;
         private readonly BrowserData browserData;
+        private readonly MobileData mobileData;
 
         private const string Currency = "GBP";
         private static readonly decimal Amount = new decimal(10.01);
@@ -33,7 +35,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
+                // RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
             });
         }
 
@@ -41,8 +45,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             // Create card data
             card = new CreditCardData {
                 Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_1,
-                ExpMonth = 12,
-                ExpYear = 2025,
+                ExpMonth = expMonth,
+                ExpYear = expYear,
                 CardHolderName = "John Smith"
             };
 
@@ -71,6 +75,24 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 UserAgent =
                     "Mozilla/5.0 (Windows NT 6.1; Win64, x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
             };
+
+            // Mobile data
+            mobileData =
+                    new MobileData { 
+                            EncodedData = "ew0KCSJEViI6ICIxLjAiLA0KCSJERCI6IHsNCgkJIkMwMDEiOiAiQW5kcm9pZCIsDQoJCSJDMDAyIjogIkhUQyBPbmVfTTgiLA0KCQkiQzAwNCI6ICI1LjAuMSIsDQoJCSJDMDA1IjogImVuX1VTIiwNCgkJIkMwMDYiOiAiRWFzdGVybiBTdGFuZGFyZCBUaW1lIiwNCgkJIkMwMDciOiAiMDY3OTc5MDMtZmI2MS00MWVkLTk0YzItNGQyYjc0ZTI3ZDE4IiwNCgkJIkMwMDkiOiAiSm9obidzIEFuZHJvaWQgRGV2aWNlIg0KCX0sDQoJIkRQTkEiOiB7DQoJCSJDMDEwIjogIlJFMDEiLA0KCQkiQzAxMSI6ICJSRTAzIg0KCX0sDQoJIlNXIjogWyJTVzAxIiwgIlNXMDQiXQ0KfQ0K"
+                            ,ApplicationReference ="f283b3ec-27da-42a1-acea-f3f70e75bbdc"
+                            ,SdkInterface = SdkInterface.BOTH                           
+                            ,EphemeralPublicKey = 
+                                    JsonDoc.Parse("{" +
+                                                        "\"kty\":\"EC\"," +
+                                                        "\"crv\":\"P-256\"," +
+                                                        "\"x\":\"WWcpTjbOqiu_1aODllw5rYTq5oLXE_T0huCPjMIRbkI\",\"y\":\"Wz_7anIeadV8SJZUfr4drwjzuWoUbOsHp5GdRZBAAiw\"" +
+                                                    "}"
+                                    )                            
+                            ,MaximumTimeout = 50
+                            ,ReferenceNumber = "3DS_LOA_SDK_PPFU_020100_00007"
+                            ,SdkTransReference = "b2385523-a66c-4907-ac3c-91848e8c0067" };
+            mobileData.SetSdkUiTypes(SdkUiType.OOB);
         }
 
         #region Check Enrollment Challenge Required V2
@@ -317,6 +339,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertThreeDSResponse(secureEcom, AVAILABLE);
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
+       
 
         #endregion
 
@@ -729,6 +752,173 @@ namespace GlobalPayments.Api.Tests.GpApi {
             finally {
                 Assert.IsTrue(exceptionCaught);
             }
+        }
+
+        [TestMethod]
+        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_MobileSDK()
+        {
+            CreditCardData challengeCard = new CreditCardData { 
+                Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2,
+                ExpMonth = 12,
+                ExpYear = 2025,
+                CardHolderName = "James Mason"
+            };
+
+            var secureEcom = Secure3dService.CheckEnrollment(card)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .Execute(Secure3dVersion.Two);
+
+            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            Assert.AreEqual("ENROLLED", secureEcom.Enrolled);
+
+            var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
+                .WithMobileData(mobileData)
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .Execute(Secure3dVersion.Two);
+
+            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
+            Assert.IsNotNull(initAuth.AcsInterface);
+            Assert.IsNotNull(initAuth.AcsUiTemplate);
+        }
+
+        [TestMethod]
+        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_MobileDataAndBrowserData()
+        {
+            CreditCardData challengeCard = new CreditCardData
+            {
+                Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2,
+                ExpMonth = 12,
+                ExpYear = 2025,
+                CardHolderName = "James Mason"
+            };
+
+            var secureEcom = Secure3dService.CheckEnrollment(card)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .Execute(Secure3dVersion.Two);
+
+            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            Assert.AreEqual("ENROLLED", secureEcom.Enrolled);
+
+            var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
+                .WithMobileData(mobileData)
+                .WithBrowserData(browserData)
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)                
+                .Execute(Secure3dVersion.Two);
+
+            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+        }
+
+        [TestMethod]
+        public void CardHolderEnrolled_ChallengeRequired_v2_With_MobileData()
+        {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+
+            var secureEcom = Secure3dService.CheckEnrollment(card)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
+                .Execute(Secure3dVersion.Two);
+
+            Assert.IsNotNull(secureEcom);
+            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
+            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+
+            ThreeDSecure initAuth =
+                Secure3dService
+                        .InitiateAuthentication(card, secureEcom)
+                        .WithAmount(Amount)
+                        .WithCurrency(Currency)                        
+                        .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
+                        .WithMobileData(mobileData)
+                        .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                        .WithOrderCreateDate(DateTime.Now)
+                        .WithAddress(shippingAddress, AddressType.Shipping)                        
+                        .Execute(Secure3dVersion.Two);
+
+            Assert.IsNotNull(initAuth);            
+            Assert.AreEqual(ENROLLED, initAuth.Enrolled);
+            Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.AreEqual("YES", initAuth.LiabilityShift);
+            Assert.IsFalse(initAuth.ChallengeMandated);
+            Assert.IsNotNull(initAuth.IssuerAcsUrl);
+            Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
+            Assert.AreEqual("5", initAuth.Eci.ToString());            
+
+            // Get authentication data
+            secureEcom =
+                    Secure3dService
+                            .GetAuthenticationData()
+                            .WithServerTransactionId(initAuth.ServerTransactionId)
+                            .Execute(Secure3dVersion.Two);            
+
+            card.ThreeDSecure = secureEcom;
+
+            // Create transaction
+            Transaction response =
+                    card
+                            .Charge(Amount)
+                            .WithCurrency(Currency)
+                            .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CardHolderEnrolled_Frictionless_v2_Initiate_With_MobileDataAndBrowserData()
+        {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+
+            var secureEcom = Secure3dService.CheckEnrollment(card)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
+                .Execute(Secure3dVersion.Two);
+
+            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
+
+            ThreeDSecure initAuth =
+                Secure3dService
+                        .InitiateAuthentication(card, secureEcom)
+                        .WithCurrency(Currency)
+                        .WithAmount(Amount)
+                        .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
+                        .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                        .WithOrderCreateDate(DateTime.Now)
+                        .WithAddress(shippingAddress, AddressType.Shipping)
+                        .WithMobileData(mobileData)
+                        .WithBrowserData(browserData)
+                        .Execute(Secure3dVersion.Two);
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual(ENROLLED, initAuth.Enrolled);
+            Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.AreEqual("YES", initAuth.LiabilityShift);
+            Assert.IsFalse(initAuth.ChallengeMandated);
+            Assert.IsNotNull(initAuth.IssuerAcsUrl);
+            Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
+            Assert.IsNotNull(initAuth.ChallengeReturnUrl);
+            Assert.IsNotNull(initAuth.MessageType);
+            Assert.IsNotNull(initAuth.SessionDataFieldName);
+            Assert.AreEqual("5", initAuth.Eci.ToString());
         }
 
         #endregion

@@ -99,6 +99,10 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string CardLast4 { get; set; }
 
+        public string FingerPrint { get; set; }
+
+        public string FingerPrintIndicator { get; set; }
+
         /// <summary>
         /// The card number used in the transaction.
         /// </summary>
@@ -495,10 +499,11 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Confirm an original transaction. For now it is used for the APM transactions with PayPal
         /// </summary>
-        public ManagementBuilder Confirm()
+        public ManagementBuilder Confirm(decimal? amount = null)
         {
             return new ManagementBuilder(TransactionType.Confirm)
-                .WithPaymentMethod(this.TransactionReference);
+                .WithPaymentMethod(this.TransactionReference)
+                .WithAmount(amount);
         }
 
         public ManagementBuilder Increment(decimal? amount = null) {

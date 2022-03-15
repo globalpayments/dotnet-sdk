@@ -13,6 +13,8 @@ namespace GlobalPayments.Api.Entities {
         public string AcsStartVersion { get; set; }
 
         public IEnumerable<string> AcsInfoIndicator { get; set; }
+        public string AcsInterface { get; set; }
+        public string AcsUiTemplate { get; set; }
 
         /// <summary>
         /// The algorithm used.
@@ -203,6 +205,8 @@ namespace GlobalPayments.Api.Entities {
                 AcsTransactionId = MergeValue(AcsTransactionId, secureEcom.AcsTransactionId);
                 AcsEndVersion = MergeValue(AcsEndVersion, secureEcom.AcsEndVersion);
                 AcsStartVersion = MergeValue(AcsStartVersion, secureEcom.AcsStartVersion);
+                AcsInterface = MergeValue(AcsInterface, secureEcom.AcsInterface);
+                AcsUiTemplate = MergeValue(AcsUiTemplate, secureEcom.AcsUiTemplate);
                 Algorithm = MergeValue(Algorithm, secureEcom.Algorithm);
                 Amount = MergeValue(Amount, secureEcom.Amount);
                 AuthenticationSource = MergeValue(AuthenticationSource, secureEcom.AuthenticationSource);
