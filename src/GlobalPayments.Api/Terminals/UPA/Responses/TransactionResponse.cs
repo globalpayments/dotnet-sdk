@@ -95,11 +95,28 @@ namespace GlobalPayments.Api.Terminals.UPA
             // TraceNumber = payment.GetValue<string>("trackNumber");
         }
 
+        private string ConvertHEX(string hexString)
+        {
+            string retValue = "";
+            if (hexString.Length%2 != 0) {
+                return retValue;
+            }
+
+            for (int i = 0; i < hexString.Length - 1; i += 2)  {
+                retValue += System.Convert.ToChar(System.Convert.ToUInt32(hexString.Substring(i, 2), 16)).ToString();
+            }
+            return retValue;
+        }
+
         protected void HydrateEmvData(JsonDoc data) {
             var emv = data.Get("emv");
             if (emv == null) {
                 return;
             }
+            ApplicationId = emv.GetValue("9F06").ToString();
+            ApplicationCryptogram = emv.GetValue("9F26").ToString();
+            ApplicationLabel = ConvertHEX(emv.GetValue("50").ToString());
+            ApplicationPreferredName = ConvertHEX(emv.GetValue("9F12").ToString());
             // Emv4F = emv.Emv4F;
             // Emv50 = emv.Emv50;
             // Emv5F20 = emv.Emv5F20;
