@@ -127,7 +127,7 @@ namespace GlobalPayments.Api.Gateways {
             var responseCode = root.GetValue<string>("status");
 
             if (responseCode != "00") {
-                throw new GatewayException($"Unexpected Gateway Response: {responseCode}");
+                throw new GatewayException($"Unexpected Gateway Response: {responseCode}", responseCode);
             }
 
             var proPayResponse = PopulateProPayResponse(builder, root);

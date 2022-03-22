@@ -249,6 +249,45 @@ namespace GlobalPayments.Api.Tests.ProPay {
         }
 
         [TestMethod]
+        public void UploadDocumentChargebackByDocumentString()
+        {
+            var docUploadData = new DocumentUploadData()
+            {
+                DocumentName = "TestDocCB_12345",
+                TransactionReference = "2",
+                Document = TestAccountData.GetDocumentBase64String(@"ProPay\TestData\TestDocChargeback.docx"),
+                DocType = "docx"
+            };
+
+            var response = _service.UploadDocumentChargeback()
+                .WithAccountNumber("718134204")
+                .WithDocumentUploadData(docUploadData)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void UploadDocumentByDocumentString() {
+            var docUploadData = new DocumentUploadData()
+            {
+                DocumentName = "TestDoc_12345",
+                DocCategory = "Verification",
+                Document = TestAccountData.GetDocumentBase64String(@"ProPay\TestData\TestDoc.docx"),
+                DocType = "docx"
+            };
+
+            var response = _service.UploadDocument()
+                .WithAccountNumber("718134204")
+                .WithDocumentUploadData(docUploadData)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
         public void ObtainSSOKey() {
             var ssoRequestData = new SSORequestData()
             {

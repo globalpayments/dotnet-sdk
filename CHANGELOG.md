@@ -4,6 +4,13 @@
 
 #### Enhancements
 
+- Added direct Base64 string support for Document/Document Chargeback Upload image parameters (ProPay)
+- Added ProPay error code to GatewayException object (ProPay)
+
+## v2.0.5 (03/15/2022)
+
+#### Enhancements
+
 - Added fingerprint_mode in the create transaction request
 - MOBILE_SDK source in the 3DS flow
 - Alternative Payment Method (PayPal) for GPEcom

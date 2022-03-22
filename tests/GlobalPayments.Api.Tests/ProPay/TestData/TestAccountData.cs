@@ -262,5 +262,9 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
 
             return renewAccountData;
         }
+
+        public static string GetDocumentBase64String(string filepath) {
+            return Convert.ToBase64String(System.IO.File.ReadAllBytes(filepath));
+        }
     }
 }
