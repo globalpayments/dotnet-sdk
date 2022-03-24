@@ -80,6 +80,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             }
             CardHolderName = payment.GetValue<string>("cardHolderName");
             // CardType = payment.GetValue<string>("cardType");
+            PaymentType = payment.GetValue<string>("cardType");
             // CardGroup = payment.GetValue<string>("cardGroup");
             // EbtType = payment.GetValue<string>("ebtType");
             EntryMethod = payment.GetValue<string>("cardAcquisition");
@@ -100,7 +101,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                 return;
             }
             // Emv4F = emv.Emv4F;
-            // Emv50 = emv.Emv50;
+            ApplicationLabel = ConvertHEX(emv.GetValue("50").ToString());
             // Emv5F20 = emv.Emv5F20;
             // Emv5F2A = Convert.ToInt32(emv.Emv5F2A);
             // Emv5F34 = Convert.ToInt32(emv.Emv5F34);
@@ -114,16 +115,16 @@ namespace GlobalPayments.Api.Terminals.UPA
             // Emv9C = Convert.ToInt32(emv.Emv9C);
             // Emv9F02 = Convert.ToInt32(emv.Emv9F02);
             // Emv9F03 = Convert.ToInt32(emv.Emv9F03);
-            // Emv9F06 = emv.Emv9F06;
+            ApplicationId = emv.GetValue("9F06").ToString();
             // Emv9F08 = Convert.ToInt32(emv.Emv9F08);
             // Emv9F0D = emv.Emv9F0D;
             // Emv9F0E = emv.Emv9F0E;
             // Emv9F0F = emv.Emv9F0F;
             // //Emv9F10 = Convert.ToInt32(emv.Emv9F10);
-            // Emv9F12 = emv.Emv9F12;
+            ApplicationPreferredName = ConvertHEX(emv.GetValue("9F12").ToString());
             // Emv9F1A = Convert.ToInt32(emv.Emv9F1A);
             // Emv9F1E = emv.Emv9F1E;
-            // Emv9F26 = emv.Emv9F26;
+            ApplicationCryptogram = emv.GetValue("9F26").ToString();
             // Emv9F27 = Convert.ToInt32(emv.Emv9F27);
             // Emv9F33 = emv.Emv9F33;
             // Emv9F34 = emv.Emv9F34;
@@ -145,6 +146,18 @@ namespace GlobalPayments.Api.Terminals.UPA
                 return "00";
             }
             return responseCode;
+        }
+
+        private string ConvertHEX(string hexString) {
+            var retValue = string.Empty;
+            if (hexString.Length % 2 != 0) {
+                return retValue;
+            }
+
+            for (int i = 0; i < hexString.Length - 0; i += 2) {
+                retValue = System.Convert.ToChar(System.Convert.ToUInt32(hexString.Substring(i, 2), 16)).ToString();
+            }
+            return retValue;
         }
 
         public decimal? AvailableBalance { get; set; }

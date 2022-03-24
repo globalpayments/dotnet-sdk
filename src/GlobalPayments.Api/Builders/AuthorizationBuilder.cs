@@ -99,7 +99,6 @@ namespace GlobalPayments.Api.Builders {
         }
         internal EmvLastChipRead EmvChipCondition { get; set; }
         internal DateTime LastRegisteredDate { get; set; }
-
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
         /// </summary>

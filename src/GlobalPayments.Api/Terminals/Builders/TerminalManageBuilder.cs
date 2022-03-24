@@ -16,6 +16,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
+        internal decimal? TaxAmount { get; set; }
+        internal string TaxExempt { get; set; }
+        internal string TaxExemptId { get; set; }
+        internal string InvoiceNumber { get; set; }
+        internal int? ProcessCPC { get; set; }
 
         public TerminalManageBuilder WithTerminalRefNumber(string terminalRefNumber) {
             TerminalRefNumber = terminalRefNumber;
@@ -43,10 +48,36 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Gratuity = amount;
             return this;
         }
+
+        public TerminalManageBuilder WithTaxAmount(decimal taxAmount) {
+            TaxAmount = taxAmount;
+            return this;
+        }
+        public TerminalManageBuilder WithTaxType(TaxType taxType, string taxExemptId = null) {
+            TaxExempt = taxType == TaxType.TAXEXEMPT ? "1" : "0";
+            TaxExemptId = taxExemptId;
+            return this;
+        }
+
+        public TerminalManageBuilder WithInvoiceNumber(string invoiceNumber) {
+            this.InvoiceNumber = invoiceNumber;
+            return this;
+        }
+
+        public TerminalManageBuilder WithProcessCPC(int value) {
+            ProcessCPC = value;
+            return this;
+        }
+
         public TerminalManageBuilder WithTransactionId(string value) {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
             (PaymentMethod as TransactionReference).TransactionId = value;
+            return this;
+        }
+
+        public TerminalManageBuilder WithTransactionModifier(TransactionModifier modifier) {
+            TransactionModifier = modifier;
             return this;
         }
 

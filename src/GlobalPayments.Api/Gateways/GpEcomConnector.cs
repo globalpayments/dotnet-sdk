@@ -792,9 +792,9 @@ namespace GlobalPayments.Api.Gateways {
                 }              
             };
             
-            var paymentMethodDetails = root.Get("paymentmethoddetails");
-            if (paymentMethodDetails != null) {
-
+            if (root.Has("paymentmethoddetails")) {
+                var paymentMethodDetails = root.Get("paymentmethoddetails");
+                    
                 AlternativePaymentResponse alternativePaymentResponse = new AlternativePaymentResponse
                 {
                     BankAccount = paymentMethodDetails?.GetValue<string>("bankaccount"),
@@ -914,7 +914,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 var eci = root.GetValue<string>("eci");
                 if (!string.IsNullOrEmpty(eci))
-                    result.ThreeDSecure.Eci = int.Parse(eci);
+                    result.ThreeDSecure.Eci = eci;
 
                 var algorithm = root.GetValue<string>("algorithm");
                 if (!string.IsNullOrEmpty(algorithm))

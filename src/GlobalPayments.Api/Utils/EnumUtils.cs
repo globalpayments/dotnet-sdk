@@ -16,7 +16,8 @@ namespace GlobalPayments.Api.Utils {
         VAPS,
         Transit,
         Portico,
-        GP_API
+        GP_API,
+        UPA
     }
 
     [AttributeUsage(AttributeTargets.Enum)]

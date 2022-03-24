@@ -458,7 +458,7 @@ namespace GlobalPayments.Api.Mapping {
                         AcsStartVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_start"),
                         AcsEndVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_end"),
                         Enrolled = json.Get("three_ds")?.GetValue<string>("enrolled_status"),
-                        Eci = json.Get("three_ds")?.GetValue<string>("eci")?.ToInt32(),
+                        Eci = !string.IsNullOrEmpty(json.Get("three_ds")?.GetValue<string>("eci")) ? json.Get("three_ds")?.GetValue<string>("eci") : null,
                         AcsInfoIndicator = json.Get("three_ds")?.GetArray<string>("acs_info_indicator"),
                         ChallengeMandated = json.Get("three_ds")?.GetValue<string>("challenge_status") == "MANDATED",
                         PayerAuthenticationRequest = (!string.IsNullOrEmpty(json.Get("three_ds").GetValue<string>("acs_challenge_request_url")) && json.GetValue<string>("status") == "CHALLENGE_REQUIRED") ?

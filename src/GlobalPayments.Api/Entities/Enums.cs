@@ -300,7 +300,12 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates an alternative payment method transaction.
         /// </summary>
-        AlternativePaymentMethod = 1 << 15
+        AlternativePaymentMethod = 1 << 15,
+
+        /// <summary>
+        /// Indicates a DeletePreAuth transaction
+        /// </summary>
+        DeletePreAuth = 1 << 16,
     }
 
     /// <summary>

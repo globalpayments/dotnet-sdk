@@ -335,7 +335,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_022_Visa_Internet_ECI_5");
 
             VisaManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 AuthenticationValue = "1234567890123456789012345678901234567890"
             };
 
@@ -351,7 +351,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_023_Mastercard_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 AuthenticationValue = "12345678901234567890123456789012",
                 //UcafCollectionIndicator = UcafCollectionIndicator.Supported_Authenticated
             };
@@ -368,7 +368,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_024_Discover_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 AuthenticationValue = "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
             };
 
@@ -384,7 +384,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_025_AMEX_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 AuthenticationValue = "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
             };
 
@@ -400,7 +400,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_026_Visa_Internet_ECI_6");
 
             VisaManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 6,
+                Eci = "6",
                 AuthenticationValue = "1234567890123456789012345678901234567890"
             };
 
@@ -416,7 +416,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_027_Mastercard_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 AuthenticationValue = "12345678901234567890123456789012",
                 //UcafCollectionIndicator = UcafCollectionIndicator.Supported_Authenticated
             };

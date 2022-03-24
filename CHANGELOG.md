@@ -4,6 +4,20 @@
 
 #### Enhancements
 
+- Added Authorization (UPA)
+- Added DeletePreAuth (UPA)
+- Added Tokenization (UPA)
+- Added HSA/FSA support (UPA)
+- Support alphanumerical ECI values on 3DS
+
+#### Bug Fixes:
+
+- Fixed mapping issue with Payment Method details (GPEcom)
+
+## v2.0.6 (3/22/2022)
+
+#### Enhancements
+
 - Added direct Base64 string support for Document/Document Chargeback Upload image parameters (ProPay)
 - Added ProPay error code to GatewayException object (ProPay)
 

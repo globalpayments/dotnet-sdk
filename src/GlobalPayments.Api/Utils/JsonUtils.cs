@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Utils {
         public string Encode(object value) {
             if (value == null) return null;
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(value.ToString()));
-        }
+        }        
 
         public string Decode(object value) {
             try {

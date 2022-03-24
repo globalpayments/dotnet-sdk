@@ -857,7 +857,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsFalse(initAuth.ChallengeMandated);
             Assert.IsNotNull(initAuth.IssuerAcsUrl);
             Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
-            Assert.AreEqual("5", initAuth.Eci.ToString());            
+            Assert.AreEqual("05", initAuth.Eci);            
 
             // Get authentication data
             secureEcom =
@@ -918,7 +918,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(initAuth.ChallengeReturnUrl);
             Assert.IsNotNull(initAuth.MessageType);
             Assert.IsNotNull(initAuth.SessionDataFieldName);
-            Assert.AreEqual("5", initAuth.Eci.ToString());
+            Assert.AreEqual("05", initAuth.Eci);
         }
 
         #endregion
@@ -955,7 +955,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(initAuth.ChallengeReturnUrl);
             Assert.IsNotNull(initAuth.MessageType);
             Assert.IsNotNull(initAuth.SessionDataFieldName);
-            Assert.AreEqual(5, initAuth.Eci);
+            Assert.AreEqual("05", initAuth.Eci);
         }
 
         [DataTestMethod]
@@ -995,7 +995,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(initAuth.ChallengeReturnUrl);
             Assert.IsNotNull(initAuth.MessageType);
             Assert.IsNotNull(initAuth.SessionDataFieldName);
-            Assert.AreEqual(5, initAuth.Eci);
+            Assert.AreEqual("05", initAuth.Eci);
         }
 
         [DataTestMethod]

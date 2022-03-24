@@ -9,6 +9,8 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
         [TestCleanup]
         public void Throttle() { System.Threading.Thread.Sleep(1500); }
 
+        protected static readonly int expYear = DateTime.Now.Year + 1;
+        
         [TestMethod]
         public void DotNet_Auth_006a() {
             ServicesContainer.ConfigureService(new GpEcomConfig {
@@ -24,7 +26,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -54,7 +56,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -84,7 +86,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -114,7 +116,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -144,7 +146,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -174,7 +176,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -204,7 +206,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -234,7 +236,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -264,7 +266,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -294,7 +296,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -324,7 +326,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -354,7 +356,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -384,7 +386,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -414,7 +416,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -444,7 +446,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -474,7 +476,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -504,7 +506,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -534,7 +536,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -564,7 +566,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -594,7 +596,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -624,7 +626,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -655,7 +657,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -686,7 +688,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -717,7 +719,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -747,7 +749,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -777,7 +779,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -807,7 +809,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -837,7 +839,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -867,7 +869,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -897,7 +899,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -927,7 +929,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -957,7 +959,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -987,7 +989,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1017,7 +1019,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1047,7 +1049,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1077,7 +1079,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1107,7 +1109,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1137,7 +1139,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1166,7 +1168,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1196,7 +1198,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "424242000000000000000",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1226,7 +1228,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "42424242424",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1256,7 +1258,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262#",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1286,7 +1288,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1316,7 +1318,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
             };
@@ -1345,7 +1347,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep"
@@ -1375,7 +1377,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James~Mason"
@@ -1405,7 +1407,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1435,7 +1437,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1465,7 +1467,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 20,
-                ExpYear = 2012,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1523,7 +1525,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1553,7 +1555,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1583,7 +1585,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1613,7 +1615,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1643,7 +1645,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1673,7 +1675,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1704,7 +1706,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1734,7 +1736,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1765,7 +1767,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "12345",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1795,7 +1797,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1825,7 +1827,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -1855,7 +1857,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)2,
                 CardHolderName = "James Mason"
@@ -1885,7 +1887,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)3,
                 CardHolderName = "James Mason"
@@ -1915,7 +1917,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)4,
                 CardHolderName = "James Mason"
@@ -1945,7 +1947,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)5,
                 CardHolderName = "James Mason"
@@ -1975,7 +1977,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)0,
                 CardHolderName = "James Mason"
@@ -2005,7 +2007,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2035,7 +2037,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2065,7 +2067,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2095,7 +2097,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2125,7 +2127,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2155,7 +2157,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2185,7 +2187,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2215,7 +2217,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2245,7 +2247,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2275,7 +2277,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2305,7 +2307,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2335,7 +2337,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2365,7 +2367,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2395,7 +2397,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2425,7 +2427,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2455,7 +2457,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2485,7 +2487,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2515,7 +2517,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2545,7 +2547,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2575,7 +2577,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2605,7 +2607,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2635,7 +2637,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2664,7 +2666,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2693,7 +2695,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2723,7 +2725,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2753,7 +2755,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2784,7 +2786,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2815,7 +2817,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2845,7 +2847,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2876,7 +2878,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2907,7 +2909,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2938,7 +2940,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2968,7 +2970,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -2999,7 +3001,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3030,7 +3032,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3061,7 +3063,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3091,7 +3093,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3122,7 +3124,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3153,7 +3155,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3184,7 +3186,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3214,7 +3216,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3245,7 +3247,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3288,7 +3290,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3330,7 +3332,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3367,7 +3369,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3403,7 +3405,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3439,7 +3441,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3475,7 +3477,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3516,7 +3518,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3553,7 +3555,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3589,7 +3591,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3625,7 +3627,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3661,7 +3663,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3692,7 +3694,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3722,7 +3724,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3765,7 +3767,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3814,7 +3816,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3863,7 +3865,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3912,7 +3914,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -3961,7 +3963,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4010,7 +4012,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "V002625938386848",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4059,7 +4061,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4108,7 +4110,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = " 4002 6259 3838 6848",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4157,7 +4159,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4206,7 +4208,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4255,7 +4257,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4304,7 +4306,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4353,7 +4355,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 20,
-                ExpYear = 2012,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4402,7 +4404,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4500,7 +4502,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4549,7 +4551,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 20,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4598,7 +4600,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4694,7 +4696,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4744,7 +4746,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4794,7 +4796,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "12345",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4843,7 +4845,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4892,7 +4894,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -4941,7 +4943,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)0,
                 CardHolderName = "James Mason"
@@ -4990,7 +4992,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)2,
                 CardHolderName = "James Mason"
@@ -5039,7 +5041,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)3,
                 CardHolderName = "James Mason"
@@ -5088,7 +5090,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)4,
                 CardHolderName = "James Mason"
@@ -5138,7 +5140,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5187,7 +5189,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5237,7 +5239,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5286,7 +5288,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5335,7 +5337,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5385,7 +5387,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5434,7 +5436,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5484,7 +5486,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5533,7 +5535,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5582,7 +5584,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5631,7 +5633,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 11,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5730,7 +5732,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5779,7 +5781,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5828,7 +5830,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5877,7 +5879,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = 11,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -5976,7 +5978,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6025,7 +6027,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6074,7 +6076,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 11,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6172,7 +6174,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "30384800000000",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6221,7 +6223,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "30450100000000",
                 ExpMonth = 11,
-                ExpYear = 2015,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6320,7 +6322,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6370,7 +6372,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "2",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6420,7 +6422,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "3",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6468,7 +6470,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "4",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6518,7 +6520,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "5",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6568,7 +6570,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "6",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6618,7 +6620,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "7",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6668,7 +6670,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "8",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6718,7 +6720,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "9",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6768,7 +6770,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "10",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6818,7 +6820,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "11",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6868,7 +6870,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "12",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6918,7 +6920,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "13",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -6966,7 +6968,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "14",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7014,7 +7016,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "15",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7051,7 +7053,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7090,7 +7092,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7129,7 +7131,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7168,7 +7170,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7207,7 +7209,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7246,7 +7248,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7285,7 +7287,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7324,7 +7326,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7363,7 +7365,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7402,7 +7404,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7441,7 +7443,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7480,7 +7482,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7519,7 +7521,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7558,7 +7560,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7597,7 +7599,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7636,7 +7638,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7675,7 +7677,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7714,7 +7716,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7753,7 +7755,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7792,7 +7794,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7831,7 +7833,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7870,7 +7872,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7909,7 +7911,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7948,7 +7950,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -7987,7 +7989,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8026,7 +8028,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8065,7 +8067,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8104,7 +8106,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8143,7 +8145,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8182,7 +8184,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8221,7 +8223,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8260,7 +8262,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8299,7 +8301,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8338,7 +8340,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8377,7 +8379,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8416,7 +8418,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8455,7 +8457,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8494,7 +8496,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8533,7 +8535,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8572,7 +8574,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8611,7 +8613,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8650,7 +8652,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8688,7 +8690,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8727,7 +8729,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8766,7 +8768,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8805,7 +8807,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8844,7 +8846,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8883,7 +8885,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8922,7 +8924,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8960,7 +8962,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -8999,7 +9001,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9038,7 +9040,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9077,7 +9079,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9116,7 +9118,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9154,7 +9156,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9192,7 +9194,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9230,7 +9232,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9268,7 +9270,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9306,7 +9308,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9344,7 +9346,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9382,7 +9384,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9420,7 +9422,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9458,7 +9460,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9496,7 +9498,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9534,7 +9536,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9572,7 +9574,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9610,7 +9612,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9648,7 +9650,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9686,7 +9688,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9724,7 +9726,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9762,7 +9764,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9800,7 +9802,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9838,7 +9840,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9876,7 +9878,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9914,7 +9916,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9952,7 +9954,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -9990,7 +9992,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10028,7 +10030,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10066,7 +10068,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10104,7 +10106,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10142,7 +10144,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10180,7 +10182,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10218,7 +10220,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10256,7 +10258,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10294,7 +10296,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10332,7 +10334,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10370,7 +10372,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10408,7 +10410,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10446,7 +10448,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10484,7 +10486,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10522,7 +10524,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10560,7 +10562,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10598,7 +10600,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10636,7 +10638,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10674,7 +10676,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10712,7 +10714,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10750,7 +10752,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10789,7 +10791,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10828,7 +10830,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10867,7 +10869,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10906,7 +10908,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10945,7 +10947,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -10984,7 +10986,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11023,7 +11025,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11062,7 +11064,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11101,7 +11103,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11140,7 +11142,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11179,7 +11181,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11218,7 +11220,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11257,7 +11259,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11296,7 +11298,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11335,7 +11337,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11374,7 +11376,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11413,7 +11415,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11452,7 +11454,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11491,7 +11493,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11530,7 +11532,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11569,7 +11571,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11608,7 +11610,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11647,7 +11649,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11686,7 +11688,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11725,7 +11727,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11764,7 +11766,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11803,7 +11805,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11842,7 +11844,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11881,7 +11883,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11919,7 +11921,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11958,7 +11960,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -11997,7 +11999,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12036,7 +12038,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12075,7 +12077,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12114,7 +12116,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12153,7 +12155,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12192,7 +12194,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12231,7 +12233,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12270,7 +12272,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12309,7 +12311,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12348,7 +12350,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12387,7 +12389,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12426,7 +12428,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12465,7 +12467,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12504,7 +12506,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12543,7 +12545,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12581,7 +12583,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12620,7 +12622,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12659,7 +12661,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12698,7 +12700,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -12737,7 +12739,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12768,7 +12770,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12799,7 +12801,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12830,7 +12832,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12861,7 +12863,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12892,7 +12894,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12923,7 +12925,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12954,7 +12956,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -12985,7 +12987,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13016,7 +13018,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13047,7 +13049,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13078,7 +13080,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13109,7 +13111,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13140,7 +13142,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13171,7 +13173,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13202,7 +13204,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13233,7 +13235,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13264,7 +13266,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13295,7 +13297,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13326,7 +13328,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13357,7 +13359,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13388,7 +13390,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13419,7 +13421,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13450,7 +13452,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13481,7 +13483,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13512,7 +13514,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13543,7 +13545,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13574,7 +13576,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13605,7 +13607,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13636,7 +13638,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13667,7 +13669,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13698,7 +13700,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13729,7 +13731,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13760,7 +13762,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13791,7 +13793,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13822,7 +13824,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
             };
@@ -13852,7 +13854,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermeloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooon"
@@ -13883,7 +13885,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13914,7 +13916,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13945,7 +13947,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -13976,7 +13978,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 18,
-                ExpYear = 2012,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14036,7 +14038,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14067,7 +14069,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14098,7 +14100,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14129,7 +14131,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14160,7 +14162,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14192,7 +14194,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14224,7 +14226,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "1.23457E+18",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14255,7 +14257,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2019,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14287,7 +14289,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "7",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14319,7 +14321,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "7",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14350,7 +14352,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14381,7 +14383,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14412,7 +14414,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14443,7 +14445,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14474,7 +14476,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14505,7 +14507,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14536,7 +14538,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14567,7 +14569,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14598,7 +14600,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14629,7 +14631,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14660,7 +14662,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14691,7 +14693,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14722,7 +14724,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14753,7 +14755,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14784,7 +14786,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14815,7 +14817,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14846,7 +14848,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14877,7 +14879,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14908,7 +14910,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14939,7 +14941,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -14970,7 +14972,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15001,7 +15003,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15032,7 +15034,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15063,7 +15065,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15093,7 +15095,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15124,7 +15126,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15155,7 +15157,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15186,7 +15188,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15217,7 +15219,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15248,7 +15250,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15279,7 +15281,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15310,7 +15312,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15341,7 +15343,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15372,7 +15374,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
             };
@@ -15402,7 +15404,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
@@ -15433,7 +15435,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15495,7 +15497,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 18,
-                ExpYear = 2012,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15555,7 +15557,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15586,7 +15588,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15617,7 +15619,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15648,7 +15650,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15679,7 +15681,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15710,7 +15712,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15742,7 +15744,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123456789",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15773,7 +15775,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15805,7 +15807,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4242424242424240",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "7",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15836,7 +15838,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "12#",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15867,7 +15869,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15898,7 +15900,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15929,7 +15931,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15960,7 +15962,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -15991,7 +15993,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16022,7 +16024,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16053,7 +16055,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16084,7 +16086,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16115,7 +16117,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16146,7 +16148,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16177,7 +16179,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16208,7 +16210,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16239,7 +16241,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16270,7 +16272,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16301,7 +16303,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16332,7 +16334,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16363,7 +16365,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16394,7 +16396,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16425,7 +16427,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2018,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "Peter Watermelon"
@@ -16455,7 +16457,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16494,7 +16496,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16533,7 +16535,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16572,7 +16574,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16611,7 +16613,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16650,7 +16652,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16689,7 +16691,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16728,7 +16730,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16767,7 +16769,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16806,7 +16808,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16845,7 +16847,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16884,7 +16886,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16923,7 +16925,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -16962,7 +16964,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17001,7 +17003,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17082,7 +17084,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17121,7 +17123,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17223,7 +17225,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17308,7 +17310,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17347,7 +17349,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17409,7 +17411,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17448,7 +17450,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17487,7 +17489,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17526,7 +17528,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17564,7 +17566,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17603,7 +17605,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17642,7 +17644,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17681,7 +17683,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17720,7 +17722,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17759,7 +17761,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17798,7 +17800,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17845,7 +17847,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17892,7 +17894,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17939,7 +17941,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -17986,7 +17988,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18033,7 +18035,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18080,7 +18082,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18127,7 +18129,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18174,7 +18176,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18221,7 +18223,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18268,7 +18270,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18315,7 +18317,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18362,7 +18364,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18409,7 +18411,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18456,7 +18458,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18654,7 +18656,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18693,7 +18695,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18755,7 +18757,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18794,7 +18796,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18833,7 +18835,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18872,7 +18874,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18910,7 +18912,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18949,7 +18951,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -18988,7 +18990,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19027,7 +19029,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19066,7 +19068,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19105,7 +19107,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19143,7 +19145,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19181,7 +19183,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19219,7 +19221,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19257,7 +19259,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19295,7 +19297,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19333,7 +19335,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19371,7 +19373,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19409,7 +19411,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19447,7 +19449,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19485,7 +19487,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19523,7 +19525,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19561,7 +19563,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19599,7 +19601,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19637,7 +19639,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19675,7 +19677,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19713,7 +19715,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19751,7 +19753,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19789,7 +19791,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19827,7 +19829,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19865,7 +19867,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19903,7 +19905,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19942,7 +19944,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -19981,7 +19983,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20020,7 +20022,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20058,7 +20060,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20096,7 +20098,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20134,7 +20136,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20172,7 +20174,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20210,7 +20212,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20248,7 +20250,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20286,7 +20288,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20324,7 +20326,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20362,7 +20364,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20400,7 +20402,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20438,7 +20440,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20476,7 +20478,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20514,7 +20516,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20552,7 +20554,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20581,7 +20583,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20619,7 +20621,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20657,7 +20659,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20695,7 +20697,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20733,7 +20735,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20771,7 +20773,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
             };
@@ -20808,7 +20810,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep"
@@ -20846,7 +20848,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James~Mason"
@@ -20884,7 +20886,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20922,7 +20924,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -20960,7 +20962,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 20,
-                ExpYear = 2012,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21034,7 +21036,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21072,7 +21074,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21110,7 +21112,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21148,7 +21150,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21186,7 +21188,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21224,7 +21226,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21263,7 +21265,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21301,7 +21303,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21340,7 +21342,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "12345",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21378,7 +21380,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21416,7 +21418,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21454,7 +21456,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)2,
                 CardHolderName = "James Mason"
@@ -21492,7 +21494,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)3,
                 CardHolderName = "James Mason"
@@ -21530,7 +21532,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)4,
                 CardHolderName = "James Mason"
@@ -21568,7 +21570,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)5,
                 CardHolderName = "James Mason"
@@ -21606,7 +21608,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)0,
                 CardHolderName = "James Mason"
@@ -21644,7 +21646,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21682,7 +21684,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21720,7 +21722,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21758,7 +21760,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21796,7 +21798,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21834,7 +21836,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21872,7 +21874,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21910,7 +21912,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21948,7 +21950,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -21986,7 +21988,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22024,7 +22026,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22062,7 +22064,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22100,7 +22102,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22138,7 +22140,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22176,7 +22178,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22214,7 +22216,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22252,7 +22254,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22290,7 +22292,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22328,7 +22330,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22366,7 +22368,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22404,7 +22406,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22442,7 +22444,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22479,7 +22481,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22516,7 +22518,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22554,7 +22556,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22592,7 +22594,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22631,7 +22633,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22670,7 +22672,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22708,7 +22710,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22747,7 +22749,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22786,7 +22788,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22825,7 +22827,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22863,7 +22865,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22902,7 +22904,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22941,7 +22943,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -22980,7 +22982,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23018,7 +23020,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23057,7 +23059,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23096,7 +23098,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23135,7 +23137,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23173,7 +23175,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23212,7 +23214,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23263,7 +23265,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23313,7 +23315,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23358,7 +23360,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23402,7 +23404,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23446,7 +23448,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23490,7 +23492,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23539,7 +23541,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23584,7 +23586,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23628,7 +23630,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23672,7 +23674,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23716,7 +23718,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23755,7 +23757,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23793,7 +23795,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23831,7 +23833,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001038443335",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23861,7 +23863,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001038488884",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23891,7 +23893,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001036298889",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23921,7 +23923,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001036853337",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23951,7 +23953,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -23981,7 +23983,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037167778",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24011,7 +24013,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24041,7 +24043,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037484447",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24071,7 +24073,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037490006",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24101,7 +24103,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000198�",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24131,7 +24133,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000149",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24161,7 +24163,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000172",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24191,7 +24193,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000297",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24221,7 +24223,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000131",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24251,7 +24253,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000206",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24281,7 +24283,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000131",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24311,7 +24313,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000214",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24341,7 +24343,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "5100000000000164",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24371,7 +24373,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "370537726695896�",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24401,7 +24403,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "344598846104303",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24431,7 +24433,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "342911579886552",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24461,7 +24463,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "377775599797356",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24491,7 +24493,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "371810438025523",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24521,7 +24523,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "374973180958759",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24551,7 +24553,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "371810438025523",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24581,7 +24583,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "376515222233960",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24611,7 +24613,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "372749236937027",
                 ExpMonth = 10,
-                ExpYear = 2025,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24641,7 +24643,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24671,7 +24673,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24701,7 +24703,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24731,7 +24733,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24761,7 +24763,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24791,7 +24793,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24821,7 +24823,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24851,7 +24853,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24881,7 +24883,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24911,7 +24913,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24941,7 +24943,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -24971,7 +24973,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25001,7 +25003,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25031,7 +25033,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25061,7 +25063,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25091,7 +25093,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25121,7 +25123,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25151,7 +25153,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25181,7 +25183,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25211,7 +25213,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25241,7 +25243,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25271,7 +25273,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25301,7 +25303,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25331,7 +25333,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25361,7 +25363,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25391,7 +25393,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25421,7 +25423,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25451,7 +25453,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25481,7 +25483,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25511,7 +25513,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25541,7 +25543,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25571,7 +25573,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25601,7 +25603,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25630,7 +25632,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25660,7 +25662,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25690,7 +25692,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "42424242424",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25720,7 +25722,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4263970000005262#",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25750,7 +25752,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25780,7 +25782,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
             };
@@ -25809,7 +25811,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep"
@@ -25839,7 +25841,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James~Mason"
@@ -25869,7 +25871,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25899,7 +25901,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25929,7 +25931,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 20,
-                ExpYear = 2012,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -25987,7 +25989,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26017,7 +26019,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26047,7 +26049,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26077,7 +26079,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26107,7 +26109,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26137,7 +26139,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26168,7 +26170,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26198,7 +26200,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "371810438025523",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26229,7 +26231,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "12345",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26259,7 +26261,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "371810438025523",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "1234",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26289,7 +26291,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)1,
                 CardHolderName = "James Mason"
@@ -26319,7 +26321,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)2,
                 CardHolderName = "James Mason"
@@ -26349,7 +26351,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)3,
                 CardHolderName = "James Mason"
@@ -26379,7 +26381,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "",
                 CvnPresenceIndicator = (CvnPresenceIndicator)4,
                 CardHolderName = "James Mason"
@@ -26409,7 +26411,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)5,
                 CardHolderName = "James Mason"
@@ -26439,7 +26441,7 @@ namespace GlobalPayments.Api.Tests.Realex.Certification {
             var card = new CreditCardData {
                 Number = "4012001037141112",
                 ExpMonth = 12,
-                ExpYear = 2020,
+                ExpYear = expYear,
                 Cvn = "123",
                 CvnPresenceIndicator = (CvnPresenceIndicator)0,
                 CardHolderName = "James Mason"

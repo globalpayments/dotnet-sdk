@@ -32,6 +32,15 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal int? ClerkId { get; set; }
         internal string LineItemLeft { get; set; }
         internal string LineItemRight { get; set; }
+        internal StoredCredentialInitiator? CardOnFileIndicator { get; set; }
+        internal string CardBrandTransId { get; set; }
+        internal decimal? PrescriptionAmount { get; set; }
+        internal decimal? ClinicAmount { get; set; }
+        internal decimal? DentalAmount { get; set; }
+        internal decimal? VisionOpticalAmount { get; set; }
+        internal int? ProcessCPC { get; set; }
+        public string Token { get; set; }
+
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -150,10 +159,46 @@ namespace GlobalPayments.Api.Terminals.Builders {
             (PaymentMethod as CreditCardData).Token = value;
             return this;
         }
+
+        public TerminalAuthBuilder WithCardOnFileIndicator(StoredCredentialInitiator value) {
+            CardOnFileIndicator = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithCardBrandTransId(string value) {
+            CardBrandTransId = value;
+            return this;
+        }
+
         public TerminalAuthBuilder WithTransactionId(string value) {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
             (PaymentMethod as TransactionReference).TransactionId = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithPrescriptionAmount(decimal prescriptionAmt) {
+            PrescriptionAmount = prescriptionAmt;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithClinicAmount(decimal clinicAmt) {
+            ClinicAmount = clinicAmt;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithDentalAmount(decimal value) {
+            DentalAmount = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithVisionOpticalAmount(decimal value) {
+            VisionOpticalAmount = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithProcessCPC(int value) {
+            ProcessCPC = value;
             return this;
         }
 

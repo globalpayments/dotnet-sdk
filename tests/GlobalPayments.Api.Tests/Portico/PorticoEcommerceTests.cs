@@ -75,7 +75,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             card.ThreeDSecure = new ThreeDSecure {
                 PaymentDataSource = "ApplePay",
                 Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
-                Eci = 5
+                Eci = "5"
             };
 
             Transaction response = card.Charge(10m)

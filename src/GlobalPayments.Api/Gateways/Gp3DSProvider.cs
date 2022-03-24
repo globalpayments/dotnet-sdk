@@ -285,9 +285,10 @@ namespace GlobalPayments.Api.Gateways {
             }
             else Headers["Authorization"] = string.Format("securehash {0}", value);
             Headers["X-GP-Version"] = "2.2.0";
-        }
+        }              
 
         private Transaction MapResponse(string rawResponse) {
+            
             JsonDoc doc = JsonDoc.Parse(rawResponse);
 
             ThreeDSecure secureEcom = new ThreeDSecure();
@@ -304,7 +305,7 @@ namespace GlobalPayments.Api.Gateways {
             secureEcom.DirectoryServerTransactionId = doc.GetValue<string>("ds_trans_id");
             secureEcom.AuthenticationType = doc.GetValue<string>("authentication_type");
             secureEcom.AuthenticationValue = doc.GetValue<string>("authentication_value");
-            secureEcom.Eci = doc.GetValue<int>("eci");
+            secureEcom.Eci = doc.GetValue<string>("eci");
             secureEcom.Status = doc.GetValue<string>("status");
             secureEcom.StatusReason = doc.GetValue<string>("status_reason");
             secureEcom.AuthenticationSource = doc.GetValue<string>("authentication_source");

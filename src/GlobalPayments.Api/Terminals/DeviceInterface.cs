@@ -153,6 +153,17 @@ namespace GlobalPayments.Api.Terminals {
         public virtual TerminalAuthBuilder EodProcessing() {
             throw new System.NotImplementedException();
         }
+
+        public virtual TerminalAuthBuilder Tokenize() {
+            throw new System.NotImplementedException();
+        }
+
+        public virtual TerminalAuthBuilder AuthCompletion() {
+            throw new System.NotImplementedException();
+        }
+        public virtual TerminalManageBuilder DeletePreAuth() {
+            throw new System.NotImplementedException();
+        }
         #endregion
 
         #region IDisposable

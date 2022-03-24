@@ -197,7 +197,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
             Assert.IsNotNull(secureEcom.MessageType);
             Assert.IsNotNull(secureEcom.SessionDataFieldName);
-            Assert.AreEqual(6, secureEcom.Eci);
+            Assert.AreEqual("6", secureEcom.Eci);
         }
 
         #endregion
@@ -347,7 +347,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
             Assert.IsNotNull(secureEcom.MessageType);
             Assert.IsNotNull(secureEcom.SessionDataFieldName);
-            Assert.AreEqual(6, secureEcom.Eci);
+            Assert.AreEqual("6", secureEcom.Eci);
 
             var exceptionCaught = false;
             try {

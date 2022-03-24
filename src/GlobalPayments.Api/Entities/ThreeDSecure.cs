@@ -65,7 +65,7 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Consumer authentication (3DSecure) electronic commerce indicator.
         /// </summary>
-        public int? Eci { get; set; }
+        public string Eci { get; set; }
 
         /// <summary>
         /// The enrolment status:

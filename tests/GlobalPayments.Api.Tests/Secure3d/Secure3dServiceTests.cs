@@ -741,7 +741,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
                 ThreeDSecure = new ThreeDSecure {
                     AuthenticationValue = "ODQzNjgwNjU0ZjM3N2JmYTg0NTM=",
                     DirectoryServerTransactionId = "c272b04f-6e7b-43a2-bb78-90f4fb94aa25",
-                    Eci = 5,
+                    Eci = "5",
                     MessageVersion = "2.1.0"
                 }
             };

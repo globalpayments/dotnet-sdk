@@ -12,6 +12,20 @@ namespace GlobalPayments.Api.Terminals.UPA {
             return new TerminalAuthBuilder(TransactionType.Edit, PaymentMethodType.Credit);
         }
 
+        public override TerminalAuthBuilder Tokenize() {
+            return new TerminalAuthBuilder(TransactionType.Tokenize, PaymentMethodType.Credit);
+        }
+
+        public override TerminalAuthBuilder AuthCompletion() {
+            return new TerminalAuthBuilder(TransactionType.Auth, PaymentMethodType.Credit);
+        }
+
+        public override TerminalManageBuilder DeletePreAuth()
+        {
+            return new TerminalManageBuilder(TransactionType.Delete, PaymentMethodType.Credit)
+                .WithTransactionModifier(TransactionModifier.DeletePreAuth);
+        }
+
         public override IEODResponse EndOfDay() {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.EodProcessing));

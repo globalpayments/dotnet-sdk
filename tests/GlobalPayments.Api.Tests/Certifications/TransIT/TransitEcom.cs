@@ -402,7 +402,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_022_Visa_Internet_ECI_5");
 
             VisaManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated,
                 Version = Secure3dVersion.One
@@ -420,7 +420,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_023_Mastercard_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "12345678901234567890123456789012",
                 AuthenticationType = "24", // I believe this is 3DS
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated,
@@ -439,7 +439,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_024_Discover_Internet");
 
             DiscoverManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated,
                 Version = Secure3dVersion.One
@@ -457,7 +457,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_025_AMEX_Internet");
 
             AmexManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated,
                 Version = Secure3dVersion.One
@@ -475,7 +475,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_026_Visa_Internet_ECI_6");
 
             VisaManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 6,
+                Eci = "6",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated,
                 Version = Secure3dVersion.One
@@ -493,7 +493,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_027_Mastercard_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "12345678901234567890123456789012",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated,
                 Version = Secure3dVersion.One
@@ -515,7 +515,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_022_Visa_Internet_ECI_5");
 
             VisaManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated
             };
@@ -532,7 +532,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_023_Mastercard_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 AuthenticationValue = "ODQzNjgwNjU0ZjM3N2JmYTg0NTM=",
                 AuthenticationType = "24",
                 DirectoryServerTransactionId = "c272b04f-6e7b-43a2-bb78-90f4fb94aa25",
@@ -551,7 +551,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_024_Discover_Internet");
 
             DiscoverManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated
             };
@@ -568,7 +568,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_025_AMEX_Internet");
 
             AmexManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated
             };
@@ -585,7 +585,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_026_Visa_Internet_ECI_6");
 
             VisaManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 6,
+                Eci = "6",
                 SecureCode = "1234567890123456789012345678901234567890",
                 UCAFIndicator = UCAFIndicator.FullyAuthenticated
             };
@@ -602,7 +602,7 @@ namespace GlobalPayments.Api.Tests.Certifications.TransIT {
             Logger.AppendText("\r\nTest_027_Mastercard_Internet");
 
             MasterCardManual.ThreeDSecure = new ThreeDSecure {
-                Eci = 5,
+                Eci = "5",
                 SecureCode = "12345678901234567890123456789012",
                 AuthenticationType = "24",
                 DirectoryServerTransactionId = "c272b04f-6e7b-43a2-bb78-90f4fb94aa25",

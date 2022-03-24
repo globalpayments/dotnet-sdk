@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.NUCLEUS_SATURN_1000,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.6",
+                IpAddress = "192.168.0.3",
                 Port = "8081",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -36,13 +36,115 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 Assert.IsNotNull(message);
             };
 
+            var autoSub = new AutoSubstantiation {
+                PrescriptionSubTotal = 10m,
+                ClinicSubTotal = 1m,
+                DentalSubTotal = 2m,
+                VisionSubTotal = 2m
+            };
+
             var response = _device.Sale(10m)
                 .WithEcrId(13)
                 .WithClerkId(123)
                 .WithGratuity(0m)
+                .WithRequestMultiUseToken(true)
+                .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
+                .WithCardBrandTransId("transId")
+                .WithAutoSubstantiation(autoSub)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void PreAuth()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var autoSub = new AutoSubstantiation
+            {
+                PrescriptionSubTotal = 10m,
+                ClinicSubTotal = 1m,
+                DentalSubTotal = 2m,
+                VisionSubTotal = 2m
+            };
+
+            var response = _device.Authorize()
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .WithRequestMultiUseToken(true)
+                .WithToken("2323")
+                .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
+                .WithCardBrandTransId("transId")
+                .WithAmount(10m)
+                .WithTerminalRefNumber(1234)
+                .WithAutoSubstantiation(autoSub)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void AuthCompletion()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var response = _device.Capture()
+                .WithEcrId(13)
+                .WithAmount(12m)
+                .WithTerminalRefNumber("1234567")
+                .WithTransactionId("12")// response.TransactionId)
+                .WithTaxAmount(5m)
+                .WithGratuity(1m)
+                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithInvoiceNumber("12")
+                .WithProcessCPC(1)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+        }
+
+        [TestMethod]
+        public void Tokenize()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var autoSub = new AutoSubstantiation {
+                PrescriptionSubTotal = 10m,
+                ClinicSubTotal = 1m,
+                DentalSubTotal = 2m,
+                VisionSubTotal = 2m
+            };
+
+            var response = _device.Tokenize()
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void DeletePreAuth()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var response = _device.DeletePreAuth()
+                .WithEcrId(13)
+                .WithTerminalRefNumber("1234567")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
         }
 
         [TestMethod]
@@ -237,6 +339,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
             var response = _device.Verify()
                 .WithEcrId(13)
+                .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
+                .WithCardBrandTransId("transId")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);

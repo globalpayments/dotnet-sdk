@@ -276,7 +276,7 @@ namespace GlobalPayments.Api.Tests.Realex {
                 ThreeDSecure = new ThreeDSecure {
                     Cavv = "AAACBllleHchZTBWIGV4AAAAAAA=",
                     Xid = "crqAeMwkEL9r4POdxpByWJ1/wYg=",
-                    Eci = 5
+                    Eci = "5"
                 }
             };
 
@@ -299,7 +299,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var enrolled = card.VerifyEnrolled(10m, "USD");
             Assert.IsFalse(enrolled);
             Assert.IsNotNull(card.ThreeDSecure);
-            Assert.AreEqual(6, card.ThreeDSecure.Eci);
+            Assert.AreEqual("6", card.ThreeDSecure.Eci);
 
             // complete the charge anyways
             var response = card.Charge().Execute();
@@ -319,7 +319,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var enrolled = card.VerifyEnrolled(10m, "USD");
             Assert.IsFalse(enrolled);
             Assert.IsNotNull(card.ThreeDSecure);
-            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+            Assert.AreEqual("7", card.ThreeDSecure.Eci);
 
             // complete the charge anyways
             var response = card.Charge().Execute();
@@ -364,7 +364,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var verified = card.VerifySignature(payerAuthenticationResponse, md);
             Assert.IsFalse(verified);
             Assert.IsNotNull(card.ThreeDSecure);
-            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+            Assert.AreEqual("7", card.ThreeDSecure.Eci);
 
             // complete the charge anyways
             var response = card.Charge().Execute();
@@ -429,7 +429,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var verified = card.VerifySignature(payerAuthenticationResponse, md);
             Assert.IsFalse(verified);
             Assert.AreEqual("N", card.ThreeDSecure.Status);
-            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+            Assert.AreEqual("7", card.ThreeDSecure.Eci);
 
             // complete the charge anyways
             var response = card.Charge().Execute();
@@ -462,7 +462,7 @@ namespace GlobalPayments.Api.Tests.Realex {
             var verified = card.VerifySignature(payerAuthenticationResponse, md);
             Assert.IsFalse(verified);
             Assert.AreEqual("U", card.ThreeDSecure.Status);
-            Assert.AreEqual(7, card.ThreeDSecure.Eci);
+            Assert.AreEqual("7", card.ThreeDSecure.Eci);
 
             // complete the charge anyways
             var response = card.Charge().Execute();

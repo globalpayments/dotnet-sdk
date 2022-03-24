@@ -125,6 +125,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             return new AuthorizationBuilder(TransactionType.DccRateLookup, this).WithDccRateData(dccRateData);
         }
 
+        [Obsolete("VerifyEnrolled is deprecated. Please use GetAuthenticationData from Secure3dService")]
         public bool VerifyEnrolled(decimal amount, string currency, string orderId = null, string configName = "default") {
             Transaction response = new AuthorizationBuilder(TransactionType.VerifyEnrolled, this)
                 .WithAmount(amount)
@@ -141,9 +142,9 @@ namespace GlobalPayments.Api.PaymentMethods {
                 if (new List<string> { "N", "U" }.Contains(ThreeDSecure.Enrolled)) {
                     ThreeDSecure.Xid = null;
                     if (ThreeDSecure.Enrolled == "N")
-                        ThreeDSecure.Eci = CardType == "MC" ? 1 : 6;
+                        ThreeDSecure.Eci = CardType == "MC" ? "1" : "6";
                     else if (ThreeDSecure.Enrolled == "U")
-                        ThreeDSecure.Eci = CardType == "MC" ? 0 : 7;
+                        ThreeDSecure.Eci = CardType == "MC" ? "0" : "7";
                 }
 
                 return ThreeDSecure.Enrolled == "Y";
@@ -151,6 +152,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             return false;
         }
 
+        [Obsolete("VerifySignature is deprecated. Please use CheckEnrollment from Secure3dService")]
         public bool VerifySignature(string authorizationResponse, decimal? amount, string currency, string orderId, string configName = "default") {
             // ensure we have an object
             if (ThreeDSecure == null)
@@ -162,6 +164,8 @@ namespace GlobalPayments.Api.PaymentMethods {
 
             return VerifySignature(authorizationResponse, null, configName);
         }
+
+        [Obsolete("VerifySignature is deprecated. Please use CheckEnrollment from Secure3dService")]
         public bool VerifySignature(string authorizationResponse, MerchantDataCollection merchantData = null, string configName = "default") {
             // ensure we have an object
             if (ThreeDSecure == null)
@@ -190,7 +194,7 @@ namespace GlobalPayments.Api.PaymentMethods {
                 return true;
             }
             else {
-                ThreeDSecure.Eci = CardType == "MC" ? 0 : 7;
+                ThreeDSecure.Eci = CardType == "MC" ? "0" : "7";
                 return false;
             }
         }

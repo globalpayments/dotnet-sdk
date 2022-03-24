@@ -26,7 +26,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
 
             // create card data
             card = new CreditCardData {
-                Number = "4263970000005262",
+                Number = "4012001037141112",
                 ExpMonth = 12,
                 ExpYear = 2025,
                 CardHolderName = "John Smith"
