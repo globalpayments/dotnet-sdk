@@ -1,11 +1,11 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System.Collections.Generic;
+using System.Linq;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace GlobalPayments.Api.Tests {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcomCreditTests {
         CreditCardData card;

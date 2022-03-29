@@ -1,10 +1,10 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Tests.Realex.Hpp;
+using GlobalPayments.Api.Tests.GpEcom.Hpp;
 using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Realex {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcomHppResponseTests {
         HostedService _service;

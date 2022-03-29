@@ -250,7 +250,7 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The Auto settle Flag which comes in response
         /// </summary>
-        public bool MultiCapture { get { return (MultiCapturePaymentCount != null && MultiCapturePaymentCount != null); } }
+        public bool MultiCapture { get; set; }
 
         public int? MultiCapturePaymentCount { get; set; }
 
@@ -423,7 +423,7 @@ namespace GlobalPayments.Api.Entities {
                 .WithAmount(amount);
 
             if (MultiCapture) {
-                builder.WithMultiCapture(MultiCaptureSequence.Value, MultiCapturePaymentCount.Value);
+                builder.WithMultiCapture(MultiCaptureSequence ?? 1, MultiCapturePaymentCount ?? 1);
             }
             return builder;
         }

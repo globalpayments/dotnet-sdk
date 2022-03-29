@@ -11,7 +11,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
-namespace GlobalPayments.Api.Tests.Realex.Hpp {
+namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
     public class RealexResponseHandler : DelegatingHandler {
         private string _sharedSecret;
         private IPaymentMethod paymentMethod;

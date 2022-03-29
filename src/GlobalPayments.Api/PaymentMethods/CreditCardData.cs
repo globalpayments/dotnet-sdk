@@ -125,7 +125,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             return new AuthorizationBuilder(TransactionType.DccRateLookup, this).WithDccRateData(dccRateData);
         }
 
-        [Obsolete("VerifyEnrolled is deprecated. Please use GetAuthenticationData from Secure3dService")]
+        [Obsolete("VerifyEnrolled is deprecated. Please use CheckEnrollment from Secure3dService")]
         public bool VerifyEnrolled(decimal amount, string currency, string orderId = null, string configName = "default") {
             Transaction response = new AuthorizationBuilder(TransactionType.VerifyEnrolled, this)
                 .WithAmount(amount)
@@ -152,7 +152,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             return false;
         }
 
-        [Obsolete("VerifySignature is deprecated. Please use CheckEnrollment from Secure3dService")]
+        [Obsolete("VerifySignature is deprecated. Please use GetAuthenticationData from Secure3dService")]
         public bool VerifySignature(string authorizationResponse, decimal? amount, string currency, string orderId, string configName = "default") {
             // ensure we have an object
             if (ThreeDSecure == null)
@@ -165,7 +165,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             return VerifySignature(authorizationResponse, null, configName);
         }
 
-        [Obsolete("VerifySignature is deprecated. Please use CheckEnrollment from Secure3dService")]
+        [Obsolete("VerifySignature is deprecated. Please use GetAuthenticationData from Secure3dService")]
         public bool VerifySignature(string authorizationResponse, MerchantDataCollection merchantData = null, string configName = "default") {
             // ensure we have an object
             if (ThreeDSecure == null)

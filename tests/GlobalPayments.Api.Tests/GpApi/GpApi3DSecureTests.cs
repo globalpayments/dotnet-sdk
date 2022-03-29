@@ -424,11 +424,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [DataTestMethod]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_1, SUCCESS_ATTEMPT_MADE)]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_1, FAILED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_1, NOT_AUTHENTICATED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_1, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_1, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_2, SUCCESS_ATTEMPT_MADE)]
-        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_2, FAILED)]
+        [DataRow(GpApi3DSTestCards.CARD_AUTH_FAILED_V2_2, NOT_AUTHENTICATED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ISSUER_REJECTED_V2_2, FAILED)]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_COULD_NOT_BE_PREFORMED_V2_2, FAILED)]
         public void FrictionlessFullCycle_v2_Failed(string cardNumber, string status) {

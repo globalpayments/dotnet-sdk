@@ -452,7 +452,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CreditAuthorizationForMultiCapture() {
             var authorization = card.Authorize(14m)
                 .WithCurrency("USD")
-                .WithMultiCapture()
+                .WithMultiCapture(true)
                 .Execute();
             AssertTransactionResponse(authorization, TransactionStatus.Preauthorized);
             Assert.IsTrue(authorization.MultiCapture);

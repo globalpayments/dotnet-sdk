@@ -1,14 +1,14 @@
-﻿using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.PaymentMethods;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Collections.Generic;
-using GlobalPayments.Api.Utils;
 using System.Text;
+using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Realex {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcom3dSecureTests {
         public GpEcom3dSecureTests() {

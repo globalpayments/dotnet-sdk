@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Realex.Certification {
+namespace GlobalPayments.Api.Tests.GpEcom.Certification {
     [TestClass]
     public partial class GpEcomSdkCertification {
         [TestCleanup]
-        public void Throttle() { System.Threading.Thread.Sleep(1500); }
+        public void Throttle() { Thread.Sleep(1500); }
 
         protected static readonly int expYear = DateTime.Now.Year + 1;
         

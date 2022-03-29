@@ -4,6 +4,17 @@
 
 #### Enhancements
 
+- Added challenge request indicator on 3DS2 initiate step on Gp3DSProvider
+
+#### Bug Fixes:
+
+- Fixed Multicapture information on the response of Authorize transaction (GpApi)
+- Fixed for card information not to be sent into request when using tokenized card (GpApi)
+
+## v3.0.0 (3/24/2022)
+
+#### Enhancements
+
 - Added Authorization (UPA)
 - Added DeletePreAuth (UPA)
 - Added Tokenization (UPA)

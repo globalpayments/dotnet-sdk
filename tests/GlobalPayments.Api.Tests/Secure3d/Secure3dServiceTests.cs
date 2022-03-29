@@ -1,9 +1,10 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Tests.Realex;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using GlobalPayments.Api.Tests.GpEcom;
 
 namespace GlobalPayments.Api.Tests.Secure3d {
     [TestClass]
@@ -21,7 +22,8 @@ namespace GlobalPayments.Api.Tests.Secure3d {
                 SharedSecret = "secret",
                 MethodNotificationUrl = "https://www.example.com/methodNotificationUrl",
                 ChallengeNotificationUrl = "https://www.example.com/challengeNotificationUrl",
-                Secure3dVersion = Secure3dVersion.Any,
+                Secure3dVersion = Secure3dVersion.Any,                
+                RequestLogger = new RequestConsoleLogger()
             };
             ServicesContainer.ConfigureService(config);
 
@@ -126,9 +128,10 @@ namespace GlobalPayments.Api.Tests.Secure3d {
                 Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
 
                 // initiate authentication
-                ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)                        
                         .WithAmount(10.01m)
                         .WithCurrency("USD")
+                        .WithChallengeRequestIndicator(ChallengeRequestIndicator.CHALLENGE_MANDATED)
                         .WithOrderCreateDate(DateTime.Now)
                         .WithAddress(billingAddress, AddressType.Billing)
                         .WithAddress(shippingAddress, AddressType.Shipping)

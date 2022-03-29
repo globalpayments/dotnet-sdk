@@ -4,7 +4,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Realex {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcomRecurringTests {
         Customer new_customer;

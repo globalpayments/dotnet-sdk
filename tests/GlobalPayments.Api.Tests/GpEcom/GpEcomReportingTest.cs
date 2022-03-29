@@ -1,9 +1,9 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
-namespace GlobalPayments.Api.Tests.Realex {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcomReportingTest {
         public GpEcomReportingTest() {

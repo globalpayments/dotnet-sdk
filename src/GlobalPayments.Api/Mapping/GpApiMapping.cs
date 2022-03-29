@@ -69,11 +69,27 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
                 transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
                 transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
+                transaction.MultiCapture = getIsMultiCapture(json);
                 transaction.PaymentMethodType = getPaymentMehodType(json) ?? transaction.PaymentMethodType;
                 transaction.DccRateData = MapDccInfo(json);
             }
 
             return transaction;
+        }
+
+        private static bool getIsMultiCapture(JsonDoc json)
+        {
+            if (!string.IsNullOrEmpty(json.GetValue<string>("capture_mode")))
+            {
+                switch (json.GetValue<string>("capture_mode"))
+                {
+                    case "MULTIPLE":
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
         }
 
         private static PaymentMethodType? getPaymentMehodType(JsonDoc json)

@@ -1,11 +1,11 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using System.Threading;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
 
-namespace GlobalPayments.Api.Tests {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcomApmTests {
 

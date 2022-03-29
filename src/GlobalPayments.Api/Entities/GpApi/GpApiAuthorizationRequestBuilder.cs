@@ -61,8 +61,13 @@ namespace GlobalPayments.Api.Entities {
                         card.Set("cvv_indicator", cardData.CvnPresenceIndicator != 0 ? EnumConverter.GetMapping(Target.GP_API, cardData.CvnPresenceIndicator) : null); // [ILLEGIBLE, NOT_PRESENT, PRESENT]
                         card.Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT"); // [DEBIT, CREDIT]
                     }
-                    
-                    paymentMethod.Set("card", card);                    
+
+                    var hasToken = builder.PaymentMethod is ITokenizable tokenData && !string.IsNullOrEmpty(tokenData.Token);
+
+                    if (!hasToken) {
+                        paymentMethod.Set("card", card);
+                    }
+                   
 
                     if (builder.TransactionType == TransactionType.Tokenize) {
                         var tokenizationData = new JsonDoc()

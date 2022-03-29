@@ -9,8 +9,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         protected const string VERIFIED = "VERIFIED";
         protected const string CLOSED = "CLOSED";
 
-        protected static string APP_ID = "yDkdruxQ7hUjm8p76SaeBVAUnahESP5P";
-        protected static string APP_KEY = "o8C8CYrgXNELI46x";
+        protected static string APP_ID = "x0lQh0iLV0fOkmeAyIDyBqrP9U5QaiKc";
+        protected static string APP_KEY = "DYcEE2GpSzblo0ib";
         
         protected static string APP_ID_FOR_DCC = "mivbnCh6tcXhrc6hrUxb3SU8bYQPl9pd";
         protected static string APP_KEY_FOR_DCC = "Yf6MJDNJKiqObYAb";

@@ -76,6 +76,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("merchant_id", MerchantId);
                 request.Set("account_id", AccountId);
                 request.Set("challenge_notification_url", ChallengeNotificationUrl);
+                request.Set("challenge_request_indicator", builder.ChallengeRequestIndicator.ToString());
                 request.Set("method_url_completion", builder.MethodUrlCompletion.ToString());
                 request.Set("merchant_contact_url", MerchantContactUrl);
                 request.Set("merchant_initiated_request_type", builder.MerchantInitiatedRequestType?.ToString());
