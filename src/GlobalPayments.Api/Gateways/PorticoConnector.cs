@@ -91,12 +91,17 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(identity, "DOBYear", check.BirthYear);
                     }
                 }
-                else{
+                else {
                     var card = builder.PaymentMethod as CreditCardData;
                     if (card != null && !string.IsNullOrEmpty(card.CardHolderName)) {
-                        var names = card.CardHolderName.Split(new char[] {' '}, 2);
-                        et.SubElement(holder, "CardHolderFirstName", names[0]);
-                        et.SubElement(holder, "CardHolderLastName", names[1]);
+                        if (card.CardHolderName.Trim().Contains(' ')) {
+                            var names = card.CardHolderName.Split(new char[] {' '}, 2);
+                            et.SubElement(holder, "CardHolderFirstName", names[0]);
+                            et.SubElement(holder, "CardHolderLastName", names[1]);
+                        }
+                        else {
+                            et.SubElement(holder, "CardHolderFirstName", card.CardHolderName.Trim());
+                        }
                     }
                 }
             }

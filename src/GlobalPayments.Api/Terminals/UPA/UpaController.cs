@@ -111,7 +111,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                 var txnParams = txnData.SubElement("params");
                 txnParams.Set("clerkId", builder.ClerkId);
                 if (transType == TransactionType.Tokenize || transType == TransactionType.Verify) {
-                    txnParams.Set("cardIsHSAFSA", isCardHSAFSA);
+                    txnParams.Set("cardIsHSAFSA", isCardHSAFSA ? "1" : "0");
                 }
                 if(!IsTokenRequestApplicable(isTipAdjust, transType)) {
                     txnParams.Set("tokenRequest", builder.RequestMultiUseToken ? "1" : "0");
@@ -120,7 +120,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                     txnParams.Set("tokenValue", ((CreditCardData)builder.PaymentMethod).Token);
                 }
                 if (builder.RequestMultiUseToken && (transType == TransactionType.Sale || transType == TransactionType.Refund || transType == TransactionType.Verify 
-                    || transType == TransactionType.PreAuthCompletion)) {
+                    || transType == TransactionType.Auth)) {
                     if (builder.CardOnFileIndicator != null) {
                         txnParams.Set("cardOnFileIndicator", EnumConverter.GetMapping(Target.UPA, builder.CardOnFileIndicator));
                     }
@@ -131,25 +131,23 @@ namespace GlobalPayments.Api.Terminals.UPA
 
                 if (transType != TransactionType.Verify && transType != TransactionType.Refund && !isTipAdjust && transType != TransactionType.Tokenize) {
                     var transaction = txnData.SubElement("transaction");
-                    if(transType == TransactionType.PreAuthCompletion) {
+                    if(transType == TransactionType.Auth) {
                         transaction.Set("amount", ToCurrencyString(builder.Amount));
                     }
                     else { 
-                        transaction.Set("baseAmount", ToCurrencyString(builder.Amount)); 
-                    }
-                    
-                    transaction.Set("cashBackAmount", ToCurrencyString(builder.CashBackAmount));
-                    if(transType != TransactionType.PreAuthCompletion)  {
+                        transaction.Set("baseAmount", ToCurrencyString(builder.Amount));
+                        transaction.Set("cashBackAmount", ToCurrencyString(builder.CashBackAmount));
+                        transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
+                        transaction.Set("taxIndicator", builder.TaxExempt);
+                        transaction.Set("invoiceNbr", builder.InvoiceNumber);
+                        transaction.Set("processCPC", builder.ProcessCPC);
                         transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
                     }
                     
-                    transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
-                    transaction.Set("taxIndicator", builder.TaxExempt);
-                    transaction.Set("invoiceNbr", builder.InvoiceNumber);
                     transaction.Set("referenceNumber", builder.TerminalRefNumber);
-                    transaction.Set("cardIsHSAFSA", isCardHSAFSA);
+                    transaction.Set("cardIsHSAFSA", isCardHSAFSA ? "1" : "0");
 
-                    transaction.Set("processCPC", builder.ProcessCPC);
+
                     transaction.Set("prescriptionAmount", ToCurrencyString(builder.PrescriptionAmount));
                     transaction.Set("clinicAmount", ToCurrencyString(builder.ClinicAmount));
                     transaction.Set("dentalAmount", ToCurrencyString(builder.DentalAmount));

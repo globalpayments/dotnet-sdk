@@ -181,12 +181,14 @@ namespace GlobalPayments.Api.Gateways {
                             .Set("accountType", check.CheckType.ToInitialCase())
                             .Set("telephoneIndicator", (check.SecCode == SecCode.CCD || check.SecCode == SecCode.PPD) ? false : true)
                             .Set("routingNumber", check.RoutingNumber)
-                            .Set("accountNumber", check.AccountNumber)
-                            .Set("accountHolderYob", check.BirthYear.ToString())
-                            .Set("driversLicenseState", check.DriversLicenseState)
+                            .Set("accountNumber", check.AccountNumber);
+                            if (check.BirthYear != 0) {
+                                request.Set("accountHolderYob", check.BirthYear.ToString());
+                            }
+                            request.Set("driversLicenseState", check.DriversLicenseState)
                             .Set("driversLicenseNumber", check.DriversLicenseNumber)
                             .Set("socialSecurityNumberLast4", check.SsnLast4);
-                        request.Remove("country");
+                            request.Remove("country");
                     }
 
                     if (payment.PaymentMethod is IEncryptable) {

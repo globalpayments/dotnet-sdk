@@ -34,7 +34,8 @@ namespace GlobalPayments.Api.Tests {
                 Number = "4111111111111111",
                 ExpMonth = 12,
                 ExpYear = 2025,
-                Cvn = "123"
+                Cvn = "123",
+                CardHolderName = " UnitTest "
             };
 
             track = new CreditTrackData {

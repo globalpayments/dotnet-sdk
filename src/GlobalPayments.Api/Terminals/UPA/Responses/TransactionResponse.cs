@@ -59,6 +59,8 @@ namespace GlobalPayments.Api.Terminals.UPA
             TransactionAmount = host.GetValue<decimal>("totalAmount");
             MerchantFee = host.GetValue<decimal>("surcharge");
             Token = host.GetValue<string>("tokenValue");
+            if(host.GetValue("cardBrandTransId") != null)
+                CardBrandTransId = host.GetValue<string>("cardBrandTransId");
             // TxnDescriptor = host.GetValue<string>("txnDescriptor");
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
             // CavvResultCode = host.GetValue<string>("cavvResultCode");
@@ -101,7 +103,8 @@ namespace GlobalPayments.Api.Terminals.UPA
                 return;
             }
             // Emv4F = emv.Emv4F;
-            ApplicationLabel = ConvertHEX(emv.GetValue("50").ToString());
+            if (emv.GetValue("50") != null)
+                ApplicationLabel = ConvertHEX(emv.GetValue("50").ToString());
             // Emv5F20 = emv.Emv5F20;
             // Emv5F2A = Convert.ToInt32(emv.Emv5F2A);
             // Emv5F34 = Convert.ToInt32(emv.Emv5F34);
@@ -115,16 +118,19 @@ namespace GlobalPayments.Api.Terminals.UPA
             // Emv9C = Convert.ToInt32(emv.Emv9C);
             // Emv9F02 = Convert.ToInt32(emv.Emv9F02);
             // Emv9F03 = Convert.ToInt32(emv.Emv9F03);
-            ApplicationId = emv.GetValue("9F06").ToString();
+            if (emv.GetValue("9F06") != null)
+                ApplicationId = emv.GetValue("9F06").ToString();
             // Emv9F08 = Convert.ToInt32(emv.Emv9F08);
             // Emv9F0D = emv.Emv9F0D;
             // Emv9F0E = emv.Emv9F0E;
             // Emv9F0F = emv.Emv9F0F;
             // //Emv9F10 = Convert.ToInt32(emv.Emv9F10);
-            ApplicationPreferredName = ConvertHEX(emv.GetValue("9F12").ToString());
+            if (emv.GetValue("9F12") != null)
+                ApplicationPreferredName = ConvertHEX(emv.GetValue("9F12").ToString());
             // Emv9F1A = Convert.ToInt32(emv.Emv9F1A);
             // Emv9F1E = emv.Emv9F1E;
-            ApplicationCryptogram = emv.GetValue("9F26").ToString();
+            if (emv.GetValue("9F26") != null)
+                ApplicationCryptogram = emv.GetValue("9F26").ToString();
             // Emv9F27 = Convert.ToInt32(emv.Emv9F27);
             // Emv9F33 = emv.Emv9F33;
             // Emv9F34 = emv.Emv9F34;
@@ -155,7 +161,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             }
 
             for (int i = 0; i < hexString.Length - 0; i += 2) {
-                retValue = System.Convert.ToChar(System.Convert.ToUInt32(hexString.Substring(i, 2), 16)).ToString();
+                retValue += System.Convert.ToChar(System.Convert.ToUInt32(hexString.Substring(i, 2), 16)).ToString();
             }
             return retValue;
         }
@@ -164,6 +170,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string TransactionId { get; set; }
         public string TerminalRefNumber { get; set; }
         public string Token { get; set; }
+        public string CardBrandTransId { get; set; }
         public string SignatureStatus { get; set; }
         public byte[] SignatureData { get; set; }
         public string TransactionType { get; set; }

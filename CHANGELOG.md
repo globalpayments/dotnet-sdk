@@ -4,6 +4,21 @@
 
 #### Enhancements
 
+- Card Brand Transaction ID is mapped with the response when token is requested (UPA)
+
+#### Bug Fixes:
+
+- Fixed index out of bounds exception with Cardholder Name
+- Fixed processor configuration error with birth year
+- Addressed null reference exceptions with response mappings (UPA)
+- Corrected an issue with a HEX conversion helper method (UPA)
+- Corrected a boolean conversion error on request building (UPA)
+- Corrected an incorrect internal TransactionType setting (UPA)
+
+## v3.0.1 (3/29/2022)
+
+#### Enhancements
+
 - Added challenge request indicator on 3DS2 initiate step on Gp3DSProvider
 
 #### Bug Fixes:
