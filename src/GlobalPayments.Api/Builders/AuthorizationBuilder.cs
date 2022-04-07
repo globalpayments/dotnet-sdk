@@ -861,8 +861,7 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.Verify)
                 .With(TransactionModifier.HostedRequest)
-                .Check(() => Currency).IsNotNull()
-                .Check(() => Amount).IsNull();
+                .Check(() => Currency).IsNotNull();
 
             Validations.For(TransactionType.Auth | TransactionType.Sale)
                 .With(TransactionModifier.Offline)

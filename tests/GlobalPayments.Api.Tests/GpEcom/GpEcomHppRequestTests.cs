@@ -75,6 +75,65 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             Assert.AreEqual("00", parsedResponse.ResponseCode);
         }
 
+        [TestMethod]
+        public void CreditVerify_3DS()
+        {
+            _service = new HostedService(new GpEcomConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "3dsecure",
+                SharedSecret = "secret",
+                HostedPaymentConfig = new HostedPaymentConfig {
+                    Language = "GB",
+                },
+            });
+            
+            var shippingAddress = new Address {
+                StreetAddress1 = "Apartment 852",
+                StreetAddress2 = "Complex 741",
+                StreetAddress3 = "no",
+                City = "Chicago",
+                PostalCode = "5001",
+                State = "IL",
+                Country = "840",
+            };
+            
+            var billingAddress = new Address {
+                StreetAddress1 = "Flat 123",
+                StreetAddress2 = "House 456",
+                StreetAddress3 = "Cul-De-Sac",
+                City = "Halifax",
+                Province = "West Yorkshire",
+                State = "Yorkshire and the Humber",
+                Country = "826",
+                PostalCode = "E77 4QJ"
+            };
+            
+            var testHostedPaymentData = new HostedPaymentData {
+                CustomerEmail = "james.mason@example.com",
+                CustomerPhoneMobile =  "44|07123456789",
+                AddressesMatch = false,
+                CustomerCountry = "GB",
+                CustomerFirstName = "James",
+                CustomerLastName = "Mason",
+                MerchantResponseUrl = "http://requestb.in/10q2bjb1",
+                TransactionStatusUrl = "http://requestb.in/10q2bjb123"
+            };
+            
+            var json = _service.Verify(0)
+                .WithCurrency("EUR")
+                .WithCustomerId("123456")
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithHostedPaymentData(testHostedPaymentData)
+                .Serialize();
+            Assert.IsNotNull(json);
+
+            var response = _client.SendRequest(json);
+            var parsedResponse = _service.ParseResponse(response, true);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", parsedResponse.ResponseCode);
+        }
+
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void AuthNoAmount() {
             _service.Authorize(null).WithCurrency("USD").Serialize();

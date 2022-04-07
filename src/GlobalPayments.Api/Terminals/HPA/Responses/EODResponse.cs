@@ -29,6 +29,11 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
         private string safResponseText;
         private string batchReportResponseText;
 
+        public string RespDateTime { get; set; }
+        public int BatchId { get; set; }
+        public int GatewayResponseCode { get; set; }
+        public string GatewayResponseMessage { get; set; }
+
         public string AttachmentResponseText {
             get {
                 if (AttachmentResponse != null) {

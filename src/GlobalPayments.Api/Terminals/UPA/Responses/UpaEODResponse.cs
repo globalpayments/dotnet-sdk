@@ -42,10 +42,6 @@ namespace GlobalPayments.Api.Terminals.UPA {
             GatewayResponseMessage = host.GetValue<string>("gatewayResponseMessage");
         }
 
-        string RespDateTime { get; set; }
-        int BatchId { get; set; }
-        int GatewayResponseCode { get; set; }
-        string GatewayResponseMessage { get; set; }
         public string Multiplemessage { get; set; }
 
         public IDeviceResponse AttachmentResponse { get; set; }
@@ -65,6 +61,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
         public ISAFResponse SAFResponse { get; set; }
 
         public IBatchReportResponse BatchReportResponse { get; set; }
+        public string RespDateTime { get; set; }
+        public int BatchId { get; set; }
+        public int GatewayResponseCode { get; set; }
+        public string GatewayResponseMessage { get; set; }
 
         public string AttachmentResponseText { get; set; }
 

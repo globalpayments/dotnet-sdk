@@ -140,14 +140,28 @@ namespace GlobalPayments.Api.Gateways {
 
                 // secure 3d
                 if (card is CreditCardData) {
-                    var secureEcom = (card as CreditCardData).ThreeDSecure;
+                    var CreditCardData = (card as CreditCardData);
+                    var secureEcom = CreditCardData.ThreeDSecure;
                     if (secureEcom != null) {
-                        var secureEcommerce = et.SubElement(block1, "SecureECommerce");
-                        et.SubElement(secureEcommerce, "PaymentDataSource", secureEcom.PaymentDataSource);
-                        et.SubElement(secureEcommerce, "TypeOfPaymentData", secureEcom.PaymentDataType);
-                        et.SubElement(secureEcommerce, "PaymentData", secureEcom.Cavv);
-                        et.SubElement(secureEcommerce, "ECommerceIndicator", secureEcom.Eci);
-                        et.SubElement(secureEcommerce, "XID", secureEcom.Xid);
+                        //Secure3D Element
+                        if (!string.IsNullOrEmpty(secureEcom.Eci)) {
+                            var Secure3D = et.SubElement(block1, "Secure3D");
+                            et.SubElement(Secure3D, "Version", (int)(secureEcom.Version ?? Secure3dVersion.One));
+                            et.SubElement(Secure3D, "AuthenticationValue", secureEcom.Cavv);
+                            et.SubElement(Secure3D, "ECI", secureEcom.Eci);
+                            et.SubElement(Secure3D, "DirectoryServerTxnId", secureEcom.Xid);
+                        }
+
+                        //WalletData Element
+                        if(!string.IsNullOrWhiteSpace(secureEcom.PaymentDataSource)) {
+                            var WalletData = et.SubElement(block1, "WalletData");
+                            et.SubElement(WalletData, "PaymentSource", secureEcom.PaymentDataSource);
+                            et.SubElement(WalletData, "Cryptogram", secureEcom.Cavv);
+                            et.SubElement(WalletData, "ECI", secureEcom.Eci);
+                            if (CreditCardData.MobileType != null) {
+                                et.SubElement(WalletData, "DigitalPaymentToken", CreditCardData.Token);
+                            }
+                        }                        
                     }
                 }
 
@@ -935,9 +949,7 @@ namespace GlobalPayments.Api.Gateways {
                         if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
                             if (builder.TransactionModifier == TransactionModifier.Offline)
                                 return "CreditOfflineSale"; // CreditOfflineSale : Sale (Offline|Credit)
-                            else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
-                                throw new UnsupportedTransactionException();
-                            else if (builder.TransactionModifier == TransactionModifier.Recurring)
+                         else if (builder.TransactionModifier == TransactionModifier.Recurring)
                                 return "RecurringBilling";
                             else return "CreditSale"; // CreditSale : Sale (Credit)
                         }

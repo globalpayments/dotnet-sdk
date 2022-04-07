@@ -10,6 +10,7 @@ using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.Utils.Logging;
 
 namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
     public class RealexResponseHandler : DelegatingHandler {
@@ -107,13 +108,14 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
             ServicesContainer.ConfigureService(new GpEcomConfig {
                 MerchantId = merchantId,
                 AccountId = account,
-                SharedSecret = _sharedSecret
+                SharedSecret = _sharedSecret,
+                RequestLogger = new RequestConsoleLogger()
             }, "realexResponder");
                        
 
             // build request
             AuthorizationBuilder gatewayRequest = null;
-            if (amount == null) {
+            if (amount.ToAmount().Equals(0m) || amount == null) {
                 var validate = json.GetValue<int>("VALIDATE_CARD_ONLY") == 1;
                 if (validate)
                     gatewayRequest = ((CreditCardData)paymentMethod).Verify();

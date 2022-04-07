@@ -13,6 +13,10 @@ namespace GlobalPayments.Api.Terminals.Abstractions {
         ISAFResponse SAFResponse { get; }
         IBatchReportResponse BatchReportResponse { get; }
 
+        string RespDateTime { get; set; }
+        int BatchId { get; set; }
+        int GatewayResponseCode { get; set; }
+        string GatewayResponseMessage { get; set; }
         string AttachmentResponseText { get; }
         string BatchCloseResponseText { get; }
         string EmvOfflineDeclineResponseText { get; }

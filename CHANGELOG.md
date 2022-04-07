@@ -4,6 +4,18 @@
 
 #### Enhancements
 
+- Added additional batch details to End of Day response object (UPA)
+- Updated Digital Wallet and 3DSecure support to use latest Portico data fields 
+
+#### Bug Fixes:
+
+- Fixed HPP verify with 3DSecure
+- Fixed an issue when setting DeviceType to HPA_LANE3000 during configuration
+
+## v3.0.2 (3/31/2022)
+
+#### Enhancements
+
 - Card Brand Transaction ID is mapped with the response when token is requested (UPA)
 
 #### Bug Fixes:

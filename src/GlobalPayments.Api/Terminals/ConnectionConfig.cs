@@ -82,6 +82,7 @@ namespace GlobalPayments.Api.Terminals {
                     services.DeviceController = new PaxController(this);
                     break;
                 case DeviceType.HPA_ISC250:
+                case DeviceType.HPA_LANE3000:
                     services.DeviceController = new HpaController(this);
                     break;
                 //case DeviceType.GENIUS:

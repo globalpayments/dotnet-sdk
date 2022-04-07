@@ -7,6 +7,7 @@ namespace GlobalPayments.Api.Tests.Portico {
     [TestClass]
     public class PorticoEcommerceTests {
         CreditCardData card;
+        private string _token;  
 
         public PorticoEcommerceTests() {
             ServicesContainer.ConfigureService(new PorticoConfig {
@@ -14,6 +15,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             });
 
             card = TestCards.VisaManual();
+            _token = card.Tokenize();
         }
 
         [TestMethod]
@@ -71,12 +73,48 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void EcomWithSecureEcommerce() {
+        public void EcomWithSecureEcommerceThreeDSecure() {
+            card.ThreeDSecure = new ThreeDSecure {
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "5",
+                Version = Secure3dVersion.One,
+                Xid = "0l35fwh1sys3ojzyxelu4ddhmnu5zfke5vst"
+            };
+            Transaction response = card.Charge(10m)
+                .WithCurrency("USD")
+                .WithInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+
+        [TestMethod]
+        public void EcomWithSecureEcommerceWithoutMobileType() {
+            card.ThreeDSecure = new ThreeDSecure {
+                PaymentDataSource = "ApplePay",
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "7"
+            };
+            Transaction response = card.Charge(10m)
+                .WithCurrency("USD")
+                .WithInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void EcomWithSecureEcommerceWalletDataWithMobileType() {
             card.ThreeDSecure = new ThreeDSecure {
                 PaymentDataSource = "ApplePay",
                 Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
                 Eci = "5"
             };
+            card.MobileType = "ApplePay";
+            card.Token = _token;
 
             Transaction response = card.Charge(10m)
                 .WithCurrency("USD")

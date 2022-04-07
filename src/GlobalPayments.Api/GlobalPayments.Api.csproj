@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <VersionPrefix>3.0.2</VersionPrefix>
+    <VersionPrefix>3.0.3</VersionPrefix>
     <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>GlobalPayments.Api</AssemblyName>
     <PackageId>GlobalPayments.Api</PackageId>
