@@ -79,19 +79,22 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             Assert.AreEqual("00", authorization.ResponseCode, authorization.ResponseMessage);
 
             var capture = authorization.Capture(3m)
+                .WithMultiCapture()
                 .Execute();
             Assert.IsNotNull(capture);
             Assert.AreEqual("00", capture.ResponseCode, capture.ResponseMessage);
 
             var capture2 = authorization.Capture(5m)
+                .WithMultiCapture()
                 .Execute();
-            Assert.IsNotNull(capture);
-            Assert.AreEqual("00", capture.ResponseCode, capture.ResponseMessage);
+            Assert.IsNotNull(capture2);
+            Assert.AreEqual("00", capture2.ResponseCode, capture2.ResponseMessage);
 
             var capture3 = authorization.Capture(7m)
+                .WithMultiCapture()
                 .Execute();
-            Assert.IsNotNull(capture);
-            Assert.AreEqual("00", capture.ResponseCode, capture.ResponseMessage);
+            Assert.IsNotNull(capture3);
+            Assert.AreEqual("00", capture3.ResponseCode, capture3.ResponseMessage);
         }
 
         [TestMethod]
@@ -165,7 +168,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
-        public void Credit_SupplimentaryData() {
+        public void Credit_SupplementaryData() {
             var response = card.Authorize(10m)
                 .WithCurrency("GBP")
                 .WithSupplementaryData("leg", "value1", "value2", "value3")
@@ -184,25 +187,27 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void CreditFraudResponse() {
-            var billingAddress = new Address();
-            billingAddress.StreetAddress1 = "Flat 123";
-            billingAddress.StreetAddress2 = "House 456";
-            billingAddress.StreetAddress3 = "Cul-De-Sac";
-            billingAddress.City = "Halifax";
-            billingAddress.Province = "West Yorkshire";
-            billingAddress.State = "Yorkshire and the Humber";
-            billingAddress.Country = "GB";
-            billingAddress.PostalCode = "E77 4QJ";
+            var billingAddress = new Address {
+                StreetAddress1 = "Flat 123",
+                StreetAddress2 = "House 456",
+                StreetAddress3 = "Cul-De-Sac",
+                City = "Halifax",
+                Province = "West Yorkshire",
+                State = "Yorkshire and the Humber",
+                Country = "GB",
+                PostalCode = "E77 4QJ"
+            };
 
-            var shippingAddress = new Address();
-            shippingAddress.StreetAddress1 = "House 456";
-            shippingAddress.StreetAddress2 = "987 The Street";
-            shippingAddress.StreetAddress3 = "Basement Flat";
-            shippingAddress.City = "Chicago";
-            shippingAddress.State = "Illinois";
-            shippingAddress.Province = "Mid West";
-            shippingAddress.Country = "US";
-            shippingAddress.PostalCode = "50001";
+            var shippingAddress = new Address {
+                StreetAddress1 = "House 456",
+                StreetAddress2 = "987 The Street",
+                StreetAddress3 = "Basement Flat",
+                City = "Chicago",
+                State = "Illinois",
+                Province = "Mid West",
+                Country = "US",
+                PostalCode = "50001"
+            };
 
             var fraudResponse = card.Charge(199.99m)
                 .WithCurrency("EUR")
@@ -323,7 +328,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
-        public void FraudManagement_Decisionmanager() {
+        public void FraudManagement_DecisionManager() {
             Address billingAddress = new Address {
                 StreetAddress1 = "Flat 123",
                 StreetAddress2 = "House 456",
@@ -379,10 +384,8 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 ItemVelocityHedge = Risk.High,
             };
 
-            var products = new List<Product>
-            {
-                new Product
-                        {
+            var products = new List<Product> {
+                new Product {
                             ProductId = "SKU251584",
                             ProductName = "Magazine Subscription",
                             Quantity = 12,
@@ -391,8 +394,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                             Type = "subscription",
                             Risk = "Low"
                         },
-                new Product
-                        {
+                new Product {
                             ProductId = "SKU8884784",
                             ProductName = "Charger",
                             Quantity = 10,
@@ -417,8 +419,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
-        public void FraudManagement_withFraudRules()
-        {
+        public void FraudManagement_withFraudRules() {
             string ruleId = "853c1d37-6e9f-467e-9ffc-182210b40c6b";
             FraudFilterMode mode = FraudFilterMode.OFF;
             FraudRuleCollection fraudRuleCollection = new FraudRuleCollection();

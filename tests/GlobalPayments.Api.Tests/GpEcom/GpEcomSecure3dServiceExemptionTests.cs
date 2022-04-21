@@ -1,19 +1,19 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
-namespace GlobalPayments.Api.Tests.Secure3d {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
-    public class Secure3dServiceExemptionTests {
+    public class GpEcomSecure3dServiceExemptionTests {
         private CreditCardData card;
         private RecurringPaymentMethod stored;
         private Address shippingAddress;
         private Address billingAddress;
         private BrowserData browserData;
 
-        public Secure3dServiceExemptionTests() {
+        public GpEcomSecure3dServiceExemptionTests() {
             GatewayConfig config = new GpEcomConfig {
                 MerchantId = "myMerchantId",
                 AccountId = "ecomeos",
@@ -26,7 +26,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
 
             // create card data
             card = new CreditCardData {
-                Number = "4012001037141112",
+                Number = "4263970000005262",
                 ExpMonth = 12,
                 ExpYear = 2025,
                 CardHolderName = "John Smith"

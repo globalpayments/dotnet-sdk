@@ -758,24 +758,15 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_Random_SystemHierarchy() {
-            var exceptionCaught = false;
-            
-            try {
-                ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
-                    .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                    .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
-                    .And(DataServiceCriteria.SystemHierarchy, Guid.NewGuid().ToString())
-                    .Execute();
-            }
-            catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("40105", ex.ResponseMessage);
-                Assert.IsTrue(ex.Message.Equals("Status Code: BadRequest - " +
-                    "Invalid Value provided in the input field - system.hierarchy"));
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+                .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
+                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .And(DataServiceCriteria.SystemHierarchy, Guid.NewGuid().ToString())
+                .Execute();
+
+            Assert.IsNotNull(result?.Results);
+            Assert.IsTrue(result.Results is List<TransactionSummary>);
+            Assert.IsTrue(result.Results.Count == 0);
         }
 
         [TestMethod]

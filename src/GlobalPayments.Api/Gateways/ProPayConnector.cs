@@ -404,6 +404,14 @@ namespace GlobalPayments.Api.Gateways {
                 HydrateSignificantOwnerData(xml, xmlTrans, builder.SignificantOwnerData);
             }
 
+            if (!string.IsNullOrEmpty(builder.TimeZone)) {
+                var timezoneElement = xml.SubElement(xmlTrans, "TimeZone", builder.TimeZone);
+            }
+
+            if (builder.DeviceData != null) {
+                HydrateDeviceData(xml, xmlTrans, builder.DeviceData);
+            }
+
             if (builder.BeneficialOwnerData != null) {
                 HydrateBeneficialOwnerData(xml, xmlTrans, builder.BeneficialOwnerData);
             }
@@ -542,6 +550,27 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "SignificantOwnerCountryCode", significantOwnerData.SignificantOwner.OwnerAddress.Country);
             xml.SubElement(xmlTrans, "SignificantOwnerTitle", significantOwnerData.SignificantOwner.Title);
             xml.SubElement(xmlTrans, "SignificantOwnerPercentage", significantOwnerData.SignificantOwner.Percentage);
+        }
+
+        private void HydrateDeviceData(ElementTree xml, Element xmlTrans, DeviceData deviceData) {
+            var devices = xml.SubElement(xmlTrans, "Devices");
+            if (deviceData.Devices.Count > 0) {
+                foreach (DeviceInfo deviceInfo in deviceData.Devices) {
+                    var device = xml.SubElement(devices, "Device");
+                    xml.SubElement(device, "Name", deviceInfo.Name);
+                    xml.SubElement(device, "Quantity", deviceInfo.Quantity == null ? 0 : deviceInfo.Quantity);
+                    if (deviceInfo.Attributes != null) {
+                        if (deviceInfo.Attributes.Count > 0) {
+                                var attributes = xml.SubElement(device, "Attributes");
+                                foreach (DeviceAttributeInfo attributeInfo in deviceInfo.Attributes) {
+                                    var item = xml.SubElement(attributes, "Item");
+                                    item.Set("Name", attributeInfo.Name);
+                                    item.Set("Value", attributeInfo.Value);
+                                }
+                        }
+                    }
+                }
+            }
         }
 
         private void HydrateBeneficialOwnerData(ElementTree xml, Element xmlTrans, BeneficialOwnerData beneficialOwnerData) {

@@ -1,21 +1,20 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GlobalPayments.Api.Tests.GpEcom;
 
-namespace GlobalPayments.Api.Tests.Secure3d {
+namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
-    public class Secure3dServiceTests {
+    public class GpEcomSecure3dServiceTests {
         private CreditCardData card;
         private RecurringPaymentMethod stored;
         private Address shippingAddress;
         private Address billingAddress;
         private BrowserData browserData;
 
-        public Secure3dServiceTests() {
+        public GpEcomSecure3dServiceTests() {
             GatewayConfig config = new GpEcomConfig {
                 MerchantId = "myMerchantId",
                 AccountId = "ecom3ds",
@@ -79,12 +78,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
 
         [TestMethod]
         public void FullCycle_v1() {
-            CreditCardData card = new CreditCardData {
-                Number = "4012001037141112",
-                ExpMonth = 12,
-                ExpYear = 2025,
-                CardHolderName = "John Smith"
-            };
+            card.Number = "4012001037141112";
 
             ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
                     .WithAmount(1m)
@@ -107,7 +101,7 @@ namespace GlobalPayments.Api.Tests.Secure3d {
                             .Execute();
                 card.ThreeDSecure = secureEcom;
 
-                if (secureEcom.Status.Equals("Y")) {
+                if (secureEcom.Status.Equals("Y") || secureEcom.Status.Equals("A")) {
                     Transaction response = card.Charge().Execute();
                     Assert.IsNotNull(response);
                     Assert.AreEqual("00", response.ResponseCode);
@@ -756,20 +750,8 @@ namespace GlobalPayments.Api.Tests.Secure3d {
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
 
-
         [TestMethod]
         public void ExceptionTest() {
-            // Configure client & request settings
-            ServicesContainer.ConfigureService(new GpEcomConfig {
-                MerchantId = "myMerchantId",
-                AccountId = "ecom3ds",
-                SharedSecret = "secret",
-                MethodNotificationUrl = "https://www.example.com/methodNotificationUrl",
-                ChallengeNotificationUrl = "https://www.example.com/challengeNotificationUrl",
-                MerchantContactUrl = "https://www.example.com/about",
-                Secure3dVersion = Secure3dVersion.Two
-            });
-
             // supply existing customer/payer ref
             string customerId = "20190819-Realex";
             // supply existing card/payment method ref
@@ -778,16 +760,16 @@ namespace GlobalPayments.Api.Tests.Secure3d {
             // create the payment method object
             RecurringPaymentMethod paymentMethod = new RecurringPaymentMethod(customerId, paymentId);
 
-            ThreeDSecure threeDSecureData = null;
-
+            var exceptionCaught = false;
             try {
-                threeDSecureData = Secure3dService.CheckEnrollment(paymentMethod)
-                   .Execute(Secure3dVersion.Two);
-                Assert.IsNotNull(threeDSecureData);
-                Assert.AreEqual("True", threeDSecureData.Enrolled);
+                Secure3dService.CheckEnrollment(paymentMethod)
+                    .Execute(Secure3dVersion.Two);
             }
-            catch (ApiException exc) {
-                Assert.Fail(exc.Message);
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: NotFound - Payment method not found", ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
             }
         }
     }

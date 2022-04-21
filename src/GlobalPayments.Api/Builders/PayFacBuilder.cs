@@ -22,6 +22,16 @@ namespace GlobalPayments.Api.Builders
         public BeneficialOwnerData BeneficialOwnerData { get; set; }
 
         /// <summary>
+        /// User for Portico Device Ordering. Must set TimeZone property as well when ordering Portico devices
+        /// </summary>
+        public DeviceData DeviceData { get; set; }
+
+        /// <summary>
+        /// Required for partners ordering Portico devices. Valid values: [ UTC, PT, MST, MT, CT, ET, HST, AT, AST, AKST, ACT, EET, EAT, MET, NET, PLT, IST, BST, VST, CTT, JST, ACT, AET, SST, NST, MIT, CNT, AGT, CAT ]
+        /// </summary>
+        public string TimeZone { get; set; }
+
+        /// <summary>
         /// Business Data - Required for business validated accounts. May also be required for personal validated accounts
         /// </summary>
         public BusinessData BusinessData { get; set; }
@@ -224,6 +234,19 @@ namespace GlobalPayments.Api.Builders
 
         public PayFacBuilder WithBeneficialOwnerData(BeneficialOwnerData beneficialOwnerData) {
             BeneficialOwnerData = beneficialOwnerData;
+            return this;
+        }
+
+        public PayFacBuilder WithDeviceData(DeviceData deviceData) {
+            DeviceData = deviceData;
+            return this;
+        }
+
+        /// <summary>
+        /// Required for partners ordering Portico devices. Valid values: [ UTC, PT, MST, MT, CT, ET, HST, AT, AST, AKST, ACT, EET, EAT, MET, NET, PLT, IST, BST, VST, CTT, JST, ACT, AET, SST, NST, MIT, CNT, AGT, CAT ]
+        /// </summary>
+        public PayFacBuilder WithTimeZone(string timezone) {
+            TimeZone = timezone;
             return this;
         }
 

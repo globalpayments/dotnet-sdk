@@ -19,100 +19,171 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(result);
             Assert.AreEqual("AF", result);
         }
-
+        [TestMethod]
+        public void GetCountryCodeAlpha3WithMisspelled()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("Afganistan", CountryCodeFormat.Alpha3);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("AFG", result);
+        }
+        [TestMethod]
+        public void CovertFromCountryNametoAlpha2()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("United Kingdom of Great Britain and Northern Ireland", CountryCodeFormat.Alpha2);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("GB", result);
+        }
+        [TestMethod]
+        public void CovertFromAlpha2ToAlpha3()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("GB", CountryCodeFormat.Alpha3);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("GBR", result);
+        }
+        [TestMethod]
+        public void CovertFromAlpha2ToNumeric()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("GB", CountryCodeFormat.Numeric);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("826", result);
+        }
+        [TestMethod]
+        public void CovertFromAlpha3ToAlpha2()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("GBR", CountryCodeFormat.Alpha2);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("GB", result);
+        }
+        [TestMethod]
+        public void CovertFromAlpha3ToNumeric()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("GBR", CountryCodeFormat.Numeric);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("826", result);
+        }
+        [TestMethod]
+        public void CovertFromNumericToAlpha3()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("826", CountryCodeFormat.Alpha3);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("GBR", result);
+        }
+        [TestMethod]
+        public void CovertFromNumericToAlpha2()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("826", CountryCodeFormat.Alpha2);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("GB", result);
+        }
         [TestMethod]
         public void GetCountryCodeFromPartial() {
             string result = CountryUtils.GetCountryCodeByCountry("Republic of Congo");
             Assert.IsNotNull(result);
             Assert.AreEqual("CD", result);
         }
-
+        [TestMethod]
+        public void GetCountryCodeAlpha3FromPartial()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("Republic of Congo", CountryCodeFormat.Alpha3);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("COD", result);
+        }
         [TestMethod]
         public void GetCountryCodeByExactCode() {
             string result = CountryUtils.GetCountryCodeByCountry("IE");
             Assert.IsNotNull(result);
             Assert.AreEqual("IE", result);
         }
-
+        [TestMethod]
+        public void GetCountryCodeByMispelledCode()
+        {
+            string result = CountryUtils.GetCountryByCode("VNN");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Vietnam", result);
+        }
+        [TestMethod]
+        public void GetCountryCodeByExactNumericCodeAndCountryCodeFormat()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("364", CountryCodeFormat.Numeric);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("364", result);
+        }
         [TestMethod]
         public void GetCountryCodeByPartialCode() {
             string result = CountryUtils.GetCountryCodeByCountry("USA");
             Assert.IsNotNull(result);
             Assert.AreEqual("US", result);
         }
+        [TestMethod]
+        public void GetCountryCodeAlpha3ByPartialCode()
+        {
+            string result = CountryUtils.GetCountryCodeByCountry("USA", CountryCodeFormat.Alpha3);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("USA", result);
+        }
 
         [TestMethod]
         public void GetCountryCodeNullDoesNotError() {
             CountryUtils.GetCountryCodeByCountry(null);
         }
-
         [TestMethod]
         public void GetCountryCodeFakeCountry() {
             string result = CountryUtils.GetCountryCodeByCountry("FakeCountry");
             Assert.IsNull(result);
         }
-
         [TestMethod]
         public void GetCountryCodeFakeCountry2() {
             string result = CountryUtils.GetCountryCodeByCountry("Fakeistan");
             Assert.IsNull(result);
         }
-
         [TestMethod]
         public void GetCountryCodeFakeCountry3() {
             string result = CountryUtils.GetCountryCodeByCountry("MyRussia");
             Assert.IsNull(result);
         }
-
         [TestMethod]
         public void GetCountryByCodeExact() {
             string result = CountryUtils.GetCountryByCode("IE");
             Assert.IsNotNull(result);
             Assert.AreEqual("Ireland", result);
         }
-
         [TestMethod]
-        public void GetCountryByThreeDigitCode() {
+        public void GetCountryByThreeDigitCode()
+        {
             string result = CountryUtils.GetCountryByCode("USA");
             Assert.IsNotNull(result);
             Assert.AreEqual("United States of America", result);
         }
-
         [TestMethod]
         public void GetCountryCodeByExactNumericCode() {
             string result = CountryUtils.GetCountryCodeByCountry("840");
             Assert.IsNotNull(result);
             Assert.AreEqual("US", result);
         }
-
         [TestMethod]
         public void GetNumericCodeByTwoDigitCode() {
             string result = CountryUtils.GetNumericCodeByCountry("US");
             Assert.IsNotNull(result);
             Assert.AreEqual("840", result);
         }
-
         [TestMethod]
         public void GetNumericCodeByThreeDigitCode() {
             string result = CountryUtils.GetNumericCodeByCountry("USA");
             Assert.IsNotNull(result);
             Assert.AreEqual("840", result);
         }
-
         [TestMethod]
         public void GetNumericCodeByCountryName() {
             string result = CountryUtils.GetNumericCodeByCountry("United States of America");
             Assert.IsNotNull(result);
             Assert.AreEqual("840", result);
         }
-
         [TestMethod]
         public void GetNumericCodeByNumericCode() {
             string result = CountryUtils.GetNumericCodeByCountry("840");
             Assert.IsNotNull(result);
             Assert.AreEqual("840", result);
         }
-
         [TestMethod]
         public void GetNetherlandsAntillesNumericCodeByCountryCode()
         {
@@ -120,7 +191,6 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(result);
             Assert.AreEqual("530", result);
         }
-
         [TestMethod]
         public void GetNetherlandsAntillesCountryCodeByCountryName()
         {
@@ -128,18 +198,15 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(result);
             Assert.AreEqual("AN", result);
         }
-
         [TestMethod]
         public void GetNumericCodeByNonExistingCountryName() {
             string result = CountryUtils.GetNumericCodeByCountry("Fake Country Name");
             Assert.IsNull(result);
         }
-
         [TestMethod]
         public void GetCountryByCodeNullDoesNotError() {
             CountryUtils.GetCountryCodeByCountry(null);
         }
-
         [TestMethod]
         public void CheckAddressCodeFromCountryExact() {
             Address address = new Address();
@@ -147,7 +214,6 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(address.CountryCode);
             Assert.AreEqual("US", address.CountryCode);
         }
-
         [TestMethod]
         public void CheckAddressCountryFromCodeExact() {
             Address address = new Address();
@@ -155,7 +221,6 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(address.Country);
             Assert.IsNotNull("United States of America", address.Country);
         }
-
         [TestMethod]
         public void CheckAddressCodeFromCountryFuzzy() {
             Address address = new Address();
@@ -163,7 +228,6 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(address.CountryCode);
             Assert.AreEqual("AF", address.CountryCode);
         }
-
         [TestMethod]
         public void CheckAddressCountryFromCodeFuzzy() {
             Address address = new Address();
@@ -171,14 +235,12 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(address.Country);
             Assert.IsNotNull("United States of America", address.Country);
         }
-
         [TestMethod]
         public void AddressIsCountryExactMatch() {
             Address address = new Address();
             address.Country = "United States of America";
             Assert.IsTrue(address.IsCountry("US"));
         }
-
         [TestMethod]
         public void CheckAddressCodeFromNumericCodeExact() {
             Address address = new Address();
@@ -186,28 +248,24 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(address.CountryCode);
             Assert.AreEqual("BE", address.CountryCode);
         }
-
         [TestMethod]
         public void AddressIsCountryExactMisMatch() {
             Address address = new Address();
             address.Country = "United States of America";
             Assert.IsFalse(address.IsCountry("GB"));
         }
-
         [TestMethod]
         public void AddressIsCountryFuzzyMatch() {
             Address address = new Address();
             address.Country = "Afganistan";
             Assert.IsTrue(address.IsCountry("AF"));
         }
-
         [TestMethod]
         public void AddressIsCountryFuzzyMisMatch() {
             Address address = new Address();
             address.Country = "Afganistan";
             Assert.IsFalse(address.IsCountry("GB"));
         }
-
         [TestMethod]
         public void CountryIsGB_NoStreetAddress1() {
             Address address = new Address {

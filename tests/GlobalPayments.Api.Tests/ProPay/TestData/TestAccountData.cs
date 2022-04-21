@@ -263,6 +263,35 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
             return renewAccountData;
         }
 
+        public static DeviceData GetDeviceData(int numDeviceTypes = 1, bool withAttributes = true) {
+            List<string> deviceTypes = new List<string>() { "PAX S300", "PAX S500" };
+
+            var deviceData = new DeviceData();
+            deviceData.Devices = new List<DeviceInfo>();
+
+            for (int i = 0; i < numDeviceTypes; i++) {
+                var deviceInfo = new DeviceInfo();
+                if (i >= deviceTypes.Count)
+                    break;
+                deviceInfo.Name = deviceTypes[i];
+                deviceInfo.Quantity = 1;
+                if (withAttributes)
+                {
+                    deviceInfo.Attributes = new List<DeviceAttributeInfo>()
+                        {
+                            new DeviceAttributeInfo()
+                            {
+                                Name = "Heartland.AMD.OfficeKey",
+                                Value = "123456"
+                            }
+                        };
+                }
+                deviceData.Devices.Add(deviceInfo);
+            }
+
+            return deviceData;
+        }
+
         public static string GetDocumentBase64String(string filepath) {
             return Convert.ToBase64String(System.IO.File.ReadAllBytes(filepath));
         }

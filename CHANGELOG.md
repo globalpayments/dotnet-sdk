@@ -4,6 +4,14 @@
 
 #### Enhancements
 
+- Added support for device ordering during account creation (ProPay)
+- CountryUtils class expanded to convert from any ISO 3166 value to any other ISO 3166 value
+- GP-ECOM: add 3DS tests to the suite
+
+## v3.0.3 (4/7/2022)
+
+#### Enhancements
+
 - Added additional batch details to End of Day response object (UPA)
 - Updated Digital Wallet and 3DSecure support to use latest Portico data fields 
 

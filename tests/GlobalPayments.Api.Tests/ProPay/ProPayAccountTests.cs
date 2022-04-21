@@ -38,6 +38,7 @@ namespace GlobalPayments.Api.Tests.ProPay {
             var achInfo = TestAccountData.GetACHData();
             var mailingAddressInfo = TestAccountData.GetMailingAddress();
             var secondaryBankInformation = TestAccountData.GetSecondaryBankAccountData();
+            var deviceData = TestAccountData.GetDeviceData(1, false);
 
             var response = _service.CreateAccount()
                 .WithBankAccountData(bankAccountInfo)
@@ -50,6 +51,8 @@ namespace GlobalPayments.Api.Tests.ProPay {
                 .WithACHData(achInfo)
                 .WithMailingAddress(mailingAddressInfo)
                 .WithSecondaryBankAccountData(secondaryBankInformation)
+                .WithDeviceData(deviceData)
+                .WithTimeZone("ET")
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -133,6 +136,34 @@ namespace GlobalPayments.Api.Tests.ProPay {
             var response = _service.EditAccount()
                 .WithAccountNumber("718135662")
                 .WithAccountPermissions(TestAccountData.GetAccountPermissions())
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void EditAccountTimeZone() {
+            // In ProPay, the TimeZone is edited as part of the User Personal Data. This value is not part of the UserPersonalData object in the SDK, though.
+
+            // First, populate the UserPersonalData object
+            // All items originally sent during account creation must be provided or they will be overwritten with blank spaces.
+            var userPersonalData = new UserPersonalData()
+            {
+                DayPhone = "4464464464",
+                EveningPhone = "4464464464",
+                FirstName = "John",
+                LastName = "Doe",
+                MiddleInitial = "A",
+                SourceEmail = "user840@user.com"
+            };
+
+            // Now call EditAccount, and in addition to sending the UserPersonalData, also send the TimeZone with one of the approved values.
+            // See comment on WithTimeZone for values, or the ProPay documentation for further elaboration.
+            var response = _service.EditAccount()
+                .WithAccountNumber("718216467")
+                .WithUserPersonalData(userPersonalData)
+                .WithTimeZone("ET")
                 .Execute();
 
             Assert.IsNotNull(response);

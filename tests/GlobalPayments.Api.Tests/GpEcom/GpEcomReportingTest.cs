@@ -7,15 +7,15 @@ namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcomReportingTest {
         public GpEcomReportingTest() {
-            ServicesContainer.ConfigureService(new GpEcomConfig {
-                DataClientId = "2413abd8-ea1f-4f0e-a4b5-eb5ca682efe2",
-                DataClientSecret = "nQ3eO3gV1sV7qC7vX8vY3nB1qR4oQ0dH6wI6wN4aA1oA3sP3aL",
-                DataClientUserId = "INTAPIUK",
+            var config = new GpEcomConfig {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 SharedSecret = "secret",
-                Timeout = 240000, 
-            });
+                RebatePassword = "rebate",
+                RefundPassword = "refund",
+                ServiceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi",
+            };
+            ServicesContainer.ConfigureService(config);
         }
 
         [TestMethod]
