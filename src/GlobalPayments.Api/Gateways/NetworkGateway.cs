@@ -64,9 +64,11 @@ namespace GlobalPayments.Api.Gateways {
                         //events.add(connectionEvent);
                         if (connectionFaults++ != 3) {
                             if (endpoint.Equals(PrimaryEndpoint) && SecondaryEndpoint != null) {
+                                client = null;
                                 Connect(SecondaryEndpoint, SecondaryPort);
                             }
                             else {
+                                client = null;
                                 Connect(PrimaryEndpoint, PrimaryPort);
                             }
                         }

@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Bug Fixes:
+
+- Fixed connection failover to secondary endpoints (NWS)
+
+## v3.0.4 (3/21/2022)
+
 #### Enhancements
 
 - Added support for device ordering during account creation (ProPay)
