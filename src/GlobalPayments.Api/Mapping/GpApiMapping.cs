@@ -51,6 +51,8 @@ namespace GlobalPayments.Api.Mapping {
 
                 transaction.TransactionId = json.GetValue<string>("id");
                 transaction.BalanceAmount = json.GetValue<string>("amount").ToAmount();
+                transaction.AuthorizedAmount = (json.GetValue<string>("status").ToUpper().Equals(TransactionStatus.Preauthorized.ToString().ToUpper()) && !string.IsNullOrEmpty(json.GetValue<string>("amount"))) ?
+                json.GetValue<string>("amount").ToAmount() : null;
                 transaction.Timestamp = json.GetValue<string>("time_created");
                 transaction.ResponseMessage = json.GetValue<string>("status");
                 transaction.ReferenceNumber = json.GetValue<string>("reference");

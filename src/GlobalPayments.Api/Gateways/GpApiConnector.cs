@@ -11,18 +11,8 @@ using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
     internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider {
-        private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
-
-        public string AppId { get; set; }
-        public string AppKey { get; set; }
-        public int? SecondsToExpire { get; set; }
-        public IntervalToExpire? IntervalToExpire { get; set; }
-        public Channel Channel { get; set; }
-        public Language Language { get; set; }
-        public string Country { get; set; }
-        public string[] Permissions { get; set; }
-        public string MerchantContactUrl { get; set; }
-        public string MerchantId { get; set; }
+        private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";        
+        public GpApiConfig GpApiConfig { get; set; }
 
         private string _AccessToken;
         public string AccessToken {
@@ -38,58 +28,7 @@ namespace GlobalPayments.Api.Gateways {
                     Headers["Authorization"] = $"Bearer {_AccessToken}";
                 }
             }
-        }
-        private string _DataAccountName;
-        public string DataAccountName {
-            get {
-                if (string.IsNullOrEmpty(_DataAccountName)) {
-                    throw new GatewayException("DataAccountName is not set");
-                }
-                return _DataAccountName;
-            }
-            internal set {
-                _DataAccountName = value;
-            }
-        }
-        private string _DisputeManagementAccountName;
-        public string DisputeManagementAccountName {
-            get {
-                if (string.IsNullOrEmpty(_DisputeManagementAccountName)) {
-                    throw new GatewayException("DisputeManagementAccountName is not set");
-                }
-                return _DisputeManagementAccountName;
-            }
-            internal set {
-                _DisputeManagementAccountName = value;
-            }
-        }
-        private string _TokenizationAccountName;
-        public string TokenizationAccountName {
-            get {
-                if (string.IsNullOrEmpty(_TokenizationAccountName)) {
-                    throw new GatewayException("TokenizationAccountName is not set");
-                }
-                return _TokenizationAccountName;
-            }
-            internal set {
-                _TokenizationAccountName = value;
-            }
-        }
-        private string _TransactionProcessingAccountName;
-        public string TransactionProcessingAccountName {
-            get {
-                if (string.IsNullOrEmpty(_TransactionProcessingAccountName)) {
-                    throw new GatewayException("TransactionProcessingAccountName is not set");
-                }
-                return _TransactionProcessingAccountName;
-            }
-            internal set {
-                _TransactionProcessingAccountName = value;
-            }
-        }
-        public string ChallengeNotificationUrl { get; set; }
-        
-        public string MethodNotificationUrl { get; set; }
+        }       
 
         public bool SupportsHostedPayments { get { return true; } }
 
@@ -97,13 +36,23 @@ namespace GlobalPayments.Api.Gateways {
             throw new NotImplementedException();
         }
 
-        internal GpApiConnector() {
+        public GpApiConnector(GpApiConfig gpApiConfig)
+        {   
+            GpApiConfig = gpApiConfig;          
+            ServiceUrl = gpApiConfig.Environment.Equals(Entities.Environment.PRODUCTION) ? ServiceEndpoints.GP_API_PRODUCTION : ServiceEndpoints.GP_API_TEST;
+            Timeout = gpApiConfig.Timeout;            
+            RequestLogger = gpApiConfig.RequestLogger;            
+            WebProxy = gpApiConfig.WebProxy;
+
             // Set required api version header
             Headers["X-GP-Version"] = "2021-03-22";
             Headers["Accept"] = "application/json";
             Headers["Accept-Encoding"] = "gzip";
-            Headers["x-gp-sdk"] = "net;version="+getReleaseVersion();
+            Headers["x-gp-sdk"] = "net;version=" + getReleaseVersion();
+
+            DynamicHeaders = gpApiConfig.DynamicHeaders;
         }
+               
 
         //Get the SDK release version
         private string getReleaseVersion()
@@ -119,21 +68,35 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         public void SignIn() {
-            if (string.IsNullOrEmpty(_AccessToken))
-            {
+            AccessTokenInfo accessTokenInfo = GpApiConfig.AccessTokenInfo;
+
+            if (accessTokenInfo != null && !string.IsNullOrEmpty(accessTokenInfo.Token)) {
+                AccessToken = accessTokenInfo.Token;
+                return;
+            }
                 var response = GetAccessToken();
 
                 AccessToken = response.Token;
 
-                if (string.IsNullOrEmpty(_DataAccountName))
-                    DataAccountName = response.DataAccountName;
-                if (string.IsNullOrEmpty(_DisputeManagementAccountName))
-                    DisputeManagementAccountName = response.DisputeManagementAccountName;
-                if (string.IsNullOrEmpty(_TokenizationAccountName))
-                    TokenizationAccountName = response.TokenizationAccountName;
-                if (string.IsNullOrEmpty(_TransactionProcessingAccountName))
-                    TransactionProcessingAccountName = response.TransactionProcessingAccountName;
+            if (accessTokenInfo == null)
+            {
+                accessTokenInfo = new AccessTokenInfo();
             }
+
+            if (string.IsNullOrEmpty(accessTokenInfo.DataAccountName)) {
+                accessTokenInfo.DataAccountName = response.DataAccountName;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountName)) {
+                accessTokenInfo.DisputeManagementAccountName = response.DisputeManagementAccountName;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.TokenizationAccountName)) {
+                accessTokenInfo.TokenizationAccountName = response.TokenizationAccountName;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountName)) {
+                accessTokenInfo.TransactionProcessingAccountName = response.TransactionProcessingAccountName;
+            }
+
+            GpApiConfig.AccessTokenInfo = accessTokenInfo;
         }
 
         public void SignOut() {
@@ -143,7 +106,7 @@ namespace GlobalPayments.Api.Gateways {
         public GpApiTokenResponse GetAccessToken() {
             AccessToken = null;
 
-            GpApiRequest request = GpApiSessionInfo.SignIn(AppId, AppKey, SecondsToExpire, IntervalToExpire, Permissions);
+            GpApiRequest request = GpApiSessionInfo.SignIn(GpApiConfig.AppId, GpApiConfig.AppKey, GpApiConfig.SecondsToExpire, GpApiConfig.IntervalToExpire, GpApiConfig.Permissions);
 
             string response = base.DoTransaction(request.Verb, request.Endpoint, request.RequestBody);
 
@@ -170,7 +133,7 @@ namespace GlobalPayments.Api.Gateways {
                 return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
             }
             catch (GatewayException ex) {
-                if (ex.ResponseCode == "NOT_AUTHENTICATED" && !string.IsNullOrEmpty(AppId) && !string.IsNullOrEmpty(AppKey)) {
+                if (ex.ResponseCode == "NOT_AUTHENTICATED" && !string.IsNullOrEmpty(GpApiConfig.AppId) && !string.IsNullOrEmpty(GpApiConfig.AppKey)) {
                     SignIn();
                     return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
                 }

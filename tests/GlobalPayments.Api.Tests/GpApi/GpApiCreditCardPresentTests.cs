@@ -1,5 +1,6 @@
 using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
@@ -523,7 +524,50 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         #endregion
-        
+
+        [TestMethod]
+        public void IncrementalAuth() {
+
+            var transaction = card.Authorize(amount)
+                .WithCurrency(currency)
+                .Execute();
+
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
+
+            var lodgingInfo = new LodgingData();
+                lodgingInfo.bookingReference = "s9RpaDwXq1sPRkbP";
+                lodgingInfo.StayDuration = 10;
+                lodgingInfo.CheckInDate = DateTime.Now;
+                lodgingInfo.CheckOutDate = DateTime.Now.AddDays(7);
+                lodgingInfo.Rate = (decimal)13.49;
+            var item1 = new LodgingItems();
+            item1.Types = LodgingItemType.NO_SHOW.ToString();
+            item1.Reference = "item_1";
+            item1.TotalAmount = "13.49";
+            item1.paymentMethodProgramCodes = new string[1] { PaymentMethodProgram.ASSURED_RESERVATION.ToString() };
+            lodgingInfo.Items = new System.Collections.Generic.List<LodgingItems>() { item1 };
+
+            transaction = transaction.AdditionalAuth(10)
+                .WithCurrency(currency)
+                .WithLodgingData(lodgingInfo)
+                .Execute();
+
+            Assert.IsNotNull(transaction);
+            //echo '---'. $transaction->authorizationCode. '--->'. $transaction->cardBrandTransactionId;
+            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
+            Assert.AreEqual((decimal)12.12, transaction.AuthorizedAmount);
+
+            var capture = transaction.Capture()
+                .Execute();
+
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("SUCCESS", capture.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), capture.ResponseMessage.ToUpper());
+        }
+
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
             Assert.AreEqual(SUCCESS, transaction?.ResponseCode);

@@ -8,7 +8,7 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiSecure3DRequestBuilder {
         internal static GpApiRequest BuildRequest(Secure3dBuilder builder, GpApiConnector gateway) {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
+            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
                 var storedCredential = new JsonDoc()
                     .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))
@@ -30,16 +30,16 @@ namespace GlobalPayments.Api.Entities {
                 }
 
                 var notifications = new JsonDoc()
-                    .Set("challenge_return_url", gateway.ChallengeNotificationUrl)
-                    .Set("three_ds_method_return_url", gateway.MethodNotificationUrl);
+                    .Set("challenge_return_url", gateway.GpApiConfig.ChallengeNotificationUrl)
+                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl);
 
                 var data = new JsonDoc()
-                    .Set("account_name", gateway.TransactionProcessingAccountName)
+                    .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
                     .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())
-                    .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
+                    .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("currency", builder.Currency)
-                    .Set("country", gateway.Country)
+                    .Set("country", gateway.GpApiConfig.Country)
                     .Set("preference", builder.ChallengeRequestIndicator?.ToString())
                     .Set("source", builder.AuthenticationSource.ToString())
                     .Set("initator", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Initiator))
@@ -79,8 +79,8 @@ namespace GlobalPayments.Api.Entities {
 
                 #region Notifications
                 var notifications = new JsonDoc()
-                    .Set("challenge_return_url", gateway.ChallengeNotificationUrl)
-                    .Set("three_ds_method_return_url", gateway.MethodNotificationUrl);
+                    .Set("challenge_return_url", gateway.GpApiConfig.ChallengeNotificationUrl)
+                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl);
                 #endregion
 
                 #region Order
@@ -226,7 +226,7 @@ namespace GlobalPayments.Api.Entities {
                     .Set("payer_login_data", payerLoginData.HasKeys() ? payerLoginData : null)
                     .Set("browser_data", browserData.HasKeys() && builder.AuthenticationSource != AuthenticationSource.MOBILE_SDK ? browserData : null)
                     .Set("mobile_data", mobileData.HasKeys() && builder.AuthenticationSource == AuthenticationSource.MOBILE_SDK ? mobileData : null)
-                    .Set("merchant_contact_url", gateway.MerchantContactUrl);
+                    .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl);
 
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,

@@ -9,12 +9,13 @@ namespace GlobalPayments.Api.Entities {
         public string FolioNumber { get; set; }
         public decimal? Rate { get; set; }
         public int StayDuration { get; set; }
-
         public PrestigiousPropertyLimit? PrestigiousPropertyLimit { get; set; }
         public bool NoShow { get; set; }
         public AdvancedDepositType? AdvancedDepositType { get; set; }
         public string LodgingDataEdit { get; set; }
         public bool PreferredCustomer { get; set; }
+        public string bookingReference { get; set; }
+        public List<LodgingItems> Items { get; set; }
 
         public decimal ExtraChargeAmount {
             get {

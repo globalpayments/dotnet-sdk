@@ -32,6 +32,13 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             var elements = values.Split((char)ControlCodes.US);
             foreach (var element in elements) {
+                // recent app versions can include an empty element at
+                // the beginning of this subgroup against what is
+                // detailed in the message spec
+                if (string.IsNullOrEmpty(element)) {
+                    continue;
+                }
+
                 var kv = element.Split('=');
 
                 try {

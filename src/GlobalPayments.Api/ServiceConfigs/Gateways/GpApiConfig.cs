@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Utils;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace GlobalPayments.Api {
@@ -57,6 +58,8 @@ namespace GlobalPayments.Api {
 
         public string MerchantId { get; set; }
 
+        public Dictionary<string, string> DynamicHeaders { get; set; }
+
         public GpApiConfig() : base(GatewayProvider.GP_API) { }
 
         internal override void ConfigureContainer(ConfiguredServices services) {
@@ -67,7 +70,8 @@ namespace GlobalPayments.Api {
                     ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION;
             }
 
-            var gateway = new GpApiConnector {
+            var gpApiConfig = new GpApiConfig
+            {
                 AppId = AppId,
                 AppKey = AppKey,
                 SecondsToExpire = SecondsToExpire,
@@ -78,19 +82,17 @@ namespace GlobalPayments.Api {
                 ServiceUrl = ServiceUrl,
                 Timeout = Timeout,
                 Permissions = Permissions,
-                AccessToken = AccessTokenInfo?.Token,
-                DataAccountName = AccessTokenInfo?.DataAccountName,
-                DisputeManagementAccountName = AccessTokenInfo?.DisputeManagementAccountName,
-                TokenizationAccountName = AccessTokenInfo?.TokenizationAccountName,
-                TransactionProcessingAccountName = AccessTokenInfo?.TransactionProcessingAccountName,
-                ChallengeNotificationUrl = ChallengeNotificationUrl,
                 MethodNotificationUrl = MethodNotificationUrl,
                 RequestLogger = RequestLogger,
                 MerchantContactUrl = MerchantContactUrl,
+                ChallengeNotificationUrl = ChallengeNotificationUrl,
                 WebProxy = WebProxy,
                 DynamicHeaders = DynamicHeaders,
-                MerchantId = MerchantId
+                MerchantId = MerchantId,
+                AccessTokenInfo = AccessTokenInfo,
             };
+
+            var gateway = new GpApiConnector(gpApiConfig);
 
             services.GatewayConnector = gateway;
 

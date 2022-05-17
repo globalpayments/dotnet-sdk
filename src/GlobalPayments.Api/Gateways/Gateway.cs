@@ -18,6 +18,7 @@ namespace GlobalPayments.Api.Gateways {
         public Dictionary<string, string> Headers { get; set; }
         public int Timeout { get; set; }
         public string ServiceUrl { get; set; }
+
         public Dictionary<string, string> DynamicHeaders;
 
         public Gateway(string contentType) {
@@ -131,7 +132,7 @@ namespace GlobalPayments.Api.Gateways {
                 response = httpClient.SendAsync(request).Result;
 
                 string rawResponse = response.Content.ReadAsStringAsync().Result;
-                
+
                 RequestLogger?.ResponseReceived(rawResponse);
 
                 return new GatewayResponse {

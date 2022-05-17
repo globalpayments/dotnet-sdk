@@ -10,7 +10,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiCreditWithMerchantIdTests : BaseGpApiTests {
         CreditCardData card;
-        string merchantId = "MER_c4c0df11039c48a9b63701adeaa296c3";
+        string merchantId = "MER_7e3e2c7df34f42819b3edee31022ee3f";
 
         [TestInitialize]
         public void TestInitialize() {

@@ -41,7 +41,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestConsoleLogger()
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
             });
         }
 

@@ -2,11 +2,22 @@
 
 ## Latest
 
+#### Enhancements
+
+- GpApiService refactor
+- GP-API: Add increment an Auth
+
+#### Bug Fixes:
+
+- PAX Devices: Fixed issue with EBT processing using recent application versions
+
+## v3.0.5 (4/28/2022)
+
 #### Bug Fixes:
 
 - Fixed connection failover to secondary endpoints (NWS)
 
-## v3.0.4 (3/21/2022)
+## v3.0.4 (4/21/2022)
 
 #### Enhancements
 

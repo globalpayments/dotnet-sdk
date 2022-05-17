@@ -2,12 +2,13 @@
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
+using System.Collections.Generic;
 using System.Net.Http;
 
 namespace GlobalPayments.Api.Entities {
     internal class GpApiManagementRequestBuilder {
         internal static GpApiRequest BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
+            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.Capture) {
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -144,6 +145,45 @@ namespace GlobalPayments.Api.Entities {
                         Verb = HttpMethod.Post,
                         Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/confirmation",
                         RequestBody = data.ToString(),
+                    };
+                }
+            }
+            else if (builder.TransactionType == TransactionType.Auth)
+            {
+                var payload = new JsonDoc();
+                payload.Set("amount", builder.Amount);
+
+                if (builder.LodgingData != null) {
+                    var lodging = builder.LodgingData;
+                    if (lodging.Items != null) {
+                        var lodginItems = new List<LodgingItems>();
+
+                        foreach (var item in lodging.Items)
+                        {
+                            lodginItems.Add(new LodgingItems { 
+                                Types = item.Types,
+                                Reference = item.Reference,
+                                TotalAmount = item.TotalAmount,
+                                paymentMethodProgramCodes = item.paymentMethodProgramCodes
+                            });
+                        }
+
+                        var lodgingData = new JsonDoc()
+                      .Set("booking_reference", lodging.bookingReference)
+                      .Set("duration_days", lodging.StayDuration)
+                      .Set("date_checked_in", lodging.CheckInDate?.ToString("yyyy-MM-dd"))
+                      .Set("date_checked_out", lodging.CheckOutDate?.ToString("yyyy-MM-dd"))
+                      .Set("daily_rate_amount", lodging.Rate.ToNumericCurrencyString())
+                      .Set("charge_items", lodginItems);
+
+                      payload.Set("lodging", lodgingData);
+                    }
+
+                    return new GpApiRequest
+                    {
+                        Verb = HttpMethod.Post,
+                        Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/incremental",
+                        RequestBody = payload.ToString(),
                     };
                 }
             }

@@ -6,7 +6,7 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiReportRequestBuilder {
         internal static GpApiRequest BuildRequest<T>(ReportBuilder<T> builder, GpApiConnector gateway) where T : class {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
+            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             if (builder is TransactionReportBuilder<T> trb) {
                 var request = new GpApiRequest();
                 switch (builder.ReportType) {
@@ -60,7 +60,7 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("number_first6", trb.SearchBuilder.CardNumberFirstSix);
                         request.AddQueryStringParam("number_last4", trb.SearchBuilder.CardNumberLastFour);
                         request.AddQueryStringParam("deposit_status", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.DepositStatus));
-                        request.AddQueryStringParam("account_name", gateway.DataAccountName);
+                        request.AddQueryStringParam("account_name", gateway.GpApiConfig.AccessTokenInfo.DataAccountName);
                         request.AddQueryStringParam("brand", trb.SearchBuilder.CardBrand);
                         request.AddQueryStringParam("arn", trb.SearchBuilder.AquirerReferenceNumber);
                         request.AddQueryStringParam("brand_reference", trb.SearchBuilder.BrandReference);
@@ -92,7 +92,7 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
                         request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, trb.DepositOrderBy));
                         request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, trb.Order));
-                        request.AddQueryStringParam("account_name", gateway.DataAccountName);
+                        request.AddQueryStringParam("account_name", gateway.GpApiConfig.AccessTokenInfo.DataAccountName);
                         request.AddQueryStringParam("from_time_created", trb.StartDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("to_time_created", trb.EndDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("id", trb.SearchBuilder.DepositReference);
@@ -137,7 +137,7 @@ namespace GlobalPayments.Api.Entities {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}/settlement/disputes",
                         };
-                        request.AddQueryStringParam("account_name", gateway.DataAccountName);
+                        request.AddQueryStringParam("account_name", gateway.GpApiConfig.AccessTokenInfo.DataAccountName);
                         request.AddQueryStringParam("deposit_id", trb.SearchBuilder.DepositReference);
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());

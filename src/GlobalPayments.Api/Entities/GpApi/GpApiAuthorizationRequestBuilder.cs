@@ -9,9 +9,9 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Entities {
     internal class GpApiAuthorizationRequestBuilder {
         internal static GpApiRequest BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.MerchantId) ? $"/merchants/{gateway.MerchantId}" : string.Empty;
+            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             var paymentMethod = new JsonDoc()
-                .Set("entry_mode", GetEntryMode(builder, gateway.Channel)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
+                .Set("entry_mode", GetEntryMode(builder, gateway.GpApiConfig.Channel)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
             if (builder.PaymentMethod is CreditCardData && (builder.TransactionModifier == TransactionModifier.EncryptedMobile || builder.TransactionModifier == TransactionModifier.DecryptedMobile))
             {
                 var digitalWallet = new JsonDoc();
@@ -71,7 +71,7 @@ namespace GlobalPayments.Api.Entities {
 
                     if (builder.TransactionType == TransactionType.Tokenize) {
                         var tokenizationData = new JsonDoc()
-                            .Set("account_name", gateway.TokenizationAccountName)
+                            .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                             .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))                            
                             .Set("card", card);
@@ -95,12 +95,12 @@ namespace GlobalPayments.Api.Entities {
                         }
 
                         var RequestData = new JsonDoc()
-                           .Set("account_name", gateway.TransactionProcessingAccountName)
-                           .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
+                           .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                           .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                            .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                            .Set("amount", builder.Amount.ToNumericCurrencyString())
                            .Set("currency", builder.Currency)
-                           .Set("country", gateway.Country)
+                           .Set("country", gateway.GpApiConfig.Country)
                            .Set("payment_method", paymentMethod);
 
                         return new GpApiRequest
@@ -113,7 +113,7 @@ namespace GlobalPayments.Api.Entities {
                     else if (builder.TransactionType == TransactionType.Verify) {
                         if (builder.RequestMultiUseToken && string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                             var tokenizationData = new JsonDoc()
-                                .Set("account_name", gateway.TokenizationAccountName)
+                                .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                                 .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
@@ -128,17 +128,17 @@ namespace GlobalPayments.Api.Entities {
                         else
                         {
                             var verificationData = new JsonDoc()
-                                .Set("account_name", gateway.TransactionProcessingAccountName)
-                                .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
+                                .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                                .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("currency", builder.Currency)
-                                .Set("country", gateway.Country)
+                                .Set("country", gateway.GpApiConfig.Country)
                                 .Set("payment_method", paymentMethod);
 
                             if (builder.PaymentMethod is ITokenizable && !string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                                 verificationData.Remove("payment_method");
                                 verificationData.Set("payment_method", new JsonDoc()
-                                    .Set("entry_mode", GetEntryMode(builder, gateway.Channel))
+                                    .Set("entry_mode", GetEntryMode(builder, gateway.GpApiConfig.Channel))
                                     .Set("id", (builder.PaymentMethod as ITokenizable).Token)
                                     .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
                                 );
@@ -166,11 +166,11 @@ namespace GlobalPayments.Api.Entities {
                         paymentMethod.Set("card", card);
 
                         var verificationData = new JsonDoc()
-                            .Set("account_name", gateway.TransactionProcessingAccountName)
-                            .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel))
+                            .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                            .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                             .Set("currency", builder.Currency)
-                            .Set("country", gateway.Country)
+                            .Set("country", gateway.GpApiConfig.Country)
                             .Set("payment_method", paymentMethod)
                             .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null);
 
@@ -314,9 +314,9 @@ namespace GlobalPayments.Api.Entities {
             }           
 
             var data = new JsonDoc()
-                .Set("account_name", gateway.TransactionProcessingAccountName)
+                .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
                 .Set("type", builder.TransactionType == TransactionType.Refund ? "REFUND" : "SALE") // [SALE, REFUND]
-                .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.Channel)) // [CP, CNP]
+                .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel)) // [CP, CNP]
                 .Set("capture_mode", GetCaptureMode(builder)) // [AUTO, LATER, MULTIPLE]
                 //.Set("remaining_capture_count", "") //Pending Russell
                 .Set("authorization_mode", builder.AllowPartialAuth ? "PARTIAL" : null)
@@ -329,7 +329,7 @@ namespace GlobalPayments.Api.Entities {
                 .Set("cashback_amount", builder.CashBackAmount.ToNumericCurrencyString())
                 .Set("surcharge_amount", builder.SurchargeAmount.ToNumericCurrencyString())
                 .Set("convenience_amount", builder.ConvenienceAmount.ToNumericCurrencyString())
-                .Set("country", gateway.Country)
+                .Set("country", gateway.GpApiConfig.Country)
                 //.Set("language", EnumConverter.GetMapping(Target.GP_API, Language))
                 .Set("ip_address", builder.CustomerIpAddress)
                 //.Set("site_reference", "") //
