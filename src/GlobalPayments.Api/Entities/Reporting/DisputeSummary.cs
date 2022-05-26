@@ -50,6 +50,7 @@ namespace GlobalPayments.Api.Entities {
         public decimal? LastAdjustmentAmount { get; set; }
         public string LastAdjustmentCurrency { get; set; }
         public string LastAdjustmentFunding { get; set; }
+        public DisputeDocument[] Documents { get; set; }
 
         public ManagementBuilder Accept() {
             return new ManagementBuilder(Entities.TransactionType.DisputeAcceptance)

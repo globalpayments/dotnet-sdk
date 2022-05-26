@@ -128,5 +128,20 @@ namespace GlobalPayments.Api.Entities {
         public HostedPaymentData() {
             SupplementaryData = new Dictionary<string, string>();
         }
+
+        /// <summary>
+        /// Determines whether the address forms will be displayed on the HPP
+        /// </summary>
+        public bool CaptureAddress { get; set; }
+
+        /// <summary>
+        /// Determines whether or not the HPP response will contain the address and contact information
+        /// </summary>
+        public bool ReturnAddress { get; set; } = false;
+
+        /// <summary>
+        /// Determine whether or not the address and contact information must be provided in the HPP request and  whether they will/won't be editable by the customer.
+        /// </summary>
+        //public bool AddressReadOnly { get; set; } = true;
     }
 }

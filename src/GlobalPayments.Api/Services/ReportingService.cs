@@ -30,9 +30,15 @@ namespace GlobalPayments.Api.Services {
             return new TransactionReportBuilder<DepositSummary>(ReportType.DepositDetail)
                 .WithDepositReference(depositId);
         }
-
+       
         public static TransactionReportBuilder<DisputeSummary> DisputeDetail(string disputeId) {
             return new TransactionReportBuilder<DisputeSummary>(ReportType.DisputeDetail)
+                .WithDisputeId(disputeId);
+        }
+
+        public static TransactionReportBuilder<DisputeDocument> DocumentDisputeDetail(string disputeId)
+        {
+            return new TransactionReportBuilder<DisputeDocument>(ReportType.DocumentDisputeDetail)
                 .WithDisputeId(disputeId);
         }
 

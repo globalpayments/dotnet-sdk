@@ -116,5 +116,10 @@ namespace GlobalPayments.Api.PaymentMethods {
         string ITokenizable.Tokenize(bool validateCard, string configName, PaymentMethodUsageMode paymentMethodUsageMode) {
             throw new NotImplementedException();
         }
+
+        public ManagementBuilder UpdateToken()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

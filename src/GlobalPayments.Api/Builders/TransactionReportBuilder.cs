@@ -19,6 +19,7 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal string TransactionId { get; set; }
+        internal string DisputeDocumentId { get; set; }
         internal int? Page { get; set; }
         internal int? PageSize { get; set; }
         internal SortDirection? Order { get; set; }
@@ -75,6 +76,16 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>TResult</returns>
         public TransactionReportBuilder<TResult> WithDisputeId(string value) {
             SearchBuilder.DisputeId = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the gateway DisputeDocumentId as criteria for the report
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public TransactionReportBuilder<TResult> WithDisputeDocumentId(string value) {
+            DisputeDocumentId = value;
             return this;
         }
 
@@ -205,7 +216,7 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public SearchCriteriaBuilder<TResult> Where<T>(SearchCriteria criteria, T value) {
+        public SearchCriteriaBuilder<TResult> Where<T>(SearchCriteria criteria, T value) {         
             return SearchBuilder.And(criteria, value);
         }
 
@@ -220,6 +231,7 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => TransactionId).IsNotNull();
 
             Validations.For(ReportType.Activity).Check(() => TransactionId).IsNull();
+            Validations.For(ReportType.DocumentDisputeDetail).Check(() => DisputeDocumentId).IsNotNull();
         }
     }
 }

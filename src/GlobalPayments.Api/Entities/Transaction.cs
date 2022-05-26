@@ -383,6 +383,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string Token { get; set; }
 
+        public PaymentMethodUsageMode? TokenUsageMode { get; set; }
+
         /// <summary>
         /// The token data returned for the specific token
         /// </summary>

@@ -544,6 +544,11 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates an actions report paged
         /// </summary>
         FindActionsPaged = 1 << 21,
+
+        /// <summary>
+        /// Indicates a Dispute Document Details report.
+        /// </summary>
+        DocumentDisputeDetail = 1 << 22,
     }
 
     /// <summary>

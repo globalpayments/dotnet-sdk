@@ -125,7 +125,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)                        
                         .WithAmount(10.01m)
                         .WithCurrency("USD")
-                        .WithChallengeRequestIndicator(ChallengeRequestIndicator.CHALLENGE_MANDATED)
+                        .WithChallengeRequestIndicator(ChallengeRequestIndicator.NO_PREFERENCE)
                         .WithOrderCreateDate(DateTime.Now)
                         .WithAddress(billingAddress, AddressType.Billing)
                         .WithAddress(shippingAddress, AddressType.Shipping)

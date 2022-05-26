@@ -82,6 +82,7 @@ namespace GlobalPayments.Api.Builders {
         internal bool AllowDuplicates { get; set; }
         internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
         internal string TagData { get; set; }
+        internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
 
@@ -504,6 +505,12 @@ namespace GlobalPayments.Api.Builders {
 
         public ManagementBuilder WithDccRateData(DccRateData value){
             DccRateData = value;
+            return this;
+        }
+
+        public ManagementBuilder WithPaymentMethodUsageMode(PaymentMethodUsageMode value)
+        {
+            PaymentMethodUsageMode = value;
             return this;
         }
     }

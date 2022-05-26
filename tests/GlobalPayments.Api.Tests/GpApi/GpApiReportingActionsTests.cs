@@ -140,6 +140,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var result = ReportingService.FindActionsPaged(FIRST_PAGE,PAGE_SIZE)
                 .Where(SearchCriteria.ResourceId, resourceId)
+                .And(SearchCriteria.Resource, "TRANSACTION")
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<ActionSummary>);
@@ -242,7 +243,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindActionsPaged_By_ResponseCode() {
-            var responseCode = SampleAction.ResponseCode;
+            var responseCode = !string.IsNullOrEmpty(SampleAction.ResponseCode) ? SampleAction.ResponseCode : "SUCCESS";
 
             var result = ReportingService.FindActionsPaged(FIRST_PAGE,PAGE_SIZE)
                 .Where(SearchCriteria.ResponseCode, responseCode)

@@ -139,7 +139,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Where(SearchCriteria.StartDate, DateTime.Now.AddYears(-1))
                 .And(SearchCriteria.EndDate, DateTime.Now.AddDays(-2))
                 .And(SearchCriteria.PaymentType, PaymentType.Sale)
-                .And(SearchCriteria.PaymentMethod, PaymentMethodName.BankTransfer)
+                .And(SearchCriteria.PaymentMethodName, PaymentMethodName.BankTransfer)
                 .And(DataServiceCriteria.Amount, amount)
                 .Execute();
 

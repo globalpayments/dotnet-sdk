@@ -15,7 +15,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private static string Token;
 
         private static CreditCardData Card = new CreditCardData {
-            Number = "4111111111111111",
+            Number = "4242424242424242",
             ExpMonth = DateTime.Now.Month,
             ExpYear = DateTime.Now.Year + 1,
             Cvn = "123"
@@ -106,6 +106,76 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.AreEqual(0, result?.Results.Count);
+        }
+
+        [TestMethod]
+        public void FindStoredPaymentMethod_By_CardInfo()
+        {
+            Card = new CreditCardData();
+            Card.Number = "4242424242424242";
+            Card.ExpMonth = 12;
+            Card.ExpYear = DateTime.Now.AddYears(1).Year;
+
+            var response = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            .Where(SearchCriteria.PaymentMethod, Card as IPaymentMethod)
+            .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(true, (response.Results is IList<StoredPaymentMethodSummary>));
+            
+            foreach (var rs in response.Results)
+            {
+                Assert.AreEqual(Card.ExpMonth.ToString(), rs.CardExpMonth);
+                Assert.AreEqual(true, Card.ExpYear.ToString().EndsWith(rs.CardExpYear));
+                Assert.AreEqual(Card.Number.Substring(Card.Number.Length - 4), rs.CardLast4.Substring(rs.CardLast4.Length - 4));
+            }           
+        }
+
+        [TestMethod]
+        public void FindStoredPaymentMethod_By_OnlyCardNumberInfo()
+        {
+            Card = new CreditCardData();
+            Card.Number = "4263970000005262";
+            Card.ExpMonth = 12;
+            Card.ExpYear = DateTime.Now.AddYears(1).Year;
+
+            var response = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            .Where(SearchCriteria.PaymentMethod, Card as IPaymentMethod)
+            .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(true, (response.Results is IList<StoredPaymentMethodSummary>));
+          
+            foreach (var rs in response.Results)
+            {
+                Assert.AreEqual(Card.ExpMonth.ToString(), rs.CardExpMonth);
+                Assert.AreEqual(true, Card.ExpYear.ToString().EndsWith(rs.CardExpYear));
+                Assert.AreEqual(Card.Number.Substring(Card.Number.Length - 4), rs.CardLast4.Substring(rs.CardLast4.Length - 4));
+            }
+        }
+
+        [TestMethod]
+        public void FindStoredPaymentMethod_By_WithoutMandatoryCardNumber()
+        {
+            Card = new CreditCardData();
+            var exceptionCaught = false;
+
+            try
+            {
+                ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+                .Where(SearchCriteria.PaymentMethod, Card as IPaymentMethod)
+                .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("40005", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields : number", ex.Message);               
+            }
+            finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         [TestMethod]

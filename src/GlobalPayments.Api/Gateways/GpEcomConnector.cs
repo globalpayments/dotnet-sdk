@@ -400,6 +400,9 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_CUSTOMER_COUNTRY", builder.HostedPaymentData.CustomerCountry);
                 request.Set("HPP_CUSTOMER_FIRSTNAME", builder.HostedPaymentData.CustomerFirstName);
                 request.Set("HPP_CUSTOMER_LASTNAME", builder.HostedPaymentData.CustomerLastName);
+                if (!string.IsNullOrEmpty(builder.HostedPaymentData.CustomerFirstName) && !string.IsNullOrEmpty(builder.HostedPaymentData.CustomerLastName)) {
+                    request.Set("HPP_NAME", $"{builder.HostedPaymentData.CustomerFirstName} {builder.HostedPaymentData.CustomerLastName}");
+                }
                 request.Set("MERCHANT_RESPONSE_URL", builder.HostedPaymentData.MerchantResponseUrl);
                 request.Set("HPP_TX_STATUS_URL", builder.HostedPaymentData.TransactionStatusUrl);
                 request.Set("PM_METHODS", PaymentValues);
@@ -407,6 +410,7 @@ namespace GlobalPayments.Api.Gateways {
                 // 3DSv2
                 request.Set("HPP_CUSTOMER_EMAIL", builder.HostedPaymentData.CustomerEmail);
                 request.Set("HPP_CUSTOMER_PHONENUMBER_MOBILE", builder.HostedPaymentData.CustomerPhoneMobile);
+                request.Set("HPP_PHONE", builder.HostedPaymentData.CustomerPhoneMobile);
                 request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequestIndicator);
                 if (builder.HostedPaymentData.AddressesMatch != null) {
                     request.Set("HPP_ADDRESS_MATCH_INDICATOR", builder.HostedPaymentData.AddressesMatch.Value ? "TRUE" : "FALSE");
@@ -418,6 +422,12 @@ namespace GlobalPayments.Api.Gateways {
                         request.Set(key, builder.HostedPaymentData.SupplementaryData[key]);
                     }
                 }
+
+                //CAPTURE BILLING AND SHIPPING INFORMATION
+                request.Set("HPP_CAPTURE_ADDRESS", builder.HostedPaymentData.CaptureAddress ? "TRUE" : "FALSE");
+                request.Set("HPP_DO_NOT_RETURN_ADDRESS", builder.HostedPaymentData.ReturnAddress ? "TRUE" : "FALSE");
+                //TO DO
+                //request.Set("HPP_ADDRESS_READONLY", builder.HostedPaymentData.AddressReadOnly ? "1" : "0");
             }
             if (builder.ShippingAddress != null) {
                 // FRAUD VALUES

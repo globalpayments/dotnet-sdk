@@ -91,7 +91,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
             amounts.TransactionAmount = "{0:c}".FormatWith(builder.Amount).ToNumeric();
             amounts.CashBackAmount = "{0:c}".FormatWith(builder.CashBackAmount).ToNumeric();
             amounts.TipAmount = "{0:c}".FormatWith(builder.Gratuity).ToNumeric();
-            if (builder.PaymentMethodType != PaymentMethodType.EBT) {
+            if (builder.PaymentMethodType != PaymentMethodType.EBT && builder.TransactionType != TransactionType.Refund) {
                 amounts.TaxAmount = "{0:c}".FormatWith(builder.TaxAmount).ToNumeric();
             }
 

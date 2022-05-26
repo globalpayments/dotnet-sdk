@@ -118,7 +118,7 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // PIN Debit
-            if (builder.PaymentMethod is IPinProtected pinProtected) {
+            if (builder.PaymentMethod is IPinProtected pinProtected && !string.IsNullOrEmpty(pinProtected.PinBlock)) {
                 request.Set("pin", pinProtected.PinBlock.Substring(0, 16))
                     .Set("pinKsn", pinProtected.PinBlock.Substring(16));
             }

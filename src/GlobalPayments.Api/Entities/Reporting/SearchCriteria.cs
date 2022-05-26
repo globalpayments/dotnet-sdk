@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
+using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Entities {
     public enum SearchCriteria {
@@ -49,6 +50,7 @@ namespace GlobalPayments.Api.Entities {
         PaymentEntryMode,
         PaymentMethodKey,
         PaymentType,
+        PaymentMethodName,
         PaymentMethod,
         ReferenceNumber,
         Resource,
@@ -65,6 +67,7 @@ namespace GlobalPayments.Api.Entities {
         TransactionStatus,
         DisputeStage,
         DisputeStatus,
+        DisputeDocumentId,
         UniqueDeviceId,
         Username,
         Version,
@@ -181,6 +184,8 @@ namespace GlobalPayments.Api.Entities {
 
         internal DisputeStatus? DisputeStatus { get; set; }
 
+        internal string DisputeDocumentId { get; set; }
+
         internal DateTime? EndBatchDate { get; set; }
 
         internal DateTime? EndDate { get; set; }
@@ -227,7 +232,10 @@ namespace GlobalPayments.Api.Entities {
 
         internal PaymentType? PaymentType { get; set; }
 
-        internal PaymentMethodName? PaymentMethod { get; set; }
+        internal PaymentMethodName? PaymentMethodName { get; set; }
+
+        internal IPaymentMethod PaymentMethod { get; set; }
+
         internal IEnumerable<PaymentMethodType> PaymentTypes { get; set; }
 
         internal string ReferenceNumber { get; set; }

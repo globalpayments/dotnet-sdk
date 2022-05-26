@@ -283,6 +283,22 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsTrue(result.Results is List<DisputeSummary>);
         }
 
+        [TestMethod]
+        public void FindDocumentAssociatedWithDispute()
+        {
+            var disputeId = "DIS_SAND_abcd1235";
+            var disputeDocumentId = "DOC_MyEvidence_234234AVCDE-1";
+            var response = ReportingService.DocumentDisputeDetail(disputeId)
+                .WithDisputeDocumentId(disputeDocumentId)
+                .Where(SearchCriteria.DisputeDocumentId, disputeDocumentId)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response, typeof(DisputeDocument));
+            Assert.AreEqual(disputeDocumentId, response.Id);
+            Assert.IsNotNull(response.Base64Content);
+        }
+
         #endregion
 
         #region Settlement disputes

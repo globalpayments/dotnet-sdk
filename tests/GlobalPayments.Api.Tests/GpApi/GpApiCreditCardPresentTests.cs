@@ -3,6 +3,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Environment = GlobalPayments.Api.Entities.Environment;
@@ -47,6 +48,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 CardHolderName = "John Smith",
                 CardPresent = true
             };
+        }
+
+        private void InitCreditTrackData(EntryMethod entryMethod = EntryMethod.Swipe)
+        {
+            creditTrackData = new CreditTrackData();
+            creditTrackData.Value =
+                "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?";            
+            creditTrackData.EntryMethod = entryMethod;
         }
 
         #region Create sale using Credit track data
@@ -168,7 +177,215 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
         }
-        
+
+        [TestMethod]
+        public void AdjustSaleTransaction() {
+            var card = new CreditTrackData();
+                card.Value = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?";
+
+            var tagData = "9F4005F000F0A0019F02060000000025009F03060000000000009F2608D90A06501B48564E82027C005F3401019F360200029F0702FF009F0802008C9F0902008C9F34030403029F2701809F0D05F0400088009F0E0508000000009F0F05F0400098005F280208409F390105FFC605DC4000A800FFC7050010000000FFC805DC4004F8009F3303E0B8C89F1A0208409F350122950500000080005F2A0208409A031409109B02E8009F21030811539C01009F37045EED3A8E4F07A00000000310109F0607A00000000310108407A00000000310109F100706010A03A400029F410400000001";
+            
+            card.EntryMethod = EntryMethod.Proximity;
+
+            var transaction = card.Charge(10)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithTagData(tagData)
+                .Execute();
+
+                AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var response = transaction.Edit()
+                .WithAmount((decimal)10.01)
+                .WithTagData(tagData)
+                .WithGratuity((decimal)5.01)
+                .Execute();
+
+                AssertTransactionResponse(response, TransactionStatus.Captured);        
+        }
+
+        [TestMethod]
+        public void AdjustAuthTransaction()
+        {
+            InitCreditTrackData(EntryMethod.Proximity);
+           
+            tagData = "9F4005F000F0A0019F02060000000025009F03060000000000009F2608D90A06501B48564E82027C005F3401019F360200029F0702FF009F0802008C9F0902008C9F34030403029F2701809F0D05F0400088009F0E0508000000009F0F05F0400098005F280208409F390105FFC605DC4000A800FFC7050010000000FFC805DC4004F8009F3303E0B8C89F1A0208409F350122950500000080005F2A0208409A031409109B02E8009F21030811539C01009F37045EED3A8E4F07A00000000310109F0607A00000000310108407A00000000310109F100706010A03A400029F410400000001";
+                        
+            var transaction = creditTrackData.Authorize(10)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithTagData(tagData)
+                .Execute();
+
+            AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
+
+            var response = transaction.Edit()
+                .WithAmount((decimal)10.01)
+                .WithTagData(tagData)
+                .WithGratuity((decimal)5.01)
+                .WithMultiCapture((int)(StoredCredentialSequence.First), 1)
+                .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Preauthorized);
+        }
+
+        [TestMethod]
+        public void AdjustSaleTransaction_AdjustAmountHigherThanSale()
+        {
+            InitCreditTrackData();
+                        
+            var transaction = creditTrackData.Charge(10)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)                
+                .Execute();
+
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var response = transaction.Edit()
+                .WithAmount((decimal)10 + 2)                
+                .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void AdjustSaleTransaction_AdjustOnlyTag()
+        {
+            InitCreditTrackData(EntryMethod.Proximity);
+
+            tagData = "9F4005F000F0A0019F02060000000025009F03060000000000009F2608D90A06501B48564E82027C005F3401019F360200029F0702FF009F0802008C9F0902008C9F34030403029F2701809F0D05F0400088009F0E0508000000009F0F05F0400098005F280208409F390105FFC605DC4000A800FFC7050010000000FFC805DC4004F8009F3303E0B8C89F1A0208409F350122950500000080005F2A0208409A031409109B02E8009F21030811539C01009F37045EED3A8E4F07A00000000310109F0607A00000000310108407A00000000310109F100706010A03A400029F410400000001";
+
+            var transaction = creditTrackData.Charge(10)
+                .WithCurrency("USD")                
+                .WithTagData(tagData)
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var response = transaction.Edit()
+                .WithTagData(tagData)                
+                .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void AdjustSaleTransaction_AdjustOnlyGratuity()
+        {
+            InitCreditTrackData();
+                       
+            var transaction = creditTrackData.Charge(10)
+                .WithCurrency("USD")
+                .WithChipCondition(EmvLastChipRead.Successful)
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var response = transaction.Edit()
+                .WithGratuity(1)
+                .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void AdjustSaleTransaction_AdjustAmountToZero()
+        {
+            InitCreditTrackData();
+
+            var transaction = creditTrackData.Charge(10)
+                .WithCurrency("USD")
+                .WithChipCondition(EmvLastChipRead.Successful)
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var response = transaction.Edit()
+                .WithAmount(0)
+                .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void AdjustSaleTransaction_AdjustGratuityToZero()
+        {
+            InitCreditTrackData();
+
+            var transaction = creditTrackData.Charge(10)
+                .WithCurrency("USD")
+                .WithChipCondition(EmvLastChipRead.Successful)
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var response = transaction.Edit()
+                .WithGratuity(0)
+                .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void AdjustSaleTransaction_WithoutMandatory()
+        {
+            InitCreditTrackData();
+
+            var transaction = creditTrackData.Charge(10)
+                .WithCurrency("USD")
+                .WithChipCondition(EmvLastChipRead.Successful)
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var exceptionCaught = false;
+
+            try
+            {
+                transaction.Edit()
+                    .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("40005", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields [amount or tag or gratuityAmount]", ex.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void AdjustSaleTransaction_TransactionNotFound()
+        {   
+            var transaction = new Transaction();
+            transaction.TransactionId = Guid.NewGuid().ToString();
+            
+            var exceptionCaught = false;
+            try
+            {
+                transaction.Edit()
+                    .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("40008", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: NotFound - Transaction {transaction.TransactionId} not found at this location.", ex.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
         [TestMethod]
         public void CreditTrackData_SaleContactlessChip_WrongPin() {
             creditTrackData.EntryMethod = EntryMethod.Proximity;

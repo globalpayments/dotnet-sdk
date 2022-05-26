@@ -20,6 +20,7 @@ namespace GlobalPayments.Api.Mapping {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
 
                 transaction.ResponseCode = json.Get("action")?.GetValue<string>("result_code");
+                transaction.ResponseMessage = json.GetValue<string>("status");
 
                 string actionType = json.Get("action")?.GetValue<string>("type");
 
@@ -37,6 +38,7 @@ namespace GlobalPayments.Api.Mapping {
                     case PAYMENT_METHOD_EDIT:
                     case PAYMENT_METHOD_DELETE:
                         transaction.Token = json.GetValue<string>("id");
+                        transaction.TokenUsageMode = getPaymentMethodUsageMode(json);
                         transaction.Timestamp = json.GetValue<string>("time_created");
                         transaction.ReferenceNumber = json.GetValue<string>("reference");
                         transaction.CardType = json.Get("card")?.GetValue<string>("brand");
@@ -62,7 +64,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.BatchSummary = new BatchSummary {
                     BatchReference = json.GetValue<string>("batch_id")
                 };
-                transaction.Token = json.Get("payment_method")?.GetValue<string>("id");
+                transaction.Token = json.Get("payment_method")?.GetValue<string>("id");                
                 transaction.AuthorizationCode = json.Get("payment_method")?.GetValue<string>("result");
                 transaction.CardType = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand");
                 transaction.CardLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4");
@@ -103,6 +105,19 @@ namespace GlobalPayments.Api.Mapping {
             else if (json.Get("payment_method")?.Has("apm") ?? false)
             {
                 return PaymentMethodType.APM;
+            }
+            return null;
+        }
+
+        private static PaymentMethodUsageMode? getPaymentMethodUsageMode(JsonDoc json)
+        {
+            if (json.Has("usage_mode")) {
+                if (json.GetValue<string>("usage_mode").Equals(EnumConverter.GetMapping(Target.GP_API, PaymentMethodUsageMode.Single))) {
+                    return PaymentMethodUsageMode.Single;
+                }
+                else if (json.GetValue<string>("usage_mode").Equals(EnumConverter.GetMapping(Target.GP_API, PaymentMethodUsageMode.Multiple))) {
+                    return PaymentMethodUsageMode.Multiple;
+                }
             }
             return null;
         }
@@ -261,6 +276,9 @@ namespace GlobalPayments.Api.Mapping {
             else if (reportType == ReportType.DisputeDetail && result is DisputeSummary) {
                 result = MapDisputeSummary(json) as T;
             }
+            else if (reportType == ReportType.DocumentDisputeDetail && result is DisputeDocument) {                
+                    result = MapDisputeDocument(json) as T;                
+            }
             else if (reportType == ReportType.FindDisputesPaged && result is PagedResult<DisputeSummary>) {
                 SetPagingInfo(result as PagedResult<DisputeSummary>, json);
                 foreach (var doc in json.GetArray<JsonDoc>("disputes") ?? Enumerable.Empty<JsonDoc>()) {
@@ -338,6 +356,15 @@ namespace GlobalPayments.Api.Mapping {
             return summary;
         }
 
+        public static DisputeDocument MapDisputeDocument(JsonDoc doc)
+        {
+            return new DisputeDocument
+            {
+                Id = doc.GetValue<string>("id"),
+                Base64Content = doc.GetValue<string>("b64_content"),               
+            };
+        }
+
         public static DisputeSummary MapDisputeSummary(JsonDoc doc) {
             var summary = new DisputeSummary {
                 CaseId = doc.GetValue<string>("id"),
@@ -366,6 +393,20 @@ namespace GlobalPayments.Api.Mapping {
                 summary.RespondByDate = doc.GetValue<DateTime?>("time_to_respond_by", DateConverter);
             }
 
+            var counter = 0;
+
+            foreach (var item in doc.GetArray<JsonDoc>("documents") ?? Enumerable.Empty<JsonDoc>())
+            {
+                if (string.IsNullOrEmpty(item.GetValue<string>("id"))) {
+                    var document = new DisputeDocument
+                    {
+                        Id = doc.GetValue<string>("id"),
+                        Type = !string.IsNullOrEmpty(doc.GetValue<string>("type")) ? doc.GetValue<string>("type") : null,
+                    };
+                    summary.Documents[counter] = document;
+                    counter++;
+                }
+            }
             return summary;
         }
 

@@ -24,7 +24,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         #region Transactions
         [TestMethod]
         public void ReportTransactionDetail() {
-            const string transactionId = "TRN_ANsrbidEEc0e9LoAVJHR4BxGaXAYB4_6f516e4c9101";
+            var transactionId = ReportingService.FindTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+                .Execute().Results.Select(t => t.TransactionId).FirstOrDefault();
+            
             var response = ReportingService.TransactionDetail(transactionId)
                 .Execute();
             Assert.IsNotNull(response);
@@ -240,7 +242,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.TokenFirstSix, firstSix)
                 .And(SearchCriteria.TokenLastFour, lastFour)
-                .And(SearchCriteria.PaymentMethod, PaymentMethodName.DigitalWallet)
+                .And(SearchCriteria.PaymentMethodName, PaymentMethodName.DigitalWallet)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -257,7 +259,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(SearchCriteria.TokenFirstSix, firstSix)
                     .And(SearchCriteria.TokenLastFour, lastFour)
-                    .And(SearchCriteria.PaymentMethod, PaymentMethodName.Card)
+                    .And(SearchCriteria.PaymentMethodName, PaymentMethodName.Card)
                     .Execute();
             }
             catch (GatewayException ex) {
@@ -275,7 +277,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             foreach (PaymentMethodName paymentMethodName in Enum.GetValues(typeof(PaymentMethodName))) {
                 var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                    .Where(SearchCriteria.PaymentMethod, paymentMethodName)
+                    .Where(SearchCriteria.PaymentMethodName, paymentMethodName)
                     .Execute();
                 Assert.IsNotNull(result?.Results);
             }

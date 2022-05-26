@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.GpEcom.Hpp;
+using GlobalPayments.Api.Utils;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -649,6 +650,51 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
             var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"061609f85a8e0191dc7f487f8278e71898a2ee2d\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"SHIPPING_CODE\": \"654|123\", \"SHIPPING_CO\": \"GB\", \"BILLING_CODE\": \"50001\", \"BILLING_CO\": \"US\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
+
+        [TestMethod]
+        public void CaptureBillingAndShippingInformation()
+        {
+            var service = new HostedService(new GpEcomConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "hpp",
+                SharedSecret = "secret",
+
+                HostedPaymentConfig = new HostedPaymentConfig {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                }
+            });
+
+            var captureAddress = true;
+            var returnAddress = false;
+
+            var testHostedPaymentData = new HostedPaymentData {
+                CaptureAddress = captureAddress,
+                ReturnAddress = returnAddress,                
+            };
+
+            var billingAddress = new Address {
+                Country = "US",
+                PostalCode = "50001"
+            };
+
+            var shippingAddress = new Address {
+                Country = "GB",
+                PostalCode = "654|123"
+            };
+
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")                
+                .WithHostedPaymentData(testHostedPaymentData)
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .Serialize();
+
+            var jsonParse = JsonDoc.Parse(hppJson);
+            
+            Assert.IsTrue(hppJson.Contains("\"HPP_CAPTURE_ADDRESS\":\"TRUE\""));
+            Assert.IsTrue(hppJson.Contains("\"HPP_DO_NOT_RETURN_ADDRESS\":\"FALSE\""));
         }
 
         [TestMethod]

@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Gateways;
+using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System.Net.Http;
 
@@ -45,7 +46,7 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("batch_id", trb.SearchBuilder.BatchId);
                         request.AddQueryStringParam("entry_mode", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.PaymentEntryMode));
                         request.AddQueryStringParam("name", trb.SearchBuilder.Name);
-                        request.AddQueryStringParam("payment_method", EnumConverter.GetMapping(Target.GP_API,trb.SearchBuilder.PaymentMethod));
+                        request.AddQueryStringParam("payment_method", EnumConverter.GetMapping(Target.GP_API,trb.SearchBuilder.PaymentMethodName));
 
                         return request;
                     case ReportType.FindSettlementTransactionsPaged:
@@ -108,6 +109,12 @@ namespace GlobalPayments.Api.Entities {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}/disputes/{trb.SearchBuilder.DisputeId}",
                         };
+                    case ReportType.DocumentDisputeDetail:
+                        var apiRequest = new GpApiRequest {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}/disputes/{trb.SearchBuilder.DisputeId}/documents/{trb.SearchBuilder.DisputeDocumentId}",
+                        };                       
+                        return apiRequest;
                     case ReportType.FindDisputesPaged:
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
@@ -161,6 +168,27 @@ namespace GlobalPayments.Api.Entities {
                             Endpoint = $"{merchantUrl}/payment-methods/{trb.SearchBuilder.StoredPaymentMethodId}",
                         };
                     case ReportType.FindStoredPaymentMethodsPaged:
+                        if (trb.SearchBuilder.PaymentMethod is CreditCardData) {
+
+                            var creditCardData = trb.SearchBuilder.PaymentMethod as CreditCardData;
+
+                            var card = new JsonDoc()
+                                .Set("number", creditCardData.Number)
+                                .Set("expiry_month", creditCardData.ExpMonth.HasValue ? creditCardData.ExpMonth.ToString().PadLeft(2, '0') : null)
+                                .Set("expiry_year", creditCardData.ExpYear.HasValue ? creditCardData.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : null);
+
+                            var payload = new JsonDoc()
+                                .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
+                                .Set("reference", trb.SearchBuilder.ReferenceNumber)
+                                .Set("card", card != null ? card : null);                 
+
+                            request = new GpApiRequest {
+                                Verb = HttpMethod.Post,
+                                Endpoint = $"{merchantUrl}/payment-methods/search",
+                                RequestBody = payload.ToString()
+                            };
+                            return request;
+                        }
                         request = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}/payment-methods",

@@ -4,6 +4,19 @@
 
 #### Enhancements
 
+- GP-API: Features (Adjust, Stored Payment Methods - POST Search and disputes- GET Document)
+- GP-API: Update payment token (Added missing keys in the request to update the payment token)
+- GP-ECOM: Added New HPP Fields in the SDKs for HPP Capture Billing enhancement
+
+#### Bug Fixes:
+
+- PAX devices: Fix refund validation logic
+- TransIt Gateway: Fix pin debit message handling
+
+## v4.0.0 (5/17/2022)
+
+#### Enhancements
+
 - GpApiService refactor
 - GP-API: Add increment an Auth
 

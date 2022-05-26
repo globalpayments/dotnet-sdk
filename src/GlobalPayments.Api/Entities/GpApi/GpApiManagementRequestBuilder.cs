@@ -44,7 +44,11 @@ namespace GlobalPayments.Api.Entities {
                     RequestBody = data.ToString(),
                 };
             }
-            else if (builder.TransactionType == TransactionType.TokenUpdate && builder.PaymentMethod is CreditCardData) {
+            else if (builder.TransactionType == TransactionType.TokenUpdate) {
+                if(!(builder.PaymentMethod is CreditCardData)) {
+                    throw new GatewayException("Payment method doesn't support this action!");
+                }
+
                 var cardData = builder.PaymentMethod as CreditCardData;
 
                 var card = new JsonDoc()
@@ -52,6 +56,8 @@ namespace GlobalPayments.Api.Entities {
                     .Set("expiry_year", cardData.ExpYear.HasValue ? cardData.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
 
                 var data = new JsonDoc()
+                    .Set("usage_mode", !string.IsNullOrEmpty(builder.PaymentMethodUsageMode.ToString()) ? EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode) : null)
+                    .Set("name", !string.IsNullOrEmpty(cardData.CardHolderName) ? cardData.CardHolderName : null)
                     .Set("card", card);
 
                 return new GpApiRequest {
@@ -186,6 +192,27 @@ namespace GlobalPayments.Api.Entities {
                         RequestBody = payload.ToString(),
                     };
                 }
+            }
+            else if (builder.TransactionType == TransactionType.Edit)
+            {                
+                    var card = new JsonDoc()
+                        .Set("tag", builder.TagData);
+
+                    var payment_method = new JsonDoc()
+                        .Set("card", card);
+
+                    var payload = new JsonDoc()
+                        .Set("amount", builder.Amount.ToNumericCurrencyString())
+                        .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
+                        .Set("payment_method", payment_method);
+
+                    return new GpApiRequest
+                    {
+                        Verb = HttpMethod.Post,
+                        Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/adjustment",
+                        RequestBody = payload.ToString(),
+                    };
+                
             }
             return null;
         }

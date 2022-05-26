@@ -201,6 +201,16 @@ namespace GlobalPayments.Api.PaymentMethods {
             return true;
         }
 
+        public ManagementBuilder UpdateToken()
+        {
+            if (string.IsNullOrEmpty(this.Token)) {
+                throw new BuilderException("Token cannot be null");
+            }
+
+            return (new ManagementBuilder(TransactionType.TokenUpdate))
+                .WithPaymentMethod(this);
+        }
+
         /// <summary>
         /// Deletes the token associated with the current card object
         /// </summary>
