@@ -358,7 +358,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
             // expand return data
             string payerAuthenticationResponse = authResponse.pares;
-            MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
+            MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md.ToString());
 
             // verify signature
             var verified = card.VerifySignature(payerAuthenticationResponse, md);
@@ -538,7 +538,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         private string GetInputValue(string raw, string inputValue) {
-            var searchString = string.Format("NAME=\"{0}\" VALUE=\"", inputValue);
+            var searchString = string.Format("name=\"{0}\" value=\"", inputValue);
 
             var index = raw.IndexOf(searchString);
             if (index > -1) {

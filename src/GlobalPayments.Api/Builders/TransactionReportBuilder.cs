@@ -224,6 +224,11 @@ namespace GlobalPayments.Api.Builders {
             return SearchBuilder.And(criteria, value);
         }
 
+        public TransactionReportBuilder<TResult> WithBankPaymentId(string bankPaymentId) {
+            SearchBuilder.BankPaymentId = bankPaymentId;
+            return this;
+        }
+
         public TransactionReportBuilder(ReportType type) : base(type) { }
 
         protected override void SetupValidations() {

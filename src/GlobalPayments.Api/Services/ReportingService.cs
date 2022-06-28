@@ -57,6 +57,19 @@ namespace GlobalPayments.Api.Services {
                 .WithActionId(actionId);
         }
 
+        public static TransactionReportBuilder<PagedResult<TransactionSummary>> BankPaymentDetail(string bankPaymentId, int page, int pageSize)
+        {
+            return new TransactionReportBuilder<PagedResult<TransactionSummary>>(ReportType.FindBankPayment)
+                .WithBankPaymentId(bankPaymentId)
+                .WithPaging(page, pageSize);
+        }
+
+        public static TransactionReportBuilder<PagedResult<TransactionSummary>> FindBankPaymentTransactions(int page, int pageSize)
+        {
+            return new TransactionReportBuilder<PagedResult<TransactionSummary>>(ReportType.FindBankPayment)
+                .WithPaging(page, pageSize);
+        }
+
         public static TransactionReportBuilder<PagedResult<TransactionSummary>> FindTransactionsPaged(int page, int pageSize, string transactionId = null) {
             return new TransactionReportBuilder<PagedResult<TransactionSummary>>(ReportType.FindTransactionsPaged)
                 .WithTransactionId(transactionId)

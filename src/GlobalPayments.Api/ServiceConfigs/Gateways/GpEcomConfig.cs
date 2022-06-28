@@ -1,5 +1,6 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Gateways;
 
 namespace GlobalPayments.Api {
@@ -39,6 +40,9 @@ namespace GlobalPayments.Api {
         /// Hosted Payment Page (HPP) configuration
         /// </summary>
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
+
+        
+        public ShaHashType ShaHashType { get; set; } = ShaHashType.SHA1;
         #endregion
 
         #region Secure 3D
@@ -49,6 +53,10 @@ namespace GlobalPayments.Api {
         public string MethodNotificationUrl { get; set; }
 
         public Secure3dVersion? Secure3dVersion { get; set; }
+        #endregion
+
+        #region Open Banking Service
+        public bool EnableBankPayment { get; set; } = false;
         #endregion
 
         public GpEcomConfig() : base(GatewayProvider.GP_Ecom) {
@@ -71,6 +79,7 @@ namespace GlobalPayments.Api {
                 RebatePassword = RebatePassword,
                 RefundPassword = RefundPassword,
                 SharedSecret = SharedSecret,
+                ShaHashType = ShaHashType,
                 Timeout = Timeout,
                 ServiceUrl = ServiceUrl,
                 HostedPaymentConfig = HostedPaymentConfig,
@@ -112,6 +121,20 @@ namespace GlobalPayments.Api {
                 };
 
                 services.SetSecure3dProvider(Entities.Secure3dVersion.Two, secure3d2);
+            }
+
+            if (EnableBankPayment) {
+                var openBanking = new OpenBankingProvider();
+                openBanking.MerchantId = gateway.MerchantId;
+                openBanking.AccountId = gateway.AccountId;
+                openBanking.SharedSecret = gateway.SharedSecret;
+                openBanking.ShaHashType = ShaHashType;
+                openBanking.ServiceUrl = Environment.Equals(Entities.Environment.TEST) ? ServiceEndpoints.OPEN_BANKING_TEST : ServiceEndpoints.OPEN_BANKING_PRODUCTION;
+                openBanking.Timeout = gateway.Timeout;
+                openBanking.RequestLogger = RequestLogger;
+                openBanking.WebProxy = WebProxy;
+
+                services.SetOpenBanking(openBanking);
             }
         }
 

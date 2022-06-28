@@ -11,6 +11,8 @@ namespace GlobalPayments.Api {
 
         internal IPayFacProvider PayFacProvider { get; set; }
 
+        internal IOpenBankingProvider OpenBankingProvider { get; set; }
+
         internal IPaymentGateway GatewayConnector { get; set; }
 
         internal IRecurringService RecurringConnector { get; set; }
@@ -57,6 +59,13 @@ namespace GlobalPayments.Api {
             }
             else _secure3dProviders.Add(version, provider);
         }
+
+        internal void SetOpenBanking(IOpenBankingProvider provider) {
+            if (this.OpenBankingProvider == null) {
+                this.OpenBankingProvider = provider;
+            }
+        }
+
 
         public ConfiguredServices() {
             _secure3dProviders = new Dictionary<Secure3dVersion, ISecure3dProvider>();
@@ -204,6 +213,12 @@ namespace GlobalPayments.Api {
             throw new ConfigurationException("PayFacProvider is not configured");
         }
 
+        internal IOpenBankingProvider GetOpenBanking(string configName) {
+            if (_configurations.ContainsKey(configName))
+                return _configurations[configName].OpenBankingProvider;
+            throw new ConfigurationException("OpenBankingProvider is not configured");
+        }
+        
         internal IBillingProvider GetBillingClient(string configName) {
             if (_configurations.ContainsKey(configName))
             {

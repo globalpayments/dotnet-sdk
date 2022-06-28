@@ -25,5 +25,7 @@
         internal const string BILLPAY_TEST = "https://testing.heartlandpaymentservices.net/";
         public const string BILLPAY_CERTIFICATION = "https://staging.heartlandpaymentservices.net/";
         public const string BILLPAY_PRODUCTION = "https://heartlandpaymentservices.net/";
+        public const string OPEN_BANKING_TEST = "https://beta.sandbox.globalpay-ecommerce.com/openbanking";
+        public const string OPEN_BANKING_PRODUCTION = "https://beta.globalpay-ecommerce.com/openbanking";
     }
 }

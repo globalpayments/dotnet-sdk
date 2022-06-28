@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Entities {
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             var paymentMethod = new JsonDoc()
                 .Set("entry_mode", GetEntryMode(builder, gateway.GpApiConfig.Channel)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
+            paymentMethod.Set("narrative", !string.IsNullOrEmpty(builder.DynamicDescriptor) ? builder.DynamicDescriptor : null);
             if (builder.PaymentMethod is CreditCardData && (builder.TransactionModifier == TransactionModifier.EncryptedMobile || builder.TransactionModifier == TransactionModifier.DecryptedMobile))
             {
                 var digitalWallet = new JsonDoc();

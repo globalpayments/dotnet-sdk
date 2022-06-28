@@ -103,6 +103,8 @@ namespace GlobalPayments.Api.Entities {
 
         public string FingerPrintIndicator { get; set; }
 
+        public BankPaymentResponse BankPaymentResponse { get; set; }
+
         /// <summary>
         /// The card number used in the transaction.
         /// </summary>

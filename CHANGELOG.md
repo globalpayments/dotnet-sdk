@@ -4,6 +4,14 @@
 
 #### Enhancements
 
+- GP-API: Added Dynamic Descriptor
+- GP-ECOM: Added flag EnableExemptionOptimization to identify customer exemptions and avoid unnecessary authentications
+- GP-ECOM: Added Open Banking as new payment method
+
+## v4.0.2 (5/26/2022)
+
+#### Enhancements
+
 - GP-API: Features (Adjust, Stored Payment Methods - POST Search and disputes- GET Document)
 - GP-API: Update payment token (Added missing keys in the request to update the payment token)
 - GP-ECOM: Added New HPP Fields in the SDKs for HPP Capture Billing enhancement

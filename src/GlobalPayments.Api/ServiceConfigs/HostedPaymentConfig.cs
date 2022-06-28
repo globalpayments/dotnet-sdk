@@ -94,5 +94,8 @@ namespace GlobalPayments.Api {
         /// iFrame Optimisation - response
         /// </summary>
         public string PostResponse { get; set; }
+
+
+        public bool EnableBankTransfer { get; set; } = false;
     }
 }

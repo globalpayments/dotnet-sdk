@@ -21,7 +21,8 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 SharedSecret = "secret",
                 MethodNotificationUrl = "https://www.example.com/methodNotificationUrl",
                 ChallengeNotificationUrl = "https://www.example.com/challengeNotificationUrl",
-                Secure3dVersion = Secure3dVersion.Any,                
+                MerchantContactUrl = "https://www.example.com/merchantAboutUrl",
+                Secure3dVersion = Secure3dVersion.Two,                
                 RequestLogger = new RequestConsoleLogger()
             };
             ServicesContainer.ConfigureService(config);
@@ -115,8 +116,14 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         public void FullCycle_v2() {
             // check enrollment
             ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
-                    .Execute(Secure3dVersion.Two);
+                    .Execute();
             Assert.IsNotNull(secureEcom);
+
+            // create card data
+            card.ExpMonth = 12;
+            card.ExpYear = 2025;
+            card.CardHolderName = "John Smith";
+          
 
             if (secureEcom.Enrolled.Equals("True")) {
                 Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
@@ -124,8 +131,8 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 // initiate authentication
                 ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)                        
                         .WithAmount(10.01m)
-                        .WithCurrency("USD")
-                        .WithChallengeRequestIndicator(ChallengeRequestIndicator.NO_PREFERENCE)
+                        .WithCurrency("GBP")
+                        //.WithChallengeRequestIndicator(ChallengeRequestIndicator.NO_PREFERENCE)
                         .WithOrderCreateDate(DateTime.Now)
                         .WithAddress(billingAddress, AddressType.Billing)
                         .WithAddress(shippingAddress, AddressType.Shipping)

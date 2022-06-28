@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Gateways;
 
 namespace GlobalPayments.Api.Builders {
     public abstract class ReportBuilder<TResult> : BaseBuilder<TResult> where TResult : class {
@@ -15,9 +16,18 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>TResult</returns>
         public override TResult Execute(string configName = "default") {
             base.Execute(configName);
+            object client;
+            switch (ReportType)
+            {
+                case ReportType.FindBankPayment:
+                    client = ServicesContainer.Instance.GetOpenBanking(configName);                    
+                    break;
+                default:
+                    client = ServicesContainer.Instance.GetReportingClient(configName);
+                    break;
 
-            var client = ServicesContainer.Instance.GetReportingClient(configName);
-            return client.ProcessReport(this);
+            }
+            return ((IReportingService)client).ProcessReport(this);
         }
     }
 }

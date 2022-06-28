@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
@@ -22,6 +23,7 @@ namespace GlobalPayments.Api.Gateways {
         public bool SupportsUpdatePaymentDetails { get { return true; } }
         public string PaymentValues { get; set; }
         public HostedPaymentConfig HostedPaymentConfig { get; set; }
+        public ShaHashType ShaHashType { get; set; }
         public Secure3dVersion Version { get { return Secure3dVersion.One; } }
 
         #region transaction handling
@@ -362,6 +364,9 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.TransactionType != TransactionType.Sale && builder.TransactionType != TransactionType.Auth && builder.TransactionType != TransactionType.Verify)
                 throw new UnsupportedTransactionException("Only Charge and Authorize are supported through hpp.");
 
+            if (builder.PaymentMethod is BankPayment && builder.TransactionType != TransactionType.Sale) {
+                throw new UnsupportedTransactionException("Only Charge is supported for Bank Payment through HPP.");
+            }
             request.Set("MERCHANT_ID", MerchantId);
             request.Set("ACCOUNT", AccountId);
             request.Set("HPP_CHANNEL", Channel);
@@ -379,8 +384,18 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("DCC_ENABLE", HostedPaymentConfig.DynamicCurrencyConversionEnabled.Value ? "1" : "0");
             if (builder.HostedPaymentData != null) {
                 AlternativePaymentType[] PaymentTypes = builder.HostedPaymentData.PresetPaymentMethods;
+                HostedPaymentMethods[] HostedPaymentMethods = builder.HostedPaymentData.HostedPaymentMethods;
                 if (PaymentTypes != null) {
                     PaymentValues = string.Join("|", PaymentTypes);
+                }
+                if (HostedPaymentMethods != null)
+                {
+                    if (PaymentValues != null) {
+                        PaymentValues = string.Join("|", new string[] { PaymentValues, string.Join("|", HostedPaymentMethods) });
+                    }
+                    else {
+                        PaymentValues = string.Join("|", HostedPaymentMethods);
+                    }
                 }
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
                 if (HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null) {
@@ -412,6 +427,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_CUSTOMER_PHONENUMBER_MOBILE", builder.HostedPaymentData.CustomerPhoneMobile);
                 request.Set("HPP_PHONE", builder.HostedPaymentData.CustomerPhoneMobile);
                 request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequestIndicator);
+                request.Set("HPP_ENABLE_EXEMPTION_OPTIMIZATION", builder.HostedPaymentData.EnableExemptionOptimization);
                 if (builder.HostedPaymentData.AddressesMatch != null) {
                     request.Set("HPP_ADDRESS_MATCH_INDICATOR", builder.HostedPaymentData.AddressesMatch.Value ? "TRUE" : "FALSE");
                 }
@@ -424,8 +440,14 @@ namespace GlobalPayments.Api.Gateways {
                 }
 
                 //CAPTURE BILLING AND SHIPPING INFORMATION
-                request.Set("HPP_CAPTURE_ADDRESS", builder.HostedPaymentData.CaptureAddress ? "TRUE" : "FALSE");
-                request.Set("HPP_DO_NOT_RETURN_ADDRESS", builder.HostedPaymentData.ReturnAddress ? "TRUE" : "FALSE");
+                if (builder.HostedPaymentData.CaptureAddress != null) {
+                    request.Set("HPP_CAPTURE_ADDRESS", builder.HostedPaymentData.CaptureAddress.Value ? "TRUE" : "FALSE");
+                }
+
+                if (builder.HostedPaymentData.ReturnAddress != null) {
+                    request.Set("HPP_DO_NOT_RETURN_ADDRESS",
+                        builder.HostedPaymentData.ReturnAddress.Value ? "TRUE" : "FALSE");
+                }
                 //TO DO
                 //request.Set("HPP_ADDRESS_READONLY", builder.HostedPaymentData.AddressReadOnly ? "1" : "0");
             }
@@ -501,6 +523,31 @@ namespace GlobalPayments.Api.Gateways {
 
             if (HostedPaymentConfig.FraudFilterMode != FraudFilterMode.NONE) {
                 toHash.Add(HostedPaymentConfig.FraudFilterMode.ToString());
+            }
+
+            if (builder.PaymentMethod is BankPayment) {
+                var bankPaymentMethod = builder.PaymentMethod as BankPayment;
+
+                request.Set("HPP_OB_PAYMENT_SCHEME", bankPaymentMethod.BankPaymentType != null ? bankPaymentMethod.BankPaymentType.ToString() : OpenBankingProvider.GetBankPaymentType(builder.Currency).ToString());
+                request.Set("HPP_OB_REMITTANCE_REF_TYPE", builder.RemittanceReferenceType.ToString());
+                request.Set("HPP_OB_REMITTANCE_REF_VALUE", builder.RemittanceReferenceValue);
+                request.Set("HPP_OB_DST_ACCOUNT_IBAN", bankPaymentMethod.Iban);
+                request.Set("HPP_OB_DST_ACCOUNT_NAME", bankPaymentMethod.AccountName);
+                request.Set("HPP_OB_DST_ACCOUNT_NUMBER", bankPaymentMethod.AccountNumber);
+                request.Set("HPP_OB_DST_ACCOUNT_SORT_CODE", bankPaymentMethod.SortCode);
+
+                if (builder.HostedPaymentData != null) {
+                    var hostedPaymentData = builder.HostedPaymentData;                 
+
+                    request.Set("HPP_OB_CUSTOMER_COUNTRIES", hostedPaymentData.CustomerCountry);
+                }
+
+                if (!string.IsNullOrEmpty(bankPaymentMethod.SortCode))
+                    toHash.Add(bankPaymentMethod.SortCode);
+                if (!string.IsNullOrEmpty(bankPaymentMethod.AccountNumber))
+                    toHash.Add(bankPaymentMethod.AccountNumber);
+                if (!string.IsNullOrEmpty(bankPaymentMethod.Iban))
+                    toHash.Add(bankPaymentMethod.Iban);               
             }
 
             if (builder.DynamicDescriptor != null) {

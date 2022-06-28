@@ -154,7 +154,9 @@ namespace GlobalPayments.Api.Entities {
 
         APM = 1 << 9,
 
-        Ewic = 1 << 10
+        Ewic = 1 << 10,
+
+        BankPayment = 1 << 11
     }
 
     /// <summary>
@@ -306,6 +308,11 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a DeletePreAuth transaction
         /// </summary>
         DeletePreAuth = 1 << 16,
+
+        /// <summary>
+        /// Indicates a OpenBanking transaction
+        /// </summary>
+        BankPayment = 1 << 17,
     }
 
     /// <summary>
@@ -549,6 +556,8 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a Dispute Document Details report.
         /// </summary>
         DocumentDisputeDetail = 1 << 22,
+
+        FindBankPayment = 1 << 23,
     }
 
     /// <summary>
@@ -767,6 +776,11 @@ public enum ReasonCode {
         CUSTOMERCANCELLATION,
         TERMINALERROR,
         TIMEOUT
+    }
+
+    public enum HostedPaymentMethods {
+        OB,
+        CARDS
     }
 
     public enum AlternativePaymentType {

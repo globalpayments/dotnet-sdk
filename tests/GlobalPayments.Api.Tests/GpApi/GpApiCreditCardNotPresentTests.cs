@@ -530,6 +530,20 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditSale_WithDynamicDescriptor()
+        {
+            var dynamicDescriptor = "My company";
+            var response = card.Charge(50)
+                .WithCurrency("EUR")
+                .WithDynamicDescriptor(dynamicDescriptor)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+        }
+
+        [TestMethod]
         public void CreditReverseTransactionWrongId() {
             var transaction = new Transaction {
                 TransactionId = "TRN_" + Guid.NewGuid()
