@@ -171,15 +171,15 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         public void Credit_SupplementaryData() {
             var response = card.Authorize(10m)
                 .WithCurrency("GBP")
-                .WithSupplementaryData("leg", "value1", "value2", "value3")
-                .WithSupplementaryData("leg", "value1", "value2", "value3")
+                .WithSupplementaryData("taxInfo", "VATREF", "7636372833321")
+                .WithSupplementaryData("indentityInfo", "Passport", "PPS736353")
+                .WithSupplementaryData("RANDOM_KEY1", "Passport", "PPS736353")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
 
             var captureResponse = response.Capture(10m)
-                .WithSupplementaryData("leg", "value1", "value2", "value3")
-                .WithSupplementaryData("leg", "value1", "value2", "value3")
+                .WithSupplementaryData("taxInfo", "VATREF", "7636372833321")                
                 .Execute();
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode, captureResponse.ResponseMessage);

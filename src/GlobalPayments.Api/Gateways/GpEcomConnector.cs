@@ -58,8 +58,17 @@ namespace GlobalPayments.Api.Gateways {
                 .Set("timestamp", timestamp);
             et.SubElement(request, "merchantid").Text(MerchantId);
             et.SubElement(request, "account", AccountId);
+
+            var applePayValidation = builder.PaymentMethod is CreditCardData && builder.TransactionModifier == TransactionModifier.EncryptedMobile && (builder.PaymentMethod as CreditCardData).MobileType == (MobilePaymentMethodType.APPLEPAY);
+
+            var amount = string.Empty;
+            
             if (builder.Amount.HasValue) {
-                et.SubElement(request, "amount").Text(builder.Amount.ToNumericCurrencyString()).Set("currency", builder.Currency);
+                amount = builder.Amount.ToNumericCurrencyString();
+                if(applePayValidation) {
+                    amount = amount.RemoveInitialZero();
+                }
+                et.SubElement(request, "amount").Text( amount ).Set("currency", builder.Currency);
             }
 
             #region AUTO/MULTI SETTLE
@@ -101,7 +110,7 @@ namespace GlobalPayments.Api.Gateways {
                     hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, card.Number);
                 else {
                     if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.APPLEPAY)
-                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
+                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, amount, builder.Currency, card.Token);
                     else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.GOOGLEPAY)
                         hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
                     else
@@ -426,7 +435,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_CUSTOMER_EMAIL", builder.HostedPaymentData.CustomerEmail);
                 request.Set("HPP_CUSTOMER_PHONENUMBER_MOBILE", builder.HostedPaymentData.CustomerPhoneMobile);
                 request.Set("HPP_PHONE", builder.HostedPaymentData.CustomerPhoneMobile);
-                request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequestIndicator);
+                request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequestIndicator.ToString());
                 request.Set("HPP_ENABLE_EXEMPTION_OPTIMIZATION", builder.HostedPaymentData.EnableExemptionOptimization);
                 if (builder.HostedPaymentData.AddressesMatch != null) {
                     request.Set("HPP_ADDRESS_MATCH_INDICATOR", builder.HostedPaymentData.AddressesMatch.Value ? "TRUE" : "FALSE");
@@ -662,7 +671,7 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(tssInfo, "varref", builder.ClientTransactionId);
             }
 
-            // data supplimentary
+            // data supplementary
             if (builder.SupplementaryData != null) {
                 var supplementaryData = et.SubElement(request, "supplementarydata");
                 Dictionary<string, List<string[]>> suppData = builder.SupplementaryData;
@@ -982,7 +991,7 @@ namespace GlobalPayments.Api.Gateways {
             result.SchemeId = root.GetValue<string>("srd");
 
             return result;
-        }
+        }               
 
         private TResult MapRecurringResponse<TResult>(string rawResponse, RecurringBuilder<TResult> builder) where TResult : class {
             var root = new ElementTree(rawResponse).Get("response");

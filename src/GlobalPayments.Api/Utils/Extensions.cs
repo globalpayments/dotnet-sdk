@@ -26,6 +26,13 @@ namespace GlobalPayments.Api.Utils {
             return dec?.ToNumericCurrencyString();
         }
 
+        public static string RemoveInitialZero(this string amount) {
+            if(amount.StartsWith("0")) {
+                return amount.Remove(0, 1);
+            }
+            return amount;
+        }
+
         public static string ToCurrencyString(this decimal? dec) {
             if (dec != null) {
                 return Regex.Replace(string.Format("{0:c}", dec), "[^0-9.,]", "");

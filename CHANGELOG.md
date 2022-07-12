@@ -4,6 +4,17 @@
 
 #### Enhancements
 
+- GP-ECOM: HPP_CHALLENGE_REQUEST_INDICATOR value from integer to string
+- GP-ECOM: Added supplementary data elements for having extra data in the request and can be used in Authorization, Credit, Refund (Rebate) and Capture (Settle)
+
+#### Bug Fixes:
+
+- GP-ECOM ApplePay: Fixed amount less than $1
+
+## v4.1.0 (6/28/2022)
+
+#### Enhancements
+
 - GP-API: Added Dynamic Descriptor
 - GP-ECOM: Added flag EnableExemptionOptimization to identify customer exemptions and avoid unnecessary authentications
 - GP-ECOM: Added Open Banking as new payment method
