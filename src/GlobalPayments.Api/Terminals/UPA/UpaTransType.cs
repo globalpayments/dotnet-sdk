@@ -15,10 +15,10 @@
         public const string SendSAF = "SendSAF";
         public const string GetSAFReport = "GetSAFReport";
         public const string GetBatchReport = "GetBatchReport";
-
         public const string Tokenize = "Tokenize";
         public const string PreAuth = "PreAuth";
         public const string AuthCompletion = "AuthCompletion";
         public const string DeletePreAuth = "DeletePreAuth";
+        public const string GetOpenTabDetails = "GetOpenTabDetails";
     }
 }

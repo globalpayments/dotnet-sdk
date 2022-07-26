@@ -110,6 +110,10 @@ namespace GlobalPayments.Api.Terminals {
         public virtual TerminalReportBuilder GetBatchReport() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+
+        public virtual TerminalReportBuilder GetOpenTabDetails() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
         #endregion
 
         #region Transactions
@@ -147,7 +151,7 @@ namespace GlobalPayments.Api.Terminals {
                 .WithAmount(amount);
         }
 
-        public virtual TerminalAuthBuilder TipAdjust() {
+        public virtual TerminalAuthBuilder TipAdjust(decimal? amount) {
             throw new System.NotImplementedException();
         }
         public virtual TerminalAuthBuilder EodProcessing() {

@@ -1,8 +1,20 @@
 # Changelog
 
-## Latest
+## v4.1.2 (7/26/2022)
 
-#### Enhancements
+#### Enhancements:
+
+- UPA Devices: added tip-adjust support, open-tab report type, & expiration date transaction response property
+- UPA Devices: added support for the new fields 'directMktInvoiceNbr', 'directMktShipMonth', 'directMktShipDay'
+
+#### Bug Fixes:
+
+- UPA Devices: corrected End-Of-Day response exception handling
+- Wallet and 3DSecure: fix request 
+
+## v4.1.1 (7/12/2022)
+
+#### Enhancements:
 
 - GP-ECOM: HPP_CHALLENGE_REQUEST_INDICATOR value from integer to string
 - GP-ECOM: Added supplementary data elements for having extra data in the request and can be used in Authorization, Credit, Refund (Rebate) and Capture (Settle)
@@ -13,7 +25,7 @@
 
 ## v4.1.0 (6/28/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - GP-API: Added Dynamic Descriptor
 - GP-ECOM: Added flag EnableExemptionOptimization to identify customer exemptions and avoid unnecessary authentications
@@ -21,7 +33,7 @@
 
 ## v4.0.2 (5/26/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - GP-API: Features (Adjust, Stored Payment Methods - POST Search and disputes- GET Document)
 - GP-API: Update payment token (Added missing keys in the request to update the payment token)
@@ -34,7 +46,7 @@
 
 ## v4.0.0 (5/17/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - GpApiService refactor
 - GP-API: Add increment an Auth
@@ -51,7 +63,7 @@
 
 ## v3.0.4 (4/21/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Added support for device ordering during account creation (ProPay)
 - CountryUtils class expanded to convert from any ISO 3166 value to any other ISO 3166 value
@@ -59,7 +71,7 @@
 
 ## v3.0.3 (4/7/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Added additional batch details to End of Day response object (UPA)
 - Updated Digital Wallet and 3DSecure support to use latest Portico data fields 
@@ -71,7 +83,7 @@
 
 ## v3.0.2 (3/31/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Card Brand Transaction ID is mapped with the response when token is requested (UPA)
 
@@ -86,7 +98,7 @@
 
 ## v3.0.1 (3/29/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Added challenge request indicator on 3DS2 initiate step on Gp3DSProvider
 
@@ -97,7 +109,7 @@
 
 ## v3.0.0 (3/24/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Added Authorization (UPA)
 - Added DeletePreAuth (UPA)
@@ -111,14 +123,14 @@
 
 ## v2.0.6 (3/22/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Added direct Base64 string support for Document/Document Chargeback Upload image parameters (ProPay)
 - Added ProPay error code to GatewayException object (ProPay)
 
 ## v2.0.5 (03/15/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Added fingerprint_mode in the create transaction request
 - MOBILE_SDK source in the 3DS flow
@@ -136,7 +148,7 @@
 
 ## v2.0.3 (2/22/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - use "IN_APP" entry_mode when creating a transaction with digital wallets (GP-API)
 - Refactor reporting unit test (GP-API)
@@ -145,7 +157,7 @@
 
 ## v2.0.2 (02/17/2022)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Payment Link Id in the request for authorize (GP-API)
 - Add Dynamic Currency Conversion feature for GP-API
@@ -166,7 +178,7 @@
 
 ## v2.0.0 (12/16/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Paypal alternative payment method to GpApi
 
@@ -183,7 +195,7 @@
 
 ## v1.10.0 (11/18/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Added initial support for Unified Payments Application
 
@@ -191,7 +203,7 @@
 
 ## v1.9.0 (11/10/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Update default GpApi version header
 - Add Eci field to DigitalWallet
@@ -202,7 +214,7 @@
 
 ## v1.7.45 (10/28/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Contactless Swipe entry mode
 - Add ACH functionality
@@ -216,7 +228,7 @@
 
 ## v1.7.44 (09/28/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Multiple merchants to GpApi
 
@@ -224,7 +236,7 @@
 
 ## v1.7.43 (09/23/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Entry Mode to GpApi
 
@@ -232,7 +244,7 @@
 
 ## v1.7.42 (09/09/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Dynamic Headers to GpApi
 - Add Digital Wallet to GpApi
@@ -243,7 +255,7 @@
 
 ## v1.7.41 (08/26/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Fraud Dynamic Rules to GpEcom
 - Add amount and currency into Apple Pay hash generation for GpEcom
@@ -252,7 +264,7 @@
 
 ## v1.7.40 (08/19/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add Alternative payment method response mapping to GpEcom
 
@@ -267,7 +279,7 @@
 
 ## v1.7.38 (08/10/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Add "Netherlands Antilles" country codes
 - Add phone and subscriber number validation for 3DS2
@@ -282,7 +294,7 @@
 
 ## v1.7.37 (08/05/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - NWS second phase:
 	- NWS Credit card transactions
@@ -296,7 +308,7 @@
 
 ## v1.7.36 (08/03/2021)
 
-#### Enhancements
+#### Enhancements:
 
 - Upgrade GpApi to March version
 - Add support for single and multiple usage mode for tokenized cards

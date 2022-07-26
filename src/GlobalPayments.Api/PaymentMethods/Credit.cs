@@ -44,6 +44,10 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// A MobileType value representing the Google/Apple.
         /// </summary>
         public string MobileType { get; set; }
+        /// <summary>
+        /// Payment Source is the API or source of the cryptogram for WalletData.
+        /// </summary>
+        public string PaymentSource { get; set; }
 
         public string Cryptogram { get; set; }
 

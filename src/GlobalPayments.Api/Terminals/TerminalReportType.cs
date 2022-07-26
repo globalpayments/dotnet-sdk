@@ -4,6 +4,7 @@ namespace GlobalPayments.Api.Terminals {
     public enum TerminalReportType {
         LocalDetailReport,
         GetSAFReport,
-        GetBatchReport
+        GetBatchReport,
+        GetOpenTabDetails
     }
 }

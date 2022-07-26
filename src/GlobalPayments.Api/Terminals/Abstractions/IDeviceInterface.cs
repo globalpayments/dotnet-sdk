@@ -30,6 +30,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalReportBuilder LocalDetailReport();
         TerminalReportBuilder GetSAFReport();
         TerminalReportBuilder GetBatchReport();
+        TerminalReportBuilder GetOpenTabDetails();
         #endregion
 
         #region Batch Calls
@@ -75,7 +76,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Verify();
         TerminalManageBuilder Void();
         TerminalAuthBuilder Withdrawal(decimal? amount = null);
-        TerminalAuthBuilder TipAdjust();
+        TerminalAuthBuilder TipAdjust(decimal? amount = null);
         TerminalAuthBuilder Tokenize();
         TerminalAuthBuilder AuthCompletion();
         TerminalManageBuilder DeletePreAuth();

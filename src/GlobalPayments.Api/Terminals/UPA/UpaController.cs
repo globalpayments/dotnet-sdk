@@ -61,6 +61,8 @@ namespace GlobalPayments.Api.Terminals.UPA
                     return new SafReportResponse(jsonParse);
                 case TerminalReportType.GetBatchReport:
                     return new BatchReportResponse(jsonParse);
+                case TerminalReportType.GetOpenTabDetails:
+                    return new OpenTabDetailsResponse(jsonParse);
                 default: return null;
             }
         }
@@ -128,6 +130,12 @@ namespace GlobalPayments.Api.Terminals.UPA
                 }
                 txnParams.Set("lineItemLeft", builder.LineItemLeft);
                 txnParams.Set("lineItemRight", builder.LineItemRight);
+                txnParams.Set("directMktInvoiceNbr", builder.InvoiceNumber);
+
+                if (builder.ShippingDate != DateTime.MinValue) {
+                    txnParams.Set("directMktShipMonth", builder.ShippingDate.Month.ToString("00"));
+                    txnParams.Set("directMktShipDay", builder.ShippingDate.Day.ToString("00"));
+                }
 
                 if (transType != TransactionType.Verify && transType != TransactionType.Refund && !isTipAdjust && transType != TransactionType.Tokenize) {
                     var transaction = txnData.SubElement("transaction");
@@ -180,8 +188,11 @@ namespace GlobalPayments.Api.Terminals.UPA
 
             var baseRequest = doc.SubElement("data");
             baseRequest.Set("command", MapReportType(builder.ReportType));
-            baseRequest.Set("EcrId", builder.SearchBuilder.EcrId.ToString());
+            if (!(builder.SearchBuilder.EcrId == null)) baseRequest.Set("EcrId", builder.SearchBuilder.EcrId);
             baseRequest.Set("requestId", requestId.ToString());
+
+            if (builder.ReportType == TerminalReportType.GetOpenTabDetails)
+                return TerminalUtilities.BuildUpaRequest(doc.ToString());
 
             var txnData = baseRequest.SubElement("data");
             var txnParams = txnData.SubElement("params");
@@ -304,6 +315,8 @@ namespace GlobalPayments.Api.Terminals.UPA
                     return UpaTransType.GetSAFReport;
                 case TerminalReportType.GetBatchReport:
                     return UpaTransType.GetBatchReport;
+                case TerminalReportType.GetOpenTabDetails:
+                    return UpaTransType.GetOpenTabDetails;
                 default:
                     throw new UnsupportedTransactionException();
             }

@@ -95,6 +95,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             // InvoiceNumber = payment.GetValue<string>("invoiceNbr");
             // TrackData = payment.GetValue<string>("trackData");
             // TraceNumber = payment.GetValue<string>("trackNumber");
+            ExpirationDate = payment.GetValue<string>("expiryDate");
         }
 
         protected void HydrateEmvData(JsonDoc data) {

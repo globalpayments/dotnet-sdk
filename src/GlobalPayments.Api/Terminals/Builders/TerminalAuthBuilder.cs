@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
+using System;
 
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalAuthBuilder : TerminalBuilder<TerminalAuthBuilder> {
@@ -28,7 +29,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal decimal TaxAmount { get; set; }
         internal string TaxExempt { get; set; }
         internal string TaxExemptId { get; set; }
-        internal int TerminalRefNumber { get; set; }
+        internal string TerminalRefNumber { get; set; }
         internal int? ClerkId { get; set; }
         internal string LineItemLeft { get; set; }
         internal string LineItemRight { get; set; }
@@ -40,6 +41,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal decimal? VisionOpticalAmount { get; set; }
         internal int? ProcessCPC { get; set; }
         public string Token { get; set; }
+        public DateTime ShippingDate { get; set; }
 
         internal string TransactionId {
             get {
@@ -143,7 +145,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
-        public TerminalAuthBuilder WithTerminalRefNumber(int terminalRefNumber) {
+        public TerminalAuthBuilder WithTerminalRefNumber(string terminalRefNumber) {
             TerminalRefNumber = terminalRefNumber;
             return this;
         }
@@ -203,6 +205,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
+        }
+
+        public TerminalAuthBuilder WithShippingDate(DateTime value) {
+            ShippingDate = value;
+            return this;
         }
 
         public override ITerminalResponse Execute(string configName = "default") {

@@ -722,6 +722,19 @@ namespace GlobalPayments.Api.Entities {
     }
 
     /// <summary>
+    /// Indicates the API or source of the cryptogram.
+    /// </summary>
+    public static class PaymentDataSourceType
+    {
+        public const string APPLEPAY = "ApplePay";
+        public const string APPLEPAYAPP = "ApplePayApp";
+        public const string APPLEPAYWEB = "ApplePayWeb";
+        public const string GOOGLEPAYAPP = "GooglePayApp";
+        public const string GOOGLEPAYWEB = "GooglePayWeb";
+        public const string DISCOVER3DSECURE = "Discover 3DSecure";
+    }
+
+    /// <summary>
     /// Indicates the GooglePay and ApplePay.
     /// </summary>
     public static class EncyptedMobileType

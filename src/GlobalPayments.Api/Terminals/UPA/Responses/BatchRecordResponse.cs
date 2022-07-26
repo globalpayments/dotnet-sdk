@@ -9,7 +9,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string BatchStatus { get; set; }
         public string OpenUtcDateTime { get; set; }
         public string CloseUtcDateTime { get; set; }
-        public int OpenTnxId { get; set; }
+        public string OpenTnxId { get; set; }
         public decimal TotalAmount { get; set; }
         public int TotalCnt { get; set; }
         public int CreditCnt { get; set; }

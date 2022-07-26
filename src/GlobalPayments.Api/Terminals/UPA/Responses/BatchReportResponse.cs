@@ -46,7 +46,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                             BatchStatus = batchRecord.GetValue<string>("batchStatus"),
                             OpenUtcDateTime = batchRecord.GetValue<string>("openUtcDateTime"),
                             CloseUtcDateTime = batchRecord.GetValue<string>("closeUtcDateTime"),
-                            OpenTnxId = batchRecord.GetValue<int>("openTnxId"),
+                            OpenTnxId = batchRecord.GetValue<string>("openTnxId"),
                             TotalAmount = batchRecord.GetValue<decimal>("totalAmount"),
                             TotalCnt = batchRecord.GetValue<int>("totalCnt"),
                             CreditCnt = batchRecord.GetValue<int>("credictCnt"),

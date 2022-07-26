@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.NUCLEUS_SATURN_1000,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.0.3",
+                IpAddress = "192.168.0.114",
                 Port = "8081",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -74,12 +74,12 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             var response = _device.Authorize()
                 .WithEcrId(13)
                 .WithClerkId(123)
-                .WithRequestMultiUseToken(true)
-                .WithToken("2323")
-                .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
+                // .WithRequestMultiUseToken(true)
+                // .WithToken("2323")
+                // .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
                 .WithCardBrandTransId("transId")
                 .WithAmount(10m)
-                .WithTerminalRefNumber(1234)
+                .WithTerminalRefNumber("1234")
                 .WithAutoSubstantiation(autoSub)
                 .Execute();
             Assert.IsNotNull(response);
@@ -107,6 +107,29 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
+        }
+
+        [TestMethod]
+        public void AuthCompletionUseTransId()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var authResponse = _device.Authorize(10.00m)
+                .WithEcrId(13)
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(authResponse);
+            Assert.AreEqual("00", authResponse.ResponseCode);
+
+            Thread.Sleep(1500);
+
+            var captureResponse = _device.Capture(10.00m)
+                .WithTransactionId(authResponse.TransactionId)
+                .Execute();
+            Assert.IsNotNull(authResponse);
+            Assert.AreEqual("00", authResponse.ResponseCode);
         }
 
         [TestMethod]
@@ -301,20 +324,30 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.AreEqual("00", returnResponse.ResponseCode);
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void CreditTipAdjust()
         {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.TipAdjust()
+            var saleResponse = _device.Sale(15.12m)
                 .WithEcrId(13)
                 .WithClerkId(123)
-                .WithGratuity(12.12m)
+                .WithGratuity(0.00m)
                 .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+
+            Assert.IsNotNull(saleResponse);
+
+            Thread.Sleep(2500);
+
+            var tipAdjustResponse = _device.TipAdjust(3.00m)
+                .WithTerminalRefNumber(saleResponse.TerminalRefNumber)
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .Execute();
+            Assert.IsNotNull(tipAdjustResponse);
+            Assert.AreEqual("00", tipAdjustResponse.ResponseCode);
         }
 
         [TestMethod]
@@ -383,6 +416,34 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithPaymentMethod(card)
                 .WithClerkId(1234)
                 .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void SaleWithMktData()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var card = new CreditCardData
+            {
+                Number = "4005554444444460",
+                ExpMonth = 12,
+                ExpYear = 17,
+                Cvn = "123"
+            };
+
+            var response = _device.Sale(1.23m)
+                .WithGratuity(0.00m)
+                .WithEcrId(13)
+                .WithPaymentMethod(card)
+                .WithClerkId(1234)
+                .WithInvoiceNumber("12345")
+                .WithShippingDate(new DateTime(2022, 7, 26))
+                .Execute();
+
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }

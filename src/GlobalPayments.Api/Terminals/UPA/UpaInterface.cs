@@ -8,8 +8,9 @@ namespace GlobalPayments.Api.Terminals.UPA {
     public class UpaInterface : DeviceInterface<UpaController>, IDeviceInterface {
         internal UpaInterface(UpaController controller) : base(controller) { }
 
-        public override TerminalAuthBuilder TipAdjust() {
-            return new TerminalAuthBuilder(TransactionType.Edit, PaymentMethodType.Credit);
+        public override TerminalAuthBuilder TipAdjust(decimal? amount) {
+            return new TerminalAuthBuilder(TransactionType.Edit, PaymentMethodType.Credit)
+                .WithGratuity(amount);
         }
 
         public override TerminalAuthBuilder Tokenize() {
@@ -73,6 +74,11 @@ namespace GlobalPayments.Api.Terminals.UPA {
         public override TerminalReportBuilder GetBatchReport()
         {
             return new TerminalReportBuilder(TerminalReportType.GetBatchReport);
+        }
+
+        public override TerminalReportBuilder GetOpenTabDetails()
+        {
+            return new TerminalReportBuilder(TerminalReportType.GetOpenTabDetails);
         }
         #endregion
     }

@@ -32,14 +32,13 @@ namespace GlobalPayments.Api.Terminals.UPA {
             Multiplemessage = secondDataNode.GetValue<string>("multipleMessage");
 
             var host = secondDataNode.Get("host");
-            if (host == null) {
-                throw new MessageException(INVALID_RESPONSE_FORMAT);
-            }
 
-            RespDateTime = host.GetValue<string>("respDateTime");
-            BatchId = host.GetValue<int>("batchId");
-            GatewayResponseCode = host.GetValue<int>("gatewayResponseCode");
-            GatewayResponseMessage = host.GetValue<string>("gatewayResponseMessage");
+            if (host != null) {
+                RespDateTime = host.GetValue<string>("respDateTime");
+                BatchId = host.GetValue<int>("batchId");
+                GatewayResponseCode = host.GetValue<int>("gatewayResponseCode");
+                GatewayResponseMessage = host.GetValue<string>("gatewayResponseMessage");
+            }
         }
 
         public string Multiplemessage { get; set; }

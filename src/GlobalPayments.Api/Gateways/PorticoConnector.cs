@@ -139,31 +139,47 @@ namespace GlobalPayments.Api.Gateways {
                 block1.Append(cardData);
 
                 // secure 3d
-                if (card is CreditCardData) {
+                if (card is CreditCardData)
+                {
                     var CreditCardData = (card as CreditCardData);
                     var secureEcom = CreditCardData.ThreeDSecure;
-                    if (secureEcom != null) {
+                    if (secureEcom != null)
+                    {
                         //Secure3D Element
-                        if (!string.IsNullOrEmpty(secureEcom.Eci)) {
+                        if (!string.IsNullOrEmpty(secureEcom.Eci) && (!IsAppleOrGooglePay(secureEcom.PaymentDataSource)))
+                        {
                             var Secure3D = et.SubElement(block1, "Secure3D");
                             et.SubElement(Secure3D, "Version", (int)(secureEcom.Version ?? Secure3dVersion.One));
                             et.SubElement(Secure3D, "AuthenticationValue", secureEcom.Cavv);
                             et.SubElement(Secure3D, "ECI", secureEcom.Eci);
                             et.SubElement(Secure3D, "DirectoryServerTxnId", secureEcom.Xid);
-                        }
-
-                        //WalletData Element
-                        if(!string.IsNullOrWhiteSpace(secureEcom.PaymentDataSource)) {
+                        }                        
+                        if (IsAppleOrGooglePay(secureEcom.PaymentDataSource))
+                        {
                             var WalletData = et.SubElement(block1, "WalletData");
                             et.SubElement(WalletData, "PaymentSource", secureEcom.PaymentDataSource);
                             et.SubElement(WalletData, "Cryptogram", secureEcom.Cavv);
                             et.SubElement(WalletData, "ECI", secureEcom.Eci);
-                            if (CreditCardData.MobileType != null) {
-                                et.SubElement(WalletData, "DigitalPaymentToken", CreditCardData.Token);
-                            }
-                        }                        
+                        }
                     }
+                    //WalletData Element
+                    if ((CreditCardData.MobileType == MobilePaymentMethodType.APPLEPAY || CreditCardData.MobileType == MobilePaymentMethodType.GOOGLEPAY)
+                        && !string.IsNullOrEmpty(CreditCardData.PaymentSource) && IsAppleOrGooglePay(CreditCardData.PaymentSource))
+                    {
+                        var WalletData = et.SubElement(block1, "WalletData");
+                        et.SubElement(WalletData, "PaymentSource", CreditCardData.PaymentSource);
+                        et.SubElement(WalletData, "Cryptogram", CreditCardData.Cryptogram);
+                        et.SubElement(WalletData, "ECI", CreditCardData.Eci);
+                        if (CreditCardData.MobileType != null)
+                        {
+                            et.SubElement(WalletData, "DigitalPaymentToken", CreditCardData.Token);
+                            block1.Remove("CardData");
+                            block1.Remove("CardHolderData");
+                        }
+                    }
+
                 }
+                
 
                 // recurring data
                 if (builder.TransactionModifier == TransactionModifier.Recurring) {
@@ -1109,6 +1125,14 @@ namespace GlobalPayments.Api.Gateways {
                 return true;
             }
             return false;
+        }
+        private bool IsAppleOrGooglePay(string paymentDataSource)
+        {
+            return paymentDataSource == PaymentDataSourceType.APPLEPAY
+                || paymentDataSource == PaymentDataSourceType.APPLEPAYAPP
+                || paymentDataSource == PaymentDataSourceType.APPLEPAYWEB
+                || paymentDataSource == PaymentDataSourceType.GOOGLEPAYAPP
+                || paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB;
         }
         #endregion
 

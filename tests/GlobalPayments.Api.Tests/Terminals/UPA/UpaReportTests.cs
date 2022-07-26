@@ -3,6 +3,7 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.UPA;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
 
 namespace GlobalPayments.Api.Tests.Terminals.UPA
 {
@@ -16,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.NUCLEUS_SATURN_1000,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.6",
+                IpAddress = "192.168.0.114",
                 Port = "8081",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -44,5 +45,35 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.AreEqual("Success", report.Status);
         }
 
+        [TestMethod]
+        public void GetOpenTabDetailsReport() {
+            var report = _device.GetOpenTabDetails()
+                .Where(UpaSearchCriteria.EcrId, 13)
+                .Execute();
+
+            Assert.IsNotNull(report);
+            Assert.AreEqual("Success", report.Status);
+        }
+
+        [TestMethod]
+        public void CloseAllOpenTabs() {
+            var report = _device.GetOpenTabDetails()
+                .Where(UpaSearchCriteria.EcrId, 13)
+                .Execute() as OpenTabDetailsResponse;
+
+            var tabsToClose = report.OpenTabs;
+
+            Thread.Sleep(1000);
+
+            foreach(var openTab in tabsToClose) {
+                var captureResponse = _device.Capture(openTab.AuthorizedAmount)
+                    .WithTransactionId(openTab.TransactionId)
+                    .WithGratuity(0.00m)
+                    .Execute();
+                Assert.AreEqual("00", captureResponse.ResponseCode);
+
+                Thread.Sleep(1000);
+            }            
+        }
     }
 }

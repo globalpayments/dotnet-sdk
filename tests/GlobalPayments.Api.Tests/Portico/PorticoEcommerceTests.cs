@@ -93,10 +93,10 @@ namespace GlobalPayments.Api.Tests.Portico {
         [TestMethod]
         public void EcomWithSecureEcommerceWithoutMobileType() {
             card.ThreeDSecure = new ThreeDSecure {
-                PaymentDataSource = "ApplePay",
+                PaymentDataSource = PaymentDataSourceType.APPLEPAY, 
                 Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
-                Eci = "7"
-            };
+                Eci = "7",
+             };           
             Transaction response = card.Charge(10m)
                 .WithCurrency("USD")
                 .WithInvoiceNumber("1234567890")
@@ -108,21 +108,18 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void EcomWithSecureEcommerceWalletDataWithMobileType() {
-            card.ThreeDSecure = new ThreeDSecure {
-                PaymentDataSource = "ApplePay",
-                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
-                Eci = "5"
-            };
-            card.MobileType = "ApplePay";
-            card.Token = _token;
+           
+            card.MobileType = MobilePaymentMethodType.APPLEPAY;
+            card.PaymentSource = PaymentDataSourceType.APPLEPAYWEB;
+            card.Token = _token;            
 
             Transaction response = card.Charge(10m)
-                .WithCurrency("USD")
-                .WithInvoiceNumber("1234567890")
-                .WithAllowDuplicates(true)
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+                    .WithCurrency("USD")
+                    .WithInvoiceNumber("1234567890")
+                    .WithAllowDuplicates(true)
+                    .Execute();
+                Assert.IsNotNull(response);
+                Assert.AreEqual("00", response.ResponseCode);          
         }
     }
 }
