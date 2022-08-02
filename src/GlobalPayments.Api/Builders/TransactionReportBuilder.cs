@@ -1,5 +1,6 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 
 namespace GlobalPayments.Api.Builders {
     public class TransactionReportBuilder<TResult> : ReportBuilder<TResult> where TResult : class {
@@ -28,6 +29,8 @@ namespace GlobalPayments.Api.Builders {
         internal DisputeSortProperty? DisputeOrderBy { get; set; }
         internal StoredPaymentMethodSortProperty? StoredPaymentMethodOrderBy { get; set; }
         internal ActionSortProperty? ActionOrderBy { get; set; }
+        internal PayLinkSortProperty? PayLinkOrderBy { get; set; }
+        internal string PayLinkId { get; set; }
 
         private SearchCriteriaBuilder<TResult> _searchBuilder;
         internal SearchCriteriaBuilder<TResult> SearchBuilder {
@@ -216,6 +219,13 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public TransactionReportBuilder<TResult> OrderBy(PayLinkSortProperty orderBy, SortDirection direction = SortDirection.Ascending)
+        {
+            PayLinkOrderBy = orderBy;
+            Order = direction;
+            return this;
+        }
+
         public SearchCriteriaBuilder<TResult> Where<T>(SearchCriteria criteria, T value) {         
             return SearchBuilder.And(criteria, value);
         }
@@ -229,6 +239,13 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public TransactionReportBuilder<TResult> WithPayLinkId(string payLinkId)
+        {
+            SearchBuilder.PayLinkId = payLinkId;
+            PayLinkId = payLinkId;
+            return this;
+        }
+
         public TransactionReportBuilder(ReportType type) : base(type) { }
 
         protected override void SetupValidations() {
@@ -237,6 +254,7 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(ReportType.Activity).Check(() => TransactionId).IsNull();
             Validations.For(ReportType.DocumentDisputeDetail).Check(() => DisputeDocumentId).IsNotNull();
+            Validations.For(ReportType.PayLinkDetail).Check(() => PayLinkId).IsNotNull();
         }
     }
 }

@@ -214,6 +214,35 @@ namespace GlobalPayments.Api.Entities {
                     };
                 
             }
+            else if (builder.TransactionType == TransactionType.PayLinkUpdate)
+            {
+                var payLinkData = builder.PayLinkData;
+
+                var payload = new JsonDoc()
+                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payLinkData.UsageMode) ?? null)
+                    .Set("usage_limit", payLinkData.UsageLimit ?? null)
+                    .Set("name", payLinkData.Name ?? null)
+                    .Set("description", builder.Description ?? null)
+                    .Set("type", payLinkData.Type.ToString() ?? null)
+                    .Set("status", payLinkData.Status.ToString() ?? null)
+                    .Set("shippable", payLinkData.IsShippable?.ToString() ?? null)
+                    .Set("shipping_amount", payLinkData.ShippingAmount.ToNumericCurrencyString());
+
+                var transaction = new JsonDoc()
+                    .Set("amount", builder.Amount.ToNumericCurrencyString() ?? null);
+
+                payload.Set("transactions", transaction)
+                    .Set("expiration_date", payLinkData.ExpirationDate ?? null)
+                    .Set("images", payLinkData.Images ?? null);
+
+                return new GpApiRequest
+                {
+                    Verb = new HttpMethod("PATCH"),
+                    Endpoint = $"{merchantUrl}/links/{builder.PaymentLinkId}",
+                    RequestBody = payload.ToString(),
+                };
+
+            }
             return null;
         }
     }

@@ -558,6 +558,10 @@ namespace GlobalPayments.Api.Entities {
         DocumentDisputeDetail = 1 << 22,
 
         FindBankPayment = 1 << 23,
+
+        PayLinkDetail = 1 << 24,
+
+        FindPayLinkPaged = 1 << 25,
     }
 
     /// <summary>

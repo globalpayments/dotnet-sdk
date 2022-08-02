@@ -20,7 +20,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         protected static readonly int expMonth = DateTime.Now.Month;
         protected static readonly int expYear = DateTime.Now.Year + 1;
-        
+
+        protected static readonly DateTime startDate = DateTime.UtcNow.AddDays(-30);
+        protected static readonly DateTime endDate = DateTime.UtcNow;
+
         protected string GetMapping<T>(T value, Target target = Target.GP_API) where T : Enum {
             return EnumConverter.GetMapping(target, value);
         }

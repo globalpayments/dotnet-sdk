@@ -65,8 +65,7 @@ namespace GlobalPayments.Api.Builders {
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
         public PhoneNumber HomePhone { get; set; }
         public PhoneNumber WorkPhone { get; set; }
-        public PhoneNumber ShippingPhone { get; set; }
-        public string PaymentLinkId { get; set; }        
+        public PhoneNumber ShippingPhone { get; set; }               
         public RemittanceReferenceType RemittanceReferenceType { get; set; }
         public string RemittanceReferenceValue { get; set; }
         public PhoneNumber MobilePhone { get; set; }
@@ -696,6 +695,18 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public AuthorizationBuilder WithPayLinkData(PayLinkData payLinkData)
+        {
+            PayLinkData = payLinkData;
+            return this;
+        }
+
+        public AuthorizationBuilder WithPaymentLinkId(string paymentLinkId)
+        {
+            PaymentLinkId = paymentLinkId;
+            return this;
+        }
+
         /// <summary>
         /// Sets the schedule ID associated with the transaction; where applicable.
         /// </summary>
@@ -1038,11 +1049,7 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithPaymentLinkId(string value) {
-            PaymentLinkId = value;
-            return this;
-        }
-
+        
         public AuthorizationBuilder WithRemittanceReference(RemittanceReferenceType remittanceReferenceType, string remittanceReferenceValue) {
             RemittanceReferenceType = remittanceReferenceType;
             RemittanceReferenceValue = remittanceReferenceValue;

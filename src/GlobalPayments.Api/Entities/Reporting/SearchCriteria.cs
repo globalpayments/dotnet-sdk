@@ -242,7 +242,9 @@ namespace GlobalPayments.Api.Entities {
         internal IEnumerable<PaymentMethodType> PaymentTypes { get; set; }
 
         internal string BankPaymentId { get; set; }
-   
+
+        internal string PayLinkId { get; set; }
+
         internal bool? ReturnPII { get; set; }
 
         internal string ReferenceNumber { get; set; }

@@ -1,4 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,9 @@ namespace GlobalPayments.Api.Mapping {
         private const string PAYMENT_METHOD_CREATE = "PAYMENT_METHOD_CREATE";
         private const string PAYMENT_METHOD_DETOKENIZE = "PAYMENT_METHOD_DETOKENIZE";
         private const string PAYMENT_METHOD_EDIT = "PAYMENT_METHOD_EDIT";
-        private const string PAYMENT_METHOD_DELETE = "PAYMENT_METHOD_DELETE";        
+        private const string PAYMENT_METHOD_DELETE = "PAYMENT_METHOD_DELETE";
+        private const string LINK_CREATE = "LINK_CREATE";
+        private const string LINK_EDIT = "LINK_EDIT";
 
 
         public static Transaction MapResponse(string rawResponse) {
@@ -38,7 +42,7 @@ namespace GlobalPayments.Api.Mapping {
                     case PAYMENT_METHOD_EDIT:
                     case PAYMENT_METHOD_DELETE:
                         transaction.Token = json.GetValue<string>("id");
-                        transaction.TokenUsageMode = getPaymentMethodUsageMode(json);
+                        transaction.TokenUsageMode = GetPaymentMethodUsageMode(json);
                         transaction.Timestamp = json.GetValue<string>("time_created");
                         transaction.ReferenceNumber = json.GetValue<string>("reference");
                         transaction.CardType = json.Get("card")?.GetValue<string>("brand");
@@ -46,6 +50,15 @@ namespace GlobalPayments.Api.Mapping {
                         transaction.CardLast4 = json.Get("card")?.GetValue<string>("masked_number_last4");
                         transaction.CardExpMonth = json.Get("card")?.GetValue<int>("expiry_month");
                         transaction.CardExpYear = json.Get("card")?.GetValue<int>("expiry_year");
+                        return transaction;
+                    case LINK_CREATE:
+                    case LINK_EDIT:
+                        transaction.PayLinkResponse = MapPayLinkResponse(json);
+                        if (json.Has("transactions")) {
+                            var trn = json.Get("transactions");
+                            transaction.BalanceAmount = trn.GetValue<string>("amount").ToAmount();
+                            transaction.PayLinkResponse.AllowedPaymentMethods = GetAllowedPaymentMethods(trn);
+                        }
                         return transaction;
                     default:
                         break;
@@ -73,20 +86,18 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
                 transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
                 transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
-                transaction.MultiCapture = getIsMultiCapture(json);
-                transaction.PaymentMethodType = getPaymentMehodType(json) ?? transaction.PaymentMethodType;
+                transaction.MultiCapture = GetIsMultiCapture(json);
+                transaction.PaymentMethodType = GetPaymentMehodType(json) ?? transaction.PaymentMethodType;
                 transaction.DccRateData = MapDccInfo(json);
             }
 
             return transaction;
         }
 
-        private static bool getIsMultiCapture(JsonDoc json)
+        private static bool GetIsMultiCapture(JsonDoc json)
         {
-            if (!string.IsNullOrEmpty(json.GetValue<string>("capture_mode")))
-            {
-                switch (json.GetValue<string>("capture_mode"))
-                {
+            if (!string.IsNullOrEmpty(json.GetValue<string>("capture_mode"))) {
+                switch (json.GetValue<string>("capture_mode")) {
                     case "MULTIPLE":
                         return true;
                     default:
@@ -96,20 +107,18 @@ namespace GlobalPayments.Api.Mapping {
             return false;
         }
 
-        private static PaymentMethodType? getPaymentMehodType(JsonDoc json)
+        private static PaymentMethodType? GetPaymentMehodType(JsonDoc json)
         {
-            if (json.Get("payment_method")?.Has("bank_transfer") ?? false)
-            {
+            if (json.Get("payment_method")?.Has("bank_transfer") ?? false) {
                 return PaymentMethodType.ACH;
             }
-            else if (json.Get("payment_method")?.Has("apm") ?? false)
-            {
+            else if (json.Get("payment_method")?.Has("apm") ?? false) {
                 return PaymentMethodType.APM;
             }
             return null;
         }
 
-        private static PaymentMethodUsageMode? getPaymentMethodUsageMode(JsonDoc json)
+        private static PaymentMethodUsageMode? GetPaymentMethodUsageMode(JsonDoc json) 
         {
             if (json.Has("usage_mode")) {
                 if (json.GetValue<string>("usage_mode").Equals(EnumConverter.GetMapping(Target.GP_API, PaymentMethodUsageMode.Single))) {
@@ -173,8 +182,36 @@ namespace GlobalPayments.Api.Mapping {
             return transaction;
         }
 
-        public static TransactionSummary MapTransactionSummary(JsonDoc doc) {
+        public static PayLinkResponse MapPayLinkResponse(JsonDoc doc) 
+        {
+            var payLinkResponse = new PayLinkResponse();
+            payLinkResponse.Id = doc.GetValue<string>("id");
+            payLinkResponse.AccountName = doc.GetValue<string>("account_name");
+            payLinkResponse.Url = doc.GetValue<string>("url");
+            payLinkResponse.Status = GetPayLinkStatus(doc);
+            payLinkResponse.Type = GetPayLinkType(doc);
+            payLinkResponse.UsageMode = GetPaymentMethodUsageMode(doc);
+            payLinkResponse.UsageLimit = doc.GetValue<int>("usage_limit");
+            payLinkResponse.Reference = doc.GetValue<string>("reference");
+            payLinkResponse.Name = doc.GetValue<string>("name");
+            payLinkResponse.Description = doc.GetValue<string>("description");
+            payLinkResponse.IsShippable = GetIsShippable(doc);
+            payLinkResponse.ViewedCount = doc.GetValue<string>("viewed_count");
+            payLinkResponse.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
+            
+            return payLinkResponse;
+        }
 
+        private static bool? GetIsShippable(JsonDoc doc) 
+        {
+            if (doc.Has("shippable")) {
+                return doc.GetValue<string>("shippable").ToUpper() == "TRUE" ? true : false;
+            }
+            return null;
+        }
+
+        public static TransactionSummary MapTransactionSummary(JsonDoc doc) 
+        {
             var summary = new TransactionSummary {
                 TransactionId = doc.GetValue<string>("id"),
                 TransactionDate = doc.GetValue<DateTime?>("time_created", DateConverter),
@@ -243,7 +280,87 @@ namespace GlobalPayments.Api.Mapping {
             return summary;
         }
 
-        private static DateTime? DateConverter(object value) {
+        public static PayLinkSummary MapPayLinkSummary(JsonDoc doc)
+        {
+            var summary = new PayLinkSummary();
+            
+            summary.Id = doc.GetValue<string>("id");
+            summary.MerchantId = doc.GetValue<string>("merchant_id");
+            summary.MerchantName = doc.GetValue<string>("merchant_name");
+            summary.AccountId = doc.GetValue<string>("account_id");
+            summary.AccountName = doc.GetValue<string>("account_name");
+            summary.Url = doc.GetValue<string>("url");
+            summary.Status = GetPayLinkStatus(doc);
+            summary.Type = GetPayLinkType(doc);
+            summary.AllowedPaymentMethods = GetAllowedPaymentMethods(doc); 
+            summary.UsageMode = GetPaymentMethodUsageMode(doc);
+            summary.UsageCount = doc.GetValue<string>("usage_count");
+            summary.Reference = doc.GetValue<string>("reference");
+            summary.Name = doc.GetValue<string>("name");
+            summary.Description = doc.GetValue<string>("description");
+            summary.Shippable = doc.GetValue<string>("shippable");
+            summary.ViewedCount = doc.GetValue<string>("viewed_count");
+            summary.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
+            summary.Images = doc.GetArray<string>("images").ToArray();//GetImages(doc); //ToDo 
+
+            if (doc.Has("transactions")) {
+                summary.Transactions = new List<TransactionSummary>();
+                foreach (var transaction in doc.GetArray<JsonDoc>("transactions") ?? Enumerable.Empty<JsonDoc>()) {
+                    summary.Transactions.Add(CreateTransactionSummary(transaction));
+                }                
+            }
+            return summary;
+        }
+
+       
+        private static TransactionSummary CreateTransactionSummary(JsonDoc doc)
+        {
+            var transaction = new TransactionSummary();
+            transaction.TransactionId = doc.GetValue<string>("id");
+            transaction.TransactionDate = doc.GetValue<DateTime?>("time_created", DateConverter);
+            transaction.TransactionStatus = doc.GetValue<string>("status");
+            transaction.TransactionType = doc.GetValue<string>("type");
+            transaction.Channel = doc.GetValue<string>("channel");
+            transaction.Amount = doc.GetValue<string>("amount").ToAmount();
+            transaction.Currency = doc.GetValue<string>("currency");
+            transaction.ReferenceNumber = doc.GetValue<string>("reference");
+            transaction.ClientTransactionId = doc.GetValue<string>("reference");
+
+            return transaction;
+        }
+
+        private static List<PaymentMethodName> GetAllowedPaymentMethods(JsonDoc doc) 
+        {
+            List<PaymentMethodName> List = null;
+
+            if (doc.Has("allowed_payment_methods")) {
+                List = new List<PaymentMethodName>();
+                foreach (var item in doc.GetArray<string>("allowed_payment_methods")) {
+                    PaymentMethodName methodName = EnumConverter.FromMapping<PaymentMethodName>(Target.GP_API, item);
+                    List.Add(methodName);
+                }
+            }
+            return List;
+        }
+
+        private static PayLinkType? GetPayLinkType(JsonDoc doc) 
+        {
+            if (doc.Has("type")) {
+                return (PayLinkType)Enum.Parse(typeof(PayLinkType), doc.GetValue<string>("type").ToUpper());                            
+            }
+            return null;
+        }
+
+        private static PayLinkStatus? GetPayLinkStatus(JsonDoc doc) 
+        {
+            if (doc.Has("status")) {
+                return (PayLinkStatus)Enum.Parse(typeof(PayLinkStatus), doc.GetValue<string>("status"));                
+            }
+            return null;            
+        }
+
+        private static DateTime? DateConverter(object value) 
+        {
             if (value != null && !string.IsNullOrEmpty(value.ToString())) {
                 return Convert.ToDateTime(value);
             }
@@ -311,6 +428,15 @@ namespace GlobalPayments.Api.Mapping {
                 foreach (var doc in json.GetArray<JsonDoc>("actions") ?? Enumerable.Empty<JsonDoc>()) {
                     (result as PagedResult<ActionSummary>).Add(MapActionSummary(doc));
                 }
+            }
+            else if (reportType == ReportType.FindPayLinkPaged && result is PagedResult<PayLinkSummary>) {
+                SetPagingInfo(result as PagedResult<PayLinkSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("links") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<PayLinkSummary>).Add(MapPayLinkSummary(doc));
+                }                
+            }
+            else if (reportType == ReportType.PayLinkDetail && result is PayLinkSummary) {
+                    result = MapPayLinkSummary(json) as T;                
             }
 
             return result;

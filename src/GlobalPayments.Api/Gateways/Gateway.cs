@@ -147,8 +147,8 @@ namespace GlobalPayments.Api.Gateways {
             finally { }
         }
 
-        private string BuildQueryString(Dictionary<string, string> queryStringParams) {
-            if (queryStringParams == null)
+        private string BuildQueryString(Dictionary<string, string> queryStringParams) {            
+            if (queryStringParams == null || queryStringParams.Count == 0)
                 return string.Empty;
             return string.Format("?{0}", string.Join("&", queryStringParams.Select(kvp => string.Format("{0}={1}", Uri.EscapeDataString(kvp.Key), Uri.EscapeDataString(kvp.Value)))));
         }

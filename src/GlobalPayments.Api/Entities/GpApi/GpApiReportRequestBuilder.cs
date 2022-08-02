@@ -236,6 +236,28 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("http_response_code", trb.SearchBuilder.HttpResponseCode);
 
                         return request;
+
+                    case ReportType.PayLinkDetail:
+                        return new GpApiRequest
+                        {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}/links/{trb.SearchBuilder.PayLinkId}",
+                        };
+                        
+                       
+                    case ReportType.FindPayLinkPaged:
+                        request = new GpApiRequest
+                        {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}/links",
+                        };
+
+                        request.AddQueryStringParam("from_time_created", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-dd"));
+                        request.AddQueryStringParam("to_time_created", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-dd"));
+                        request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, trb.Order));
+                        request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, trb.ActionOrderBy));
+
+                        return request;
                 }
             }
             return null;

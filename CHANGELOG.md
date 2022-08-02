@@ -1,5 +1,11 @@
 # Changelog
 
+## Latest
+
+#### Enhancements
+
+- GP-API: Added PayLink API that allows you to generate single or multi-use unique payment links.
+
 ## v4.1.2 (7/26/2022)
 
 #### Enhancements:

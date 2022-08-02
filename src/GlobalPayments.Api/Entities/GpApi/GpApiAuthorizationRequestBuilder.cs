@@ -152,6 +152,7 @@ namespace GlobalPayments.Api.Entities {
                             };
                         }
                     }
+                    
                 }
                 else if (builder.PaymentMethod is ITrackData) {
                     var track = builder.PaymentMethod as ITrackData;
@@ -312,7 +313,48 @@ namespace GlobalPayments.Api.Entities {
                         paymentMethod.Set("encryption", encryption);
                     }
                 }
-            }           
+            }
+
+            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData)
+            {
+                var payLinkData = builder.PayLinkData;
+                var requestData = new JsonDoc()
+                    .Set("usage_limit", payLinkData.UsageLimit.ToString())
+                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payLinkData.UsageMode))
+                    .Set("images", payLinkData.Images)
+                    .Set("description", builder.Description ?? null)
+                    .Set("type", payLinkData.Type?.ToString())
+                    .Set("expiration_date", payLinkData.ExpirationDate ?? null);
+
+                var transaction = new JsonDoc()
+                    .Set("country", gateway.GpApiConfig.Country)
+                    .Set("amount", builder.Amount.ToNumericCurrencyString())
+                    .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
+                    .Set("currency", builder.Currency)                    
+                    .Set("allowed_payment_methods", GetAllowedPaymentMethod(payLinkData.AllowedPaymentMethods));                
+
+                requestData.Set("transactions", transaction)
+                    .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())                    
+                    .Set("shipping_amount", payLinkData.ShippingAmount.ToNumericCurrencyString())
+                    .Set("shippable", payLinkData.IsShippable?.ToString() ?? false.ToString())
+                    .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                    .Set("name", payLinkData.Name ?? null);
+
+                var notification = new JsonDoc()
+                    .Set("cancel_url", payLinkData.CancelUrl)
+                    .Set("return_url", payLinkData.ReturnUrl)
+                    .Set("status_url", payLinkData.StatusUpdateUrl);
+
+                requestData.Set("notifications", notification)
+                    .Set("status", payLinkData.Status.ToString());
+
+                return new GpApiRequest
+                {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{merchantUrl}/links",
+                    RequestBody = requestData.ToString(),
+                };                
+            }
 
             var data = new JsonDoc()
                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
@@ -334,13 +376,13 @@ namespace GlobalPayments.Api.Entities {
                 //.Set("language", EnumConverter.GetMapping(Target.GP_API, Language))
                 .Set("ip_address", builder.CustomerIpAddress)
                 //.Set("site_reference", "") //
-                .Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)                
-                .Set("payment_method", paymentMethod)                
+                .Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
+                .Set("payment_method", paymentMethod)             
                 .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
-                            .Set("id", builder.PaymentLinkId) : null );
+                .Set("id", builder.PaymentLinkId) : null);
 
             if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternativePaymentMethod) {
-                data.Set("payer", setPayerInformation(builder));
+                data.Set("payer", SetPayerInformation(builder));
             }
 
             // set order reference
@@ -380,6 +422,18 @@ namespace GlobalPayments.Api.Entities {
                 Endpoint = $"{merchantUrl}/transactions",
                 RequestBody = data.ToString(),
             };
+        }
+
+        private static string[] GetAllowedPaymentMethod(PaymentMethodName[] allowedPaymentMethods) {
+            if (allowedPaymentMethods == null)
+                return null;
+            
+            string[] result = new string[allowedPaymentMethods.Length];
+            for (int i = 0; i < (allowedPaymentMethods.Length); i++ ) {
+                result[i] = EnumConverter.GetMapping(Target.GP_API, allowedPaymentMethods[i]);
+            }
+
+            return result;
         }
 
         private static string GetEntryMode(AuthorizationBuilder builder,Channel channel)
@@ -444,7 +498,7 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
-        private static JsonDoc setPayerInformation(AuthorizationBuilder builder)
+        private static JsonDoc SetPayerInformation(AuthorizationBuilder builder)
         {
             JsonDoc payer = new JsonDoc();
             payer.Set("reference", builder.CustomerId ?? builder.CustomerData?.Id);

@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using System.Collections.Generic;
@@ -35,8 +36,7 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? ConvenienceAmount { get; set; }
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
-        internal string CustomerIpAddress { get; set; }
-        internal string Description { get; set; }
+        internal string CustomerIpAddress { get; set; }        
         internal IEnumerable<DisputeDocument> DisputeDocuments { get; set; }
         internal string DisputeId { get; set; }
         internal string DynamicDescriptor { get; set; }
@@ -83,6 +83,9 @@ namespace GlobalPayments.Api.Builders {
         internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
         internal string TagData { get; set; }
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
+        internal PaymentMethodUsageMode? UsageMode { get; set; }       
+        public int? UsageLimit { get; set; }
+        public PayLinkType? Type { get; set; }
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
 
@@ -189,7 +192,7 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        /// <summary>
+        ///// <summary>
         /// Sets the transaction's description.
         /// </summary>
         /// <remarks>
@@ -200,6 +203,14 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>ManagementBuilder</returns>
         public ManagementBuilder WithDescription(string value) {
             Description = value;
+            return this;
+        }
+
+        public ManagementBuilder WithPayLinkData(PayLinkData payLinkData) {
+            PayLinkData = payLinkData;
+            UsageMode = payLinkData?.UsageMode;
+            UsageLimit = payLinkData?.UsageLimit;
+            Type = payLinkData?.Type;
             return this;
         }
 
@@ -246,8 +257,7 @@ namespace GlobalPayments.Api.Builders {
         /// </remarks>
         /// <param name="value">The dynamic descriptor</param>
         /// <returns>AuthorizationBuilder</returns>
-        public ManagementBuilder WithDynamicDescriptor(string value)
-        {
+        public ManagementBuilder WithDynamicDescriptor(string value) {
             DynamicDescriptor = value;
             return this;
         }
@@ -298,6 +308,11 @@ namespace GlobalPayments.Api.Builders {
 
         internal ManagementBuilder WithPaymentMethod(IPaymentMethod value) {
             PaymentMethod = value;
+            return this;
+        }
+
+        public ManagementBuilder WithPaymentLinkId(string value) {
+            PaymentLinkId = value;
             return this;
         }
 
@@ -456,6 +471,13 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.TokenUpdate)
                 .Check(() => PaymentMethod).Is<CreditCardData>();
 
+            Validations.For(TransactionType.PayLinkUpdate)
+               .Check(() => PayLinkData).IsNotNull()
+               .Check(() => Amount).IsNotNull()
+               .Check(() => UsageMode).IsNotNull()
+               .Check(() => UsageLimit).IsNotNull()
+               .Check(() => Type).IsNotNull();
+
             Validations.For(
                 TransactionType.Capture |
                 TransactionType.Edit |
@@ -508,8 +530,7 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public ManagementBuilder WithPaymentMethodUsageMode(PaymentMethodUsageMode value)
-        {
+        public ManagementBuilder WithPaymentMethodUsageMode(PaymentMethodUsageMode value) {
             PaymentMethodUsageMode = value;
             return this;
         }
