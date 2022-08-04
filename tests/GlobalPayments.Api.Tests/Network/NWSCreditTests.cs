@@ -61,7 +61,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 SecondaryEndpoint = "test.txns-e.secureexchange.net",
                 SecondaryPort = 15031,
                 CompanyId = "SPSA",
-                TerminalId = "NWSDOTNET21",
+                TerminalId = "NWSDOTNET01",
                 UniqueDeviceId = "0001",
                 AcceptorConfig = acceptorConfig,
                 EnableLogging = true,
@@ -233,7 +233,7 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("200", pmi.FunctionCode);
             // check response
-            Assert.AreEqual("000", response.ResponseCode);            
+            Assert.AreEqual("000", response.ResponseCode);
         }
 
         [TestMethod]
@@ -309,7 +309,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_011_swipe_void() {
-            Transaction sale = track.Charge(10m)
+            Transaction sale = track.Charge(100m)
                         .WithCurrency("USD")
                         .Execute();
             Assert.IsNotNull(sale);

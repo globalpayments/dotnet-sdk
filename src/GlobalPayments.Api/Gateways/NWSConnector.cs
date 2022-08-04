@@ -98,6 +98,9 @@ namespace GlobalPayments.Api.Gateways {
                         else if (track.EntryMethod.Equals(EntryMethod.Proximity)) {
                             dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactlessMsd;
                         }
+                        else if (builder.EmvFallbackCondition != null) {
+                            dataCode.CardDataInputMode = DE22_CardDataInputMode.MagStripe_Fallback;
+                        }
                         else {
                             dataCode.CardDataInputMode = DE22_CardDataInputMode.UnalteredTrackData;
                         }
@@ -647,7 +650,6 @@ namespace GlobalPayments.Api.Gateways {
             // DE 34: Primary Account Number, Extended - LLVAR ns.. 28
 
             // DE 37: Retrieval Reference Number - anp12
-            //request.set(DataElementId.DE_037, builder.getClientTransactionId());
 
             // DE 38: Approval Code - anp6
             request.Set(DataElementId.DE_038, builder.AuthorizationCode);
@@ -1147,7 +1149,6 @@ namespace GlobalPayments.Api.Gateways {
                     result.AuthorizedAmount = message.GetAmount(DataElementId.DE_004);
                     result.SystemTraceAuditNumber = request.GetString(DataElementId.DE_011);
                     result.HostResponseDate = message.GetDate(DataElementId.DE_012, "yyMMddhhmmss");
-                    result.ReferenceNumber = message.GetString(DataElementId.DE_037);
                     result.AuthorizationCode = message.GetString(DataElementId.DE_038);
                     string responseCode = message.GetString(DataElementId.DE_039);
                     string responseText = DE39_ActionCodeMethods.GetDescription(responseCode);
@@ -2622,7 +2623,7 @@ namespace GlobalPayments.Api.Gateways {
                                 reasonCode = partial ? DE25_MessageReasonCode.CustomerInitiated_PartialApproval : DE25_MessageReasonCode.CustomerInitiatedVoid;
                             }
                             else if (builder.ForcedReversal) {
-                                reasonCode = partial ? DE25_MessageReasonCode.ForceVoid_PartialApproval : DE25_MessageReasonCode.ForceVoid_ApprovedTransaction;
+                                reasonCode = DE25_MessageReasonCode.FailureToDispense;
                             }
                             else {
                                 reasonCode = DE25_MessageReasonCode.MerchantInitiatedVoid;
@@ -2635,7 +2636,7 @@ namespace GlobalPayments.Api.Gateways {
                         reasonCode = partial ? DE25_MessageReasonCode.CustomerInitiated_PartialApproval : DE25_MessageReasonCode.CustomerInitiatedVoid;
                     }
                     else if (builder.ForcedReversal) {
-                        reasonCode = partial ? DE25_MessageReasonCode.ForceVoid_PartialApproval : DE25_MessageReasonCode.ForceVoid_ApprovedTransaction;
+                        reasonCode = DE25_MessageReasonCode.FailureToDispense;
                     }
                     else {
                         reasonCode = DE25_MessageReasonCode.MerchantInitiatedVoid;

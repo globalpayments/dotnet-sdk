@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Bug Fixes:
+- Added DE 25 Message Reason Code enum value for Failure to Dispense to replace incorrect, outdated values (NWS)
+- Corrected an issue where EmvFallbackCondition was not being respected when set (NWS)
+
+## v4.1.3 (8/2/2022)
+
 #### Enhancements
 
 - GP-API: Added PayLink API that allows you to generate single or multi-use unique payment links.

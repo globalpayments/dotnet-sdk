@@ -21,9 +21,7 @@ namespace GlobalPayments.Api.Network.Entities {
         CustomerInitiated_PartialApproval,
         [Map(Target.NWS, "4354")]
         SystemTimeout_Malfunction,
-        [Map(Target.NWS, "4355")]
-        ForceVoid_PartialApproval,
-        [Map(Target.NWS, "4356")]
-        ForceVoid_ApprovedTransaction
+        [Map(Target.NWS, "4358")]
+        FailureToDispense,
     }
 }
