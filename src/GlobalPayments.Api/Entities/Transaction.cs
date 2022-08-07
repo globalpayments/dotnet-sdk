@@ -382,6 +382,17 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
+        public string BatchNumber
+        {
+            get => TransactionReference?.BatchNumber;
+            set
+            {
+                if (TransactionReference == null)
+                    TransactionReference = new TransactionReference();
+                TransactionReference.BatchNumber = value;
+            }
+        }
+
         /// <summary>
         /// The payment token returned in the transaction.
         /// </summary>
