@@ -5,27 +5,24 @@ using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
+
     [TestClass]
     public class GpApiAuthenticationTests : BaseGpApiTests {
         private CreditCardData card;
         private GpApiConfig gpApiConfig;
-        private const Environment ENVIRONMENT = Environment.TEST;
-        private const string APP_ID = "JF2GQpeCrOivkBGsTRiqkpkdKp67Gxi0";
-        private const string APP_KEY = "y7vALnUtFulORlTV";
 
         [TestInitialize]
         public void TestInitialize() {
             card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "123",
             };
 
             gpApiConfig = new GpApiConfig {
-                Environment = ENVIRONMENT, 
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 RequestLogger = new RequestConsoleLogger()
             };
         }
@@ -40,12 +37,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void GenerateAccessTokenManualWithPermissions() {
             var permissions = new[] { "PMT_POST_Create", "PMT_POST_Detokenize" };
             gpApiConfig.Permissions = permissions;
-            
+
             var info = GpApiService.GenerateTransactionKey(gpApiConfig);
 
             Assert.IsNotNull(info);
             Assert.IsNotNull(info.Token);
-            Assert.AreEqual("Tokenization", info.TokenizationAccountName);
+            Assert.AreEqual("tokenization", info.TokenizationAccountName);
             Assert.IsNull(info.DataAccountName);
             Assert.IsNull(info.DisputeManagementAccountName);
             Assert.IsNull(info.TransactionProcessingAccountName);
@@ -55,7 +52,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void GenerateAccessTokenManualWithWrongPermissions() {
             var permissions = new[] { "TEST_1", "TEST_2" };
             gpApiConfig.Permissions = permissions;
-            
+
             var exceptionCaught = false;
             try {
                 GpApiService.GenerateTransactionKey(gpApiConfig);
@@ -76,7 +73,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             gpApiConfig.Permissions = permissions;
             gpApiConfig.SecondsToExpire = 60;
             GpApiService.GenerateTransactionKey(gpApiConfig);
-            
+
             ServicesContainer.ConfigureService(gpApiConfig, "GpApiConfig_2");
 
             var exceptionCaught = false;
@@ -120,7 +117,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             gpApiConfig.AccessTokenInfo = info;
 
             ServicesContainer.ConfigureService(gpApiConfig);
-            
+
             var response = card.Verify()
                 .WithCurrency("USD")
                 .Execute();
@@ -290,10 +287,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private static void AssertAccessTokenResponse(AccessTokenInfo accessTokenInfo) {
             Assert.IsNotNull(accessTokenInfo);
             Assert.IsNotNull(accessTokenInfo.Token);
-            Assert.AreEqual("Tokenization", accessTokenInfo.TokenizationAccountName);
-            Assert.AreEqual("Settlement Reporting", accessTokenInfo.DataAccountName);
-            Assert.AreEqual("Dispute Management", accessTokenInfo.DisputeManagementAccountName);
-            Assert.AreEqual("Transaction_Processing", accessTokenInfo.TransactionProcessingAccountName);
+            Assert.AreEqual("tokenization", accessTokenInfo.TokenizationAccountName);
+            Assert.AreEqual("settlement_reporting", accessTokenInfo.DataAccountName);
+            Assert.AreEqual("dispute_management", accessTokenInfo.DisputeManagementAccountName);
+            Assert.AreEqual("transaction_processing", accessTokenInfo.TransactionProcessingAccountName);
         }
     }
 }

@@ -25,8 +25,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Country = "GB",
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
@@ -40,8 +40,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public GpApi3DSecure1Tests() {
             card = new CreditCardData {
                 Number = CARDHOLDER_ENROLLED_V1,
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 CardHolderName = "John Smith"
             };
         }

@@ -769,10 +769,16 @@ namespace GlobalPayments.Api.Gateways {
                     if (payment.PaymentMethod != null) {
                         var card = payment.PaymentMethod as CreditCardData;
                         string expiry = card.ShortExpiry;
+
                         et.SubElement(cardElement, "number").Text(card.Number);
                         et.SubElement(cardElement, "expdate").Text(expiry);
                         et.SubElement(cardElement, "chname").Text(card.CardHolderName);
                         et.SubElement(cardElement, "type").Text(MapCardType(CardUtils.GetBaseCardType(card.CardType)));
+
+                        if (payment.StoredCredential != null) {
+                            Element storedCredentialElement = et.SubElement(request, "storedcredential");
+                            et.SubElement(storedCredentialElement, "srd", payment.StoredCredential.SchemeId);
+                        }
 
                         string sha1hash = string.Empty;
                         if (builder.TransactionType == TransactionType.Create)
@@ -1292,7 +1298,7 @@ namespace GlobalPayments.Api.Gateways {
 
             var addressNode = et.Element("address").Set("type", address.Type == AddressType.Billing ? "billing" : "shipping");
             et.SubElement(addressNode, "code").Text(code);
-            et.SubElement(addressNode, "country").Text(address.Country);
+            et.SubElement(addressNode, "country").Text(address.CountryCode);
 
             return addressNode;
         }

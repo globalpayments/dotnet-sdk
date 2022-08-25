@@ -22,8 +22,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
@@ -42,8 +42,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "123",
                 CardHolderName = "John Smith",
                 CardPresent = true
@@ -450,8 +450,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             ServicesContainer.ConfigureService(new GpApiConfig {
                 Environment = Environment.TEST,
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Permissions = permissions,
                 SecondsToExpire = 60
             }, withoutPermissions);

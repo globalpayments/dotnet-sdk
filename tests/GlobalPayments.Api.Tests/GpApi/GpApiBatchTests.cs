@@ -19,8 +19,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID_FOR_BATCH,
-                AppKey = APP_KEY_FOR_BATCH,
+                AppId = AppIdForBatch,
+                AppKey = AppKeyForBatch,
                 Channel = Channel.CardPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
@@ -36,8 +36,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CloseBatch_ActionNotAuthorized() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardPresent
             });
 
@@ -47,7 +47,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                             .Execute();
             AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var exceptionCaught = false;
             try {
@@ -70,7 +70,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(chargeTransaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
@@ -85,7 +85,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
@@ -104,7 +104,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(captureTransaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(captureTransaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
@@ -125,7 +125,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
@@ -144,7 +144,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(secondTransaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(secondTransaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, 3.28m);
@@ -163,7 +163,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(refundTransaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(refundTransaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, 0);
@@ -184,7 +184,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
@@ -210,7 +210,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(reverseTransaction, TransactionStatus.Reversed);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var exceptionCaught = false;
             try {
@@ -230,8 +230,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CloseBatch_WithCardNumberDetails() {
             var card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "123",
                 CardPresent = true
             };
@@ -242,7 +242,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(chargeTransaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
@@ -252,8 +252,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CloseBatch_WithCardNumberDetails_DeclinedTransaction() {
             var card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "852",
                 CardPresent = true
             };
@@ -263,17 +263,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(chargeTransaction);
-            Assert.AreEqual(DECLINED, chargeTransaction?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Declined), chargeTransaction?.ResponseMessage);
+            Assert.AreEqual(DECLINED, chargeTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Declined), chargeTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary?.Status);
-            Assert.AreEqual(0, batchSummary?.TransactionCount);
-            Assert.AreEqual(0, batchSummary?.TotalAmount);
+            Assert.AreEqual(CLOSED, batchSummary.Status);
+            Assert.AreEqual(0, batchSummary.TransactionCount);
+            Assert.AreEqual(0, batchSummary.TotalAmount);
         }
         
         [TestMethod]
@@ -288,13 +288,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(response, TransactionStatus.Reversed);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary?.Status);
-            Assert.AreEqual(0, batchSummary?.TransactionCount);
-            Assert.AreEqual(0, batchSummary?.TotalAmount);
+            Assert.AreEqual(CLOSED, batchSummary.Status);
+            Assert.AreEqual(0, batchSummary.TransactionCount);
+            Assert.AreEqual(0, batchSummary.TotalAmount);
         }
         
         [TestMethod]
@@ -305,7 +305,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var exceptionCaught = false;
             try {
@@ -336,7 +336,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             //.setIdempotency - ToDo
 
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary?.Status);
+            Assert.AreEqual(CLOSED, batchSummary.Status);
 
             BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
         }
@@ -349,13 +349,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var batchSummary = BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var exceptionCaught = false;
             try {
@@ -378,8 +378,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
-            Assert.AreEqual(VERIFIED, transaction?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, transaction.ResponseCode);
+            Assert.AreEqual(VERIFIED, transaction.ResponseMessage);
 
             var exceptionCaught = false;
             try {
@@ -399,15 +399,15 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CloseBatch_CardNotPresentChannel() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID_FOR_BATCH,
-                AppKey = APP_KEY_FOR_BATCH,
-                Channel = Channel.CardNotPresent,
+                AppId = AppIdForBatch,
+                AppKey = AppKeyForBatch,
+                Channel = Channel.CardNotPresent
             });
 
             var creditCardData = new CreditCardData {
                 Number = "5425230000004415",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "852",
             };
 
@@ -417,7 +417,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
 
             var exceptionCaught = false;
             try {
@@ -455,15 +455,15 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private static void AssertBatchCloseResponse(BatchSummary batchSummary, decimal amount) {
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary?.Status);
-            Assert.IsTrue(batchSummary?.TransactionCount >= 1);
-            Assert.IsTrue(batchSummary?.TotalAmount >= amount);
+            Assert.AreEqual(CLOSED, batchSummary.Status);
+            Assert.IsTrue(batchSummary.TransactionCount >= 1);
+            Assert.IsTrue(batchSummary.TotalAmount >= amount);
         }
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
-            Assert.AreEqual(GetMapping(transactionStatus), transaction?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
     }
 }

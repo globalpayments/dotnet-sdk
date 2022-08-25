@@ -3,7 +3,6 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using GlobalPayments.Api.Utils.Logging;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
@@ -13,16 +12,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private static CreditCardData Card = new CreditCardData {
             Number = "4111111111111111",
-            ExpMonth = expMonth,
-            ExpYear = expYear,
+            ExpMonth = ExpMonth,
+            ExpYear = ExpYear,
             Cvn = "123"
         };
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 RequestLogger = new RequestConsoleLogger()
             });
 
@@ -38,7 +37,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void VerifyTokenizedPaymentMethod() {
             var tokenizedCard = new CreditCardData {
-                Token = Token,
+                Token = Token
             };
 
             var response = tokenizedCard.Verify()
@@ -55,7 +54,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var idempotencyKey = Guid.NewGuid().ToString();
 
             var tokenizedCard = new CreditCardData {
-                Token = Token,
+                Token = Token
             };
 
             var response = tokenizedCard.Verify()
@@ -107,7 +106,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleWithTokenizedPaymentMethod() {
             var tokenizedCard = new CreditCardData {
-                Token = Token,
+                Token = Token
             };
 
             var response = tokenizedCard.Charge(19.99m)
@@ -115,14 +114,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
         [TestMethod]
         public void CreditSaleWithTokenizedPaymentMethod_WithStoredCredentials() {
             var tokenizedCard = new CreditCardData {
-                Token = Token,
+                Token = Token
             };
 
             var response = tokenizedCard.Charge(15.25m)
@@ -136,8 +135,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
         [ClassCleanup]

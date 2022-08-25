@@ -14,8 +14,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
             });
@@ -24,9 +24,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         #region Transactions
         [TestMethod]
         public void ReportTransactionDetail() {
-            var transactionId = ReportingService.FindTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var transactionId = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .Execute().Results.Select(t => t.TransactionId).FirstOrDefault();
-            
+
             var response = ReportingService.TransactionDetail(transactionId)
                 .Execute();
             Assert.IsNotNull(response);
@@ -54,24 +54,24 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_And_EndDate() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
-                .And(SearchCriteria.EndDate, REPORTING_END_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
+                .And(SearchCriteria.EndDate, ReportingEndDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.TransactionDate?.Date >= REPORTING_START_DATE.Date && t.TransactionDate?.Date <= REPORTING_END_DATE.Date));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.TransactionDate?.Date >= ReportingStartDate.Date && t.TransactionDate?.Date <= ReportingEndDate.Date));
         }
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Id() {
-            var transactionId = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var transactionId = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .Execute().Results.Select(t => t.TransactionId).FirstOrDefault();
 
             Assert.IsNotNull(transactionId);
             
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .WithTransactionId(transactionId)
                 .Execute();
             
@@ -84,7 +84,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_WrongId() {
             const string transactionId = "TRN_B2RDfsrhwhzvsbkci4JdTiZ9mHVmvC";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .WithTransactionId(transactionId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -95,7 +95,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_BatchId() {
             const string batchId = "BAT_845591";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.BatchId, batchId)
                 .Execute();
@@ -107,7 +107,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Type() {
             const PaymentType paymentType = PaymentType.Sale;
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.PaymentType, paymentType)
                 .Execute();
@@ -121,7 +121,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const decimal amount = 1.12M;
             const string currency = "aud"; //This is case sensitive
             const string country = "AU"; //This is case sensitive
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.Amount, amount)
                 .And(DataServiceCriteria.Currency, currency)
@@ -135,7 +135,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Channel() {
             const Channel channel = Channel.CardNotPresent;
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.Channel, channel)
                 .Execute();
@@ -147,7 +147,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Status() {
             const TransactionStatus transactionStatus = TransactionStatus.Captured;
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.TransactionStatus, transactionStatus)
                 .Execute();
@@ -160,7 +160,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_CardBrand_And_AuthCode() {
             const string cardBrand = "VISA";
             const string authCode = "12345";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.CardBrand, cardBrand)
                 .And(SearchCriteria.AuthCode, authCode)
@@ -173,7 +173,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Reference() {
             const string referenceNumber = "e1f2f968-e9cc-45b2-b41f-61cad13754aa";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.ReferenceNumber, referenceNumber)
                 .Execute();
@@ -185,7 +185,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_BrandReference() {
             const string brandReference = "D5v2Nv8h91Me3DTh";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.BrandReference, brandReference)
                 .Execute();
@@ -197,7 +197,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_EntryMode() {
             const PaymentEntryMode paymentEntryMode = PaymentEntryMode.Ecom;
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.PaymentEntryMode, paymentEntryMode)
                 .Execute();
@@ -210,7 +210,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_Number_First6_And_Last4() {
             const string firstSix = "426397";
             const string lastFour = "5262";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.CardNumberFirstSix, firstSix)
                 .And(SearchCriteria.CardNumberLastFour, lastFour)
@@ -224,7 +224,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_Token_First6_And_Last4() {
             const string firstSix = "426397";
             const string lastFour = "5262";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.TokenFirstSix, firstSix)
                 .And(SearchCriteria.TokenLastFour, lastFour)
@@ -238,7 +238,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_Token_First6_And_Last4_And_PaymentMethod() {
             const string firstSix = "426397";
             const string lastFour = "5262";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.TokenFirstSix, firstSix)
                 .And(SearchCriteria.TokenLastFour, lastFour)
@@ -255,7 +255,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const string lastFour = "5262";
             var exceptionCaught = false;
             try {
-                ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+                ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(SearchCriteria.TokenFirstSix, firstSix)
                     .And(SearchCriteria.TokenLastFour, lastFour)
@@ -275,7 +275,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_PaymentMethod() {
             foreach (PaymentMethodName paymentMethodName in Enum.GetValues(typeof(PaymentMethodName))) {
-                var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+                var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(SearchCriteria.PaymentMethodName, paymentMethodName)
                     .Execute();
@@ -286,7 +286,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Name() {
             const string name = "James Mason";
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Where(SearchCriteria.Name, name)
                 .Execute();
@@ -297,9 +297,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_OrderBy_TimeCreated_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results.Count > 0);
@@ -309,9 +309,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_OrderBy_Id_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Id, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results.Count > 0);
@@ -321,9 +321,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_OrderBy_Type_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results.Count > 0);
@@ -333,7 +333,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_TimeCreated_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -343,7 +343,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_TimeCreated_Descending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -353,7 +353,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Id_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Id, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -363,7 +363,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Id_Descending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Id, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -373,7 +373,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Type_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -383,7 +383,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Type_Descending() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -393,7 +393,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_Without_Mandatory_StartDate() {
-            var result = ReportingService.FindTransactionsPaged(FIRST_PAGE,PAGE_SIZE)
+            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
                 .Execute();
 
@@ -405,21 +405,21 @@ namespace GlobalPayments.Api.Tests.GpApi {
         #region Settlement Transactions
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_And_EndDate() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
-                .And(SearchCriteria.EndDate, REPORTING_END_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
+                .And(SearchCriteria.EndDate, ReportingEndDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.TransactionDate?.Date >= REPORTING_START_DATE.Date && t.TransactionDate?.Date <= REPORTING_END_DATE.Date));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.TransactionDate?.Date >= ReportingStartDate.Date && t.TransactionDate?.Date <= ReportingEndDate.Date));
         }
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_TimeCreated_Ascending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -428,9 +428,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_TimeCreated_Descending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -439,9 +439,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Status_Ascending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Status, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -450,9 +450,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Status_Descending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Status, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -461,9 +461,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Type_Ascending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -472,9 +472,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_Type_Descending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -483,9 +483,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_DepositId_Ascending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.DepositId, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -494,9 +494,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_StartDate_OrderBy_DepositId_Descending() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.DepositId, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
@@ -508,9 +508,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const string firstSix = "543458";
             const string lastFour = "7652";
             
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.CardNumberFirstSix, firstSix)
                 .And(SearchCriteria.CardNumberLastFour, lastFour)
                 .Execute();
@@ -523,9 +523,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_CardBrand() {
             const string cardBrand = "MASTERCARD";
             
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.CardBrand, cardBrand)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -537,9 +537,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_InvalidCardBrand() {
             const string cardBrand = "MIT";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.CardBrand, cardBrand)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -551,9 +551,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_DepositStatus()
         {
             foreach (DepositStatus depositStatus in Enum.GetValues(typeof(DepositStatus))) {
-                var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+                var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                    .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                    .Where(SearchCriteria.StartDate, ReportingStartDate)
                     .And(SearchCriteria.DepositStatus, depositStatus)
                     .Execute();
                 Assert.IsNotNull(result?.Results);
@@ -565,9 +565,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_ARN() {
             const string arn = "74500010037624410827759";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.AquirerReferenceNumber, arn)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -579,9 +579,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_WrongARN() {
             const string arn = "00000010037624410827527";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.AquirerReferenceNumber, arn)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -593,9 +593,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_BrandReference() {
             const string brandReference = "MCF1CZ5ME5405";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.BrandReference, brandReference)
                 .Execute();
             Assert.IsNotNull(result.Results);
@@ -607,9 +607,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_WrongBrandReference() {
             const string brandReference = "MCF1CZ5ME5001";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.BrandReference, brandReference)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -622,9 +622,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const string cardBrand = "MASTERCARD";
             const string authCode = "028010";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.CardBrand, cardBrand)
                 .And(SearchCriteria.AuthCode, authCode)
                 .Execute();
@@ -638,9 +638,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_Reference() {
             const string reference = "50080513769";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.ReferenceNumber, reference)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -650,9 +650,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_RandomReference() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.ReferenceNumber, Guid.NewGuid().ToString())
                 .Execute();
 
@@ -664,9 +664,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_Status() {
             foreach (TransactionStatus transactionStatus in Enum.GetValues(typeof(TransactionStatus))) {
-                var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+                var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                    .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                    .Where(SearchCriteria.StartDate, ReportingStartDate)
                     .And(SearchCriteria.TransactionStatus, transactionStatus)
                     .Execute();
                 Assert.IsNotNull(result?.Results);
@@ -680,9 +680,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_DepositReference() {
             const string depositReference = "DEP_2342423429";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(DataServiceCriteria.DepositReference, depositReference)
                 .Execute();
             Assert.IsNotNull(result.Results);
@@ -692,9 +692,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_RandomDepositReference() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(DataServiceCriteria.DepositReference, Guid.NewGuid().ToString())
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -704,28 +704,28 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_FromDepositTimeCreated_And_ToDepositTimeCreated() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.StartDepositDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.EndDepositDate, REPORTING_LAST_MONTH_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
+                .And(DataServiceCriteria.StartDepositDate, ReportingStartDate)
+                .And(DataServiceCriteria.EndDepositDate, ReportingLastMonthDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.DepositDate?.Date >= REPORTING_START_DATE.Date && t.DepositDate?.Date <= REPORTING_LAST_MONTH_DATE.Date));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.DepositDate?.Date >= ReportingStartDate.Date && t.DepositDate?.Date <= ReportingLastMonthDate.Date));
         }
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_FromBatchTimeCreated_And_ToBatchTimeCreated() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.StartBatchDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.EndBatchDate, REPORTING_LAST_MONTH_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
+                .And(DataServiceCriteria.StartBatchDate, ReportingStartDate)
+                .And(DataServiceCriteria.EndBatchDate, ReportingLastMonthDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.BatchCloseDate?.Date >= REPORTING_START_DATE.Date && t.BatchCloseDate?.Date <= REPORTING_LAST_MONTH_DATE.Date));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.BatchCloseDate?.Date >= ReportingStartDate.Date && t.BatchCloseDate?.Date <= ReportingLastMonthDate.Date));
         }
 
         [TestMethod]
@@ -733,9 +733,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const string merchantId = "101023947262";
             const string systemHierarchy = "055-70-024-011-019";
 
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(DataServiceCriteria.MerchantId, merchantId)
                 .And(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
@@ -748,9 +748,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindSettlementTransactionsPaged_By_NonExistent_MerchantId() {
             const string merchantId = "100023947222";
             
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -760,9 +760,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindSettlementTransactionsPaged_By_Random_SystemHierarchy() {
-            var result = ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(DataServiceCriteria.SystemHierarchy, Guid.NewGuid().ToString())
                 .Execute();
 
@@ -776,9 +776,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var exceptionCaught = false;
             
             try {
-                ReportingService.FindSettlementTransactionsPaged(FIRST_PAGE, PAGE_SIZE)
+                ReportingService.FindSettlementTransactionsPaged(FirstPage, PageSize)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                    .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                    .Where(SearchCriteria.StartDate, ReportingStartDate)
                     .And(DataServiceCriteria.MerchantId, Guid.NewGuid().ToString())
                     .Execute();
             }

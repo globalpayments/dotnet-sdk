@@ -19,8 +19,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardNotPresent,
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
@@ -38,8 +38,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "123",
                 CardPresent = true
             };
@@ -78,8 +78,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);
             Assert.IsNotNull(response.FingerPrintIndicator);           
             Assert.AreEqual("EXISTS",response.FingerPrintIndicator);           
@@ -100,8 +100,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual("VERIFIED", response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);           
         }
 
@@ -210,8 +210,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CardTokenizationWithSomeCardInfoThenUpdateWithoutUsageMode()
         {
             var tokenizedCard = new CreditCardData();
-            tokenizedCard.ExpMonth = expMonth;
-            tokenizedCard.ExpYear = expYear;
+            tokenizedCard.ExpMonth = ExpMonth;
+            tokenizedCard.ExpYear = ExpYear;
             tokenizedCard.Token = $"PMT_{Guid.NewGuid()}";
             var exceptionCaught = false;
             try
@@ -242,8 +242,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);
             Assert.IsNotNull(response.FingerPrintIndicator);           
             Assert.AreEqual("EXISTS",response.FingerPrintIndicator);           
@@ -262,8 +262,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual(DECLINED, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
+            Assert.AreEqual(DECLINED, response.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Declined), response.ResponseMessage);
             Assert.AreEqual("",response.FingerPrint);           
             Assert.AreEqual("",response.FingerPrintIndicator);           
         }
@@ -732,8 +732,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(VERIFIED, response.ResponseMessage);
 
             var exceptionCaught = false;
             try {
@@ -821,8 +821,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     ServicesContainer.ConfigureService(new GpApiConfig
                     {
                         Environment = Environment.TEST,
-                        AppId = APP_ID,
-                        AppKey = APP_KEY,
+                        AppId = AppId,
+                        AppKey = AppKey,
                         SecondsToExpire = 60,
                         Channel = channel,
                         RequestLogger = new RequestConsoleLogger()
@@ -844,8 +844,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod))) {
                 ServicesContainer.ConfigureService(new GpApiConfig {
                     Environment = Environment.TEST,
-                    AppId = APP_ID,
-                    AppKey = APP_KEY,
+                    AppId = AppId,
+                    AppKey = AppKey,
                     SecondsToExpire = 60,
                     Channel = Channel.CardPresent,
                     RequestLogger = new RequestConsoleLogger()
@@ -903,8 +903,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 })
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(VERIFIED, response.ResponseMessage);
         }
 
         [TestMethod]
@@ -1066,8 +1066,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual(status, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(transactionStatus), response?.ResponseMessage);
+            Assert.AreEqual(status, response.ResponseCode);
+            Assert.AreEqual(GetMapping(transactionStatus), response.ResponseMessage);
             Assert.AreEqual(cvnResponseMessage, response.CvnResponseMessage);
             Assert.AreEqual(avsResponseCode, response.AvsResponseCode);
             Assert.AreEqual(avsAddressResponse, response.AvsAddressResponse);

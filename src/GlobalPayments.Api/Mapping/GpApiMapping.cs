@@ -632,9 +632,7 @@ namespace GlobalPayments.Api.Mapping {
                 {
                     ThreeDSecure = new ThreeDSecure
                     {
-                        ServerTransactionId = !string.IsNullOrEmpty(json.GetValue<string>("id")) ?
-                            json.GetValue<string>("id") :
-                            json.Get("three_ds")?.GetValue<string>("server_trans_ref"),
+                        ServerTransactionId = json.GetValue<string>("id"),                        
                         MessageVersion = json.Get("three_ds")?.GetValue<string>("message_version"),
                         Version = Parse3DSVersion(json.Get("three_ds")?.GetValue<string>("message_version")),
                         Status = json.GetValue<string>("status"),
@@ -642,6 +640,8 @@ namespace GlobalPayments.Api.Mapping {
                         DirectoryServerEndVersion = json.Get("three_ds")?.GetValue<string>("ds_protocol_version_end"),
                         AcsStartVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_start"),
                         AcsEndVersion = json.Get("three_ds")?.GetValue<string>("acs_protocol_version_end"),
+                        AcsReferenceNumber = json.Get("three_ds")?.GetValue<string>("acs_reference_number"),
+                        ProviderServerTransRef = json.Get("three_ds")?.GetValue<string>("server_trans_ref"),
                         Enrolled = json.Get("three_ds")?.GetValue<string>("enrolled_status"),
                         Eci = !string.IsNullOrEmpty(json.Get("three_ds")?.GetValue<string>("eci")) ? json.Get("three_ds")?.GetValue<string>("eci") : null,
                         AcsInfoIndicator = json.Get("three_ds")?.GetArray<string>("acs_info_indicator"),

@@ -13,8 +13,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
             });
@@ -54,33 +54,33 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindDepositsPaged_By_StartDate_Order_By_TimeCreated() {
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DepositSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(d => d.DepositDate?.Date >= REPORTING_START_DATE.Date));
+            Assert.IsTrue(result.Results.TrueForAll(d => d.DepositDate?.Date >= ReportingStartDate.Date));
         }
 
         [TestMethod]
         public void ReportFindDepositsPaged_By_EndDate_Order_By_TimeCreated() {
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
-                .And(SearchCriteria.EndDate, REPORTING_END_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
+                .And(SearchCriteria.EndDate, ReportingEndDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DepositSummary>);
             Assert.IsTrue(result.Results.TrueForAll(d =>
-                d.DepositDate?.Date >= REPORTING_START_DATE.Date && d.DepositDate?.Date <= REPORTING_END_DATE.Date));
+                d.DepositDate?.Date >= ReportingStartDate.Date && d.DepositDate?.Date <= ReportingEndDate.Date));
         }
 
         [TestMethod]
         public void ReportFindDepositsPaged_By_Amount() {
             const decimal amount = 141;
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.Amount, amount)
                 .Execute();
@@ -93,7 +93,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_NotFoundAmount() {
             const decimal amount = 140;
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.Amount, amount)
                 .Execute();
@@ -105,7 +105,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindDepositsPaged_By_Status() {
             foreach (DepositStatus depositStatus in Enum.GetValues(typeof(DepositStatus))) {
-                var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+                var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                     .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(SearchCriteria.DepositStatus, depositStatus)
                     .Execute();
@@ -119,7 +119,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_Masked_Account_Number_Last4() {
             const string maskedAccountNumberLast4 = "9999";
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.AccountNumberLastFour, maskedAccountNumberLast4)
                 .Execute();
@@ -132,7 +132,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_SystemHierarchy() {
             const string systemHierarchy = "055-70-024-011-019";
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
@@ -145,7 +145,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_WrongSystemHierarchy() {
             const string systemHierarchy = "042-70-013-011-018";
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
@@ -158,7 +158,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_RandomUUIDSystemHierarchy() {
             var exceptionCaught = false;
             try {
-                ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+                ReportingService.FindDepositsPaged(FirstPage, PageSize)
                     .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(DataServiceCriteria.SystemHierarchy, Guid.NewGuid().ToString())
                     .Execute();
@@ -177,7 +177,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_WithoutFromTimeCreated() {
             var exceptionCaught = false;
             try {
-                ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+                ReportingService.FindDepositsPaged(FirstPage, PageSize)
                     .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(DataServiceCriteria.SystemHierarchy, Guid.NewGuid().ToString())
                     .Execute();
@@ -196,7 +196,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_MerchantId() {
             const string merchantId = "101023947262";
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
@@ -209,7 +209,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_Wrong_MerchantId() {
             const string merchantId = "000023985843";
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
@@ -222,7 +222,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_DepositId() {
             const string depositId = "DEP_2342423440";
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .WithDepositReference(depositId)
                 .Execute();
@@ -235,10 +235,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindDepositsPaged_By_WrongDepositId() {
             const string depositId = "DEP_1112423111";
 
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.TimeCreated, SortDirection.Descending)
                 .WithDepositReference(depositId)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results.Count == 0);
@@ -246,9 +246,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindDepositsPaged_Order_By_DepositId() {
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.DepositId, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DepositSummary>);
@@ -256,9 +256,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindDepositsPaged_Order_By_Status() {
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.Status, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DepositSummary>);
@@ -266,9 +266,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindDepositsPaged_Order_By_Type() {
-            var result = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.Type, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DepositSummary>);
@@ -276,14 +276,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CompareResults_reportFindDepositsWithCriteria_OrderBy_DepositId_And_Type() {
-            var resultById = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var resultById = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.DepositId, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
 
-            var resultByType = ReportingService.FindDepositsPaged(FIRST_PAGE, PAGE_SIZE)
+            var resultByType = ReportingService.FindDepositsPaged(FirstPage, PageSize)
                 .OrderBy(DepositSortProperty.Type, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
 
             Assert.IsNotNull(resultById?.Results);

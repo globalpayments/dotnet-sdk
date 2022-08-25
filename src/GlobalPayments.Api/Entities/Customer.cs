@@ -92,6 +92,11 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public List<RecurringPaymentMethod> PaymentMethods { get; set; }
 
+        public RecurringPaymentMethod AddPaymentMethod(string paymentId, IPaymentMethod paymentMethod)
+        {
+            return AddPaymentMethod(paymentId, paymentMethod, null);
+        }
+
         /// <summary>
         /// Adds a payment method to the customer
         /// </summary>
@@ -102,7 +107,7 @@ namespace GlobalPayments.Api.Entities {
         /// The payment method
         /// </param>
         /// <returns>RecurringPaymentMethod</returns>
-        public RecurringPaymentMethod AddPaymentMethod(string paymentId, IPaymentMethod paymentMethod) {
+        public RecurringPaymentMethod AddPaymentMethod(string paymentId, IPaymentMethod paymentMethod, StoredCredential storedCredential) {
             var nameOnAccount = string.Format("{0} {1}", FirstName, LastName);
             if (string.IsNullOrWhiteSpace(nameOnAccount))
                 nameOnAccount = Company;
@@ -111,7 +116,8 @@ namespace GlobalPayments.Api.Entities {
                 Address = Address,
                 CustomerKey = Key,
                 Id = paymentId,
-                NameOnAccount = nameOnAccount
+                NameOnAccount = nameOnAccount,
+                StoredCredential = storedCredential
             };
         }
     }

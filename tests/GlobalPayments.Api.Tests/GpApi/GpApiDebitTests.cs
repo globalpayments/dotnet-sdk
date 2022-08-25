@@ -15,8 +15,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
@@ -163,8 +163,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
-            Assert.AreEqual(GetMapping(transactionStatus), transaction?.ResponseMessage);
+            Assert.AreEqual(SUCCESS, transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
     }
 }

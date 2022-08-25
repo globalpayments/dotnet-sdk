@@ -165,12 +165,15 @@ namespace GlobalPayments.Api.Terminals.UPA
                 if (transType == TransactionType.Refund) {
                     var transaction = txnData.SubElement("transaction");
                     transaction.Set("totalAmount", ToCurrencyString(builder.Amount));
+                    transaction.Set("invoiceNbr", builder.InvoiceNumber);
+                    transaction.Set("referenceNumber", builder.TerminalRefNumber);
                 }
 
                 if (isTipAdjust) {
                     var transaction = txnData.SubElement("transaction");
                     transaction.Set("tranNo", builder.TerminalRefNumber);
                     transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
+                    transaction.Set("invoiceNbr", builder.InvoiceNumber);
                 }
             }
 

@@ -29,8 +29,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Country = "GB",
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
@@ -45,8 +45,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             // Create card data
             card = new CreditCardData {
                 Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_1,
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 CardHolderName = "John Smith"
             };
 
@@ -759,8 +759,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         {
             CreditCardData challengeCard = new CreditCardData { 
                 Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2,
-                ExpMonth = 12,
-                ExpYear = 2025,
+                ExpMonth = expMonth,
+                ExpYear = expYear,
                 CardHolderName = "James Mason"
             };
 
@@ -786,6 +786,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
             Assert.IsNotNull(initAuth.AcsInterface);
             Assert.IsNotNull(initAuth.AcsUiTemplate);
+            Assert.IsNotNull(initAuth.AcsReferenceNumber);
+            Assert.IsNotNull(initAuth.ProviderServerTransRef);
         }
 
         [TestMethod]

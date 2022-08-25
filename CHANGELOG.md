@@ -2,7 +2,23 @@
 
 ## Latest
 
+#### Enhancements
+
+- Enhanced security on MVC end to end example application
+- Increased the version number of Newtonsoft.Json in the GlobalPayments.API solution
+- GP-API: Updated Misc Tests
+- GP-ECOM: Add srd information on store a new card request 
+- GP-API: Add mapping for "acs_reference_number", "acs_signed_content" and "server_trans_ref" in 3DS flow on initiate authentication step
+
 #### Bug Fixes:
+
+- UPA Devices: Added invoice number to Refund and Tip Adjust transactions
+- GP-ECOM: Billing/Shipping country value should be ISO2 country code
+
+## v4.1.4 (8/4/2022)
+
+#### Bug Fixes:
+
 - Added DE 25 Message Reason Code enum value for Failure to Dispense to replace incorrect, outdated values (NWS)
 - Corrected an issue where EmvFallbackCondition was not being respected when set (NWS)
 

@@ -12,8 +12,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 RequestLogger = new RequestConsoleLogger()
             });
         }
@@ -23,7 +23,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const string token = "This_is_not_a_payment_id";
 
             var tokenizedCard = new CreditCardData {
-                Token = token,
+                Token = token
             };
 
             var exceptionCaught = false;
@@ -45,8 +45,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void VerifyTokenizedPaymentMethod_WithMissingCardNumber() {
             _card = new CreditCardData {
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear
             };
             var exceptionCaught = false;
             try {
@@ -65,7 +65,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void VerifyTokenizedPaymentMethod_WithRandomId() {
             var tokenizedCard = new CreditCardData {
-                Token = "PMT_" + Guid.NewGuid(),
+                Token = "PMT_" + Guid.NewGuid()
             };
 
             var exceptionCaught = false;
@@ -88,8 +88,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void UpdateTokenizedPaymentMethod_WithMalformedId() {
             var tokenizedCard = new CreditCardData {
                 Token = "This_is_not_a_payment_id",
-                ExpMonth = expMonth,
-                ExpYear = expYear
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear
             };
             var exceptionCaught = false;
             try {
@@ -108,8 +108,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void UpdateTokenizedPaymentMethod_WithRandomId() {
             var tokenizedCard = new CreditCardData {
                 Token = "PMT_" + Guid.NewGuid(),
-                ExpMonth = expMonth,
-                ExpYear = expYear
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear
             };
             var exceptionCaught = false;
             try {
@@ -130,8 +130,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void DeleteTokenizedPaymentMethod_WithNonExistingId() {
             _card = new CreditCardData {
                 Number = "4111111111111111",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "123"
             };
 

@@ -51,6 +51,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
                 .WithCardBrandTransId("transId")
                 .WithAutoSubstantiation(autoSub)
+                .WithInvoiceNumber("aswe232322335")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -293,6 +294,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
             var returnResponse = _device.Refund(14m)
                 .WithEcrId(13)
+                .WithInvoiceNumber("aswe232322335")
                 .Execute();
             Assert.IsNotNull(returnResponse);
             Assert.AreEqual("00", returnResponse.ResponseCode);

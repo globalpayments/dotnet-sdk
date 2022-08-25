@@ -8,6 +8,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
     public class GpEcomRecurringTests {
         Customer new_customer;
+        CreditCardData card;
 
         public string CustomerId {
             get {
@@ -15,7 +16,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             }
         }
         public string PaymentId(string type) {
-            return string.Format("{0}-Realex-{1}", DateTime.Now.ToString("yyyyMMdd"), type);
+            return string.Format("{0}-Realex-{1}", DateTime.Now.AddDays(1).ToString("yyyyMMdd"), type);
         }
 
         public GpEcomRecurringTests() {
@@ -23,7 +24,8 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "api",
                 RefundPassword = "refund",
-                SharedSecret = "secret"
+                SharedSecret = "secret",
+                RequestLogger = new RequestConsoleLogger()
             },"test");
 
             new_customer = new Customer {
@@ -49,11 +51,11 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 Comments = "Campaign Ref E7373G"
             };
 
-            var card = new CreditCardData {
-                Number = "4263970000005262",
-                ExpMonth = 5,
+            card = new CreditCardData {
+                Number = "5425230000004415",
+                ExpMonth = 10,
                 ExpYear = DateTime.Now.AddYears(2).Year,
-                CardHolderName = "James Mason"
+                CardHolderName = "James New Mason"
             };
         }
 
@@ -89,6 +91,41 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
+        public void Test_001c_CreatePaymentMethodWithStoredCredential() {
+            try {
+                StoredCredential storedCredential = new StoredCredential();
+                storedCredential.SchemeId = "YOUR_DESIRED_SCHEME_ID_NEW1";
+
+                RecurringPaymentMethod paymentMethod =
+                        new_customer
+                                .AddPaymentMethod(PaymentId("Credit"), card, storedCredential)
+                                .Create("test");
+
+                Assert.IsNotNull(paymentMethod);
+            }
+            catch (GatewayException exc) {
+                if(!exc.ResponseCode.Equals("520"))
+                    throw exc;
+            }
+        }
+
+        [TestMethod]
+        public void Test_002c_EditPaymentMethodWithStoredCredential() {
+            RecurringPaymentMethod paymentMethod = new RecurringPaymentMethod(CustomerId, PaymentId("Credit"));
+            CreditCardData newCard = new CreditCardData();
+            newCard.Number = "5425230000004415";
+            newCard.ExpMonth = DateTime.Now.Month;
+            newCard.ExpYear = DateTime.Now.AddYears(2).Year;
+            newCard.CardHolderName = "Philip Marlowe";
+
+            paymentMethod.PaymentMethod = newCard;
+            StoredCredential storedCredential = new StoredCredential();
+            storedCredential.SchemeId = "YOUR_DESIRED_SCHEME_ID";
+            paymentMethod.StoredCredential = storedCredential;
+            paymentMethod.SaveChanges("test");
+    }
+
+    [TestMethod]
         public void Test_002a_EditCustomer() {
             var customer = new Customer { Key = CustomerId };
             customer.FirstName = "Perry";

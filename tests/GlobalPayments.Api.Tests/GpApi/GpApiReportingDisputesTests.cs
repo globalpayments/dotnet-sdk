@@ -14,8 +14,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
             });
@@ -56,7 +56,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void ReportFindDisputesPaged_By_ARN() {
             const string arn = "135091790340196";
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .Where(SearchCriteria.AquirerReferenceNumber, arn)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -67,8 +67,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void ReportFindDisputesPaged_By_Brand() {
             const string cardBrand = "VISA";
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.CardBrand, cardBrand)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -79,8 +79,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void ReportFindDisputesPaged_By_Status() {
             foreach (DisputeStatus disputeStatus in Enum.GetValues(typeof(DisputeStatus))) {
-                var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
-                    .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
+                    .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                     .And(SearchCriteria.DisputeStatus, disputeStatus)
                     .Execute();
                 Assert.IsNotNull(result?.Results);
@@ -97,8 +97,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                     continue;
                 }
 
-                var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
-                    .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
+                    .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                     .And(SearchCriteria.DisputeStage, disputeStage)
                     .Execute();
                 Assert.IsNotNull(result?.Results);
@@ -110,22 +110,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_By_From_And_To_Stage_Time_Created() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.EndStageDate, REPORTING_END_DATE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
+                .And(DataServiceCriteria.EndStageDate, ReportingEndDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
             Assert.IsTrue(result.Results.TrueForAll(d =>
-                d.CaseIdTime >= REPORTING_START_DATE.Date && d.CaseIdTime <= REPORTING_END_DATE.Date));
+                d.CaseIdTime >= ReportingStartDate.Date && d.CaseIdTime <= ReportingEndDate.Date));
         }
 
         [TestMethod]
         public void ReportFindDisputesPaged_By_MerchantId() {
             const string merchantId = "8593872";
 
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -137,8 +137,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindDisputesPaged_By_SystemHierarchy() {
             const string systemHierarchy = "111-23-099-002-005";
 
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -148,9 +148,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_Id() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -158,11 +158,11 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_ARN() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.ARN, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 // EndStageDate must be set in order to be able to sort by ARN
-                .And(DataServiceCriteria.EndStageDate, REPORTING_LAST_MONTH_DATE)
+                .And(DataServiceCriteria.EndStageDate, ReportingLastMonthDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -170,9 +170,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_Brand() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Brand, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -180,9 +180,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_Status() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Status, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -190,9 +190,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_Stage() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Stage, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -202,9 +202,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         [Ignore]
         // orderBy FromStageTimeCreated is not supported anymore
         public void ReportFindDisputesPaged_Order_By_FromStageTimeCreated() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.FromStageTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -212,9 +212,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_ToStageTimeCreated() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.ToStageTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -222,9 +222,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_AdjustmentFunding() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.AdjustmentFunding, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -232,9 +232,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_FromAdjustmentTimeCreated() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.FromAdjustmentTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -242,9 +242,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_ToAdjustmentTimeCreated() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.ToAdjustmentTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -252,9 +252,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_Id_With_Brand_VISA() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Ascending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.CardBrand, "VISA")
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -263,9 +263,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_Id_With_Status_UnderReview() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Ascending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.DisputeStatus, DisputeStatus.UnderReview)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -274,9 +274,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindDisputesPaged_Order_By_Id_With_Stage_Chargeback() {
-            var result = ReportingService.FindDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Ascending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.DisputeStage, DisputeStage.Chargeback)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -335,9 +335,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_Order_By_Id() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -347,7 +347,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesByDpositIdPaged_Order_By_Id() {
             const string depositId = "DEP_2342423423";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
                 .Where(DataServiceCriteria.DepositReference, depositId)
                 .Execute();
@@ -360,9 +360,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_Brand() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Brand, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -370,9 +370,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_Stage() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Stage, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -380,9 +380,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_FromStageTimeCreated() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.FromStageTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -390,9 +390,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_ToStageTimeCreated() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.ToStageTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -400,9 +400,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_AdjustmentFunding() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.AdjustmentFunding, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -410,9 +410,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_FromAdjustmentTimeCreated() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.FromAdjustmentTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -420,9 +420,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_OrderBy_ToAdjustmentTimeCreated() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.ToAdjustmentTimeCreated, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -432,9 +432,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesPaged_By_ARN() {
             const string arn = "71400011129688701392096";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.AquirerReferenceNumber, arn)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -446,9 +446,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesPaged_By_ARN_NotFound() {
             const string arn = "00000011129654301392121";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.AquirerReferenceNumber, arn)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -460,9 +460,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesPaged_By_Brand() {
             const string brand = "VISA";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.CardBrand, brand)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -473,9 +473,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesPaged_By_Brand_NotFound() {
             const string brand = "MASTERCAR";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.CardBrand, brand)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -485,9 +485,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_By_Status() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.DisputeStatus, DisputeStatus.Funded)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -497,23 +497,23 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_By_DepositDate() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartDepositDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.EndDepositDate, REPORTING_END_DATE)
+                .Where(DataServiceCriteria.StartDepositDate, ReportingStartDate)
+                .And(DataServiceCriteria.EndDepositDate, ReportingEndDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
             Assert.IsTrue(result.Results.TrueForAll(d =>
-                d.DepositDate >= REPORTING_START_DATE && d.DepositDate <= REPORTING_END_DATE));
+                d.DepositDate >= ReportingStartDate && d.DepositDate <= ReportingEndDate));
         }
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_By_Stage() {
             foreach (DisputeStage stage in Enum.GetValues(typeof(DisputeStage))) {
-                var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+                var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                     .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                    .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                    .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                     .And(SearchCriteria.DisputeStage, stage)
                     .Execute();
                 Assert.IsNotNull(result?.Results);
@@ -524,24 +524,24 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_By_From_And_To_Stage_Time_Created() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.EndStageDate, REPORTING_LAST_MONTH_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
+                .And(DataServiceCriteria.EndStageDate, ReportingLastMonthDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
             Assert.IsTrue(result.Results.TrueForAll(d =>
-                d.CaseIdTime >= REPORTING_START_DATE.Date && d.CaseIdTime <= REPORTING_LAST_MONTH_DATE.Date));
+                d.CaseIdTime >= ReportingStartDate.Date && d.CaseIdTime <= ReportingLastMonthDate.Date));
         }
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_By_MerchantId() {
             const string merchantId = "101023947262";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -553,9 +553,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesPaged_By_SystemHierarchy() {
             const string systemHierarchy = "055-70-024-011-019";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -567,9 +567,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesPaged_By_Wrong_MerchantId() {
             const string merchantId = "000023947222";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(DataServiceCriteria.MerchantId, merchantId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -581,9 +581,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindSettlementDisputesPaged_By_Wrong_SystemHierarchy() {
             const string systemHierarchy = "000-70-024-011-111";
 
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(DataServiceCriteria.SystemHierarchy, systemHierarchy)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -593,9 +593,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_Order_By_ARN() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.ARN, SortDirection.Descending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
@@ -603,9 +603,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindSettlementDisputesPaged_Order_By_Id_With_Status_UnderReview() {
-            var result = ReportingService.FindSettlementDisputesPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindSettlementDisputesPaged(FirstPage, PageSize)
                 .OrderBy(DisputeSortProperty.Id, SortDirection.Ascending)
-                .Where(DataServiceCriteria.StartStageDate, REPORTING_START_DATE)
+                .Where(DataServiceCriteria.StartStageDate, ReportingStartDate)
                 .And(SearchCriteria.DisputeStatus, DisputeStatus.UnderReview)
                 .Execute();
             Assert.IsNotNull(result?.Results);

@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("VISA", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -41,7 +41,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -61,7 +61,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("MASTERCARD", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -70,7 +70,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -90,7 +90,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("AMEX", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -99,7 +99,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -119,7 +119,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("DINERS", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -128,7 +128,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -148,7 +148,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("DISCOVER", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -157,7 +157,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -177,7 +177,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("JCB", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(SUCCESS, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
         #endregion
@@ -188,7 +188,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -216,7 +216,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -244,7 +244,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -274,7 +274,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -302,7 +302,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -330,7 +330,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -359,7 +359,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -387,7 +387,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -415,7 +415,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -445,7 +445,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -473,7 +473,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -501,7 +501,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -531,7 +531,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -559,7 +559,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -587,7 +587,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -617,7 +617,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -645,7 +645,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -673,7 +673,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -703,7 +703,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -716,7 +716,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             };
 
             try {
-                var response = card.Charge(3.99m)
+                card.Charge(3.99m)
                     .WithCurrency("USD")
                     .WithDescription("CreditCard_Visa_Processing_Error")
                     .Execute();
@@ -732,7 +732,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -745,7 +745,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             };
 
             try {
-                var response = card.Charge(3.99m)
+                card.Charge(3.99m)
                     .WithCurrency("XXX")
                     .WithDescription("CreditCard_Visa_Processing_Error_Wrong_Currency")
                     .Execute();
@@ -763,7 +763,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -776,7 +776,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             };
 
             try {
-                var response = card.Charge(2.16m)
+                card.Charge(2.16m)
                     .WithCurrency("USD")
                     .WithDescription("CreditCard_Mastercard_Processing_Error")
                     .Execute();
@@ -794,7 +794,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -807,7 +807,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             };
 
             try {
-                var response = card.Charge(4.02m)
+                card.Charge(4.02m)
                     .WithCurrency("USD")
                     .WithDescription("CreditCard_AmericanExpress_Processing_Error")
                     .Execute();
@@ -825,7 +825,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -838,7 +838,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             };
 
             try {
-                var response = card.Charge(5.99m)
+                card.Charge(5.99m)
                     .WithCurrency("USD")
                     .WithDescription("CreditCard_DinersClub_Processing_Error")
                     .Execute();
@@ -856,7 +856,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -869,7 +869,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             };
 
             try {
-                var response = card.Charge(8.99m)
+                card.Charge(8.99m)
                     .WithCurrency("USD")
                     .WithDescription("CreditCard_Discover_Processing_Error")
                     .Execute();
@@ -887,7 +887,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
                 AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent,
+                Channel = Channel.CardNotPresent
             });
 
             var card = new CreditCardData {
@@ -900,7 +900,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             };
 
             try {
-                var response = card.Charge(4.99m)
+                card.Charge(4.99m)
                     .WithCurrency("USD")
                     .WithDescription("CreditCard_JCB_Processing_Error")
                     .Execute();

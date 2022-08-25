@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
@@ -16,8 +15,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID_FOR_DCC,
-                AppKey = APP_KEY_FOR_DCC,
+                AppId = AppIdForDcc,
+                AppKey = AppKeyForDcc,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true,
@@ -26,8 +25,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             card = new CreditCardData {
                 Number = "4006097467207025",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 CardPresent = true
             };
         }
@@ -41,7 +40,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var transaction = card.Charge(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
@@ -58,7 +57,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var response = card.Authorize(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
@@ -75,7 +74,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var response = card.Refund(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
@@ -92,7 +91,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var transaction = card.Charge(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
@@ -114,7 +113,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var transaction = card.Charge(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
@@ -137,7 +136,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var transaction = card.Authorize(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
@@ -153,7 +152,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void CreditDccRateCardTokenizationThenPayingWithToken() {
             var tokenizedCard = new CreditCardData {
-                Token = card.Tokenize(),
+                Token = card.Tokenize()
             };
 
             var dccDetails = tokenizedCard.GetDccRate()
@@ -163,7 +162,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var response = tokenizedCard.Charge(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)
@@ -183,7 +182,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var expectedDccAmountValue = GetDccAmount(dccDetails);
             AssertDccInfoResponse(dccDetails, expectedDccAmountValue);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var exceptionCaught = false;
             try {
                 card.GetDccRate()
@@ -216,7 +215,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("NOT_AVAILABLE", dccDetails?.ResponseMessage);
             Assert.IsNotNull(dccDetails.DccRateData);
 
-            waitForGpApiReplication();
+            WaitForGpApiReplication();
             var transaction = card.Charge(Amount)
                 .WithCurrency(CURRENCY)
                 .WithDccRateData(dccDetails.DccRateData)

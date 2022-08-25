@@ -71,6 +71,8 @@ namespace GlobalPayments.Api.PaymentMethods
 
         public ThreeDSecure ThreeDSecure { get; set; }
 
+        public StoredCredential StoredCredential { get; set; }
+
         public RecurringPaymentMethod() : this(null, null) { }
         internal RecurringPaymentMethod(IPaymentMethod paymentMethod) {
             PaymentMethod = paymentMethod;

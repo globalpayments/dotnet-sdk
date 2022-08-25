@@ -15,8 +15,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardPresent,
                 RequestLogger = new RequestConsoleLogger()
             });
@@ -26,8 +26,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void TestInitialize() {
             ebtCardData = new EBTCardData {
                 Number = "4012002000060016",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 PinBlock = "32539F50C245A6A93D123412324000AA",
                 CardHolderName = "Jane Doe",
                 CardPresent = true

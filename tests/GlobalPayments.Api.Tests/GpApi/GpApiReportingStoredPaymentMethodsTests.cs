@@ -24,8 +24,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 RequestLogger = new RequestConsoleLogger()
             });
 
@@ -89,7 +89,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_By_Id() {
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .Where(DataServiceCriteria.StoredPaymentMethodId, Token)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -101,7 +101,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindStoredPaymentMethodsPaged_By_RandomId() {
             var storedPaymentMethodId = $"PMT_{Guid.NewGuid()}";
 
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .Where(DataServiceCriteria.StoredPaymentMethodId, storedPaymentMethodId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -116,7 +116,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Card.ExpMonth = 12;
             Card.ExpYear = DateTime.Now.AddYears(1).Year;
 
-            var response = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var response = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
             .Where(SearchCriteria.PaymentMethod, Card as IPaymentMethod)
             .Execute();
 
@@ -139,7 +139,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Card.ExpMonth = 12;
             Card.ExpYear = DateTime.Now.AddYears(1).Year;
 
-            var response = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var response = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
             .Where(SearchCriteria.PaymentMethod, Card as IPaymentMethod)
             .Execute();
 
@@ -162,7 +162,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             try
             {
-                ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+                ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .Where(SearchCriteria.PaymentMethod, Card as IPaymentMethod)
                 .Execute();
             }
@@ -184,7 +184,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         // Endpoint is retrieving not filtered results
         public void ReportFindStoredPaymentMethodsPaged_By_NumberLast4() {
             var numberLast4 = Card.Number.Substring(Card.Number.Length - 4);
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .Where(DataServiceCriteria.CardNumberLastFour, numberLast4)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -198,7 +198,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         // Endpoint is retrieving not filtered results
         public void ReportFindStoredPaymentMethodsPaged_By_NumberLast4_Set0000() {
             const string numberLast4 = "0000";
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .Where(DataServiceCriteria.CardNumberLastFour, numberLast4)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -211,7 +211,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(response?.Reference);
 
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .Where(SearchCriteria.ReferenceNumber, response.Reference)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -222,7 +222,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_By_Status() {
             const StoredPaymentMethodStatus status = StoredPaymentMethodStatus.Active;
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .Where(SearchCriteria.StoredPaymentMethodStatus, status)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -232,33 +232,33 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_By_StartDate_And_EndDate() {
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(SearchCriteria.StartDate, REPORTING_START_DATE)
-                .And(SearchCriteria.EndDate, REPORTING_END_DATE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
+                .Where(SearchCriteria.StartDate, ReportingStartDate)
+                .And(SearchCriteria.EndDate, ReportingEndDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<StoredPaymentMethodSummary>);
             Assert.IsTrue(result.Results.TrueForAll(r =>
-                r.TimeCreated.Date >= REPORTING_START_DATE.Date && r.TimeCreated.Date <= REPORTING_END_DATE.Date));
+                r.TimeCreated.Date >= ReportingStartDate.Date && r.TimeCreated.Date <= ReportingEndDate.Date));
         }
 
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_By_StartDate_And_EndDate_CurrentDay() {
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(SearchCriteria.StartDate, REPORTING_END_DATE)
-                .And(SearchCriteria.EndDate, REPORTING_END_DATE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
+                .Where(SearchCriteria.StartDate, ReportingEndDate)
+                .And(SearchCriteria.EndDate, ReportingEndDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<StoredPaymentMethodSummary>);
             Assert.IsTrue(result.Results.TrueForAll(t =>
-                t.TimeCreated.Date >= REPORTING_END_DATE.Date && t.TimeCreated.Date <= REPORTING_END_DATE.Date));
+                t.TimeCreated.Date >= ReportingEndDate.Date && t.TimeCreated.Date <= ReportingEndDate.Date));
         }
 
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_By_StartLastUpdatedDate_And_EndLastUpdatedDate() {
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
-                .Where(DataServiceCriteria.StartLastUpdatedDate, REPORTING_START_DATE)
-                .And(DataServiceCriteria.EndLastUpdatedDate, REPORTING_LAST_MONTH_DATE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
+                .Where(DataServiceCriteria.StartLastUpdatedDate, ReportingStartDate)
+                .And(DataServiceCriteria.EndLastUpdatedDate, ReportingLastMonthDate)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<StoredPaymentMethodSummary>);
@@ -267,7 +267,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_OrderBy_TimeCreated_Ascending() {
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -277,7 +277,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_OrderBy_TimeCreated_Descending() {
-            var result = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var result = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -287,14 +287,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindStoredPaymentMethodsPaged_OrderBy_TimeCreated() {
-            var resultAsc = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var resultAsc = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(resultAsc?.Results);
             Assert.IsTrue(resultAsc.Results is List<StoredPaymentMethodSummary>);
             Assert.IsTrue(resultAsc.Results.SequenceEqual(resultAsc.Results.OrderBy(r => r.TimeCreated)));
 
-            var resultDesc = ReportingService.FindStoredPaymentMethodsPaged(FIRST_PAGE, PAGE_SIZE)
+            var resultDesc = ReportingService.FindStoredPaymentMethodsPaged(FirstPage, PageSize)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(resultDesc?.Results);
