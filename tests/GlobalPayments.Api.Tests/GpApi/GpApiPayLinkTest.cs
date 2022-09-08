@@ -55,8 +55,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             card = new CreditCardData {
                 Number = "4263970000005262",
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 Cvn = "123",
                 CardPresent = true
             };
@@ -793,8 +793,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private static GpApiConfig SetupTransactionConfig() {
             var config = new GpApiConfig {
-                AppId = APP_ID,
-                AppKey = APP_KEY,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardNotPresent,
                 ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
                 MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",

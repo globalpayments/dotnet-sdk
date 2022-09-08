@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.NUCLEUS_SATURN_1000,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.0.114",
+                IpAddress = "192.168.0.105",
                 Port = "8081",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -51,7 +51,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
                 .WithCardBrandTransId("transId")
                 .WithAutoSubstantiation(autoSub)
-                .WithInvoiceNumber("aswe232322335")
+                .WithInvoiceNumber(new Random().Next(1000000, 9999999).ToString())
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
@@ -293,8 +293,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             };
 
             var returnResponse = _device.Refund(14m)
+                .WithInvoiceNumber(new Random().Next(10000, 99999).ToString())
                 .WithEcrId(13)
-                .WithInvoiceNumber("aswe232322335")
                 .Execute();
             Assert.IsNotNull(returnResponse);
             Assert.AreEqual("00", returnResponse.ResponseCode);
@@ -449,5 +449,25 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(MessageException),
+            "Connection not established within the specified timeout.")]
+        public void testConnectionTimeout()
+        {
+            IDeviceInterface timeoutDevice = DeviceService.Create(new ConnectionConfig {
+                DeviceType = DeviceType.NUCLEUS_SATURN_1000,
+                ConnectionMode = ConnectionModes.TCP_IP,
+                IpAddress = "192.168.0.105",
+                Port = "8081",
+                Timeout = 1, // overly-short timeout value to trigger exception in UpaTcpInterface
+                RequestIdProvider = new RandomIdProvider()
+            });
+            Assert.IsNotNull(timeoutDevice);
+
+            var response = _device.Sale(123m)
+                .Execute();
+        }
+        
     }
 }

@@ -759,8 +759,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         {
             CreditCardData challengeCard = new CreditCardData { 
                 Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2,
-                ExpMonth = expMonth,
-                ExpYear = expYear,
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
                 CardHolderName = "James Mason"
             };
 

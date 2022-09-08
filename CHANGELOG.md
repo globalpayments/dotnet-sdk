@@ -4,6 +4,16 @@
 
 #### Enhancements
 
+- UPA Devices: Improved connection timeout exception handling
+
+#### Bug Fixes:
+
+- UPA Devices: - UPA Devices: Corrected invoice number logic
+
+## v4.1.5 (8/23/2022)
+
+#### Enhancements
+
 - Enhanced security on MVC end to end example application
 - Increased the version number of Newtonsoft.Json in the GlobalPayments.API solution
 - GP-API: Updated Misc Tests

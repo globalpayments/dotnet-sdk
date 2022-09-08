@@ -3,7 +3,6 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Utils;
 using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace GlobalPayments.Api.Terminals.UPA {
@@ -19,9 +18,16 @@ namespace GlobalPayments.Api.Terminals.UPA {
         }
 
         public void Connect() {
+            int connectionTimestamp = Int32.Parse(DateTime.Now.ToString("mmssfff"));
+
             if (_client == null) {
                 _client = new TcpClient();
                 _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
+
+                if (Int32.Parse(DateTime.Now.ToString("mmssfff")) > connectionTimestamp + _settings.Timeout) {
+                    throw new MessageException("Connection not established within the specified timeout.");
+                }
+
                 _stream = _client.GetStream();
                 _stream.ReadTimeout = _settings.Timeout;
             }
