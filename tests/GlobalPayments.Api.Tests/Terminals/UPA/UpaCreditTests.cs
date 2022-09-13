@@ -13,6 +13,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
     {
         IDeviceInterface _device;
 
+        private int validYear = DateTime.Now.Year + 1;
+
         public UpaCreditTests() {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.NUCLEUS_SATURN_1000,
@@ -433,7 +435,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             {
                 Number = "4005554444444460",
                 ExpMonth = 12,
-                ExpYear = 17,
+                ExpYear = validYear,
                 Cvn = "123"
             };
 

@@ -4,10 +4,10 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     public abstract class BaseGpApiTests {
-        protected const string SUCCESS = "SUCCESS";
-        protected const string DECLINED = "DECLINED";
-        protected const string VERIFIED = "VERIFIED";
-        protected const string CLOSED = "CLOSED";
+        protected const string Success = "SUCCESS";
+        protected const string Declined = "DECLINED";
+        protected const string Verified = "VERIFIED";
+        protected const string Closed = "CLOSED";
 
         protected static readonly string AppId = "x0lQh0iLV0fOkmeAyIDyBqrP9U5QaiKc";
         protected static readonly string AppKey = "DYcEE2GpSzblo0ib";
@@ -21,8 +21,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         protected static readonly int ExpMonth = DateTime.Now.Month;
         protected static readonly int ExpYear = DateTime.Now.Year + 1;
 
-        protected static readonly DateTime startDate = DateTime.UtcNow.AddDays(-30);
-        protected static readonly DateTime endDate = DateTime.UtcNow;
+        protected static readonly DateTime StartDate = DateTime.UtcNow.AddDays(-30);
+        protected static readonly DateTime EndDate = DateTime.UtcNow;
 
         protected string GetMapping<T>(T value, Target target = Target.GP_API) where T : Enum {
             return EnumConverter.GetMapping(target, value);

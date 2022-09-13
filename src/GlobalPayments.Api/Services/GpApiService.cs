@@ -9,6 +9,14 @@ namespace GlobalPayments.Api.Services {
         public static AccessTokenInfo GenerateTransactionKey(GpApiConfig gpApiConfig) {
             GpApiConnector connector = new GpApiConnector(gpApiConfig);
 
+            if (string.IsNullOrEmpty(connector.ServiceUrl))
+            {
+                if (gpApiConfig.Environment.Equals(Entities.Environment.TEST))
+                    connector.ServiceUrl = ServiceEndpoints.GP_API_TEST;
+                else
+                    connector.ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION;
+            }
+
             var data = connector.GetAccessToken();
 
             return new AccessTokenInfo {

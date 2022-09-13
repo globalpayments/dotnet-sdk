@@ -3,18 +3,20 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
     public class PaxCreditTests {
         IDeviceInterface _device;
 
+        private int validYear = DateTime.Now.Year + 1;
+
         public PaxCreditTests() {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_S300,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "10.12.220.172",
-                //IpAddress = "192.168.0.31",
+                IpAddress = "192.168.0.116",
                 Port = "10009",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -312,7 +314,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             var card = new CreditCardData {
                 Number = "4005554444444460",
                 ExpMonth = 12,
-                ExpYear = 17,
+                ExpYear = validYear,
                 Cvn = "123"
             };
 

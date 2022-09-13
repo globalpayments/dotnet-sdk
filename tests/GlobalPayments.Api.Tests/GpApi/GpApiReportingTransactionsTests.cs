@@ -26,7 +26,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportTransactionDetail() {
             var transactionId = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
                 .Execute().Results.Select(t => t.TransactionId).FirstOrDefault();
-
+            
             var response = ReportingService.TransactionDetail(transactionId)
                 .Execute();
             Assert.IsNotNull(response);
@@ -54,7 +54,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_And_EndDate() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.EndDate, ReportingEndDate)
@@ -66,12 +66,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Id() {
-            var transactionId = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var transactionId = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .Execute().Results.Select(t => t.TransactionId).FirstOrDefault();
 
             Assert.IsNotNull(transactionId);
             
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .WithTransactionId(transactionId)
                 .Execute();
             
@@ -84,7 +84,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_WrongId() {
             const string transactionId = "TRN_B2RDfsrhwhzvsbkci4JdTiZ9mHVmvC";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .WithTransactionId(transactionId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -95,7 +95,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_BatchId() {
             const string batchId = "BAT_845591";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.BatchId, batchId)
                 .Execute();
@@ -107,7 +107,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Type() {
             const PaymentType paymentType = PaymentType.Sale;
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.PaymentType, paymentType)
                 .Execute();
@@ -121,7 +121,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const decimal amount = 1.12M;
             const string currency = "aud"; //This is case sensitive
             const string country = "AU"; //This is case sensitive
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(DataServiceCriteria.Amount, amount)
                 .And(DataServiceCriteria.Currency, currency)
@@ -135,7 +135,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Channel() {
             const Channel channel = Channel.CardNotPresent;
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.Channel, channel)
                 .Execute();
@@ -147,7 +147,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Status() {
             const TransactionStatus transactionStatus = TransactionStatus.Captured;
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.TransactionStatus, transactionStatus)
                 .Execute();
@@ -160,7 +160,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_CardBrand_And_AuthCode() {
             const string cardBrand = "VISA";
             const string authCode = "12345";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.CardBrand, cardBrand)
                 .And(SearchCriteria.AuthCode, authCode)
@@ -173,7 +173,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Reference() {
             const string referenceNumber = "e1f2f968-e9cc-45b2-b41f-61cad13754aa";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.ReferenceNumber, referenceNumber)
                 .Execute();
@@ -185,7 +185,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_BrandReference() {
             const string brandReference = "D5v2Nv8h91Me3DTh";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.BrandReference, brandReference)
                 .Execute();
@@ -197,7 +197,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_EntryMode() {
             const PaymentEntryMode paymentEntryMode = PaymentEntryMode.Ecom;
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.PaymentEntryMode, paymentEntryMode)
                 .Execute();
@@ -210,7 +210,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_Number_First6_And_Last4() {
             const string firstSix = "426397";
             const string lastFour = "5262";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.CardNumberFirstSix, firstSix)
                 .And(SearchCriteria.CardNumberLastFour, lastFour)
@@ -224,7 +224,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_Token_First6_And_Last4() {
             const string firstSix = "426397";
             const string lastFour = "5262";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.TokenFirstSix, firstSix)
                 .And(SearchCriteria.TokenLastFour, lastFour)
@@ -238,7 +238,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void ReportFindTransactionsPaged_By_Token_First6_And_Last4_And_PaymentMethod() {
             const string firstSix = "426397";
             const string lastFour = "5262";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.TokenFirstSix, firstSix)
                 .And(SearchCriteria.TokenLastFour, lastFour)
@@ -255,7 +255,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             const string lastFour = "5262";
             var exceptionCaught = false;
             try {
-                ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+                ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(SearchCriteria.TokenFirstSix, firstSix)
                     .And(SearchCriteria.TokenLastFour, lastFour)
@@ -275,7 +275,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_PaymentMethod() {
             foreach (PaymentMethodName paymentMethodName in Enum.GetValues(typeof(PaymentMethodName))) {
-                var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+                var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                     .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                     .Where(SearchCriteria.PaymentMethodName, paymentMethodName)
                     .Execute();
@@ -286,7 +286,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_Name() {
             const string name = "James Mason";
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Where(SearchCriteria.Name, name)
                 .Execute();
@@ -297,7 +297,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_OrderBy_TimeCreated_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
@@ -309,7 +309,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_OrderBy_Id_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.Id, SortDirection.Ascending)
                 .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
@@ -321,7 +321,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_By_StartDate_OrderBy_Type_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
                 .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .Execute();
@@ -333,7 +333,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_TimeCreated_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -343,7 +343,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_TimeCreated_Descending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -353,7 +353,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Id_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.Id, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -363,7 +363,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Id_Descending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.Id, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -373,7 +373,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Type_Ascending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -383,7 +383,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_OrderBy_Type_Descending() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -393,7 +393,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportFindTransactionsPaged_Without_Mandatory_StartDate() {
-            var result = ReportingService.FindTransactionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.Type, SortDirection.Ascending)
                 .Execute();
 

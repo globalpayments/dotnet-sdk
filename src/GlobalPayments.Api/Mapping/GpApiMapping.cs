@@ -85,7 +85,10 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.CardBrandTransactionId = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand_reference");
                 transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
                 transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
-                transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
+                transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");                
+                if (json.Get("payment_method")?.Get("card")?.Has("provider") ?? false) {
+                    transaction.CardIssuerResponse = MapCardIssuerResponse(json.Get("payment_method")?.Get("card")?.Get("provider"));
+                }
                 transaction.MultiCapture = GetIsMultiCapture(json);
                 transaction.PaymentMethodType = GetPaymentMehodType(json) ?? transaction.PaymentMethodType;
                 transaction.DccRateData = MapDccInfo(json);
@@ -709,6 +712,17 @@ namespace GlobalPayments.Api.Mapping {
                 return transaction;
             }
             return new Transaction();
+        }
+
+        public static CardIssuerResponse MapCardIssuerResponse(JsonDoc response)
+        {
+            return new CardIssuerResponse { 
+                Result = response.GetValue<string>("result") ?? null,
+                AvsResult = response.GetValue<string>("avs_result") ?? null,
+                CvvResult = response.GetValue<string>("cvv_result") ?? null,
+                AvsAddressResult = response.GetValue<string>("avs_address_result") ?? null,
+                AvsPostalCodeResult = response.GetValue<string>("avs_postal_code_result") ?? null,
+            };
         }
     }
 }

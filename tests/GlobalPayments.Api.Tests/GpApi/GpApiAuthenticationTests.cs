@@ -106,8 +106,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(Verified, response?.ResponseMessage);
         }
 
         [TestMethod]
@@ -123,8 +123,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(Verified, response?.ResponseMessage);
         }
 
         [TestMethod]
@@ -175,8 +175,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(Verified, response?.ResponseMessage);
         }
 
         [TestMethod]
@@ -190,8 +190,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(Verified, response?.ResponseMessage);
         }
 
         [TestMethod]

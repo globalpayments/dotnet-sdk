@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("VISA", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -61,7 +61,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("MASTERCARD", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -90,7 +90,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("AMEX", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -119,7 +119,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("DINERS", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -148,7 +148,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("DISCOVER", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -177,7 +177,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
             Assert.IsNotNull(response);
             Assert.AreEqual("JCB", response.CardType, true, "Card brand mismatch");
             Assert.AreEqual("00", response.AuthorizationCode);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
         #endregion

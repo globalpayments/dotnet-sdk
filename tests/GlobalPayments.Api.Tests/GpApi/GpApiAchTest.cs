@@ -163,7 +163,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private void assertResponse(Transaction response, TransactionStatus transactionStatus) {
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), response?.ResponseMessage);
         }
     }

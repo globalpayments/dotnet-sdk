@@ -135,7 +135,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -191,7 +191,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -307,7 +307,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -364,7 +364,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -419,7 +419,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -477,7 +477,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -537,7 +537,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -592,7 +592,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -654,7 +654,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
+            Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 

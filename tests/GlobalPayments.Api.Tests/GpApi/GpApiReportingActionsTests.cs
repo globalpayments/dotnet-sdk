@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = AppId,
                 AppKey = AppKey,
-                RequestLogger = new RequestConsoleLogger()
+                RequestLogger = new RequestConsoleLogger(),
             });
 
             SampleAction = ReportingService.FindActionsPaged(1, 1)
@@ -60,7 +60,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_Id() {
             var actionId = SampleAction.Id;
             
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ActionId, actionId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -72,7 +72,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_Random_Id() {
             var actionId = $"ACT_{Guid.NewGuid()}";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ActionId, actionId)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -83,7 +83,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_Type() {
             var actionType = SampleAction.Type;
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ActionType, actionType)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -95,7 +95,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_Random_Type() {
             const string actionType = "USERS";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ActionType, actionType)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -106,7 +106,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_Resource() {
             var resource = SampleAction.Resource;
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.Resource, resource)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -120,7 +120,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 ? SampleAction.ResourceStatus
                 : "AVAILABLE";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ResourceStatus, resourceStatus)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -133,12 +133,12 @@ namespace GlobalPayments.Api.Tests.GpApi
             var resourceId = SampleAction.ResourceId;
 
             if (string.IsNullOrWhiteSpace(resourceId)) {
-                resourceId = ReportingService.FindActionsPaged(FirstPage, PageSize)
+                resourceId = ReportingService.FindActionsPaged(FirstPage,PageSize)
                     .Where(SearchCriteria.StartDate, ReportingStartDate)
                     .Execute().Results?.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.ResourceId))?.ResourceId;
             }
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ResourceId, resourceId)
                 .And(SearchCriteria.Resource, "TRANSACTION")
                 .Execute();
@@ -149,7 +149,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindActionsPaged_By_StartDate_And_EndDate() {
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.StartDate, ReportingStartDate)
                 .And(SearchCriteria.EndDate, ReportingEndDate)
                 .Execute();
@@ -163,7 +163,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_MerchantName() {
             var merchantName = SampleAction.MerchantName;
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.MerchantName, merchantName)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -175,7 +175,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_Random_MerchantName() {
             var exceptionCaught = false;
             try {
-                ReportingService.FindActionsPaged(FirstPage, PageSize)
+                ReportingService.FindActionsPaged(FirstPage,PageSize)
                     .Where(SearchCriteria.MerchantName, Guid.NewGuid().ToString())
                     .Execute();
             }
@@ -196,7 +196,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 ? SampleAction.AccountName
                 : "Tokenization";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.AccountName, accountName)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -208,7 +208,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_AppName() {
             var appName = SampleAction.AppName;
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.AppName, appName)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -220,7 +220,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_Version() {
             var version = SampleAction.Version;
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.Version, version)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -232,7 +232,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_WrongVersion() {
             const string version = "2020-05-10";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.Version, version)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -245,7 +245,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_ResponseCode() {
             var responseCode = !string.IsNullOrEmpty(SampleAction.ResponseCode) ? SampleAction.ResponseCode : "SUCCESS";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ResponseCode, responseCode)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -257,7 +257,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_ResponseCode_Declined() {
             const string responseCode = "DECLINED";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ResponseCode, responseCode)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -269,7 +269,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_HttpResponseCode() {
             var httpResponseCode = SampleAction.HttpResponseCode;
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.HttpResponseCode, httpResponseCode)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -281,7 +281,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReportFindActionsPaged_By_HttpResponseCode_502() {
             const string httpResponseCode = "502";
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.HttpResponseCode, httpResponseCode)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -291,8 +291,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindActionsPaged_OrderBy_TimeCreated_Ascending() {
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
-                .OrderBy(ActionSortProperty.TimeCreated)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
+                .OrderBy(ActionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<ActionSummary>);
@@ -301,7 +301,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindActionsPaged_OrderBy_TimeCreated_Descending() {
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .OrderBy(ActionSortProperty.TimeCreated, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(result?.Results);
@@ -311,15 +311,15 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindActionsPaged_OrderBy_TimeCreated() {
-            var resultDesc = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            var resultDesc = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .OrderBy(ActionSortProperty.TimeCreated, SortDirection.Descending)
                 .Execute();
             Assert.IsNotNull(resultDesc?.Results);
             Assert.IsTrue(resultDesc.Results is List<ActionSummary>);
             Assert.IsTrue(resultDesc.Results.SequenceEqual(resultDesc.Results.OrderByDescending(r => r.TimeCreated)));
 
-            var resultAsc = ReportingService.FindActionsPaged(FirstPage, PageSize)
-                .OrderBy(ActionSortProperty.TimeCreated)
+            var resultAsc = ReportingService.FindActionsPaged(FirstPage,PageSize)
+                .OrderBy(ActionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Execute();
             Assert.IsNotNull(resultAsc?.Results);
             Assert.IsTrue(resultAsc.Results is List<ActionSummary>);
@@ -334,7 +334,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             if (string.IsNullOrWhiteSpace(sampleAction.AccountName) ||
                 string.IsNullOrWhiteSpace(sampleAction.MerchantName) || string.IsNullOrWhiteSpace(sampleAction.Version))
             {
-                sampleAction = ReportingService.FindActionsPaged(FirstPage, PageSize)
+                sampleAction = ReportingService.FindActionsPaged(FirstPage,PageSize)
                     .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-5))
                     .Execute().Results?.FirstOrDefault(x =>
                         !string.IsNullOrWhiteSpace(x.AccountName) && !string.IsNullOrWhiteSpace(x.MerchantName) &&
@@ -348,7 +348,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var merchantName = sampleAction.MerchantName;
             var version = sampleAction.Version;
 
-            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+            PagedResult<ActionSummary> result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.ActionType, actionType)
                 .And(SearchCriteria.Resource, resource)
                 .And(SearchCriteria.ResourceStatus, resourceStatus)

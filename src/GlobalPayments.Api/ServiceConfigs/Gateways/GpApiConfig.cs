@@ -90,9 +90,12 @@ namespace GlobalPayments.Api {
                 DynamicHeaders = DynamicHeaders,
                 MerchantId = MerchantId,
                 AccessTokenInfo = AccessTokenInfo,
+                Environment = Environment,
             };
 
             var gateway = new GpApiConnector(gpApiConfig);
+
+            gateway.ServiceUrl = ServiceUrl;
 
             services.GatewayConnector = gateway;
 

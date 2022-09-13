@@ -47,7 +47,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(transaction);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(Success, transaction?.ResponseCode);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
         }
 
@@ -73,7 +73,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(transaction);
-                Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+                Assert.AreEqual(Success, transaction?.ResponseCode);
                 Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
                 Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
                 Assert.IsFalse(string.IsNullOrEmpty(transaction.AuthorizationCode));
@@ -96,7 +96,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(Success, transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
         }
@@ -117,14 +117,14 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(Success, transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
 
             var refund = transaction.Refund().WithCurrency("EUR").Execute();
 
             Assert.IsNotNull(refund);
-            Assert.AreEqual(SUCCESS, refund?.ResponseCode);
+            Assert.AreEqual(Success, refund?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), refund?.ResponseMessage);
         }
 
@@ -144,14 +144,14 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(transaction);
-                Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+                Assert.AreEqual(Success, transaction?.ResponseCode);
                 Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
                 Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
 
                 var refund = transaction.Reverse().WithCurrency("EUR").Execute();
 
                 Assert.IsNotNull(refund);
-                Assert.AreEqual(SUCCESS, refund?.ResponseCode);
+                Assert.AreEqual(Success, refund?.ResponseCode);
                 Assert.AreEqual(GetMapping(TransactionStatus.Reversed), refund?.ResponseMessage);
         }
     }

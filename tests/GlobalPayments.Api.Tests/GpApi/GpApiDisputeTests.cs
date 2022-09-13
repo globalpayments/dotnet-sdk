@@ -162,7 +162,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         
         private void AssertDisputeResponse(Transaction transaction, DisputeStatus disputeStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction.ResponseCode);
+            Assert.AreEqual(Success, transaction.ResponseCode);
             Assert.AreEqual(GetMapping(disputeStatus), transaction.ResponseMessage);
         }
     }

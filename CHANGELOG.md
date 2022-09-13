@@ -4,11 +4,22 @@
 
 #### Enhancements
 
+ GP-API: Add new mapping for card issuer avs/cvv result 
+
+#### Bug Fixes:
+
+- PAX Devices: - fixed 'verify' transactions not working
+- GP-API: Fix issue with the ServiceUrl when switching to PRODUCTION env
+
+## v4.1.6 (9/8/2022)
+
+#### Enhancements
+
 - UPA Devices: Improved connection timeout exception handling
 
 #### Bug Fixes:
 
-- UPA Devices: - UPA Devices: Corrected invoice number logic
+- UPA Devices: Corrected invoice number logic
 
 ## v4.1.5 (8/23/2022)
 

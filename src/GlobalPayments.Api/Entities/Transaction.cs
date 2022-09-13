@@ -107,6 +107,8 @@ namespace GlobalPayments.Api.Entities {
 
         public PayLinkResponse PayLinkResponse { get; set; }
 
+        public CardIssuerResponse CardIssuerResponse { get; set; }
+
         /// <summary>
         /// The card number used in the transaction.
         /// </summary>

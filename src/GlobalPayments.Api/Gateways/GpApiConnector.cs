@@ -38,8 +38,7 @@ namespace GlobalPayments.Api.Gateways {
 
         public GpApiConnector(GpApiConfig gpApiConfig)
         {   
-            GpApiConfig = gpApiConfig;          
-            ServiceUrl = gpApiConfig.Environment.Equals(Entities.Environment.PRODUCTION) ? ServiceEndpoints.GP_API_PRODUCTION : ServiceEndpoints.GP_API_TEST;
+            GpApiConfig = gpApiConfig;
             Timeout = gpApiConfig.Timeout;            
             RequestLogger = gpApiConfig.RequestLogger;            
             WebProxy = gpApiConfig.WebProxy;

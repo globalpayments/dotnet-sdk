@@ -195,7 +195,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual(
-                    $"Status Code: Conflict - Idempotency Key seen before: id={dccDetails.TransactionId}, status=AVAILABLE",
+                    $"Status Code: Conflict - Idempotency Key seen before: id={dccDetails.TransactionId}",
                     ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
@@ -211,7 +211,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(dccDetails);
-            Assert.AreEqual(SUCCESS, dccDetails?.ResponseCode);
+            Assert.AreEqual(Success, dccDetails?.ResponseCode);
             Assert.AreEqual("NOT_AVAILABLE", dccDetails?.ResponseMessage);
             Assert.IsNotNull(dccDetails.DccRateData);
 
@@ -287,7 +287,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         private void AssertDccInfoResponse(Transaction dccDetails, decimal expectedDccAmountValue) {
             Assert.IsNotNull(dccDetails);
-            Assert.AreEqual(SUCCESS, dccDetails?.ResponseCode);
+            Assert.AreEqual(Success, dccDetails?.ResponseCode);
             Assert.AreEqual("AVAILABLE", dccDetails?.ResponseMessage);
             Assert.IsNotNull(dccDetails.DccRateData);
             Assert.AreEqual(expectedDccAmountValue, dccDetails.DccRateData.CardHolderAmount);
@@ -295,7 +295,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus, decimal expectedDccAmountValue) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(Success, transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction?.ResponseMessage);
             if (!transactionStatus.Equals(TransactionStatus.Reversed)) {
                 Assert.AreEqual(expectedDccAmountValue, transaction.DccRateData.CardHolderAmount);

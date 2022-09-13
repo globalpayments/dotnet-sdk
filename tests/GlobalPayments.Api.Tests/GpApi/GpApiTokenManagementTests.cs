@@ -45,8 +45,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
-            Assert.AreEqual(VERIFIED, response.ResponseMessage);
+            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual(Verified, response.ResponseMessage);
         }
 
         [TestMethod]
@@ -63,8 +63,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
-            Assert.AreEqual(VERIFIED, response.ResponseMessage);
+            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual(Verified, response.ResponseMessage);
 
             var exceptionCaught = false;
             try {
@@ -78,7 +78,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual(
-                    $"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}, status=VERIFIED",
+                    $"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}",
                     ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
@@ -99,8 +99,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
-            Assert.AreEqual(VERIFIED, response.ResponseMessage);
+            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual(Verified, response.ResponseMessage);
         }
 
         [TestMethod]
@@ -114,7 +114,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 
@@ -135,7 +135,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
         }
 

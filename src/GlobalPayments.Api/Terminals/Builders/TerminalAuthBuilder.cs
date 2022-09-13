@@ -26,7 +26,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal string PoNumber { get; set; }
         internal bool RequestMultiUseToken { get; set; }
         internal bool SignatureCapture { get; set; }
-        internal decimal TaxAmount { get; set; }
+        internal decimal? TaxAmount { get; set; }
         internal string TaxExempt { get; set; }
         internal string TaxExemptId { get; set; }
         internal string TerminalRefNumber { get; set; }

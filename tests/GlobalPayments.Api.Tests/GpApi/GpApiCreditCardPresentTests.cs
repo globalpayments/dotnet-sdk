@@ -85,7 +85,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tagData)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(DECLINED, response?.ResponseCode);
+            Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("55", response.AuthorizationCode);
         }
@@ -129,7 +129,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(DECLINED, response?.ResponseCode);
+            Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("14", response.AuthorizationCode);
         }
@@ -148,7 +148,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tag)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(DECLINED, response?.ResponseCode);
+            Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("54", response.AuthorizationCode);
         }
@@ -395,7 +395,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tagData)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(DECLINED, response?.ResponseCode);
+            Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("55", response.AuthorizationCode);
         }
@@ -540,8 +540,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(Verified, response?.ResponseMessage);
         }
         
         [TestMethod]
@@ -550,8 +550,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response?.ResponseCode);
-            Assert.AreEqual(VERIFIED, response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(Verified, response?.ResponseMessage);
         }
         
         [TestMethod]
@@ -665,7 +665,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual(
-                    $"Status Code: Conflict - Idempotency Key seen before: id={reauthTransaction.TransactionId}, status=CAPTURED",
+                    $"Status Code: Conflict - Idempotency Key seen before: id={reauthTransaction.TransactionId}",
                     ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
@@ -787,7 +787,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction?.ResponseCode);
+            Assert.AreEqual(Success, transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction?.ResponseMessage);
         }
     }

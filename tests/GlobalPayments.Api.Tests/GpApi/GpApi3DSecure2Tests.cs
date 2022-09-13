@@ -145,8 +145,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual(
-                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId +
-                    ", status=AVAILABLE", ex.Message);
+                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId,
+                    ex.Message);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -281,8 +281,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual(
-                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId +
-                    ", status=AVAILABLE", ex.Message);
+                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId,
+                    ex.Message);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -411,8 +411,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual(
-                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId +
-                    ", status=CHALLENGE_REQUIRED", ex.Message);
+                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId,
+                    ex.Message);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -755,14 +755,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_MobileSDK()
-        {
-            CreditCardData challengeCard = new CreditCardData { 
-                Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2,
-                ExpMonth = ExpMonth,
-                ExpYear = ExpYear,
-                CardHolderName = "James Mason"
-            };
+        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_MobileSDK() {
+            card.Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2;
 
             var secureEcom = Secure3dService.CheckEnrollment(card)
                 .WithCurrency(Currency)
@@ -791,15 +785,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_MobileDataAndBrowserData()
-        {
-            CreditCardData challengeCard = new CreditCardData
-            {
-                Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2,
-                ExpMonth = 12,
-                ExpYear = 2025,
-                CardHolderName = "James Mason"
-            };
+        public void CardHolderEnrolled_ChallengeRequired_v2_Initiate_MobileDataAndBrowserData() {
+            card.Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2;
 
             var secureEcom = Secure3dService.CheckEnrollment(card)
                 .WithCurrency(Currency)
@@ -824,8 +811,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CardHolderEnrolled_ChallengeRequired_v2_With_MobileData()
-        {
+        public void CardHolderEnrolled_ChallengeRequired_v2_With_MobileData() {
             card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
 
             var secureEcom = Secure3dService.CheckEnrollment(card)
@@ -878,13 +864,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
                             .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(SUCCESS, response.ResponseCode);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
         }
 
         [TestMethod]
-        public void CardHolderEnrolled_Frictionless_v2_Initiate_With_MobileDataAndBrowserData()
-        {
+        public void CardHolderEnrolled_Frictionless_v2_Initiate_With_MobileDataAndBrowserData() {
             card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
 
             var secureEcom = Secure3dService.CheckEnrollment(card)

@@ -263,7 +263,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(chargeTransaction);
-            Assert.AreEqual(DECLINED, chargeTransaction.ResponseCode);
+            Assert.AreEqual(Declined, chargeTransaction.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), chargeTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
@@ -271,7 +271,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary.Status);
+            Assert.AreEqual(Closed, batchSummary.Status);
             Assert.AreEqual(0, batchSummary.TransactionCount);
             Assert.AreEqual(0, batchSummary.TotalAmount);
         }
@@ -292,7 +292,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary.Status);
+            Assert.AreEqual(Closed, batchSummary.Status);
             Assert.AreEqual(0, batchSummary.TransactionCount);
             Assert.AreEqual(0, batchSummary.TotalAmount);
         }
@@ -336,7 +336,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             //.setIdempotency - ToDo
 
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary.Status);
+            Assert.AreEqual(Closed, batchSummary.Status);
 
             BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
         }
@@ -378,8 +378,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction.ResponseCode);
-            Assert.AreEqual(VERIFIED, transaction.ResponseMessage);
+            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual(Verified, transaction.ResponseMessage);
 
             var exceptionCaught = false;
             try {
@@ -455,14 +455,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private static void AssertBatchCloseResponse(BatchSummary batchSummary, decimal amount) {
             Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(CLOSED, batchSummary.Status);
+            Assert.AreEqual(Closed, batchSummary.Status);
             Assert.IsTrue(batchSummary.TransactionCount >= 1);
             Assert.IsTrue(batchSummary.TotalAmount >= amount);
         }
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(SUCCESS, transaction.ResponseCode);
+            Assert.AreEqual(Success, transaction.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
     }

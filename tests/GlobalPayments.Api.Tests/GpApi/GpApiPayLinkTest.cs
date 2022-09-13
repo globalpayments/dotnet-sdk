@@ -138,8 +138,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void FindPayLinkByDate() {
             var response = PayLinkService.FindPayLink(1, 10)
                 .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -154,8 +154,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void FindPayLinkByDate_NoResults() {
             var response = PayLinkService.FindPayLink(1, 10)
                 .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, startDate.AddYears(-1))
-                .And(SearchCriteria.EndDate, endDate.AddYears(-1))
+                .Where(SearchCriteria.StartDate, StartDate.AddYears(-1))
+                .And(SearchCriteria.EndDate, EndDate.AddYears(-1))
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -190,6 +190,43 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(AMOUNT, response.BalanceAmount);
             Assert.IsNotNull(response.PayLinkResponse.Url);
             Assert.IsNotNull(response.PayLinkResponse.Id);
+        }
+        
+        [TestMethod]
+        public void CreatePayLink_WithIdempotency() {
+            var idempotency = Guid.NewGuid().ToString();
+            var response = PayLinkService.Create(payLink, AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithDescription("March and April Invoice")
+                .WithIdempotencyKey(idempotency)
+                .Execute();
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.AreEqual(AMOUNT, response.BalanceAmount);
+            Assert.IsNotNull(response.PayLinkResponse.Url);
+            Assert.IsNotNull(response.PayLinkResponse.Id);
+            
+            var exceptionCaught = false;
+            try {
+                PayLinkService.Create(payLink, AMOUNT)
+                    .WithCurrency(CURRENCY)
+                    .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                    .WithDescription("March and April Invoice")
+                    .WithIdempotencyKey(idempotency)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual(
+                    $"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}",
+                    ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         [TestMethod]
@@ -230,7 +267,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute("createTransaction");
 
             Assert.IsNotNull(charge);
-            Assert.AreEqual(SUCCESS, charge?.ResponseCode);
+            Assert.AreEqual(Success, charge?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), charge?.ResponseMessage);
 
             Thread.Sleep(2000);
@@ -262,7 +299,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute("createTransaction");
 
             Assert.IsNotNull(charge);
-            Assert.AreEqual(SUCCESS, charge?.ResponseCode);
+            Assert.AreEqual(Success, charge?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), charge?.ResponseMessage);
 
             Thread.Sleep(2000);
@@ -299,7 +336,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute("createTransaction");
 
                 Assert.IsNotNull(charge);
-                Assert.AreEqual(SUCCESS, charge?.ResponseCode);
+                Assert.AreEqual(Success, charge?.ResponseCode);
                 Assert.AreEqual(GetMapping(TransactionStatus.Captured), charge?.ResponseMessage);
             }
 
@@ -332,7 +369,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute("createTransaction");
 
             Assert.IsNotNull(authTransaction);
-            Assert.AreEqual(SUCCESS, authTransaction?.ResponseCode);
+            Assert.AreEqual(Success, authTransaction?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), authTransaction?.ResponseMessage);
 
             var chargeTransaction = authTransaction.Capture(AMOUNT)
@@ -341,7 +378,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute("createTransaction");
 
             Assert.IsNotNull(chargeTransaction);
-            Assert.AreEqual(SUCCESS, chargeTransaction?.ResponseCode);
+            Assert.AreEqual(Success, chargeTransaction?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), chargeTransaction?.ResponseMessage);
 
             Thread.Sleep(2000);
@@ -378,7 +415,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute("createTransaction");
 
             Assert.IsNotNull(charge);
-            Assert.AreEqual(SUCCESS, charge?.ResponseCode);
+            Assert.AreEqual(Success, charge?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), charge?.ResponseMessage);
 
             Thread.Sleep(2000);
@@ -444,7 +481,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute("createTransaction");
 
             Assert.IsNotNull(charge);
-            Assert.AreEqual(SUCCESS, charge?.ResponseCode);
+            Assert.AreEqual(Success, charge?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), charge?.ResponseMessage);
 
             Thread.Sleep(2000);
@@ -462,8 +499,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void EditPayLink() {
             var response = PayLinkService.FindPayLink(1, 10)
                 .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-10))
+                .And(SearchCriteria.EndDate, EndDate)
                 .Execute();
 
             Assert.IsNotNull(response);
