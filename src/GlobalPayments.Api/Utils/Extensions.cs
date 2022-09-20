@@ -112,7 +112,7 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public static byte[] GetTerminalResponseAsync(this NetworkStream stream) {
-            var buffer = new byte[8192];
+            var buffer = new byte[32768];
             int bytesReceived = stream.ReadAsync(buffer, 0, buffer.Length).Result;
             
             if (bytesReceived > 0) {

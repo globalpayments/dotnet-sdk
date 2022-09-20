@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Bug Fixes:
+
+- UPA Devices: increased read buffer size to allow for larger message size from devices
+
+## v4.2.0 (9/15/2022)
+
 #### Enhancements
 
  GP-API: Add new mapping for card issuer avs/cvv result 
