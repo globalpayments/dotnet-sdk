@@ -57,6 +57,7 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring
                 && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift
                 && builder.TransactionType != TransactionType.Tokenize
+                && builder.TransactionType != TransactionType.Reversal
             ) {
                 var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
                 var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
@@ -698,6 +699,7 @@ namespace GlobalPayments.Api.Gateways {
                 result.HostResponseDate = root.GetValue<DateTime>("HostRspDT");
                 if (payment != null) {
                     result.TransactionReference = new TransactionReference {
+                        ClientTransactionId = root.GetValue<string>("ClientTxnId"),
                         PaymentMethodType = payment.PaymentMethodType,
                         TransactionId = root.GetValue<string>("GatewayTxnId"),
                         AuthCode = root.GetValue<string>("AuthCode")

@@ -136,12 +136,16 @@ namespace GlobalPayments.Api.Tests {
 
         [TestMethod]
         public void CreditSale() {
+            string clientTxnId = new Random().Next(100000000, 999999999).ToString();
+
             var response = card.Charge(15m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
+                .WithClientTransactionId(clientTxnId)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual(clientTxnId, response.ClientTransactionId);
         }
 
         [TestMethod]

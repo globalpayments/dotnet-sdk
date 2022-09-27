@@ -1,4 +1,5 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -149,17 +150,19 @@ namespace GlobalPayments.Api.Tests.Services {
 
         [TestMethod]
         public void CreditServiceReverseByClientId() {
+            string clientTxnId = new Random().Next(100000000, 999999999).ToString();
+
             Transaction response = service.Charge(18m)
                 .WithCurrency("USD")
                 .WithPaymentMethod(card)
-                .WithClientTransactionId("123456789")
+                .WithClientTransactionId(clientTxnId)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
             Transaction reverseResponse = service.Reverse(18m)
-                .WithClientTransactionId("123456789")
+                .WithClientTransactionId(clientTxnId)
                 .Execute();
             Assert.IsNotNull(reverseResponse);
             Assert.AreEqual("00", reverseResponse.ResponseCode);

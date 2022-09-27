@@ -2,6 +2,16 @@
 
 ## Latest
 
+#### Enhancements
+
+- Heartland/Portico Gateway: add "ClientTxnId" to transaction response properties
+
+#### Bug Fixes:
+
+- Heartland/Portico Gateway: fix CreditReversal message structure
+
+## v4.2.1 (9/22/2022)
+
 #### Bug Fixes:
 
 - UPA Devices: increased read buffer size to allow for larger message size from devices
