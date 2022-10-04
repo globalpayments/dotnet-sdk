@@ -472,7 +472,13 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(root, "GatewayTxnId", builder.TransactionId);
 
                 // Client Txn Id
-                if (builder.TransactionType == TransactionType.Reversal) {
+                if (
+                    builder.TransactionType == TransactionType.Reversal
+                    || (
+                        builder.PaymentMethod != null 
+                        && builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH
+                    )
+                ) {
                     et.SubElement(root, "ClientTxnId", builder.ClientTransactionId);
                 }
 

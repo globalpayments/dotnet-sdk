@@ -22,5 +22,22 @@ namespace GlobalPayments.Api.Tests.TestData
                 CheckName = checkName
             };
         }
+
+        public static eCheck HeartlandACH(
+            string secCode = SecCode.PPD,
+            CheckType checkType = CheckType.PERSONAL,
+            AccountType accountType = AccountType.CHECKING,
+            string checkName = "Jane Doe"
+        ) 
+        {
+            return new eCheck {
+                AccountNumber = "1357902468",
+                RoutingNumber = "122000030",
+                AccountType = accountType,
+                SecCode = secCode,
+                CheckType = checkType,
+                CheckName = checkName
+            };
+        }
     }
 }

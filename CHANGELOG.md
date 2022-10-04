@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest
+## Latest (10/03/2022)
+
+#### Enhancements
+
+- Heartland/Portico Gateway: added method for voiding eCheck using ClientTxnId to CheckService
+
+## v4.2.2 (9/27/2022)
 
 #### Enhancements
 

@@ -17,13 +17,26 @@ namespace GlobalPayments.Api.Services {
             return new AuthorizationBuilder(TransactionType.Sale).WithAmount(amount);
         }
 
-        // Void
+        // Void using gateway transaction ID
         public ManagementBuilder Void(string transactionId) {
-            return new ManagementBuilder(TransactionType.Void)
-                .WithPaymentMethod(new TransactionReference {
-                    PaymentMethodType = PaymentMethodType.ACH,
-                    TransactionId = transactionId
-                });
+            return Void(transactionId);
+        }
+
+        // Void using client transaction ID
+        public ManagementBuilder Void(string transactionId, bool isClientTxnId = false) {
+            if (isClientTxnId) {
+                return new ManagementBuilder(TransactionType.Void)
+                    .WithPaymentMethod(new TransactionReference {
+                        PaymentMethodType = PaymentMethodType.ACH,
+                        ClientTransactionId = transactionId
+                    });
+            } else {
+                return new ManagementBuilder(TransactionType.Void)
+                    .WithPaymentMethod(new TransactionReference {
+                        PaymentMethodType = PaymentMethodType.ACH,
+                        TransactionId = transactionId
+                    });
+            }            
         }
     }
 }
