@@ -83,9 +83,7 @@ namespace GlobalPayments.Api.Builders {
         internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
         internal string TagData { get; set; }
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
-        internal PaymentMethodUsageMode? UsageMode { get; set; }       
-        public int? UsageLimit { get; set; }
-        public PayLinkType? Type { get; set; }
+       
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
 
@@ -207,10 +205,7 @@ namespace GlobalPayments.Api.Builders {
         }
 
         public ManagementBuilder WithPayLinkData(PayLinkData payLinkData) {
-            PayLinkData = payLinkData;
-            UsageMode = payLinkData?.UsageMode;
-            UsageLimit = payLinkData?.UsageLimit;
-            Type = payLinkData?.Type;
+            PayLinkData = payLinkData;            
             return this;
         }
 
@@ -474,9 +469,9 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.PayLinkUpdate)
                .Check(() => PayLinkData).IsNotNull()
                .Check(() => Amount).IsNotNull()
-               .Check(() => UsageMode).IsNotNull()
-               .Check(() => UsageLimit).IsNotNull()
-               .Check(() => Type).IsNotNull();
+               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageMode)).IsNotNull()
+               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageLimit)).IsNotNull()
+               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.Type)).IsNotNull();
 
             Validations.For(
                 TransactionType.Capture |

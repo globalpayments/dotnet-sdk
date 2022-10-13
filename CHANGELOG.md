@@ -1,6 +1,15 @@
 # Changelog
 
-## Latest (10/03/2022)
+## Latest
+
+#### Enhancements
+
+- GP-API: The Fraud Management solution passed the values sent in the risk_assessment object
+- GP-API: Updated PayLink properties on the request
+- Added isnotnull validation for subproperties in builders
+- Updated OpenBaking service endpoints
+
+## v4.2.3 (10/04/2022)
 
 #### Enhancements
 

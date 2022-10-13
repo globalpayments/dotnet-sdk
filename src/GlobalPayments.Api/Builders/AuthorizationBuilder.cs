@@ -44,7 +44,7 @@ namespace GlobalPayments.Api.Builders {
         internal EcommerceInfo EcommerceInfo { get; set; }
         internal EmvFallbackCondition? EmvFallbackCondition { get; set; }
         internal EmvLastChipRead? EmvLastChipRead { get; set; }
-        internal FraudFilterMode FraudFilterMode { get; set; }
+        internal FraudFilterMode? FraudFilterMode { get; set; }
         internal FraudRuleCollection FraudRules { get; set; }
         internal decimal? Gratuity { get; set; }
         internal decimal? ConvenienceAmount { get; set; }

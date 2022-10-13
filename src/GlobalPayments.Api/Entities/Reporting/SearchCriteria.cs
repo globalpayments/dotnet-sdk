@@ -54,6 +54,9 @@ namespace GlobalPayments.Api.Entities {
         PaymentMethodName,
         PaymentMethod,
         ReturnPII,
+        RiskAssessmentMode,
+        RiskAssessmentResult,
+        RiskAssessmentReasonCode,
         ReferenceNumber,
         Resource,
         ResourceStatus,
@@ -74,6 +77,10 @@ namespace GlobalPayments.Api.Entities {
         UniqueDeviceId,
         Username,
         Version,
+        PayLinkStatus,
+        PaymentMethodUsageMode,
+        Description,
+        ExpirationDate
     }
 
     public enum DataServiceCriteria {
@@ -243,9 +250,23 @@ namespace GlobalPayments.Api.Entities {
 
         internal string BankPaymentId { get; set; }
 
-        internal string PayLinkId { get; set; }
+        internal string PayLinkId { get; set; }       
+        
+        public PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
+   
+        public string Description { get; set; }
+    
+        public DateTime? ExpirationDate { get; set; }
+    
+        public PayLinkStatus? PayLinkStatus { get; set; }
 
         internal bool? ReturnPII { get; set; }
+
+        internal FraudFilterMode? RiskAssessmentMode { get; set; }
+
+        internal FraudFilterResult? RiskAssessmentResult { get; set; }
+        
+        internal ReasonCode? RiskAssessmentReasonCode { get; set; }
 
         internal string ReferenceNumber { get; set; }
 

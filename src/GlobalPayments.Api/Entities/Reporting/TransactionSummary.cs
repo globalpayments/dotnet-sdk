@@ -289,5 +289,7 @@ namespace GlobalPayments.Api.Entities {
         public AlternativePaymentResponse AlternativePaymentResponse { get; set; }
 
         public BankPaymentResponse BankPaymentResponse { get; set; }
+
+        public FraudManagementResponse FraudManagementResponse { get; set; }
     }
 }

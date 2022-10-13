@@ -29,7 +29,7 @@ namespace GlobalPayments.Api.Builders {
             }
             clause = new ValidationClause(parent, this, prop);
             return clause;
-        }
+        }      
 
         public ValidationClause When<T>(Expression<Func<T>> property) {
             var prop = ((MemberExpression)property.Body).Member as PropertyInfo;

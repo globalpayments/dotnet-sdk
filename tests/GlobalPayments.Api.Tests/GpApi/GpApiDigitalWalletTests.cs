@@ -17,8 +17,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         {
             ServicesContainer.ConfigureService(new GpApiConfig
             {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
             });

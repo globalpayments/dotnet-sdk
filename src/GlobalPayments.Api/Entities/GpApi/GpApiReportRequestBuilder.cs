@@ -46,7 +46,16 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("batch_id", trb.SearchBuilder.BatchId);
                         request.AddQueryStringParam("entry_mode", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.PaymentEntryMode));
                         request.AddQueryStringParam("name", trb.SearchBuilder.Name);
-                        request.AddQueryStringParam("payment_method", EnumConverter.GetMapping(Target.GP_API,trb.SearchBuilder.PaymentMethodName));
+                        request.AddQueryStringParam("payment_method", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.PaymentMethodName));
+                        if (trb.SearchBuilder.RiskAssessmentMode != null) {
+                            request.AddQueryStringParam("risk_assessment_mode", trb.SearchBuilder.RiskAssessmentMode.ToString());
+                        }
+                        if (trb.SearchBuilder.RiskAssessmentResult != null) {
+                            request.AddQueryStringParam("risk_assessment_result", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.RiskAssessmentResult));
+                        }
+                        if (trb.SearchBuilder.RiskAssessmentReasonCode != null) {
+                            request.AddQueryStringParam("risk_assessment_reason_code", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.RiskAssessmentReasonCode));
+                        }
 
                         return request;
                     case ReportType.FindSettlementTransactionsPaged:
@@ -256,6 +265,15 @@ namespace GlobalPayments.Api.Entities {
                         request.AddQueryStringParam("to_time_created", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, trb.Order));
                         request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, trb.ActionOrderBy));
+                        request.AddQueryStringParam("status", trb.SearchBuilder.PayLinkStatus?.ToString());
+                        request.AddQueryStringParam("usage_mode", trb.SearchBuilder.PaymentMethodUsageMode?.ToString());
+                        request.AddQueryStringParam("name", trb.SearchBuilder.DisplayName);
+                        request.AddQueryStringParam("amount", trb.SearchBuilder.Amount.ToNumericCurrencyString());
+                        request.AddQueryStringParam("description", trb.SearchBuilder.Description);
+                        request.AddQueryStringParam("reference", trb.SearchBuilder.ReferenceNumber);
+                        request.AddQueryStringParam("country", trb.SearchBuilder.Country);
+                        request.AddQueryStringParam("currency", trb.SearchBuilder.Currency);
+                        request.AddQueryStringParam("expiration_date", trb.SearchBuilder.ExpirationDate?.ToString("yyyy-MM-dd"));
 
                         return request;
                 }

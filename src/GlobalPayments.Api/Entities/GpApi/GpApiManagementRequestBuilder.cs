@@ -225,7 +225,7 @@ namespace GlobalPayments.Api.Entities {
                     .Set("description", builder.Description ?? null)
                     .Set("type", payLinkData.Type.ToString() ?? null)
                     .Set("status", payLinkData.Status.ToString() ?? null)
-                    .Set("shippable", payLinkData.IsShippable?.ToString() ?? null)
+                    .Set("shippable", payLinkData.IsShippable != null && payLinkData.IsShippable.Value ? "YES" : "NO" )
                     .Set("shipping_amount", payLinkData.ShippingAmount.ToNumericCurrencyString());
 
                 var transaction = new JsonDoc()
@@ -243,6 +243,21 @@ namespace GlobalPayments.Api.Entities {
                 };
 
             }
+            else if (builder.TransactionType == TransactionType.Release || builder.TransactionType == TransactionType.Hold)
+            {
+                var payload = new JsonDoc()
+                    .Set("reason_code", EnumConverter.GetMapping(Target.GP_API, builder.ReasonCode) ?? null);
+
+                var endpoint = builder.TransactionType == TransactionType.Release ? "release" : builder.TransactionType == TransactionType.Hold ? "hold" : null;
+
+                return new GpApiRequest
+                {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/{endpoint}",
+                    RequestBody = payload.ToString(),
+                };
+            }
+            
             return null;
         }
     }

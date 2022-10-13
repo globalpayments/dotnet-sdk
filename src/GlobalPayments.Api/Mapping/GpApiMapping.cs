@@ -92,6 +92,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.MultiCapture = GetIsMultiCapture(json);
                 transaction.PaymentMethodType = GetPaymentMehodType(json) ?? transaction.PaymentMethodType;
                 transaction.DccRateData = MapDccInfo(json);
+                transaction.FraudFilterResponse = json.Has("risk_assessment") ? MapFraudManagement(json) : null;
             }
 
             return transaction;
@@ -197,18 +198,18 @@ namespace GlobalPayments.Api.Mapping {
             payLinkResponse.UsageLimit = doc.GetValue<int>("usage_limit");
             payLinkResponse.Reference = doc.GetValue<string>("reference");
             payLinkResponse.Name = doc.GetValue<string>("name");
-            payLinkResponse.Description = doc.GetValue<string>("description");
-            payLinkResponse.IsShippable = GetIsShippable(doc);
+            payLinkResponse.Description = doc.GetValue<string>("description");            
             payLinkResponse.ViewedCount = doc.GetValue<string>("viewed_count");
             payLinkResponse.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
-            
+            payLinkResponse.IsShippable = GetIsShippable(doc);
+
             return payLinkResponse;
         }
 
         private static bool? GetIsShippable(JsonDoc doc) 
         {
             if (doc.Has("shippable")) {
-                return doc.GetValue<string>("shippable").ToUpper() == "TRUE" ? true : false;
+                return doc.GetValue<string>("shippable").ToUpper() == "YES" ? true : false;
             }
             return null;
         }
@@ -280,37 +281,46 @@ namespace GlobalPayments.Api.Mapping {
                     summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.APM);
                 }
             }
+
+            summary.FraudManagementResponse = doc.Has("risk_assessment") ? MapFraudManagementReport(doc.Get("risk_assessment")) : null;
             return summary;
         }
 
         public static PayLinkSummary MapPayLinkSummary(JsonDoc doc)
         {
-            var summary = new PayLinkSummary();
+            var summary = new PayLinkSummary();            
             
-            summary.Id = doc.GetValue<string>("id");
             summary.MerchantId = doc.GetValue<string>("merchant_id");
             summary.MerchantName = doc.GetValue<string>("merchant_name");
             summary.AccountId = doc.GetValue<string>("account_id");
             summary.AccountName = doc.GetValue<string>("account_name");
+            summary.Id = doc.GetValue<string>("id");
             summary.Url = doc.GetValue<string>("url");
             summary.Status = GetPayLinkStatus(doc);
-            summary.Type = GetPayLinkType(doc);
-            summary.AllowedPaymentMethods = GetAllowedPaymentMethods(doc); 
+            summary.Type = GetPayLinkType(doc);             
             summary.UsageMode = GetPaymentMethodUsageMode(doc);
-            summary.UsageCount = doc.GetValue<string>("usage_count");
+            summary.UsageLimit = doc.GetValue<string>("usage_limit");            
             summary.Reference = doc.GetValue<string>("reference");
             summary.Name = doc.GetValue<string>("name");
-            summary.Description = doc.GetValue<string>("description");
-            summary.Shippable = doc.GetValue<string>("shippable");
+            summary.Description = doc.GetValue<string>("description");            
             summary.ViewedCount = doc.GetValue<string>("viewed_count");
             summary.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
+
+            summary.Shippable = doc.GetValue<string>("shippable");
+            summary.UsageCount = doc.GetValue<string>("usage_count");
             summary.Images = doc.GetArray<string>("images").ToArray();//GetImages(doc); //ToDo 
+            summary.ShippingAmount = doc.GetValue<string>("shipping_amount");            
 
             if (doc.Has("transactions")) {
-                summary.Transactions = new List<TransactionSummary>();
-                foreach (var transaction in doc.GetArray<JsonDoc>("transactions") ?? Enumerable.Empty<JsonDoc>()) {
-                    summary.Transactions.Add(CreateTransactionSummary(transaction));
-                }                
+                summary.Amount = doc.Get("transactions").GetValue<string>("amount").ToAmount();
+                summary.Currency = doc.Get("transactions").GetValue<string>("currency");
+                summary.AllowedPaymentMethods = GetAllowedPaymentMethods(doc.Get("transactions"));
+                if (doc.Get("transactions").Has("transaction_list")) {
+                    summary.Transactions = new List<TransactionSummary>();
+                    foreach (var transaction in doc.Get("transactions").GetArray<JsonDoc>("transaction_list") ?? Enumerable.Empty<JsonDoc>()) {
+                        summary.Transactions.Add(CreateTransactionSummary(transaction));
+                    }
+                }
             }
             return summary;
         }
@@ -439,7 +449,7 @@ namespace GlobalPayments.Api.Mapping {
                 }                
             }
             else if (reportType == ReportType.PayLinkDetail && result is PayLinkSummary) {
-                    result = MapPayLinkSummary(json) as T;                
+                    result = MapPayLinkSummary(json) as T;
             }
 
             return result;
@@ -589,6 +599,42 @@ namespace GlobalPayments.Api.Mapping {
                 AccountName = doc.GetValue<string>("account_name"),
                 MerchantName = doc.GetValue<string>("merchant_name"),
             };
+        }
+
+        private static FraudManagementResponse MapFraudManagement(JsonDoc response)
+        {
+            var fraudFilterResponse = new FraudManagementResponse();
+            if (response.Has("risk_assessment")) {
+                var fraudResponses = response.GetArray<JsonDoc>("risk_assessment");
+                foreach (var fraudResponse in fraudResponses) {
+                    fraudFilterResponse = MapFraudManagementReport(fraudResponse);                   
+                }
+                return fraudFilterResponse;
+            }
+            return null;
+        }
+
+        private static FraudManagementResponse MapFraudManagementReport(JsonDoc response)
+        {
+            var fraudFilterResponse = new FraudManagementResponse();
+            var fraudResponse = response;
+            fraudFilterResponse.FraudResponseMode = fraudResponse.GetValue<string>("mode") ?? null;
+            fraudFilterResponse.FraudResponseResult = fraudResponse.Has("result") ? EnumConverter.FromMapping<FraudFilterResult>(Target.GP_API, fraudResponse.GetValue("result")).ToString() : string.Empty;
+            fraudFilterResponse.FraudResponseMessage = fraudResponse.GetValue<string>("message") ?? null;
+            if (fraudResponse.Has("rules"))
+            {
+                fraudFilterResponse.FraudResponseRules = new List<FraudRule>();
+                foreach (var rule in fraudResponse.GetArray<JsonDoc>("rules") ?? Enumerable.Empty<JsonDoc>())
+                {
+                    var fraudRule = new FraudRule();
+                    fraudRule.Key = rule.GetValue<string>("reference") ?? null;
+                    fraudRule.Mode = (FraudFilterMode)(Enum.Parse(typeof(FraudFilterMode), rule.GetValue<string>("mode")));
+                    fraudRule.Description = rule.GetValue<string>("description") ?? null;
+                    fraudRule.result = rule.Has("result") ? EnumConverter.FromMapping<FraudFilterResult>(Target.GP_API, rule.GetValue("result")).ToString() : null;
+                    fraudFilterResponse.FraudResponseRules.Add(fraudRule);
+                }
+            }
+            return fraudFilterResponse;
         }
 
         public static DccRateData MapDccInfo(JsonDoc response)

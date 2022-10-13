@@ -15,8 +15,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppIdForDcc,
-                AppKey = AppKeyForDcc,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true,

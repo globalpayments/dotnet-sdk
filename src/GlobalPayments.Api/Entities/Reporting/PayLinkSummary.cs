@@ -28,7 +28,9 @@ namespace GlobalPayments.Api.Entities.Reporting
         public PaymentMethodUsageMode? UsageMode { get; set; }
         
         public string UsageCount { get; set; }
-        
+
+        public string UsageLimit { get; set; }
+
         public string Reference { get; set; }
         
         public string Name { get; set; }
@@ -36,12 +38,18 @@ namespace GlobalPayments.Api.Entities.Reporting
         public string Description { get; set; }
         
         public string Shippable { get; set; }
+
+        public string ShippingAmount { get; set; }
         
         public string ViewedCount { get; set; }
         
         public DateTime? ExpirationDate { get; set; }
         
         public string[] Images { get; set; }
+
+        public decimal? Amount { get; set; }
+
+        public string Currency { get; set; }
        
         public List<TransactionSummary> Transactions { get; set; }
     }

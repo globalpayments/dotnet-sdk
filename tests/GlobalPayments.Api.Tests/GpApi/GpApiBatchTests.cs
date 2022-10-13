@@ -19,8 +19,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppIdForBatch,
-                AppKey = AppKeyForBatch,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
@@ -36,8 +36,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CloseBatch_ActionNotAuthorized() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
+                AppId = "OWTP5ptQZKGj7EnvPt3uqO844XDBt8Oj",
+                AppKey = "qM31FmlFiyXRHGYh",
                 Channel = Channel.CardPresent
             });
 
@@ -399,10 +399,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CloseBatch_CardNotPresentChannel() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppIdForBatch,
-                AppKey = AppKeyForBatch,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardNotPresent
-            });
+            }, "GP_API_CONFIG_NAME");
 
             var creditCardData = new CreditCardData {
                 Number = "5425230000004415",
@@ -413,7 +413,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var transaction = creditCardData.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
-                .Execute();
+                .Execute("GP_API_CONFIG_NAME");
             AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
             //TODO - remove when api fix polling issue
@@ -421,7 +421,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var exceptionCaught = false;
             try {
-                BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
+                BatchService.CloseBatch(transaction.BatchSummary.BatchReference, "GP_API_CONFIG_NAME");
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;

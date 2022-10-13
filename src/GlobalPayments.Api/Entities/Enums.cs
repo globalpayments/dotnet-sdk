@@ -761,31 +761,37 @@ public enum ReasonCode {
         /// <summary>
         /// Indicates fraud.
         /// </summary>
+        [Map(Target.GP_API, "FRAUD")]
         FRAUD,
 
         /// <summary>
         /// Indicates a false positive.
         /// </summary>
+        [Map(Target.GP_API, "FALSE_POSITIVE")]
         FALSEPOSITIVE,
 
         /// <summary>
         /// Indicates desired good is out of stock.
         /// </summary>
+        [Map(Target.GP_API, "OUT_OF_STOCK")]
         OUTOFSTOCK,
 
         /// <summary>
         /// Indicates desired good is in of stock.
         /// </summary>
+        [Map(Target.GP_API, "IN_STOCK")]
         INSTOCK,
 
         /// <summary>
         /// Indicates another reason.
         /// </summary>
+        [Map(Target.GP_API, "OTHER")]
         OTHER,
 
         /// <summary>
         /// Indicates reason was not given.
         /// </summary>
+        [Map(Target.GP_API, "NOT_GIVEN")]
         NOTGIVEN
     }
 

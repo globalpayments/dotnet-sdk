@@ -19,6 +19,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private CreditCardData card;
         private Address shippingAddress;
         private BrowserData browserData;
+        private string PayLinkId;
 
         private const decimal AMOUNT = 7.8m;
         private const string CURRENCY = "GBP";
@@ -84,6 +85,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 UserAgent =
                     "Mozilla/5.0 (Windows NT 6.1; Win64, x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
             };
+
+            var response = PayLinkService.FindPayLink(1, 1)
+                .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
+                .And(SearchCriteria.PayLinkStatus, PayLinkStatus.ACTIVE)
+                .Execute();
+            if (response.Results.Count > 0) {
+                PayLinkId = response.Results[0].Id;
+            }
         }
 
         [TestMethod]
@@ -190,6 +201,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(AMOUNT, response.BalanceAmount);
             Assert.IsNotNull(response.PayLinkResponse.Url);
             Assert.IsNotNull(response.PayLinkResponse.Id);
+            Assert.IsNotNull(response.PayLinkResponse.IsShippable);
+            Assert.IsTrue(response.PayLinkResponse.IsShippable != null && response.PayLinkResponse.IsShippable.Value);
         }
         
         [TestMethod]
@@ -222,7 +235,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual(
-                    $"Status Code: Conflict - Idempotency Key seen before: id={response.TransactionId}",
+                    $"Status Code: Conflict - Idempotency Key seen before: id={response.PayLinkResponse.Id}, status={response.ResponseMessage}",
                     ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
@@ -501,6 +514,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-10))
                 .And(SearchCriteria.EndDate, EndDate)
+                .And(SearchCriteria.PayLinkStatus, PayLinkStatus.ACTIVE)
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -617,20 +631,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreatePayLink_MissingShippable() {
-            payLink.IsShippable = null;
-
-            var response = PayLinkService.Create(payLink, AMOUNT)
-                .WithCurrency(CURRENCY)
-                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
-                .WithDescription("March and April Invoice")
-                .Execute();
-
-            AssertTransactionResponse(response);
-            Assert.IsFalse(response.PayLinkResponse.IsShippable != null && response.PayLinkResponse.IsShippable.Value);
-        }
-
-        [TestMethod]
         public void CreatePayLink_MissingDescription() {
             var exceptionCaught = false;
             try {
@@ -672,7 +672,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var exceptionCaught = false;
             try {
-                PayLinkService.Edit(Guid.NewGuid().ToString())
+                PayLinkService.Edit(PayLinkId)
                     .WithAmount(AMOUNT)
                     .WithPayLinkData(payLink)
                     .WithDescription("Update Paylink description")
@@ -692,7 +692,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var exceptionCaught = false;
             try {
-                PayLinkService.Edit(Guid.NewGuid().ToString())
+                PayLinkService.Edit(PayLinkId)
                     .WithAmount(AMOUNT)
                     .WithPayLinkData(payLink)
                     .WithDescription("Update Paylink description")
@@ -712,7 +712,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var exceptionCaught = false;
             try {
-                PayLinkService.Edit(Guid.NewGuid().ToString())
+                PayLinkService.Edit(PayLinkId)
                     .WithAmount(AMOUNT)
                     .WithPayLinkData(payLink)
                     .WithDescription("Update Paylink description")
@@ -720,8 +720,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException e) {
                 exceptionCaught = true;
-                Assert.AreEqual("40005", e.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following field name", e.Message);
+                Assert.AreEqual("40005", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -733,7 +733,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var exceptionCaught = false;
             try {
-                PayLinkService.Edit(Guid.NewGuid().ToString())
+                PayLinkService.Edit(PayLinkId)
                     .WithAmount(AMOUNT)
                     .WithPayLinkData(payLink)
                     .WithDescription("Update Paylink description")
@@ -750,16 +750,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void EditPayLink_MissingDescription() {
             var exceptionCaught = false;
-            try {
-                PayLinkService.Edit(Guid.NewGuid().ToString())
+            try {                
+
+                PayLinkService.Edit(PayLinkId)
                     .WithAmount(AMOUNT)
                     .WithPayLinkData(payLink)
                     .Execute();
             }
             catch (GatewayException e) {
                 exceptionCaught = true;
-                Assert.AreEqual("40005", e.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following field description", e.Message);
+                Assert.AreEqual("40005", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -769,7 +770,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void EditPayLink_MissingAmount() {
             var exceptionCaught = false;
             try {
-                PayLinkService.Edit(Guid.NewGuid().ToString())
+                PayLinkService.Edit(PayLinkId)
                     .WithAmount(null)
                     .WithPayLinkData(payLink)
                     .WithDescription("Update Paylink description")
@@ -787,7 +788,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void EditPayLink_MissingPayLinkData() {
             var exceptionCaught = false;
             try {
-                PayLinkService.Edit(Guid.NewGuid().ToString())
+                PayLinkService.Edit(PayLinkId)
                     .WithAmount(AMOUNT)
                     .WithPayLinkData(null)
                     .WithDescription("Update Paylink description")
@@ -820,6 +821,85 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
         }
 
+        [TestMethod]
+        public void FindPayLinkByStatus() {
+            var response = PayLinkService.FindPayLink(1, 10)
+                .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
+                .And(SearchCriteria.PayLinkStatus, PayLinkStatus.EXPIRED)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Results);
+            /** @var PayLinkSummary $randomPayLink */
+            var randomPayLink = response.Results[0];
+            Assert.IsNotNull(randomPayLink);
+            Assert.IsInstanceOfType(randomPayLink, typeof(PayLinkSummary));
+            Assert.AreEqual(PayLinkStatus.EXPIRED, randomPayLink.Status);
+        }
+
+        [TestMethod]
+        public void FindPayLinkByUsageModeAndName() {
+            const string name = "iphone 14";
+
+            var response = PayLinkService.FindPayLink(1, 10)
+                .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
+                .And(SearchCriteria.PaymentMethodUsageMode, PaymentMethodUsageMode.Single)
+                .And(SearchCriteria.DisplayName, name)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Results);
+            /** @var PayLinkSummary $randomPayLink */
+            var randomPayLink = response.Results[0];
+            Assert.IsNotNull(randomPayLink);
+            Assert.IsInstanceOfType(randomPayLink, typeof(PayLinkSummary));
+            Assert.AreEqual(PaymentMethodUsageMode.Single, randomPayLink.UsageMode);
+            Assert.AreEqual(name, randomPayLink.Name);
+        }
+
+        [TestMethod]
+        public void FindPayLinkByAmount() {
+            const decimal amount = 10.01m;
+
+            var response = PayLinkService.FindPayLink(1, 10)
+                .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
+                .And(DataServiceCriteria.Amount, amount)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Results);
+            /** @var PayLinkSummary $randomPayLink */
+            var randomPayLink = response.Results[0];
+            Assert.IsNotNull(randomPayLink);
+            Assert.IsInstanceOfType(randomPayLink, typeof(PayLinkSummary));
+            Assert.AreEqual(amount, randomPayLink.Amount);
+        }
+
+        [TestMethod]
+        public void FindPayLinkByExpirationDate() {
+            var expirationDate = new DateTime(2024, 05, 09);
+
+            var response = PayLinkService.FindPayLink(1, 10)
+                .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
+                .And(SearchCriteria.ExpirationDate, expirationDate)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Results);
+            /** @var PayLinkSummary $randomPayLink */
+            var randomPayLink = response.Results[0];
+            Assert.IsNotNull(randomPayLink);
+            Assert.IsInstanceOfType(randomPayLink, typeof(PayLinkSummary));
+        }
+        
         private void AssertTransactionResponse(Transaction transaction) {
             Assert.AreEqual("SUCCESS", transaction.ResponseCode);
             Assert.AreEqual(PayLinkStatus.ACTIVE.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());

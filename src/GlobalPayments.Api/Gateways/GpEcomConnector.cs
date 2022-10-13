@@ -214,7 +214,7 @@ namespace GlobalPayments.Api.Gateways {
 
             #region FRAUD
             // fraud filter mode
-            if (builder.FraudFilterMode != FraudFilterMode.NONE) {
+            if (builder.FraudFilterMode != null && builder.FraudFilterMode != FraudFilterMode.NONE) {
                 var fraudFilter = et.SubElement(request, "fraudfilter").Set("mode", builder.FraudFilterMode.ToString());
                 if(builder.FraudRules != null)
                 {

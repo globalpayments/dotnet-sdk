@@ -8,7 +8,10 @@ using System.Net.Http;
 
 namespace GlobalPayments.Api.Entities {
     internal class GpApiAuthorizationRequestBuilder {
+        private static AuthorizationBuilder Builder;
+
         internal static GpApiRequest BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
+            Builder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             var paymentMethod = new JsonDoc()
                 .Set("entry_mode", GetEntryMode(builder, gateway.GpApiConfig.Channel)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
@@ -336,7 +339,7 @@ namespace GlobalPayments.Api.Entities {
                 requestData.Set("transactions", transaction)
                     .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())                    
                     .Set("shipping_amount", payLinkData.ShippingAmount.ToNumericCurrencyString())
-                    .Set("shippable", payLinkData.IsShippable?.ToString() ?? false.ToString())
+                    .Set("shippable", payLinkData.IsShippable != null && payLinkData.IsShippable.Value ? "YES" : "NO")
                     .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
                     .Set("name", payLinkData.Name ?? null);
 
@@ -377,7 +380,8 @@ namespace GlobalPayments.Api.Entities {
                 .Set("ip_address", builder.CustomerIpAddress)
                 //.Set("site_reference", "") //
                 .Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
-                .Set("payment_method", paymentMethod)             
+                .Set("payment_method", paymentMethod) 
+                .Set("risk_assessment", builder.FraudFilterMode != null ? MapFraudManagement(builder) : null)
                 .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
                 .Set("id", builder.PaymentLinkId) : null);
 
@@ -432,6 +436,31 @@ namespace GlobalPayments.Api.Entities {
             for (int i = 0; i < (allowedPaymentMethods.Length); i++ ) {
                 result[i] = EnumConverter.GetMapping(Target.GP_API, allowedPaymentMethods[i]);
             }
+
+            return result;
+        }
+
+        public static List<Dictionary<string, object>> MapFraudManagement(AuthorizationBuilder builder)
+        {
+            List<Dictionary<string, object>> rules = new List<Dictionary<string, object>>();
+            if (builder.FraudRules != null) {
+                foreach (var fraudRule in builder.FraudRules.Rules) {
+                    Dictionary<string, object> rule = new Dictionary<string, object>();
+                    rule.Add("reference", fraudRule.Key);
+                    rule.Add("mode", fraudRule.Mode.ToString());
+
+                    rules.Add(rule);
+                }
+            }
+
+            var result = new List<Dictionary<string, object>>();
+
+            var item = new Dictionary<string, object>();
+            item.Add("mode", builder.FraudFilterMode.ToString());
+            if (rules.Count > 0) {
+                item.Add("rules", rules);
+            }
+            result.Add(item);
 
             return result;
         }

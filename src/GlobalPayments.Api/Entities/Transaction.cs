@@ -248,6 +248,8 @@ namespace GlobalPayments.Api.Entities {
         /// 
         /// </summary>
         public FraudResponse FraudResponse;
+
+        public FraudManagementResponse FraudFilterResponse;
         /// <summary>
         /// The host response date
         /// </summary>

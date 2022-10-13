@@ -8,5 +8,7 @@ namespace GlobalPayments.Api.Entities
     {
         public string Key { get; set; }
         public FraudFilterMode Mode { get; set; }
+        public string Description { get; set; }
+        public string result { get; set; }
     }
 }
