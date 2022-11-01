@@ -22,7 +22,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 MethodNotificationUrl = "https://www.example.com/methodNotificationUrl",
                 ChallengeNotificationUrl = "https://www.example.com/challengeNotificationUrl",
                 MerchantContactUrl = "https://www.example.com/merchantAboutUrl",
-                Secure3dVersion = Secure3dVersion.Two,                
+                Secure3dVersion = Secure3dVersion.Any,                
                 RequestLogger = new RequestConsoleLogger()
             };
             ServicesContainer.ConfigureService(config);
@@ -81,35 +81,38 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         public void FullCycle_v1() {
             card.Number = "4012001037141112";
 
-            ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
+            var exceptionCaught = false;
+            try {
+                Secure3dService.CheckEnrollment(card)
+                    .WithAmount(1m)
+                    .WithCurrency("USD")
+                    .Execute(Secure3dVersion.Any);
+            }
+            catch (BuilderException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("3D Secure One is no longer supported!", ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void FullCycle_v1_ConfigException() {
+            card.Number = "4012001037141112";
+
+            var exceptionCaught = false;
+            try {
+                Secure3dService.CheckEnrollment(card)
                     .WithAmount(1m)
                     .WithCurrency("USD")
                     .Execute(Secure3dVersion.One);
-            Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
-
-            if (secureEcom.Enrolled.Equals("Y")) {
-                // authenticate
-                ThreeDSecureAcsClient authClient = new ThreeDSecureAcsClient(secureEcom.IssuerAcsUrl);
-                var authResponse = authClient.Authenticate(secureEcom.PayerAuthenticationRequest, secureEcom.MerchantData.ToString());
-
-                string payerAuthenticationResponse = authResponse.pares;
-                MerchantDataCollection md = MerchantDataCollection.Parse(authResponse.md);
-
-                // verify signature through the service and affix to the card object
-                secureEcom = Secure3dService.GetAuthenticationData()
-                            .WithPayerAuthenticationResponse(payerAuthenticationResponse)
-                            .WithMerchantData(md)
-                            .Execute();
-                card.ThreeDSecure = secureEcom;
-
-                if (secureEcom.Status.Equals("Y") || secureEcom.Status.Equals("A")) {
-                    Transaction response = card.Charge().Execute();
-                    Assert.IsNotNull(response);
-                    Assert.AreEqual("00", response.ResponseCode);
-                }
-                else Assert.Fail("Signature verification Assert.Failed.");
             }
-            else Assert.Fail("Card not enrolled.");
+            catch (ConfigurationException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Secure 3d is not configured for version One.", ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         [TestMethod]

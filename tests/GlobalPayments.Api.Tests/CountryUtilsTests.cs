@@ -155,6 +155,25 @@ namespace GlobalPayments.Api.Tests {
             Assert.AreEqual("United States of America", result);
         }
         [TestMethod]
+        public void GetPhoneByCountry()
+        {
+            string result = CountryUtils.GetPhoneCodesByCountry("United States of America");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("1", result);
+
+            result = CountryUtils.GetPhoneCodesByCountry("840");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("1", result);
+
+            result = CountryUtils.GetPhoneCodesByCountry("US");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("1", result);
+
+            result = CountryUtils.GetPhoneCodesByCountry("USA");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("1", result);
+        }
+        [TestMethod]
         public void GetCountryCodeByExactNumericCode() {
             string result = CountryUtils.GetCountryCodeByCountry("840");
             Assert.IsNotNull(result);

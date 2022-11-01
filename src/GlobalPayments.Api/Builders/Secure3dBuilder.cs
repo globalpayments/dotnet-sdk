@@ -512,9 +512,13 @@ namespace GlobalPayments.Api.Builders {
 
             // get the provider
             ISecure3dProvider provider = ServicesContainer.Instance.GetSecure3d(configName, version);
+            if (version == Secure3dVersion.One && (provider is GpApiConnector || provider is GpEcomConnector)) {
+                throw new BuilderException($"3D Secure {version} is no longer supported!");
+            }
             if (provider != null) {
                 bool canDowngrade = false;
-                if (provider.Version.Equals(Secure3dVersion.Two) && version.Equals(Secure3dVersion.Any)) {
+                if (provider.Version.Equals(Secure3dVersion.Two) && version.Equals(Secure3dVersion.Any) &&
+                (!(provider is GpEcomConnector) && !(provider is GpApiConnector))) {
                     try {
                         var oneProvider = ServicesContainer.Instance.GetSecure3d(configName, Secure3dVersion.One);
                         canDowngrade = (oneProvider != null);

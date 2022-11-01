@@ -87,56 +87,34 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CardHolderEnrolled_ChallengeRequired_AuthenticationSuccessful_FullCycle_v1() {
             card.Number = GpApi3DSTestCards.CARDHOLDER_ENROLLED_V1;
 
-            var secureEcom = Secure3dService.CheckEnrollment(card)
-                .WithCurrency(Currency)
-                .WithAmount(Amount)
-                .WithAuthenticationSource(AuthenticationSource.BROWSER)
-                .WithChallengeRequestIndicator(ChallengeRequestIndicator.CHALLENGE_MANDATED)
-                .WithStoredCredential(new StoredCredential {
-                    Initiator = StoredCredentialInitiator.CardHolder,
-                    Type = StoredCredentialType.Unscheduled,
-                    Sequence = StoredCredentialSequence.First,
-                    Reason = StoredCredentialReason.NoShow
-                })
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
-            Assert.AreEqual(CHALLENGE_REQUIRED, secureEcom.Status);
-            Assert.IsTrue(secureEcom.ChallengeMandated);
-            Assert.IsNotNull(secureEcom.IssuerAcsUrl);
-            Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
-            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
-            Assert.IsNotNull(secureEcom.MessageType);
-            Assert.IsNotNull(secureEcom.SessionDataFieldName);
-
-            // Perform ACS authentication
-            GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string payerAuthenticationResponse;
-            string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);
-            Assert.AreEqual("{\"success\":true}", authResponse);
-
-            // Get authentication data
-            secureEcom = Secure3dService.GetAuthenticationData()
-                .WithServerTransactionId(secureEcom.ServerTransactionId)
-                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
-            Assert.AreEqual("YES", secureEcom.LiabilityShift);
-
-            card.ThreeDSecure = secureEcom;
-
-            // Create transaction
-            var response = card.Charge(Amount)
-                .WithCurrency(Currency)
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            bool errorFound = false;
+            try
+            {
+                // Check enrollment
+                var result = Secure3dService
+                        .CheckEnrollment(card)
+                        .WithCurrency(Currency)
+                        .WithAmount(Amount)
+                        .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                        .WithChallengeRequestIndicator(ChallengeRequestIndicator.CHALLENGE_MANDATED)
+                        .WithStoredCredential(new StoredCredential
+                        {
+                            Initiator = StoredCredentialInitiator.CardHolder,
+                            Type = StoredCredentialType.Unscheduled,
+                            Sequence = StoredCredentialSequence.First,
+                            Reason = StoredCredentialReason.NoShow
+                        })
+                        .Execute(Secure3dVersion.One);
+            }
+            catch (BuilderException e)
+            {
+                errorFound = true;
+                Assert.AreEqual("3D Secure One is no longer supported!", e.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(errorFound);
+            }
         }
 
         [TestMethod]
@@ -150,165 +128,45 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(tokenizedCard.Token);
 
-            // Check enrollment
-            var secureEcom = Secure3dService.CheckEnrollment(tokenizedCard)
-                .WithCurrency(Currency)
-                .WithAmount(Amount)
-                .Execute();
+            bool errorFound = false;
+            try
+            {
 
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
-            Assert.AreEqual(CHALLENGE_REQUIRED, secureEcom.Status);
-            Assert.IsTrue(secureEcom.ChallengeMandated);
-            Assert.IsNotNull(secureEcom.IssuerAcsUrl);
-            Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
-            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
-            Assert.IsNotNull(secureEcom.MessageType);
-            Assert.IsNotNull(secureEcom.SessionDataFieldName);
-
-            // Perform ACS authentication
-            GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string payerAuthenticationResponse;
-            string authResponse = acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse);
-            Assert.AreEqual("{\"success\":true}", authResponse);
-
-            // Get authentication data
-            secureEcom = Secure3dService.GetAuthenticationData()
-                .WithServerTransactionId(secureEcom.ServerTransactionId)
-                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
-            Assert.AreEqual("YES", secureEcom.LiabilityShift);
-
-            tokenizedCard.ThreeDSecure = secureEcom;
-
-            // Create transaction
-            var response = tokenizedCard.Charge(Amount)
-                .WithCurrency(Currency)
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
-        }
-
-        [DataTestMethod]
-        [DataRow(AuthenticationResultCode.Unavailable, FAILED)]
-        [DataRow(AuthenticationResultCode.Failed, NOT_AUTHENTICATED)]
-        [DataRow(AuthenticationResultCode.AttemptAcknowledge, SUCCESS_ATTEMPT_MADE)]
-        public void CardHolderEnrolled_ChallengeRequired_AuthenticationFailed_v1(
-            AuthenticationResultCode authenticationResultCode, string status) {
-            card.Number = GpApi3DSTestCards.CARDHOLDER_ENROLLED_V1;
-
-            // Check enrollment
-            var secureEcom = Secure3dService.CheckEnrollment(card)
-                .WithCurrency(Currency)
-                .WithAmount(Amount)
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
-            Assert.AreEqual(CHALLENGE_REQUIRED, secureEcom.Status);
-            Assert.IsTrue(secureEcom.ChallengeMandated);
-            Assert.IsNotNull(secureEcom.IssuerAcsUrl);
-            Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
-            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
-            Assert.IsNotNull(secureEcom.MessageType);
-            Assert.IsNotNull(secureEcom.SessionDataFieldName);
-
-            // Perform ACS authentication
-            GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string payerAuthenticationResponse;
-            string authResponse =
-                acsClient.Authenticate_v1(secureEcom, out payerAuthenticationResponse, authenticationResultCode);
-            Assert.AreEqual("{\"success\":true}", authResponse);
-
-            // Get authentication data
-            secureEcom = Secure3dService.GetAuthenticationData()
-                .WithServerTransactionId(secureEcom.ServerTransactionId)
-                .WithPayerAuthenticationResponse(payerAuthenticationResponse)
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(status, secureEcom.Status);
-            string liabilityShift = status == "SUCCESS_ATTEMPT_MADE" ? "YES" : "NO";
-            Assert.AreEqual(liabilityShift, secureEcom.LiabilityShift);
-        }
-
-        [TestMethod]
-        public void CardHolderEnrolled_ChallengeRequired_AuthenticationFailed_v1_WrongAcsValue() {
-            card.Number = GpApi3DSTestCards.CARDHOLDER_ENROLLED_V1;
-
-            // Check enrollment
-            var secureEcom = Secure3dService.CheckEnrollment(card)
-                .WithCurrency(Currency)
-                .WithAmount(Amount)
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
-            Assert.AreEqual(CHALLENGE_REQUIRED, secureEcom.Status);
-            Assert.IsTrue(secureEcom.ChallengeMandated);
-            Assert.IsNotNull(secureEcom.IssuerAcsUrl);
-            Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
-            Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
-            Assert.IsNotNull(secureEcom.MessageType);
-            Assert.IsNotNull(secureEcom.SessionDataFieldName);
-
-            // Perform ACS authentication
-            GpApi3DSecureAcsClient acsClient = new GpApi3DSecureAcsClient(secureEcom.IssuerAcsUrl);
-            string authResponse =
-                acsClient.Authenticate_v1(secureEcom, out var payerAuthenticationResponse,
-                    AuthenticationResultCode.Successful);
-            Assert.AreEqual("{\"success\":true}", authResponse);
-
-            var exceptionCaught = false;
-            try {
-                Secure3dService.GetAuthenticationData()
-                    .WithServerTransactionId(secureEcom.ServerTransactionId)
-                    .WithPayerAuthenticationResponse(Guid.NewGuid().ToString())
-                    .Execute();
-            }
-            catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("50020", ex.ResponseMessage);
-                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Unable to decompress the PARes.", ex.Message);
-            }
-            finally {
-                Assert.IsTrue(exceptionCaught);
+                Secure3dService
+                     .CheckEnrollment(tokenizedCard)
+                     .WithCurrency(Currency)
+                     .WithAmount(Amount)
+                     .Execute(Secure3dVersion.One);
+            } catch (BuilderException e) {
+                errorFound = true;
+                Assert.AreEqual("3D Secure One is no longer supported!", e.Message);
+            } finally {
+                Assert.IsTrue(errorFound);
             }
         }
 
         [TestMethod]
         public void CardHolderNotEnrolled_v1() {
             card.Number = GpApi3DSTestCards.CARDHOLDER_NOT_ENROLLED_V1;
-
-            var secureEcom = Secure3dService.CheckEnrollment(card)
-                .WithCurrency(Currency)
-                .WithAmount(Amount)
-                .Execute();
-
-            Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
-            Assert.AreEqual(NOT_ENROLLED, secureEcom.Enrolled);
-            Assert.AreEqual(NOT_ENROLLED, secureEcom.Status);
-            Assert.AreEqual("YES", secureEcom.LiabilityShift);
-
-            card.ThreeDSecure = secureEcom;
-
-            var response = card.Charge(Amount)
-                .WithCurrency(Currency)
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            bool errorFound = false;
+            try
+            {
+                // Check enrollment
+                var result = Secure3dService
+                        .CheckEnrollment(card)
+                        .WithCurrency(Currency)
+                        .WithAmount(Amount)
+                        .Execute(Secure3dVersion.One);
+            }
+            catch (BuilderException e)
+            {
+                errorFound = true;
+                Assert.AreEqual("3D Secure One is no longer supported!", e.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(errorFound);
+            }
         }
 
         #endregion

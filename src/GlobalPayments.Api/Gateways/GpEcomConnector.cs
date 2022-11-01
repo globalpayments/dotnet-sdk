@@ -9,7 +9,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
-    internal class GpEcomConnector : XmlGateway, IPaymentGateway, IRecurringService, ISecure3dProvider, IReportingService {
+    internal class GpEcomConnector : XmlGateway, IPaymentGateway, IRecurringService, IReportingService {
                
         private static Dictionary<string, string> mapCardType = new Dictionary<string, string> { { "DinersClub", "Diners" } };
         public string MerchantId { get; set; }
@@ -802,36 +802,7 @@ namespace GlobalPayments.Api.Gateways {
 
             var response = DoTransaction(et.ToString(request));
             return MapRecurringResponse<TResult>(response, builder);
-        }
-
-        public Transaction ProcessSecure3d(Secure3dBuilder builder) {
-            TransactionType transType = builder.TransactionType;
-            if (transType.Equals(TransactionType.VerifyEnrolled)) {
-                AuthorizationBuilder authBuilder = new AuthorizationBuilder(transType, builder.PaymentMethod)
-                        .WithAmount(builder.Amount)
-                        .WithCurrency(builder.Currency)
-                        .WithOrderId(builder.OrderId);
-
-                return ProcessAuthorization(authBuilder);
-            }
-            else if (transType.Equals(TransactionType.VerifySignature)) {
-                // get our three d secure object
-                ThreeDSecure secureEcom = builder.ThreeDSecure;
-
-                // create our transaction reference
-                TransactionReference reference = new TransactionReference {
-                    OrderId = secureEcom.OrderId
-                };
-
-                ManagementBuilder managementBuilder = new ManagementBuilder(transType)
-                        .WithAmount(secureEcom.Amount)
-                        .WithCurrency(secureEcom.Currency)
-                        .WithPayerAuthenticationResponse(builder.PayerAuthenticationResponse)
-                        .WithPaymentMethod(reference);
-                return ManageTransaction(managementBuilder);
-            }
-            throw new UnsupportedTransactionException(string.Format("Unknown transaction type {0}", transType));
-        }
+        }             
 
         #endregion
 

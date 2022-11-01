@@ -4,6 +4,11 @@
 
 #### Enhancements
 
+- Added phone country and retrieve the same by NumericCountryCode/ISO2/ISO3
+- Removed 3DS1 for GP-API and GP-ECOM
+
+## v4.2.4 (10/13/2022)
+
 - GP-API: The Fraud Management solution passed the values sent in the risk_assessment object
 - GP-API: Updated PayLink properties on the request
 - Added isnotnull validation for subproperties in builders

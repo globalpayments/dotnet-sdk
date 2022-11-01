@@ -19,6 +19,8 @@ namespace GlobalPayments.Api.Entities {
         private Dictionary<string, string> _countryCodeAlpha2MapByNumericCode;
         private Dictionary<string, string> _numericCodeMapByCountryCodeAlpha2;
         private Dictionary<string, string> _numericCodeMapByCountry;
+        private Dictionary<string, string> _phoneCodeMapByCountry;
+        private Dictionary<string, string> _countryMapByPhoneCode;
         private Dictionary<string, string> _countryMapByNumeric;
 
         /// <summary>
@@ -1071,6 +1073,270 @@ namespace GlobalPayments.Api.Entities {
 
             #endregion
 
+            #region PhoneCodeByCountryName - CountryNameByPhoneCode
+            _phoneCodeMapByCountry = new Dictionary<string, string>();
+            _phoneCodeMapByCountry.Add("Afghanistan", "93");
+            _phoneCodeMapByCountry.Add("Åland Islands", "358");
+            _phoneCodeMapByCountry.Add("Albania", "355");
+            _phoneCodeMapByCountry.Add("Algeria", "213");
+            _phoneCodeMapByCountry.Add("American Samoa", "1-684");
+            _phoneCodeMapByCountry.Add("Andorra", "376");
+            _phoneCodeMapByCountry.Add("Angola", "244");
+            _phoneCodeMapByCountry.Add("Anguilla", "1-264");
+            _phoneCodeMapByCountry.Add("Antarctica", "672");
+            _phoneCodeMapByCountry.Add("Antigua and Barbuda", "1-268");
+            _phoneCodeMapByCountry.Add("Argentina", "54");
+            _phoneCodeMapByCountry.Add("Armenia", "374");
+            _phoneCodeMapByCountry.Add("Aruba", "297");
+            _phoneCodeMapByCountry.Add("Australia", "61");
+            _phoneCodeMapByCountry.Add("Austria", "43");
+            _phoneCodeMapByCountry.Add("Azerbaijan", "994");
+            _phoneCodeMapByCountry.Add("Bahamas", "1-242");
+            _phoneCodeMapByCountry.Add("Bahrain", "973");
+            _phoneCodeMapByCountry.Add("Bangladesh", "880");
+            _phoneCodeMapByCountry.Add("Barbados", "1-246");
+            _phoneCodeMapByCountry.Add("Belarus", "375");
+            _phoneCodeMapByCountry.Add("Belgium", "32");
+            _phoneCodeMapByCountry.Add("Belize", "501");
+            _phoneCodeMapByCountry.Add("Benin", "229");
+            _phoneCodeMapByCountry.Add("Bermuda", "1-441");
+            _phoneCodeMapByCountry.Add("Bhutan", "975");
+            _phoneCodeMapByCountry.Add("Bolivia (Plurinational State of)", "591");
+            _phoneCodeMapByCountry.Add("Bonaire, Sint Eustatius and Saba", "599");
+            _phoneCodeMapByCountry.Add("Bosnia and Herzegovina", "387");
+            _phoneCodeMapByCountry.Add("Botswana", "267");
+            _phoneCodeMapByCountry.Add("Bouvet Island", "55");
+            _phoneCodeMapByCountry.Add("Brazil", "55");
+            _phoneCodeMapByCountry.Add("British Indian Ocean Territory", "246");
+            _phoneCodeMapByCountry.Add("Brunei Darussalam", "673");
+            _phoneCodeMapByCountry.Add("Bulgaria", "359");
+            _phoneCodeMapByCountry.Add("Burkina Faso", "226");
+            _phoneCodeMapByCountry.Add("Burundi", "257");            
+            _phoneCodeMapByCountry.Add("Cambodia", "855");
+            _phoneCodeMapByCountry.Add("Cameroon", "237");
+            _phoneCodeMapByCountry.Add("Canada", "1");
+            _phoneCodeMapByCountry.Add("Cabo Verde", "238");
+            _phoneCodeMapByCountry.Add("Cayman Islands", "1-345");
+            _phoneCodeMapByCountry.Add("Central African Republic", "236");
+            _phoneCodeMapByCountry.Add("Chad", "235");
+            _phoneCodeMapByCountry.Add("Chile", "56");
+            _phoneCodeMapByCountry.Add("China", "86");
+            _phoneCodeMapByCountry.Add("Christmas Island", "61");
+            _phoneCodeMapByCountry.Add("Cocos (Keeling) Islands", "61");
+            _phoneCodeMapByCountry.Add("Colombia", "57");
+            _phoneCodeMapByCountry.Add("Comoros", "269");
+            _phoneCodeMapByCountry.Add("Congo", "242");
+            _phoneCodeMapByCountry.Add("Congo, Democratic Republic of the", "243");
+            _phoneCodeMapByCountry.Add("Cook Islands", "682");
+            _phoneCodeMapByCountry.Add("Costa Rica", "506");
+            _phoneCodeMapByCountry.Add("Côte d'Ivoire", "225");
+            _phoneCodeMapByCountry.Add("Croatia", "385");
+            _phoneCodeMapByCountry.Add("Cuba", "53");
+            _phoneCodeMapByCountry.Add("Curaçao", "599");
+            _phoneCodeMapByCountry.Add("Cyprus", "357");
+            _phoneCodeMapByCountry.Add("Czechia", "420"); //Validate
+            _phoneCodeMapByCountry.Add("Denmark", "45");
+            _phoneCodeMapByCountry.Add("Djibouti", "253");
+            _phoneCodeMapByCountry.Add("Dominica", "1-767");
+            _phoneCodeMapByCountry.Add("Dominican Republic", "1-809, 1-829, 1-849");
+            _phoneCodeMapByCountry.Add("Ecuador", "593");
+            _phoneCodeMapByCountry.Add("Egypt", "20");
+            _phoneCodeMapByCountry.Add("El Salvador", "503");
+            _phoneCodeMapByCountry.Add("Equatorial Guinea", "240");
+            _phoneCodeMapByCountry.Add("Eritrea", "291");
+            _phoneCodeMapByCountry.Add("Estonia", "372");
+            //_phoneCodeMapByCountry.Add("Eswatini", "748");
+            _phoneCodeMapByCountry.Add("Ethiopia", "251");
+            _phoneCodeMapByCountry.Add("Falkland Islands (Malvinas)", "500");
+            _phoneCodeMapByCountry.Add("Faroe Islands", "298");
+            _phoneCodeMapByCountry.Add("Fiji", "679");
+            _phoneCodeMapByCountry.Add("Finland", "358");
+            _phoneCodeMapByCountry.Add("France", "33");
+            _phoneCodeMapByCountry.Add("French Guiana", "594");
+            _phoneCodeMapByCountry.Add("French Polynesia", "689");
+            _phoneCodeMapByCountry.Add("French Southern Territories", "262");
+            _phoneCodeMapByCountry.Add("Gabon", "241");
+            _phoneCodeMapByCountry.Add("Gambia", "220");
+            _phoneCodeMapByCountry.Add("Georgia", "995");
+            _phoneCodeMapByCountry.Add("Germany", "49");
+            _phoneCodeMapByCountry.Add("Ghana", "233");
+            _phoneCodeMapByCountry.Add("Gibraltar", "350");
+            _phoneCodeMapByCountry.Add("Greece", "30");
+            _phoneCodeMapByCountry.Add("Greenland", "299");
+            _phoneCodeMapByCountry.Add("Grenada", "1-473");
+            _phoneCodeMapByCountry.Add("Guadeloupe", "590");
+            _phoneCodeMapByCountry.Add("Guam", "1-671");
+            _phoneCodeMapByCountry.Add("Guatemala", "502");
+            _phoneCodeMapByCountry.Add("Guernsey", "44-1481");
+            _phoneCodeMapByCountry.Add("Guinea", "224");
+            _phoneCodeMapByCountry.Add("Guinea-Bissau", "245");
+            _phoneCodeMapByCountry.Add("Guyana", "592");
+            _phoneCodeMapByCountry.Add("Haiti", "509");
+            _phoneCodeMapByCountry.Add("Heard Island and McDonald Islands", "672");
+            _phoneCodeMapByCountry.Add("Holy See", "379");
+            _phoneCodeMapByCountry.Add("Honduras", "504");
+            _phoneCodeMapByCountry.Add("Hong Kong", "852");
+            _phoneCodeMapByCountry.Add("Hungary", "36");
+            _phoneCodeMapByCountry.Add("Iceland", "354");
+            _phoneCodeMapByCountry.Add("India", "91");
+            _phoneCodeMapByCountry.Add("Indonesia", "62");
+            _phoneCodeMapByCountry.Add("Iran (Islamic Republic of)", "98");
+            _phoneCodeMapByCountry.Add("Iraq", "964");
+            _phoneCodeMapByCountry.Add("Ireland", "353");
+            _phoneCodeMapByCountry.Add("Isle of Man", "44-1624");
+            _phoneCodeMapByCountry.Add("Israel", "972");
+            _phoneCodeMapByCountry.Add("Italy", "39");
+            _phoneCodeMapByCountry.Add("Jamaica", "1-876");
+            _phoneCodeMapByCountry.Add("Japan", "81");
+            _phoneCodeMapByCountry.Add("Jersey", "44-1534");
+            _phoneCodeMapByCountry.Add("Jordan", "962");
+            _phoneCodeMapByCountry.Add("Kazakhstan", "7");
+            _phoneCodeMapByCountry.Add("Kenya", "254");
+            _phoneCodeMapByCountry.Add("Kiribati", "686");
+            _phoneCodeMapByCountry.Add("Korea (Democratic People's Republic of)", "850");
+            _phoneCodeMapByCountry.Add("Korea, Republic of", "82");
+            _phoneCodeMapByCountry.Add("Kuwait", "965");
+            _phoneCodeMapByCountry.Add("Kyrgyzstan", "996");
+            _phoneCodeMapByCountry.Add("Lao People's Democratic Republic", "856");
+            _phoneCodeMapByCountry.Add("Latvia", "371");
+            _phoneCodeMapByCountry.Add("Lebanon", "961");
+            _phoneCodeMapByCountry.Add("Lesotho", "266");
+            _phoneCodeMapByCountry.Add("Liberia", "231");
+            _phoneCodeMapByCountry.Add("Libya", "218");
+            _phoneCodeMapByCountry.Add("Liechtenstein", "423");
+            _phoneCodeMapByCountry.Add("Lithuania", "370");
+            _phoneCodeMapByCountry.Add("Luxembourg", "352"); 
+            _phoneCodeMapByCountry.Add("Macao", "853");
+            _phoneCodeMapByCountry.Add("Macedonia, the former Yugoslav Republic of", "389");
+            _phoneCodeMapByCountry.Add("Madagascar", "261");
+            _phoneCodeMapByCountry.Add("Malawi", "265");
+            _phoneCodeMapByCountry.Add("Malaysia", "60");
+            _phoneCodeMapByCountry.Add("Maldives", "960");
+            _phoneCodeMapByCountry.Add("Mali", "223");
+            _phoneCodeMapByCountry.Add("Malta", "356");
+            _phoneCodeMapByCountry.Add("Marshall Islands", "692");
+            _phoneCodeMapByCountry.Add("Martinique", "596");
+            _phoneCodeMapByCountry.Add("Mauritania", "222");
+            _phoneCodeMapByCountry.Add("Mauritius", "230");
+            _phoneCodeMapByCountry.Add("Mayotte", "262");
+            _phoneCodeMapByCountry.Add("Mexico", "52");
+            _phoneCodeMapByCountry.Add("Micronesia (Federated States of)", "691");
+            _phoneCodeMapByCountry.Add("Moldova, Republic of", "373");
+            _phoneCodeMapByCountry.Add("Monaco", "377");
+            _phoneCodeMapByCountry.Add("Mongolia", "976");
+            _phoneCodeMapByCountry.Add("Montenegro", "382");
+            _phoneCodeMapByCountry.Add("Montserrat", "1-664");
+            _phoneCodeMapByCountry.Add("Morocco", "212");
+            _phoneCodeMapByCountry.Add("Mozambique", "258");
+            _phoneCodeMapByCountry.Add("Myanmar", "95");
+            _phoneCodeMapByCountry.Add("Namibia", "264");
+            _phoneCodeMapByCountry.Add("Nauru", "674");
+            _phoneCodeMapByCountry.Add("Nepal", "977");
+            _phoneCodeMapByCountry.Add("Netherlands", "31");
+            _phoneCodeMapByCountry.Add("Netherlands Antilles", "599");
+            _phoneCodeMapByCountry.Add("New Caledonia", "687");
+            _phoneCodeMapByCountry.Add("New Zealand", "64");
+            _phoneCodeMapByCountry.Add("Nicaragua", "505");
+            _phoneCodeMapByCountry.Add("Niger", "227");
+            _phoneCodeMapByCountry.Add("Nigeria", "234");
+            _phoneCodeMapByCountry.Add("Niue", "683");
+            _phoneCodeMapByCountry.Add("Norfolk Island", "672");
+            //_phoneCodeMapByCountry.Add("North Macedonia", "807");
+            _phoneCodeMapByCountry.Add("Northern Mariana Islands", "1-670");
+            _phoneCodeMapByCountry.Add("Norway", "47");
+            _phoneCodeMapByCountry.Add("Oman", "968");
+            _phoneCodeMapByCountry.Add("Pakistan", "92");
+            _phoneCodeMapByCountry.Add("Palau", "680");
+            _phoneCodeMapByCountry.Add("Palestine, State of", "970");
+            _phoneCodeMapByCountry.Add("Panama", "507");
+            _phoneCodeMapByCountry.Add("Papua New Guinea", "675");
+            _phoneCodeMapByCountry.Add("Paraguay", "595");
+            _phoneCodeMapByCountry.Add("Peru", "51");
+            _phoneCodeMapByCountry.Add("Philippines", "63");
+            _phoneCodeMapByCountry.Add("Pitcairn", "64");
+            _phoneCodeMapByCountry.Add("Poland", "48");
+            _phoneCodeMapByCountry.Add("Portugal", "351");
+            _phoneCodeMapByCountry.Add("Puerto Rico", "1-787, 1-939");
+            _phoneCodeMapByCountry.Add("Qatar", "974");
+            _phoneCodeMapByCountry.Add("Réunion", "262");
+            _phoneCodeMapByCountry.Add("Romania", "40");
+            _phoneCodeMapByCountry.Add("Russian Federation", "7");
+            _phoneCodeMapByCountry.Add("Rwanda", "250");
+            _phoneCodeMapByCountry.Add("Saint Barthélemy", "590");
+            _phoneCodeMapByCountry.Add("Saint Helena, Ascension and Tristan da Cunha", "290");
+            _phoneCodeMapByCountry.Add("Saint Kitts and Nevis", "1-869");
+            _phoneCodeMapByCountry.Add("Saint Lucia", "1-758");
+            _phoneCodeMapByCountry.Add("Saint Martin (French part)", "590");
+            _phoneCodeMapByCountry.Add("Saint Pierre and Miquelon", "508");
+            _phoneCodeMapByCountry.Add("Saint Vincent and the Grenadines", "1-784");
+            _phoneCodeMapByCountry.Add("Samoa", "685");
+            _phoneCodeMapByCountry.Add("San Marino", "378");
+            _phoneCodeMapByCountry.Add("Sao Tome and Principe", "239");
+            _phoneCodeMapByCountry.Add("Saudi Arabia", "966");
+            _phoneCodeMapByCountry.Add("Senegal", "221");
+            _phoneCodeMapByCountry.Add("Serbia", "381");
+            _phoneCodeMapByCountry.Add("Seychelles", "248");
+            _phoneCodeMapByCountry.Add("Sierra Leone", "232");
+            _phoneCodeMapByCountry.Add("Singapore", "65");
+            _phoneCodeMapByCountry.Add("Sint Maarten (Dutch part)", "1-721");
+            _phoneCodeMapByCountry.Add("Slovakia", "421");
+            _phoneCodeMapByCountry.Add("Slovenia", "386");
+            _phoneCodeMapByCountry.Add("Solomon Islands", "677");
+            _phoneCodeMapByCountry.Add("Somalia", "252");
+            _phoneCodeMapByCountry.Add("South Africa", "27");
+            _phoneCodeMapByCountry.Add("South Georgia and the South Sandwich Islands", "500");
+            _phoneCodeMapByCountry.Add("South Sudan", "211");
+            _phoneCodeMapByCountry.Add("Spain", "34");
+            _phoneCodeMapByCountry.Add("Sri Lanka", "94");
+            _phoneCodeMapByCountry.Add("Sudan", "249");
+            _phoneCodeMapByCountry.Add("Suriname", "597");
+            _phoneCodeMapByCountry.Add("Svalbard and Jan Mayen", "47");
+            _phoneCodeMapByCountry.Add("Swaziland", "268");
+            _phoneCodeMapByCountry.Add("Sweden", "46");
+            _phoneCodeMapByCountry.Add("Switzerland", "41");
+            _phoneCodeMapByCountry.Add("Syrian Arab Republic", "963");
+            _phoneCodeMapByCountry.Add("Taiwan, Province of China", "886");
+            _phoneCodeMapByCountry.Add("Tajikistan", "992");
+            _phoneCodeMapByCountry.Add("Tanzania, United Republic of", "255");
+            _phoneCodeMapByCountry.Add("Thailand", "66");
+            _phoneCodeMapByCountry.Add("Timor-Leste", "670");
+            _phoneCodeMapByCountry.Add("Togo", "228");
+            _phoneCodeMapByCountry.Add("Tokelau", "690");
+            _phoneCodeMapByCountry.Add("Tonga", "676");
+            _phoneCodeMapByCountry.Add("Trinidad and Tobago", "1-868");
+            _phoneCodeMapByCountry.Add("Tunisia", "216");
+            _phoneCodeMapByCountry.Add("Turkey", "90");
+            _phoneCodeMapByCountry.Add("Turkmenistan", "993");
+            _phoneCodeMapByCountry.Add("Turks and Caicos Islands", "1-649");
+            _phoneCodeMapByCountry.Add("Tuvalu", "688");
+            _phoneCodeMapByCountry.Add("Uganda", "256");
+            _phoneCodeMapByCountry.Add("Ukraine", "380");
+            _phoneCodeMapByCountry.Add("United Arab Emirates", "971");
+            _phoneCodeMapByCountry.Add("United Kingdom of Great Britain and Northern Ireland", "44");
+            _phoneCodeMapByCountry.Add("United States of America", "1");
+            _phoneCodeMapByCountry.Add("United States Minor Outlying Islands", "1");
+            _phoneCodeMapByCountry.Add("Uruguay", "598");
+            _phoneCodeMapByCountry.Add("Uzbekistan", "998");
+            _phoneCodeMapByCountry.Add("Vanuatu", "678");
+            _phoneCodeMapByCountry.Add("Venezuela (Bolivarian Republic of)", "58");
+            _phoneCodeMapByCountry.Add("Vietnam", "84");
+            _phoneCodeMapByCountry.Add("Virgin Islands (British)", "1-284");
+            _phoneCodeMapByCountry.Add("Virgin Islands (U.S.)", "1-340");
+            _phoneCodeMapByCountry.Add("Wallis and Futuna", "681");
+            _phoneCodeMapByCountry.Add("Western Sahara", "212");
+            _phoneCodeMapByCountry.Add("Yemen", "967");
+            _phoneCodeMapByCountry.Add("Zambia", "260");
+            _phoneCodeMapByCountry.Add("Zimbabwe", "263");
+
+            //// build the inverse
+            //_countryMapByPhoneCode = new Dictionary<string, string>();
+            //foreach (var country in _phoneCodeMapByCountry.Keys)
+            //{
+            //    _countryMapByPhoneCode.Add(_phoneCodeMapByCountry[country], country);
+            //}
+
+            #endregion
+
             #endregion
 
             #region Alpha 3 Data Init
@@ -1704,6 +1970,17 @@ namespace GlobalPayments.Api.Entities {
             get
             {
                 return _countryMapByNumeric;
+            }
+        }
+
+        /// <summary>
+        /// PhoneCodeByCountry
+        /// </summary>
+        public Dictionary<string, string> PhoneCodeByCountry
+        {
+            get
+            {
+                return _phoneCodeMapByCountry;
             }
         }
     }

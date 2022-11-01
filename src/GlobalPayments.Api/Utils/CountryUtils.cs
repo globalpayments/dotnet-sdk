@@ -238,6 +238,38 @@ namespace GlobalPayments.Api.Utils {
         }
 
         /// <summary>
+        /// Return Phone Code by country
+        /// </summary>
+        /// <param name="country"></param>
+        /// <returns></returns>
+        public static string GetPhoneCodesByCountry(string country)
+        {
+            CountryData CountryData = new CountryData();
+            if (IsCountryName(country) && CountryData.PhoneCodeByCountry.ContainsKey(country)) {
+                return CountryData.PhoneCodeByCountry[country];
+            }
+            else if (IsNumeric(country) && CountryData.CountryByNumericCode.ContainsKey(country)) {                
+                return CountryData.PhoneCodeByCountry[CountryData.CountryByNumericCode[country]];
+            }            
+            else if (IsAlpha2(country) && CountryData.NumericByAlpha2CountryCode.ContainsKey(country))
+            {
+                if (CountryData.CountryByNumericCode.ContainsKey(CountryData.NumericByAlpha2CountryCode[country])) {
+                    var countryCode = CountryData.CountryByNumericCode[CountryData.NumericByAlpha2CountryCode[country]];
+                    return CountryData.PhoneCodeByCountry[countryCode];
+                }
+            }
+            else if (IsAlpha3(country) && CountryData.NumericByAlpha3CountryCode.ContainsKey(country))
+            {
+                if (CountryData.CountryByNumericCode.ContainsKey(CountryData.NumericByAlpha3CountryCode[country]))
+                {
+                    var countryCode = CountryData.CountryByNumericCode[CountryData.NumericByAlpha3CountryCode[country]];
+                    return CountryData.PhoneCodeByCountry[countryCode];
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Converts from Name to requested format
         /// </summary>
         /// <param name="input"></param>

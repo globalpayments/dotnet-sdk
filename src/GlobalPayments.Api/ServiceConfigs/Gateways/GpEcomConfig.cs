@@ -96,12 +96,7 @@ namespace GlobalPayments.Api {
 
             // set default
             if (Secure3dVersion == null) {
-                Secure3dVersion = Entities.Secure3dVersion.One;
-            }
-
-            // secure 3d v1
-            if (Secure3dVersion.Equals(Entities.Secure3dVersion.One) || Secure3dVersion.Equals(Entities.Secure3dVersion.Any)) {
-                services.SetSecure3dProvider(Entities.Secure3dVersion.One, gateway);
+                Secure3dVersion = Entities.Secure3dVersion.Two;           
             }
 
             // secure 3d v2
