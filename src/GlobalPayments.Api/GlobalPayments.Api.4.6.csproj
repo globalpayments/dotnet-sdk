@@ -34,7 +34,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>BlueBridge.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\..\Certificates\BlueBridge.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -636,7 +636,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BlueBridge.pfx" />
+    <None Include="..\..\..\Certificates\BlueBridge.pfx">
+      <Link>BlueBridge.pfx</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
