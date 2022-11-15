@@ -5,6 +5,7 @@ using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
+using System.Text.RegularExpressions;
 
 namespace GlobalPayments.Api.Gateways {
     internal class PorticoConnector : XmlGateway, IPaymentGateway, IReportingService {
@@ -66,7 +67,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(holder, isCheck ? "Address1" : "CardHolderAddr", builder.BillingAddress.StreetAddress1);
                     et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
                     et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
-                    et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
+                    et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", StringUtils.ToValidateAndFormatZipCode(builder.BillingAddress.PostalCode));
                 }
 
                 if (isCheck) {
@@ -82,7 +83,7 @@ namespace GlobalPayments.Api.Gateways {
                         }
                     }
                     et.SubElement(holder, "CheckName", check.CheckName);
-                    et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
+                    et.SubElement(holder, "PhoneNumber", StringUtils.ToValidateAndFormatPhoneNumber(check.PhoneNumber));
                     et.SubElement(holder, "DLNumber", check.DriversLicenseNumber);
                     et.SubElement(holder, "DLState", check.DriversLicenseState);
 
@@ -449,6 +450,10 @@ namespace GlobalPayments.Api.Gateways {
                 }
                 else { root = transaction; }
 
+                if (builder.EcommerceInfo != null) {
+                    et.SubElement(root, "Ecommerce", builder.EcommerceInfo.Channel.ToString());
+                }
+
                 // amount
                 if (builder.Amount != null) {
                     et.SubElement(root, "Amt").Text(builder.Amount.ToString());
@@ -509,8 +514,8 @@ namespace GlobalPayments.Api.Gateways {
                             et.SubElement(data, "DiscountAmt", cd.DiscountAmount);
                             et.SubElement(data, "FreightAmt", cd.FreightAmount);
                             et.SubElement(data, "DutyAmt", cd.DutyAmount);
-                            et.SubElement(data, "DestinationPostalZipCode", cd.DestinationPostalCode);
-                            et.SubElement(data, "ShipFromPostalZipCode", cd.OriginPostalCode);
+                            et.SubElement(data, "DestinationPostalZipCode", StringUtils.ToValidateAndFormatZipCode(cd.DestinationPostalCode));
+                            et.SubElement(data, "ShipFromPostalZipCode", StringUtils.ToValidateAndFormatZipCode(cd.OriginPostalCode));
                             et.SubElement(data, "DestinationCountryCode", cd.DestinationCountryCode);
                             et.SubElement(data, "InvoiceRefNbr", cd.VAT_InvoiceNumber);
                             et.SubElement(data, "OrderDate", cd.OrderDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));

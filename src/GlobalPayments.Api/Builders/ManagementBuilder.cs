@@ -42,6 +42,7 @@ namespace GlobalPayments.Api.Builders {
         internal string DynamicDescriptor { get; set; }
         internal eCheck BankTransferDetails { get; set; }
         internal DccRateData DccRateData { get; set; }
+        internal EcommerceInfo EcommerceInfo { get; set; }
         internal decimal? Gratuity { get; set; }
         internal string IdempotencyKey { get; set;  }
         internal string InvoiceNumber { get; set; }
@@ -527,6 +528,11 @@ namespace GlobalPayments.Api.Builders {
 
         public ManagementBuilder WithPaymentMethodUsageMode(PaymentMethodUsageMode value) {
             PaymentMethodUsageMode = value;
+            return this;
+        }
+
+        public ManagementBuilder WithEcommerceInfo(EcommerceInfo value) {
+            EcommerceInfo = value;
             return this;
         }
     }

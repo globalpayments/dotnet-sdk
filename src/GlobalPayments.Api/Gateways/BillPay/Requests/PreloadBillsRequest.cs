@@ -33,7 +33,7 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                     et.SubElement(customerAddress, "bdms:AddressLineOne", bill.Customer.Address.StreetAddress1);
                     et.SubElement(customerAddress, "bdms:City", bill.Customer.Address.City);
                     et.SubElement(customerAddress, "bdms:Country", bill.Customer.Address.Country);
-                    et.SubElement(customerAddress, "bdms:PostalCode", bill.Customer.Address.PostalCode);
+                    et.SubElement(customerAddress, "bdms:PostalCode", StringUtils.ToValidateAndFormatZipCode(bill.Customer.Address.PostalCode));
                     et.SubElement(customerAddress, "bdms:State", bill.Customer.Address.State);
                 }
 
@@ -41,7 +41,7 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                 et.SubElement(billElement, "bdms:ObligorEmailAddress", bill.Customer?.Email);
                 et.SubElement(billElement, "bdms:ObligorFirstName", bill.Customer?.FirstName);
                 et.SubElement(billElement, "bdms:ObligorLastName", bill.Customer?.LastName);
-                et.SubElement(billElement, "bdms:ObligorPhoneNumber", bill.Customer?.HomePhone);
+                et.SubElement(billElement, "bdms:ObligorPhoneNumber", StringUtils.ToValidateAndFormatPhoneNumber(bill.Customer?.HomePhone));
 
                 et.SubElement(billElement, "bdms:RequiredAmount", bill.Amount);
             }

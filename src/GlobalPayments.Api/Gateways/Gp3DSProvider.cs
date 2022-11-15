@@ -140,7 +140,7 @@ namespace GlobalPayments.Api.Gateways {
                     shippingAddressElement.Set("line2", shippingAddress.StreetAddress2);
                     shippingAddressElement.Set("line3", shippingAddress.StreetAddress3);
                     shippingAddressElement.Set("city", shippingAddress.City);
-                    shippingAddressElement.Set("postal_code", shippingAddress.PostalCode);
+                    shippingAddressElement.Set("postal_code", StringUtils.ToValidateAndFormatZipCode(shippingAddress.PostalCode));
                     shippingAddressElement.Set("state", shippingAddress.State);
                     shippingAddressElement.Set("country", shippingAddress.CountryCode);
                 }
@@ -216,7 +216,7 @@ namespace GlobalPayments.Api.Gateways {
                     billingAddressElement.Set("line2", billingAddress.StreetAddress2);
                     billingAddressElement.Set("line3", billingAddress.StreetAddress3);
                     billingAddressElement.Set("city", billingAddress.City);
-                    billingAddressElement.Set("postal_code", billingAddress.PostalCode);
+                    billingAddressElement.Set("postal_code", StringUtils.ToValidateAndFormatZipCode(billingAddress.PostalCode));
                     billingAddressElement.Set("state", billingAddress.State);
                     billingAddressElement.Set("country", billingAddress.CountryCode);
                 }

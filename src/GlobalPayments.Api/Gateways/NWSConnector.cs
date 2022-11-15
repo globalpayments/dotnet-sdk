@@ -1877,7 +1877,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (!(builder.PaymentMethod is eCheck)) {
                     if (authBuilder.BillingAddress != null) {
                         Address address = authBuilder.BillingAddress;
-                        customerData.Set(DE48_CustomerDataType.PostalCode, address.PostalCode);
+                        customerData.Set(DE48_CustomerDataType.PostalCode, StringUtils.ToValidateAndFormatZipCode(address.PostalCode));
                     }
                 }
 

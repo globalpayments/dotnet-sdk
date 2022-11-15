@@ -451,8 +451,8 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "dob", userPersonalData.DateOfBirth);
             xml.SubElement(xmlTrans, "ssn", userPersonalData.SSN);
             xml.SubElement(xmlTrans, "sourceEmail", userPersonalData.SourceEmail);
-            xml.SubElement(xmlTrans, "dayPhone", userPersonalData.DayPhone);
-            xml.SubElement(xmlTrans, "evenPhone", userPersonalData.EveningPhone);
+            xml.SubElement(xmlTrans, "dayPhone", StringUtils.ToValidateAndFormatPhoneNumber(userPersonalData.DayPhone));
+            xml.SubElement(xmlTrans, "evenPhone", StringUtils.ToValidateAndFormatPhoneNumber(userPersonalData.EveningPhone));
             xml.SubElement(xmlTrans, "NotificationEmail", userPersonalData.NotificationEmail);
             xml.SubElement(xmlTrans, "currencyCode", userPersonalData.CurrencyCode);
             xml.SubElement(xmlTrans, "tier", userPersonalData.Tier);
@@ -462,7 +462,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "addr3", userPersonalData.UserAddress.StreetAddress3);
             xml.SubElement(xmlTrans, "city", userPersonalData.UserAddress.City);
             xml.SubElement(xmlTrans, "state", userPersonalData.UserAddress.State);
-            xml.SubElement(xmlTrans, "zip", userPersonalData.UserAddress.PostalCode);
+            xml.SubElement(xmlTrans, "zip", StringUtils.ToValidateAndFormatZipCode(userPersonalData.UserAddress.PostalCode));
             xml.SubElement(xmlTrans, "country", userPersonalData.UserAddress.Country);
         }
 
@@ -481,7 +481,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "BusinessCity", businessData.BusinessAddress.City);
             xml.SubElement(xmlTrans, "BusinessCountry", businessData.BusinessAddress.Country);
             xml.SubElement(xmlTrans, "BusinessState", businessData.BusinessAddress.State);
-            xml.SubElement(xmlTrans, "BusinessZip", businessData.BusinessAddress.PostalCode);
+            xml.SubElement(xmlTrans, "BusinessZip", StringUtils.ToValidateAndFormatZipCode(businessData.BusinessAddress.PostalCode));
         }
 
         private void HydrateBankDetails(ElementTree xml, Element xmlTrans, PayFacBuilder builder) {
@@ -526,7 +526,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "mailCity", mailingAddressInfo.City);
             xml.SubElement(xmlTrans, "mailCountry", mailingAddressInfo.Country);
             xml.SubElement(xmlTrans, "mailState", mailingAddressInfo.State);
-            xml.SubElement(xmlTrans, "mailZip", mailingAddressInfo.PostalCode);
+            xml.SubElement(xmlTrans, "mailZip", StringUtils.ToValidateAndFormatZipCode(mailingAddressInfo.PostalCode));
         }
 
         private void HydrateThreatRiskData(ElementTree xml, Element xmlTrans, ThreatRiskData threatRiskData) {
@@ -546,7 +546,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "SignificantOwnerStreetAddress", significantOwnerData.SignificantOwner.OwnerAddress.StreetAddress1);
             xml.SubElement(xmlTrans, "SignificantOwnerCityName", significantOwnerData.SignificantOwner.OwnerAddress.City);
             xml.SubElement(xmlTrans, "SignificantOwnerRegionCode", significantOwnerData.SignificantOwner.OwnerAddress.State);
-            xml.SubElement(xmlTrans, "SignificantOwnerPostalCode", significantOwnerData.SignificantOwner.OwnerAddress.PostalCode);
+            xml.SubElement(xmlTrans, "SignificantOwnerPostalCode", StringUtils.ToValidateAndFormatZipCode(significantOwnerData.SignificantOwner.OwnerAddress.PostalCode));
             xml.SubElement(xmlTrans, "SignificantOwnerCountryCode", significantOwnerData.SignificantOwner.OwnerAddress.Country);
             xml.SubElement(xmlTrans, "SignificantOwnerTitle", significantOwnerData.SignificantOwner.Title);
             xml.SubElement(xmlTrans, "SignificantOwnerPercentage", significantOwnerData.SignificantOwner.Percentage);
@@ -592,7 +592,7 @@ namespace GlobalPayments.Api.Gateways {
                     xml.SubElement(newOwner, "Address", ownerInfo.OwnerAddress.StreetAddress1);
                     xml.SubElement(newOwner, "City", ownerInfo.OwnerAddress.City);
                     xml.SubElement(newOwner, "State", ownerInfo.OwnerAddress.State);
-                    xml.SubElement(newOwner, "Zip", ownerInfo.OwnerAddress.PostalCode);
+                    xml.SubElement(newOwner, "Zip", StringUtils.ToValidateAndFormatZipCode(ownerInfo.OwnerAddress.PostalCode));
                     xml.SubElement(newOwner, "Country", ownerInfo.OwnerAddress.Country);
                     xml.SubElement(newOwner, "Title", ownerInfo.Title);
                     xml.SubElement(newOwner, "Percentage", ownerInfo.Percentage);
@@ -604,7 +604,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "GrossSettleAddress", grossBillingInformation.GrossSettleAddress.StreetAddress1);
             xml.SubElement(xmlTrans, "GrossSettleCity", grossBillingInformation.GrossSettleAddress.City);
             xml.SubElement(xmlTrans, "GrossSettleState", grossBillingInformation.GrossSettleAddress.State);
-            xml.SubElement(xmlTrans, "GrossSettleZipCode", grossBillingInformation.GrossSettleAddress.PostalCode);
+            xml.SubElement(xmlTrans, "GrossSettleZipCode", StringUtils.ToValidateAndFormatZipCode(grossBillingInformation.GrossSettleAddress.PostalCode));
             xml.SubElement(xmlTrans, "GrossSettleCountry", grossBillingInformation.GrossSettleAddress.Country);
             xml.SubElement(xmlTrans, "GrossSettleCreditCardNumber", grossBillingInformation.GrossSettleCreditCardData.Number);
             xml.SubElement(xmlTrans, "GrossSettleNameOnCard", grossBillingInformation.GrossSettleCreditCardData.CardHolderName);
@@ -654,9 +654,9 @@ namespace GlobalPayments.Api.Gateways {
                     xml.SubElement(primaryOwnerTag, "Address3", builder.PrimaryBankAccountOwner.OwnerAddress.StreetAddress3);
                     xml.SubElement(primaryOwnerTag, "City", builder.PrimaryBankAccountOwner.OwnerAddress.City);
                     xml.SubElement(primaryOwnerTag, "StateProvince", builder.PrimaryBankAccountOwner.OwnerAddress.State);
-                    xml.SubElement(primaryOwnerTag, "PostalCode", builder.PrimaryBankAccountOwner.OwnerAddress.PostalCode);
+                    xml.SubElement(primaryOwnerTag, "PostalCode", StringUtils.ToValidateAndFormatZipCode(builder.PrimaryBankAccountOwner.OwnerAddress.PostalCode));
                     xml.SubElement(primaryOwnerTag, "Country", builder.PrimaryBankAccountOwner.OwnerAddress.Country);
-                    xml.SubElement(primaryOwnerTag, "Phone", builder.PrimaryBankAccountOwner.PhoneNumber);
+                    xml.SubElement(primaryOwnerTag, "Phone", StringUtils.ToValidateAndFormatPhoneNumber(builder.PrimaryBankAccountOwner.PhoneNumber));
                 }
 
                 if (builder.SecondaryBankAccountOwner != null) {
@@ -668,9 +668,9 @@ namespace GlobalPayments.Api.Gateways {
                     xml.SubElement(secondaryOwnerTag, "Address3", builder.SecondaryBankAccountOwner.OwnerAddress.StreetAddress3);
                     xml.SubElement(secondaryOwnerTag, "City", builder.SecondaryBankAccountOwner.OwnerAddress.City);
                     xml.SubElement(secondaryOwnerTag, "StateProvince", builder.SecondaryBankAccountOwner.OwnerAddress.State);
-                    xml.SubElement(secondaryOwnerTag, "PostalCode", builder.SecondaryBankAccountOwner.OwnerAddress.PostalCode);
+                    xml.SubElement(secondaryOwnerTag, "PostalCode", StringUtils.ToValidateAndFormatZipCode(builder.SecondaryBankAccountOwner.OwnerAddress.PostalCode));
                     xml.SubElement(secondaryOwnerTag, "Country", builder.SecondaryBankAccountOwner.OwnerAddress.Country);
-                    xml.SubElement(secondaryOwnerTag, "Phone", builder.SecondaryBankAccountOwner.PhoneNumber);
+                    xml.SubElement(secondaryOwnerTag, "Phone", StringUtils.ToValidateAndFormatPhoneNumber(builder.SecondaryBankAccountOwner.PhoneNumber));
                 }
             }
         }
@@ -697,7 +697,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "CVV2", renewalAccountData.CreditCard.Cvn);
             xml.SubElement(xmlTrans, "ccNum", renewalAccountData.CreditCard.Number);
             xml.SubElement(xmlTrans, "expDate", renewalAccountData.CreditCard.ShortExpiry);
-            xml.SubElement(xmlTrans, "zip", renewalAccountData.ZipCode);
+            xml.SubElement(xmlTrans, "zip", StringUtils.ToValidateAndFormatZipCode(renewalAccountData.ZipCode));
             xml.SubElement(xmlTrans, "PaymentBankAccountNumber", renewalAccountData.PaymentBankAccountNumber);
             xml.SubElement(xmlTrans, "PaymentBankRoutingNumber", renewalAccountData.PaymentBankRoutingNumber);
             xml.SubElement(xmlTrans, "PaymentBankAccountType", renewalAccountData.PaymentBankAccountType);
@@ -711,7 +711,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "addr", cardData.CardholderAddress.StreetAddress1);
             xml.SubElement(xmlTrans, "city", cardData.CardholderAddress.City);
             xml.SubElement(xmlTrans, "state", cardData.CardholderAddress.State);
-            xml.SubElement(xmlTrans, "zip", cardData.CardholderAddress.PostalCode);
+            xml.SubElement(xmlTrans, "zip", StringUtils.ToValidateAndFormatZipCode(cardData.CardholderAddress.PostalCode));
             xml.SubElement(xmlTrans, "country", cardData.CardholderAddress.Country);
         }
         #endregion

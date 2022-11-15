@@ -46,9 +46,9 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             et.SubElement(requestElement, "bdms:PayorLastName", builder.HostedPaymentData.CustomerLastName);
             et.SubElement(requestElement, "bdms:PayorLastNameIsEditable", customerIsEditable);
             et.SubElement(requestElement, "bdms:PayorMiddleNameIsEditable", customerIsEditable);
-            et.SubElement(requestElement, "bdms:PayorPhoneNumber", builder.HostedPaymentData.CustomerPhoneMobile);
+            et.SubElement(requestElement, "bdms:PayorPhoneNumber", StringUtils.ToValidateAndFormatPhoneNumber(builder.HostedPaymentData.CustomerPhoneMobile));
             et.SubElement(requestElement, "bdms:PayorPhoneNumberIsEditable", customerIsEditable);
-            et.SubElement(requestElement, "bdms:PayorPostalCode", builder.HostedPaymentData.CustomerAddress.PostalCode);
+            et.SubElement(requestElement, "bdms:PayorPostalCode", StringUtils.ToValidateAndFormatZipCode(builder.HostedPaymentData.CustomerAddress.PostalCode));
             et.SubElement(requestElement, "bdms:PayorPostalCodeIsEditable", customerIsEditable);
             et.SubElement(requestElement, "bdms:PayorState", builder.HostedPaymentData.CustomerAddress.State);
             et.SubElement(requestElement, "bdms:PayorStateIsEditable", customerIsEditable);

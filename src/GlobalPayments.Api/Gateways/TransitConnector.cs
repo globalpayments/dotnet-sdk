@@ -114,7 +114,7 @@ namespace GlobalPayments.Api.Gateways {
             // AVS
             if (builder.BillingAddress != null) {
                 request.Set("addressLine1", builder.BillingAddress.StreetAddress1)
-                    .Set("zip", builder.BillingAddress.PostalCode);
+                    .Set("zip", StringUtils.ToValidateAndFormatZipCode(builder.BillingAddress.PostalCode));
             }
 
             // PIN Debit
@@ -167,8 +167,8 @@ namespace GlobalPayments.Api.Gateways {
                     .Set("chargeDescriptor", cd.Description)
                     .Set("customerRefID", cd.CustomerReferenceId)
                     .Set("purchaseOrder", cd.PoNumber)
-                    .Set("shipToZip", cd.DestinationPostalCode)
-                    .Set("shipFromZip", cd.OriginPostalCode)
+                    .Set("shipToZip", StringUtils.ToValidateAndFormatZipCode(cd.DestinationPostalCode))
+                    .Set("shipFromZip", StringUtils.ToValidateAndFormatZipCode(cd.OriginPostalCode))
                     .Set("supplierReferenceNumber", cd.SupplierReferenceNumber)
                     .Set("customerVATNumber", cd.CustomerVAT_Number)
                     .Set("summaryCommodityCode", cd.SummaryCommodityCode)

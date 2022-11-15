@@ -121,5 +121,28 @@ namespace GlobalPayments.Api.Tests.Portico {
                 Assert.IsNotNull(response);
                 Assert.AreEqual("00", response.ResponseCode);          
         }
+
+        [TestMethod]
+        public void RefundIncludingEcommInfo() {
+            var saleResponse = card.Charge(12.34m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+
+            var ecomInfo1 = new EcommerceInfo();
+            ecomInfo1.Channel = EcommerceChannel.MOTO;
+
+            var tran = Transaction.FromId(saleResponse.TransactionId, PaymentMethodType.Credit);
+
+            var refundResponse = tran.Refund(1.01m)
+                .WithEcommerceInfo(ecomInfo1)
+                .WithInvoiceNumber("invoice01a")
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(refundResponse);
+            Assert.AreEqual("00", refundResponse.ResponseCode);
+        }
     }
 }

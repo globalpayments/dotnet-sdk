@@ -62,7 +62,7 @@ namespace GlobalPayments.Api.Gateways {
 
             // AVS
             et.SubElement(paymentData, "AvsStreetAddress", builder.BillingAddress?.StreetAddress1);
-            et.SubElement(paymentData, "AvsZipCode", builder.BillingAddress?.PostalCode);
+            et.SubElement(paymentData, "AvsZipCode", StringUtils.ToValidateAndFormatZipCode(builder.BillingAddress?.PostalCode));
 
             // Request
             var request = et.SubElement(transaction, "Request");
@@ -101,9 +101,9 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(invoice, "DiscountAmount", cd.DiscountAmount);
                 et.SubElement(invoice, "ShippingAmount", cd.FreightAmount);
                 et.SubElement(invoice, "DutyAmount", cd.DutyAmount);
-                et.SubElement(invoice, "DestinationPostalCode", cd.DestinationPostalCode);
+                et.SubElement(invoice, "DestinationPostalCode", StringUtils.ToValidateAndFormatZipCode(cd.DestinationPostalCode));
                 et.SubElement(invoice, "DestinationCountryCode", cd.DestinationCountryCode);
-                et.SubElement(invoice, "ShipFromPostalCode", cd.OriginPostalCode);
+                et.SubElement(invoice, "ShipFromPostalCode", StringUtils.ToValidateAndFormatZipCode(cd.OriginPostalCode));
 
                 if (cd.LineItems.Count > 0) {
                     var lineItemsElement = et.SubElement(invoice, "LineItems");

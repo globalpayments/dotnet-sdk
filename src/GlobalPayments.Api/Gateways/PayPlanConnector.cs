@@ -137,9 +137,9 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("company", customer.Company);
                 request.Set("customerStatus", customer.Status);
                 request.Set("primaryEmail", customer.Email);
-                request.Set("phoneDay", customer.HomePhone);
-                request.Set("phoneEvening", customer.WorkPhone);
-                request.Set("phoneMobile", customer.MobilePhone);
+                request.Set("phoneDay", StringUtils.ToValidateAndFormatPhoneNumber(customer.HomePhone));
+                request.Set("phoneEvening", StringUtils.ToValidateAndFormatPhoneNumber(customer.WorkPhone));
+                request.Set("phoneMobile", StringUtils.ToValidateAndFormatPhoneNumber(customer.MobilePhone));
                 request.Set("fax", customer.Fax);
                 request.Set("title", customer.Title);
                 request.Set("department", customer.Department);
@@ -311,7 +311,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("city", address.City);
                 request.Set("country", address.Country);
                 request.Set("stateProvince", address.State);
-                request.Set("zipPostalCode", address.PostalCode);
+                request.Set("zipPostalCode", StringUtils.ToValidateAndFormatZipCode(address.PostalCode));
             }
             return request;
         }

@@ -195,5 +195,30 @@ namespace GlobalPayments.Api.Utils {
 	    	}
 	    	return masked;
 	    }
+
+        public static string ToValidateAndFormatZipCode(string value, string regexForZipCode = @"^\d{5}$") {
+            if (string.IsNullOrEmpty(value)) {
+                return "";
+            }
+            if (Regex.IsMatch(value, regexForZipCode)) {
+                return value;
+            }
+            else {
+                throw new Exception("Provided ZipCode is not a valid.");
+            }
+        }
+
+        public static string ToValidateAndFormatPhoneNumber(string value, string regexPhoneNumber = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$") {
+            if (string.IsNullOrEmpty(value)) {
+                return "";
+            }
+            string formattedPhoneNumber = Regex.Replace(value, @"[^0-9]", "");
+            if (Regex.IsMatch(formattedPhoneNumber, regexPhoneNumber)) {
+                return formattedPhoneNumber;
+            }
+            else {
+                throw new Exception("Provided phone number is not a valid.");
+            }
+        }
     }
 }

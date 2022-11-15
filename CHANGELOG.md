@@ -4,6 +4,14 @@
 
 #### Enhancements
 
+- Portico Gateway: add Ecommerce tag to CreditReturn transactions
+- Security enhancement in example application
+- Sanitize phone numbers and zip codes
+
+## v5.0.0 (11/01/22)
+
+#### Enhancements
+
 - Added phone country and retrieve the same by NumericCountryCode/ISO2/ISO3
 - Removed 3DS1 for GP-API and GP-ECOM
 
