@@ -8,8 +8,8 @@ namespace GlobalPayments.Api.Entities {
     internal class GpApiReportRequestBuilder {
         internal static GpApiRequest BuildRequest<T>(ReportBuilder<T> builder, GpApiConnector gateway) where T : class {
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
-            if (builder is TransactionReportBuilder<T> trb) {
-                var request = new GpApiRequest();
+            var request = new GpApiRequest();
+            if (builder is TransactionReportBuilder<T> trb) {                
                 switch (builder.ReportType) {
                     case ReportType.TransactionDetail:
                         return new GpApiRequest {
@@ -122,7 +122,7 @@ namespace GlobalPayments.Api.Entities {
                         var apiRequest = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}/disputes/{trb.SearchBuilder.DisputeId}/documents/{trb.SearchBuilder.DisputeDocumentId}",
-                        };                       
+                        };
                         return apiRequest;
                     case ReportType.FindDisputesPaged:
                         request = new GpApiRequest {
@@ -189,7 +189,7 @@ namespace GlobalPayments.Api.Entities {
                             var payload = new JsonDoc()
                                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
                                 .Set("reference", trb.SearchBuilder.ReferenceNumber)
-                                .Set("card", card != null ? card : null);                 
+                                .Set("card", card != null ? card : null);
 
                             request = new GpApiRequest {
                                 Verb = HttpMethod.Post,
@@ -252,8 +252,8 @@ namespace GlobalPayments.Api.Entities {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}/links/{trb.SearchBuilder.PayLinkId}",
                         };
-                        
-                       
+
+
                     case ReportType.FindPayLinkPaged:
                         request = new GpApiRequest
                         {
@@ -278,6 +278,24 @@ namespace GlobalPayments.Api.Entities {
                         return request;
                 }
             }
+            else if (builder is UserReportBuilder<T> userTrb)
+            {                
+                switch (builder.ReportType) {
+                    case ReportType.FindMerchantsPaged:
+                        request = new GpApiRequest
+                        {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}/merchants"
+                        };
+
+                        request.AddQueryStringParam("page", userTrb.Page.ToString());
+                        request.AddQueryStringParam("page_size", userTrb.PageSize.ToString());
+
+                        return request;
+                }
+                   
+            }                
+            
             return null;
         }
     }

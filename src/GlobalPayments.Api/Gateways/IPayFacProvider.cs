@@ -7,6 +7,7 @@ using System.Text;
 namespace GlobalPayments.Api.Gateways
 {
     interface IPayFacProvider {
-        Transaction ProcessPayFac(PayFacBuilder builder);
+        T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class;
+        T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class;
     }
 }

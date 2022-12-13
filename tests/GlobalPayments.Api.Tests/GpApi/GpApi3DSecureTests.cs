@@ -517,6 +517,61 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         #endregion
+
+        [TestMethod]
+        public void DecoupledAuth()
+        {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+
+            var tokenizedCard = new CreditCardData() {
+                Token = card.Tokenize()
+            };
+        
+             tokenizedCard.CardHolderName = "James Mason";
+
+            var secureEcom = Secure3dService.CheckEnrollment(tokenizedCard)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .WithDecoupledNotificationUrl("https://www.example.com/decoupledNotification")
+                .Execute();
+
+                Assert.IsNotNull(secureEcom);
+                Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
+                Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+                Assert.AreEqual(AVAILABLE, secureEcom.Status);
+
+            var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithBrowserData(browserData)
+                .WithDecoupledFlowRequest(true)
+                .WithDecoupledFlowTimeout(9001)
+                .WithDecoupledNotificationUrl("https://www.example.com/decoupledNotification")
+                .Execute();
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
+
+             secureEcom = Secure3dService.GetAuthenticationData()
+                .WithServerTransactionId(secureEcom.ServerTransactionId)
+                .Execute();
+
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
+
+            tokenizedCard.ThreeDSecure = secureEcom;
+            var response = tokenizedCard.Charge(Amount)
+                    .WithCurrency(Currency)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
+        }
     }
 
     /// <summary>

@@ -15,12 +15,17 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a billing address.
         /// </summary>
+        [Description("BILLING")]
         Billing,
 
         /// <summary>
         /// Indicates a shipping address.
         /// </summary>
-        Shipping
+        [Description("SHIPPING")]
+        Shipping,
+
+        [Description("BUSINESS")]
+        Business,
     }
 
     /// <summary>
@@ -313,6 +318,9 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a OpenBanking transaction
         /// </summary>
         BankPayment = 1 << 17,
+
+        [Description("MERCHANT")]
+        Merchant = 1 << 18,
     }
 
     /// <summary>
@@ -364,18 +372,21 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a checking account.
         /// </summary>
         [Map(Target.GP_API, "CHECKING")] 
+        [Description("Checking")]
         CHECKING,
 
         /// <summary>
         /// Indicates a savings account.
         /// </summary>
         [Map(Target.GP_API, "SAVING")]
+        [Description("Savings")]
         SAVINGS,
 
         /// <summary>
         /// Indicates a credit account.
         /// </summary>
         [Map(Target.GP_API, "CREDIT")]
+        [Description("Credit")]
         CREDIT
     }
 
@@ -387,18 +398,21 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a personal check.
         /// </summary>
         [Map(Target.NWS, "0")]
+        [Description("Personal")]
         PERSONAL,
 
         /// <summary>
         /// Indicates a business check.
         /// </summary>
         [Map(Target.NWS, "3")]
+        [Description("Business")]
         BUSINESS,
 
         /// <summary>
         /// Indicates a payroll check.
         /// </summary>
         [Map(Target.NWS, "1")]
+        [Description("Payroll")]
         PAYROLL
     }
 
@@ -562,6 +576,8 @@ namespace GlobalPayments.Api.Entities {
         PayLinkDetail = 1 << 24,
 
         FindPayLinkPaged = 1 << 25,
+
+        FindMerchantsPaged = 1 << 26
     }
 
     /// <summary>

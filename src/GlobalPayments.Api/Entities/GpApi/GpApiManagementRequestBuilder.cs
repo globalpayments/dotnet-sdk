@@ -183,15 +183,14 @@ namespace GlobalPayments.Api.Entities {
                       .Set("charge_items", lodginItems);
 
                       payload.Set("lodging", lodgingData);
-                    }
-
-                    return new GpApiRequest
-                    {
-                        Verb = HttpMethod.Post,
-                        Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/incremental",
-                        RequestBody = payload.ToString(),
-                    };
+                    }                    
                 }
+                return new GpApiRequest
+                {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/incremental",
+                    RequestBody = payload.ToString(),
+                };
             }
             else if (builder.TransactionType == TransactionType.Edit)
             {                

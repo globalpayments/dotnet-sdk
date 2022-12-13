@@ -101,6 +101,7 @@ namespace GlobalPayments.Api {
 
             services.ReportingService = gateway;
 
+            services.SetPayFacProvider(gateway);
             services.SetSecure3dProvider(Secure3dVersion.One, gateway);
             services.SetSecure3dProvider(Secure3dVersion.Two, gateway);
         }

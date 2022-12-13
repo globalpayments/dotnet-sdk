@@ -112,7 +112,7 @@ namespace GlobalPayments.Api.Entities {
     }
 
     public class SearchCriteriaBuilder<TResult> where TResult : class {
-        private TransactionReportBuilder<TResult> _reportBuilder;
+        private ReportBuilder<TResult> _reportBuilder;
 
         internal string AccountName { get; set; }
 
@@ -319,7 +319,7 @@ namespace GlobalPayments.Api.Entities {
 
         internal string Version { get; set; }
 
-        internal SearchCriteriaBuilder(TransactionReportBuilder<TResult> reportBuilder) {
+        internal SearchCriteriaBuilder(ReportBuilder<TResult> reportBuilder) {
             _reportBuilder = reportBuilder;
         }
 

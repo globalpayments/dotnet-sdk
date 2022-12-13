@@ -918,7 +918,35 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
         }
-        
+
+        [TestMethod]
+        public void CreditSale_WithCardBrandStorage_RecurringPayment() {
+            var tokenizedCard = new CreditCardData {
+                Token = card.Tokenize(),
+            };
+
+            Transaction response = tokenizedCard.Charge(10.01m)
+                        .WithCurrency("GBP")
+                        .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+
+            var response2 = tokenizedCard.Charge(10.01m)
+                .WithCurrency(CURRENCY)
+                .WithStoredCredential(new StoredCredential
+                {
+                    Initiator = StoredCredentialInitiator.Merchant,
+                    Type = StoredCredentialType.Recurring,
+                    Sequence = StoredCredentialSequence.Subsequent,
+                    Reason = StoredCredentialReason.Incremental
+                })
+                .WithCardBrandStorage(StoredCredentialInitiator.Merchant, response.CardBrandTransactionId)
+                .Execute();
+
+            AssertTransactionResponse(response2, TransactionStatus.Captured);
+            Assert.IsNotNull(response2.CardBrandTransactionId);
+        }
+
         [TestMethod]
         public void CreditSale_WithStoredCredentials_RecurringPayment() {
             var tokenizedCard = new CreditCardData {

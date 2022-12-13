@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider {
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";        
         public GpApiConfig GpApiConfig { get; set; }
 
@@ -219,6 +219,27 @@ namespace GlobalPayments.Api.Gateways {
                 return GpApiMapping.Map3DSecureData(response);
             }
             return null;
+        }
+
+        public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class
+        {
+            T result = Activator.CreateInstance<T>();
+            if (string.IsNullOrEmpty(AccessToken))
+            {
+                SignIn();
+            }
+            GpApiRequest request = GpApiPayFacRequestBuilder<T>.BuildRequest(builder, this);
+
+            if (request != null){
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey); 
+                return GpApiMapping.MapMerchantEndpointResponse<T>(response);
+            }
+            return result;
+        }
+
+        public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class
+        {
+            throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessPayFac")} not supported");
         }
     }
 }

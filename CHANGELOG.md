@@ -4,6 +4,14 @@
 
 #### Enhancements
 
+- GP-API: Added brand_reference in the recurring transaction request
+- GP-API: Added Decoupled authentication
+- GP-API: Added onboarding merchant feature
+
+## v5.0.1 (11/15/22)
+
+#### Enhancements
+
 - Portico Gateway: add Ecommerce tag to CreditReturn transactions
 - Security enhancement in example application
 - Sanitize phone numbers and zip codes

@@ -66,6 +66,13 @@ namespace GlobalPayments.Api {
             }
         }
 
+        internal void SetPayFacProvider(IPayFacProvider provider)
+        {
+            if (this.PayFacProvider == null) {
+                this.PayFacProvider = provider;
+            }
+        }
+
 
         public ConfiguredServices() {
             _secure3dProviders = new Dictionary<Secure3dVersion, ISecure3dProvider>();

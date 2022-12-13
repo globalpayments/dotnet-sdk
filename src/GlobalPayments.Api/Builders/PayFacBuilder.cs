@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.PaymentMethods;
 using System;
@@ -7,7 +8,8 @@ using System.Text;
 
 namespace GlobalPayments.Api.Builders
 {
-    public class PayFacBuilder : BaseBuilder<Transaction> {
+    public class PayFacBuilder<TResult> : BaseBuilder<TResult> where TResult : class
+    {
         public TransactionType TransactionType { get; set; }
         public TransactionModifier TransactionModifier { get; set; }
 
@@ -74,7 +76,18 @@ namespace GlobalPayments.Api.Builders
         public string TransNum { get; set; }
 
         public string ExternalID { get; set; }
-        public string SourceEmail { get; set; }
+        public string SourceEmail { get; set; }       
+        public string Description { get; set; }   
+        public List<Product> ProductData { get; set; }
+        public List<Person> PersonsData { get; set; }
+        
+        public int Page { get; set; }    
+        public int PageSize { get; set; }    
+        public PaymentStatistics PaymentStatistics { get; set; }    
+        public StatusChangeReason StatusChangeReason { get; set; }   
+        public UserReference UserReference { get; set; }    
+        public Dictionary<string, PaymentMethodFunction?> PaymentMethodsFunctions { get; set; }
+        public string IdempotencyKey { get; set; }
 
         public FlashFundsPaymentCardData FlashFundsPaymentCardData { get; set; }
 
@@ -83,10 +96,17 @@ namespace GlobalPayments.Api.Builders
             TransactionModifier = modifer;
         }
 
-        public override Transaction Execute(string configName = "default") {
+        public override TResult Execute(string configName = "default") {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetPayFac(configName);
+            switch (TransactionModifier)
+            {              
+                case TransactionModifier.Merchant:
+                    return client.ProcessBoardingUser(this);                   
+                default:
+                    break;
+            }           
 
             return client.ProcessPayFac(this);
         }
@@ -225,163 +245,235 @@ namespace GlobalPayments.Api.Builders
             Validations.For(TransactionType.GetAccountBalance)
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull();
+
+            Validations.For(TransactionType.Fetch)
+                .With(TransactionModifier.Merchant)
+                .Check(() => UserReference).PropertyOf(nameof(UserReference.UserId)).IsNotNull();
+
+            Validations.For(TransactionType.Edit)
+                .With(TransactionModifier.Merchant)
+                .Check(() => UserReference).PropertyOf(nameof(UserReference.UserId)).IsNotNull();
         }
 
-        public PayFacBuilder WithBankAccountData(BankAccountData bankAccountData) {
+        public PayFacBuilder<TResult> WithBankAccountData(BankAccountData bankAccountData, PaymentMethodFunction? paymentMethodFunction = null) {
             BankAccountData = bankAccountData;
+            if (paymentMethodFunction != null) {
+                if (PaymentMethodsFunctions == null) {
+                    PaymentMethodsFunctions = new Dictionary<string, PaymentMethodFunction?>();
+                }
+                PaymentMethodsFunctions.Add(bankAccountData.GetType().Name, paymentMethodFunction.Value);
+            }            
             return this;
         }
 
-        public PayFacBuilder WithBeneficialOwnerData(BeneficialOwnerData beneficialOwnerData) {
+        public PayFacBuilder<TResult> WithBeneficialOwnerData(BeneficialOwnerData beneficialOwnerData) {
             BeneficialOwnerData = beneficialOwnerData;
             return this;
         }
 
-        public PayFacBuilder WithDeviceData(DeviceData deviceData) {
+        public PayFacBuilder<TResult> WithDeviceData(DeviceData deviceData) {
             DeviceData = deviceData;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithDescription(string description) {
+            Description = description;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithProductData(List<Product> productData) {
+            ProductData = productData;
+            return this;
+        }
+        
+        public PayFacBuilder<TResult> WithPersonsData(List<Person> personsData) {
+            PersonsData = personsData;
+            return this;
+        }             
+
+        public PayFacBuilder<TResult> WithUserReference(UserReference userReference) {
+            UserReference = userReference;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithModifier(TransactionModifier transactionModifier) {
+            TransactionModifier = transactionModifier;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithPaymentStatistics(PaymentStatistics paymentStatistics) {
+            PaymentStatistics = paymentStatistics;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithStatusChangeReason(StatusChangeReason statusChangeReason) {
+            StatusChangeReason = statusChangeReason;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the gateway paging criteria for the report
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public PayFacBuilder<TResult> WithPaging(int page, int pageSize) {
+            Page = page;
+            PageSize = pageSize;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithIdempotencyKey(string value) {
+            IdempotencyKey = value;
             return this;
         }
 
         /// <summary>
         /// Required for partners ordering Portico devices. Valid values: [ UTC, PT, MST, MT, CT, ET, HST, AT, AST, AKST, ACT, EET, EAT, MET, NET, PLT, IST, BST, VST, CTT, JST, ACT, AET, SST, NST, MIT, CNT, AGT, CAT ]
         /// </summary>
-        public PayFacBuilder WithTimeZone(string timezone) {
+        public PayFacBuilder<TResult> WithTimeZone(string timezone) {
             TimeZone = timezone;
             return this;
         }
 
-        public PayFacBuilder WithBusinessData(BusinessData businessData) {
+        public PayFacBuilder<TResult> WithBusinessData(BusinessData businessData) {
             BusinessData = businessData;
             return this;
         }
 
-        public PayFacBuilder WithSignificantOwnerData(SignificantOwnerData significantOwnerData) {
+        public PayFacBuilder<TResult> WithSignificantOwnerData(SignificantOwnerData significantOwnerData) {
             SignificantOwnerData = significantOwnerData;
             return this;
         }
 
-        public PayFacBuilder WithThreatRiskData(ThreatRiskData threatRiskData) {
+        public PayFacBuilder<TResult> WithThreatRiskData(ThreatRiskData threatRiskData) {
             ThreatRiskData = threatRiskData;
             return this;
         }
 
-        public PayFacBuilder WithUserPersonalData(UserPersonalData userPersonalData) {
+        public PayFacBuilder<TResult> WithUserPersonalData(UserPersonalData userPersonalData) {
             UserPersonalData = userPersonalData;
             return this;
         }
 
-        public PayFacBuilder WithCreditCardData(CreditCardData creditCardInformation) {
+        public PayFacBuilder<TResult> WithCreditCardData(CreditCardData creditCardInformation, PaymentMethodFunction? paymentMethodFunction = null) {
             CreditCardInformation = creditCardInformation;
+            if (paymentMethodFunction != null) {
+                if(PaymentMethodsFunctions == null) {
+                    PaymentMethodsFunctions = new Dictionary<string, PaymentMethodFunction?>();
+                }
+                PaymentMethodsFunctions.Add(CreditCardInformation.GetType().Name, paymentMethodFunction.Value);
+            }
             return this;
         }
 
-        public PayFacBuilder WithACHData(BankAccountData achInformation) {
+        public PayFacBuilder<TResult> WithACHData(BankAccountData achInformation) {
             ACHInformation = achInformation;
             return this;
         }
 
-        public PayFacBuilder WithMailingAddress(Address mailingAddressInformation) {
+        public PayFacBuilder<TResult> WithMailingAddress(Address mailingAddressInformation) {
             MailingAddressInformation = mailingAddressInformation;
             return this;
         }
 
-        public PayFacBuilder WithSecondaryBankAccountData(BankAccountData secondaryBankInformation) {
+        public PayFacBuilder<TResult> WithSecondaryBankAccountData(BankAccountData secondaryBankInformation) {
             SecondaryBankInformation = secondaryBankInformation;
             return this;
         }
 
-        public PayFacBuilder WithGrossBillingSettleData(GrossBillingInformation grossBillingInformation) {
+        public PayFacBuilder<TResult> WithGrossBillingSettleData(GrossBillingInformation grossBillingInformation) {
             GrossBillingInformation = grossBillingInformation;
             return this;
         }
 
-        public PayFacBuilder WithAccountNumber(string accountNumber) {
+        public PayFacBuilder<TResult> WithAccountNumber(string accountNumber) {
             AccountNumber = accountNumber;
             return this;
         }
 
-        public PayFacBuilder WithPassword(string password) {
+        public PayFacBuilder<TResult> WithPassword(string password) {
             Password = password;
             return this;
         }
 
-        public PayFacBuilder WithAccountPermissions(AccountPermissions accountPermissions) {
+        public PayFacBuilder<TResult> WithAccountPermissions(AccountPermissions accountPermissions) {
             AccountPermissions = accountPermissions;
             return this;
         }
 
-        public PayFacBuilder WithPrimaryBankAccountOwner(BankAccountOwnershipData primaryBankAccountOwner) {
+        public PayFacBuilder<TResult> WithPrimaryBankAccountOwner(BankAccountOwnershipData primaryBankAccountOwner) {
             PrimaryBankAccountOwner = primaryBankAccountOwner;
             return this;
         }
 
-        public PayFacBuilder WithSecondaryBankAccountOwner(BankAccountOwnershipData secondaryBankAccountOwner) {
+        public PayFacBuilder<TResult> WithSecondaryBankAccountOwner(BankAccountOwnershipData secondaryBankAccountOwner) {
             SecondaryBankAccountOwner = secondaryBankAccountOwner;
             return this;
         }
 
-        public PayFacBuilder WithDocumentUploadData(DocumentUploadData docUploadData) {
+        public PayFacBuilder<TResult> WithDocumentUploadData(DocumentUploadData docUploadData) {
             DocumentUploadData = docUploadData;
 
             return this;
         }
 
-        public PayFacBuilder WithSSORequestData(SSORequestData ssoRequestData) {
+        public PayFacBuilder<TResult> WithSSORequestData(SSORequestData ssoRequestData) {
             SSORequestData = ssoRequestData;
             return this;
         }
 
-        public PayFacBuilder WithNegativeLimit(string negativeLimit) {
+        public PayFacBuilder<TResult> WithNegativeLimit(string negativeLimit) {
             NegativeLimit = negativeLimit;
             return this;
         }
 
-        public PayFacBuilder WithRenewalAccountData(RenewAccountData renewalAccountData) {
+        public PayFacBuilder<TResult> WithRenewalAccountData(RenewAccountData renewalAccountData) {
             RenewalAccountData = renewalAccountData;
             return this;
         }
 
-        public PayFacBuilder WithAmount(string amount) {
+        public PayFacBuilder<TResult> WithAmount(string amount) {
             Amount = amount;
             return this;
         }
 
-        public PayFacBuilder WithFlashFundsPaymentCardData(FlashFundsPaymentCardData cardData) {
+        public PayFacBuilder<TResult> WithFlashFundsPaymentCardData(FlashFundsPaymentCardData cardData) {
             FlashFundsPaymentCardData = cardData;
             return this;
         }
 
-        public PayFacBuilder WithReceivingAccountNumber(string receivingAccountNumber) {
+        public PayFacBuilder<TResult> WithReceivingAccountNumber(string receivingAccountNumber) {
             ReceivingAccountNumber = receivingAccountNumber;
             return this;
         }
 
-        public PayFacBuilder WithAllowPending(bool allowPending) {
+        public PayFacBuilder<TResult> WithAllowPending(bool allowPending) {
             AllowPending = allowPending;
             return this;
         }
 
-        public PayFacBuilder WithCCAmount(string ccAmount) {
+        public PayFacBuilder<TResult> WithCCAmount(string ccAmount) {
             CCAmount = ccAmount;
             return this;
         }
 
-        public PayFacBuilder WithRequireCCRefund(bool requireCCRefund) {
+        public PayFacBuilder<TResult> WithRequireCCRefund(bool requireCCRefund) {
             RequireCCRefund = requireCCRefund;
             return this;
         }
 
-        public PayFacBuilder WithTransNum(string transNum) {
+        public PayFacBuilder<TResult> WithTransNum(string transNum) {
             TransNum = transNum;
             return this;
         }
 
-        public PayFacBuilder WithExternalID(string externalId) {
+        public PayFacBuilder<TResult> WithExternalID(string externalId) {
             ExternalID = externalId;
             return this;
         }
 
-        public PayFacBuilder WithSourceEmail(string sourceEmail) {
+        public PayFacBuilder<TResult> WithSourceEmail(string sourceEmail) {
             SourceEmail = sourceEmail;
             return this;
         }

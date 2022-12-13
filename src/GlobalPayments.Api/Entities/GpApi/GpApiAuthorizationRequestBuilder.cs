@@ -71,6 +71,14 @@ namespace GlobalPayments.Api.Entities {
                     if (!hasToken) {
                         paymentMethod.Set("card", card);
                     }
+                    //Brand reference when card was tokenized
+                    else {
+                        JsonDoc brand = new JsonDoc()
+                            .Set("brand_reference", builder.CardBrandTransactionId);
+                        if (brand.HasKeys()) {
+                            paymentMethod.Set("card", brand);
+                        }
+                    }
                    
 
                     if (builder.TransactionType == TransactionType.Tokenize) {

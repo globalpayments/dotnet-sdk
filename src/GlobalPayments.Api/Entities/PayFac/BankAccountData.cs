@@ -41,5 +41,7 @@ namespace GlobalPayments.Api.Entities.PayFac
         /// The account holder's name. This is required if payment method is a bank account.
         /// </summary>
         public string AccountHolderName { get; set; }
+
+        public Address BankAddress { get; set; }
     }
 }

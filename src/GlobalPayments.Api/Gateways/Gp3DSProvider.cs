@@ -81,9 +81,9 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("merchant_contact_url", MerchantContactUrl);
                 request.Set("merchant_initiated_request_type", builder.MerchantInitiatedRequestType?.ToString());
                 request.Set("whitelist_status", builder.WhitelistStatus);
-                request.Set("decoupled_flow_request", builder.DecoupledFlowRequest);
-                request.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout);
-                request.Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
+                request.Set("decoupled_flow_request", builder.DecoupledFlowRequest ?? null);
+                request.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout ?? null);
+                request.Set("decoupled_notification_url", builder.DecoupledNotificationUrl ?? null);
                 request.Set("enable_exemption_optimization", builder.EnableExemptionOptimization);
 
                 // card details

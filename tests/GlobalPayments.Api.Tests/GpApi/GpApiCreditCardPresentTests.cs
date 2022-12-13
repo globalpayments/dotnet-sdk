@@ -784,7 +784,162 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual("SUCCESS", capture.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), capture.ResponseMessage.ToUpper());
         }
+        
+        [TestMethod]
+        public void IncrementalAuth_WithoutLodgingData() {
+            var transaction = card.Authorize(amount)
+                .WithCurrency(currency)
+                .Execute();
 
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
+
+            transaction = transaction.AdditionalAuth(10)
+                .WithCurrency(currency)
+                // .WithLodgingData(lodgingInfo)
+                .Execute();
+
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
+            Assert.AreEqual((decimal)12.12, transaction.AuthorizedAmount);
+
+            var capture = transaction.Capture()
+                .Execute();
+
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("SUCCESS", capture.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), capture.ResponseMessage.ToUpper());
+        }
+        
+        [TestMethod]
+        public void IncrementalAuth_Reverse() {
+            var transaction = card.Authorize(amount)
+                .WithCurrency(currency)
+                .Execute();
+
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
+
+            var lodgingInfo = new LodgingData {
+                bookingReference = "s9RpaDwXq1sPRkbP",
+                StayDuration = 10,
+                CheckInDate = DateTime.Now,
+                CheckOutDate = DateTime.Now.AddDays(7),
+                Rate = (decimal)13.49
+            };
+            
+            var item1 = new LodgingItems {
+                Types = LodgingItemType.NO_SHOW.ToString(),
+                Reference = "item_1",
+                TotalAmount = "13.49",
+                paymentMethodProgramCodes = new string[1] { PaymentMethodProgram.ASSURED_RESERVATION.ToString() }
+            };
+            
+            lodgingInfo.Items = new System.Collections.Generic.List<LodgingItems>() { item1 };
+
+            transaction = transaction.AdditionalAuth(10)
+                .WithCurrency(currency)
+                .WithLodgingData(lodgingInfo)
+                .Execute();
+
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
+            Assert.AreEqual((decimal)12.12, transaction.AuthorizedAmount);
+
+            var capture = transaction.Reverse()
+                .Execute();
+
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("SUCCESS", capture.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Reversed.ToString().ToUpper(), capture.ResponseMessage.ToUpper());
+        }
+        
+        [TestMethod]
+        public void IncrementalAuth_Charge() {
+            var transaction = card.Charge(amount)
+                .WithCurrency(currency)
+                .Execute();
+
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
+
+            var lodgingInfo = new LodgingData {
+                bookingReference = "s9RpaDwXq1sPRkbP",
+                StayDuration = 10,
+                CheckInDate = DateTime.Now,
+                CheckOutDate = DateTime.Now.AddDays(7),
+                Rate = (decimal)13.49
+            };
+            
+            var item1 = new LodgingItems {
+                Types = LodgingItemType.NO_SHOW.ToString(),
+                Reference = "item_1",
+                TotalAmount = "13.49",
+                paymentMethodProgramCodes = new string[1] { PaymentMethodProgram.ASSURED_RESERVATION.ToString() }
+            };
+            
+            lodgingInfo.Items = new System.Collections.Generic.List<LodgingItems>() { item1 };
+
+            var exceptionCaught = false;
+            try {
+                transaction.AdditionalAuth(10)
+                    .WithCurrency(currency)
+                    .WithLodgingData(lodgingInfo)
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("INVALID_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40290", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Cannot PROCESS Incremental Authorization over a transaction that does not have a status of PREAUTHORIZED.", ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void IncrementalAuth_RandomTransactionId() {
+            var randomTransactionId = Guid.NewGuid().ToString();
+            var transaction = new Transaction {
+                TransactionId = randomTransactionId
+            };
+
+            var lodgingInfo = new LodgingData {
+                bookingReference = "s9RpaDwXq1sPRkbP",
+                StayDuration = 10,
+                CheckInDate = DateTime.Now,
+                CheckOutDate = DateTime.Now.AddDays(7),
+                Rate = (decimal)13.49
+            };
+            var item1 = new LodgingItems {
+                Types = LodgingItemType.NO_SHOW.ToString(),
+                Reference = "item_1",
+                TotalAmount = "13.49",
+                paymentMethodProgramCodes = new string[1] { PaymentMethodProgram.ASSURED_RESERVATION.ToString() }
+            };
+            
+            lodgingInfo.Items = new System.Collections.Generic.List<LodgingItems>() { item1 };
+
+            var exceptionCaught = false;
+            try {
+                transaction.AdditionalAuth(10)
+                    .WithCurrency(currency)
+                    .WithLodgingData(lodgingInfo)
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
+                Assert.AreEqual("40008", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: NotFound - Transaction {randomTransactionId} not found at this location.", ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
             Assert.AreEqual(Success, transaction?.ResponseCode);

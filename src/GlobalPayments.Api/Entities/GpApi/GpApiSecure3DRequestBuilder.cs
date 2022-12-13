@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -31,7 +32,8 @@ namespace GlobalPayments.Api.Entities {
 
                 var notifications = new JsonDoc()
                     .Set("challenge_return_url", gateway.GpApiConfig.ChallengeNotificationUrl)
-                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl);
+                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl)
+                    .Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
 
                 var data = new JsonDoc()
                     .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
@@ -80,7 +82,8 @@ namespace GlobalPayments.Api.Entities {
                 #region Notifications
                 var notifications = new JsonDoc()
                     .Set("challenge_return_url", gateway.GpApiConfig.ChallengeNotificationUrl)
-                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl);
+                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl)
+                    .Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
                 #endregion
 
                 #region Order
@@ -218,7 +221,11 @@ namespace GlobalPayments.Api.Entities {
                     .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("method_url_completion_status", builder.MethodUrlCompletion.ToString())
                     .Set("payment_method", paymentMethod.HasKeys() ? paymentMethod : null)
-                    .Set("notifications", notifications.HasKeys() ? notifications : null)
+                    .Set("notifications", notifications.HasKeys() ? notifications : null);
+                if(builder.DecoupledFlowRequest.HasValue) {
+                    data.Set("decoupled_flow_request", builder.DecoupledFlowRequest.Value ? DecoupledFlowRequest.DECOUPLED_PREFERRED.ToString() : DecoupledFlowRequest.DO_NOT_USE_DECOUPLED.ToString());
+                }
+                data.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout.HasValue ? builder.DecoupledFlowTimeout.ToString() : null)
                     .Set("order", order.HasKeys() ? order : null)
                     .Set("payer", payer.HasKeys() ? payer : null)
                     .Set("payer_prior_three_ds_authentication_data", payerPrior3DSAuthenticationData.HasKeys() ? payerPrior3DSAuthenticationData : null)

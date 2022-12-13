@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
@@ -77,24 +78,17 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             };
         }
 
-        [TestMethod]
-        public void FullCycle_v1() {
-            card.Number = "4012001037141112";
+         [TestMethod]
+         public void FullCycle_v1() {
+             card.Number = "4012001037141112";
 
-            var exceptionCaught = false;
-            try {
-                Secure3dService.CheckEnrollment(card)
-                    .WithAmount(1m)
-                    .WithCurrency("USD")
-                    .Execute(Secure3dVersion.Any);
-            }
-            catch (BuilderException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("3D Secure One is no longer supported!", ex.Message);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
-        }
+             var secure = Secure3dService.CheckEnrollment(card)
+                 .WithAmount(1m)
+                 .WithCurrency("USD")
+                 .Execute();
+
+             Assert.AreEqual("False", secure.Enrolled);
+         }
 
         [TestMethod]
         public void FullCycle_v1_ConfigException() {

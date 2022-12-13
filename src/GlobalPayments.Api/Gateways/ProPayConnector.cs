@@ -4,6 +4,7 @@ using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -15,7 +16,7 @@ namespace GlobalPayments.Api.Gateways {
         public string X509Base64String { get; internal set; }
 
         #region Transaction Handling
-        public Transaction ProcessPayFac(PayFacBuilder builder) {
+        public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class {
             UpdateGatewaySettings(builder);
 
             var et = new ElementTree();
@@ -34,10 +35,10 @@ namespace GlobalPayments.Api.Gateways {
             HydrateAccountDetails(et, xmlTrans, builder);
 
             var response = DoTransaction(et.ToString(request));
-            return MapResponse(builder, response);
+            return MapResponse(builder, response) as T;
         }
 
-        private void UpdateGatewaySettings(PayFacBuilder builder) {
+        private void UpdateGatewaySettings<T>(PayFacBuilder<T> builder) where T : class {
             var certTransactions = new List<TransactionType>()
             {
                 TransactionType.EditAccount,
@@ -69,7 +70,7 @@ namespace GlobalPayments.Api.Gateways {
             }
         }
 
-        public string MapRequestType(PayFacBuilder builder) {
+        public string MapRequestType<T>(PayFacBuilder<T> builder) where T : class {
             switch (builder.TransactionType) {
                 case TransactionType.CreateAccount:
                     return "01";
@@ -122,7 +123,7 @@ namespace GlobalPayments.Api.Gateways {
         #endregion
 
         #region Response Handling
-        public Transaction MapResponse(PayFacBuilder builder, string rawResponse) {
+        public Transaction MapResponse<T>(PayFacBuilder<T> builder, string rawResponse) where T : class {
             var root = new ElementTree(rawResponse).Get("XMLResponse");
             var responseCode = root.GetValue<string>("status");
 
@@ -140,7 +141,7 @@ namespace GlobalPayments.Api.Gateways {
             return response;
         }
 
-        private PayFacResponseData PopulateProPayResponse(PayFacBuilder builder, Element root)
+        private PayFacResponseData PopulateProPayResponse<T>(PayFacBuilder<T> builder, Element root) where T : class 
         {
             if (builder.TransactionType == TransactionType.GetAccountDetails && builder.TransactionModifier == TransactionModifier.Additional) {
                 return PopulateResponseWithEnhancedAccountDetails(root);
@@ -367,7 +368,7 @@ namespace GlobalPayments.Api.Gateways {
         #endregion
 
         #region Hydration
-        private void HydrateAccountDetails(ElementTree xml, Element xmlTrans, PayFacBuilder builder) {
+        private void HydrateAccountDetails<T>(ElementTree xml, Element xmlTrans, PayFacBuilder<T> builder) where T : class {
             xml.SubElement(xmlTrans, "accountNum", builder.AccountNumber);
             xml.SubElement(xmlTrans, "sourceEmail", builder.SourceEmail);
             xml.SubElement(xmlTrans, "externalId", builder.ExternalID);
@@ -484,7 +485,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "BusinessZip", StringUtils.ToValidateAndFormatZipCode(businessData.BusinessAddress.PostalCode));
         }
 
-        private void HydrateBankDetails(ElementTree xml, Element xmlTrans, PayFacBuilder builder) {
+        private void HydrateBankDetails<T>(ElementTree xml, Element xmlTrans, PayFacBuilder<T> builder) where T : class {
             if (builder.CreditCardInformation != null) {
                 xml.SubElement(xmlTrans, "NameOnCard", builder.CreditCardInformation.CardHolderName);
                 xml.SubElement(xmlTrans, "ccNum", builder.CreditCardInformation.Number);
@@ -641,7 +642,7 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "AchPaymentAchOffPercent", accountPermissions.ACHPaymentACHOffPercent);
         }
 
-        private void HydrateBankAccountOwnershipData(ElementTree xml, Element xmlTrans, PayFacBuilder builder) {
+        private void HydrateBankAccountOwnershipData<T>(ElementTree xml, Element xmlTrans, PayFacBuilder<T> builder) where T : class {
             if (builder.PrimaryBankAccountOwner != null || builder.SecondaryBankAccountOwner != null) {
                 var ownersDataTag = xml.SubElement(xmlTrans, "BankAccountOwnerData");
 
@@ -713,6 +714,11 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "state", cardData.CardholderAddress.State);
             xml.SubElement(xmlTrans, "zip", StringUtils.ToValidateAndFormatZipCode(cardData.CardholderAddress.PostalCode));
             xml.SubElement(xmlTrans, "country", cardData.CardholderAddress.Country);
+        }
+
+        public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class
+        {
+            throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessBoardingUser")} not supported");
         }
         #endregion
     }

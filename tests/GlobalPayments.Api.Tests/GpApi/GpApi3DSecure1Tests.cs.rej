@@ -1,6 +1,0 @@
-diff a/tests/GlobalPayments.Api.Tests/GpApi/GpApi3DSecure1Tests.cs b/tests/GlobalPayments.Api.Tests/GpApi/GpApi3DSecure1Tests.cs	(rejected hunks)
-@@ -1,4 +1,3 @@
--using System;
- using GlobalPayments.Api.Entities;
- using GlobalPayments.Api.PaymentMethods;
- using GlobalPayments.Api.Services;

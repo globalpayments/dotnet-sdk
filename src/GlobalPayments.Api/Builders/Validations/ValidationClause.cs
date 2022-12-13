@@ -28,8 +28,14 @@ namespace GlobalPayments.Api.Builders {
                 }
                 else {
                     var parentValue = property.GetValue(builder);
+                    if (parentValue == null) {
+                        subProperty = null;
+                        return false;
+                    }
+
                     var value = parentValue.GetType().GetProperty(subProperty).GetValue(parentValue);
                     return value != null;
+                    
                 }
             };
             this.message = message ?? string.Format("{0} cannot be null for this transaction type.", string.IsNullOrEmpty(subProperty) ? property.Name : subProperty);

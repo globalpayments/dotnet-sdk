@@ -15,5 +15,9 @@ namespace GlobalPayments.Api.Entities {
         public string Type { get; set; }
         public string Risk { get; set; }
         public decimal? TaxAmount { get; set; }
+        public decimal? TaxPercentage { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public string Url { get; set; }
+        public string ImageUrl { get; set; }
     }
 }
