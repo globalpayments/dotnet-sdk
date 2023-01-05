@@ -13,6 +13,7 @@ namespace GlobalPayments.Api.PaymentMethods {
             }
             set { _paymentMethodType = value; }
         }
+        public TransactionType OriginalTransactionType { get; set; }
         public string AuthCode { get; set; }
         public string BatchNumber { get; set; }
         public string OrderId { get; set; }
@@ -22,15 +23,24 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string AcquiringInstitutionId{ get; set; }
         public string MessageTypeIndicator{ get; set; }
         public decimal? OriginalAmount{ get; set; }
+        public decimal? OriginalApprovedAmount { get; set; }
         public IPaymentMethod OriginalPaymentMethod{ get; set; }
         public string OriginalProcessingCode{ get; set; }
         public string OriginalTransactionTime{ get; set; }
+        public bool PartialApproval { get; set; }
         public int SequenceNumber{ get; set; }
         public string SystemTraceAuditNumber{ get; set; }
         public NtsData NtsData { get; set; }
         public AlternativePaymentResponse AlternativePaymentResponse { get; set; }
         public void SetNtsData(string value) {
             this.NtsData = NtsData.FromString(value);
+        }
+        public decimal GetOriginalApprovedAmount() {
+            if (OriginalApprovedAmount != null) {
+                return (decimal)OriginalApprovedAmount;
+            }
+
+            return (decimal)OriginalAmount;
         }
     }
 }

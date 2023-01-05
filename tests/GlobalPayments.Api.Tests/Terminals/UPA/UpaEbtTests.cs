@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
         public UpaEbtTests() {
             _device = DeviceService.Create(new ConnectionConfig {
-                DeviceType = DeviceType.NUCLEUS_SATURN_1000,
+                DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "192.168.1.6",
                 Port = "8081",

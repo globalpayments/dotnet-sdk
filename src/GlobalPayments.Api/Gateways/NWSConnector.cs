@@ -437,6 +437,11 @@ namespace GlobalPayments.Api.Gateways {
                 currencyCode = builder.Currency.ToUpper().Equals("USD") ? Iso4217_CurrencyCode.USD : Iso4217_CurrencyCode.CAD;
             }
 
+            decimal? transactionAmount = builder.Amount;
+            if (transactionAmount == null && paymentMethod is TransactionReference) {
+                transactionAmount = (paymentMethod as TransactionReference).OriginalApprovedAmount;
+            }
+
             // MTI
             string mti = MapMTI(builder);
             request.MessageTypeIndicator = mti;
@@ -541,11 +546,7 @@ namespace GlobalPayments.Api.Gateways {
             request.Set(DataElementId.DE_003, processingCode);
 
             // DE 4: Amount, Transaction - n12 // C 1100, 1200, 1220, 1420
-            decimal? amount = builder.Amount;
-            if (amount == null && paymentMethod is TransactionReference reference) {
-                amount = reference.OriginalAmount;
-            }
-            request.Set(DataElementId.DE_004, StringUtils.ToNumeric(amount, 12));
+            request.Set(DataElementId.DE_004, StringUtils.ToNumeric(transactionAmount, 12));
 
             // DE 7: Date and Time, Transmission - n10 (MMDDhhmmss) // C
             request.Set(DataElementId.DE_007, DateTime.UtcNow.ToString("MMddhhmmss"));
@@ -735,11 +736,11 @@ namespace GlobalPayments.Api.Gateways {
                 DE54_AmountsAdditional amountsAdditional = new DE54_AmountsAdditional();
                 if (paymentMethod.PaymentMethodType.Equals(PaymentMethodType.EBT)) {
                     amountsAdditional.Put(DE54_AmountTypeCode.AmountCash, DE3_AccountType.CashBenefitAccount, currencyCode, builder.CashBackAmount);
-                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.CashBenefitAccount, currencyCode, (builder.Amount - builder.CashBackAmount));
+                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.CashBenefitAccount, currencyCode, (transactionAmount - builder.CashBackAmount));
                 }
                 else if (paymentMethod.PaymentMethodType.Equals(PaymentMethodType.Debit)) {
                     amountsAdditional.Put(DE54_AmountTypeCode.AmountCash, DE3_AccountType.PinDebitAccount, currencyCode, builder.CashBackAmount);
-                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.PinDebitAccount, currencyCode, (builder.Amount - builder.CashBackAmount));
+                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.PinDebitAccount, currencyCode, (transactionAmount - builder.CashBackAmount));
                 }
                 request.Set(DataElementId.DE_054, amountsAdditional);
             }
@@ -1184,12 +1185,25 @@ namespace GlobalPayments.Api.Gateways {
 
                                 // original data elements
                                 MessageTypeIndicator = request.MessageTypeIndicator,
+                                OriginalApprovedAmount = message.GetAmount(DataElementId.DE_004),
                                 OriginalProcessingCode = request.GetString(DataElementId.DE_003),
                                 SystemTraceAuditNumber = request.GetString(DataElementId.DE_011),
-                                OriginalTransactionTime = request.GetString(DataElementId.DE_012)
-
+                                OriginalTransactionTime = request.GetString(DataElementId.DE_012),
+                                AcquiringInstitutionId = request.GetString(DataElementId.DE_032)
                         };
-                            // TODO: revisit this, reference.setAcquiringInstitutionId();
+
+
+                            // partial flag
+                            if (!String.IsNullOrEmpty(responseCode)) {
+                                if (responseCode.Equals("002")) {
+                                    reference.PartialApproval = true;
+                                }
+                                else if (responseCode.Equals("000")) {
+                                    string requestAmount = request.GetString(DataElementId.DE_004);
+                                    string responseAmount = message.GetString(DataElementId.DE_004);
+                                    reference.PartialApproval = !requestAmount.Equals(responseAmount);
+                                }
+                            }
 
                             // message control fields
                             if (messageControl != null) {
@@ -1786,7 +1800,23 @@ namespace GlobalPayments.Api.Gateways {
                         return "400";
                     }
                 case TransactionType.Void: {
-                        return "441";
+                        ManagementBuilder managementBuilder = (ManagementBuilder)(object)builder;
+                        TransactionReference paymentMethod = (TransactionReference)builder.PaymentMethod;
+                        bool partial = false;
+                        if (paymentMethod != null) {
+                            partial = paymentMethod.PartialApproval;
+                        }
+                        if (managementBuilder.VoidReason == VoidReason.DeviceTimeout && managementBuilder.ForcedReversal == true) {
+                            if (partial == true) {
+                                return "441";
+                            }
+                            else {
+                                return "444";
+                            }
+                        }
+                        else {
+                            return "441";
+                        }
                     }
                 case TransactionType.TimeRequest: {
                         return "641";
@@ -1877,7 +1907,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (!(builder.PaymentMethod is eCheck)) {
                     if (authBuilder.BillingAddress != null) {
                         Address address = authBuilder.BillingAddress;
-                        customerData.Set(DE48_CustomerDataType.PostalCode, StringUtils.ToValidateAndFormatZipCode(address.PostalCode));
+                        customerData.Set(DE48_CustomerDataType.PostalCode, address.PostalCode);
                     }
                 }
 
@@ -2373,7 +2403,7 @@ namespace GlobalPayments.Api.Gateways {
                 "580"
             };
 
-            decimal amount = request.GetAmount(DataElementId.DE_004);
+            decimal amount = response.GetAmount(DataElementId.DE_004);
             TransactionType transactionType = new TransactionType();
             PaymentMethodType paymentMethodType = new PaymentMethodType();
             if (builder != null) {
@@ -2604,8 +2634,8 @@ namespace GlobalPayments.Api.Gateways {
             }
             else if (transactionType.Equals(TransactionType.Void)) {
                 bool partial = false;
-                if (builder.Amount != null && paymentMethod != null) {
-                    partial = !builder.Amount.Equals(paymentMethod.OriginalAmount);
+                if (paymentMethod != null) {
+                    partial = paymentMethod.PartialApproval;
                 }
 
                 if (fallbackCode != null) {

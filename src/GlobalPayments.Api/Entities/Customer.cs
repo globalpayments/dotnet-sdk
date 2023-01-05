@@ -30,6 +30,11 @@ namespace GlobalPayments.Api.Entities {
         public string MiddleName { get; set; }
 
         /// <summary>
+        /// Customer's buiness name
+        /// </summary>
+        public string BusinessName { get; set; }
+
+        /// <summary>
         /// Customer's company
         /// </summary>
         public string Company { get; set; }

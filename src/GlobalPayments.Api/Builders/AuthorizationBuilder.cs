@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
+using GlobalPayments.Api.Entities.TransactionApi.Request;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Network.Elements;
 using GlobalPayments.Api.Network.Entities;
@@ -101,6 +102,18 @@ namespace GlobalPayments.Api.Builders {
         }
         internal EmvLastChipRead EmvChipCondition { get; set; }
         internal DateTime LastRegisteredDate { get; set; }
+        internal DateTime ShippingDate { get; set; }
+        internal TransactionData TransactionData { get; set; }
+
+        public AuthorizationBuilder WithTransactionData(TransactionData value) {
+            TransactionData = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithShippingDate(DateTime value)  {
+            ShippingDate = value;
+            return this;
+        }
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
         /// </summary>
@@ -273,6 +286,15 @@ namespace GlobalPayments.Api.Builders {
             if (TransactionType == TransactionType.Reversal || TransactionType == TransactionType.Refund) {
                 if (PaymentMethod is TransactionReference) {
                     ((TransactionReference)PaymentMethod).ClientTransactionId = value;
+                }
+                else if(PaymentMethod is eCheck) {
+                    ClientTransactionId = value;
+                }
+                else if(PaymentMethod is ICardData) {
+                    ClientTransactionId = value;
+                }
+                else if (PaymentMethod is Credit) {
+                    ClientTransactionId = value;
                 }
                 else {
                     PaymentMethod = new TransactionReference {

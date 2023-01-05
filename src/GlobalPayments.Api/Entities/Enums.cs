@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Utils;
 using System;
+using System.Runtime.Serialization;
 
 namespace GlobalPayments.Api.Entities {
     internal enum AliasAction {
@@ -31,7 +32,12 @@ namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Indicates a device type for out of scope / semi-integrated devices.
     /// </summary>
-    public enum DeviceType {
+    public enum DeviceType
+    {        
+        /// <summary>
+        /// Indicates PAX device.
+        /// </summary>
+        PAX_DEVICE,
         /// <summary>
         /// Indicates PAX D200 device.
         /// </summary>
@@ -62,7 +68,10 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a HeartSIP Lane 3000 device
         /// </summary>
         HPA_LANE3000,
-
+        /// <summary>
+        /// Indicates a UPA device
+        /// </summary>
+        UPA_DEVICE,
         /// <summary>
         /// Indicates a genius terminal
         /// </summary>
@@ -373,6 +382,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         [Map(Target.GP_API, "CHECKING")] 
         [Description("Checking")]
+        
+        [Map(Target.TransactionApi, "Checking")]
         CHECKING,
 
         /// <summary>
@@ -1107,5 +1118,46 @@ public enum ReasonCode {
     public enum ReportOutput {
         Print,
         ReturnData
+    }
+
+    public enum LanguageEnum {
+        [Description("en-US")]
+        En_Us,
+        [Description("en-CA")]
+        En_Ca,
+        [Description("fr-CA")]
+        Fr_Ca,
+        [Description("en-AU")]
+        En_Au,
+        [Description("en-NZ")]
+        En_Nz,
+        [Description("en-GB")]
+        En_Gb
+    }
+
+    public enum CountryCode {
+        [Description("840")]
+        Country_840,
+        [Description("124")]
+        Country_124,
+        [Description("036")]
+        Country_036,
+        [Description("554")]
+        Country_554,
+        [Description("826")]
+        Country_826
+    }
+
+    public enum EcomIndicator {
+        [Description("1")]
+        Indicator1,
+        [Description("2")]
+        Indicator2,
+        [Description("3")]
+        Indicator3,
+        [Description("5")]
+        Indicator5,
+        [Description("7")]
+        Indicator7
     }
 }

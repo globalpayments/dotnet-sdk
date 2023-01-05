@@ -4,6 +4,7 @@
         GP_API,
         GP_Ecom,
         Genius,
-        TransIT
+        TransIT,
+        TransactionApi
     }
 }

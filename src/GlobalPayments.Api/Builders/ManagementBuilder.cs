@@ -49,6 +49,9 @@ namespace GlobalPayments.Api.Builders {
         internal LodgingData LodgingData { get; set; }
         internal int? MultiCapturePaymentCount { get; set; }
         internal int? MultiCaptureSequence { get; set; }
+        internal string EntryClass { get; set; }
+        internal string PaymentPurposeCode { get; set; }
+        internal string SoftDescriptor { get; set; }
         internal string OrderId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -69,6 +72,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal string ClerkId { get; set; }
         internal int TransactionCount { get; set; }
         internal decimal TotalCredits { get; set; }
         internal decimal TotalDebits { get; set; }
@@ -82,6 +86,7 @@ namespace GlobalPayments.Api.Builders {
         internal VoidReason? VoidReason { get; set; }
         internal bool AllowDuplicates { get; set; }
         internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
+        internal bool GenerateReceipt { get; set; }
         internal string TagData { get; set; }
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
        
@@ -105,6 +110,30 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>ManagementBuilder</returns>
         public ManagementBuilder WithAuthAmount(decimal? value) {
             AuthAmount = value;
+            return this;
+        }
+
+        public ManagementBuilder WithClerkId(string value) {
+            ClerkId = value;
+            return this;
+        }
+        /// <summary>
+        /// Sets the current transaction's entry class where applicable.
+        /// </summary>
+        /// <param name="value">entry class</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithEntryClass(string value) {
+            EntryClass = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the current transaction's payment purpose code where applicable.
+        /// </summary>
+        /// <param name="value">payment purpose code</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithPaymentPurposeCode(string value) {
+            PaymentPurposeCode = value;
             return this;
         }
 
@@ -443,7 +472,7 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release)
                 .Check(() => PaymentMethod).IsNotNull();
 
-            Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release | TransactionType.Reauth)
+            Validations.For(TransactionType.Capture | TransactionType.Hold | TransactionType.Release | TransactionType.Reauth)
                 .Check(() => TransactionId).IsNotNull();
 
             // TODO: Need level validations
@@ -533,6 +562,19 @@ namespace GlobalPayments.Api.Builders {
 
         public ManagementBuilder WithEcommerceInfo(EcommerceInfo value) {
             EcommerceInfo = value;
+            return this;
+        }
+        /// <summary>
+        /// Generate receipt
+        /// </summary>
+        /// <param name="value">generate receipt</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithGenerateReceipt(bool value) {
+            GenerateReceipt = value;
+            return this;
+        }
+        public ManagementBuilder WithSoftDescriptor(string value) {
+            SoftDescriptor = value;
             return this;
         }
     }

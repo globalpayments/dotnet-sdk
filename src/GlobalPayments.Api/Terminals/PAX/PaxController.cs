@@ -126,7 +126,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
             // Avs Sub Group
             if (builder.Address != null) {
-                avs.ZipCode = StringUtils.ToValidateAndFormatZipCode(builder.Address.PostalCode);
+                avs.ZipCode = builder.Address.PostalCode;
                 avs.Address = builder.Address.StreetAddress1;
             }
 

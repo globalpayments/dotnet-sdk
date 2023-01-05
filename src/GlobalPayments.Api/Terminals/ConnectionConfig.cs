@@ -74,11 +74,7 @@ namespace GlobalPayments.Api.Terminals {
 
         internal override void ConfigureContainer(ConfiguredServices services) {
             switch (DeviceType) {
-                case DeviceType.PAX_D200:
-                case DeviceType.PAX_D210:
-                case DeviceType.PAX_PX5:
-                case DeviceType.PAX_PX7:
-                case DeviceType.PAX_S300:
+                case DeviceType.PAX_DEVICE:                
                     services.DeviceController = new PaxController(this);
                     break;
                 case DeviceType.HPA_ISC250:
@@ -88,7 +84,7 @@ namespace GlobalPayments.Api.Terminals {
                 //case DeviceType.GENIUS:
                 //services.DeviceController = new GeniusController(this);
                 //break;
-                case DeviceType.NUCLEUS_SATURN_1000:
+                case DeviceType.UPA_DEVICE:                
                     services.DeviceController = new UpaController(this);
                     break;
                 default:

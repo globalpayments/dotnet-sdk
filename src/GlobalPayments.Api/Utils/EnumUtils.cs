@@ -18,7 +18,8 @@ namespace GlobalPayments.Api.Utils {
         Portico,
         GP_API,
         UPA,
-        GP_ECOM
+        GP_ECOM,
+        TransactionApi
     }
 
     [AttributeUsage(AttributeTargets.Enum)]

@@ -34,6 +34,8 @@ namespace GlobalPayments.Api.PaymentMethods {
         public bool CheckGuarantee { get; set; }
         public string CheckReference { get; set; }
         public string MerchantNotes { get; set; }
+        public string BranchTransitNumber { get; set; }
+        public string FinancialInstitutionNumber { get; set; }
         public Address BankAddress { get; set; }
 
         /// <summary>

@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         [ClassInitialize]
         public static void Initialize(TestContext context) {
             _device = DeviceService.Create(new ConnectionConfig {
-                DeviceType = DeviceType.PAX_S300,
+                DeviceType = DeviceType.PAX_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "10.12.220.172",
                 //IpAddress = "192.168.0.31",

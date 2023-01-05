@@ -170,7 +170,7 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             et.SubElement(parent, "pos:City", address?.City);
             et.SubElement(parent, "pos:NameOnCard", nameOnAccount);
             et.SubElement(parent, "pos:State", address?.State);
-            et.SubElement(parent, "pos:Zip", StringUtils.ToValidateAndFormatZipCode(address?.PostalCode));
+            et.SubElement(parent, "pos:Zip", address?.PostalCode);
         }
 
         /// <summary>
@@ -210,8 +210,8 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             et.SubElement(transaction, "bdms:PayorEmailAddress", builder.Customer?.Email);
             et.SubElement(transaction, "bdms:PayorFirstName", builder.Customer?.FirstName);
             et.SubElement(transaction, "bdms:PayorLastName", builder.Customer?.LastName);
-            et.SubElement(transaction, "bdms:PayorPhoneNumber", StringUtils.ToValidateAndFormatPhoneNumber(builder.Customer?.HomePhone));
-            et.SubElement(transaction, "bdms:PayorPostalCode", StringUtils.ToValidateAndFormatZipCode(builder.Customer?.Address?.PostalCode));
+            et.SubElement(transaction, "bdms:PayorPhoneNumber", builder.Customer?.HomePhone);
+            et.SubElement(transaction, "bdms:PayorPostalCode", builder.Customer?.Address?.PostalCode);
             et.SubElement(transaction, "bdms:PayorState", builder.Customer?.Address?.State);
         }
 
@@ -226,11 +226,11 @@ namespace GlobalPayments.Api.Gateways.BillPay {
             et.SubElement(parent, "bdms:LastName", customer.LastName);
             et.SubElement(parent, "bdms:MerchantCustomerID", customer.Id); // Should we create the guid or throw an error?
                                                                                                         //et.SubElement(parent, "bdms:MiddleName");
-            et.SubElement(parent, "bdms:MobilePhone", StringUtils.ToValidateAndFormatPhoneNumber(customer.MobilePhone));
+            et.SubElement(parent, "bdms:MobilePhone", customer.MobilePhone);
             et.SubElement(parent, "bdms:MobilePhoneCountry");
-            et.SubElement(parent, "bdms:Phone", StringUtils.ToValidateAndFormatPhoneNumber(customer.HomePhone));
+            et.SubElement(parent, "bdms:Phone", customer.HomePhone);
             et.SubElement(parent, "bdms:PhoneCountry");
-            et.SubElement(parent, "bdms:Postal", StringUtils.ToValidateAndFormatZipCode(customer.Address?.PostalCode));
+            et.SubElement(parent, "bdms:Postal", customer.Address?.PostalCode);
             //<bdms:PreferredContactMethod>?</bdms:PreferredContactMethod>
             et.SubElement(parent, "bdms:State", customer.Address?.State);
         }

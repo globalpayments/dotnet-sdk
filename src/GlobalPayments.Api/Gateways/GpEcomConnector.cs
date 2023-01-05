@@ -181,7 +181,7 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(customer, "email", customerValue.Email);
                 et.SubElement(customer, "domainname", customerValue.DomainName);
                 et.SubElement(customer, "devicefingerprint", customerValue.DeviceFingerPrint);
-                et.SubElement(customer, "phonenumber", StringUtils.ToValidateAndFormatPhoneNumber(customerValue.HomePhone));
+                et.SubElement(customer, "phonenumber", customerValue.HomePhone);
             }
             #endregion
 
@@ -433,7 +433,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 // 3DSv2
                 request.Set("HPP_CUSTOMER_EMAIL", builder.HostedPaymentData.CustomerEmail);
-                request.Set("HPP_CUSTOMER_PHONENUMBER_MOBILE", StringUtils.ToValidateAndFormatPhoneNumber(builder.HostedPaymentData.CustomerPhoneMobile));
+                request.Set("HPP_CUSTOMER_PHONENUMBER_MOBILE", builder.HostedPaymentData.CustomerPhoneMobile);
                 request.Set("HPP_PHONE", builder.HostedPaymentData.CustomerPhoneMobile);
                 request.Set("HPP_CHALLENGE_REQUEST_INDICATOR", builder.HostedPaymentData.ChallengeRequestIndicator.ToString());
                 request.Set("HPP_ENABLE_EXEMPTION_OPTIMIZATION", builder.HostedPaymentData.EnableExemptionOptimization);
@@ -471,7 +471,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_SHIPPING_STREET3", builder.ShippingAddress.StreetAddress3);
                 request.Set("HPP_SHIPPING_CITY", builder.ShippingAddress.City);
                 request.Set("HPP_SHIPPING_STATE", builder.ShippingAddress.State);
-                request.Set("HPP_SHIPPING_POSTALCODE", StringUtils.ToValidateAndFormatZipCode(builder.ShippingAddress.PostalCode));
+                request.Set("HPP_SHIPPING_POSTALCODE", builder.ShippingAddress.PostalCode);
                 request.Set("HPP_SHIPPING_COUNTRY", CountryUtils.GetNumericCodeByCountry(builder.ShippingAddress.Country));
             }
             if (builder.BillingAddress != null) {
@@ -485,7 +485,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_BILLING_STREET3", builder.BillingAddress.StreetAddress3);
                 request.Set("HPP_BILLING_CITY", builder.BillingAddress.City);
                 request.Set("HPP_BILLING_STATE", builder.BillingAddress.State);
-                request.Set("HPP_BILLING_POSTALCODE", StringUtils.ToValidateAndFormatZipCode(builder.BillingAddress.PostalCode));
+                request.Set("HPP_BILLING_POSTALCODE", builder.BillingAddress.PostalCode);
                 request.Set("HPP_BILLING_COUNTRY", CountryUtils.GetNumericCodeByCountry(builder.BillingAddress.Country));
             }
             request.Set("CUST_NUM", builder.CustomerId);
@@ -570,10 +570,10 @@ namespace GlobalPayments.Api.Gateways {
             string countryCode = CountryUtils.GetCountryCodeByCountry(address.Country);
             switch (countryCode) {
                 case "GB":
-                    return $"{StringUtils.ToValidateAndFormatZipCode(address.PostalCode.ExtractDigits())}|{address.StreetAddress1.ExtractDigits()}";
+                    return $"{address.PostalCode.ExtractDigits()}|{address.StreetAddress1.ExtractDigits()}";
                 case "US":
                 case "CA":
-                    return $"{StringUtils.ToValidateAndFormatZipCode(address.PostalCode)}|{address.StreetAddress1}";
+                    return $"{address.PostalCode}|{address.StreetAddress1}";
                 default:
                     return null;
             }
@@ -1236,17 +1236,17 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(address, "line3", customer.Address.StreetAddress3);
                 et.SubElement(address, "city", customer.Address.City);
                 et.SubElement(address, "county", customer.Address.Province);
-                et.SubElement(address, "postcode", StringUtils.ToValidateAndFormatZipCode(customer.Address.PostalCode));
+                et.SubElement(address, "postcode", customer.Address.PostalCode);
                 var country = et.SubElement(address, "country", customer.Address.Country);
                 if (country != null)
                     country.Set("code", customer.Address.CountryCode);
             }
 
             var phone = et.SubElement(payer, "phonenumbers");
-            et.SubElement(phone, "home", StringUtils.ToValidateAndFormatPhoneNumber(customer.HomePhone));
-            et.SubElement(phone, "work", StringUtils.ToValidateAndFormatPhoneNumber(customer.WorkPhone));
+            et.SubElement(phone, "home", customer.HomePhone);
+            et.SubElement(phone, "work", customer.WorkPhone);
             et.SubElement(phone, "fax", customer.Fax);
-            et.SubElement(phone, "mobile", StringUtils.ToValidateAndFormatPhoneNumber(customer.MobilePhone));
+            et.SubElement(phone, "mobile", customer.MobilePhone);
 
             et.SubElement(payer, "email", customer.Email);
 
@@ -1258,9 +1258,9 @@ namespace GlobalPayments.Api.Gateways {
             if (address == null)
                 return null;
 
-            var code = StringUtils.ToValidateAndFormatZipCode(address.PostalCode);
+            var code = address.PostalCode;
             if (!string.IsNullOrEmpty(code) && !code.Contains("|")) {
-                code = string.Format("{0}|{1}", StringUtils.ToValidateAndFormatZipCode(address.PostalCode), address.StreetAddress1);
+                code = string.Format("{0}|{1}", address.PostalCode, address.StreetAddress1);
                 if (address.Country == "GB") {
                     var encStreetAddress = string.IsNullOrEmpty(address.StreetAddress1) ? "" : Regex.Replace(address.StreetAddress1, "[^0-9]", "");
                     code = string.Format("{0}|{1}", Regex.Replace(address.PostalCode, "[^0-9]", ""), encStreetAddress);

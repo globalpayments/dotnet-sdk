@@ -51,13 +51,13 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                 // NAME ON CARD (Taken from ACH info earlier in method)
 
                 if (!string.IsNullOrEmpty(customer.WorkPhone)) {
-                    et.SubElement(accountHolderDataElement, "pos:Phone", StringUtils.ToValidateAndFormatPhoneNumber(customer?.WorkPhone));
+                    et.SubElement(accountHolderDataElement, "pos:Phone", customer?.WorkPhone);
                 }
                 else if (!string.IsNullOrEmpty(customer.MobilePhone)) {
-                    et.SubElement(accountHolderDataElement, "pos:Phone", StringUtils.ToValidateAndFormatPhoneNumber(customer?.MobilePhone));
+                    et.SubElement(accountHolderDataElement, "pos:Phone", customer?.MobilePhone);
                 }
                 else if (!string.IsNullOrEmpty(customer.HomePhone)) {
-                    et.SubElement(accountHolderDataElement, "pos:Phone", StringUtils.ToValidateAndFormatPhoneNumber(customer?.HomePhone));
+                    et.SubElement(accountHolderDataElement, "pos:Phone", customer?.HomePhone);
                 }
 
                 // PLACEHOLDER PhoneRegionCode

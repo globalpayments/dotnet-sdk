@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Entities.PayFac;
+using GlobalPayments.Api.Entities.TransactionApi.Response;
 using GlobalPayments.Api.Gateways.Events;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
@@ -385,7 +386,6 @@ namespace GlobalPayments.Api.Entities {
                 TransactionReference.OriginalProcessingCode = value;
             }
         }
-
         /// <summary>
         /// The payment token returned in the transaction.
         /// </summary>
@@ -397,15 +397,18 @@ namespace GlobalPayments.Api.Entities {
         /// The token data returned for the specific token
         /// </summary>
         public TokenData TokenData { get; set; }
-        
-
         internal GiftCard GiftCard { get; set; }
-
         internal TransactionReference TransactionReference { get; set; }
         public PriorMessageInformation MessageInformation { get; set; }
         public string TransactionToken { get; set; }
         public List<IGatewayEvent> GatewayEvents { get; set; }
-
+        public string ApprovalCode { get; set; }
+        public string  Status { get; set; }
+        public string ProcessorResponse { get; set; }
+        public CardResponse  CardDetail { get; set; }
+        public CheckResponse CheckDetail { get; set; }
+        public PaymentResponse PaymentDetail { get; set; }
+        public TransactionResponseDetail TransDetail { get; set; }
         /// <summary>
         /// Creates an additional authorization against the original transaction.
         /// </summary>
@@ -551,6 +554,69 @@ namespace GlobalPayments.Api.Entities {
         /// at a later date/time.
         /// </remarks>
         /// <param name="transactionId">The original transaction ID</param>
+        /// <param name="transactionType">Transaction type of original transaction</param>
+        /// <param name="paymentMethodType">
+        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
+        /// </param>
+        public static Transaction FromId(string transactionId, TransactionType transactionType, PaymentMethodType paymentMethodType = PaymentMethodType.Credit) {
+            return new Transaction  {
+                TransactionReference = new TransactionReference {
+                    TransactionId = transactionId,
+                    PaymentMethodType = paymentMethodType,
+                    OriginalTransactionType = transactionType
+                }
+            };
+        }
+
+        /// <summary>
+        /// Creates a `Transaction` object from a stored transaction ID.
+        /// </summary>
+        /// <remarks>
+        /// Used to expose management requests on the original transaction
+        /// at a later date/time.
+        /// </remarks>
+        /// <param name="transactionId">The original transaction ID</param>
+        /// <param name="paymentMethodType">
+        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
+        /// </param>
+        public static Transaction FromClientTransactionId(string clientTransactionId, TransactionType transactionType, PaymentMethodType paymentMethodType = PaymentMethodType.Credit) {
+            return new Transaction {
+                TransactionReference = new TransactionReference {
+                    ClientTransactionId = clientTransactionId,
+                    PaymentMethodType = paymentMethodType,
+                    OriginalTransactionType = transactionType
+                }
+            };
+        }
+
+        /// <summary>
+        /// Creates a `Transaction` object from a stored transaction ID.
+        /// </summary>
+        /// <remarks>
+        /// Used to expose management requests on the original transaction
+        /// at a later date/time.
+        /// </remarks>
+        /// <param name="transactionId">The original transaction ID</param>
+        /// <param name="paymentMethodType">
+        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
+        /// </param>
+        public static Transaction FromClientTransactionId(string clientTransactionId, PaymentMethodType paymentMethodType = PaymentMethodType.Credit) {
+            return new Transaction {
+                TransactionReference = new TransactionReference {
+                    ClientTransactionId = clientTransactionId,
+                    PaymentMethodType = paymentMethodType
+                }
+            };
+        }
+
+        /// <summary>
+        /// Creates a `Transaction` object from a stored transaction ID.
+        /// </summary>
+        /// <remarks>
+        /// Used to expose management requests on the original transaction
+        /// at a later date/time.
+        /// </remarks>
+        /// <param name="transactionId">The original transaction ID</param>
         /// <param name="transactionId">The original transaction's order ID</param>
         /// <param name="paymentMethodType">
         /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
@@ -568,7 +634,7 @@ namespace GlobalPayments.Api.Entities {
             };
         }
 
-        public static Transaction FromNetwork(decimal? amount, string authCode, NtsData originalNtsCode, IPaymentMethod originalPaymentMethod, string messageTypeIndicator = null, string stan = null, string originalTransactionTime = null, string originalProcessingCode = null, string acquirerId = null)
+        public static Transaction FromNetwork(decimal? amount, string authCode, NtsData originalNtsCode, IPaymentMethod originalPaymentMethod, string messageTypeIndicator = null, string stan = null, string originalTransactionTime = null, string originalProcessingCode = null, string acquirerId = null, bool partialApproval = false)
         {
             TransactionReference reference = new TransactionReference();
             reference.OriginalAmount = amount;
@@ -580,6 +646,7 @@ namespace GlobalPayments.Api.Entities {
             reference.OriginalTransactionTime = originalTransactionTime;
             reference.SystemTraceAuditNumber = stan;
             reference.OriginalProcessingCode = originalProcessingCode;
+            reference.PartialApproval = partialApproval;
 
             Transaction trans = new Transaction();
             trans.TransactionReference = reference;
@@ -587,5 +654,19 @@ namespace GlobalPayments.Api.Entities {
             return trans;
         }
         public List<CheckResponseErrorMessage> CheckResponseErrorMessages { get; set; }
+
+        public ManagementBuilder Fetch() {
+            return Fetch(null);
+        }
+
+        public ManagementBuilder Fetch(decimal amount) {
+            return Fetch(amount);
+        }
+
+        public ManagementBuilder Fetch(decimal? amount) {
+            return new ManagementBuilder(TransactionType.Fetch)
+                            .WithPaymentMethod(TransactionReference)
+                            .WithAmount(amount);
+        }
     }
 }

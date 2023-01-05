@@ -26,13 +26,13 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                 et.SubElement(accountHolderDataElement, "pos:Address", builder.BillingAddress?.StreetAddress1);
                 et.SubElement(accountHolderDataElement, "pos:City", builder.BillingAddress?.City);
                 et.SubElement(accountHolderDataElement, "pos:State", builder.BillingAddress?.State);
-                et.SubElement(accountHolderDataElement, "pos:Zip", StringUtils.ToValidateAndFormatZipCode(builder.BillingAddress?.PostalCode));
+                et.SubElement(accountHolderDataElement, "pos:Zip", builder.BillingAddress?.PostalCode);
             }
             else if (customer!= null && customer.Address != null) {
                 et.SubElement(accountHolderDataElement, "pos:Address", customer.Address?.StreetAddress1);
                 et.SubElement(accountHolderDataElement, "pos:City", customer.Address?.City);
                 et.SubElement(accountHolderDataElement, "pos:State", customer.Address?.State);
-                et.SubElement(accountHolderDataElement, "pos:Zip", StringUtils.ToValidateAndFormatZipCode(customer.Address?.PostalCode));
+                et.SubElement(accountHolderDataElement, "pos:Zip", customer.Address?.PostalCode);
             }
 
             if (customer != null) {
@@ -41,13 +41,13 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                 et.SubElement(accountHolderDataElement, "pos:MiddleName", customer?.MiddleName);
 
                 if (!string.IsNullOrEmpty(customer.WorkPhone)) {
-                    et.SubElement(accountHolderDataElement, "pos:Phone", StringUtils.ToValidateAndFormatPhoneNumber(customer?.WorkPhone));
+                    et.SubElement(accountHolderDataElement, "pos:Phone", customer?.WorkPhone);
                 }
                 else if (!string.IsNullOrEmpty(customer.MobilePhone)) {
-                    et.SubElement(accountHolderDataElement, "pos:Phone", StringUtils.ToValidateAndFormatPhoneNumber(customer?.MobilePhone));
+                    et.SubElement(accountHolderDataElement, "pos:Phone", customer?.MobilePhone);
                 }
                 else if (!string.IsNullOrEmpty(customer.HomePhone)) {
-                    et.SubElement(accountHolderDataElement, "pos:Phone", StringUtils.ToValidateAndFormatPhoneNumber(customer?.HomePhone));
+                    et.SubElement(accountHolderDataElement, "pos:Phone", customer?.HomePhone);
                 }
 
                 // PLACEHOLDER PhoneRegionCode

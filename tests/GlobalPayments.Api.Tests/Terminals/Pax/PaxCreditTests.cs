@@ -14,7 +14,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         public PaxCreditTests() {
             _device = DeviceService.Create(new ConnectionConfig {
-                DeviceType = DeviceType.PAX_S300,
+                DeviceType = DeviceType.PAX_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "192.168.0.116",
                 Port = "10009",

@@ -33,6 +33,9 @@ namespace GlobalPayments.Api.Network {
                 }
                 return false;
             }
+            else if (MessageTypeIndicator.Equals("1420")) {
+                return true;
+            }
             return false;
         }
 
