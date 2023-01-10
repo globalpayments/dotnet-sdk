@@ -134,6 +134,7 @@ namespace GlobalPayments.Api.Entities {
         public bool HasEcomPaymentData { get; set; }
 
         public bool HasEmvTags { get; set; }
+        public string HasLevelIII { get; set; }
 
         public string InvoiceNumber { get; set; }
 

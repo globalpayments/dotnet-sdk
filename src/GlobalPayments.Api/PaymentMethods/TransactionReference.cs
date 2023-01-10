@@ -16,6 +16,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public TransactionType OriginalTransactionType { get; set; }
         public string AuthCode { get; set; }
         public string BatchNumber { get; set; }
+        public string CardType { get; set; }
         public string OrderId { get; set; }
         public string TransactionId { get; set; }
         public string ClientTransactionId { get; set; }

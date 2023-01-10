@@ -504,8 +504,9 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
                     }
 
-                    if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod is Credit) {
-                        var isVisa = (builder.PaymentMethod as Credit).CardType == "Visa";
+                    if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod.PaymentMethodType is PaymentMethodType.Credit) {                       
+                        
+                        var isVisa = (builder.CardType == "Visa");
                         var cpc = et.SubElement(root, "CorporateData");
                         var data = et.SubElement(cpc, isVisa ? "Visa" : "MC");
 
@@ -526,6 +527,7 @@ namespace GlobalPayments.Api.Gateways {
                             // et.SubElement(data, "TaxTreatment", null);
                             // et.SubElement(data, "DiscountTreatment", null);
                         }
+                       
                     }
                 }
 
@@ -717,7 +719,8 @@ namespace GlobalPayments.Api.Gateways {
                         ClientTransactionId = root.GetValue<string>("ClientTxnId"),
                         PaymentMethodType = payment.PaymentMethodType,
                         TransactionId = root.GetValue<string>("GatewayTxnId"),
-                        AuthCode = root.GetValue<string>("AuthCode")
+                        AuthCode = root.GetValue<string>("AuthCode"),
+                        CardType = root.GetValue<string>("CardType")
                     };
                 }
                 // Add additional error messages
@@ -866,7 +869,7 @@ namespace GlobalPayments.Api.Gateways {
                         DebtRepaymentIndicator = root.GetValue<string>("DebtRepaymentIndicator") == "1",
                         CaptureAmount = root.GetValue<decimal>("CaptureAmtInfo"),
                         FullyCaptured = root.GetValue<string>("FullyCapturedInd") == "1",
-
+                        HasLevelIII = root.GetValue<string>("HasLevelIII"),
                     };
 
                     // card holder data
@@ -1223,21 +1226,24 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(lineItem, "ItemDescription", item.Description);
                 et.SubElement(lineItem, "ProductCode", item.ProductCode);
                 et.SubElement(lineItem, "Quantity", item.Quantity);
-                et.SubElement(lineItem, "ExtendedItemAmount", item.ExtendedAmount);
+                et.SubElement(lineItem, "ItemTotalAmt", item.TotalAmount);
                 et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
 
                 if (!isVisa) {
                     continue;
                 }
 
-                // The schema says this field should exist, but it's not currently allowed.
-                // et.SubElement(lineItem, "ItemCommodityCode", item.CommodityCode);
+                et.SubElement(lineItem, "ItemCommodityCode ", item.CommodityCode);
                 et.SubElement(lineItem, "UnitCost", item.UnitCost);
                 et.SubElement(lineItem, "VATTaxAmt", item.TaxAmount);
-                // et.SubElement(lineItem, "VATTaxRate", null);
-                et.SubElement(lineItem, "ItemTotalAmt", item.TotalAmount);
-                // et.SubElement(lineItem, "ItemTaxTreatment", null);
                 et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails?.DiscountAmount);
+
+
+                //et.SubElement(lineItem, "ExtendedItemAmount", item.ExtendedAmount);
+                // The schema says this field should exist, but it's not currently allowed.
+                // et.SubElement(lineItem, "ItemCommodityCode", item.CommodityCode);
+                // et.SubElement(lineItem, "VATTaxRate", null);
+                // et.SubElement(lineItem, "ItemTaxTreatment", null);
             }
 
         }

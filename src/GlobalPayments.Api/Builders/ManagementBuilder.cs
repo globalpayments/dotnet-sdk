@@ -24,6 +24,16 @@ namespace GlobalPayments.Api.Builders {
         }
         internal string BatchReference { get; set; }
         internal IEnumerable<Bill> Bills { get; set; }
+        internal string CardType {
+            get
+            {
+                if (PaymentMethod is TransactionReference)
+                {
+                    return ((TransactionReference)PaymentMethod).CardType;
+                }
+                return null;
+            }
+        }       
         internal string ClientTransactionId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -34,7 +44,7 @@ namespace GlobalPayments.Api.Builders {
         }
         internal CommercialData CommercialData { get; set; }
         internal decimal? ConvenienceAmount { get; set; }
-        internal string Currency { get; set; }
+        internal string Currency { get; set; }        
         internal string CustomerId { get; set; }
         internal string CustomerIpAddress { get; set; }        
         internal IEnumerable<DisputeDocument> DisputeDocuments { get; set; }

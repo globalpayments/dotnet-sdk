@@ -2,6 +2,11 @@
 
 ## Latest
 
+#### Bug Fixes:
+
+- Portico Gateway: Fix for Level III data not being included in the CreditCPCEdit request
+
+## v5.0.3 (01/05/23)
 
 #### Enhancements
 
@@ -9,7 +14,7 @@
 - Update device configuration to be generic
 - Transaction API: Add transaction api support for US and CA region
 
-## v5.0.3 (01/05/23)
+## v5.0.2 (12/13/22)
 
 #### Enhancements
 
@@ -17,7 +22,7 @@
 - GP-API: Added Decoupled authentication
 - GP-API: Added onboarding merchant feature
 
-## v5.0.2 (12/13/22)
+## v5.0.1 (11/15/22)
 
 #### Enhancements
 
