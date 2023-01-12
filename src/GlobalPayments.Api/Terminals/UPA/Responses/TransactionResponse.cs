@@ -67,7 +67,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             // TokenPANLast = host.GetValue<string>("tokenPANLast");
             // PartialApproval = host.GetValue<string>("partialApproval");
             // TraceNumber = host.GetValue<string>("traceNumber");
-            // BalanceDue = host.GetValue<decimal>("balanceDue");
+            AmountDue = BalanceAmount = host.GetValue<decimal>("balanceDue");
             // BaseDue = host.GetValue<decimal>("baseDue");
             // TaxDue = host.GetValue<decimal>("taxDue");
             // TipDue = host.GetValue<decimal>("tipDue");
