@@ -310,5 +310,11 @@ namespace GlobalPayments.Api.Entities {
         public BankPaymentResponse BankPaymentResponse { get; set; }
 
         public FraudManagementResponse FraudManagementResponse { get; set; }
+
+        public BNPLResponse BNPLResponse { get; set; }
+        
+        public string Fingerprint { get; set; }
+    
+        public string FingerprintIndicator { get; set; }
     }
 }

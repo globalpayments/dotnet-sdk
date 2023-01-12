@@ -66,7 +66,7 @@ namespace GlobalPayments.Api.Builders {
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
         public PhoneNumber HomePhone { get; set; }
         public PhoneNumber WorkPhone { get; set; }
-        public PhoneNumber ShippingPhone { get; set; }               
+        public PhoneNumber ShippingPhone { get; set; }
         public RemittanceReferenceType RemittanceReferenceType { get; set; }
         public string RemittanceReferenceValue { get; set; }
         public PhoneNumber MobilePhone { get; set; }
@@ -95,6 +95,7 @@ namespace GlobalPayments.Api.Builders {
         internal string CheckCustomerId { get; set; }
         internal string RawMICRData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
+        internal BNPLShippingMethod BNPLShippingMethod {get;set;}
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
@@ -1075,6 +1076,16 @@ namespace GlobalPayments.Api.Builders {
         public AuthorizationBuilder WithRemittanceReference(RemittanceReferenceType remittanceReferenceType, string remittanceReferenceValue) {
             RemittanceReferenceType = remittanceReferenceType;
             RemittanceReferenceValue = remittanceReferenceValue;
+            return this;
+        }
+
+        public AuthorizationBuilder WithBNPLShippingMethod(BNPLShippingMethod value) {
+            if (!(PaymentMethod is BNPL))
+            {
+                throw new ArgumentException("The selected payment method doesn't support this property!");
+            }
+
+            BNPLShippingMethod = value;
             return this;
         }
     }

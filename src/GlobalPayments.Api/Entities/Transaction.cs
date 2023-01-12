@@ -75,17 +75,26 @@ namespace GlobalPayments.Api.Entities {
         public string CardBrandTransactionId { get; set; }
 
         public AlternativePaymentResponse AlternativePaymentResponse {
-            get
-            {
+            get {
                 return TransactionReference?.AlternativePaymentResponse;
             }
-            set
-            {
-                if(TransactionReference == null)
-                {
+            set {
+                if(TransactionReference == null) {
                     TransactionReference = new TransactionReference();
                 }
                 TransactionReference.AlternativePaymentResponse = value;
+            }
+        }
+
+        public BNPLResponse BNPLResponse {
+            get {
+                return TransactionReference?.BNPLResponse;
+            }
+            set {
+                if (TransactionReference == null) {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.BNPLResponse = value;
             }
         }
 

@@ -572,6 +572,24 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual("SUCCESS", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
         }
+
+        [TestMethod]
+        public void ExemptionSaleTransaction()
+        {
+            card.Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2;
+
+            var threeDS = new ThreeDSecure();
+            threeDS.ExemptStatus = ExemptStatus.LOW_VALUE;
+            card.ThreeDSecure = threeDS;
+        
+            var response = card.Charge(Amount)
+                        .WithCurrency(Currency)
+                        .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+        }
     }
 
     /// <summary>

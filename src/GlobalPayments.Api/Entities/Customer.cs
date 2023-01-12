@@ -91,6 +91,10 @@ namespace GlobalPayments.Api.Entities {
         /// Customer resource's status
         /// </summary>
         public string Status { get; set; }
+        
+        public PhoneNumber Phone { get; set; }
+   
+        public List<CustomerDocument> Documents { get; set; }
 
         /// <summary>
         /// Customer's existing payment methods

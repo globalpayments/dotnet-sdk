@@ -33,6 +33,8 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string SystemTraceAuditNumber{ get; set; }
         public NtsData NtsData { get; set; }
         public AlternativePaymentResponse AlternativePaymentResponse { get; set; }
+        
+        public BNPLResponse BNPLResponse;
         public void SetNtsData(string value) {
             this.NtsData = NtsData.FromString(value);
         }

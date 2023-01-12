@@ -71,15 +71,23 @@ namespace GlobalPayments.Api.Mapping {
                 }
 
                 transaction.TransactionId = json.GetValue<string>("id");
+                var batchSummary = new BatchSummary();
+                batchSummary.BatchReference = json.GetValue<string>("batch_id");
+                transaction.BatchSummary = batchSummary;
                 transaction.BalanceAmount = json.GetValue<string>("amount").ToAmount();
                 transaction.AuthorizedAmount = (json.GetValue<string>("status").ToUpper().Equals(TransactionStatus.Preauthorized.ToString().ToUpper()) && !string.IsNullOrEmpty(json.GetValue<string>("amount"))) ?
                 json.GetValue<string>("amount").ToAmount() : null;
-                transaction.Timestamp = json.GetValue<string>("time_created");
-                transaction.ResponseMessage = json.GetValue<string>("status");
+                transaction.Timestamp = json.GetValue<string>("time_created");                
                 transaction.ReferenceNumber = json.GetValue<string>("reference");
                 transaction.ClientTransactionId = json.GetValue<string>("reference");
+                transaction.MultiCapture = GetIsMultiCapture(json);
                 transaction.FingerPrint = json.Get("payment_method")?.GetValue<string>("fingerprint") ?? null;
                 transaction.FingerPrintIndicator = json.Get("payment_method")?.GetValue<string>("fingerprint_presence_indicator") ?? null;
+                if (json.Has("payment_method") && json.Get("payment_method").Has("bnpl"))
+                {
+                    MapBNPLResponse(json, ref transaction);
+                    return transaction;
+                }
                 transaction.BatchSummary = new BatchSummary {
                     BatchReference = json.GetValue<string>("batch_id")
                 };
@@ -94,8 +102,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");                
                 if (json.Get("payment_method")?.Get("card")?.Has("provider") ?? false) {
                     transaction.CardIssuerResponse = MapCardIssuerResponse(json.Get("payment_method")?.Get("card")?.Get("provider"));
-                }
-                transaction.MultiCapture = GetIsMultiCapture(json);
+                }                
                 transaction.PaymentMethodType = GetPaymentMehodType(json) ?? transaction.PaymentMethodType;
                 transaction.DccRateData = MapDccInfo(json);
                 transaction.FraudFilterResponse = json.Has("risk_assessment") ? MapFraudManagement(json) : null;
@@ -212,6 +219,14 @@ namespace GlobalPayments.Api.Mapping {
             return payLinkResponse;
         }
 
+        private static void MapBNPLResponse(JsonDoc response, ref Transaction transaction) {
+            transaction.PaymentMethodType = PaymentMethodType.BNPL;            
+            var bnplResponse = new BNPLResponse();
+            bnplResponse.RedirectUrl = response.Get("payment_method").GetValue<string>("redirect_url");
+            bnplResponse.ProviderName = response.Get("payment_method").Get("bnpl").GetValue<string>("provider");
+            transaction.BNPLResponse = bnplResponse;           
+        }
+
         private static bool? GetIsShippable(JsonDoc doc) 
         {
             if (doc.Has("shippable")) {
@@ -239,7 +254,7 @@ namespace GlobalPayments.Api.Mapping {
                 DepositReference = doc.GetValue<string>("deposit_id"),
                 BatchCloseDate = doc.GetValue<DateTime?>("batch_time_created", DateConverter),
                 DepositDate = doc.GetValue<DateTime?>("deposit_time_created", DateConverter),
-
+                OrderId = doc.GetValue<string>("order_reference"),
                 MerchantId = doc.Get("system")?.GetValue<string>("mid"),
                 MerchantHierarchy = doc.Get("system")?.GetValue<string>("hierarchy"),
                 MerchantName = doc.Get("system")?.GetValue<string>("name"),
@@ -285,6 +300,14 @@ namespace GlobalPayments.Api.Mapping {
                     alternativePaymentResponse.ProviderReference = apm?.GetValue<string>("provider_reference");
                     summary.AlternativePaymentResponse = alternativePaymentResponse;
                     summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.APM);
+                }
+                else if (paymentMethod.Has("bnpl"))
+                {
+                    JsonDoc bnpl = paymentMethod?.Get("bnpl");
+                    var bnplResponse = new BNPLResponse();                    
+                    bnplResponse.ProviderName = bnpl?.GetValue<string>("provider");                    
+                    summary.BNPLResponse = bnplResponse;
+                    summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BNPL);
                 }
             }
 
@@ -344,6 +367,9 @@ namespace GlobalPayments.Api.Mapping {
             transaction.Currency = doc.GetValue<string>("currency");
             transaction.ReferenceNumber = doc.GetValue<string>("reference");
             transaction.ClientTransactionId = doc.GetValue<string>("reference");
+            transaction.Description = doc.GetValue<string>("description");
+            transaction.Fingerprint = doc.Get("payment_method")?.GetValue<string>("fingerprint");
+            transaction.FingerprintIndicator = doc.Get("payment_method")?.GetValue<string>("fingerprint_presence_indicator");
 
             return transaction;
         }

@@ -2,6 +2,13 @@
 
 ## Latest
 
+#### Enhancements
+
+- GP-API: Buy Now Pay Later payment method allows customers to repay the cost of their purchase over time instead of all at once
+- GP-API: Added exemption status to help reduce payment friction
+
+## v5.0.4 (01/10/23)
+
 #### Bug Fixes:
 
 - Portico Gateway: Fix for Level III data not being included in the CreditCPCEdit request

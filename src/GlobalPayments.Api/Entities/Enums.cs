@@ -170,7 +170,9 @@ namespace GlobalPayments.Api.Entities {
 
         Ewic = 1 << 10,
 
-        BankPayment = 1 << 11
+        BankPayment = 1 << 11,
+
+        BNPL = 1 << 12
     }
 
     /// <summary>
@@ -330,6 +332,11 @@ namespace GlobalPayments.Api.Entities {
 
         [Description("MERCHANT")]
         Merchant = 1 << 18,
+
+        /// <summary>
+        /// Indicates a Buy Now Pay Later transaction
+        /// </summary>
+        BuyNowPayLater = 1 << 19,
     }
 
     /// <summary>

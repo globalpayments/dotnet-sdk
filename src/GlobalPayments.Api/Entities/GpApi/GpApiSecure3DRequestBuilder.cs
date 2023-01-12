@@ -8,8 +8,10 @@ using System.Net.Http;
 
 namespace GlobalPayments.Api.Entities {
     internal class GpApiSecure3DRequestBuilder {
+        private static Secure3dBuilder _builder;
         internal static GpApiRequest BuildRequest(Secure3dBuilder builder, GpApiConnector gateway) {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            _builder = builder;
+             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
                 var storedCredential = new JsonDoc()
                     .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))
@@ -84,40 +86,7 @@ namespace GlobalPayments.Api.Entities {
                     .Set("challenge_return_url", gateway.GpApiConfig.ChallengeNotificationUrl)
                     .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl)
                     .Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
-                #endregion
-
-                #region Order
-                var order = new JsonDoc()
-                    .Set("time_created_reference", builder.OrderCreateDate?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
-                    .Set("amount", builder.Amount.ToNumericCurrencyString())
-                    .Set("currency", builder.Currency)
-                    .Set("reference", builder.ReferenceNumber)
-                    .Set("address_match_indicator", builder.AddressMatchIndicator)
-                    .Set("gift_card_count", builder.GiftCardCount)
-                    .Set("gift_card_currency", builder.GiftCardCurrency)
-                    .Set("gift_card_amount", builder.GiftCardAmount.ToNumericCurrencyString())
-                    .Set("delivery_email", builder.DeliveryEmail)
-                    .Set("delivery_timeframe", builder.DeliveryTimeframe?.ToString())
-                    .Set("shipping_method", builder.ShippingMethod?.ToString())
-                    .Set("shipping_name_matches_cardholder_name", builder.ShippingNameMatchesCardHolderName)
-                    .Set("preorder_indicator", builder.PreOrderIndicator?.ToString())
-                    .Set("preorder_availability_date", builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"))
-                    .Set("reorder_indicator", builder.ReorderIndicator?.ToString())
-                    .Set("category", builder.MessageCategory.ToString());
-
-                if (builder.ShippingAddress != null) {
-                    var shippingAddress = new JsonDoc()
-                        .Set("line1", builder.ShippingAddress.StreetAddress1)
-                        .Set("line2", builder.ShippingAddress.StreetAddress2)
-                        .Set("line3", builder.ShippingAddress.StreetAddress3)
-                        .Set("city", builder.ShippingAddress.City)
-                        .Set("postal_code", builder.ShippingAddress.PostalCode)
-                        .Set("state", builder.ShippingAddress.State)
-                        .Set("country", builder.ShippingAddress.CountryCode);
-
-                    order.Set("shipping_address", shippingAddress);
-                }
-                #endregion
+                #endregion               
 
                 #region Payer
                 var homePhone = new JsonDoc()
@@ -226,7 +195,7 @@ namespace GlobalPayments.Api.Entities {
                     data.Set("decoupled_flow_request", builder.DecoupledFlowRequest.Value ? DecoupledFlowRequest.DECOUPLED_PREFERRED.ToString() : DecoupledFlowRequest.DO_NOT_USE_DECOUPLED.ToString());
                 }
                 data.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout.HasValue ? builder.DecoupledFlowTimeout.ToString() : null)
-                    .Set("order", order.HasKeys() ? order : null)
+                    .Set("order", SetOrderParam())
                     .Set("payer", payer.HasKeys() ? payer : null)
                     .Set("payer_prior_three_ds_authentication_data", payerPrior3DSAuthenticationData.HasKeys() ? payerPrior3DSAuthenticationData : null)
                     .Set("recurring_authorization_data", recurringAuthorizationData.HasKeys() ? recurringAuthorizationData : null)
@@ -256,6 +225,43 @@ namespace GlobalPayments.Api.Entities {
                 };
             }
             return null;
+        }
+
+        private static JsonDoc SetOrderParam()
+        {            
+            var order = new JsonDoc()
+                .Set("time_created_reference", _builder.OrderCreateDate?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
+                .Set("amount", _builder.Amount.ToNumericCurrencyString())
+                .Set("currency", _builder.Currency)
+                .Set("reference", _builder.ReferenceNumber)
+                .Set("address_match_indicator", _builder.AddressMatchIndicator)
+                .Set("gift_card_count", _builder.GiftCardCount)
+                .Set("gift_card_currency", _builder.GiftCardCurrency)
+                .Set("gift_card_amount", _builder.GiftCardAmount.ToNumericCurrencyString())
+                .Set("delivery_email", _builder.DeliveryEmail)
+                .Set("delivery_timeframe", _builder.DeliveryTimeframe?.ToString())
+                .Set("shipping_method", _builder.ShippingMethod?.ToString())
+                .Set("shipping_name_matches_cardholder_name", _builder.ShippingNameMatchesCardHolderName)
+                .Set("preorder_indicator", _builder.PreOrderIndicator?.ToString())
+                .Set("preorder_availability_date", _builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"))
+                .Set("reorder_indicator", _builder.ReorderIndicator?.ToString())
+                .Set("category", _builder.MessageCategory.ToString());
+
+            if (_builder.ShippingAddress != null)
+            {
+                var shippingAddress = new JsonDoc()
+                    .Set("line1", _builder.ShippingAddress.StreetAddress1)
+                    .Set("line2", _builder.ShippingAddress.StreetAddress2)
+                    .Set("line3", _builder.ShippingAddress.StreetAddress3)
+                    .Set("city", _builder.ShippingAddress.City)
+                    .Set("postal_code", _builder.ShippingAddress.PostalCode)
+                    .Set("state", _builder.ShippingAddress.State)
+                    .Set("country", _builder.ShippingAddress.CountryCode);
+
+                order.Set("shipping_address", shippingAddress);
+            }
+
+            return order.HasKeys() ? order : null;           
         }
     }
 }
