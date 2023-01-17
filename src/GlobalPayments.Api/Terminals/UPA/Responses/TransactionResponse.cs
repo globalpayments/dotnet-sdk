@@ -4,7 +4,7 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.UPA
 {
-    internal class TransactionResponse: ITerminalResponse {
+    internal class TransactionResponse : ITerminalResponse {
         public TransactionResponse(JsonDoc root) {
             var response = root.Get("data");
             if (response == null) {

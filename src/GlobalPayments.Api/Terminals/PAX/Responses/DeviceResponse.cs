@@ -246,6 +246,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public string TerminalVerificationResults { get; set; }
 
         public decimal? MerchantFee { get; set; }
+
+        public string RequestId { get; }
+
         public int TranNo { get; set; }
 
         internal PaxTerminalResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
