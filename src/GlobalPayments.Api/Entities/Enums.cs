@@ -779,6 +779,7 @@ namespace GlobalPayments.Api.Entities {
     {
         public const string APPLE_PAY = "APPLEPAY";
         public const string GOOGLE_PAY = "PAY_BY_GOOGLE";
+        public const string CLICK_TO_PAY = "CLICK_TO_PAY";
     }
 
     public static class DigitalWalletTokenFormat{

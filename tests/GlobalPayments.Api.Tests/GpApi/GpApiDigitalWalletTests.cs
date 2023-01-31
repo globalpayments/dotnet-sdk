@@ -19,8 +19,8 @@ namespace GlobalPayments.Api.Tests.GpApi
             {
                 AppId = AppId,
                 AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
+                Channel = Channel.CardNotPresent,                
+                RequestLogger = new RequestConsoleLogger()
             });
         }
 
@@ -31,6 +31,24 @@ namespace GlobalPayments.Api.Tests.GpApi
             {
                 CardHolderName = "James Mason#",
             };
+        }
+
+        [TestMethod]
+        public void ClickToPayEncrypted()
+        {            
+            card.Token = "9113329269393758302";              
+            card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
+
+            var response = card.Charge(10m)
+                .WithCurrency("EUR")
+                .WithModifier(TransactionModifier.EncryptedMobile)
+                .WithMaskedDataResponse(true)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.IsFalse(string.IsNullOrEmpty(response.TransactionId));
         }
 
         [TestMethod, Ignore]

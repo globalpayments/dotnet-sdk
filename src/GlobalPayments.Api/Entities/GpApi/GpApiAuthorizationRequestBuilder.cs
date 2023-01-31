@@ -22,10 +22,19 @@ namespace GlobalPayments.Api.Entities {
                 var digitalWallet = new JsonDoc();
                 var creditCardData = (builder.PaymentMethod as CreditCardData);
                 //Digital Wallet
-                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
-                {
+                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                    var payment_token = new JsonDoc();
+                    switch (creditCardData.MobileType)
+                    {
+                        case EncyptedMobileType.CLICK_TO_PAY:
+                            payment_token.Set("data", creditCardData.Token);
+                            break;
+                        default:
+                            payment_token = JsonDoc.Parse(creditCardData.Token);
+                            break;
+                    }
                     digitalWallet
-                        .Set("payment_token", JsonDoc.Parse(creditCardData.Token));
+                            .Set("payment_token", payment_token);
 
                 }
                 else if (builder.TransactionModifier == TransactionModifier.DecryptedMobile)
@@ -384,12 +393,15 @@ namespace GlobalPayments.Api.Entities {
                 .Set("type", builder.TransactionType == TransactionType.Refund ? "REFUND" : "SALE") // [SALE, REFUND]
                 .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel)) // [CP, CNP]
                 .Set("capture_mode", GetCaptureMode(builder)) // [AUTO, LATER, MULTIPLE]
-                //.Set("remaining_capture_count", "") //Pending Russell
+                                                              //.Set("remaining_capture_count", "") //Pending Russell
                 .Set("authorization_mode", builder.AllowPartialAuth ? "PARTIAL" : null)
                 .Set("amount", builder.Amount.ToNumericCurrencyString())
                 .Set("currency", builder.Currency)
-                .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
-                .Set("description", builder.Description)
+                .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString());
+                if (builder.PaymentMethod is CreditCardData && ((builder.PaymentMethod as CreditCardData).MobileType == EncyptedMobileType.CLICK_TO_PAY)) {
+                    data.Set("masked", builder.MaskedDataResponse ? "YES" : "NO");
+                }
+            data.Set("description", builder.Description)
                 //.Set("order_reference", builder.OrderId)
                 .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
                 .Set("cashback_amount", builder.CashBackAmount.ToNumericCurrencyString())

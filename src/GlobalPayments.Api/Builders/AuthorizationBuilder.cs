@@ -96,6 +96,7 @@ namespace GlobalPayments.Api.Builders {
         internal string RawMICRData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
         internal BNPLShippingMethod BNPLShippingMethod {get;set;}
+        internal bool MaskedDataResponse { get; set; }
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
@@ -848,6 +849,12 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithSurchargeAmount(decimal? value) {
             SurchargeAmount = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithMaskedDataResponse(bool value)
+        {
+            MaskedDataResponse = value;
             return this;
         }
 

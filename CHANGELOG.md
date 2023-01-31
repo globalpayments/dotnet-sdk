@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- GP-API: Click To Pay added for merchants can give customers an easier, seamless checkout experience while also gaining access to Secure Remote Commerce network tokens
+
+## v5.0.5 (01/12/23)
+
+#### Enhancements
+
 - GP-API: Buy Now Pay Later payment method allows customers to repay the cost of their purchase over time instead of all at once
 - GP-API: Added exemption status to help reduce payment friction
 
