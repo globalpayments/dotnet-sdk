@@ -638,6 +638,52 @@ namespace GlobalPayments.Api.Mapping {
             };
         }
 
+        public static T MapRiskAssessmentResponse<T>(string rawResponse) where T : class
+        {
+            T result = Activator.CreateInstance<T>();
+            if (!string.IsNullOrEmpty(rawResponse))
+            {
+                JsonDoc response = JsonDoc.Parse(rawResponse);
+                var riskAssessment = new RiskAssessment();
+                riskAssessment.Id = response.GetValue<string>("id");
+                riskAssessment.TimeCreated = response.GetValue<DateTime?>("time_created", DateConverter);
+                riskAssessment.Status = (RiskAssessmentStatus)Enum.Parse(typeof(RiskAssessmentStatus), response.GetValue<string>("status").ToUpper());
+                riskAssessment.Amount = response.GetValue<string>("amount").ToAmount() ?? null;
+                riskAssessment.Currency = response.GetValue<string>("currency") ?? null;
+                riskAssessment.MerchantId = response.GetValue<string>("merchant_id") ?? null;
+                riskAssessment.MerchantName = response.GetValue<string>("merchant_name") ?? null;
+                riskAssessment.AccountId = response.GetValue<string>("account_id") ?? null;
+                riskAssessment.AccountName = response.GetValue<string>("account_name") ?? null;
+                riskAssessment.Reference = response.GetValue<string>("reference") ?? null;
+                riskAssessment.ResponseCode = response.Get("action").GetValue<string>("result_code") ?? null;
+                riskAssessment.ResponseMessage = response.GetValue<string>("result") ?? null;
+                if ((bool)response.Get("payment_method")?.Has("card")) {
+                    var paymentMethod = response.Get("payment_method").Get("card");
+                    var card = new Card();
+                    card.MaskedNumberLast4 = paymentMethod.GetValue<string>("masked_number_last4") ?? null;
+                    card.Brand = paymentMethod.GetValue<string>("brand") ?? null;
+                    card.BrandReference = paymentMethod.GetValue<string>("brand_reference") ?? null;
+                    card.Bin = paymentMethod.GetValue<string>("bin") ?? null;
+                    card.BinCountry = paymentMethod.GetValue<string>("bin_country") ?? null;
+                    card.AccountType = paymentMethod.GetValue<string>("account_type") ?? null;
+                    card.Issuer = paymentMethod.GetValue<string>("issuer") ?? null;
+
+                    riskAssessment.CardDetails = card;
+                }
+                if (response.Has("raw_response")) {
+                    var rawResponseField = response.Get("raw_response");
+                    var thirdPartyResponse = new ThirdPartyResponse();
+                    thirdPartyResponse.Platform = rawResponseField.GetValue<string>("platform");
+                    thirdPartyResponse.Data = rawResponseField.Get("data").ToString();
+                    riskAssessment.ThirdPartyResponse = thirdPartyResponse;
+                }
+
+                riskAssessment.ActionId = response.Get("action").GetValue<string>("id") ?? null;
+                return riskAssessment as T;
+            }
+            return new RiskAssessment() as T;
+        }
+
         private static FraudManagementResponse MapFraudManagement(JsonDoc response)
         {
             var fraudFilterResponse = new FraudManagementResponse();

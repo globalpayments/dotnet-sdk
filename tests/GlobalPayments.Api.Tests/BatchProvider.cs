@@ -220,6 +220,8 @@ namespace GlobalPayments.Api.Tests {
                                 CardType = "OH ";
                                 OtherCardTransactionCount += 1;
                                 OtherCardTransactionSales += amount;
+                                CreditCardTransactionCount += 1;
+                                CreditCardTransactionSales += amount;
                             }
                         }
                         break;
@@ -243,6 +245,8 @@ namespace GlobalPayments.Api.Tests {
                                 CardType = "OH ";
                                 OtherCardTransactionCount -= 1;
                                 OtherCardTransactionSales -= amount;
+                                CreditCardTransactionCount -= 1;
+                                CreditCardTransactionSales -= amount;
                             }
                         }
                         break;
@@ -257,6 +261,11 @@ namespace GlobalPayments.Api.Tests {
                                 DebitReturnTransactionCount += 1;
                                 DebitReturnTransactionSales += amount;
                             }
+                            else {
+                                CardType = "OH ";
+                                CreditReturnTransactionCount += 1;
+                                CreditReturnTransactionSales += amount;
+                            }
                         }
                         break;
                     case TransactionType.Void: {
@@ -270,7 +279,12 @@ namespace GlobalPayments.Api.Tests {
                                     CardType = "DB ";
                                     DebitEBTVoidTransactionCount += 1;
                                     DebitEBTVoidTransactionSales += amount;
-                                } 
+                                }
+                                else {
+                                    CardType = "OH ";
+                                    CreditVoidTransactionCount += 1;
+                                    CreditVoidTransactionSales += amount;
+                                }
 
                                 break;
                             }

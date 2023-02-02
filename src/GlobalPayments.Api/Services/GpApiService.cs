@@ -25,6 +25,7 @@ namespace GlobalPayments.Api.Services {
                 DisputeManagementAccountName = data.DisputeManagementAccountName,
                 TokenizationAccountName = data.TokenizationAccountName,
                 TransactionProcessingAccountName = data.TransactionProcessingAccountName,
+                RiskAssessmentAccountName = data.RiskAssessmentAccountName,
             };
         }
     }

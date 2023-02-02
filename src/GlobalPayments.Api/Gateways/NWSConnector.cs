@@ -1145,7 +1145,10 @@ namespace GlobalPayments.Api.Gateways {
                         result.AvsResponseCode = cardIssuerData.Get("IAV");
                         result.CvnResponseCode = cardIssuerData.Get("ICV");
                     }
-                    
+
+                    if (additionalAmounts != null) {
+                        result.AvailableBalance = additionalAmounts.GetAmount(DE3_AccountType.CashCard_CashAccount, DE54_AmountTypeCode.AccountAvailableBalance);
+                    }
 
                     result.AuthorizedAmount = message.GetAmount(DataElementId.DE_004);
                     result.SystemTraceAuditNumber = request.GetString(DataElementId.DE_011);

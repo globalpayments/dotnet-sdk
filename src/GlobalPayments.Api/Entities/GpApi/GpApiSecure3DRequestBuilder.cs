@@ -156,12 +156,12 @@ namespace GlobalPayments.Api.Entities {
                 #endregion
 
                 #region MobileData
-                string[] ModifySdkUiTypes() {                    
+                string[] ModifySdkUiTypes() {
                     string[] result = new string[(int)builder.MobileData?.SdkUiTypes.Length];
                     for (int i = 0; i < builder.MobileData?.SdkUiTypes.Length; i++)
                     {
                         result[i] = EnumConverter.GetMapping(Target.GP_API, builder.MobileData?.SdkUiTypes[i]);
-                        
+
                     }
                     return result;
                 }
@@ -191,7 +191,7 @@ namespace GlobalPayments.Api.Entities {
                     .Set("method_url_completion_status", builder.MethodUrlCompletion.ToString())
                     .Set("payment_method", paymentMethod.HasKeys() ? paymentMethod : null)
                     .Set("notifications", notifications.HasKeys() ? notifications : null);
-                if(builder.DecoupledFlowRequest.HasValue) {
+                if (builder.DecoupledFlowRequest.HasValue) {
                     data.Set("decoupled_flow_request", builder.DecoupledFlowRequest.Value ? DecoupledFlowRequest.DECOUPLED_PREFERRED.ToString() : DecoupledFlowRequest.DO_NOT_USE_DECOUPLED.ToString());
                 }
                 data.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout.HasValue ? builder.DecoupledFlowTimeout.ToString() : null)
@@ -224,6 +224,22 @@ namespace GlobalPayments.Api.Entities {
                     RequestBody = data?.ToString()
                 };
             }
+            else if (builder.TransactionType == TransactionType.RiskAssess) { 
+                JsonDoc threeDS = null;
+                threeDS.Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                   .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())                   
+                   .Set("source", builder.AuthenticationSource.ToString())
+                   .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl)
+                   .Set("order", SetOrderParam());
+
+                return new GpApiRequest
+                {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{merchantUrl}/risk-assessments",
+                    RequestBody = threeDS.ToString(),
+                };
+
+            }
             return null;
         }
 
@@ -245,7 +261,8 @@ namespace GlobalPayments.Api.Entities {
                 .Set("preorder_indicator", _builder.PreOrderIndicator?.ToString())
                 .Set("preorder_availability_date", _builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"))
                 .Set("reorder_indicator", _builder.ReorderIndicator?.ToString())
-                .Set("category", _builder.MessageCategory.ToString());
+                .Set("category", _builder.MessageCategory.ToString())
+                .Set("transaction_type", _builder.OrderTransactionType.ToString());
 
             if (_builder.ShippingAddress != null)
             {

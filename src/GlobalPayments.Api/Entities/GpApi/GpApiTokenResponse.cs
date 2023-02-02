@@ -19,6 +19,7 @@ namespace GlobalPayments.Api.Entities {
         internal string DisputeManagementAccountName { get { return GetAccountName("DIA_"); } }
         internal string TokenizationAccountName { get { return GetAccountName("TKA_"); } }
         internal string TransactionProcessingAccountName { get { return GetAccountName("TRA_"); } }
+        internal string RiskAssessmentAccountName { get { return GetAccountName("RAA_"); } }
 
         private string GetAccountName(string accountPrefix) {
             return Accounts?.Where(a => a.Id.StartsWith(accountPrefix)).Select(a => a.Name).FirstOrDefault();

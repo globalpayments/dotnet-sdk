@@ -18,5 +18,7 @@ namespace GlobalPayments.Api.PaymentMethods
         public ManualEntryMethod? EntryMethod { get; set; }
 
         public string ShortExpiry => throw new NotImplementedException();
+
+        public string CardHolderName { get; set; }
     }
 }

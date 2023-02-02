@@ -81,7 +81,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(response.BNPLResponse.RedirectUrl);
 
-            // Thread.Sleep(60000);
+            // Thread.Sleep(6000);
 
             var captured = response.Capture()
                 .Execute();
@@ -97,6 +97,42 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsNotNull(refund);
             Assert.AreEqual("SUCCESS", refund.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), refund.ResponseMessage);
+        }
+        
+        [TestMethod]
+        public void BNPL_WithIdempotency() {
+            var idempotencyKey = Guid.NewGuid().ToString();
+            var customer = GenerateCustomerData();
+            var products = GenerateProducts();
+
+            paymentMethod.Authorize(10)
+                .WithCurrency(currency)
+                .WithMiscProductData(products)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithCustomerData(customer)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+
+            var exceptionCaught = false;
+            try {
+                paymentMethod.Authorize(10)
+                    .WithCurrency(currency)
+                    .WithMiscProductData(products)
+                    .WithAddress(shippingAddress, AddressType.Shipping)
+                    .WithAddress(billingAddress, AddressType.Billing)
+                    .WithCustomerData(customer)
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.IsTrue(ex.Message.StartsWith("Status Code: Conflict - Idempotency Key seen before: id=" ));
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         [TestMethod]
@@ -146,7 +182,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
 
-            Thread.Sleep(4500);
+            Thread.Sleep(6000);
 
             var captureTrn = transaction.Capture()
                 .Execute();
@@ -155,7 +191,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
 
-            Thread.Sleep(1500);
+            Thread.Sleep(6000);
 
             var trnRefund = captureTrn.Refund(100)
                 .WithCurrency(currency)
@@ -188,7 +224,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
-            Thread.Sleep(4500);
+            Thread.Sleep(6000);
             
             var captureTrn = transaction.Capture()
                 .Execute();
@@ -197,7 +233,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
 
-            Thread.Sleep(60000);
+            Thread.Sleep(6000);
 
             var trnRefund = captureTrn.Refund(100)
                 .WithCurrency(currency)
@@ -239,7 +275,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
 
-            Thread.Sleep(60000);
+            Thread.Sleep(6000);
 
             var captureTrn = transaction.Reverse()
                 .Execute();
@@ -289,7 +325,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
 
-            Thread.Sleep(4500);
+            Thread.Sleep(6000);
             
             var captureTrn = transaction.Capture()
                 .Execute();
@@ -340,7 +376,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
 
-            Thread.Sleep(50000);
+            Thread.Sleep(6000);
 
             var captureTrn = transaction.Capture(100)
                 .Execute();
@@ -372,7 +408,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
 
-            Thread.Sleep(45000);
+            Thread.Sleep(6000);
 
             var captureTrn = transaction.Capture(100)
                 .Execute();
@@ -381,7 +417,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
 
-            Thread.Sleep(25000);
+            Thread.Sleep(6000);
 
             captureTrn = transaction.Capture(100)
                 .Execute();

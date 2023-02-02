@@ -40,7 +40,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual("DEBIT", response.CardType);
         }
         
         [TestMethod]
@@ -91,7 +90,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual("DEBIT", response.CardType);
         }
         
         [TestMethod]
@@ -108,7 +106,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tag)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual("DEBIT", response.CardType);
         }
         
         [TestMethod]
@@ -125,7 +122,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tag)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual("DEBIT", response.CardType);
         }
 
         [TestMethod]

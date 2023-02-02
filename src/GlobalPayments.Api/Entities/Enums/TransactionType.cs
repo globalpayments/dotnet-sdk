@@ -329,5 +329,7 @@ namespace GlobalPayments.Api.Entities {
         GetTokenInfo = 1L << 63,
 
         PayLinkUpdate = 1L << 63,
+
+        RiskAssess = 1L << 64
     }
 }

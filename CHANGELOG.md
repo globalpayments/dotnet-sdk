@@ -4,6 +4,17 @@
 
 #### Enhancements
 
+- GP-API: Added Risk Assessments that represents an analysis to determine the risk of fraud associated with a transaction, payer or payment method.
+- NWS: Gift Card Available Balance added to response
+
+#### Bug Fixes:
+
+- NWS: Out of balance issue related to gift cards
+
+## v5.0.6 (01/31/23)
+
+#### Enhancements
+
 - GP-API: Click To Pay added for merchants can give customers an easier, seamless checkout experience while also gaining access to Secure Remote Commerce network tokens
 
 ## v5.0.5 (01/12/23)

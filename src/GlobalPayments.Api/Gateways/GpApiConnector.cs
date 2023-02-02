@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Mapping;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -10,7 +11,7 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider {
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";        
         public GpApiConfig GpApiConfig { get; set; }
 
@@ -93,6 +94,9 @@ namespace GlobalPayments.Api.Gateways {
             }
             if (string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountName)) {
                 accessTokenInfo.TransactionProcessingAccountName = response.TransactionProcessingAccountName;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountName)) {
+                accessTokenInfo.RiskAssessmentAccountName = response.RiskAssessmentAccountName;
             }
 
             GpApiConfig.AccessTokenInfo = accessTokenInfo;
@@ -241,5 +245,22 @@ namespace GlobalPayments.Api.Gateways {
         {
             throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessPayFac")} not supported");
         }
+
+        public T ProcessFraud<T>(FraudBuilder<T> builder) where T : class
+        {
+            T result = Activator.CreateInstance<T>();
+            if (string.IsNullOrEmpty(AccessToken))
+            {
+                SignIn();
+            }
+            GpApiRequest request = GpApiSecureRequestBuilder<T>.BuildRequest(builder, this);
+
+            if (request != null) {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
+                return GpApiMapping.MapRiskAssessmentResponse<T>(response);
+            }
+            return result;
+        }
+       
     }
 }

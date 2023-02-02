@@ -8,6 +8,7 @@ namespace GlobalPayments.Api.Entities {
         public string DataAccountName { get; set; }
         public string DisputeManagementAccountName { get; set; }
         public string TokenizationAccountName { get; set; }
-        public string TransactionProcessingAccountName { get; set; }
+        public string TransactionProcessingAccountName { get; set; }        
+        public string RiskAssessmentAccountName { get; set; }
     }
 }
