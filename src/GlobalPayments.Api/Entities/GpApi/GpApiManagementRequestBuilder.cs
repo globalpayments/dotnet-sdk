@@ -5,10 +5,28 @@ using GlobalPayments.Api.Utils;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace GlobalPayments.Api.Entities {
+namespace GlobalPayments.Api.Entities
+{
     internal class GpApiManagementRequestBuilder {
+
+        private static Dictionary<string, List<string>> AllowedActions { get; set; }
+               
         internal static GpApiRequest BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
+            GetAllowedActions();
+
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+          
+            if (builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.BankPayment) {
+                var message = $"The {builder.TransactionType.ToString()} is not supported for {PaymentMethodName.BankPayment.ToString()}";
+                
+                if (AllowedActions[PaymentMethodType.BankPayment.ToString()] == null) {
+                    throw new BuilderException(message);                    
+                }
+                else if (!AllowedActions[PaymentMethodType.BankPayment.ToString()].Contains(builder.TransactionType.ToString())) {
+                    throw new BuilderException(message);
+                }
+            }
+            
             if (builder.TransactionType == TransactionType.Capture) {
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -258,6 +276,14 @@ namespace GlobalPayments.Api.Entities {
             }
             
             return null;
+        }
+
+        private static void GetAllowedActions()
+        {
+            if (AllowedActions == null) {
+                AllowedActions = new Dictionary<string, List<string>>();
+                AllowedActions.Add(PaymentMethodType.BankPayment.ToString(), null);
+            }
         }
     }
 }

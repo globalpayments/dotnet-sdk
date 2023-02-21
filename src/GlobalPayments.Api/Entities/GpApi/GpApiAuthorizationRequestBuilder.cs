@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.PaymentMethods.PaymentInterfaces;
@@ -237,19 +238,16 @@ namespace GlobalPayments.Api.Entities {
             }
 
             // pin block
-            if (builder.PaymentMethod is IPinProtected)
-            {
+            if (builder.PaymentMethod is IPinProtected) {
                 paymentMethod.Get("card")?.Set("pin_block", ((IPinProtected)builder.PaymentMethod).PinBlock);
             }
 
             // authentication
-            if (builder.PaymentMethod is CreditCardData)
-            {
+            if (builder.PaymentMethod is CreditCardData) {
                 paymentMethod.Set("name", (builder.PaymentMethod as CreditCardData).CardHolderName);
 
                 var secureEcom = (builder.PaymentMethod as CreditCardData).ThreeDSecure;
-                if (secureEcom != null)
-                {
+                if (secureEcom != null) {
                     var authentication = new JsonDoc().Set("id", secureEcom.ServerTransactionId);
                     var three_ds =new JsonDoc().Set("exempt_status", secureEcom.ExemptStatus.ToString());
                     authentication.Set("three_ds", three_ds);
@@ -260,13 +258,11 @@ namespace GlobalPayments.Api.Entities {
                 paymentMethod.Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null);
             }
 
-            if(builder.PaymentMethod is EBT)
-            {
+            if(builder.PaymentMethod is EBT) {
                 paymentMethod.Set("name", (builder.PaymentMethod as EBT).CardHolderName);
             }
 
-            if (builder.PaymentMethod is eCheck)
-            {
+            if (builder.PaymentMethod is eCheck) {
                 eCheck check = (builder.PaymentMethod as eCheck);
                 paymentMethod.Set("name", check.CheckHolderName);
 
@@ -298,8 +294,7 @@ namespace GlobalPayments.Api.Entities {
 
             }
 
-            if (builder.PaymentMethod is AlternativePaymentMethod)
-            {
+            if (builder.PaymentMethod is AlternativePaymentMethod) {
                 var alternatepaymentMethod = (AlternativePaymentMethod)builder.PaymentMethod;
                 
                 paymentMethod.Set("name", alternatepaymentMethod.AccountHolderName);
@@ -308,6 +303,33 @@ namespace GlobalPayments.Api.Entities {
                     .Set("provider", alternatepaymentMethod.AlternativePaymentMethodType?.ToString()?.ToLower())
                     .Set("address_override_mode", alternatepaymentMethod.AddressOverrideMode);
                 paymentMethod.Set("apm", apm);
+            }
+
+            if (builder.PaymentMethod is BankPayment) {
+                var bankpaymentMethod = (BankPayment)builder.PaymentMethod;
+
+                var apm = new JsonDoc()
+                   .Set("provider", PaymentProvider.OPEN_BANKING.ToString())
+                   .Set("countries", bankpaymentMethod.Countries?.ToArray());
+                paymentMethod.Set("apm", apm);
+
+                var bankPaymentType = bankpaymentMethod.BankPaymentType ?? OpenBankingProvider.GetBankPaymentType(builder.Currency);
+
+                var bankTransfer = new JsonDoc()
+                  .Set("account_number", bankPaymentType == BankPaymentType.FASTERPAYMENTS ? bankpaymentMethod.AccountNumber : "")
+                  .Set("iban", bankPaymentType == BankPaymentType.SEPA ? bankpaymentMethod.Iban : "");
+
+                var bank = new JsonDoc()
+                    .Set("code", bankpaymentMethod.SortCode)
+                    .Set("name", bankpaymentMethod.AccountName);
+                bankTransfer.Set("bank", bank);
+
+                var remittance = new JsonDoc()
+                    .Set("type", builder.RemittanceReferenceType.ToString())
+                    .Set("value", builder.RemittanceReferenceValue);
+                bankTransfer.Set("remittance_reference", remittance);
+
+                paymentMethod.Set("bank_transfer", bankTransfer);
             }
 
             if (builder.PaymentMethod is BNPL) {
@@ -320,35 +342,29 @@ namespace GlobalPayments.Api.Entities {
             }
 
             // encryption
-            if (builder.PaymentMethod is IEncryptable)
-            {
+            if (builder.PaymentMethod is IEncryptable) {
                 var encryptionData = ((IEncryptable)builder.PaymentMethod).EncryptionData;
 
-                if (encryptionData != null)
-                {
+                if (encryptionData != null) {
                     var encryption = new JsonDoc()
                         .Set("version", encryptionData.Version);
 
-                    if (!string.IsNullOrEmpty(encryptionData.KTB))
-                    {
+                    if (!string.IsNullOrEmpty(encryptionData.KTB)) {
                         encryption.Set("method", "KTB");
                         encryption.Set("info", encryptionData.KTB);
                     }
-                    else if (!string.IsNullOrEmpty(encryptionData.KSN))
-                    {
+                    else if (!string.IsNullOrEmpty(encryptionData.KSN)) {
                         encryption.Set("method", "KSN");
                         encryption.Set("info", encryptionData.KSN);
                     }
 
-                    if (encryption.Has("info"))
-                    {
+                    if (encryption.Has("info")) {
                         paymentMethod.Set("encryption", encryption);
                     }
                 }
             }
 
-            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData)
-            {
+            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData) {
                 var payLinkData = builder.PayLinkData;
                 var requestData = new JsonDoc()
                     .Set("usage_limit", payLinkData.UsageLimit.ToString())
@@ -431,24 +447,14 @@ namespace GlobalPayments.Api.Entities {
             }
 
             if (builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
-                SetOrderInformation(builder, ref data);
-
-                INotificationData payment = null;
-
-                if (builder.PaymentMethod is AlternativePaymentMethod) {
-                    payment = (builder.PaymentMethod) as AlternativePaymentMethod;                   
-                }
-                if (builder.PaymentMethod is BNPL) {
-                    payment = builder.PaymentMethod as BNPL;                   
-                }
-
-                var notifications = new JsonDoc()
-                      .Set("return_url", payment?.ReturnUrl)
-                      .Set("status_url", payment?.StatusUpdateUrl)
-                      .Set("cancel_url", payment?.CancelUrl);
-
-                data.Set("notifications", notifications);
+                SetOrderInformation(builder, ref data);                
             }
+
+            if(builder.PaymentMethod is AlternativePaymentMethod || 
+                builder.PaymentMethod is BNPL || 
+                builder.PaymentMethod is BankPayment) {
+                data.Set("notifications", SetNotificationUrls(builder));
+            }            
 
             // stored credential
             if (builder.StoredCredential != null) {
@@ -465,6 +471,28 @@ namespace GlobalPayments.Api.Entities {
                 Endpoint = $"{merchantUrl}/transactions",
                 RequestBody = data.ToString(),
             };
+        }
+
+        private static JsonDoc SetNotificationUrls(AuthorizationBuilder builder)
+        {
+            INotificationData payment = null;
+
+            if (builder.PaymentMethod is AlternativePaymentMethod) {
+                payment = (builder.PaymentMethod) as AlternativePaymentMethod;
+            }
+            if (builder.PaymentMethod is BNPL) {
+                payment = builder.PaymentMethod as BNPL;
+            }
+            if (builder.PaymentMethod is BankPayment) {
+                payment = builder.PaymentMethod as BankPayment;
+            }
+
+            var notifications = new JsonDoc()
+                  .Set("return_url", payment?.ReturnUrl)
+                  .Set("status_url", payment?.StatusUpdateUrl)
+                  .Set("cancel_url", payment?.CancelUrl);
+
+            return notifications;
         }
 
         private static string[] GetAllowedPaymentMethod(PaymentMethodName[] allowedPaymentMethods) {

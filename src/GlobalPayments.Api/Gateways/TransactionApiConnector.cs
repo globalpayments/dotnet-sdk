@@ -31,6 +31,10 @@ namespace GlobalPayments.Api.Gateways {
         public string AppSecret { get; set; }
         public bool SupportsHostedPayments { get { return true; } }
 
+        public bool SupportsOpenBanking() {
+            return false;
+        }
+
         public string SerializeRequest(AuthorizationBuilder builder) {
             throw new NotImplementedException();
         }

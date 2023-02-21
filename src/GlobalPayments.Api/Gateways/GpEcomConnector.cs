@@ -26,6 +26,10 @@ namespace GlobalPayments.Api.Gateways {
         public ShaHashType ShaHashType { get; set; }
         public Secure3dVersion Version { get { return Secure3dVersion.One; } }
 
+        public bool SupportsOpenBanking() {
+            return true;
+        }
+
         #region transaction handling
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             var et = new ElementTree();

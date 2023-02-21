@@ -17,6 +17,7 @@ namespace GlobalPayments.Api.Entities {
         BankTransfer,
 
         [Map(Target.GP_ECOM, "BANK PAYMENT")]
+        [Map(Target.GP_API, "BANK PAYMENT")]
         BankPayment,
 
         [Map(Target.GP_API, "BNPL")]

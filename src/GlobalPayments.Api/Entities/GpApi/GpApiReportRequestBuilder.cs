@@ -56,6 +56,9 @@ namespace GlobalPayments.Api.Entities {
                         if (trb.SearchBuilder.RiskAssessmentReasonCode != null) {
                             request.AddQueryStringParam("risk_assessment_reason_code", EnumConverter.GetMapping(Target.GP_API, trb.SearchBuilder.RiskAssessmentReasonCode));
                         }
+                        if (trb.SearchBuilder.PaymentProvider != null) {
+                            request.AddQueryStringParam("provider", trb.SearchBuilder.PaymentProvider.ToString());
+                        }
 
                         return request;
                     case ReportType.FindSettlementTransactionsPaged:

@@ -53,6 +53,7 @@ namespace GlobalPayments.Api.Entities {
         PaymentType,
         PaymentMethodName,
         PaymentMethod,
+        PaymentProvider,
         ReturnPII,
         RiskAssessmentMode,
         RiskAssessmentResult,
@@ -239,6 +240,10 @@ namespace GlobalPayments.Api.Entities {
         internal PaymentEntryMode? PaymentEntryMode { get; set; }
 
         internal string PaymentMethodKey { get; set; }
+
+        internal PaymentMethodType? PaymentMethodType { get; set; }
+
+        internal PaymentProvider? PaymentProvider { get; set; }
 
         internal PaymentType? PaymentType { get; set; }
 

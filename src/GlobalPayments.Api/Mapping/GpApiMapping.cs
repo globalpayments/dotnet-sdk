@@ -102,9 +102,27 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");                
                 if (json.Get("payment_method")?.Get("card")?.Has("provider") ?? false) {
                     transaction.CardIssuerResponse = MapCardIssuerResponse(json.Get("payment_method")?.Get("card")?.Get("provider"));
-                }                
-                transaction.PaymentMethodType = GetPaymentMehodType(json) ?? transaction.PaymentMethodType;
-                transaction.DccRateData = MapDccInfo(json);
+                }
+                if ((json.Get("payment_method")?.Has("apm")) ?? false &&
+                    (json.Get("payment_method")?.Get("apm").GetValue<string>("provider").ToUpper() == PaymentProvider.OPEN_BANKING.ToString()))
+                {
+                    transaction.PaymentMethodType = PaymentMethodType.BankPayment;
+                    var obResponse = new BankPaymentResponse();
+                    obResponse.RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url") ?? null;
+                    obResponse.PaymentStatus = json.Get("payment_method")?.GetValue<string>("message") ?? null;
+                    obResponse.AccountNumber = json.Get("payment_method")?.Get("bank_transfer")?.GetValue<string>("account_number") ?? null;
+                    obResponse.Iban = json.Get("payment_method")?.Get("bank_transfer")?.GetValue<string>("iban") ?? null;
+                    obResponse.SortCode = json.Get("payment_method")?.Get("bank_transfer")?.Get("bank")?.GetValue<string>("code") ?? null;
+                    obResponse.AccountName = json.Get("payment_method")?.Get("bank_transfer")?.Get("bank")?.GetValue<string>("name") ?? null;
+                    transaction.BankPaymentResponse = obResponse;
+                }
+                else if (json.Get("payment_method")?.Has("bank_transfer") ?? false) {
+                    transaction.PaymentMethodType = PaymentMethodType.ACH;
+                }
+                else if (json.Get("payment_method")?.Has("apm") ?? false) {
+                    transaction.PaymentMethodType = PaymentMethodType.APM;
+                }
+                    transaction.DccRateData = MapDccInfo(json);
                 transaction.FraudFilterResponse = json.Has("risk_assessment") ? MapFraudManagement(json) : null;
             }
 
@@ -122,18 +140,7 @@ namespace GlobalPayments.Api.Mapping {
                 }
             }
             return false;
-        }
-
-        private static PaymentMethodType? GetPaymentMehodType(JsonDoc json)
-        {
-            if (json.Get("payment_method")?.Has("bank_transfer") ?? false) {
-                return PaymentMethodType.ACH;
-            }
-            else if (json.Get("payment_method")?.Has("apm") ?? false) {
-                return PaymentMethodType.APM;
-            }
-            return null;
-        }
+        }       
 
         private static PaymentMethodUsageMode? GetPaymentMethodUsageMode(JsonDoc json) 
         {
@@ -284,22 +291,34 @@ namespace GlobalPayments.Api.Mapping {
                     summary.MaskedCardNumber = digitalWallet?.GetValue<string>("masked_token_first6last4");
                     summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.DigitalWallet);
                 }
-                else if(paymentMethod.Has("bank_transfer")) 
-                {
+                else if(paymentMethod.Has("bank_transfer") && paymentMethod.Has("apm") && paymentMethod.Get("apm").GetValue<string>("provider").ToUpper() != PaymentProvider.OPEN_BANKING.ToString().ToUpper()) 
+                {                    
                     JsonDoc bankTransfer = paymentMethod?.Get("bank_transfer");
                     summary.AccountNumberLast4 = bankTransfer?.GetValue<string>("masked_account_number_last4");
-                    summary.AccountType = bankTransfer?.GetValue<string>("account_type");
-                    summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BankTransfer);
+                    summary.AccountType = bankTransfer?.GetValue<string>("account_type");                    
                 }
-                else if(paymentMethod.Has("apm")) 
-                {
-                    JsonDoc apm = paymentMethod?.Get("apm");
-                    var alternativePaymentResponse = new AlternativePaymentResponse();
-                    alternativePaymentResponse.RedirectUrl = apm?.GetValue<string>("redirect_url");
-                    alternativePaymentResponse.ProviderName = apm?.GetValue<string>("provider");
-                    alternativePaymentResponse.ProviderReference = apm?.GetValue<string>("provider_reference");
-                    summary.AlternativePaymentResponse = alternativePaymentResponse;
-                    summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.APM);
+                else if(paymentMethod.Has("apm")) {
+                    if (paymentMethod.Get("apm").GetValue<string>("provider").ToUpper() == PaymentProvider.OPEN_BANKING.ToString().ToUpper()) {
+                        JsonDoc bankTransfer = paymentMethod?.Get("bank_transfer");
+                        summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BankPayment);
+                        var bankPaymentResponse = new BankPaymentResponse();
+                        bankPaymentResponse.Iban = bankTransfer?.GetValue<string>("iban");
+                        bankPaymentResponse.AccountNumber = bankTransfer?.GetValue<string>("account_number");
+                        bankPaymentResponse.AccountName = bankTransfer?.Get("bank").GetValue<string>("name");
+                        bankPaymentResponse.SortCode = bankTransfer?.Get("bank").GetValue<string>("code");
+                        bankPaymentResponse.RemittanceReferenceValue = bankTransfer?.Get("remittance_reference")?.GetValue<string>("value");
+                        bankPaymentResponse.RemittanceReferenceType = bankTransfer?.Get("remittance_reference")?.GetValue<string>("type");
+                        summary.BankPaymentResponse = bankPaymentResponse;
+                    }
+                    else {
+                        JsonDoc apm = paymentMethod?.Get("apm");
+                        var alternativePaymentResponse = new AlternativePaymentResponse();
+                        alternativePaymentResponse.RedirectUrl = apm?.GetValue<string>("redirect_url");
+                        alternativePaymentResponse.ProviderName = apm?.GetValue<string>("provider");
+                        alternativePaymentResponse.ProviderReference = apm?.GetValue<string>("provider_reference");
+                        summary.AlternativePaymentResponse = alternativePaymentResponse;
+                        summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.APM);
+                    }
                 }
                 else if (paymentMethod.Has("bnpl"))
                 {

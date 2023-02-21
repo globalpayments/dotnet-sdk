@@ -19,6 +19,9 @@ namespace GlobalPayments.Api.Gateways {
 
         public bool SupportsHostedPayments { get { return false; } }
 
+        public bool SupportsOpenBanking() {
+            return false;
+        }
         public TransitConnector() {
         }
 

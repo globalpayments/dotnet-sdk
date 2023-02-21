@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- GP-API: Added Open Banking to let customers pay using their bank account.
+
+## v5.1.0 (02/02/23)
+
+#### Enhancements
+
 - GP-API: Added Risk Assessments that represents an analysis to determine the risk of fraud associated with a transaction, payer or payment method.
 - NWS: Gift Card Available Balance added to response
 

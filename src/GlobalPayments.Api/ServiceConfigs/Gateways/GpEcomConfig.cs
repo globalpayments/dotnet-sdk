@@ -56,6 +56,9 @@ namespace GlobalPayments.Api {
         #endregion
 
         #region Open Banking Service
+        /// <summary>
+        /// deprecated  Property not used and it will be removed
+        /// </summary>
         public bool EnableBankPayment { get; set; } = false;
         #endregion
 
@@ -118,7 +121,7 @@ namespace GlobalPayments.Api {
                 services.SetSecure3dProvider(Entities.Secure3dVersion.Two, secure3d2);
             }
 
-            if (EnableBankPayment) {
+            if (gateway.SupportsOpenBanking()) {
                 var openBanking = new OpenBankingProvider();
                 openBanking.MerchantId = gateway.MerchantId;
                 openBanking.AccountId = gateway.AccountId;
@@ -129,7 +132,7 @@ namespace GlobalPayments.Api {
                 openBanking.RequestLogger = RequestLogger;
                 openBanking.WebProxy = WebProxy;
 
-                services.SetOpenBanking(openBanking);
+                services.SetOpenBankingProvider(openBanking);
             }
         }
 

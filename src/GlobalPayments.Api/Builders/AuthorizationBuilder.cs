@@ -322,8 +322,7 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithFraudFilter(FraudFilterMode fraudFilter, FraudRuleCollection fraudRules = null)
-        {
+        public AuthorizationBuilder WithFraudFilter(FraudFilterMode fraudFilter, FraudRuleCollection fraudRules = null) {
             FraudFilterMode = fraudFilter;
             if(fraudRules != null)
                 FraudRules = fraudRules;
@@ -497,8 +496,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <param name="value">The shippingDiscount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithShippingDiscount(decimal? value)
-        {
+        public AuthorizationBuilder WithShippingDiscount(decimal? value) {
             ShippingDiscount = value;
             return this;
         }
@@ -508,8 +506,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <param name="value">The OrderDetails</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithOrderDetails(OrderDetails value)
-        {
+        public AuthorizationBuilder WithOrderDetails(OrderDetails value) {
             OrderDetails = value;
             return this;
         }
@@ -719,14 +716,12 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithPayLinkData(PayLinkData payLinkData)
-        {
+        public AuthorizationBuilder WithPayLinkData(PayLinkData payLinkData) {
             PayLinkData = payLinkData;
             return this;
         }
 
-        public AuthorizationBuilder WithPaymentLinkId(string paymentLinkId)
-        {
+        public AuthorizationBuilder WithPaymentLinkId(string paymentLinkId) {
             PaymentLinkId = paymentLinkId;
             return this;
         }
@@ -870,6 +865,12 @@ namespace GlobalPayments.Api.Builders {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
+            if (client.SupportsOpenBanking() && PaymentMethod is BankPayment) {
+            var obClient = ServicesContainer.Instance.GetOpenBanking(configName);
+                if (obClient != null && (obClient != client)) {
+                    return obClient.ProcessOpenBanking(this);
+                }
+            }
             return client.ProcessAuthorization(this);
         }
 
@@ -950,10 +951,8 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public AuthorizationBuilder WithPhoneNumber(string phoneCountryCode, string number, PhoneNumberType type)
-        {
-            var phoneNumber = new PhoneNumber
-            {
+        public AuthorizationBuilder WithPhoneNumber(string phoneCountryCode, string number, PhoneNumberType type) {
+            var phoneNumber = new PhoneNumber {
                 CountryCode = phoneCountryCode,
                 Number = number
             };
@@ -1087,8 +1086,7 @@ namespace GlobalPayments.Api.Builders {
         }
 
         public AuthorizationBuilder WithBNPLShippingMethod(BNPLShippingMethod value) {
-            if (!(PaymentMethod is BNPL))
-            {
+            if (!(PaymentMethod is BNPL)) {
                 throw new ArgumentException("The selected payment method doesn't support this property!");
             }
 

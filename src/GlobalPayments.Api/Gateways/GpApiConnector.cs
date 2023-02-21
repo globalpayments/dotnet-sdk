@@ -11,7 +11,8 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService {
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService
+    {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";        
         public GpApiConfig GpApiConfig { get; set; }
 
@@ -35,6 +36,10 @@ namespace GlobalPayments.Api.Gateways {
 
         public string SerializeRequest(AuthorizationBuilder builder) {
             throw new NotImplementedException();
+        }
+
+        public bool SupportsOpenBanking() {
+            return true;
         }
 
         public GpApiConnector(GpApiConfig gpApiConfig)
@@ -260,7 +265,6 @@ namespace GlobalPayments.Api.Gateways {
                 return GpApiMapping.MapRiskAssessmentResponse<T>(response);
             }
             return result;
-        }
-       
+        }      
     }
 }

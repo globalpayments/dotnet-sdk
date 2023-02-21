@@ -22,6 +22,9 @@ namespace GlobalPayments.Api.Gateways {
         public string UniqueDeviceId { get; set; }
         public string SDKNameVersion { get; set; }
 
+        public bool SupportsOpenBanking() {
+            return false;
+        }
         public PorticoConnector() {
         }
 

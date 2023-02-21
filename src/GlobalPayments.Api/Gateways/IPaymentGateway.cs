@@ -7,5 +7,6 @@ namespace GlobalPayments.Api.Gateways {
         Transaction ManageTransaction(ManagementBuilder builder);
         string SerializeRequest(AuthorizationBuilder builder);
         bool SupportsHostedPayments { get; }
+        bool SupportsOpenBanking();
     }
 }

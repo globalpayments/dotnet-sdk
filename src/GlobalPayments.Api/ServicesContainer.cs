@@ -63,7 +63,7 @@ namespace GlobalPayments.Api {
             else _secure3dProviders.Add(version, provider);
         }
 
-        internal void SetOpenBanking(IOpenBankingProvider provider) {
+        internal void SetOpenBankingProvider(IOpenBankingProvider provider) {
             if (this.OpenBankingProvider == null) {
                 this.OpenBankingProvider = provider;
             }
