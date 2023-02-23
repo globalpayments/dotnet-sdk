@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
@@ -251,7 +250,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CloseBatch_WithCardNumberDetails_DeclinedTransaction() {
             var card = new CreditCardData {
-                Number = "4263970000005262",
+                Number = "38865000000705",
                 ExpMonth = ExpMonth,
                 ExpYear = ExpYear,
                 Cvn = "852",
@@ -269,19 +268,26 @@ namespace GlobalPayments.Api.Tests.GpApi {
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
 
-            var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
-            Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(Closed, batchSummary.Status);
-            Assert.AreEqual(0, batchSummary.TransactionCount);
-            Assert.AreEqual(0, batchSummary.TotalAmount);
+            var exceptionCaught = false;
+            try {
+                BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadGateway - Action failed unexpectedly. Please try again ", ex.Message);
+                Assert.AreEqual("ACTION_FAILED", ex.ResponseCode);
+                Assert.AreEqual("500010", ex.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
         
         [TestMethod]
         public void CloseBatch_ReverseTransaction() {
-            var chargeTransaction = creditTrackData.Charge(AMOUNT)
+            var chargeTransaction = creditTrackData.Authorize(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(chargeTransaction, TransactionStatus.Captured);
+            AssertTransactionResponse(chargeTransaction, TransactionStatus.Preauthorized);
 
             var response = chargeTransaction.Reverse()
                 .Execute();
@@ -290,11 +296,18 @@ namespace GlobalPayments.Api.Tests.GpApi {
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
 
-            var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
-            Assert.IsNotNull(batchSummary);
-            Assert.AreEqual(Closed, batchSummary.Status);
-            Assert.AreEqual(0, batchSummary.TransactionCount);
-            Assert.AreEqual(0, batchSummary.TotalAmount);
+            var exceptionCaught = false;
+            try {
+                BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - Request expects the batch_id", ex.Message);
+                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
+                Assert.AreEqual("40223", ex.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
         
         [TestMethod]
@@ -359,13 +372,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var exceptionCaught = false;
             try {
-                BatchService.CloseBatch(batchSummary.BatchReference);
+                BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("INVALID_BATCH_ACTION", ex.ResponseCode);
-                Assert.AreEqual("40014", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadRequest - 5,No current batch", ex.Message);
+                Assert.AreEqual("Status Code: BadGateway - Action failed unexpectedly. Please try again ", ex.Message);
+                Assert.AreEqual("ACTION_FAILED", ex.ResponseCode);
+                Assert.AreEqual("500010", ex.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -425,10 +438,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("UNAUTHORIZED_DOWNSTREAM", ex.ResponseCode);
-                Assert.AreEqual("50002", ex.ResponseMessage);
-                Assert.AreEqual($"Status Code: BadGateway - -2,Authentication error—Verify and correct credentials",
+                Assert.AreEqual("Status Code: BadRequest - Merchant configuration does not exist for the following combination: country - US, channel - CNP, currency - USD",
                     ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40041", ex.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }

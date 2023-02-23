@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- GP-API: Added validation method for X-GP-SIGNATURE that is received from GP-API on the notification URL.
+
+## v5.1.1 (21/02/23)
+
+#### Enhancements
+
 - GP-API: Added Open Banking to let customers pay using their bank account.
 
 ## v5.1.0 (02/02/23)

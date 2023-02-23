@@ -158,5 +158,17 @@ namespace GlobalPayments.Api.Utils {
         public static string GenerateRecurringKey() {
             return Guid.NewGuid().ToString().ToLower();
         }
+
+        /// <summary>
+        /// Generate HASH to validate the X-GP-Signature
+        /// </summary>
+        /// <param name="toHash"></param>
+        /// <param name="appKey"></param>
+        /// <returns></returns>
+        public static string GenerateXGPSignature(string toHash, string appKey) {
+            string newToHash = new StringBuilder(toHash).Append(appKey).ToString();
+            return GenerateHash(newToHash, ShaHashType.SHA512);
+        }
+
     }
 }
