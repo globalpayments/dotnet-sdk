@@ -88,20 +88,26 @@ namespace GlobalPayments.Api.Gateways {
                 accessTokenInfo = new AccessTokenInfo();
             }
 
-            if (string.IsNullOrEmpty(accessTokenInfo.DataAccountName)) {
-                accessTokenInfo.DataAccountName = response.DataAccountName;
+            if (string.IsNullOrEmpty(accessTokenInfo.DataAccountID) &&
+                string.IsNullOrEmpty(accessTokenInfo.DataAccountName)) {
+                accessTokenInfo.DataAccountID = response.DataAccountID;
             }
-            if (string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountName)) {
-                accessTokenInfo.DisputeManagementAccountName = response.DisputeManagementAccountName;
+            if (string.IsNullOrEmpty(accessTokenInfo.TokenizationAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.TokenizationAccountID)) {
+                accessTokenInfo.TokenizationAccountID = response.TokenizationAccountID;
             }
-            if (string.IsNullOrEmpty(accessTokenInfo.TokenizationAccountName)) {
-                accessTokenInfo.TokenizationAccountName = response.TokenizationAccountName;
+            if (string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountID)) {
+                accessTokenInfo.DisputeManagementAccountID = response.DisputeManagementAccountID;
             }
-            if (string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountName)) {
-                accessTokenInfo.TransactionProcessingAccountName = response.TransactionProcessingAccountName;
+           
+            if (string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountID)) {
+                accessTokenInfo.TransactionProcessingAccountID = response.TransactionProcessingAccountID;
             }
-            if (string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountName)) {
-                accessTokenInfo.RiskAssessmentAccountName = response.RiskAssessmentAccountName;
+            if (string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountID)) {
+                accessTokenInfo.RiskAssessmentAccountID = response.RiskAssessmentAccountID;
             }
 
             GpApiConfig.AccessTokenInfo = accessTokenInfo;

@@ -19,6 +19,7 @@ namespace GlobalPayments.Api.Entities.GpApi
                 case TransactionType.RiskAssess:
                     var requestData = new JsonDoc()
                         .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.RiskAssessmentAccountName)
+                        .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.RiskAssessmentAccountID)
                         .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())
                         .Set("source", builder.AuthenticationSource?.ToString())
                         .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl)
@@ -302,6 +303,7 @@ namespace GlobalPayments.Api.Entities.GpApi
 
             var threeDS = new JsonDoc()
                 .Set("account_name", config.AccessTokenInfo.TransactionProcessingAccountName)
+                .Set("account_id", config.AccessTokenInfo.TransactionProcessingAccountID)
                 .Set("channel", EnumConverter.GetMapping(Target.GP_API, config.Channel))
                 .Set("country", config.Country)
                 .Set("reference", _3dBuilder.ReferenceNumber ?? Guid.NewGuid().ToString())                

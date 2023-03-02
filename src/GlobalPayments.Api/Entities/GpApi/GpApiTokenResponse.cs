@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace GlobalPayments.Api.Entities {
     internal class GpApiTokenResponse {
+        const string DATA_ACCOUNT_NAME_PREFIX = "DAA_";
+        const string DISPUTE_MANAGEMENT_ACCOUNT_NAME_PREFIX = "DIA_";
+        const string TOKENIZATION_ACCOUNT_NAME_PREFIX = "TKA_";
+        const string TRANSACTION_PROCESSING_ACCOUNT_NAME_PREFIX = "TRA_";
+        const string RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX = "RAA_";
+
         internal string Token { get; private set; }
         internal string Type { get; private set; }
         internal string AppId { get; private set; }
@@ -15,11 +21,21 @@ namespace GlobalPayments.Api.Entities {
         internal string MerchantId { get; private set; }
         internal string MerchantName { get; private set; }
         internal GpApiAccount[] Accounts { get; private set; }
-        internal string DataAccountName { get { return GetAccountName("DAA_"); } }
-        internal string DisputeManagementAccountName { get { return GetAccountName("DIA_"); } }
-        internal string TokenizationAccountName { get { return GetAccountName("TKA_"); } }
-        internal string TransactionProcessingAccountName { get { return GetAccountName("TRA_"); } }
-        internal string RiskAssessmentAccountName { get { return GetAccountName("RAA_"); } }
+        internal string DataAccountName { get { return GetAccountName(DATA_ACCOUNT_NAME_PREFIX); } }
+        internal string DisputeManagementAccountName { get { return GetAccountName(DISPUTE_MANAGEMENT_ACCOUNT_NAME_PREFIX); } }
+        internal string TokenizationAccountName { get { return GetAccountName(TOKENIZATION_ACCOUNT_NAME_PREFIX); } }
+        internal string TransactionProcessingAccountName { get { return GetAccountName(TRANSACTION_PROCESSING_ACCOUNT_NAME_PREFIX); } }
+        internal string RiskAssessmentAccountName { get { return GetAccountName(RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX); } }
+
+        internal string DataAccountID { get { return GetAccountID(DATA_ACCOUNT_NAME_PREFIX); } }
+        internal string DisputeManagementAccountID { get { return GetAccountID(DISPUTE_MANAGEMENT_ACCOUNT_NAME_PREFIX); } }
+        internal string TokenizationAccountID { get { return GetAccountID(TOKENIZATION_ACCOUNT_NAME_PREFIX); } }
+        internal string TransactionProcessingAccountID { get { return GetAccountID(TRANSACTION_PROCESSING_ACCOUNT_NAME_PREFIX); } }
+        internal string RiskAssessmentAccountID { get { return GetAccountID(RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX); } }
+
+        private string GetAccountID(string accountPrefix) {
+            return Accounts?.Where(a => a.Id.StartsWith(accountPrefix)).Select(a => a.Id).FirstOrDefault();
+        }
 
         private string GetAccountName(string accountPrefix) {
             return Accounts?.Where(a => a.Id.StartsWith(accountPrefix)).Select(a => a.Name).FirstOrDefault();

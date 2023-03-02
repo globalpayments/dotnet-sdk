@@ -39,6 +39,7 @@ namespace GlobalPayments.Api.Entities {
 
                 var data = new JsonDoc()
                     .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                    .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                     .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())
                     .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                     .Set("amount", builder.Amount.ToNumericCurrencyString())

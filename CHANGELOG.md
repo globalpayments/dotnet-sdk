@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- GP-API: Added as default the account_id instead of account_name for all GP-API requests.
+
+## v5.1.2 (23/02/23)
+
+#### Enhancements
+
 - GP-API: Added validation method for X-GP-SIGNATURE that is received from GP-API on the notification URL.
 
 ## v5.1.1 (21/02/23)

@@ -119,6 +119,7 @@ namespace GlobalPayments.Api.Entities {
 
                         var RequestData = new JsonDoc()
                            .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                           .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                            .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                            .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                            .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -137,6 +138,7 @@ namespace GlobalPayments.Api.Entities {
                         if (builder.RequestMultiUseToken && string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                             var tokenizationData = new JsonDoc()
                                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
+                                .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountID)
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                                 .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
@@ -152,6 +154,7 @@ namespace GlobalPayments.Api.Entities {
                         {
                             var verificationData = new JsonDoc()
                                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                                .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                                 .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("currency", builder.Currency)
@@ -191,6 +194,7 @@ namespace GlobalPayments.Api.Entities {
 
                         var verificationData = new JsonDoc()
                             .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                            .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                             .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                             .Set("currency", builder.Currency)
@@ -367,6 +371,7 @@ namespace GlobalPayments.Api.Entities {
             if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData) {
                 var payLinkData = builder.PayLinkData;
                 var requestData = new JsonDoc()
+                    .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                     .Set("usage_limit", payLinkData.UsageLimit.ToString())
                     .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payLinkData.UsageMode))
                     .Set("images", payLinkData.Images)
@@ -406,6 +411,7 @@ namespace GlobalPayments.Api.Entities {
 
             var data = new JsonDoc()
                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                 .Set("type", builder.TransactionType == TransactionType.Refund ? "REFUND" : "SALE") // [SALE, REFUND]
                 .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel)) // [CP, CNP]
                 .Set("capture_mode", GetCaptureMode(builder)) // [AUTO, LATER, MULTIPLE]
