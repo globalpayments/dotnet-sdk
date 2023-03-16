@@ -89,6 +89,8 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string PoNumber { get; set; }
 
+        public string OrderPrefix { get; set; }
+
         /// <summary>
         /// The identifier of the payment method associated with
         /// the schedule.
@@ -121,6 +123,10 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public decimal? TaxAmount { get; set; }
 
+        public string ProductId { get; set; }
+
+        public string CustomerNumber { get; set; }
+
         /// <summary>
         /// The total amount for the schedule (`Amount` + `TaxAmount`).
         /// </summary>
@@ -137,6 +143,21 @@ namespace GlobalPayments.Api.Entities {
         /// <returns>Schedule</returns>
         public Schedule WithAmount(decimal? value) {
             Amount = value; return this;
+        }
+
+        public Schedule WithProductId(string value) {
+            ProductId = value;
+            return this;
+        }
+
+        public Schedule WithOrderPrefix(string value) {
+            OrderPrefix = value;
+            return this;
+        }
+
+        public Schedule WithCustomerNumber(string value) {
+            CustomerNumber = value;
+            return this;
         }
 
         /// <summary>

@@ -104,7 +104,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .WithGiftCardCount(1)
                 .WithGiftCardCurrency(Currency)
                 .WithDeliveryEmail("james.mason@example.com")
-                .WithDeliveryTimeFrame(DeliveryTimeFrame.SAME_DAYE)
+                .WithDeliveryTimeFrame(DeliveryTimeFrame.SAME_DAY)
                 .WithShippingMethod(ShippingMethod.ANOTHER_VERIFIED_ADDRESS)
                 .WithShippingNameMatchesCardHolderName(false)
                 .WithPreOrderIndicator(PreOrderIndicator.FUTURE_AVAILABILITY)

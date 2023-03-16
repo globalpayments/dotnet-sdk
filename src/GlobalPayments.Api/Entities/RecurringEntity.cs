@@ -18,6 +18,10 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string Key { get; set; }
 
+        public string ResponseCode { get; set; }
+
+        public string ResponseMessage { get; set; }
+
         /// <summary>
         /// Creates a resource
         /// </summary>

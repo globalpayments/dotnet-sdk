@@ -231,7 +231,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.TokenPanLastFour.Contains(lastFour)));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.MaskedCardNumber.EndsWith(lastFour)));
         }
         
         [TestMethod]
@@ -246,7 +246,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.TokenPanLastFour.Contains(lastFour)));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.MaskedCardNumber.EndsWith(lastFour)));
         }
         
         [TestMethod]

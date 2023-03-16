@@ -1,20 +1,27 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace GlobalPayments.Api.Tests.GpApi.Certification {
     [TestClass]
     public class GpApiSdkCertification : BaseGpApiTests {
+
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            ServicesContainer.ConfigureService(new GpApiConfig {
+                AppId = AppId,
+                AppKey = AppKey,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger()
+            });
+        }
+
         #region Credit Card SUCCESS
         [TestMethod]
         public void CreditCard_Visa_Success() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "4263970000005262",
                 ExpMonth = DateTime.Now.Month,
@@ -37,13 +44,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         }
 
         [TestMethod]
-        public void CreditCard_Mastercard_Success() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
+        public void CreditCard_Mastercard_Success() {            
             var card = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = DateTime.Now.Month,
@@ -67,12 +68,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_AmericanExpress_Success() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
+           
             var card = new CreditCardData {
                 Number = "374101000000608",
                 ExpMonth = DateTime.Now.Month,
@@ -96,12 +92,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_DinersClub_Success() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
+            
             var card = new CreditCardData {
                 Number = "36256000000725",
                 ExpMonth = DateTime.Now.Month,
@@ -125,13 +116,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Discover_Success() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "6011000000000087",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -154,13 +139,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_JCB_Success() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "3566000000000000",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -185,13 +164,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Visa DECLINED
         [TestMethod]
         public void CreditCard_Visa_Declined_101() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+               var card = new CreditCardData {
                 Number = "4000120000001154",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -213,12 +186,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Visa_Declined_102() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "4000130000001724",
                 ExpMonth = DateTime.Now.Month,
@@ -241,13 +208,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Visa_Declined_103() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "4000160000004147",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -271,12 +232,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Mastercard DECLINED
         [TestMethod]
         public void CreditCard_Mastercard_Declined_101() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "5114610000004778",
                 ExpMonth = DateTime.Now.Month,
@@ -299,13 +254,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Mastercard_Declined_102() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "5114630000009791",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -327,13 +276,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Mastercard_Declined_103() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "5121220000006921",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -356,12 +299,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card American Express DECLINED
         [TestMethod]
         public void CreditCard_AmericanExpress_Declined_101() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "376525000000010",
                 ExpMonth = DateTime.Now.Month,
@@ -384,13 +321,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_AmericanExpress_Declined_102() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+           var card = new CreditCardData {
                 Number = "375425000000907",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -412,12 +343,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_AmericanExpress_Declined_103() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "343452000000306",
                 ExpMonth = DateTime.Now.Month,
@@ -442,13 +367,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Diners Club DECLINED
         [TestMethod]
         public void CreditCard_DinersClub_Declined_101() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "36256000000998",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -470,13 +389,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_DinersClub_Declined_102() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "36256000000634",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -498,13 +411,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_DinersClub_Declined_103() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+              var card = new CreditCardData {
                 Number = "38865000000705",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -528,13 +435,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Discover DECLINED
         [TestMethod]
         public void CreditCard_Discover_Declined_101() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "6011000000001010",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -556,12 +457,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Discover_Declined_102() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "6011000000001028",
                 ExpMonth = DateTime.Now.Month,
@@ -584,12 +479,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Discover_Declined_103() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "6011000000001036",
                 ExpMonth = DateTime.Now.Month,
@@ -614,12 +503,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card JCB DECLINED
         [TestMethod]
         public void CreditCard_JCB_Declined_101() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "3566000000001016",
                 ExpMonth = DateTime.Now.Month,
@@ -642,13 +525,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_JCB_Declined_102() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+           var card = new CreditCardData {
                 Number = "3566000000001024",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -670,13 +547,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_JCB_Declined_103() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "3566000000001032",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -700,13 +571,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Visa ERROR
         [TestMethod]
         public void CreditCard_Visa_Processing_Error() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "4009830000001985",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -729,13 +594,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [TestMethod]
         public void CreditCard_Visa_Processing_Error_Wrong_Currency() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "4009830000001985",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -760,13 +619,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Mastercard ERROR
         [TestMethod]
         public void CreditCard_Mastercard_Processing_Error() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "5135020000005871",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -791,12 +644,6 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card American Express ERROR
         [TestMethod]
         public void CreditCard_AmericanExpress_Processing_Error() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
             var card = new CreditCardData {
                 Number = "372349000000852",
                 ExpMonth = DateTime.Now.Month,
@@ -822,13 +669,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Diners Club ERROR
         [TestMethod]
         public void CreditCard_DinersClub_Processing_Error() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+              var card = new CreditCardData {
                 Number = "30450000000985",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -853,13 +694,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card Discover ERROR
         [TestMethod]
         public void CreditCard_Discover_Processing_Error() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+             var card = new CreditCardData {
                 Number = "6011000000002000",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,
@@ -884,13 +719,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
         #region Credit Card JCB ERROR
         [TestMethod]
         public void CreditCard_JCB_Processing_Error() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "Uyq6PzRbkorv2D4RQGlldEtunEeGNZll",
-                AppKey = "QDsW1ETQKHX6Y4TA",
-                Channel = Channel.CardNotPresent
-            });
-
-            var card = new CreditCardData {
+              var card = new CreditCardData {
                 Number = "3566000000002006",
                 ExpMonth = DateTime.Now.Month,
                 ExpYear = DateTime.Now.Year + 1,

@@ -26,6 +26,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestInitialize]
         public void TestInitialize() {
+            ServicesContainer.RemoveConfig();
+            
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "v2yRaFOLwFaQc0fSZTCyAdQCBNByGpVK",
                 AppKey = "oKZpWitk6tORoCVT",

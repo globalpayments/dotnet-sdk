@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- GP-ECOM: Added Payment Schedule that allows you to easily set up and manage recurring billing payments.
+
+## v5.1.3 (02/03/23)
+
+#### Enhancements
+
 - GP-API: Added as default the account_id instead of account_name for all GP-API requests.
 
 ## v5.1.2 (23/02/23)

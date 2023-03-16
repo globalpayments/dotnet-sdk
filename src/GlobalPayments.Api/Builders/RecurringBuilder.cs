@@ -8,7 +8,7 @@ namespace GlobalPayments.Api.Builders {
         internal IRecurringEntity Entity { get; set; }
         internal Dictionary<string, string> SearchCriteria { get; set; }
 
-        internal RecurringBuilder<TResult> AddSearchCriteria(string key, string value) {
+        public RecurringBuilder<TResult> AddSearchCriteria(string key, string value) {
             SearchCriteria.Add(key, value);
             return this;
         }

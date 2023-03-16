@@ -155,6 +155,11 @@ namespace GlobalPayments.Api.Utils {
             var uuid = Guid.NewGuid();
             return Convert.ToBase64String(uuid.ToByteArray()).TrimEnd('=').Replace("+", "-").Replace("/", "_");
         }
+
+        public static string GenerateScheduleId() {
+            var uuid = Guid.NewGuid();            
+            return Convert.ToBase64String(uuid.ToByteArray()).TrimEnd('=').Replace("+", "-").Replace("/", "_").ToLower().Substring(0, 20);
+        }
         public static string GenerateRecurringKey() {
             return Guid.NewGuid().ToString().ToLower();
         }

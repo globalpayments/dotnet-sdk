@@ -83,8 +83,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 AccessToken = response.Token;
 
-            if (accessTokenInfo == null)
-            {
+            if (accessTokenInfo == null) {
                 accessTokenInfo = new AccessTokenInfo();
             }
 
@@ -239,8 +238,7 @@ namespace GlobalPayments.Api.Gateways {
         public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class
         {
             T result = Activator.CreateInstance<T>();
-            if (string.IsNullOrEmpty(AccessToken))
-            {
+            if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
             GpApiRequest request = GpApiPayFacRequestBuilder<T>.BuildRequest(builder, this);
@@ -260,8 +258,7 @@ namespace GlobalPayments.Api.Gateways {
         public T ProcessFraud<T>(FraudBuilder<T> builder) where T : class
         {
             T result = Activator.CreateInstance<T>();
-            if (string.IsNullOrEmpty(AccessToken))
-            {
+            if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
             GpApiRequest request = GpApiSecureRequestBuilder<T>.BuildRequest(builder, this);

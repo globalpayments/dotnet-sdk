@@ -10,7 +10,6 @@ namespace GlobalPayments.Api.Builders
     {
         public FraudBuilder(TransactionType type) {
             TransactionType = type;
-            //AuthenticationSource = Entities.AuthenticationSource.BROWSER;
         }
                
 
@@ -21,8 +20,7 @@ namespace GlobalPayments.Api.Builders
             var client = ServicesContainer.Instance.GetFraudCheckClient(configName);
             return client.ProcessFraud(this);
         }
-
-        /** @return void */
+        
         protected override void SetupValidations()
         {
             Validations.For(TransactionType.RiskAssess)               
@@ -71,12 +69,10 @@ namespace GlobalPayments.Api.Builders
         }
         public FraudBuilder<TResult> WithAddress(Address address, AddressType type)
         {
-            if (type.Equals(AddressType.Billing))
-            {
+            if (type.Equals(AddressType.Billing)) {
                 BillingAddress = address;
             }
-            else
-            {
+            else {
                 ShippingAddress = address;
             }
             return this;
@@ -194,10 +190,8 @@ namespace GlobalPayments.Api.Builders
         {
             var phoneNumber = new PhoneNumber();
             phoneNumber.CountryCode = phoneCountryCode;
-            phoneNumber.Number = number;
-            //PhoneList[type] = phoneNumber;
-            switch (type)
-            {
+            phoneNumber.Number = number;            
+            switch (type) {
                 case PhoneNumberType.Home:
                     HomeNumber = number;
                     HomeCountryCode = phoneCountryCode;

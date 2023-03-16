@@ -6,7 +6,6 @@ namespace GlobalPayments.Api.Entities
 {
     public class ThirdPartyResponse
     {
-        
         public string Platform { get; set; }
 
         /// <summary>

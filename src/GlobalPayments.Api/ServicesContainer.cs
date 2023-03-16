@@ -255,6 +255,10 @@ namespace GlobalPayments.Api {
             }
         }
 
+        public static void RemoveConfig(string config = "default") {
+            Instance.removeConfiguration(config);
+        }
+
         /// <summary>
         /// Implementation for `IDisposable`
         /// </summary>

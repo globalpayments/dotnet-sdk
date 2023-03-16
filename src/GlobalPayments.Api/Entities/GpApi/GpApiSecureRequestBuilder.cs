@@ -14,8 +14,7 @@ namespace GlobalPayments.Api.Entities.GpApi
         private static Secure3dBuilder _3dBuilder { get; set; }        
         internal static GpApiRequest BuildRequest(FraudBuilder<T> builder, GpApiConnector gateway) {           
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
-            switch (builder.TransactionType)
-            {
+            switch (builder.TransactionType) {
                 case TransactionType.RiskAssess:
                     var requestData = new JsonDoc()
                         .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.RiskAssessmentAccountName)
@@ -31,8 +30,7 @@ namespace GlobalPayments.Api.Entities.GpApi
                         .Set("payer_login_data", SetPayerLoginDataParam(builder))
                         .Set("browser_data", SetBrowserDataParam(builder));
 
-                    return new GpApiRequest
-                    {
+                    return new GpApiRequest {
                         Verb = HttpMethod.Post,
                         Endpoint = $"{merchantUrl}/risk-assessments",
                         RequestBody = requestData.ToString(),
@@ -47,8 +45,7 @@ namespace GlobalPayments.Api.Entities.GpApi
         {
             _3dBuilder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
-            switch (builder.TransactionType)
-            {
+            switch (builder.TransactionType) {
                 case TransactionType.VerifyEnrolled:
                     return new GpApiRequest {
                         Verb = HttpMethod.Post,
@@ -64,8 +61,7 @@ namespace GlobalPayments.Api.Entities.GpApi
                    
                 case TransactionType.VerifySignature:
                     JsonDoc data = null;
-                    if (!string.IsNullOrEmpty(builder.PayerAuthenticationResponse))
-                    {
+                    if (!string.IsNullOrEmpty(builder.PayerAuthenticationResponse)) {
                         data = new JsonDoc().Set("three_ds",
                             new JsonDoc().Set("challenge_result_value", builder.PayerAuthenticationResponse)
                         );
@@ -89,9 +85,9 @@ namespace GlobalPayments.Api.Entities.GpApi
             #region ThreeDS
             var threeDS = new JsonDoc()
                 .Set("source", _3dBuilder.AuthenticationSource.ToString())
-            .Set("preference", _3dBuilder.ChallengeRequestIndicator?.ToString())
-            .Set("message_version", _3dBuilder.MessageVersion?.ToString())
-            .Set("message_category", EnumConverter.GetMapping(Target.GP_API, _3dBuilder.MessageCategory));
+                .Set("preference", _3dBuilder.ChallengeRequestIndicator?.ToString())
+                .Set("message_version", _3dBuilder.MessageVersion?.ToString())
+                .Set("message_category", EnumConverter.GetMapping(Target.GP_API, _3dBuilder.MessageCategory));
             #endregion
 
             var data = new JsonDoc()
@@ -116,24 +112,19 @@ namespace GlobalPayments.Api.Entities.GpApi
                 .Set("decoupled_notification_url", _3dBuilder.DecoupledNotificationUrl);
 
             data.Set("notifications", notifications.HasKeys() ? notifications : null);
-            if (_3dBuilder.DecoupledFlowRequest.HasValue)
-            {
+            if (_3dBuilder.DecoupledFlowRequest.HasValue) {
                 data.Set("decoupled_flow_request", _3dBuilder.DecoupledFlowRequest.Value ? DecoupledFlowRequest.DECOUPLED_PREFERRED.ToString() : DecoupledFlowRequest.DO_NOT_USE_DECOUPLED.ToString());
             }
             data.Set("decoupled_flow_timeout", _3dBuilder.DecoupledFlowTimeout.HasValue ? _3dBuilder.DecoupledFlowTimeout.ToString() : null);
 
-
-            return data;
-           
+            return data;           
         }
 
         private static JsonDoc SetMobileDataParam()
         {
-            string[] ModifySdkUiTypes()
-            {
+            string[] ModifySdkUiTypes() {
                 string[] result = new string[(int)_3dBuilder.MobileData?.SdkUiTypes.Length];
-                for (int i = 0; i < _3dBuilder.MobileData?.SdkUiTypes.Length; i++)
-                {
+                for (int i = 0; i < _3dBuilder.MobileData?.SdkUiTypes.Length; i++) {
                     result[i] = EnumConverter.GetMapping(Target.GP_API, _3dBuilder.MobileData?.SdkUiTypes[i]);
 
                 }
@@ -272,11 +263,9 @@ namespace GlobalPayments.Api.Entities.GpApi
                 .Set("preorder_indicator", builder.PreOrderIndicator?.ToString())
                 .Set("preorder_availability_date", builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"))
                 .Set("reorder_indicator", builder.ReorderIndicator?.ToString())
-                .Set("category", builder.OrderTransactionType.ToString())
-                ;
+                .Set("category", builder.OrderTransactionType.ToString());
 
-            if (builder.ShippingAddress != null)
-            {
+            if (builder.ShippingAddress != null) {
                 var shippingAddress = new JsonDoc()
                     .Set("line1", builder.ShippingAddress.StreetAddress1)
                     .Set("line2", builder.ShippingAddress.StreetAddress2)
@@ -293,13 +282,11 @@ namespace GlobalPayments.Api.Entities.GpApi
         }
 
         private static JsonDoc VerifyEnrolled(GpApiConfig config)
-        {
-            
+        {            
             var notifications = new JsonDoc()
                 .Set("challenge_return_url", config.ChallengeNotificationUrl)
                 .Set("three_ds_method_return_url", config.MethodNotificationUrl)
-                .Set("decoupled_notification_url", _3dBuilder.DecoupledNotificationUrl)
-                ;
+                .Set("decoupled_notification_url", _3dBuilder.DecoupledNotificationUrl);
 
             var threeDS = new JsonDoc()
                 .Set("account_name", config.AccessTokenInfo.TransactionProcessingAccountName)
@@ -323,12 +310,10 @@ namespace GlobalPayments.Api.Entities.GpApi
         {
             var paymentMethod = new JsonDoc();
 
-            if (builder.PaymentMethod is ITokenizable tokenized && !string.IsNullOrEmpty(tokenized.Token))
-            {
+            if (builder.PaymentMethod is ITokenizable tokenized && !string.IsNullOrEmpty(tokenized.Token)) {
                 paymentMethod.Set("id", tokenized.Token);
             }
-            else if (builder.PaymentMethod is ICardData cardData)
-            {
+            else if (builder.PaymentMethod is ICardData cardData) {
                 var card = new JsonDoc()
                     .Set("brand", cardData.CardType.ToUpper())
                     .Set("number", cardData.Number)

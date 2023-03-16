@@ -83,8 +83,7 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.MultiCapture = GetIsMultiCapture(json);
                 transaction.FingerPrint = json.Get("payment_method")?.GetValue<string>("fingerprint") ?? null;
                 transaction.FingerPrintIndicator = json.Get("payment_method")?.GetValue<string>("fingerprint_presence_indicator") ?? null;
-                if (json.Has("payment_method") && json.Get("payment_method").Has("bnpl"))
-                {
+                if (json.Has("payment_method") && json.Get("payment_method").Has("bnpl")) {
                     MapBNPLResponse(json, ref transaction);
                     return transaction;
                 }
@@ -275,8 +274,7 @@ namespace GlobalPayments.Api.Mapping {
                 summary.EntryMode = paymentMethod?.GetValue<string>("entry_mode");
                 summary.CardHolderName = paymentMethod?.GetValue<string>("name");
 
-                if (paymentMethod.Has("card"))
-                {
+                if (paymentMethod.Has("card")) {
                     JsonDoc card = paymentMethod?.Get("card");
                     summary.CardType = card?.GetValue<string>("brand");
                     summary.AuthCode = card?.GetValue<string>("authcode");
@@ -285,8 +283,7 @@ namespace GlobalPayments.Api.Mapping {
                     summary.MaskedCardNumber = card?.GetValue<string>("masked_number_first6last4");
                     summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.Card);
                 }
-                else if(paymentMethod.Has("digital_wallet")) 
-                {
+                else if(paymentMethod.Has("digital_wallet")) {
                     JsonDoc digitalWallet = paymentMethod?.Get("digital_wallet");
                     summary.MaskedCardNumber = digitalWallet?.GetValue<string>("masked_token_first6last4");
                     summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.DigitalWallet);
@@ -554,8 +551,7 @@ namespace GlobalPayments.Api.Mapping {
 
         public static DisputeDocument MapDisputeDocument(JsonDoc doc)
         {
-            return new DisputeDocument
-            {
+            return new DisputeDocument {
                 Id = doc.GetValue<string>("id"),
                 Base64Content = doc.GetValue<string>("b64_content"),               
             };
@@ -593,8 +589,7 @@ namespace GlobalPayments.Api.Mapping {
 
             foreach (var item in doc.GetArray<JsonDoc>("documents") ?? Enumerable.Empty<JsonDoc>()) {
                 if (string.IsNullOrEmpty(item.GetValue<string>("id"))) {
-                    var document = new DisputeDocument
-                    {
+                    var document = new DisputeDocument {
                         Id = doc.GetValue<string>("id"),
                         Type = !string.IsNullOrEmpty(doc.GetValue<string>("type")) ? doc.GetValue<string>("type") : null,
                     };
@@ -660,8 +655,7 @@ namespace GlobalPayments.Api.Mapping {
         public static T MapRiskAssessmentResponse<T>(string rawResponse) where T : class
         {
             T result = Activator.CreateInstance<T>();
-            if (!string.IsNullOrEmpty(rawResponse))
-            {
+            if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc response = JsonDoc.Parse(rawResponse);
                 var riskAssessment = new RiskAssessment();
                 riskAssessment.Id = response.GetValue<string>("id");
@@ -748,8 +742,7 @@ namespace GlobalPayments.Api.Mapping {
                 currencyConversion = response.Get("currency_conversion");
             }
             
-            return new DccRateData
-            { 
+            return new DccRateData { 
                 CardHolderCurrency = currencyConversion.GetValue<string>("payer_currency") ?? null,
                 CardHolderAmount = currencyConversion.GetValue<string>("payer_amount").ToAmount() ?? null,
                 CardHolderRate = currencyConversion.GetValue<string>("exchange_rate").ToDecimal() ?? null,
@@ -776,10 +769,8 @@ namespace GlobalPayments.Api.Mapping {
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
 
-                var transaction = new Transaction
-                {
-                    ThreeDSecure = new ThreeDSecure
-                    {
+                var transaction = new Transaction {
+                    ThreeDSecure = new ThreeDSecure {
                         ServerTransactionId = json.GetValue<string>("id"),                        
                         MessageVersion = json.Get("three_ds")?.GetValue<string>("message_version"),
                         Version = Parse3DSVersion(json.Get("three_ds")?.GetValue<string>("message_version")),
@@ -895,8 +886,7 @@ namespace GlobalPayments.Api.Mapping {
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc json = JsonDoc.Parse(rawResponse);                
                 string actionType = json.Get("action")?.GetValue<string>("type");
-                switch (actionType)
-                {
+                switch (actionType) {
                     case MERCHANT_CREATE:
                     case MERCHANT_EDIT:
                     case MERCHANT_EDIT_INITIATED:
@@ -928,8 +918,7 @@ namespace GlobalPayments.Api.Mapping {
                         }
                         if (json.Has("contact_phone")) {
                             if (!string.IsNullOrEmpty(json.Get("contact_phone").GetValue<string>("country_code")) &&
-                            !string.IsNullOrEmpty(json.Get("contact_phone").GetValue<string>("subscriber_number")))
-                            {
+                            !string.IsNullOrEmpty(json.Get("contact_phone").GetValue<string>("subscriber_number"))) {
                                 user.ContactPhone = new PhoneNumber {
                                     CountryCode = json.Get("contact_phone").GetValue<string>("country_code"),
                                     Number = json.Get("contact_phone").GetValue<string>("subscriber_number"),

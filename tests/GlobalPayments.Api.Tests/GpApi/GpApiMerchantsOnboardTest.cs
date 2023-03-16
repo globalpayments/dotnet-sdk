@@ -24,6 +24,8 @@ namespace GlobalPayments.Api.Tests.GpApi
             _service = new PayFacService();
             _reportingService = new ReportingService();
 
+            ServicesContainer.RemoveConfig();
+
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = AppIdForMerchant,
                 AppKey = AppKeyForMerchant,

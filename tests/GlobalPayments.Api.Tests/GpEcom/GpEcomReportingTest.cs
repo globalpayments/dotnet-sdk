@@ -20,19 +20,25 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void GetTransactionDetail() {
-            string orderId = "u2RjrtEmaU2f0pB-aGw4Eg";
+            const string orderId = "rMuOHxP5SCyCzOYE8mKCsA";
             
-            TransactionSummary response = ReportingService.TransactionDetail(orderId)
+            var response = ReportingService.TransactionDetail(orderId)
                 .Execute();
             
             Assert.IsNotNull(response);
             Assert.AreEqual(orderId, response.OrderId);
-            Assert.AreEqual("0QApOb88ngvBrZF8", response.SchemeReferenceData);
+            Assert.AreEqual("5CoDxmuV5efGltP9", response.SchemeReferenceData);
+            Assert.AreEqual("16776985695761244", response.TransactionId);
+            Assert.AreEqual("U", response.AvsResponseCode);
+            Assert.AreEqual("M", response.CvnResponseCode);
+            Assert.AreEqual("00", response.GatewayResponseCode);
+            Assert.AreEqual("(00)[ test system ] Authorised", response.GatewayResponseMessage);
+            Assert.AreEqual("PASS", response.FraudRuleInfo);
         }
 
         [TestMethod]
         public void GetTransactionDetail_WithRandomId() {
-            string orderId = Guid.NewGuid().ToString();
+            var orderId = Guid.NewGuid().ToString().Replace("-", "");
             try {
                 ReportingService.TransactionDetail(orderId)
                     .Execute();
@@ -40,6 +46,17 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             catch (GatewayException ex) {
                 Assert.AreEqual("508", ex.ResponseCode);
                 Assert.AreEqual("Original transaction not found.", ex.ResponseMessage);
+            }
+        }
+        
+        [TestMethod]
+        public void GetTransactionDetail_WithNullId() {
+            try {
+                ReportingService.TransactionDetail(null)
+                    .Execute();
+            }
+            catch (BuilderException ex) {
+                Assert.AreEqual("TransactionId cannot be null for this transaction type.", ex.Message);
             }
         }
     }
