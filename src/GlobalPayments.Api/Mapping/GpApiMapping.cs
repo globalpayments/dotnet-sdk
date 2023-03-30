@@ -92,6 +92,12 @@ namespace GlobalPayments.Api.Mapping {
                 };
                 transaction.Token = json.Get("payment_method")?.GetValue<string>("id");                
                 transaction.AuthorizationCode = json.Get("payment_method")?.GetValue<string>("result");
+
+                var cardDetails = new Card();
+                cardDetails.MaskedNumberLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4") ?? null;
+                cardDetails.Brand = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand") ?? null;
+                transaction.CardDetails = cardDetails;
+
                 transaction.CardType = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand");
                 transaction.CardLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4");
                 transaction.CvnResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result");
@@ -121,9 +127,39 @@ namespace GlobalPayments.Api.Mapping {
                 else if (json.Get("payment_method")?.Has("apm") ?? false) {
                     transaction.PaymentMethodType = PaymentMethodType.APM;
                 }
-                    transaction.DccRateData = MapDccInfo(json);
+
+                if ((json.Get("payment_method")?.Has("shipping_address") ?? false)
+                || (json.Get("payment_method")?.Has("payer") ?? false)) {
+                    var payerDetails = new PayerDetails();
+                    payerDetails.Email = json.Get("payment_method")?.Get("payer")?.GetValue<string>("email") ?? null;
+
+                    if (json.Get("payment_method")?.Get("payer").Has("billing_address") ?? false) {
+                        var billingAddress = json.Get("payment_method")?.Get("payer").Get("billing_address");
+                        payerDetails.FirstName = billingAddress.GetValue<string>("first_name") ?? null;
+                        payerDetails.LastName = billingAddress.GetValue<string>("last_name") ?? null;
+                        var billing = MapMerchantAddress(billingAddress);
+                        billing.Type = AddressType.Billing;
+                        payerDetails.BillingAddress = billing;
+                            
+                    }
+                    var shipping = MapMerchantAddress(json.Get("payment_method")?.Get("shipping_address"));
+                    shipping.Type = AddressType.Shipping;
+
+                    payerDetails.ShippingAddress = shipping;
+                    transaction.PayerDetails = payerDetails;
+                }
+                transaction.DccRateData = MapDccInfo(json);
                 transaction.FraudFilterResponse = json.Has("risk_assessment") ? MapFraudManagement(json) : null;
-            }
+
+                if (json.Has("card")) {
+                    var cardDetail = new Card();
+                    cardDetail.CardNumber = json.Get("card")?.GetValue<string>("number") ?? null;
+                    cardDetail.Brand = json.Get("card")?.GetValue<string>("brand") ?? null;
+                    cardDetail.CardExpMonth = json.Get("card")?.GetValue<string>("expiry_month") ?? null;
+                    cardDetail.CardExpYear = json.Get("card")?.GetValue<string>("expiry_year") ?? null;
+                    transaction.CardDetails = cardDetail;
+                }
+            }           
 
             return transaction;
         }

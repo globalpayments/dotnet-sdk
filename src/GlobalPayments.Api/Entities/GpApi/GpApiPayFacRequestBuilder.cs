@@ -96,15 +96,13 @@ namespace GlobalPayments.Api.Entities
         {
             var merchantData = _builder.UserPersonalData;
             var data = SetMerchantInfo();
-            data.Set("description", _builder.Description)
+            data.Set("pricing_profile", merchantData.Tier)
+                .Set("description", _builder.Description)
                 .Set("type", merchantData.Type.ToString())
                 .Set("addresses", SetAddressList())                
-                .Set("payment_processing_statistics", SetPaymentStatistics());
-            var tier = new JsonDoc()
-              .Set("reference", merchantData.Tier);
+                .Set("payment_processing_statistics", SetPaymentStatistics());          
 
-            data.Set("tier", tier)
-                .Set("payment_methods", SetPaymentMethod())
+            data.Set("payment_methods", SetPaymentMethod())
                 .Set("persons", SetPersonList())
                 .Set("products", _builder.ProductData?.Count > 0 ? SetProductList(_builder.ProductData) : null);
 
@@ -225,10 +223,14 @@ namespace GlobalPayments.Api.Entities
 
         private static List<Dictionary<string, object>> SetProductList(List<Product> productData) {
             var products = new List<Dictionary<string, object>>();
-            
+
             foreach (var product in productData) {
+                var deviceInfo = new Dictionary<string, object>();
+                if (product.ProductId.Contains("_CP-")) {
+                    deviceInfo.Add("quantity", 1);
+                }
                 var item = new Dictionary<string, object>();
-                item.Add("quantity", product.Quantity);
+                item.Add("device", deviceInfo.Count > 0 ? deviceInfo : null);
                 item.Add("id", product.ProductId);                
                 products.Add(item);
             }
@@ -290,7 +292,7 @@ namespace GlobalPayments.Api.Entities
             var requestBody = SetMerchantInfo();
             requestBody 
                 //.Set("description", _builder.Description)
-                .Set("status_change_reason", _builder.StatusChangeReason)
+                .Set("status_change_reason", _builder.StatusChangeReason?.ToString() ?? null)
                 .Set("addresses", SetAddressList() ?? null)
                 .Set("persons", SetPersonList("edit"))
                 .Set("payment_processing_statistics", SetPaymentStatistics())

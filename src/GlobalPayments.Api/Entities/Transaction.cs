@@ -107,6 +107,7 @@ namespace GlobalPayments.Api.Entities {
         /// The last four digits of the card number used in
         /// the transaction.
         /// </summary>
+        [Obsolete("Will soon be replaced with CardDetails.MaskedCardNumber")]
         public string CardLast4 { get; set; }
 
         public string FingerPrint { get; set; }
@@ -118,25 +119,33 @@ namespace GlobalPayments.Api.Entities {
         public PayLinkResponse PayLinkResponse { get; set; }
 
         public CardIssuerResponse CardIssuerResponse { get; set; }
+        
+        public PayerDetails PayerDetails { get; set; }
+    
+        public Card CardDetails { get; set; }
 
         /// <summary>
         /// The card number used in the transaction.
         /// </summary>
+        [Obsolete("Will soon be replaced with CardDetails.CardNumber")]
         public string CardNumber { get; set; }
 
         /// <summary>
         /// The card expiry month used in the transaction.
         /// </summary>
+        [Obsolete("Will soon be replaced with CardDetails.CardExpMonth")]
         public int? CardExpMonth { get; set; }
 
         /// <summary>
         /// The card expiry year used in the transaction.
         /// </summary>
+        [Obsolete("Will soon be replaced with CardDetails.CardExpYear")]
         public int? CardExpYear { get; set; }
 
         /// <summary>
         /// The cardholder name used in the transaction.
         /// </summary>
+        [Obsolete("Will soon be replaced with CardDetails.CardHolderName")]
         public string CardholderName { get; set; }
 
         /// <summary>

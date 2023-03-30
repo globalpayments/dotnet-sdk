@@ -343,6 +343,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
             Assert.AreEqual(AMOUNT, response.BalanceAmount);
+            Assert.IsNull(response.PayerDetails);
         }
 
         [TestMethod]

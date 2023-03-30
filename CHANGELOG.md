@@ -4,6 +4,14 @@
 
 #### Enhancements
 
+- GP-API: Updated some properties for merchant request.
+- GP-API: Added payer information on Transaction object.
+- Portico Gateway: Updated Portico TransactionDetail report mapping to include Invoice Number.
+
+## v5.1.4 (16/03/23)
+
+#### Enhancements
+
 - GP-ECOM: Added Payment Schedule that allows you to easily set up and manage recurring billing payments.
 
 ## v5.1.3 (02/03/23)

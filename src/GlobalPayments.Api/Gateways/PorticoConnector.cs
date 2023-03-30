@@ -974,6 +974,7 @@ namespace GlobalPayments.Api.Gateways {
                     IssuerResponseMessage = response.GetValue<string>("IssuerRspText", "RspText"),
                     IssuerTransactionId = response.GetValue<string>("IssTxnId"),            
                     SDKNameVersion = response.GetValue<string>("SDKNameVersion"),
+                    InvoiceNumber = response.GetValue<string>("InvoiceNbr"),
 
                 };
                 rvalue = summary as T;

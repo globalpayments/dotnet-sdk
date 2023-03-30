@@ -23,8 +23,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "uAGII1ChGyRk1CqzJBsOOGBTrDMMYjAp",
-                AppKey = "hgLnF6Fh7BIt3TDw",
+                AppId = AppId,
+                AppKey = AppKey,
                 Environment = Environment.TEST,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestConsoleLogger(),
@@ -465,7 +465,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void GetBNPLTransactionById() {
-            var id = "TRN_EryDeQRtqagH27G87DkSfZGL1kiE21";
+            const string id = "TRN_o7PsaRAgOviqLCPHBaxDcqYO70oUhu";
 
             var trnInfo = ReportingService.TransactionDetail(id)
                 .Execute();

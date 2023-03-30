@@ -440,7 +440,10 @@ namespace GlobalPayments.Api.Entities {
                 .Set("id", builder.PaymentLinkId) : null);
 
             if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
-                data.Set("payer", SetPayerInformation(builder));
+                var payer = SetPayerInformation(builder);
+                if (payer.HasKeys()) {
+                    data.Set("payer", payer);
+                }
             }
 
             // set order reference
@@ -632,14 +635,18 @@ namespace GlobalPayments.Api.Entities {
                 homePhone.Set("country_code", builder.HomePhone?.CountryCode)
                         .Set("subscriber_number", builder.HomePhone?.Number);
 
-                payer.Set("home_phone", homePhone);
+                if (homePhone.HasKeys()) {
+                    payer.Set("home_phone", homePhone);
+                }
 
                 JsonDoc workPhone = new JsonDoc();
 
                 workPhone.Set("country_code", builder.WorkPhone?.CountryCode)
                         .Set("subscriber_number", builder.WorkPhone?.Number);
 
-                payer.Set("work_phone", workPhone);
+                if (workPhone.HasKeys()) {
+                    payer.Set("work_phone", workPhone);
+                }
             }
             else if(builder.PaymentMethod is BNPL && builder.CustomerData != null) {
                
@@ -823,10 +830,12 @@ namespace GlobalPayments.Api.Entities {
                 }
             }
 
-            order.Set("shipping_address", shippingAddress);
+            if (shippingAddress.HasKeys()) {
+                order.Set("shipping_address", shippingAddress);
+            }
 
-            if (!requestBody.Has("order")) {
-                requestBody.Set("order", order);
+            if (!requestBody.Has("order") && order.HasKeys()) {               
+                requestBody.Set("order", order);                
             }
 
             return requestBody;

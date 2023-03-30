@@ -335,6 +335,67 @@ namespace GlobalPayments.Api.Tests.GpEcom
                 }
             }
         }
+        
+        [TestMethod]
+        public void CardStorageAddSchedule_AllFrequency() {
+            try {
+                var response = newCustomer.Create();
+                Assert.IsNotNull(response);
+                Assert.IsInstanceOfType(response, typeof(Customer));
+            } catch (GatewayException exc) {
+                if (exc.ResponseCode != "501" && exc.ResponseCode != "520") {
+                    throw;
+                }
+            }
+
+            var paymentMethod = newCustomer.AddPaymentMethod(PaymentId("Credit"), card);
+            try {
+                var response = paymentMethod.Create();
+                Assert.IsNotNull(response);
+                Assert.IsInstanceOfType(response, typeof(RecurringPaymentMethod));
+            } catch (GatewayException exc) {
+                if (exc.ResponseCode != "501" && exc.ResponseCode != "520") {
+                    throw;
+                }
+            }
+
+            var scheduleFrequency = new[] {
+                ScheduleFrequency.WEEKLY, ScheduleFrequency.BI_MONTHLY, ScheduleFrequency.MONTHLY,
+                ScheduleFrequency.QUARTERLY, ScheduleFrequency.SEMI_ANNUALLY, ScheduleFrequency.ANNUALLY
+            };
+
+            foreach (var scheduleFreq in scheduleFrequency) {
+                var scheduleId = GenerationUtils.GenerateScheduleId();
+                try {
+                    var response = paymentMethod.AddSchedule(scheduleId)
+                        .WithStartDate(DateTime.Now)
+                        .WithAmount(Amount)
+                        .WithCurrency(Currency)
+                        .WithFrequency(scheduleFreq)
+                        .WithReprocessingCount(1)
+                        .WithNumberOfPayments(12)
+                        .WithCustomerNumber("E8953893489")
+                        .WithOrderPrefix("gym")
+                        .WithName("Gym Membership")
+                        .WithDescription("Social Sign-Up")
+                        .Create();
+
+                    Assert.IsInstanceOfType(response, typeof(Schedule));
+                    Assert.AreEqual("00", response.ResponseCode);
+                    Assert.AreEqual("Schedule created successfully", response.ResponseMessage);
+
+                    var schedule = RecurringService.Get<Schedule>(scheduleId);
+
+                    Assert.AreEqual(scheduleId, schedule.Id);
+                    Assert.AreEqual(12, schedule.NumberOfPayments);
+                }
+                catch (GatewayException exc) {
+                    if (exc.ResponseCode != "501" && exc.ResponseCode != "520") {
+                        throw;
+                    }
+                }
+            }
+        }
 
         [TestMethod]
         public void CardStorageAddSchedule_WithIndefinitelyRun() {

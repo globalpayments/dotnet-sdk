@@ -256,7 +256,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsInstanceOfType(response, typeof(User));
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("PENDING", response.ResponseCode);
         }
 
         [TestMethod]
@@ -279,7 +279,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsInstanceOfType(response, typeof(User));
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("PENDING", response.ResponseCode);
         }
 
         [TestMethod]
@@ -316,7 +316,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             //print_r($response);
             Assert.IsInstanceOfType(response, typeof(User));
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("PENDING", response.ResponseCode);
             Assert.AreEqual(UserStatus.UNDER_REVIEW, response.UserReference.UserStatus);
             Assert.AreEqual(merchants.Results[0].Name, response.Name);
         }
@@ -803,9 +803,10 @@ namespace GlobalPayments.Api.Tests.GpApi
         private List<Product> GetProductList() {
             return new List<Product>()
             {
-                new Product { Quantity = 1, ProductId = "PRO_TRA_CP-US-CARD-A920_SP" },
-                new Product { Quantity = 1, ProductId = "PRO_TRA_CNP_US_BANK-TRANSFER_PP" },
-                new Product { Quantity = 1, ProductId = "PRO_FMA_PUSH-FUNDS_PP" }
+                new Product { ProductId = "PRO_TRA_CP-US-CARD-A920_SP" },
+                new Product { ProductId = "PRO_TRA_CNP_US_BANK-TRANSFER_PP" },
+                new Product { ProductId = "PRO_FMA_PUSH-FUNDS_PP" },
+                new Product { ProductId = "PRO_TRA_CNP-US-CARD_PP" }
             };
         }
 

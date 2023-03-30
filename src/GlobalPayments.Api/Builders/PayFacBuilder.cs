@@ -84,7 +84,7 @@ namespace GlobalPayments.Api.Builders
         public int Page { get; set; }    
         public int PageSize { get; set; }    
         public PaymentStatistics PaymentStatistics { get; set; }    
-        public StatusChangeReason StatusChangeReason { get; set; }   
+        public StatusChangeReason? StatusChangeReason { get; set; }   
         public UserReference UserReference { get; set; }    
         public Dictionary<string, PaymentMethodFunction?> PaymentMethodsFunctions { get; set; }
         public string IdempotencyKey { get; set; }

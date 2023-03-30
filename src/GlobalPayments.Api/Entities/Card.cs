@@ -5,7 +5,13 @@ using System.Text;
 namespace GlobalPayments.Api.Entities
 {
     public class Card
-    {
+    {        
+        public string CardHolderName { get; set; }   
+        public string CardNumber { get; set; }    
+        public string MaskedCardNumber { get; set; }    
+        public string CardExpMonth { get; set; }    
+        public string CardExpYear { get; set; }    
+        public string Token { get; set; }
         /// <summary>
         /// Masked card number with last 4 digits showing.
         /// </summary>
