@@ -13,5 +13,6 @@ namespace GlobalPayments.Api.PaymentMethods {
         bool ReaderPresent { get; set; }
         string ShortExpiry { get; }
         ManualEntryMethod? EntryMethod { get; set; }
+        EntryMethod? OriginalEntryMethod { get; set; }
     }
 }

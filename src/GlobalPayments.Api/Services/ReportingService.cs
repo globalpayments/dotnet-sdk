@@ -107,11 +107,20 @@ namespace GlobalPayments.Api.Services {
                 .WithPaging(page, pageSize);
         }
 
-        public ReportBuilder<PagedResult<MerchantSummary>> FindMerchants(int page, int pageSize)
-        {
+        public ReportBuilder<PagedResult<MerchantSummary>> FindMerchants(int page, int pageSize) {
             return new UserReportBuilder<PagedResult<MerchantSummary>>(ReportType.FindMerchantsPaged)
                 .WithModifier(TransactionModifier.Merchant)
                 .WithPaging(page, pageSize);
+        }
+
+        public static ReportBuilder<PagedResult<MerchantAccountSummary>> FindAccounts(int page, int pageSize) {
+            return (new UserReportBuilder<PagedResult<MerchantAccountSummary>>(ReportType.FindAccountsPaged))
+                .WithPaging(page, pageSize);
+        }
+
+        public static UserReportBuilder<MerchantAccountSummary> AccountDetail(string accountId) {
+            return (new UserReportBuilder<MerchantAccountSummary>(ReportType.FindAccountDetail))
+                .WithAccountId(accountId);
         }
     }
 }

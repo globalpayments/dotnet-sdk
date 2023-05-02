@@ -15,14 +15,13 @@ namespace GlobalPayments.Api.Tests.GpApi
     {
         private static CreditCardData card;
         private static Address address;
-        private readonly string currency = "USD";
+        private const string CURRENCY = "USD";
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context) {
+        [TestInitialize]
+        public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = AppId,
                 AppKey = AppKey,
-                Environment = Environment.TEST,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
@@ -56,7 +55,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             
             foreach (var items in fraudFilters) {
                 var response = card.Charge(98.10m)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithAddress(address)
                     .WithFraudFilter(items.Key)
                     .Execute();
@@ -80,7 +79,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             rules.AddRule(rule2, FraudFilterMode.OFF);
 
             var response = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE, rules)
                 .Execute();
@@ -119,7 +118,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             }
 
             var response = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE, rules)
                 .Execute();
@@ -150,7 +149,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             }
 
             var response = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE, rules)
                 .Execute();
@@ -173,7 +172,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void ReleaseTransactionAfterFraudResultHold() {
             card.CardHolderName = "Lenny Bruce";
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -199,7 +198,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle() {
             var trn = card.Authorize(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -242,7 +241,7 @@ namespace GlobalPayments.Api.Tests.GpApi
          [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_HoldAndReleaseWithoutReasonCode() {
             var trn = card.Authorize(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -284,7 +283,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void CaptureTransactionAfterFraudResultHold() {
             card.CardHolderName = "Lenny Bruce";
             var trn = card.Authorize(10.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -314,7 +313,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void RefundTransactionAfterFraudResultHold() {
             card.CardHolderName = "Lenny Bruce";
             var trn = card.Charge(10.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -329,7 +328,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var errorFound = false;
             try {
                 trn.Refund()
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .Execute();
             }
             catch (GatewayException e) {
@@ -344,7 +343,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_Charge() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -382,7 +381,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var idempotencyKey = Guid.NewGuid().ToString();
             
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .WithIdempotencyKey(idempotencyKey)
@@ -398,7 +397,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var exceptionCaught = false;
             try {
                 card.Charge(1)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithIdempotencyKey(idempotencyKey)
                     .Execute();
             }
@@ -416,7 +415,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_ChargeThenRefund() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -449,7 +448,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             var refund = trn.Refund()
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .Execute();
 
             Assert.IsNotNull(refund);
@@ -460,7 +459,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_ChargePassive() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -496,7 +495,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_Charge_ThenReleaseWithoutHold() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -526,7 +525,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_Authorize_ThenReleaseWithoutHold() {
             var trn = card.Authorize(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -561,7 +560,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 }
 
                 var trn = card.Charge(98.10m)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithAddress(address)
                     .WithFraudFilter(FraudFilterMode.ACTIVE)
                     .Execute();
@@ -603,7 +602,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var idempotencyKey = Guid.NewGuid().ToString();
             
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .WithIdempotencyKey(idempotencyKey)
@@ -668,7 +667,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void Release_InvalidReason() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -697,10 +696,10 @@ namespace GlobalPayments.Api.Tests.GpApi
         
         [TestMethod]
         public void HoldTransactionAfterFraudResultHold() {
+            card.CardHolderName = "Lenny Bruce";
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
-                .WithCustomerIpAddress("123.123.123.123")
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
 
@@ -734,7 +733,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 }
 
                 var trn = card.Charge(98.10m)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithAddress(address)
                     .WithFraudFilter(FraudFilterMode.ACTIVE)
                     .Execute();
@@ -765,7 +764,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var idempotencyKey = Guid.NewGuid().ToString();
             
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .WithIdempotencyKey(idempotencyKey)
@@ -820,7 +819,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void Hold_InvalidReason() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();

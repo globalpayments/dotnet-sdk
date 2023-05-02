@@ -14,6 +14,7 @@ namespace GlobalPayments.Api.Gateways {
         public string TermID { get; internal set; }
         public string X509CertPath { get; internal set; }
         public string X509Base64String { get; internal set; }
+        public bool HasBuiltInMerchantManagementService => false;
 
         #region Transaction Handling
         public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class {

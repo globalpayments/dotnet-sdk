@@ -470,6 +470,14 @@ namespace GlobalPayments.Api.Gateways {
                         dataCode.CardDataInputMode = cardData.ReaderPresent ? DE22_CardDataInputMode.KeyEntry : DE22_CardDataInputMode.Manual;
                         dataCode.CardHolderPresence = cardData.CardPresent ? DE22_CardHolderPresence.CardHolder_Present : DE22_CardHolderPresence.CardHolder_NotPresent;
                         dataCode.CardPresence = cardData.CardPresent ? DE22_CardPresence.CardPresent : DE22_CardPresence.CardNotPresent;
+
+                        if (cardData.OriginalEntryMethod == EntryMethod.Chip) {
+                            dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactEmv;
+                        }
+
+                        if (cardData.OriginalEntryMethod == EntryMethod.Swipe) {
+                            dataCode.CardDataInputMode = DE22_CardDataInputMode.MagStripe;
+                        }
                     }
                     else if (originalPaymentMethod is ITrackData track) {
                         if (track is IEncryptable && ((IEncryptable)track).EncryptionData != null) {
@@ -1666,6 +1674,10 @@ namespace GlobalPayments.Api.Gateways {
             // setting the accountType
             DE3_AccountType accountType = DE3_AccountType.Unspecified;
             if (paymentMethod is Credit credit) {
+                bool isVisa = false;
+                if (credit.CardType == "Visa")
+                    isVisa = true;
+
                 if (credit.FleetCard) {
                     accountType = DE3_AccountType.FleetAccount;
                 }
@@ -1675,8 +1687,53 @@ namespace GlobalPayments.Api.Gateways {
                 else if (credit.ReadyLinkCard) {
                     accountType = DE3_AccountType.PinDebitAccount;
                 }
+                else if (credit.CardType == "Unknown") {
+                    accountType = DE3_AccountType.PinDebitAccount; // Testing through scenarios in certification have shown this to be exclusive to debit. We can update logic if we find otherwise in the future.
+                }
                 else {
-                    accountType = DE3_AccountType.CreditAccount;
+                    if (isVisa) {
+                        EmvData tagData = null;
+                        TlvData aidTag = null;
+                        if (builder is AuthorizationBuilder) {
+                            tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder)?.TagData, EnableLogging);
+                            aidTag = tagData.GetTag("9F06");
+                        }
+                        else if (builder is ManagementBuilder) {
+                            tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                            aidTag = tagData.GetTag("9F06");
+                        }
+
+                        if (aidTag == null) {
+                            // If the other AID location was null, check the alternate location for a possible value
+                            aidTag = tagData.GetTag("4F");
+
+                            if (aidTag == null) {
+                                accountType = DE3_AccountType.CreditAccount;
+                            }
+                            else {
+                                // Visa US Common Debit is not going through Debit rails so we need to force it
+                                if (aidTag.GetValue() == "A0000000980840") {
+                                    accountType = DE3_AccountType.PinDebitAccount;
+                                }
+                                else {
+                                    accountType = DE3_AccountType.CreditAccount;
+                                }
+                            }
+
+                        }
+                        else {
+                            // Visa US Common Debit is not going through Debit rails so we need to force it
+                            if (aidTag.GetValue() == "A0000000980840") {
+                                accountType = DE3_AccountType.PinDebitAccount;
+                            }
+                            else  {
+                                accountType = DE3_AccountType.CreditAccount;
+                            }
+                        }
+                    }
+                    else {
+                        accountType = DE3_AccountType.CreditAccount;
+                    }
                 }
             }
             else if (paymentMethod is Debit) {
@@ -1998,7 +2055,42 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // DE48-11
-            messageControl.CardType = MapCardType(builder.PaymentMethod);
+            // We are checking the AID EMV tag for specific application values, as they should be run with specific card types they won't get caught by the mapping control.
+            TlvData aidTag = null;
+            bool maestroCard = false;
+            if (builder is AuthorizationBuilder) {
+                EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
+                aidTag = tagData.GetTag("9F06");
+            }
+            else if (builder is ManagementBuilder) {
+                EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                aidTag = tagData.GetTag("9F06");
+            }
+            // If the tag is still null, check the other potential AID location
+            if (aidTag == null) {
+                if (builder is AuthorizationBuilder) {
+                    EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
+                    aidTag = tagData.GetTag("4F");
+                }
+                else if (builder is ManagementBuilder) {
+                    EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                    aidTag = tagData.GetTag("4F");
+                }
+            }
+
+            // If we have a value by this point, we need to check the value to see if we should force PINDEBIT card type
+            if (aidTag != null) {
+                if (aidTag.GetValue() == "A0000000042203") {
+                    maestroCard = true;
+                }
+            }
+
+            if (maestroCard) {
+                messageControl.CardType = DE48_CardType.PINDebitCard;
+            }
+            else {
+                messageControl.CardType = MapCardType(builder.PaymentMethod);
+            }
 
             // DE48-14
             if (builder.PaymentMethod is IPinProtected) {

@@ -4,6 +4,7 @@ using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.PaymentMethods;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace GlobalPayments.Api.Builders
@@ -88,6 +89,7 @@ namespace GlobalPayments.Api.Builders
         public UserReference UserReference { get; set; }    
         public Dictionary<string, PaymentMethodFunction?> PaymentMethodsFunctions { get; set; }
         public string IdempotencyKey { get; set; }
+        public Dictionary<AddressType, Address> Addresses { get; set; }
 
         public FlashFundsPaymentCardData FlashFundsPaymentCardData { get; set; }
 
@@ -99,14 +101,11 @@ namespace GlobalPayments.Api.Builders
         public override TResult Execute(string configName = "default") {
             base.Execute(configName);
 
-            var client = ServicesContainer.Instance.GetPayFac(configName);
-            switch (TransactionModifier)
-            {              
-                case TransactionModifier.Merchant:
-                    return client.ProcessBoardingUser(this);                   
-                default:
-                    break;
-            }           
+            var client = ServicesContainer.Instance.GetPayFac(configName);           
+
+            if (client.HasBuiltInMerchantManagementService) {
+                return client.ProcessBoardingUser(this);
+            }      
 
             return client.ProcessPayFac(this);
         }
@@ -246,6 +245,10 @@ namespace GlobalPayments.Api.Builders
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull();
 
+            Validations.For(TransactionType.Create)
+                .With(TransactionModifier.Merchant)
+                .Check(() => UserPersonalData).IsNotNull();           
+
             Validations.For(TransactionType.Fetch)
                 .With(TransactionModifier.Merchant)
                 .Check(() => UserReference).PropertyOf(nameof(UserReference.UserId)).IsNotNull();
@@ -253,6 +256,9 @@ namespace GlobalPayments.Api.Builders
             Validations.For(TransactionType.Edit)
                 .With(TransactionModifier.Merchant)
                 .Check(() => UserReference).PropertyOf(nameof(UserReference.UserId)).IsNotNull();
+
+            Validations.For(TransactionType.EditAccount)                
+                .Check(() => AccountNumber).IsNotNull();
         }
 
         public PayFacBuilder<TResult> WithBankAccountData(BankAccountData bankAccountData, PaymentMethodFunction? paymentMethodFunction = null) {
@@ -325,6 +331,14 @@ namespace GlobalPayments.Api.Builders
 
         public PayFacBuilder<TResult> WithIdempotencyKey(string value) {
             IdempotencyKey = value;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithAddress(Address value, AddressType type = AddressType.Billing) {
+            if(Addresses == null) {
+                Addresses = new Dictionary<AddressType, Address>();
+            }
+            Addresses.Add(type, value);
             return this;
         }
 

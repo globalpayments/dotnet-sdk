@@ -10,27 +10,18 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities
 {
-    public class GpApiPayFacRequestBuilder<T> where T : class
-    {
+    public class GpApiPayFacRequestBuilder<T> where T : class {
         private static PayFacBuilder<T> _builder { get; set; }        
         
-        internal static GpApiRequest BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway )
-        {
+        internal static GpApiRequest BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway) {
             _builder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
-            switch (builder.TransactionType)
-            {               
+            switch (builder.TransactionType) {               
                 case TransactionType.Create:
-                    if (builder.TransactionModifier == TransactionModifier.Merchant)
-                    {
-                        if (builder.UserPersonalData == null)
-                        {
-                            throw new ArgumentException("Merchant data is mandatory!");
-                        }
+                    if (builder.TransactionModifier == TransactionModifier.Merchant) {                        
                         var data = BuildCreateMerchantRequest();
 
-                        return new GpApiRequest
-                        {
+                        return new GpApiRequest {
                             Verb = HttpMethod.Post,
                             Endpoint = $"{merchantUrl}/merchants",
                             RequestBody = data.ToString(),
@@ -39,8 +30,7 @@ namespace GlobalPayments.Api.Entities
                     break;
                 case TransactionType.Edit:
                  if (builder.TransactionModifier == TransactionModifier.Merchant) {
-                        return new GpApiRequest
-                        {
+                        return new GpApiRequest {
                             Verb = new HttpMethod("PATCH"),
                             Endpoint = $"{merchantUrl}/merchants/{_builder.UserReference.UserId}",
                             RequestBody = BuildEditMerchantRequest().ToString(),
@@ -48,21 +38,89 @@ namespace GlobalPayments.Api.Entities
                     }
                     break;
                 case TransactionType.Fetch:
-                    if (builder.TransactionModifier == TransactionModifier.Merchant)
-                    {
-                        return new GpApiRequest
-                        {
+                    if (builder.TransactionModifier == TransactionModifier.Merchant) {
+                        return new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}/merchants/{_builder.UserReference.UserId}",                            
                         };
                     }
                     break;
-               
+                case TransactionType.EditAccount:
+                    var dataRequest = new JsonDoc();
+                    var paymentMethod = new Dictionary<string, object>();
+
+                    if (builder.CreditCardInformation != null) {
+                        var card = new Dictionary<string, object>();
+                        card.Add("name", builder.CreditCardInformation?.CardHolderName);
+                        card.Add("card", builder.CreditCardInformation is CreditCardData ? MapCreditCardInfo(builder.CreditCardInformation) : null);
+                        paymentMethod.Add("payment_method", card);
+                    }
+
+                    if ((builder.Addresses != null) && (builder.Addresses.ContainsKey(AddressType.Billing))){
+                        paymentMethod.Add("billing_address",
+                            MapAddress(builder.Addresses[AddressType.Billing], "alpha2"));
+                    }
+                    
+                    dataRequest.Set("payer", paymentMethod);
+
+                    var endpoint = merchantUrl;
+                    if (!string.IsNullOrEmpty(builder.UserReference?.UserId)) {
+                        endpoint = $"/merchants/{builder.UserReference.UserId}";
+                    }
+
+                    return new GpApiRequest {
+                        Verb = new HttpMethod("PATCH"),
+                        Endpoint = $"{endpoint}/accounts/{_builder.AccountNumber}",
+                        RequestBody = dataRequest.ToString(),
+                    };
                 default:
                     break;
             }
            
             return null;
+        }
+
+        private static Dictionary<string, object> MapAddress(Address address, string countryCodeType = null, string functionKey = null)
+        {
+            var countryCode = string.Empty;
+            switch (countryCodeType) {
+                case "alpha2":
+                    countryCode = CountryUtils.GetCountryCodeByCountry(address.CountryCode);
+                    break;
+                default:
+                countryCode = address.CountryCode;
+                    break;
+            }
+            var item = new Dictionary<string, object>();
+            if(!string.IsNullOrEmpty(functionKey))                
+                item.Add("functions", new string[] { functionKey });
+            if (!string.IsNullOrEmpty(address?.StreetAddress1))
+                item.Add("line_1", address.StreetAddress1);
+            if (!string.IsNullOrEmpty(address?.StreetAddress2))
+                item.Add("line_2", address.StreetAddress2);
+            if (!string.IsNullOrEmpty(address?.StreetAddress3))
+                item.Add("line_3", address.StreetAddress3);
+            if (!string.IsNullOrEmpty(address?.City))
+                item.Add("city", address.City); 
+            if (!string.IsNullOrEmpty(address?.PostalCode))
+                item.Add("postal_code", address.PostalCode);
+            if (!string.IsNullOrEmpty(address?.State))
+                item.Add("state", address.State);
+            
+            item.Add("country", countryCode);
+                        
+            return item;
+        }
+
+        private static Dictionary<string, object> MapCreditCardInfo(CreditCardData value)
+        {
+            var item = new Dictionary<string, object>();
+            item.Add("name", value.CardHolderName);
+            item.Add("number", value.Number);
+            item.Add("expiry_month", value.ExpMonth.HasValue ? value.ExpMonth.ToString().PadLeft(2, '0') : string.Empty);
+            item.Add("expiry_year", value.ExpYear.HasValue ? value.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
+            item.Add("cvv", value.Cvn);           
+            return item;
         }
 
         private static JsonDoc SetMerchantInfo()
@@ -140,18 +198,8 @@ namespace GlobalPayments.Api.Entities
                 item.Add("job_title", person.JobTitle);
 
 
-                if (person.Address != null && type == null)
-                {
-                    var address = new Dictionary<string, object>();
-                    address.Add("line_1", person.Address.StreetAddress1);
-                    address.Add("line_2", person.Address.StreetAddress2);
-                    address.Add("line_3", person.Address.StreetAddress3);
-                    address.Add("city", person.Address.City);
-                    address.Add("state", person.Address.State);
-                    address.Add("postal_code", person.Address.PostalCode);
-                    address.Add("country", person.Address.CountryCode);
-
-                    item.Add("address", address);
+                if (person.Address != null && type == null) {
+                    item.Add("address", MapAddress(person.Address));
                 }
                 if (person.HomePhone != null) {
                     var contactPhone = new Dictionary<string, object>();
@@ -188,23 +236,7 @@ namespace GlobalPayments.Api.Entities
             
                 bank.Add("international_code", ""); //@TODO
             
-
-            var address = new Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(bankAccountData?.BankAddress?.StreetAddress1))            
-                address.Add("line_1", bankAccountData?.BankAddress?.StreetAddress1);            
-            if (!string.IsNullOrEmpty(bankAccountData?.BankAddress?.StreetAddress2))
-                address.Add("line_2", bankAccountData?.BankAddress?.StreetAddress2);
-            if (!string.IsNullOrEmpty(bankAccountData?.BankAddress?.StreetAddress3))
-                address.Add("line_3", bankAccountData?.BankAddress?.StreetAddress3);
-            if (!string.IsNullOrEmpty(bankAccountData?.BankAddress?.City))
-                address.Add("city", bankAccountData?.BankAddress?.City);
-            if (!string.IsNullOrEmpty(bankAccountData?.BankAddress?.PostalCode))
-                address.Add("postal_code", bankAccountData?.BankAddress?.PostalCode);
-            if (!string.IsNullOrEmpty(bankAccountData?.BankAddress?.State))
-                address.Add("state", bankAccountData?.BankAddress?.State);
-            address.Add("country", bankAccountData?.BankAddress != null ? CountryUtils.GetCountryCodeByCountry(bankAccountData?.BankAddress?.CountryCode) : "");
-
-            bank.Add("address", address);
+            bank.Add("address", (bankAccountData.BankAddress != null) ? MapAddress(bankAccountData.BankAddress, "alpha2") : null);
 
             data.Add("bank", bank);                
 
@@ -273,15 +305,7 @@ namespace GlobalPayments.Api.Entities
             foreach (KeyValuePair<string, object> address in addressList) {               
                 var item = new Dictionary<string, object>();
                 var dataAddress = ((Address)address.Value);
-                item.Add("functions", new string[] { address.Key });
-                item.Add("line_1", dataAddress.StreetAddress1);
-                item.Add("line_2", dataAddress.StreetAddress2);
-                item.Add("city", dataAddress.City);
-                item.Add("postal_code", dataAddress.PostalCode);
-                item.Add("state", dataAddress.State);
-                item.Add("country", CountryUtils.GetCountryCodeByCountry(dataAddress.CountryCode));                
-
-                addresses.Add(item);               
+                addresses.Add(MapAddress(dataAddress, "alpha2", address.Key));               
             }
                         
             return addresses;

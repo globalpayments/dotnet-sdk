@@ -22,6 +22,7 @@ namespace GlobalPayments.Api.Mapping {
         private const string MERCHANT_SINGLE = "MERCHANT_SINGLE";
         private const string MERCHANT_EDIT = "MERCHANT_EDIT";
         private const string MERCHANT_EDIT_INITIATED = "MERCHANT_EDIT_INITIATED";
+        private const string ADDRESS_LIST = "ADDRESS_LIST";
 
         public static Transaction MapResponse(string rawResponse) {
             Transaction transaction = new Transaction();
@@ -137,12 +138,12 @@ namespace GlobalPayments.Api.Mapping {
                         var billingAddress = json.Get("payment_method")?.Get("payer").Get("billing_address");
                         payerDetails.FirstName = billingAddress.GetValue<string>("first_name") ?? null;
                         payerDetails.LastName = billingAddress.GetValue<string>("last_name") ?? null;
-                        var billing = MapMerchantAddress(billingAddress);
+                        var billing = MapAddressObject(billingAddress);
                         billing.Type = AddressType.Billing;
                         payerDetails.BillingAddress = billing;
                             
                     }
-                    var shipping = MapMerchantAddress(json.Get("payment_method")?.Get("shipping_address"));
+                    var shipping = MapAddressObject(json.Get("payment_method")?.Get("shipping_address"));
                     shipping.Type = AddressType.Shipping;
 
                     payerDetails.ShippingAddress = shipping;
@@ -541,9 +542,19 @@ namespace GlobalPayments.Api.Mapping {
                     (result as PagedResult<MerchantSummary>).Add(MapMerchantSummary(doc));
                 }                
             }
+            else if (reportType == ReportType.FindAccountsPaged && result is PagedResult<MerchantAccountSummary>) {
+                SetPagingInfo(result as PagedResult<MerchantAccountSummary>, json);
+                foreach (var doc in json.GetArray<JsonDoc>("accounts") ?? Enumerable.Empty<JsonDoc>()) {
+                    (result as PagedResult<MerchantAccountSummary>).Add(MapMerchantAccountSummary(doc));
+                }
+            }
+            else if (reportType == ReportType.FindAccountDetail && result is MerchantAccountSummary) {
+                result = MapMerchantAccountSummary(json) as T;
+            }
 
             return result;
         }
+
 
         private static void SetPagingInfo<T>(PagedResult<T> result, JsonDoc json) where T : class {
             result.TotalRecordCount = json.GetValue<int>("total_record_count", "total_count");
@@ -892,7 +903,59 @@ namespace GlobalPayments.Api.Mapping {
             };
         }
 
-       
+        private static MerchantAccountSummary MapMerchantAccountSummary(JsonDoc account)
+        {
+            var merchantAccountSummary = new MerchantAccountSummary();
+            merchantAccountSummary.Id = account.GetValue<string>("id");
+            if(account.Has("type"))
+            merchantAccountSummary.Type = (MerchantAccountType)Enum.Parse(typeof(MerchantAccountType), account.GetValue<string>("type"));
+            merchantAccountSummary.Name = account.GetValue<string>("name") ?? null;
+            if(account.Has("status"))
+            merchantAccountSummary.Status = (MerchantAccountStatus)Enum.Parse(typeof(MerchantAccountStatus), account.GetValue<string>("status"));           
+            merchantAccountSummary.Permissions = account.GetArray<string>("permissions")?.ToList() ?? null;
+            merchantAccountSummary.Countries = account.GetArray<string>("countries")?.ToList() ?? null;
+            merchantAccountSummary.Channels = account.GetArray<string>("channels")?.ToList()
+                                                    .Select(x => EnumConverter.FromMapping<Channel>(Target.GP_API, x)).ToList();
+            merchantAccountSummary.Currencies = account.GetArray<string>("currencies")?.ToList() ?? null;
+            merchantAccountSummary.PaymentMethods = GetPaymentMethodsName(account);
+            merchantAccountSummary.Configurations = account.GetArray<string>("configurations")?.ToList() ?? null;
+           
+            if (account.Has("addresses")) {
+                var addresses = new List<Address>();
+                var actionType = account.Get("action")?.GetValue<string>("type");
+                foreach (var address in account.GetArray<JsonDoc>("addresses") ?? Enumerable.Empty<JsonDoc>()) {
+                    addresses.Add(MapAddressObject(address, actionType));
+                }
+                merchantAccountSummary.Addresses = addresses;
+            }
+
+            return merchantAccountSummary;
+        }
+
+        private static List<PaymentMethodName> GetPaymentMethodsName(JsonDoc doc)
+        {
+            var result = new List<PaymentMethodName>();
+            foreach (var payment in doc.GetArray<JsonDoc>("payment_methods") ?? Enumerable.Empty<JsonDoc>()) {
+                switch (payment.ToString()) {
+                    case "BANK_TRANSFER":
+                        result.Add(PaymentMethodName.BankTransfer);
+                        break;
+                    case "BANK_PAYMENT":
+                        result.Add(PaymentMethodName.BankPayment);
+                        break;
+                    case "DIGITAL_WALLET":
+                        result.Add(PaymentMethodName.DigitalWallet);
+                        break;
+                    default:
+                        result.Add(EnumConverter.FromMapping<PaymentMethodName>(Target.GP_API, payment));
+                        break;
+                }
+                
+            }
+
+            return result;
+        }
+
         private static MerchantSummary MapMerchantSummary(JsonDoc merchant)
         {
             var merchantInfo = new MerchantSummary();
@@ -942,7 +1005,7 @@ namespace GlobalPayments.Api.Mapping {
                         if (json.Has("addresses")) {
                             user.Addresses = new List<Address>();
                             foreach (var address in json.GetArray<JsonDoc>("addresses") ?? Enumerable.Empty<JsonDoc>()) {                              
-                                var userAddress = MapMerchantAddress(address);                                
+                                var userAddress = MapAddressObject(address);                                
                                 if (address.Has("functions")) {
                                     userAddress.Type = EnumConverter.FromDescription<AddressType>((address.GetValue("functions") as List<string>).FirstOrDefault().ToString());
                                 }
@@ -1015,17 +1078,31 @@ namespace GlobalPayments.Api.Mapping {
             return merchantPaymentList;
         }
 
-        private static Address MapMerchantAddress(JsonDoc address)
+        private static Address MapAddressObject(JsonDoc address, string actionType = null)
         {
-            return new Address() {
-                StreetAddress1 = address.GetValue<string>("line_1") ?? null,
-                StreetAddress2 = address.GetValue<string>("line_2") ?? null,
-                StreetAddress3 = address.GetValue<string>("line_3") ?? null,
-                City = address.GetValue<string>("city") ?? null,
-                State = address.GetValue<string>("state") ?? null,
-                PostalCode = address.GetValue<string>("postal_code") ?? null,
-                CountryCode = address.GetValue<string>("country")
-            };
+            var addressReturn = new Address();
+            addressReturn.StreetAddress1 = address.GetValue<string>("line_1") ?? null;
+
+            switch (actionType) {
+                case ADDRESS_LIST:
+                    if (address.Get("line_2").HasKeys())
+                        addressReturn.StreetAddress2 = address.GetValue<string>("line_2") ?? null;
+                    if (address.Get("line_3").HasKeys())
+                        addressReturn.StreetAddress3 = address.GetValue<string>("line_3") ?? null;
+                    break;
+                default:
+                    addressReturn.StreetAddress2 = address.GetValue<string>("line_2") ?? null;
+                    addressReturn.StreetAddress3 = address.GetValue<string>("line_3") ?? null;
+                    break;
+            }
+
+           
+            addressReturn.City = address.GetValue<string>("city") ?? null;
+            addressReturn.State = address.GetValue<string>("state") ?? null;
+            addressReturn.PostalCode = address.GetValue<string>("postal_code") ?? null;
+            addressReturn.CountryCode = address.GetValue<string>("country");
+
+            return addressReturn;
         }
 
         private static List<Person> MapMerchantPersonList(JsonDoc json)
@@ -1042,7 +1119,7 @@ namespace GlobalPayments.Api.Mapping {
 
                 if (person.Has("address")) {
                     var address = person.Get("address");
-                    newPerson.Address = MapMerchantAddress(address);                   
+                    newPerson.Address = MapAddressObject(address);                   
                 }
 
                 newPerson.WorkPhone = person.Has("work_phone") ?

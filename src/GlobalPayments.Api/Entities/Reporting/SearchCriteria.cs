@@ -8,10 +8,12 @@ using GlobalPayments.Api.Entities.Enums;
 
 namespace GlobalPayments.Api.Entities {
     public enum SearchCriteria {
+        AccountId,
         AccountName,
         AccountNumberLastFour,
         ActionId,
         ActionType,
+        AccountStatus,
         AltPaymentStatus,
         AppName,
         AquirerReferenceNumber,
@@ -46,6 +48,8 @@ namespace GlobalPayments.Api.Entities {
         IssuerResult,
         IssuerTransactionId,
         MerchantName,
+        MerchantStatus,
+        Address,
         Name,
         OneTime,
         PaymentEntryMode,
@@ -114,6 +118,8 @@ namespace GlobalPayments.Api.Entities {
 
     public class SearchCriteriaBuilder<TResult> where TResult : class {
         private ReportBuilder<TResult> _reportBuilder;
+
+        internal string AccountId { get; set; }
 
         internal string AccountName { get; set; }
 
@@ -231,6 +237,8 @@ namespace GlobalPayments.Api.Entities {
 
         internal string MerchantName { get; set; }
 
+        public MerchantAccountStatus? MerchantStatus { get; set; }
+
         internal string Name { get; set; }
 
         internal bool? OneTime { get; set; }
@@ -255,8 +263,10 @@ namespace GlobalPayments.Api.Entities {
 
         internal string BankPaymentId { get; set; }
 
-        internal string PayLinkId { get; set; }       
-        
+        internal string PayLinkId { get; set; }
+
+        internal Address Address { get; set; }       
+
         public PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
    
         public string Description { get; set; }
@@ -264,6 +274,8 @@ namespace GlobalPayments.Api.Entities {
         public DateTime? ExpirationDate { get; set; }
     
         public PayLinkStatus? PayLinkStatus { get; set; }
+
+        public MerchantAccountStatus? AccountStatus { get; set; }
 
         internal bool? ReturnPII { get; set; }
 

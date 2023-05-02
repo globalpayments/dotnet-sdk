@@ -9,5 +9,6 @@ namespace GlobalPayments.Api.Gateways
     interface IPayFacProvider {
         T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class;
         T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class;
+        bool HasBuiltInMerchantManagementService { get; }
     }
 }

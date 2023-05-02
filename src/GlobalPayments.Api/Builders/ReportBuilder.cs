@@ -7,6 +7,7 @@ namespace GlobalPayments.Api.Builders {
         internal ReportType ReportType { get; set; }
         internal TimeZoneConversion TimeZoneConversion { get; set; }
         internal SortDirection? Order { get; set; }
+        internal MerchantAccountsSortProperty? AccountOrderBy { get; set; }
         internal TransactionSortProperty? TransactionOrderBy { get; set; }
         internal DepositSortProperty? DepositOrderBy { get; set; }
         internal DisputeSortProperty? DisputeOrderBy { get; set; }
@@ -16,10 +17,8 @@ namespace GlobalPayments.Api.Builders {
         internal string TransactionId { get; set; }
 
         private SearchCriteriaBuilder<TResult> _searchBuilder;
-        internal SearchCriteriaBuilder<TResult> SearchBuilder
-        {
-            get
-            {
+        internal SearchCriteriaBuilder<TResult> SearchBuilder {
+            get {
                 if (_searchBuilder == null)
                     _searchBuilder = new SearchCriteriaBuilder<TResult>(this);
                 return _searchBuilder;
@@ -39,8 +38,7 @@ namespace GlobalPayments.Api.Builders {
         public override TResult Execute(string configName = "default") {
             base.Execute(configName);
             object client;
-            switch (ReportType)
-            {
+            switch (ReportType) {
                 case ReportType.FindBankPayment:
                     client = ServicesContainer.Instance.GetOpenBanking(configName);                    
                     break;
@@ -58,8 +56,7 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="orderBy">Order by property</param>
         /// <param name="direction">Order by direction</param>
         /// <returns>TResult</returns>
-        public ReportBuilder<TResult> OrderBy(TransactionSortProperty orderBy, SortDirection direction = SortDirection.Ascending)
-        {
+        public ReportBuilder<TResult> OrderBy(TransactionSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             TransactionOrderBy = orderBy;
             Order = direction;
             return this;
@@ -71,8 +68,7 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="orderBy">Order by property</param>
         /// <param name="direction">Order by direction</param>
         /// <returns>TResult</returns>
-        public ReportBuilder<TResult> OrderBy(DepositSortProperty orderBy, SortDirection direction = SortDirection.Ascending)
-        {
+        public ReportBuilder<TResult> OrderBy(DepositSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             DepositOrderBy = orderBy;
             Order = direction;
             return this;
@@ -84,8 +80,7 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="orderBy">Order by property</param>
         /// <param name="direction">Order by direction</param>
         /// <returns>TResult</returns>
-        public ReportBuilder<TResult> OrderBy(DisputeSortProperty orderBy, SortDirection direction = SortDirection.Ascending)
-        {
+        public ReportBuilder<TResult> OrderBy(DisputeSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             DisputeOrderBy = orderBy;
             Order = direction;
             return this;
@@ -97,8 +92,7 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="orderBy">Order by property</param>
         /// <param name="direction">Order by direction</param>
         /// <returns></returns>
-        public ReportBuilder<TResult> OrderBy(StoredPaymentMethodSortProperty orderBy, SortDirection direction = SortDirection.Ascending)
-        {
+        public ReportBuilder<TResult> OrderBy(StoredPaymentMethodSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             StoredPaymentMethodOrderBy = orderBy;
             Order = direction;
             return this;
@@ -110,27 +104,35 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="orderBy">Order by property</param>
         /// <param name="direction">Order by direction</param>
         /// <returns></returns>
-        public ReportBuilder<TResult> OrderBy(ActionSortProperty orderBy, SortDirection direction = SortDirection.Ascending)
-        {
+        public ReportBuilder<TResult> OrderBy(ActionSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             ActionOrderBy = orderBy;
             Order = direction;
             return this;
         }
 
-        public ReportBuilder<TResult> OrderBy(PayLinkSortProperty orderBy, SortDirection direction = SortDirection.Ascending)
-        {
+        public ReportBuilder<TResult> OrderBy(PayLinkSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
             PayLinkOrderBy = orderBy;
             Order = direction;
             return this;
         }
 
-        public SearchCriteriaBuilder<TResult> Where<T>(SearchCriteria criteria, T value)
-        {
+        /// <summary>
+        /// Set the gateway action order by criteria for the Merchant and Account report.
+        /// </summary>
+        /// <param name="orderBy"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
+        public ReportBuilder<TResult> OrderBy(MerchantAccountsSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
+            AccountOrderBy = orderBy;
+            Order = direction;
+            return this;
+        }
+
+        public SearchCriteriaBuilder<TResult> Where<T>(SearchCriteria criteria, T value) {
             return SearchBuilder.And(criteria, value);
         }
 
-        public SearchCriteriaBuilder<TResult> Where<T>(DataServiceCriteria criteria, T value)
-        {
+        public SearchCriteriaBuilder<TResult> Where<T>(DataServiceCriteria criteria, T value) {
             return SearchBuilder.And(criteria, value);
         }
 
@@ -139,13 +141,11 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <param name="value">The gateway transaction ID</param>
         /// <returns>TResult</returns>
-        public ReportBuilder<TResult> WithTransactionId(string value)
-        {
+        public ReportBuilder<TResult> WithTransactionId(string value) {
             TransactionId = value;
             return this;
         }
-        public ReportBuilder<TResult> WithTimeZoneConversion(TimeZoneConversion value)
-        {
+        public ReportBuilder<TResult> WithTimeZoneConversion(TimeZoneConversion value) {
             TimeZoneConversion = value;
             return this;
         }
@@ -155,8 +155,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <param name="value">The gateway deposit reference</param>
         /// <returns>TResult</returns>
-        public ReportBuilder<TResult> WithDepositReference(string value)
-        {
+        public ReportBuilder<TResult> WithDepositReference(string value) {
             SearchBuilder.DepositReference = value;
             return this;
         }
@@ -167,8 +166,7 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>TResult</returns>
-        public ReportBuilder<TResult> WithPaging(int page, int pageSize)
-        {
+        public ReportBuilder<TResult> WithPaging(int page, int pageSize) {
             Page = page;
             PageSize = pageSize;
             return this;

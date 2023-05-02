@@ -26,11 +26,13 @@ namespace GlobalPayments.Api.Services {
                 TokenizationAccountName = data.TokenizationAccountName,
                 TransactionProcessingAccountName = data.TransactionProcessingAccountName,
                 RiskAssessmentAccountName = data.RiskAssessmentAccountName,
+                MerchantManagementAccountName = data.MerchantManagementAccountName,
                 DataAccountID = data.DataAccountID,
                 DisputeManagementAccountID = data.DisputeManagementAccountID,
                 TokenizationAccountID = data.TokenizationAccountID,
                 TransactionProcessingAccountID = data.TransactionProcessingAccountID,
                 RiskAssessmentAccountID = data.RiskAssessmentAccountID,
+                MerchantManagementAccountID = data.MerchantManagementAccountID
             };
         }
     }

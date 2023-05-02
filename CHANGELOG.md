@@ -4,6 +4,18 @@
 
 #### Enhancements
 
+- GP-API: Manage merchant accounts for partner solution
+- NWS: Various backend updates (Chip EntryMethod support, DE56 updates, OriginalEntryMethod tracking)
+- End-to-end demo security enhancements
+
+#### Bug fixes:
+
+- General: MasterCard regex correction
+
+## v5.1.5 (30/03/23)
+
+#### Enhancements
+
 - GP-API: Updated some properties for merchant request.
 - GP-API: Added payer information on Transaction object.
 - Portico Gateway: Updated Portico TransactionDetail report mapping to include Invoice Number.

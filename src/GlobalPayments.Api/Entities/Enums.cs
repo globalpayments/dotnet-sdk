@@ -193,6 +193,11 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates proximity/contactless entry.
         /// </summary>
         Proximity,
+
+        /// <summary>
+        /// Indicates contact entry
+        /// </summary>
+        Chip
     }
 
     /// <summary>
@@ -595,7 +600,11 @@ namespace GlobalPayments.Api.Entities {
 
         FindPayLinkPaged = 1 << 25,
 
-        FindMerchantsPaged = 1 << 26
+        FindMerchantsPaged = 1 << 26,
+
+        FindAccountsPaged = 1 << 27,
+
+        FindAccountDetail = 1 << 28
     }
 
     /// <summary>

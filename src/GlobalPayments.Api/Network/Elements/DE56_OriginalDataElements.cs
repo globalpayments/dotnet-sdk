@@ -19,13 +19,13 @@ namespace GlobalPayments.Api.Network.Elements {
             return this;
         }
         public byte[] ToByteArray() {
-            string rvalue = string.Concat(MessageTypeIdentifier
-                ,SystemTraceAuditNumber
-                ,TransactionDateTime);
+            string rvalue = string.Concat(MessageTypeIdentifier, SystemTraceAuditNumber, TransactionDateTime);
             // put the acquirer id if present
             if (!string.IsNullOrEmpty(AcquiringInstitutionId)) {
-                rvalue = string.Concat(rvalue,StringUtils.PadLeft(AcquiringInstitutionId.Length, 2, '0')
-                        ,AcquiringInstitutionId);
+                rvalue = string.Concat(rvalue, StringUtils.PadLeft(AcquiringInstitutionId.Length, 2, '0'), AcquiringInstitutionId);
+            }
+            else {
+                rvalue = string.Concat(rvalue, "00");
             }
             return Encoding.ASCII.GetBytes(rvalue);
         }

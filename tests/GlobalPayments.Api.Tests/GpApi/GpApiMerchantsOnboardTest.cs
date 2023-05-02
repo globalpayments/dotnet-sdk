@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.PayFac;
@@ -238,6 +239,39 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsTrue(merchants.TotalRecordCount > 0);
             Assert.IsTrue(merchants.Results.Count <= 10);
+        }
+
+        [TestMethod]
+        public void SearchMerchantAccounts()
+        {
+            var config = new GpApiConfig
+            {
+                AppId = AppIdForMerchant,
+                AppKey = AppKeyForMerchant,
+                Environment = Environment.TEST,
+                Channel = Channel.CardNotPresent,                
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true,
+            };          
+
+            var merchants = _reportingService.FindMerchants(1, 10)
+                .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)
+                .Execute();
+
+            Assert.IsTrue(merchants.TotalRecordCount > 0);
+            Assert.IsTrue(merchants.Results.Count <= 10);
+
+            var merchantId = merchants.Results.FirstOrDefault().Id;
+
+            config.MerchantId = merchantId;
+            ServicesContainer.ConfigureService(config, "accounts");
+
+            var accounts = ReportingService.FindAccounts(1, 10)
+                .Where(SearchCriteria.AccountStatus, MerchantAccountStatus.ACTIVE)                
+                .Execute("accounts");
+
+            Assert.IsNotNull(accounts);
+            Assert.IsTrue(accounts.Results.Count > 0);
         }
 
         [TestMethod]

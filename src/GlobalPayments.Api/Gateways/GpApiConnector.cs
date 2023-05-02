@@ -13,8 +13,9 @@ using System.Reflection;
 namespace GlobalPayments.Api.Gateways {
     internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService
     {
-        private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";        
-        public GpApiConfig GpApiConfig { get; set; }
+        private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
+        public bool HasBuiltInMerchantManagementService => true;
+        public GpApiConfig GpApiConfig { get; set; }       
 
         private string _AccessToken;
         public string AccessToken {
@@ -107,6 +108,10 @@ namespace GlobalPayments.Api.Gateways {
             if (string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountName) &&
                 string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountID)) {
                 accessTokenInfo.RiskAssessmentAccountID = response.RiskAssessmentAccountID;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.MerchantManagementAccountName) &&
+               string.IsNullOrEmpty(accessTokenInfo.MerchantManagementAccountID)) {
+                accessTokenInfo.MerchantManagementAccountID = response.MerchantManagementAccountID;
             }
 
             GpApiConfig.AccessTokenInfo = accessTokenInfo;

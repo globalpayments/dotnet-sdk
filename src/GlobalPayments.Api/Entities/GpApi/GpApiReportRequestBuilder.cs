@@ -289,14 +289,53 @@ namespace GlobalPayments.Api.Entities {
             {                
                 switch (builder.ReportType) {
                     case ReportType.FindMerchantsPaged:
-                        request = new GpApiRequest
-                        {
+                        request = new GpApiRequest {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}/merchants"
                         };
+                        BasicsParams(request, userTrb);
+                        request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, userTrb.Order));
+                        request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, userTrb.AccountOrderBy));
+                        request.AddQueryStringParam("status", userTrb.SearchBuilder.MerchantStatus?.ToString());
 
-                        request.AddQueryStringParam("page", userTrb.Page.ToString());
-                        request.AddQueryStringParam("page_size", userTrb.PageSize.ToString());
+                        return request;
+
+                    case ReportType.FindAccountsPaged:
+                        var endpoint = merchantUrl;
+                        if(!string.IsNullOrEmpty(userTrb.SearchBuilder.MerchantId)) {
+                            endpoint = $"/merchants/{userTrb.SearchBuilder.MerchantId}";
+                        }
+                        request = new GpApiRequest {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{endpoint}/accounts",
+                        };
+
+                        BasicsParams(request, userTrb);
+                        request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, userTrb.Order));
+                        request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, userTrb.AccountOrderBy));
+                        request.AddQueryStringParam("from_time_created", userTrb.SearchBuilder.StartDate?.ToString("yyyy-MM-dd"));
+                        request.AddQueryStringParam("to_time_created", userTrb.SearchBuilder.EndDate?.ToString("yyyy-MM-dd"));
+                        request.AddQueryStringParam("status", userTrb.SearchBuilder.AccountStatus?.ToString());
+                        request.AddQueryStringParam("name", userTrb.SearchBuilder.AccountName);
+                        request.AddQueryStringParam("id", userTrb.SearchBuilder.ResourceId);
+
+                        return request;
+
+                    case ReportType.FindAccountDetail:
+                        request = new GpApiRequest {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}/accounts/{builder.SearchBuilder.AccountId}",
+                        };
+
+                        if(builder.SearchBuilder.Address != null) {
+                            request = new GpApiRequest {
+                                Verb = HttpMethod.Get,
+                                Endpoint = $"{merchantUrl}/accounts/{builder.SearchBuilder.AccountId}/addresses",
+                            };
+                            request.AddQueryStringParam("postal_code", userTrb.SearchBuilder.Address.PostalCode);
+                            request.AddQueryStringParam("line_1", userTrb.SearchBuilder.Address.StreetAddress1);
+                            request.AddQueryStringParam("line_2", userTrb.SearchBuilder.Address.StreetAddress2);
+                        }
 
                         return request;
                 }
@@ -304,6 +343,12 @@ namespace GlobalPayments.Api.Entities {
             }                
             
             return null;
+        }
+
+        private static void BasicsParams<T>(GpApiRequest request, UserReportBuilder<T> userTrb) where T : class
+        {
+            request.AddQueryStringParam("page", userTrb.Page.ToString());
+            request.AddQueryStringParam("page_size", userTrb.PageSize.ToString());
         }
     }
 }

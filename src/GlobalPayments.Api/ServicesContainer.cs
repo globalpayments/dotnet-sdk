@@ -69,8 +69,7 @@ namespace GlobalPayments.Api {
             }
         }
 
-        internal void SetPayFacProvider(IPayFacProvider provider)
-        {
+        internal void SetPayFacProvider(IPayFacProvider provider) {
             if (this.PayFacProvider == null) {
                 this.PayFacProvider = provider;
             }
