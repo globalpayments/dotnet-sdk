@@ -1022,8 +1022,8 @@ namespace GlobalPayments.Api.Gateways {
                                 return "CreditOfflineAuth"; // CreditOfflineAuth : Auth (Offline|Credit)
                             else if (builder.TransactionModifier == TransactionModifier.Recurring)
                                 return "RecurringBillingAuth"; // RecurringBillingAuth : Auth (Recurring)
-                            else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
-                                throw new UnsupportedTransactionException();
+                           // else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
+                             //   throw new UnsupportedTransactionException();
                             return "CreditAuth"; // CreditAuth : Auth (Credit)
                         }
                         else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Recurring)

@@ -4,6 +4,18 @@
 
 #### Enhancements
 
+- Portico Gateway: Enable CreditAuth transaction type for Apple Pay & Google Pay.
+- GP-ECOM: Added missing 3DS fields mapping for MOBILE_SDK.
+
+#### Bug fixes:
+
+- GP-ECOM: Fixed remittance_reference when it is null.
+- GP-API: Update token with usage_mode only.
+
+## v5.1.6 (02/05/23)
+
+#### Enhancements
+
 - GP-API: Manage merchant accounts for partner solution
 - NWS: Various backend updates (Chip EntryMethod support, DE56 updates, OriginalEntryMethod tracking)
 - End-to-end demo security enhancements

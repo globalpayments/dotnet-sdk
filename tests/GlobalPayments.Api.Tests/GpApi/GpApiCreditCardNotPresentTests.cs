@@ -104,41 +104,66 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void UpdatePaymentToken()
-        {
-            DateTime startDate = DateTime.UtcNow.AddDays(-30);
-            DateTime endDate = DateTime.UtcNow;
-
+        public void UpdatePaymentToken() {
             var response = ReportingService.FindStoredPaymentMethodsPaged(1, 1)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
                 .Execute();
 
             Assert.AreEqual(1, response.Results.Count);
             var pmtToken = response.Results[0].Id;
             Assert.IsNotNull(pmtToken);            
-            var tokenizedCard = new CreditCardData();
-            tokenizedCard.Token = pmtToken;
-            tokenizedCard.CardHolderName = "James BondUp";
-            tokenizedCard.ExpYear = DateTime.Now.AddYears(1).Year;
-            tokenizedCard.ExpMonth = DateTime.Now.Month;
-            tokenizedCard.Number = "4263970000005262";
+            var tokenizedCard = new CreditCardData {
+                Token = pmtToken,
+                CardHolderName = "James BondUp",
+                ExpYear = ExpYear,
+                ExpMonth = ExpMonth,
+                Number = "4263970000005262"
+            };
 
-            var response2 = tokenizedCard.UpdateToken()
+            var updateTokenResponse = tokenizedCard.UpdateToken()
                 .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Multiple)
                 .Execute();
 
-            Assert.AreEqual("SUCCESS", response2.ResponseCode);
-            Assert.AreEqual("ACTIVE", response2.ResponseMessage);
-            Assert.AreEqual(pmtToken, response2.Token);
-            Assert.AreEqual(PaymentMethodUsageMode.Multiple, response2.TokenUsageMode);
+            Assert.AreEqual("SUCCESS", updateTokenResponse.ResponseCode);
+            Assert.AreEqual("ACTIVE", updateTokenResponse.ResponseMessage);
+            Assert.AreEqual(pmtToken, updateTokenResponse.Token);
+            Assert.AreEqual(PaymentMethodUsageMode.Multiple, updateTokenResponse.TokenUsageMode);
+        }
+        
+        [TestMethod]
+        public void UpdatePaymentToken_UsageModeOnly()
+        {
+            var response = ReportingService.FindStoredPaymentMethodsPaged(1, 1)
+                .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)
+                .Where(SearchCriteria.StartDate, StartDate)
+                .And(SearchCriteria.EndDate, EndDate)
+                .Execute();
+
+            Assert.AreEqual(1, response.Results.Count);
+            var pmtToken = response.Results[0].Id;
+            Assert.IsNotNull(pmtToken);            
+            var tokenizedCard = new CreditCardData {
+                Token = pmtToken,
+                CardHolderName = "James BondUp",
+                Number = "4263970000005262"
+            };
+
+            var updateTokenResponse = tokenizedCard.UpdateToken()
+                .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Multiple)
+                .Execute();
+
+            Assert.AreEqual("SUCCESS", updateTokenResponse.ResponseCode);
+            Assert.AreEqual("ACTIVE", updateTokenResponse.ResponseMessage);
+            Assert.AreEqual(pmtToken, updateTokenResponse.Token);
+            Assert.AreEqual(PaymentMethodUsageMode.Multiple, updateTokenResponse.TokenUsageMode);
         }
 
         [TestMethod]
         public void CardTokenizationThenUpdateAndThenCharge()
         {
-            var tokenId = card.Tokenize("default");
+            var tokenId = card.Tokenize();
         
             card.Token = tokenId;
             card.CardHolderName = "GpApi";
@@ -160,70 +185,60 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CardTokenizationThenUpdateToSingleUsage()
-        {
-            var tokenizedCard = new CreditCardData();
-            tokenizedCard.Token = $"PMT_{Guid.NewGuid()}";
+        public void CardTokenizationThenUpdateToSingleUsage() {
+            var tokenizedCard = new CreditCardData {
+                Token = $"PMT_{Guid.NewGuid()}"
+            };
 
             var exceptionCaught = false;
-            try
-            {
+            try {
                 tokenizedCard.UpdateToken()
                     .WithPaymentMethodUsageMode(PaymentMethodUsageMode.Single)
                     .Execute();
-            }
-            catch (GatewayException e) {
+            } catch (GatewayException e) {
                 exceptionCaught = true;
                 Assert.AreEqual("50020", e.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Tokentype can only be MULTI", e.Message);
-            } finally
-            {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
 
         [TestMethod]
-        public void CardTokenizationThenUpdateWithoutUsageMode()
-        {
-            var tokenizedCard = new CreditCardData();
-            tokenizedCard.Token = $"PMT_{Guid.NewGuid()}";
+        public void CardTokenizationThenUpdateWithoutUsageMode() {
+            var tokenizedCard = new CreditCardData {
+                Token = $"PMT_{Guid.NewGuid()}"
+            };
 
             var exceptionCaught = false;
-            try
-            {
+            try {
                 tokenizedCard.UpdateToken()
                     .Execute();
-            }
-            catch (GatewayException e) {
+            } catch (GatewayException e) {
                 exceptionCaught = true;
                 Assert.AreEqual("50021", e.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Mandatory Fields missing [card expdate] See Developers Guide", e.Message);
-            } finally
-            {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
 
         [TestMethod]
-        public void CardTokenizationWithSomeCardInfoThenUpdateWithoutUsageMode()
-        {
-            var tokenizedCard = new CreditCardData();
-            tokenizedCard.ExpMonth = ExpMonth;
-            tokenizedCard.ExpYear = ExpYear;
-            tokenizedCard.Token = $"PMT_{Guid.NewGuid()}";
+        public void CardTokenizationWithSomeCardInfoThenUpdateWithoutUsageMode() {
+            var tokenizedCard = new CreditCardData {
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
+                Token = $"PMT_{Guid.NewGuid()}"
+            };
             var exceptionCaught = false;
-            try
-            {
+            try {
                 tokenizedCard.UpdateToken()
                     .Execute();
-            }
-            catch (GatewayException e) {
+            } catch (GatewayException e) {
                 exceptionCaught = true;
                 Assert.AreEqual("40116", e.ResponseMessage);
                 Assert.AreEqual($"Status Code: NotFound - payment_method {tokenizedCard.Token} not found at this location.", e.Message);
-            }
-            finally
-            {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -267,13 +282,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
         
         [TestMethod]
-        public void CreditAuthorizationWithPaymentLinkId()
-        {
+        public void CreditAuthorizationWithPaymentLinkId() {
             var transaction = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
                 .WithPaymentLinkId("LNK_W1xgWehivDP8P779cFDDTZwzL01EEw4")
                 .Execute();
+            
             AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
         }
 
@@ -287,6 +302,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var capture = transaction.Capture(2.99m)
                 .WithGratuity(2m)
                 .Execute();
+            
             AssertTransactionResponse(capture, TransactionStatus.Captured);
         }
 
@@ -300,6 +316,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var capture = transaction.Capture(AMOUNT * 1.15m)
                 .WithGratuity(2m)
                 .Execute();
+            
             AssertTransactionResponse(capture, TransactionStatus.Captured);
         }
 
@@ -316,8 +333,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 transaction.Capture(AMOUNT * 1.16m)
                     .WithGratuity(2m)
                     .Execute();
-            } 
-            catch (GatewayException ex) {
+            } catch (GatewayException ex) {
                 Assert.AreEqual("50020", ex.ResponseMessage);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
                 Assert.AreEqual(

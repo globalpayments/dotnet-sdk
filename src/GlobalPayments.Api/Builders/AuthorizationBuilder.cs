@@ -67,7 +67,7 @@ namespace GlobalPayments.Api.Builders {
         public PhoneNumber HomePhone { get; set; }
         public PhoneNumber WorkPhone { get; set; }
         public PhoneNumber ShippingPhone { get; set; }
-        public RemittanceReferenceType RemittanceReferenceType { get; set; }
+        public RemittanceReferenceType? RemittanceReferenceType { get; set; }
         public string RemittanceReferenceValue { get; set; }
         public PhoneNumber MobilePhone { get; set; }
         internal string PosSequenceNumber { get; set; }

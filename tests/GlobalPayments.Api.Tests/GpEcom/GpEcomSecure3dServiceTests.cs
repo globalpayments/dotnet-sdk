@@ -683,6 +683,15 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         [TestMethod]
         public void OptionalMobileFields() {
             // check enrollment
+            card.Number = "4012001038488884";
+
+            const string ephemeralPublicKey = "{" +
+                                              "\"kty\":\"EC\"," +
+                                              "\"crv\":\"P-256\"," +
+                                              "\"x\":\"WWcpTjbOqiu_1aODllw5rYTq5oLXE_T0huCPjMIRbkI\"," +
+                                              "\"y\":\"Wz_7anIeadV8SJZUfr4drwjzuWoUbOsHp5GdRZBAAiw\"" +
+                                              "}";
+
             ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
                         .Execute(Secure3dVersion.Two);
             Assert.IsNotNull(secureEcom);
@@ -694,24 +703,36 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                         .WithAmount(250m)
                         .WithCurrency("USD")
+                        .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
                         .WithOrderCreateDate(DateTime.Now)
+                        .WithOrderId(secureEcom.OrderId)
                         .WithAddress(billingAddress, AddressType.Billing)
                         .WithAddress(shippingAddress, AddressType.Shipping)
-                        .WithBrowserData(browserData)
+                        .WithAddressMatchIndicator(false)
                         .WithMethodUrlCompletion(MethodUrlCompletion.NO)
+                        .WithMessageCategory(MessageCategory.PAYMENT_AUTHENTICATION)
+                        .WithCustomerEmail("customer@domain.com")
+                        //.WithBrowserData(browserData)
 
                         // optionals
                         .WithApplicationId("f283b3ec-27da-42a1-acea-f3f70e75bbdc")
                         .WithSdkInterface(SdkInterface.BOTH)
-                        .WithSdkUiTypes(SdkUiType.TEXT, SdkUiType.SINGLE_SELECT, SdkUiType.MULTI_SELECT, SdkUiType.OOB, SdkUiType.HTML_OTHER)
-                        // .WithEphemeralPublicKey("{\"kty\":\"EC\",\"crv\":\"p-256\",\"x\":\"WWcpTjbOqiu_1aODllw5rYTq5oLXE_T0huCPjMIRbkI\",\"y\":\"Wz_7anIeadV8SJZUfr4drwjzuWoUbOsHp5GdRZBAAiw\"}")
-                        // .WithMaximumTimeout(5)
+                        .WithSdkUiTypes(SdkUiType.TEXT, SdkUiType.SINGLE_SELECT, SdkUiType.MULTI_SELECT, SdkUiType.OOB, SdkUiType.HTML_OTHER)                        
+                        .WithMaximumTimeout(5)
                         .WithReferenceNumber("3DS_LOA_SDK_PPFU_020100_00007")
                         .WithSdkTransactionId("b2385523-a66c-4907-ac3c-91848e8c0067")
                         .WithEncodedData("ew0KCSJEViI6ICIxLjAiLA0KCSJERCI6IHsNCgkJIkMwMDEiOiAiQW5kcm9pZCIsDQoJCSJDMDAyIjogIkhUQyBPbmVfTTgiLA0KCQkiQzAwNCI6ICI1LjAuMSIsDQoJCSJDMDA1IjogImVuX1VTIiwNCgkJIkMwMDYiOiAiRWFzdGVybiBTdGFuZGFyZCBUaW1lIiwNCgkJIkMwMDciOiAiMDY3OTc5MDMtZmI2MS00MWVkLTk0YzItNGQyYjc0ZTI3ZDE4IiwNCgkJIkMwMDkiOiAiSm9obidzIEFuZHJvaWQgRGV2aWNlIg0KCX0sDQoJIkRQTkEiOiB7DQoJCSJDMDEwIjogIlJFMDEiLA0KCQkiQzAxMSI6ICJSRTAzIg0KCX0sDQoJIlNXIjogWyJTVzAxIiwgIlNXMDQiXQ0KfQ0K")
-
+                        .WithEphemeralPublicKey(ephemeralPublicKey)
+                        
                         .Execute();
+                
                 Assert.IsNotNull(initAuth);
+                Assert.AreEqual("CHALLENGE_REQUIRED", initAuth.Status);
+                Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
+                Assert.IsNotNull(initAuth.AcsInterface);
+                Assert.IsNotNull(initAuth.AcsTransactionId);
+                Assert.IsNotNull(initAuth.AcsUiTemplate);
+                Assert.IsNotNull(initAuth.AcsReferenceNumber);
 
                 // get authentication data
                 secureEcom = Secure3dService.GetAuthenticationData()
@@ -719,7 +740,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                         .Execute();
                 card.ThreeDSecure = secureEcom;
 
-                if (secureEcom.Status.Equals("AUTHENTICATION_SUCCESSFUL")) {
+                if (secureEcom.Status.Equals("CHALLENGE_REQUIRED")) {
                     Transaction response = card.Charge(10.01m)
                             .WithCurrency("USD")
                             .Execute();

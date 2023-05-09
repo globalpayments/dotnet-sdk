@@ -250,7 +250,7 @@ namespace GlobalPayments.Api.Gateways {
                     JsonDoc sdkInformationElement = request.SubElement("sdk_information")
                         .Set("application_id", builder.ApplicationId)
                         .Set("ephemeral_public_key", builder.EphemeralPublicKey)
-                        .Set("maximum_timeout", builder.MaximumTimeout)
+                        .Set("maximum_timeout", builder.MaximumTimeout.ToString().PadLeft(2, '0'))
                         .Set("reference_number", builder.ReferenceNumber)
                         .Set("sdk_trans_id", builder.SdkTransactionId)
                         .Set("encoded_data", builder.EncodedData)
@@ -364,6 +364,14 @@ namespace GlobalPayments.Api.Gateways {
             else if (doc.Has("encoded_creq")) {
                 secureEcom.PayerAuthenticationRequest = doc.GetValue<string>("encoded_creq");
             }
+
+            if (secureEcom.AuthenticationSource == AuthenticationSource.MOBILE_SDK.ToString()) {
+                secureEcom.PayerAuthenticationRequest = doc.GetValue<string>("acs_signed_content") ?? null;
+                secureEcom.AcsInterface = doc.Get("acs_rendering_type")?.GetValue<string>("acs_interface") ?? null;
+                secureEcom.AcsUiTemplate = doc.Get("acs_rendering_type")?.GetValue<string>("acs_ui_template") ?? null;
+            }
+            
+            secureEcom.AcsReferenceNumber = doc.GetValue<string>("acs_reference_number") ?? null;
 
             Transaction response = new Transaction {
                 ThreeDSecure = secureEcom

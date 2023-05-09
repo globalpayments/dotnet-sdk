@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         public PorticoEcommerceTests() {
             ServicesContainer.ConfigureService(new PorticoConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
+                SecretApiKey = "skapi_cert_MZ64BQBBoHAA5N2pWWCvZ7c1HTKDM2g_4HsnyC6rIQ"
             });
 
             card = TestCards.VisaManual();
@@ -107,7 +107,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void EcomWithSecureEcommerceWalletDataWithMobileType() {
+        public void EcomSaleWithSecureEcommerceWalletDataWithMobileType() {
            
             card.MobileType = MobilePaymentMethodType.APPLEPAY;
             card.PaymentSource = PaymentDataSourceType.APPLEPAYWEB;
@@ -120,6 +120,22 @@ namespace GlobalPayments.Api.Tests.Portico {
                     .Execute();
                 Assert.IsNotNull(response);
                 Assert.AreEqual("00", response.ResponseCode);          
+        }
+
+        [TestMethod]
+        public void EcomAuthWithSecureEcommerceWalletDataWithMobileType()
+        {
+
+            card.MobileType = MobilePaymentMethodType.GOOGLEPAY;
+            card.PaymentSource = PaymentDataSourceType.GOOGLEPAYWEB;
+            card.Token = "{\"signature\":\"MEQCIE0Y69+lCD/pwrdE1G8Uz7UCVtSzZrFkCZc3cBEESamqAiBgFOk7Ra0TptPDHDnEWYf5fbJL3N6gd/4jZjKdOmbdOA\\u003d\\u003d\",\"protocolVersion\":\"ECv1\",\"signedMessage\":\"{\\\"encryptedMessage\\\":\\\"5RBYQVLQ4mP5EDU8NrGtK4G5b74txt5rjuOULZFyyCQmrMc77iemfzEoiJ6iE0JSliXeLIF8XdUnwU9pIwmlEf31n5+5ix+cIPVLccBKQFegJ38dIz11PG6zdOy9b7a5FkHt86BK3WLyWk5wcVyNInYfI9cM5Et6drujHWwCvr3FFQq53HIkYjW06KBzjuddA7mZHDAv8qnP0wTOnmVBJiBGeVNqNuINEX8WFN8J2ghkd/uoD2zT7CwzIXgx4JwEtDDmFSdV4dSv6MS+K05lYG2NAfvrgFsGDHpQ3T/Vh4mMAiWHJMNxGNvvtvGoEw6iBf4V1sSAygJX/FOR93OHxLNsXPMgZ54ymsh/odzO2j3hJGXdX6wCqbc+0PHILw2/7MDr+NdDcnwRI3ByRDTgQ0RYRB3MaBqzP6v74u/EAzUOfihqxlFT03GpdQGxelHBc1IHoe7lzQ\\\\u003d\\\\u003d\\\",\\\"ephemeralPublicKey\\\":\\\"BBile099xneBNimz2d/KJxw8Qhj6Fe98aeiseCY0ccZzS7pNY2zID5OEzYPKh4anTu32U9H8Dxu2g2oL7JMcD9c\\\\u003d\\\",\\\"tag\\\":\\\"uIrfAI8u37LJ6nlNLY4/XklR5OHktLZatgRjgj+pvNk\\\\u003d\\\"}\"}";
+
+            Transaction response = card.Authorize(10m)
+                    .WithCurrency("USD")
+                    .WithAllowDuplicates(true)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
         }
 
         [TestMethod]

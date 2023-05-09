@@ -55,8 +55,8 @@ namespace GlobalPayments.Api.Mapping {
                         transaction.CardType = json.Get("card")?.GetValue<string>("brand");
                         transaction.CardNumber = json.Get("card")?.GetValue<string>("number");
                         transaction.CardLast4 = json.Get("card")?.GetValue<string>("masked_number_last4");
-                        transaction.CardExpMonth = json.Get("card")?.GetValue<int>("expiry_month");
-                        transaction.CardExpYear = json.Get("card")?.GetValue<int>("expiry_year");
+                        transaction.CardExpMonth = json.Get("card")?.GetValue<string>("expiry_month")?.ToInt32();
+                        transaction.CardExpYear = json.Get("card")?.GetValue<string>("expiry_year")?.ToInt32();
                         return transaction;
                     case LINK_CREATE:
                     case LINK_EDIT:

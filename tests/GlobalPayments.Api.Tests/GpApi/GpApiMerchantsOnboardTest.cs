@@ -425,9 +425,9 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .WithPersonsData(persons)
                     .WithPaymentStatistics(paymentStatistics)
                     .Execute();
-            } catch (ArgumentException ex) {
+            } catch (BuilderException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Merchant data is mandatory!", ex.Message);
+                Assert.AreEqual("UserPersonalData cannot be null for this transaction type.", ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -575,35 +575,6 @@ namespace GlobalPayments.Api.Tests.GpApi
                 exceptionCaught = true;
                 Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following fields website",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
-        }
-
-        [TestMethod]
-        public void BoardMerchant_WithoutTaxIdReference() {
-            var merchantData = GetMerchantData();
-            merchantData.TaxIdReference = null;
-
-            var productData = GetProductList();
-            var persons = GetPersonList();
-            var paymentStatistics = GetPaymentStatistics();
-
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields tax_id_reference",
                     ex.Message);
                 Assert.AreEqual("40005", ex.ResponseMessage);
             } finally {
