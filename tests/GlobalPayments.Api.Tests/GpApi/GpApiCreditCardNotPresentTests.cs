@@ -513,7 +513,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Reversed);
         }
-
+      
         [TestMethod]
         public void CreditReverseTransaction_WithIdempotencyKey() {
             var transaction = card.Authorize(AMOUNT)

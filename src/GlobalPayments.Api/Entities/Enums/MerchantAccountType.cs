@@ -12,6 +12,6 @@ namespace GlobalPayments.Api.Entities.Enums
         MERCHANT_MANAGEMENT,
         TOKENIZATION,
         FUND_MANAGEMENT,
-        RISK_ASSESMENT
+        RISK_ASSESSMENT
     }
 }

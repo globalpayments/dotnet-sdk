@@ -46,6 +46,29 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         [TestMethod]
+        public void ClickToPayEncryptedChargeThenSplitAmount()
+        {
+            card.Token = "9113329269393758302";
+            card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
+
+            var response = card.Charge(10m)
+                .WithCurrency("EUR")
+                .WithModifier(TransactionModifier.EncryptedMobile)
+                .WithMaskedDataResponse(true)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.IsFalse(string.IsNullOrEmpty(response.TransactionId));
+            AssertClickToPayPayerDetails(response);
+
+            var split = response.Split(5m)
+                .WithDescription("Split CTP")
+                .Execute();
+        }
+
+        [TestMethod]
         public void ClickToPayEncryptedChargeThenRefund()
         {
             card.Token = "9113329269393758302";

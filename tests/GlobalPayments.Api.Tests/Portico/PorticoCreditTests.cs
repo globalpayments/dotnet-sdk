@@ -78,6 +78,38 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(capture);
             Assert.AreEqual("00", capture.ResponseCode);
         }
+        
+       
+        [TestMethod]
+        public void CreditAuthorizationWithCommercialRequest()
+        {
+            var response = card.Authorize(14m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithCommercialRequest(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var capture = response.Capture(16m).WithGratuity(2m).Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("00", capture.ResponseCode);
+        }
+        [TestMethod]
+        public void CreditSaleWithCommercialRequest()
+        {
+            string clientTxnId = new Random().Next(100000000, 999999999).ToString();
+
+            var response = card.Charge(15m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithClientTransactionId(clientTxnId)
+                .WithCommercialRequest(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual(clientTxnId, response.ClientTransactionId);
+        }
 
         [TestMethod]
         public void CreditAuthWithConvenienceAmt() {

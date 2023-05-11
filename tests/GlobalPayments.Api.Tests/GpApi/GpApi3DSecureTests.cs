@@ -87,32 +87,25 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CardHolderEnrolled_ChallengeRequired_AuthenticationSuccessful_FullCycle_v1() {
             card.Number = GpApi3DSTestCards.CARDHOLDER_ENROLLED_V1;
 
-            bool errorFound = false;
-            try
-            {
-                // Check enrollment
-                var result = Secure3dService
-                        .CheckEnrollment(card)
-                        .WithCurrency(Currency)
-                        .WithAmount(Amount)
-                        .WithAuthenticationSource(AuthenticationSource.BROWSER)
-                        .WithChallengeRequestIndicator(ChallengeRequestIndicator.CHALLENGE_MANDATED)
-                        .WithStoredCredential(new StoredCredential
-                        {
-                            Initiator = StoredCredentialInitiator.CardHolder,
-                            Type = StoredCredentialType.Unscheduled,
-                            Sequence = StoredCredentialSequence.First,
-                            Reason = StoredCredentialReason.NoShow
-                        })
-                        .Execute(Secure3dVersion.One);
-            }
-            catch (BuilderException e)
-            {
+            var errorFound = false;
+            try {
+                Secure3dService
+                    .CheckEnrollment(card)
+                    .WithCurrency(Currency)
+                    .WithAmount(Amount)
+                    .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                    .WithChallengeRequestIndicator(ChallengeRequestIndicator.CHALLENGE_MANDATED)
+                    .WithStoredCredential(new StoredCredential {
+                        Initiator = StoredCredentialInitiator.CardHolder,
+                        Type = StoredCredentialType.Unscheduled,
+                        Sequence = StoredCredentialSequence.First,
+                        Reason = StoredCredentialReason.NoShow
+                    })
+                    .Execute(Secure3dVersion.One);
+            } catch (BuilderException e) {
                 errorFound = true;
                 Assert.AreEqual("3D Secure One is no longer supported!", e.Message);
-            }
-            finally
-            {
+            } finally {
                 Assert.IsTrue(errorFound);
             }
         }
@@ -128,15 +121,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(tokenizedCard.Token);
 
-            bool errorFound = false;
-            try
-            {
-
+            var errorFound = false;
+            try {
                 Secure3dService
-                     .CheckEnrollment(tokenizedCard)
-                     .WithCurrency(Currency)
-                     .WithAmount(Amount)
-                     .Execute(Secure3dVersion.One);
+                    .CheckEnrollment(tokenizedCard)
+                    .WithCurrency(Currency)
+                    .WithAmount(Amount)
+                    .Execute(Secure3dVersion.One);
             } catch (BuilderException e) {
                 errorFound = true;
                 Assert.AreEqual("3D Secure One is no longer supported!", e.Message);
@@ -148,23 +139,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CardHolderNotEnrolled_v1() {
             card.Number = GpApi3DSTestCards.CARDHOLDER_NOT_ENROLLED_V1;
-            bool errorFound = false;
-            try
-            {
-                // Check enrollment
-                var result = Secure3dService
-                        .CheckEnrollment(card)
-                        .WithCurrency(Currency)
-                        .WithAmount(Amount)
-                        .Execute(Secure3dVersion.One);
-            }
-            catch (BuilderException e)
-            {
+            var errorFound = false;
+            try {
+                Secure3dService
+                    .CheckEnrollment(card)
+                    .WithCurrency(Currency)
+                    .WithAmount(Amount)
+                    .Execute(Secure3dVersion.One);
+            } catch (BuilderException e) {
                 errorFound = true;
                 Assert.AreEqual("3D Secure One is no longer supported!", e.Message);
-            }
-            finally
-            {
+            } finally {
                 Assert.IsTrue(errorFound);
             }
         }

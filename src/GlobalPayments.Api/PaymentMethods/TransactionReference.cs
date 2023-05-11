@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Network.Entities;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.PaymentMethods {
     internal class TransactionReference : IPaymentMethod {
@@ -19,6 +20,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string CardType { get; set; }
         public string OrderId { get; set; }
         public string TransactionId { get; set; }
+        public List<TransferFundsAccountDetails> TransfersFundsAccounts { get; set; }
         public string ClientTransactionId { get; set; }
         public string AlternativePaymentType { get; set; }
         public string AcquiringInstitutionId{ get; set; }

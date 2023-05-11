@@ -8,6 +8,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace GlobalPayments.Api.Tests.GpApi
 {
@@ -243,7 +244,267 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsTrue(response.Addresses.Count > 0);
             Assert.AreEqual(address.PostalCode, response.Addresses[0].PostalCode);
         }
+
+        #region Transfer and Split
+        [TestMethod]
+        public void TransferFunds()
+        {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var transfer = funds.Transfer(10m)
+                .WithClientTransactionId("")
+                .WithDescription(description)
+                .Execute();
+
+            Assert.IsNotNull(transfer.TransactionId);
+            Assert.AreEqual(10m, transfer.BalanceAmount);
+            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+        }
+
+        [TestMethod]
+        public void TransferFunds_WithoutSenderAccountName()
+        {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            //funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var transfer = funds.Transfer(0.01m)
+                .WithClientTransactionId("")
+                .WithDescription(description)
+                .Execute();
+
+            Assert.IsNotNull(transfer.TransactionId);
+            Assert.AreEqual(0.01m, transfer.BalanceAmount);
+            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+        }
+
+        [TestMethod]
+        public void TransferFunds_WithoutUsableBalanceMode()
+        {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            //funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+
+            var transfer = funds.Transfer(0.01m)
+                .WithClientTransactionId("")
+                .WithDescription(description)
+                .Execute();
+
+            Assert.IsNotNull(transfer.TransactionId);
+            Assert.AreEqual(0.01m, transfer.BalanceAmount);
+            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+        }
+               
+
+        [TestMethod]
+        public void TransferFunds_WithoutSenderAccountId()
+        {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            //funds.AccountId = accountSender.Id;
+            funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var transfer = funds.Transfer(0.01m)
+                .WithClientTransactionId("")
+                .WithDescription(description)
+                .Execute();
+
+            Assert.IsNotNull(transfer.TransactionId);
+            Assert.AreEqual(0.01m, transfer.BalanceAmount);
+            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+
+        }
+
+        #endregion
+
+        #region Transfer error scenarios
+
+        [TestMethod]
+        public void TransferFunds_WithoutRecipientAccountId()
+        {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            funds.AccountName = accountSender.Name;
+            //funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var exceptionCaught = false;
+            try
+            {
+                var transfer = funds.Transfer(0.01m)
+                   .WithClientTransactionId("")
+                   .WithDescription(description)
+                   .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields recipient_account_id, recipient_account_name.", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40007", ex.ResponseMessage);
+            }
+            finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void TransferFunds_WithoutSenderAccountIdAndAccountName()
+        {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            //funds.AccountId = accountSender.Id;
+            //funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var exceptionCaught = false;
+            try
+            {
+                var transfer = funds.Transfer(0.01m)
+                   .WithClientTransactionId("")
+                   .WithDescription(description)
+                   .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields account_id, account_name.", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40007", ex.ResponseMessage);
+            }
+            finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        
+        [TestMethod]
+        public void TransferFunds_WithoutAmount()
+        {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var exceptionCaught = false;
+            try
+            {
+                var transfer = funds.Transfer()
+                   .WithClientTransactionId("")
+                   .WithDescription(description)
+                   .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields amount", ex.Message);
+                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
+                Assert.AreEqual("40005", ex.ResponseMessage);
+            }
+            finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
        
+        #endregion
+
+       
+
         [TestMethod]
         public void EditAccountInformation_WithoutCardDetails() {
             var billingAddress = new Address {
@@ -472,6 +733,29 @@ namespace GlobalPayments.Api.Tests.GpApi
                 CardPresent = true,
                 CardHolderName = "Jason Mason"
             };
+        }
+
+        private List<MerchantSummary> GetMerchants()
+        {
+            var merchants = new ReportingService().FindMerchants(1, 10)
+              .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
+              .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)
+              .Execute();
+
+            return merchants.Results;
+        }
+
+        private MerchantAccountSummary GetAccountByType(string merchantSenderId, MerchantAccountType merchantAccountType)
+        {
+            var response = ReportingService.FindAccounts(1, 10)
+                   .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
+                   .Where(SearchCriteria.StartDate, StartDate)
+                   .And(SearchCriteria.EndDate, EndDate)
+                   .And(DataServiceCriteria.MerchantId, merchantSenderId)
+                   .And(SearchCriteria.AccountStatus, MerchantAccountStatus.ACTIVE)
+                   .Execute();
+
+            return response.Results.FirstOrDefault(x => x.Type == merchantAccountType);
         }
     }
 }

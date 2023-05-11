@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.PayFac;
+using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
@@ -33,7 +35,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Environment = Environment.TEST,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
+                EnableLogging = true
             });
 
             card = new CreditCardData {
@@ -69,6 +71,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
             Assert.IsNotNull(merchant.UserReference.UserId);
         }
+        
 
         [TestMethod]
         public void BoardMerchant_OnlyMandatory() {
@@ -182,7 +185,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void GetMerchantInfo() {
-            var merchantId = "MER_98f60f1a397c4dd7b7167bda61520292";
+            var merchantId = "MER_34123992f0c84d70b30f8371202bd4e2";
 
             var merchant = _service.GetMerchantInfo(merchantId)
                 .Execute();
@@ -234,7 +237,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void SearchMerchants() {
-            var merchants = _reportingService.FindMerchants(1, 10)
+            var merchants = _reportingService.FindMerchants(1, 100)
                 .Execute();
 
             Assert.IsTrue(merchants.TotalRecordCount > 0);
@@ -274,6 +277,8 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsTrue(accounts.Results.Count > 0);
         }
 
+        #region Edit Merchant
+        
         [TestMethod]
         public void EditMerchantApplicantInfo() {
             var merchants = _reportingService.FindMerchants(1, 1)
@@ -410,7 +415,11 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.IsTrue(exceptionCaught);
             }
         }
+        
+        #endregion
 
+        #region Board Merchant error scenarios
+        
         [TestMethod]
         public void BoardMerchant_WithoutMerchantData() {
             var productData = GetProductList();
@@ -775,7 +784,9 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.IsTrue(exceptionCaught);
             }
         }
-
+        
+        #endregion            
+        
         private List<Person> GetPersonList(string type = null) {
             var persons = new List<Person>();
 

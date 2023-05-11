@@ -4,6 +4,14 @@
 
 #### Enhancements
 
+- GP-API: Manage fund transfers, splits and reverse splits in your partner network. 
+    - https://developer.globalpay.com/api/transfers
+    - https://developer.globalpay.com/api/transactions#/Split%20a%20Transaction%20Amount/splitTransaction
+
+## v5.1.7 (09/05/23)
+
+#### Enhancements
+
 - Portico Gateway: Enable CreditAuth transaction type for Apple Pay & Google Pay.
 - GP-ECOM: Added missing 3DS fields mapping for MOBILE_SDK.
 

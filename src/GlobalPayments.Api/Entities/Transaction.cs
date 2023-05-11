@@ -118,6 +118,27 @@ namespace GlobalPayments.Api.Entities {
 
         public PayLinkResponse PayLinkResponse { get; set; }
 
+        private List<TransferFundsAccountDetails> _transfersFundsAccounts;
+        public List<TransferFundsAccountDetails> TransfersFundsAccounts
+        {
+            get {
+                return _transfersFundsAccounts;
+            }
+            set {
+                if (TransactionReference == null) {
+                    TransactionReference = new TransactionReference();
+                }
+                if (value.Count > 0) {
+                    if(TransactionReference.TransfersFundsAccounts == null) {
+                        TransactionReference.TransfersFundsAccounts = new List<TransferFundsAccountDetails>();
+                    }
+                    TransactionReference.TransfersFundsAccounts = value;
+                }
+
+                _transfersFundsAccounts = value;
+            }
+        }
+
         public CardIssuerResponse CardIssuerResponse { get; set; }
         
         public PayerDetails PayerDetails { get; set; }
@@ -390,6 +411,7 @@ namespace GlobalPayments.Api.Entities {
                 TransactionReference.TransactionId = value;
             }
         }
+               
         public string ProcessingCode {
             get {
                 if (TransactionReference != null) {
@@ -477,7 +499,7 @@ namespace GlobalPayments.Api.Entities {
             return new ManagementBuilder(TransactionType.PreAuthCompletion)
                     .WithPaymentMethod(TransactionReference)
                     .WithAmount(amount);
-        }
+        }              
 
         /// <summary>
         /// Refunds/returns the original transaction.
@@ -534,6 +556,17 @@ namespace GlobalPayments.Api.Entities {
         {
             return new ManagementBuilder(TransactionType.Confirm)
                 .WithPaymentMethod(this.TransactionReference)
+                .WithAmount(amount);
+        }
+
+        /// <summary>
+        /// Transfer part of transaction amount by a merchant to the partner account
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public ManagementBuilder Split(decimal? amount = null) {            
+            return new ManagementBuilder(TransactionType.SplitFunds)
+                .WithPaymentMethod(TransactionReference)
                 .WithAmount(amount);
         }
 

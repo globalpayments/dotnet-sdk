@@ -172,7 +172,9 @@ namespace GlobalPayments.Api.Entities {
 
         BankPayment = 1 << 11,
 
-        BNPL = 1 << 12
+        BNPL = 1 << 12,
+
+        Account_Funds = 1 << 13
     }
 
     /// <summary>

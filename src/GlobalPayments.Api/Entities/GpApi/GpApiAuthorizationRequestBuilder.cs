@@ -268,14 +268,14 @@ namespace GlobalPayments.Api.Entities {
 
             if (builder.PaymentMethod is eCheck) {
                 eCheck check = (builder.PaymentMethod as eCheck);
-                paymentMethod.Set("name", check.CheckHolderName);
+                paymentMethod.Set("name", check.CheckHolderName)
+                    .Set("narrative", check.MerchantNotes);
 
                 var bankTransfer = new JsonDoc()
                     .Set("account_number", check.AccountNumber)
                     .Set("account_type", (check.AccountType != null) ? EnumConverter.GetMapping(Target.GP_API, check.AccountType) : null)
                     .Set("check_reference", check.CheckReference)
-                    .Set("sec_code", check.SecCode)
-                    .Set("narrative", check.MerchantNotes);
+                    .Set("sec_code", check.SecCode);
 
                 var bank = new JsonDoc()
                     .Set("code", check.RoutingNumber)
@@ -407,6 +407,31 @@ namespace GlobalPayments.Api.Entities {
                     Endpoint = $"{merchantUrl}/links",
                     RequestBody = requestData.ToString(),
                 };                
+            }
+
+            if (builder.TransactionType == TransactionType.TransferFunds) {
+                if (!(builder.PaymentMethod is AccountFunds)) {
+                    throw new UnsupportedTransactionException("Payment method doesn't support funds transfers");
+                }
+                var fundsData = builder.PaymentMethod as AccountFunds;
+                var payload = new JsonDoc()
+                   .Set("account_id", fundsData.AccountId)
+                   .Set("account_name", fundsData.AccountName)
+                   .Set("recipient_account_id", fundsData.RecipientAccountId)
+                   .Set("reference", builder.ClientTransactionId ?? GenerationUtils.GenerateOrderId())
+                   .Set("amount", builder.Amount.ToNumericCurrencyString())
+                   .Set("description", builder.Description)
+                   .Set("usable_balance_mode", fundsData.UsableBalanceMode?.ToString());
+
+                var endpoint = merchantUrl;
+                if (!string.IsNullOrEmpty(fundsData.MerchantId)) {
+                    endpoint = $"/merchants/{fundsData.MerchantId}";
+                }
+                return new GpApiRequest {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{endpoint}/transfers",
+                    RequestBody = payload.ToString(),
+                };
             }
 
             var data = new JsonDoc()
@@ -609,19 +634,13 @@ namespace GlobalPayments.Api.Entities {
             payer.Set("reference", builder.CustomerId ?? builder.CustomerData?.Id);
             if(builder.PaymentMethod is eCheck)
             {
-                JsonDoc billingAddress = new JsonDoc();
+                JsonDoc billingAddress = GetBasicAddressInformation(builder.BillingAddress); 
                     
-                billingAddress.Set("line_1", builder.BillingAddress?.StreetAddress1)
-                        .Set("line_2", builder.BillingAddress?.StreetAddress2)
-                        .Set("city", builder.BillingAddress?.City)
-                        .Set("postal_code", builder.BillingAddress?.PostalCode)
-                        .Set("state", builder.BillingAddress?.State)
-                        .Set("country", builder.BillingAddress.CountryCode);
+                if (billingAddress.HasKeys()) {
+                    payer.Set("billing_address", billingAddress);
+                }
 
-                payer.Set("billing_address", billingAddress);
-
-                if (builder.CustomerData != null) 
-                {
+                if (builder.CustomerData != null) {
                     payer.Set("name", builder.CustomerData.FirstName + " " + builder.CustomerData.LastName);
                     payer.Set("date_of_birth", builder.CustomerData.DateOfBirth);
                 }
@@ -653,14 +672,7 @@ namespace GlobalPayments.Api.Entities {
                 payer.Set("email", builder.CustomerData.Email)
                      .Set("date_of_birth", builder.CustomerData.DateOfBirth);
 
-                JsonDoc billing_address = new JsonDoc();
-
-                billing_address.Set("line_1", builder.BillingAddress?.StreetAddress1)
-                            .Set("line_2", builder.BillingAddress?.StreetAddress2)
-                            .Set("city", builder.BillingAddress?.City)
-                            .Set("postal_code", builder.BillingAddress?.PostalCode)
-                            .Set("state", builder.BillingAddress?.State)
-                            .Set("country", builder.BillingAddress?.CountryCode);
+                JsonDoc billing_address = GetBasicAddressInformation(builder.BillingAddress);                
                 
                 if (builder.CustomerData != null) {
                     billing_address
@@ -695,6 +707,15 @@ namespace GlobalPayments.Api.Entities {
                 }
             }
             return payer;
+        }
+
+        private static JsonDoc GetBasicAddressInformation(Address address) {
+            return new JsonDoc().Set("line_1", address?.StreetAddress1)
+                            .Set("line_2", address?.StreetAddress2)
+                            .Set("city", address?.City)
+                            .Set("postal_code", address?.PostalCode)
+                            .Set("state", address?.State)
+                            .Set("country", address?.CountryCode);
         }
 
         private static string GetCaptureMode(AuthorizationBuilder builder) {

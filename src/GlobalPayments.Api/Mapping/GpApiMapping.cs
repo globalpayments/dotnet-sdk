@@ -23,6 +23,8 @@ namespace GlobalPayments.Api.Mapping {
         private const string MERCHANT_EDIT = "MERCHANT_EDIT";
         private const string MERCHANT_EDIT_INITIATED = "MERCHANT_EDIT_INITIATED";
         private const string ADDRESS_LIST = "ADDRESS_LIST";
+        private const string SPLIT = "SPLIT";
+        private const string TRANSFER = "TRANSFER";
 
         public static Transaction MapResponse(string rawResponse) {
             Transaction transaction = new Transaction();
@@ -67,6 +69,14 @@ namespace GlobalPayments.Api.Mapping {
                             transaction.PayLinkResponse.AllowedPaymentMethods = GetAllowedPaymentMethods(trn);
                         }
                         return transaction;
+                    case TRANSFER:
+                        transaction.PaymentMethodType = PaymentMethodType.Account_Funds;
+                        break;
+                    case SPLIT:
+                    if (json.Has("transfers")) {                            
+                            transaction.TransfersFundsAccounts = MapTransferFundsAccountDetails(json);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -163,6 +173,22 @@ namespace GlobalPayments.Api.Mapping {
             }           
 
             return transaction;
+        }
+
+        private static List<TransferFundsAccountDetails> MapTransferFundsAccountDetails(JsonDoc json) {
+            var transferResponse = new List<TransferFundsAccountDetails>();
+            foreach (var item in json.GetArray<JsonDoc>("transfers") ?? Enumerable.Empty<JsonDoc>()) {
+                var transfer = new TransferFundsAccountDetails();
+                transfer.Id = item.GetValue<string>("id");
+                transfer.Status = item.GetValue<string>("status");
+                transfer.TimeCreated = item.GetValue<string>("time_created");
+                transfer.Amount = item.GetValue<string>("amount").ToAmount();
+                transfer.Reference = item.GetValue<string>("reference");
+                transfer.Description = item.GetValue<string>("description");
+                transferResponse.Add(transfer);
+            }
+
+            return transferResponse;
         }
 
         private static bool GetIsMultiCapture(JsonDoc json)

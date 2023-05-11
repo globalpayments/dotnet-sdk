@@ -56,9 +56,21 @@ namespace GlobalPayments.Api.Entities
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("currency_conversion", builder.DccRateData?.DccId ?? null);
 
+                var endpoint = $"{merchantUrl}";
+
+                if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Account_Funds) {
+                    if (!string.IsNullOrEmpty(builder.FundsData?.MerchantId)) {
+                        endpoint = $"/merchants/{builder.FundsData.MerchantId}";
+                    }
+                    endpoint += $"/transfers/{builder.TransactionId}/reversal";
+                }
+                else {
+                    endpoint += $"/transactions/{builder.TransactionId}/reversal";
+                }
+
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/reversal",
+                    Endpoint = endpoint,
                     RequestBody = data.ToString(),
                 };
             }
@@ -272,6 +284,34 @@ namespace GlobalPayments.Api.Entities
                     Verb = HttpMethod.Post,
                     Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/{endpoint}",
                     RequestBody = payload.ToString(),
+                };
+            }
+
+            //Transaction split
+            else if(builder.TransactionType == TransactionType.SplitFunds) {
+                var payment = builder.PaymentMethod;                
+                var transfer = new JsonDoc();
+                var split = new List<Dictionary<string, object>>();
+
+                var request = new Dictionary<string, object>();
+                request.Add("recipient_account_id", builder.FundsData.RecipientAccountId);
+                request.Add("reference", builder.Reference);
+                request.Add("description", builder.Description);
+                request.Add("amount", builder.Amount.ToNumericCurrencyString());
+
+                split.Add(request);
+
+                transfer.Set("transfers", split);
+                                
+                var endpoint = merchantUrl;
+                if (!string.IsNullOrEmpty(builder.FundsData.MerchantId)) {
+                    endpoint = $"/merchants/{builder.FundsData.MerchantId}";
+                }
+
+                return new GpApiRequest {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{endpoint}/transactions/{builder.TransactionId}/split",
+                    RequestBody = transfer.ToString(),
                 };
             }
             

@@ -240,7 +240,7 @@ namespace GlobalPayments.Api.Gateways {
             return null;
         }
 
-        public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class
+        public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class 
         {
             T result = Activator.CreateInstance<T>();
             if (string.IsNullOrEmpty(AccessToken)) {

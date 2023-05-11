@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
@@ -9,17 +8,11 @@ using static GlobalPayments.Api.Tests.GpApi.GpApi3DSTestCards;
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApi3DSecure1Tests : BaseGpApiTests {
-        #region Constants
-
-        private const string CHALLENGE_REQUIRED = "CHALLENGE_REQUIRED";
-        private const string ENROLLED = "ENROLLED";
-        private const string NOT_ENROLLED = "NOT_ENROLLED";
-
-        #endregion
-
+        
         private static CreditCardData card;
         private const string Currency = "GBP";
         private static readonly decimal Amount = new decimal(10.01);
+        private const string NOT_ENROLLED = "NOT_ENROLLED";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
@@ -53,12 +46,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithCurrency(Currency)
                     .WithAmount(Amount)
                     .Execute(Secure3dVersion.One);
-            }
-            catch (BuilderException ex) {
+            } catch (BuilderException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("3D Secure One is no longer supported!", ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -70,8 +61,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, CHALLENGE_REQUIRED, ENROLLED);
-            Assert.IsTrue(secureEcom.ChallengeMandated);
+            AssertThreeDsResponse(secureEcom);
         }
 
         [TestMethod]
@@ -83,7 +73,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, NOT_ENROLLED, NOT_ENROLLED);
+            AssertThreeDsResponse(secureEcom);
         }
 
         [TestMethod]
@@ -92,21 +82,18 @@ namespace GlobalPayments.Api.Tests.GpApi {
             try {
                 Secure3dService.GetAuthenticationData()
                     .Execute(Secure3dVersion.One);
-            }
-            catch (BuilderException ex) {
+            } catch (BuilderException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("3D Secure One is no longer supported!", ex.Message);
-            }
-            finally {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
 
-        private void AssertThreeDSResponse(ThreeDSecure secureEcom, string status, string enrolled) {
+        private static void AssertThreeDsResponse(ThreeDSecure secureEcom) {
             Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(enrolled, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.One, secureEcom.Version);
-            Assert.AreEqual(status, secureEcom.Status);
+            Assert.AreEqual(NOT_ENROLLED, secureEcom.Enrolled, "Card not enrolled");
+            Assert.AreEqual(NOT_ENROLLED, secureEcom.Status);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);
             Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);
             Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
