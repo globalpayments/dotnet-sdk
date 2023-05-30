@@ -19,6 +19,9 @@ namespace GlobalPayments.Api.Terminals.UPA
                 throw new MessageException(INVALID_RESPONSE_FORMAT);
             }
 
+            EcrId = firstDataNode.GetValue<int>("EcrId");
+            RequestId = firstDataNode.GetValue<int>("requestId");
+
             Status = cmdResult.GetValue<string>("result");
             if (string.IsNullOrEmpty(Status)) {
                 var errorCode = cmdResult.GetValue<string>("errorCode");

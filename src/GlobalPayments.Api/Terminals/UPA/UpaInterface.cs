@@ -3,9 +3,13 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Utils;
 using System.Text;
+using log4net;
 
 namespace GlobalPayments.Api.Terminals.UPA {
     public class UpaInterface : DeviceInterface<UpaController>, IDeviceInterface {
+
+        private readonly ILog _logger = LogManager.GetLogger(typeof(UpaInterface));
+
         internal UpaInterface(UpaController controller) : base(controller) { }
 
         public override TerminalAuthBuilder TipAdjust(decimal? amount) {
@@ -31,6 +35,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.EodProcessing));
             string jsonObject = Encoding.UTF8.GetString(response);
+
+            if(_logger.IsDebugEnabled)
+                _logger.Debug($"Raw Response: {jsonObject}");
+
             var jsonParse = JsonDoc.Parse(jsonObject);
             return new UpaEODResponse(jsonParse);
         }
@@ -39,6 +47,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.Reboot));
             string jsonObject = Encoding.UTF8.GetString(response);
+
+            if(_logger.IsDebugEnabled)
+                _logger.Debug($"Raw Response: {jsonObject}");
+
             var jsonParse = JsonDoc.Parse(jsonObject);
             return new TransactionResponse(jsonParse);
         }
@@ -47,6 +59,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.LineItemDisplay, leftText, rightText));
             string jsonObject = Encoding.UTF8.GetString(response);
+
+            if(_logger.IsDebugEnabled)
+                _logger.Debug($"Raw Response: {jsonObject}");
+
             var jsonParse = JsonDoc.Parse(jsonObject);
             return new TransactionResponse(jsonParse);
         }
@@ -61,6 +77,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.SendSAF));
             string jsonObject = Encoding.UTF8.GetString(response);
+
+            if(_logger.IsDebugEnabled)
+                _logger.Debug($"Raw Response: {jsonObject}");
+
             JsonDoc doc = JsonDoc.Parse(jsonObject);
             return new UpaSAFResponse(doc);
         }
