@@ -79,5 +79,9 @@ namespace GlobalPayments.Api.Gateways {
         public bool SupportsRetrieval => false;
 
         public bool SupportsUpdatePaymentDetails => false;
+
+        public bool SupportsOpenBanking() {
+            return false;
+        }
     }
 }

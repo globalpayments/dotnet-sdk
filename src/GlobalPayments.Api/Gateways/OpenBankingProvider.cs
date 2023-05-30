@@ -25,7 +25,7 @@ namespace GlobalPayments.Api.Gateways
             this.Headers["Accept"] = "application/json";
         }
 
-        public Transaction ProcessOpenBanking(BankPaymentBuilder builder) {
+        public Transaction ProcessOpenBanking(AuthorizationBuilder builder) {
             string timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp(); 
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
             var amount = builder.Amount != null ? builder.Amount.ToNumericCurrencyString() : null;
@@ -181,8 +181,5 @@ namespace GlobalPayments.Api.Gateways
             return response.RawResponse;
         }
 
-        public string SerializeRequest(BankPaymentBuilder builder) {
-            throw new UnsupportedTransactionException();
-        }
     }
 }

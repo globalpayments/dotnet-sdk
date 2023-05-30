@@ -26,6 +26,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestInitialize]
         public void TestInitialize() {
+            ServicesContainer.RemoveConfig();
+            
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = "v2yRaFOLwFaQc0fSZTCyAdQCBNByGpVK",
                 AppKey = "oKZpWitk6tORoCVT",
@@ -165,8 +167,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void FindPayLinkByDate_NoResults() {
             var response = PayLinkService.FindPayLink(1, 10)
                 .OrderBy(PayLinkSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, StartDate.AddYears(-1))
-                .And(SearchCriteria.EndDate, EndDate.AddYears(-1))
+                .Where(SearchCriteria.StartDate, StartDate.AddMonths(-24))
+                .And(SearchCriteria.EndDate, EndDate.AddMonths(-22))
                 .Execute();
 
             Assert.IsNotNull(response);

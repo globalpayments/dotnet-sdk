@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -7,8 +8,10 @@ using System.Net.Http;
 
 namespace GlobalPayments.Api.Entities {
     internal class GpApiSecure3DRequestBuilder {
+        private static Secure3dBuilder _builder;
         internal static GpApiRequest BuildRequest(Secure3dBuilder builder, GpApiConnector gateway) {
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            _builder = builder;
+             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
                 var storedCredential = new JsonDoc()
                     .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))
@@ -31,10 +34,12 @@ namespace GlobalPayments.Api.Entities {
 
                 var notifications = new JsonDoc()
                     .Set("challenge_return_url", gateway.GpApiConfig.ChallengeNotificationUrl)
-                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl);
+                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl)
+                    .Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
 
                 var data = new JsonDoc()
                     .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                    .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                     .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())
                     .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -80,41 +85,9 @@ namespace GlobalPayments.Api.Entities {
                 #region Notifications
                 var notifications = new JsonDoc()
                     .Set("challenge_return_url", gateway.GpApiConfig.ChallengeNotificationUrl)
-                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl);
-                #endregion
-
-                #region Order
-                var order = new JsonDoc()
-                    .Set("time_created_reference", builder.OrderCreateDate?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
-                    .Set("amount", builder.Amount.ToNumericCurrencyString())
-                    .Set("currency", builder.Currency)
-                    .Set("reference", builder.ReferenceNumber)
-                    .Set("address_match_indicator", builder.AddressMatchIndicator)
-                    .Set("gift_card_count", builder.GiftCardCount)
-                    .Set("gift_card_currency", builder.GiftCardCurrency)
-                    .Set("gift_card_amount", builder.GiftCardAmount.ToNumericCurrencyString())
-                    .Set("delivery_email", builder.DeliveryEmail)
-                    .Set("delivery_timeframe", builder.DeliveryTimeframe?.ToString())
-                    .Set("shipping_method", builder.ShippingMethod?.ToString())
-                    .Set("shipping_name_matches_cardholder_name", builder.ShippingNameMatchesCardHolderName)
-                    .Set("preorder_indicator", builder.PreOrderIndicator?.ToString())
-                    .Set("preorder_availability_date", builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"))
-                    .Set("reorder_indicator", builder.ReorderIndicator?.ToString())
-                    .Set("category", builder.MessageCategory.ToString());
-
-                if (builder.ShippingAddress != null) {
-                    var shippingAddress = new JsonDoc()
-                        .Set("line1", builder.ShippingAddress.StreetAddress1)
-                        .Set("line2", builder.ShippingAddress.StreetAddress2)
-                        .Set("line3", builder.ShippingAddress.StreetAddress3)
-                        .Set("city", builder.ShippingAddress.City)
-                        .Set("postal_code", builder.ShippingAddress.PostalCode)
-                        .Set("state", builder.ShippingAddress.State)
-                        .Set("country", builder.ShippingAddress.CountryCode);
-
-                    order.Set("shipping_address", shippingAddress);
-                }
-                #endregion
+                    .Set("three_ds_method_return_url", gateway.GpApiConfig.MethodNotificationUrl)
+                    .Set("decoupled_notification_url", builder.DecoupledNotificationUrl);
+                #endregion               
 
                 #region Payer
                 var homePhone = new JsonDoc()
@@ -184,12 +157,12 @@ namespace GlobalPayments.Api.Entities {
                 #endregion
 
                 #region MobileData
-                string[] ModifySdkUiTypes() {                    
+                string[] ModifySdkUiTypes() {
                     string[] result = new string[(int)builder.MobileData?.SdkUiTypes.Length];
                     for (int i = 0; i < builder.MobileData?.SdkUiTypes.Length; i++)
                     {
                         result[i] = EnumConverter.GetMapping(Target.GP_API, builder.MobileData?.SdkUiTypes[i]);
-                        
+
                     }
                     return result;
                 }
@@ -218,8 +191,12 @@ namespace GlobalPayments.Api.Entities {
                     .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("method_url_completion_status", builder.MethodUrlCompletion.ToString())
                     .Set("payment_method", paymentMethod.HasKeys() ? paymentMethod : null)
-                    .Set("notifications", notifications.HasKeys() ? notifications : null)
-                    .Set("order", order.HasKeys() ? order : null)
+                    .Set("notifications", notifications.HasKeys() ? notifications : null);
+                if (builder.DecoupledFlowRequest.HasValue) {
+                    data.Set("decoupled_flow_request", builder.DecoupledFlowRequest.Value ? DecoupledFlowRequest.DECOUPLED_PREFERRED.ToString() : DecoupledFlowRequest.DO_NOT_USE_DECOUPLED.ToString());
+                }
+                data.Set("decoupled_flow_timeout", builder.DecoupledFlowTimeout.HasValue ? builder.DecoupledFlowTimeout.ToString() : null)
+                    .Set("order", SetOrderParam())
                     .Set("payer", payer.HasKeys() ? payer : null)
                     .Set("payer_prior_three_ds_authentication_data", payerPrior3DSAuthenticationData.HasKeys() ? payerPrior3DSAuthenticationData : null)
                     .Set("recurring_authorization_data", recurringAuthorizationData.HasKeys() ? recurringAuthorizationData : null)
@@ -248,7 +225,61 @@ namespace GlobalPayments.Api.Entities {
                     RequestBody = data?.ToString()
                 };
             }
+            else if (builder.TransactionType == TransactionType.RiskAssess) { 
+                JsonDoc threeDS = null;
+                threeDS.Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                   .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())                   
+                   .Set("source", builder.AuthenticationSource.ToString())
+                   .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl)
+                   .Set("order", SetOrderParam());
+
+                return new GpApiRequest
+                {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{merchantUrl}/risk-assessments",
+                    RequestBody = threeDS.ToString(),
+                };
+
+            }
             return null;
+        }
+
+        private static JsonDoc SetOrderParam()
+        {            
+            var order = new JsonDoc()
+                .Set("time_created_reference", _builder.OrderCreateDate?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
+                .Set("amount", _builder.Amount.ToNumericCurrencyString())
+                .Set("currency", _builder.Currency)
+                .Set("reference", _builder.ReferenceNumber)
+                .Set("address_match_indicator", _builder.AddressMatchIndicator)
+                .Set("gift_card_count", _builder.GiftCardCount)
+                .Set("gift_card_currency", _builder.GiftCardCurrency)
+                .Set("gift_card_amount", _builder.GiftCardAmount.ToNumericCurrencyString())
+                .Set("delivery_email", _builder.DeliveryEmail)
+                .Set("delivery_timeframe", _builder.DeliveryTimeframe?.ToString())
+                .Set("shipping_method", _builder.ShippingMethod?.ToString())
+                .Set("shipping_name_matches_cardholder_name", _builder.ShippingNameMatchesCardHolderName)
+                .Set("preorder_indicator", _builder.PreOrderIndicator?.ToString())
+                .Set("preorder_availability_date", _builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"))
+                .Set("reorder_indicator", _builder.ReorderIndicator?.ToString())
+                .Set("category", _builder.MessageCategory.ToString())
+                .Set("transaction_type", _builder.OrderTransactionType.ToString());
+
+            if (_builder.ShippingAddress != null)
+            {
+                var shippingAddress = new JsonDoc()
+                    .Set("line1", _builder.ShippingAddress.StreetAddress1)
+                    .Set("line2", _builder.ShippingAddress.StreetAddress2)
+                    .Set("line3", _builder.ShippingAddress.StreetAddress3)
+                    .Set("city", _builder.ShippingAddress.City)
+                    .Set("postal_code", _builder.ShippingAddress.PostalCode)
+                    .Set("state", _builder.ShippingAddress.State)
+                    .Set("country", _builder.ShippingAddress.CountryCode);
+
+                order.Set("shipping_address", shippingAddress);
+            }
+
+            return order.HasKeys() ? order : null;           
         }
     }
 }

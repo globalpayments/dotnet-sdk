@@ -198,7 +198,7 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
             }
         }
 
-        private BankPaymentBuilder AddRemittanceRef(BankPaymentBuilder gatewayRequest ,JsonDoc json) {
+        private AuthorizationBuilder AddRemittanceRef(AuthorizationBuilder gatewayRequest ,JsonDoc json) {
             var REF_TYPE = json.GetValue<string>("HPP_OB_REMITTANCE_REF_TYPE");
             var REF_VALUE = json.GetValue<string>("HPP_OB_REMITTANCE_REF_VALUE");
             return gatewayRequest.WithRemittanceReference(

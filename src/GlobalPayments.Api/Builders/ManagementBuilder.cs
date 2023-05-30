@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using System.Collections.Generic;
@@ -24,6 +25,16 @@ namespace GlobalPayments.Api.Builders {
         }
         internal string BatchReference { get; set; }
         internal IEnumerable<Bill> Bills { get; set; }
+        internal string CardType {
+            get
+            {
+                if (PaymentMethod is TransactionReference)
+                {
+                    return ((TransactionReference)PaymentMethod).CardType;
+                }
+                return null;
+            }
+        }
         internal string ClientTransactionId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -36,18 +47,22 @@ namespace GlobalPayments.Api.Builders {
         internal decimal? ConvenienceAmount { get; set; }
         internal string Currency { get; set; }
         internal string CustomerId { get; set; }
-        internal string CustomerIpAddress { get; set; }        
+        internal string CustomerIpAddress { get; set; }
         internal IEnumerable<DisputeDocument> DisputeDocuments { get; set; }
         internal string DisputeId { get; set; }
         internal string DynamicDescriptor { get; set; }
         internal eCheck BankTransferDetails { get; set; }
         internal DccRateData DccRateData { get; set; }
+        internal EcommerceInfo EcommerceInfo { get; set; }
         internal decimal? Gratuity { get; set; }
-        internal string IdempotencyKey { get; set;  }
+        internal string IdempotencyKey { get; set; }
         internal string InvoiceNumber { get; set; }
         internal LodgingData LodgingData { get; set; }
         internal int? MultiCapturePaymentCount { get; set; }
         internal int? MultiCaptureSequence { get; set; }
+        internal string EntryClass { get; set; }
+        internal string PaymentPurposeCode { get; set; }
+        internal string SoftDescriptor { get; set; }
         internal string OrderId {
             get {
                 if (PaymentMethod is TransactionReference) {
@@ -57,7 +72,7 @@ namespace GlobalPayments.Api.Builders {
             }
         }
         internal string PayerAuthenticationResponse { get; set; }
-        internal ReasonCode? ReasonCode { get; set;}
+        internal ReasonCode? ReasonCode { get; set; }
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
         internal decimal? SurchargeAmount { get; set; }
         internal string TransactionId {
@@ -67,7 +82,8 @@ namespace GlobalPayments.Api.Builders {
                 }
                 return null;
             }
-        }
+        }        
+        internal string ClerkId { get; set; }
         internal int TransactionCount { get; set; }
         internal decimal TotalCredits { get; set; }
         internal decimal TotalDebits { get; set; }
@@ -81,9 +97,12 @@ namespace GlobalPayments.Api.Builders {
         internal VoidReason? VoidReason { get; set; }
         internal bool AllowDuplicates { get; set; }
         internal CardHolderAuthenticationMethod? AuthenticationMethod { get; set; }
+        internal bool GenerateReceipt { get; set; }
         internal string TagData { get; set; }
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
-       
+        internal string Reference { get; set; }
+        internal FundsData FundsData { get; set; }
+
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
 
@@ -104,6 +123,30 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>ManagementBuilder</returns>
         public ManagementBuilder WithAuthAmount(decimal? value) {
             AuthAmount = value;
+            return this;
+        }
+
+        public ManagementBuilder WithClerkId(string value) {
+            ClerkId = value;
+            return this;
+        }
+        /// <summary>
+        /// Sets the current transaction's entry class where applicable.
+        /// </summary>
+        /// <param name="value">entry class</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithEntryClass(string value) {
+            EntryClass = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the current transaction's payment purpose code where applicable.
+        /// </summary>
+        /// <param name="value">payment purpose code</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithPaymentPurposeCode(string value) {
+            PaymentPurposeCode = value;
             return this;
         }
 
@@ -424,6 +467,16 @@ namespace GlobalPayments.Api.Builders {
             VoidReason = value;
             return this;
         }
+        
+        public ManagementBuilder WithReference(string value) {
+            Reference = value;
+            return this;
+        }
+
+        public ManagementBuilder WithFundsData(FundsData value) {
+            FundsData = value;
+            return this;
+        }
 
         internal ManagementBuilder(TransactionType type) : base(type) {}
 
@@ -442,7 +495,7 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release)
                 .Check(() => PaymentMethod).IsNotNull();
 
-            Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release | TransactionType.Reauth)
+            Validations.For(TransactionType.Capture | TransactionType.Hold | TransactionType.Release | TransactionType.Reauth)
                 .Check(() => TransactionId).IsNotNull();
 
             // TODO: Need level validations
@@ -472,6 +525,10 @@ namespace GlobalPayments.Api.Builders {
                .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageMode)).IsNotNull()
                .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageLimit)).IsNotNull()
                .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.Type)).IsNotNull();
+       
+            Validations.For(TransactionType.SplitFunds)
+                .Check(() => FundsData).IsNotNull()
+                .Check(() => Amount).IsNotNull();
 
             Validations.For(
                 TransactionType.Capture |
@@ -527,6 +584,24 @@ namespace GlobalPayments.Api.Builders {
 
         public ManagementBuilder WithPaymentMethodUsageMode(PaymentMethodUsageMode value) {
             PaymentMethodUsageMode = value;
+            return this;
+        }
+
+        public ManagementBuilder WithEcommerceInfo(EcommerceInfo value) {
+            EcommerceInfo = value;
+            return this;
+        }
+        /// <summary>
+        /// Generate receipt
+        /// </summary>
+        /// <param name="value">generate receipt</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithGenerateReceipt(bool value) {
+            GenerateReceipt = value;
+            return this;
+        }
+        public ManagementBuilder WithSoftDescriptor(string value) {
+            SoftDescriptor = value;
             return this;
         }
     }

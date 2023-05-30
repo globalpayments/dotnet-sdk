@@ -74,6 +74,10 @@ namespace GlobalPayments.Api {
         /// ProPay X509 Certificate Base64 String (Optional: Can be used instead of X509CertificatePath)
         /// </summary>
         public string X509CertificateBase64String { get; set; }
+        /// <summary>
+        /// Name and Version of the SDK used for integration, where applicable.  Expected for users of the Heartland SDK.
+        /// </summary>
+        public string SDKNameVersion { get; set; }
 
         /// <summary>
         /// If true (default), use the US ProPay endpoints.
@@ -119,7 +123,9 @@ namespace GlobalPayments.Api {
                 ServiceUrl = ServiceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx",
                 UniqueDeviceId = UniqueDeviceId,
                 RequestLogger = RequestLogger,
-                WebProxy = WebProxy
+                WebProxy = WebProxy,
+                SDKNameVersion = SDKNameVersion,               
+
             };
             services.GatewayConnector = gateway;
 

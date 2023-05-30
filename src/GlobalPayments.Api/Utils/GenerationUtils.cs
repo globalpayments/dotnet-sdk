@@ -155,8 +155,25 @@ namespace GlobalPayments.Api.Utils {
             var uuid = Guid.NewGuid();
             return Convert.ToBase64String(uuid.ToByteArray()).TrimEnd('=').Replace("+", "-").Replace("/", "_");
         }
+
+        public static string GenerateScheduleId() {
+            var uuid = Guid.NewGuid();            
+            return Convert.ToBase64String(uuid.ToByteArray()).TrimEnd('=').Replace("+", "-").Replace("/", "_").ToLower().Substring(0, 20);
+        }
         public static string GenerateRecurringKey() {
             return Guid.NewGuid().ToString().ToLower();
         }
+
+        /// <summary>
+        /// Generate HASH to validate the X-GP-Signature
+        /// </summary>
+        /// <param name="toHash"></param>
+        /// <param name="appKey"></param>
+        /// <returns></returns>
+        public static string GenerateXGPSignature(string toHash, string appKey) {
+            string newToHash = new StringBuilder(toHash).Append(appKey).ToString();
+            return GenerateHash(newToHash, ShaHashType.SHA512);
+        }
+
     }
 }

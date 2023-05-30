@@ -127,7 +127,8 @@ namespace GlobalPayments.Api.PaymentMethods
         /// <param name="schedule">The schedule's identifier</param>
         /// <returns>Schedule</returns>
         public Schedule AddSchedule(string scheduleId) {
-            return new Schedule(CustomerKey, Key) {
+            var paymentKey = Key ?? Id;
+            return new Schedule(CustomerKey, paymentKey) {
                 Id = scheduleId
             };
         }

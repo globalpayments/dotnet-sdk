@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GlobalPayments.Api.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,6 +18,10 @@ namespace GlobalPayments.Api.Entities.PayFac
         /// Merchant/Individual lane name
         /// </summary>
         public string LastName { get; set; }
+        /// <summary>
+        /// Merchant/Individual first name
+        /// </summary>
+        public string UserName { get; set; }
         /// <summary>
         /// Merchant/Individual date of birth. Must be in 'mm-dd-yyyy' format. Individual must be 18+ to obtain an account. The value 01-01-1981 will give a successul response. All others will return a Status 66 (Failed KYC).
         /// </summary>
@@ -69,6 +74,35 @@ namespace GlobalPayments.Api.Entities.PayFac
         /// Business physical address
         /// </summary>
         public Address MailingAddress { get; set; }
+
+        /// <summary>
+        /// The legal business name of the merchant being boarded.
+        /// </summary>
+        public string LegalName { get; set; }       
+
+        /// <summary>
+        /// The merchant's DBA (Doing Business As) name or the alternate name the merchant may be known as.
+        /// </summary>
+        public string DBA { get; set; }
+
+        /// <summary>
+        /// A four-digit number used to classify the merchant into an industry or market segment.
+        /// </summary>
+        public int MerchantCategoryCode { get; set; }
+
+        /// <summary>
+        /// The merchant's business website URL
+        /// </summary>
+        public string Website { get; set; }
+
+        public UserType? Type { get; set; }
+
+        public string NotificationStatusUrl { get; set; }
+
+        /// <summary>
+        /// The merchants tax identification number. For example, in the US the (EIN) Employer Identification Number would be used.
+        /// </summary>
+        public string TaxIdReference { get; set; }
 
         public UserPersonalData() {
             UserAddress = new Address();

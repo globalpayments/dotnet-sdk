@@ -245,6 +245,10 @@ namespace GlobalPayments.Api.Gateways {
 
             return et.ToString(envelope);
         }
+
+        public bool SupportsOpenBanking() {
+            return false;
+        }
         #endregion
     }
 }

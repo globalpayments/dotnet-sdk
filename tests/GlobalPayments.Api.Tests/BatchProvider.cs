@@ -199,6 +199,8 @@ namespace GlobalPayments.Api.Tests {
 
         public void ReportDataCollect(TransactionType transactionType, PaymentMethodType paymentMethodType, decimal amount, string encodedRequest) {
             lock (objectLock) {
+                System.Diagnostics.Debug.WriteLine($"PMI:\n{priorMessageInformation?.MessageTransactionIndicator} | {priorMessageInformation?.FunctionCode}");
+
                 TotalTransactionCount += 1;
                 encodedRequests.Add(encodedRequest);
                 switch (transactionType) {
@@ -218,24 +220,33 @@ namespace GlobalPayments.Api.Tests {
                                 CardType = "OH ";
                                 OtherCardTransactionCount += 1;
                                 OtherCardTransactionSales += amount;
+                                CreditCardTransactionCount += 1;
+                                CreditCardTransactionSales += amount;
                             }
                         }
                         break;
                     case TransactionType.Reversal: {
+                            if (priorMessageInformation.MessageTransactionIndicator == "1100" && priorMessageInformation.FunctionCode == "101") {
+                                // We don't want to reverse authorizations
+                                break;
+                            }
+
                             if (paymentMethodType.Equals(PaymentMethodType.Credit)) {
                                 CardType = "CT ";
-                                CreditCardTransactionCount += 1;
+                                CreditCardTransactionCount -= 1;
                                 CreditCardTransactionSales -= amount;
                             }
                             else if (paymentMethodType.Equals(PaymentMethodType.Debit) || paymentMethodType.Equals(PaymentMethodType.EBT)) {
                                 CardType = "DB ";
-                                DebitEBTTransactionCount += 1;
+                                DebitEBTTransactionCount -= 1;
                                 DebitEBTTransactionSales -= amount;
                             }                            
                             else {
                                 CardType = "OH ";
-                                OtherCardTransactionCount += 1;
+                                OtherCardTransactionCount -= 1;
                                 OtherCardTransactionSales -= amount;
+                                CreditCardTransactionCount -= 1;
+                                CreditCardTransactionSales -= amount;
                             }
                         }
                         break;
@@ -250,19 +261,67 @@ namespace GlobalPayments.Api.Tests {
                                 DebitReturnTransactionCount += 1;
                                 DebitReturnTransactionSales += amount;
                             }
+                            else {
+                                CardType = "OH ";
+                                CreditReturnTransactionCount += 1;
+                                CreditReturnTransactionSales += amount;
+                            }
                         }
                         break;
                     case TransactionType.Void: {
+                            if (priorMessageInformation.MessageTransactionIndicator == "1100" && (priorMessageInformation.FunctionCode == "101" || priorMessageInformation.FunctionCode == "100")) {
+                                if (paymentMethodType.Equals(PaymentMethodType.Credit)) {
+                                    CardType = "CT ";
+                                    CreditVoidTransactionCount += 1;
+                                    CreditVoidTransactionSales += amount;
+                                }
+                                else if (paymentMethodType.Equals(PaymentMethodType.Debit) || paymentMethodType.Equals(PaymentMethodType.EBT)) {
+                                    CardType = "DB ";
+                                    DebitEBTVoidTransactionCount += 1;
+                                    DebitEBTVoidTransactionSales += amount;
+                                }
+                                else {
+                                    CardType = "OH ";
+                                    CreditVoidTransactionCount += 1;
+                                    CreditVoidTransactionSales += amount;
+                                }
+
+                                break;
+                            }
+
+                            bool priorTransactionWasReturn = false;
+                            if (priorMessageInformation.MessageTransactionIndicator == "1220" && priorMessageInformation.FunctionCode == "200") {
+                                // This should mean the last transaction was a Return/Refund
+                                priorTransactionWasReturn = true;
+                            }
+
                             if (paymentMethodType.Equals(PaymentMethodType.Credit)) {
                                 CardType = "CT ";
                                 CreditVoidTransactionCount += 1;
                                 CreditVoidTransactionSales += amount;
-                                CreditCardTransactionSales -= amount;
+
+                                if (priorTransactionWasReturn) {
+                                    CreditReturnTransactionCount -= 1;
+                                    CreditReturnTransactionSales -= amount;
+                                }
+                                else {
+                                    CreditCardTransactionCount -= 1;
+                                    CreditCardTransactionSales -= amount;
+                                }
                             }
                             else if (paymentMethodType.Equals(PaymentMethodType.Debit) || paymentMethodType.Equals(PaymentMethodType.EBT)) {
                                 CardType = "DB ";
                                 DebitEBTVoidTransactionCount += 1;
                                 DebitEBTVoidTransactionSales += amount;
+
+                                if (priorTransactionWasReturn) {
+                                    DebitReturnTransactionCount -= 1;
+                                    DebitReturnTransactionSales -= amount;
+                                }
+                                else {
+                                    DebitEBTTransactionCount -= 1;
+                                    DebitEBTTransactionSales -= amount;
+                                }
                             }
                         }
                         break;
@@ -275,7 +334,8 @@ namespace GlobalPayments.Api.Tests {
             StreamWriter bw = null;
             try {
                 bw = new StreamWriter(File.OpenWrite(fileName));
-                bw.Write(string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}|{20}|{21}|{22}\r\n", sequenceNumber, batchNumber,
+                bw.Write(string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}|{20}|{21}|{22}\r\n", 
+                    sequenceNumber, batchNumber,
                     ProprietaryTransactionCount, ProprietaryTransactionSales,
                     VisaTransactionCount, VisaTransactionSales,
                     MasterCardTransactionCount,MasterCardTransactionSales,

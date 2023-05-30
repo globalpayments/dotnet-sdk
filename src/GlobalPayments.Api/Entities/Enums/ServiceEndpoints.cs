@@ -25,6 +25,8 @@
         internal const string BILLPAY_TEST = "https://testing.heartlandpaymentservices.net/";
         public const string BILLPAY_CERTIFICATION = "https://staging.heartlandpaymentservices.net/";
         public const string BILLPAY_PRODUCTION = "https://heartlandpaymentservices.net/";
+        public const string Transaction_API_PRODUCTION = "";
+        public const string Transaction_API_TEST = "https://api.pit.paygateway.com/transactions";
         public const string OPEN_BANKING_TEST = "https://api.sandbox.globalpay-ecommerce.com/openbanking";
         public const string OPEN_BANKING_PRODUCTION = "https://api.globalpay-ecommerce.com/openbanking";
     }

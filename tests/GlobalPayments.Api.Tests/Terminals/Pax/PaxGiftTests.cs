@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
         public PaxGiftTests() {
             _device = DeviceService.Create(new ConnectionConfig {
-                DeviceType = DeviceType.PAX_S300,
+                DeviceType = DeviceType.PAX_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "10.12.220.172",
                 Port = "10009",

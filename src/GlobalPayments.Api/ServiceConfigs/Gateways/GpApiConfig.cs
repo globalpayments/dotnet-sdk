@@ -98,9 +98,10 @@ namespace GlobalPayments.Api {
             gateway.ServiceUrl = ServiceUrl;
 
             services.GatewayConnector = gateway;
-
             services.ReportingService = gateway;
-
+            services.FraudService = gateway;
+            
+            services.SetPayFacProvider(gateway);
             services.SetSecure3dProvider(Secure3dVersion.One, gateway);
             services.SetSecure3dProvider(Secure3dVersion.Two, gateway);
         }

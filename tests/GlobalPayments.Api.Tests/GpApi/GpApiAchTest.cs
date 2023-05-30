@@ -1,10 +1,14 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
@@ -16,18 +20,18 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private const string CURRENCY = "USD";
         private const decimal AMOUNT = 10m;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                RequestLogger  = new RequestConsoleLogger()
-            });
-        }
 
         [TestInitialize]
         public void TestInitialize() {
+            ServicesContainer.RemoveConfig();
+            ServicesContainer.ConfigureService(new GpApiConfig
+            {
+                AppId = AppId,
+                AppKey = AppKey,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger()
+            });
+
             address = new Address {
                 StreetAddress1 = "Apartment 852",
                 StreetAddress2 = "Complex 741",
@@ -79,6 +83,374 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             assertResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditSaleThenSplit()
+        {
+            var config = new GpApiConfig {
+                AppId = AppIdForMerchant,
+                AppKey = AppKeyForMerchant,
+                Environment = Entities.Environment.TEST,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
+            };
+            ServicesContainer.ConfigureService(config);
+
+            var merchants = GetMerchants();
+
+            var merchantProcessing = merchants.FirstOrDefault();
+            var merchantId = merchantProcessing.Id;
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+
+            config.MerchantId = merchantId;
+            config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
+
+            var merchantConfigName = "config_" + merchantId;
+            ServicesContainer.ConfigureService(config, merchantConfigName);
+
+            var transaction = eCheck.Charge(AMOUNT)
+               .WithCurrency(CURRENCY)
+               .WithAddress(address)
+               .WithCustomer(customer)
+               .Execute(merchantConfigName);
+
+            var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
+
+            var accountRecipient = GetAccountByType(merchantId, MerchantAccountType.FUND_MANAGEMENT);
+            var accountSplitting = GetAccountByType(merchantSplitting.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            Assert.IsNotNull(accountRecipient);
+
+            var fundsData = new FundsData();
+            fundsData.RecipientAccountId = accountSplitting.Id;
+            fundsData.MerchantId = merchantId;
+
+            var splitResponse = transaction.Split(8m)
+                .WithFundsData(fundsData)
+                .WithReference("Split Identifier")
+                .WithDescription("Split Test")
+                .Execute();
+
+            assertResponse(splitResponse, TransactionStatus.Captured);
+
+            ServicesContainer.RemoveConfig(merchantConfigName);
+            Thread.Sleep(30000);
+        }
+
+        [TestMethod]
+        public void CreditSaleThenSplitThenReverse_WithConfigMerchantId()
+        {
+            var config = new GpApiConfig {
+                AppId = AppIdForMerchant,
+                AppKey = AppKeyForMerchant,
+                Environment = Entities.Environment.TEST,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
+            };
+            ServicesContainer.ConfigureService(config);
+
+            var merchants = GetMerchants();
+
+            var merchantProcessing = merchants.FirstOrDefault();
+            var merchantId = merchantProcessing.Id;
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+
+            config.MerchantId = merchantId;
+            config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };           
+
+            var merchantConfigName = "config_" + merchantId;
+            ServicesContainer.ConfigureService(config, merchantConfigName);
+
+            var transaction = eCheck.Charge(AMOUNT)
+               .WithCurrency(CURRENCY)
+               .WithAddress(address)
+               .WithCustomer(customer)
+               .Execute(merchantConfigName);
+            
+            var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
+
+            var accountRecipient = GetAccountByType(merchantId, MerchantAccountType.FUND_MANAGEMENT);
+            var accountSplitting = GetAccountByType(merchantSplitting.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            Assert.IsNotNull(accountRecipient);
+
+            var fundsData = new FundsData();
+            fundsData.RecipientAccountId = accountSplitting.Id;
+            fundsData.MerchantId = merchantId;
+
+            var transferAmount = 8m;
+            var transferReference = "Split Identifier";
+            var transferDescription = "Split Test";
+
+            var splitResponse = transaction.Split(transferAmount)
+                .WithFundsData(fundsData)
+                .WithReference(transferReference)
+                .WithDescription(transferDescription)
+                .Execute();
+
+            assertResponse(splitResponse, TransactionStatus.Captured);
+
+            Assert.IsNotNull(splitResponse.TransfersFundsAccounts);
+
+            var transferFund = splitResponse.TransfersFundsAccounts.FirstOrDefault();
+
+            Assert.AreEqual("00", transferFund.Status);
+            Assert.AreEqual(transferAmount, transferFund.Amount);
+            Assert.AreEqual(transferReference, transferFund.Reference);
+            Assert.AreEqual(transferDescription, transferFund.Description);
+
+            var trfTransaction = Transaction.FromId(transferFund.Id, PaymentMethodType.Account_Funds);
+
+            var reverse = trfTransaction.Reverse()
+                .Execute(merchantConfigName);
+
+            assertResponse(reverse, TransactionStatus.Funded);
+
+            ServicesContainer.RemoveConfig(merchantConfigName);
+            Thread.Sleep(30000);
+        }
+
+        [TestMethod]
+        public void CreditSaleThenSplitThenReverse_WithFundsData()
+        {
+            var config = new GpApiConfig
+            {
+                AppId = AppIdForMerchant,
+                AppKey = AppKeyForMerchant,
+                Environment = Entities.Environment.TEST,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
+            };
+            ServicesContainer.ConfigureService(config);
+
+            var merchants = GetMerchants();
+
+            var merchantProcessing = merchants.FirstOrDefault();
+            var merchantId = merchantProcessing.Id;
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+
+            config.MerchantId = merchantId;
+            config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
+
+            var merchantConfigName = "config_" + merchantId;
+            ServicesContainer.ConfigureService(config, merchantConfigName);
+
+            var transaction = eCheck.Charge(AMOUNT)
+               .WithCurrency(CURRENCY)
+               .WithAddress(address)
+               .WithCustomer(customer)
+               .Execute(merchantConfigName);
+
+            var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
+
+            var accountRecipient = GetAccountByType(merchantId, MerchantAccountType.FUND_MANAGEMENT);
+            var accountSplitting = GetAccountByType(merchantSplitting.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            Assert.IsNotNull(accountRecipient);
+
+            var fundsData = new FundsData();
+            fundsData.RecipientAccountId = accountSplitting.Id;
+            fundsData.MerchantId = merchantId;
+
+            var transferAmount = 8m;
+            var transferReference = "Split Identifier";
+            var transferDescription = "Split Test";
+
+            var splitResponse = transaction.Split(transferAmount)
+                .WithFundsData(fundsData)
+                .WithReference(transferReference)
+                .WithDescription(transferDescription)
+                .Execute();
+
+            assertResponse(splitResponse, TransactionStatus.Captured);
+
+            Assert.IsNotNull(splitResponse.TransfersFundsAccounts);
+
+            var transferFund = splitResponse.TransfersFundsAccounts.FirstOrDefault();
+
+            Assert.AreEqual("00", transferFund.Status);
+            Assert.AreEqual(transferAmount, transferFund.Amount);
+            Assert.AreEqual(transferReference, transferFund.Reference);
+            Assert.AreEqual(transferDescription, transferFund.Description);
+
+            var trfTransaction = Transaction.FromId(transferFund.Id, PaymentMethodType.Account_Funds);
+
+            var reverse = trfTransaction.Reverse()
+                .WithFundsData(fundsData)
+                .Execute();
+
+            assertResponse(reverse, TransactionStatus.Funded);
+
+            ServicesContainer.RemoveConfig(merchantConfigName);
+            Thread.Sleep(30000);
+        }
+
+        [TestMethod]
+        public void CreditSaleThenSplit_WithoutFundsData()
+        {
+            var config = new GpApiConfig
+            {
+                AppId = AppIdForMerchant,
+                AppKey = AppKeyForMerchant,
+                Environment = Entities.Environment.TEST,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
+            };
+            ServicesContainer.ConfigureService(config);
+
+            var transaction = new Transaction {TransactionId = Guid.NewGuid().ToString() };
+
+            var exceptionCaught = false;
+            try
+            {                
+                var splitResponse = transaction.Split(8m)
+                   //.WithFundsData(fundsData)
+                   .WithReference("Split Identifier")
+                   .WithDescription("Split Test")
+                   .Execute();
+            }
+            catch (BuilderException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("FundsData cannot be null for this transaction type.", ex.Message);                
+            }
+            finally
+            {
+                ServicesContainer.RemoveConfig();
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void CreditSaleThenSplit_WithoutAmount()
+        {
+            var config = new GpApiConfig {
+                AppId = AppIdForMerchant,
+                AppKey = AppKeyForMerchant,
+                Environment = Entities.Environment.TEST,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
+            };
+            ServicesContainer.ConfigureService(config);
+
+            var merchants = GetMerchants();
+
+            var merchantProcessing = merchants.FirstOrDefault();
+            var merchantId = merchantProcessing.Id;
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+
+            config.MerchantId = merchantId;
+            config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
+
+            var merchantConfigName = "config_" + merchantId;
+            ServicesContainer.ConfigureService(config, merchantConfigName);
+
+            var transaction = eCheck.Charge(AMOUNT)
+               .WithCurrency(CURRENCY)
+               .WithAddress(address)
+               .WithCustomer(customer)
+               .Execute(merchantConfigName);
+
+            var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
+
+            var accountRecipient = GetAccountByType(merchantId, MerchantAccountType.FUND_MANAGEMENT);
+            var accountSplitting = GetAccountByType(merchantSplitting.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            Assert.IsNotNull(accountRecipient);
+
+            var fundsData = new FundsData();
+            fundsData.RecipientAccountId = accountSplitting.Id;
+            fundsData.MerchantId = merchantId;            
+
+            var exceptionCaught = false;
+            try {
+                var splitResponse = transaction.Split()
+                .WithFundsData(fundsData)
+                .WithReference("Split Identifier")
+                .WithDescription("Split Test")
+                .Execute();
+            }
+            catch (BuilderException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Amount cannot be null for this transaction type.", ex.Message);                
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+                ServicesContainer.RemoveConfig(merchantConfigName);
+                Thread.Sleep(30000);
+            }  
+        }
+
+        [TestMethod]
+        public void CreditSaleThenSplit_WithoutRecipientId()
+        {
+            var config = new GpApiConfig { 
+                AppId = AppIdForMerchant,
+                AppKey = AppKeyForMerchant,
+                Environment = Entities.Environment.TEST,
+                Channel = Channel.CardNotPresent,
+                RequestLogger = new RequestConsoleLogger(),
+                EnableLogging = true
+            };
+            ServicesContainer.ConfigureService(config);
+
+            var merchants = GetMerchants();
+
+            var merchantProcessing = merchants.FirstOrDefault();
+            var merchantId = merchantProcessing.Id;
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+
+            config.MerchantId = merchantId;
+            config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
+
+            var merchantConfigName = "config_" + merchantId;
+            ServicesContainer.ConfigureService(config, merchantConfigName);
+
+            var transaction = eCheck.Charge(AMOUNT)
+               .WithCurrency(CURRENCY)
+               .WithAddress(address)
+               .WithCustomer(customer)
+               .Execute(merchantConfigName);
+
+            var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
+
+            var accountRecipient = GetAccountByType(merchantId, MerchantAccountType.FUND_MANAGEMENT);
+            var accountSplitting = GetAccountByType(merchantSplitting.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            Assert.IsNotNull(accountRecipient);
+
+            var fundsData = new FundsData();
+            //fundsData.RecipientAccountId = accountSplitting.Id;
+            fundsData.MerchantId = merchantId;
+
+            var exceptionCaught = false;
+            try
+            {
+                var splitResponse = transaction.Split(0.01m)
+                .WithFundsData(fundsData)
+                .WithReference("Split Identifier")
+                .WithDescription("Split Test")
+                .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - Transfers may only be initiated between accounts under the same partner program", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40041", ex.ResponseMessage);
+            }
+            finally
+            {
+                ServicesContainer.RemoveConfig(merchantConfigName);
+                Assert.IsTrue(exceptionCaught);
+                Thread.Sleep(30000);
+            }
         }
 
         [TestMethod]
@@ -165,6 +537,29 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), response?.ResponseMessage);
+        }
+
+        private List<MerchantSummary> GetMerchants()
+        {
+            var merchants = new ReportingService().FindMerchants(1, 10)
+              .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
+              .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)
+              .Execute();
+
+            return merchants.Results;
+        }
+
+        private MerchantAccountSummary GetAccountByType(string merchantSenderId, MerchantAccountType merchantAccountType)
+        {
+            var response = ReportingService.FindAccounts(1, 10)
+                   .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
+                   .Where(SearchCriteria.StartDate, StartDate)
+                   .And(SearchCriteria.EndDate, EndDate)
+                    .And(DataServiceCriteria.MerchantId, merchantSenderId)
+                   .And(SearchCriteria.AccountStatus, MerchantAccountStatus.ACTIVE)
+                   .Execute();
+
+            return response.Results.FirstOrDefault(x => x.Type == merchantAccountType);
         }
     }
 }

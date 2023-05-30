@@ -39,5 +39,8 @@ namespace GlobalPayments.Api.Gateways {
 
         public abstract Transaction ProcessAuthorization(AuthorizationBuilder builder);
         public abstract string SerializeRequest(AuthorizationBuilder builder);
+        public bool SupportsOpenBanking() {
+            return false;
+        }
     }
 }

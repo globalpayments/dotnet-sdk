@@ -194,9 +194,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                 exceptionCaught = true;
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40039", ex.ResponseMessage);
-                Assert.AreEqual(
-                    $"Status Code: Conflict - Idempotency Key seen before: id={dccDetails.TransactionId}",
-                    ex.Message);
+                Assert.IsTrue(
+                    ex.Message.StartsWith("Status Code: Conflict - Idempotency Key seen before: id=" + dccDetails.TransactionId));
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }

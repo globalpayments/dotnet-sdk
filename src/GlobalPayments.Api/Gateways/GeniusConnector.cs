@@ -305,5 +305,9 @@ namespace GlobalPayments.Api.Gateways {
 
             return response;
         }
+
+        public bool SupportsOpenBanking() {
+            return false;
+        }
     }
 }

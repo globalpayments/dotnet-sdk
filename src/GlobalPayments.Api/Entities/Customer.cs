@@ -30,6 +30,11 @@ namespace GlobalPayments.Api.Entities {
         public string MiddleName { get; set; }
 
         /// <summary>
+        /// Customer's buiness name
+        /// </summary>
+        public string BusinessName { get; set; }
+
+        /// <summary>
         /// Customer's company
         /// </summary>
         public string Company { get; set; }
@@ -86,6 +91,10 @@ namespace GlobalPayments.Api.Entities {
         /// Customer resource's status
         /// </summary>
         public string Status { get; set; }
+        
+        public PhoneNumber Phone { get; set; }
+   
+        public List<CustomerDocument> Documents { get; set; }
 
         /// <summary>
         /// Customer's existing payment methods

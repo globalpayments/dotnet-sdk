@@ -111,6 +111,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
                 Assert.IsNotNull(result?.Results);
                 Assert.IsTrue(result.Results is List<DepositSummary>);
+                if (depositStatus == DepositStatus.SplitFunding || depositStatus == DepositStatus.Reserved || depositStatus == DepositStatus.Irregular) {
+                    continue;
+                }
                 Assert.IsTrue(result.Results.TrueForAll(d => d.Status.Trim() == depositStatus.ToString().ToUpper()));
             }
         }

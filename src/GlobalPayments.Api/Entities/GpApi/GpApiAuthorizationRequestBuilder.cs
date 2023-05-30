@@ -1,6 +1,8 @@
 ﻿using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.PaymentMethods.PaymentInterfaces;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
@@ -21,10 +23,19 @@ namespace GlobalPayments.Api.Entities {
                 var digitalWallet = new JsonDoc();
                 var creditCardData = (builder.PaymentMethod as CreditCardData);
                 //Digital Wallet
-                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
-                {
+                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                    var payment_token = new JsonDoc();
+                    switch (creditCardData.MobileType)
+                    {
+                        case EncyptedMobileType.CLICK_TO_PAY:
+                            payment_token.Set("data", creditCardData.Token);
+                            break;
+                        default:
+                            payment_token = JsonDoc.Parse(creditCardData.Token);
+                            break;
+                    }
                     digitalWallet
-                        .Set("payment_token", JsonDoc.Parse(creditCardData.Token));
+                            .Set("payment_token", payment_token);
 
                 }
                 else if (builder.TransactionModifier == TransactionModifier.DecryptedMobile)
@@ -71,6 +82,14 @@ namespace GlobalPayments.Api.Entities {
                     if (!hasToken) {
                         paymentMethod.Set("card", card);
                     }
+                    //Brand reference when card was tokenized
+                    else {
+                        JsonDoc brand = new JsonDoc()
+                            .Set("brand_reference", builder.CardBrandTransactionId);
+                        if (brand.HasKeys()) {
+                            paymentMethod.Set("card", brand);
+                        }
+                    }
                    
 
                     if (builder.TransactionType == TransactionType.Tokenize) {
@@ -100,6 +119,7 @@ namespace GlobalPayments.Api.Entities {
 
                         var RequestData = new JsonDoc()
                            .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                           .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                            .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                            .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                            .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -118,6 +138,7 @@ namespace GlobalPayments.Api.Entities {
                         if (builder.RequestMultiUseToken && string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                             var tokenizationData = new JsonDoc()
                                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
+                                .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountID)
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                                 .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
@@ -133,6 +154,7 @@ namespace GlobalPayments.Api.Entities {
                         {
                             var verificationData = new JsonDoc()
                                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                                .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                                 .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("currency", builder.Currency)
@@ -172,6 +194,7 @@ namespace GlobalPayments.Api.Entities {
 
                         var verificationData = new JsonDoc()
                             .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                            .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                             .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                             .Set("currency", builder.Currency)
@@ -219,20 +242,19 @@ namespace GlobalPayments.Api.Entities {
             }
 
             // pin block
-            if (builder.PaymentMethod is IPinProtected)
-            {
+            if (builder.PaymentMethod is IPinProtected) {
                 paymentMethod.Get("card")?.Set("pin_block", ((IPinProtected)builder.PaymentMethod).PinBlock);
             }
 
             // authentication
-            if (builder.PaymentMethod is CreditCardData)
-            {
+            if (builder.PaymentMethod is CreditCardData) {
                 paymentMethod.Set("name", (builder.PaymentMethod as CreditCardData).CardHolderName);
 
                 var secureEcom = (builder.PaymentMethod as CreditCardData).ThreeDSecure;
-                if (secureEcom != null)
-                {
+                if (secureEcom != null) {
                     var authentication = new JsonDoc().Set("id", secureEcom.ServerTransactionId);
+                    var three_ds =new JsonDoc().Set("exempt_status", secureEcom.ExemptStatus.ToString());
+                    authentication.Set("three_ds", three_ds);
 
                     paymentMethod.Set("authentication", authentication);
                 }
@@ -240,22 +262,20 @@ namespace GlobalPayments.Api.Entities {
                 paymentMethod.Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null);
             }
 
-            if(builder.PaymentMethod is EBT)
-            {
+            if(builder.PaymentMethod is EBT) {
                 paymentMethod.Set("name", (builder.PaymentMethod as EBT).CardHolderName);
             }
 
-            if (builder.PaymentMethod is eCheck)
-            {
+            if (builder.PaymentMethod is eCheck) {
                 eCheck check = (builder.PaymentMethod as eCheck);
-                paymentMethod.Set("name", check.CheckHolderName);
+                paymentMethod.Set("name", check.CheckHolderName)
+                    .Set("narrative", check.MerchantNotes);
 
                 var bankTransfer = new JsonDoc()
                     .Set("account_number", check.AccountNumber)
                     .Set("account_type", (check.AccountType != null) ? EnumConverter.GetMapping(Target.GP_API, check.AccountType) : null)
                     .Set("check_reference", check.CheckReference)
-                    .Set("sec_code", check.SecCode)
-                    .Set("narrative", check.MerchantNotes);
+                    .Set("sec_code", check.SecCode);
 
                 var bank = new JsonDoc()
                     .Set("code", check.RoutingNumber)
@@ -278,8 +298,7 @@ namespace GlobalPayments.Api.Entities {
 
             }
 
-            if (builder.PaymentMethod is AlternativePaymentMethod)
-            {
+            if (builder.PaymentMethod is AlternativePaymentMethod) {
                 var alternatepaymentMethod = (AlternativePaymentMethod)builder.PaymentMethod;
                 
                 paymentMethod.Set("name", alternatepaymentMethod.AccountHolderName);
@@ -290,38 +309,69 @@ namespace GlobalPayments.Api.Entities {
                 paymentMethod.Set("apm", apm);
             }
 
+            if (builder.PaymentMethod is BankPayment) {
+                var bankpaymentMethod = (BankPayment)builder.PaymentMethod;
+
+                var apm = new JsonDoc()
+                   .Set("provider", PaymentProvider.OPEN_BANKING.ToString())
+                   .Set("countries", bankpaymentMethod.Countries?.ToArray());
+                paymentMethod.Set("apm", apm);
+
+                var bankPaymentType = bankpaymentMethod.BankPaymentType ?? OpenBankingProvider.GetBankPaymentType(builder.Currency);
+
+                var bankTransfer = new JsonDoc()
+                  .Set("account_number", bankPaymentType == BankPaymentType.FASTERPAYMENTS ? bankpaymentMethod.AccountNumber : "")
+                  .Set("iban", bankPaymentType == BankPaymentType.SEPA ? bankpaymentMethod.Iban : "");
+
+                var bank = new JsonDoc()
+                    .Set("code", bankpaymentMethod.SortCode)
+                    .Set("name", bankpaymentMethod.AccountName);
+                bankTransfer.Set("bank", bank);
+
+                var remittance = new JsonDoc()
+                    .Set("type", builder.RemittanceReferenceType.ToString())
+                    .Set("value", builder.RemittanceReferenceValue);
+                bankTransfer.Set("remittance_reference", remittance);
+
+                paymentMethod.Set("bank_transfer", bankTransfer);
+            }
+
+            if (builder.PaymentMethod is BNPL) {
+                BNPL bnpl = (BNPL)builder.PaymentMethod;
+
+                var bnplType = new JsonDoc().Set("provider", EnumConverter.GetMapping(Target.GP_API, bnpl.BNPLType));
+
+                paymentMethod.Set("name", builder.CustomerData?.FirstName + " " + builder.CustomerData?.LastName)
+                    .Set("bnpl", bnplType);
+            }
+
             // encryption
-            if (builder.PaymentMethod is IEncryptable)
-            {
+            if (builder.PaymentMethod is IEncryptable) {
                 var encryptionData = ((IEncryptable)builder.PaymentMethod).EncryptionData;
 
-                if (encryptionData != null)
-                {
+                if (encryptionData != null) {
                     var encryption = new JsonDoc()
                         .Set("version", encryptionData.Version);
 
-                    if (!string.IsNullOrEmpty(encryptionData.KTB))
-                    {
+                    if (!string.IsNullOrEmpty(encryptionData.KTB)) {
                         encryption.Set("method", "KTB");
                         encryption.Set("info", encryptionData.KTB);
                     }
-                    else if (!string.IsNullOrEmpty(encryptionData.KSN))
-                    {
+                    else if (!string.IsNullOrEmpty(encryptionData.KSN)) {
                         encryption.Set("method", "KSN");
                         encryption.Set("info", encryptionData.KSN);
                     }
 
-                    if (encryption.Has("info"))
-                    {
+                    if (encryption.Has("info")) {
                         paymentMethod.Set("encryption", encryption);
                     }
                 }
             }
 
-            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData)
-            {
+            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData) {
                 var payLinkData = builder.PayLinkData;
                 var requestData = new JsonDoc()
+                    .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                     .Set("usage_limit", payLinkData.UsageLimit.ToString())
                     .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payLinkData.UsageMode))
                     .Set("images", payLinkData.Images)
@@ -359,17 +409,46 @@ namespace GlobalPayments.Api.Entities {
                 };                
             }
 
+            if (builder.TransactionType == TransactionType.TransferFunds) {
+                if (!(builder.PaymentMethod is AccountFunds)) {
+                    throw new UnsupportedTransactionException("Payment method doesn't support funds transfers");
+                }
+                var fundsData = builder.PaymentMethod as AccountFunds;
+                var payload = new JsonDoc()
+                   .Set("account_id", fundsData.AccountId)
+                   .Set("account_name", fundsData.AccountName)
+                   .Set("recipient_account_id", fundsData.RecipientAccountId)
+                   .Set("reference", builder.ClientTransactionId ?? GenerationUtils.GenerateOrderId())
+                   .Set("amount", builder.Amount.ToNumericCurrencyString())
+                   .Set("description", builder.Description)
+                   .Set("usable_balance_mode", fundsData.UsableBalanceMode?.ToString());
+
+                var endpoint = merchantUrl;
+                if (!string.IsNullOrEmpty(fundsData.MerchantId)) {
+                    endpoint = $"/merchants/{fundsData.MerchantId}";
+                }
+                return new GpApiRequest {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{endpoint}/transfers",
+                    RequestBody = payload.ToString(),
+                };
+            }
+
             var data = new JsonDoc()
                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
                 .Set("type", builder.TransactionType == TransactionType.Refund ? "REFUND" : "SALE") // [SALE, REFUND]
                 .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel)) // [CP, CNP]
                 .Set("capture_mode", GetCaptureMode(builder)) // [AUTO, LATER, MULTIPLE]
-                //.Set("remaining_capture_count", "") //Pending Russell
+                                                              //.Set("remaining_capture_count", "") //Pending Russell
                 .Set("authorization_mode", builder.AllowPartialAuth ? "PARTIAL" : null)
                 .Set("amount", builder.Amount.ToNumericCurrencyString())
                 .Set("currency", builder.Currency)
-                .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
-                .Set("description", builder.Description)
+                .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString());
+                if (builder.PaymentMethod is CreditCardData && ((builder.PaymentMethod as CreditCardData).MobileType == EncyptedMobileType.CLICK_TO_PAY)) {
+                    data.Set("masked", builder.MaskedDataResponse ? "YES" : "NO");
+                }
+            data.Set("description", builder.Description)
                 //.Set("order_reference", builder.OrderId)
                 .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
                 .Set("cashback_amount", builder.CashBackAmount.ToNumericCurrencyString())
@@ -385,8 +464,11 @@ namespace GlobalPayments.Api.Entities {
                 .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
                 .Set("id", builder.PaymentLinkId) : null);
 
-            if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternativePaymentMethod) {
-                data.Set("payer", SetPayerInformation(builder));
+            if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
+                var payer = SetPayerInformation(builder);
+                if (payer.HasKeys()) {
+                    data.Set("payer", payer);
+                }
             }
 
             // set order reference
@@ -398,18 +480,15 @@ namespace GlobalPayments.Api.Entities {
                 data.Set("order", order);
             }
 
-            if (builder.PaymentMethod is AlternativePaymentMethod) {
-                setOrderInformation(builder, ref data);
-
-                var alternatepaymentMethod = (AlternativePaymentMethod)builder.PaymentMethod;
-
-                var notifications = new JsonDoc()
-                   .Set("return_url", alternatepaymentMethod?.ReturnUrl)
-                   .Set("status_url", alternatepaymentMethod?.StatusUpdateUrl)
-                   .Set("cancel_url", alternatepaymentMethod?.CancelUrl);
-
-                data.Set("notifications", notifications);
+            if (builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
+                SetOrderInformation(builder, ref data);                
             }
+
+            if(builder.PaymentMethod is AlternativePaymentMethod || 
+                builder.PaymentMethod is BNPL || 
+                builder.PaymentMethod is BankPayment) {
+                data.Set("notifications", SetNotificationUrls(builder));
+            }            
 
             // stored credential
             if (builder.StoredCredential != null) {
@@ -426,6 +505,28 @@ namespace GlobalPayments.Api.Entities {
                 Endpoint = $"{merchantUrl}/transactions",
                 RequestBody = data.ToString(),
             };
+        }
+
+        private static JsonDoc SetNotificationUrls(AuthorizationBuilder builder)
+        {
+            INotificationData payment = null;
+
+            if (builder.PaymentMethod is AlternativePaymentMethod) {
+                payment = (builder.PaymentMethod) as AlternativePaymentMethod;
+            }
+            if (builder.PaymentMethod is BNPL) {
+                payment = builder.PaymentMethod as BNPL;
+            }
+            if (builder.PaymentMethod is BankPayment) {
+                payment = builder.PaymentMethod as BankPayment;
+            }
+
+            var notifications = new JsonDoc()
+                  .Set("return_url", payment?.ReturnUrl)
+                  .Set("status_url", payment?.StatusUpdateUrl)
+                  .Set("cancel_url", payment?.CancelUrl);
+
+            return notifications;
         }
 
         private static string[] GetAllowedPaymentMethod(PaymentMethodName[] allowedPaymentMethods) {
@@ -533,19 +634,13 @@ namespace GlobalPayments.Api.Entities {
             payer.Set("reference", builder.CustomerId ?? builder.CustomerData?.Id);
             if(builder.PaymentMethod is eCheck)
             {
-                JsonDoc billingAddress = new JsonDoc();
+                JsonDoc billingAddress = GetBasicAddressInformation(builder.BillingAddress); 
                     
-                billingAddress.Set("line_1", builder.BillingAddress?.StreetAddress1)
-                        .Set("line_2", builder.BillingAddress?.StreetAddress2)
-                        .Set("city", builder.BillingAddress?.City)
-                        .Set("postal_code", builder.BillingAddress?.PostalCode)
-                        .Set("state", builder.BillingAddress?.State)
-                        .Set("country", builder.BillingAddress.CountryCode);
+                if (billingAddress.HasKeys()) {
+                    payer.Set("billing_address", billingAddress);
+                }
 
-                payer.Set("billing_address", billingAddress);
-
-                if (builder.CustomerData != null) 
-                {
+                if (builder.CustomerData != null) {
                     payer.Set("name", builder.CustomerData.FirstName + " " + builder.CustomerData.LastName);
                     payer.Set("date_of_birth", builder.CustomerData.DateOfBirth);
                 }
@@ -559,16 +654,68 @@ namespace GlobalPayments.Api.Entities {
                 homePhone.Set("country_code", builder.HomePhone?.CountryCode)
                         .Set("subscriber_number", builder.HomePhone?.Number);
 
-                payer.Set("home_phone", homePhone);
+                if (homePhone.HasKeys()) {
+                    payer.Set("home_phone", homePhone);
+                }
 
                 JsonDoc workPhone = new JsonDoc();
 
                 workPhone.Set("country_code", builder.WorkPhone?.CountryCode)
                         .Set("subscriber_number", builder.WorkPhone?.Number);
 
-                payer.Set("work_phone", workPhone);
+                if (workPhone.HasKeys()) {
+                    payer.Set("work_phone", workPhone);
+                }
+            }
+            else if(builder.PaymentMethod is BNPL && builder.CustomerData != null) {
+               
+                payer.Set("email", builder.CustomerData.Email)
+                     .Set("date_of_birth", builder.CustomerData.DateOfBirth);
+
+                JsonDoc billing_address = GetBasicAddressInformation(builder.BillingAddress);                
+                
+                if (builder.CustomerData != null) {
+                    billing_address
+                           .Set("first_name", builder.CustomerData?.FirstName)
+                           .Set("last_name", builder.CustomerData?.LastName);
+                }
+
+                payer.Set("billing_address", billing_address);
+
+                if (builder.CustomerData.Phone != null) {
+                    JsonDoc homePhone = new JsonDoc();
+
+                    homePhone.Set("country_code", builder.CustomerData.Phone?.CountryCode)
+                            .Set("subscriber_number", builder.CustomerData.Phone?.Number);
+
+                    payer.Set("contact_phone", homePhone);
+                    
+                }
+                if (builder.CustomerData.Documents != null) {
+
+                    var documents = new List<Dictionary<string, object>>();
+                    foreach (var document in builder.CustomerData.Documents) {
+                        var doc = new Dictionary<string, object>();
+                        
+                        doc.Add("type", document.Type.ToString());
+                        doc.Add("reference", document.Reference);
+                        doc.Add("issuer", document.Issuer);
+
+                        documents.Add(doc);                            
+                    }
+                    payer.Set("documents", documents);
+                }
             }
             return payer;
+        }
+
+        private static JsonDoc GetBasicAddressInformation(Address address) {
+            return new JsonDoc().Set("line_1", address?.StreetAddress1)
+                            .Set("line_2", address?.StreetAddress2)
+                            .Set("city", address?.City)
+                            .Set("postal_code", address?.PostalCode)
+                            .Set("state", address?.State)
+                            .Set("country", address?.CountryCode);
         }
 
         private static string GetCaptureMode(AuthorizationBuilder builder) {
@@ -581,47 +728,41 @@ namespace GlobalPayments.Api.Entities {
             return "AUTO";
         }
 
-        private static JsonDoc setOrderInformation(AuthorizationBuilder builder, ref JsonDoc requestBody)
+        private static JsonDoc SetItemDetailsListForBNPL(AuthorizationBuilder builder, ref JsonDoc order)
         {
-            JsonDoc order;
-            if (requestBody.Has("order"))
-            {
-                order = requestBody.Get("order");
-            }
-            else
-            {
-                order = new JsonDoc();
-            }
-            order.Set("description", builder.OrderDetails?.Description);
+            var items = new List<Dictionary<string, object>>();                        
+                foreach (var product in builder.MiscProductData) {
+                    var item = new Dictionary<string, object>();                    
+                    var qta = product.Quantity;
+                    var taxAmount = product.TaxAmount ?? 0;
+                    var unitAmount = product.UnitPrice ?? 0;
+                    var netUnitAmount = product.NetUnitAmount ?? 0;
+                    var discountAmount = product.DiscountAmount ?? 0;
+                    item.Add("reference", product.ProductId ?? null);
+                    item.Add("label", product.ProductName ?? null);
+                    item.Add("description", product.Description ?? null);
+                    item.Add("quantity", qta.ToString());
+                    item.Add("unit_amount", unitAmount.ToNumericCurrencyString());
+                    item.Add("total_amount", (qta * unitAmount).ToNumericCurrencyString());
+                    item.Add("tax_amount", taxAmount.ToNumericCurrencyString());
+                    item.Add("discount_amount", discountAmount != 0 ? discountAmount.ToNumericCurrencyString().RemoveInitialZero() : "0");
+                    item.Add("tax_percentage", product.TaxPercentage != 0 ? product.TaxPercentage.ToNumericCurrencyString().RemoveInitialZero() : "0");
+                    item.Add("net_unit_amount", netUnitAmount.ToNumericCurrencyString());
+                    item.Add("gift_card_currency", product.GiftCardCurrency);
+                    item.Add("url", product.Url);
+                    item.Add("image_url", product.ImageUrl);
+                    items.Add(item);
+                }
+                         
+            return order.Set("items", items);
+        }
 
-            if (builder.ShippingAddress != null)
-            {
-                var shippingAddress = new JsonDoc()
-                    .Set("line1", builder.ShippingAddress.StreetAddress1)
-                    .Set("line2", builder.ShippingAddress.StreetAddress2)
-                    .Set("line3", builder.ShippingAddress.StreetAddress3)
-                    .Set("city", builder.ShippingAddress.City)
-                    .Set("postal_code", builder.ShippingAddress.PostalCode)
-                    .Set("state", builder.ShippingAddress.State)
-                    .Set("country", builder.ShippingAddress.CountryCode);
-
-                order.Set("shipping_address", shippingAddress);
-            }
-
-            var shippingPhone = new JsonDoc()
-                .Set("country_code", builder.ShippingPhone?.CountryCode)
-                .Set("subscriber_number", builder.ShippingPhone?.Number);
-
-            order.Set("shipping_phone", shippingPhone);
-
-            decimal taxTotalAmount = 0;
-            decimal itemsAmount = 0;
+        private static JsonDoc SetItemDetailsListForApm(AuthorizationBuilder builder, ref JsonDoc order) {
+            decimal taxTotalAmount = 0, itemsAmount = 0;
             decimal? orderAmount = null;
-            if (builder.MiscProductData != null)
-            {
-                var items = new List<Dictionary<string,object>>();
-                foreach (var product in builder.MiscProductData)
-                {
+            if (builder.MiscProductData != null) {
+                var items = new List<Dictionary<string, object>>();
+                foreach (var product in builder.MiscProductData) {
                     var qta = product.Quantity ?? 0;
                     var taxAmount = product.TaxAmount ?? 0;
                     var unitAmount = product.UnitPrice ?? 0;
@@ -654,9 +795,68 @@ namespace GlobalPayments.Api.Entities {
                 order.Set("currency", builder.Currency);
                 order.Set("items", items);
             }
-            if (!requestBody.Has("order"))
-            {
-                requestBody.Set("order", order);
+
+            return order;
+        }
+
+        private static JsonDoc SetOrderInformation(AuthorizationBuilder builder, ref JsonDoc requestBody) {
+            JsonDoc order;
+            if (requestBody.Has("order")) {
+                order = requestBody.Get("order");
+            }
+            else {
+                order = new JsonDoc();
+            }
+            order.Set("description", builder.OrderDetails?.Description);
+
+            var shippingAddress = new JsonDoc();
+            if (builder.ShippingAddress != null) {
+                shippingAddress
+                    .Set("line_1", builder.ShippingAddress.StreetAddress1)
+                    .Set("line_2", builder.ShippingAddress.StreetAddress2)
+                    .Set("line_3", builder.ShippingAddress.StreetAddress3)
+                    .Set("city", builder.ShippingAddress.City)
+                    .Set("postal_code", builder.ShippingAddress.PostalCode)
+                    .Set("state", builder.ShippingAddress.State)
+                    .Set("country", builder.ShippingAddress.CountryCode);                
+            }
+
+            var shippingPhone = new JsonDoc()
+                .Set("country_code", builder.ShippingPhone?.CountryCode)
+                .Set("subscriber_number", builder.ShippingPhone?.Number);
+
+            if (shippingPhone.HasKeys()) {
+                order.Set("shipping_phone", shippingPhone);
+            }
+
+            //AlternativePaymentMethod
+            if (builder.PaymentMethod is AlternativePaymentMethod) { 
+                if (builder.MiscProductData != null) {
+                    SetItemDetailsListForApm(builder, ref order);
+                }
+            }
+
+            //Buy Now Pay Later
+            if (builder.PaymentMethod is BNPL) {
+                order.Set("shipping_method", builder.BNPLShippingMethod.ToString());
+
+                if (builder.MiscProductData != null) {
+                    SetItemDetailsListForBNPL(builder, ref order);
+                }
+
+                if (builder.CustomerData != null) {
+                     shippingAddress
+                            .Set("first_name", builder.CustomerData?.FirstName)
+                            .Set("last_name", builder.CustomerData?.LastName);                    
+                }
+            }
+
+            if (shippingAddress.HasKeys()) {
+                order.Set("shipping_address", shippingAddress);
+            }
+
+            if (!requestBody.Has("order") && order.HasKeys()) {               
+                requestBody.Set("order", order);                
             }
 
             return requestBody;

@@ -644,7 +644,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
             var commercialData = new CommercialData(TaxType.SALESTAX) {
-                PoNumber = "9876543210",
+                PoNumber = "9876543210",                
                 TaxAmount = 1m
             };
 
@@ -654,7 +654,7 @@ namespace GlobalPayments.Api.Tests.Certifications {
 
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
-        }
+        }      
 
         [TestMethod]
         public void ecomm_025_level_ii_response_s() {
@@ -1495,5 +1495,46 @@ namespace GlobalPayments.Api.Tests.Certifications {
                     Assert.Fail(exc.Message);
             }
         }
+
+        //Level III Corporate Purchase Card
+        [TestMethod]
+        public void ecomm_level_iii_visa()
+        {
+            var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
+
+            var card = new CreditCardData
+            {
+                Number = "4012002000060016",
+                ExpMonth = 12,
+                ExpYear = 2025,
+                Cvn = "123"
+            };
+
+            var chargeResponse = card.Charge(134.56m)
+                .WithCurrency("USD")
+                .WithEcommerceInfo(ecom)
+                .WithAddress(address)
+                .WithCommercialRequest(true)
+                .Execute();
+
+            Assert.IsNotNull(chargeResponse);
+            Assert.AreEqual("00", chargeResponse.ResponseCode);
+            Assert.AreEqual("S", chargeResponse.CommercialIndicator);
+
+            var commercialData = new CommercialData(TaxType.SALESTAX, CommercialIndicator.Level_III)
+            {
+                PoNumber = "PO123",
+                TaxAmount = 1m,
+
+            };
+
+            var cpcResponse = chargeResponse.Edit()
+                .WithCommercialData(commercialData)
+                .Execute();
+
+            Assert.IsNotNull(cpcResponse);
+            Assert.AreEqual("00", cpcResponse.ResponseCode);
+        }
+        
     }
 }

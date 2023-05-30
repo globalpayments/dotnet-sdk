@@ -42,7 +42,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 SoftwareLevel = "21205710",
 
                 // pos configuration values
-                SupportsPartialApproval = false,
+                SupportsPartialApproval = true,
                 SupportsShutOffAmount = true,
                 SupportsReturnBalance = true,
                 SupportsDiscoverNetworkReferenceId = true,

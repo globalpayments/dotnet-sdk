@@ -1,5 +1,7 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.PayFac;
+using GlobalPayments.Api.Entities.Reporting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,90 +9,106 @@ using System.Text;
 namespace GlobalPayments.Api.Services
 {
     public class PayFacService : IDisposable {
-        public PayFacBuilder CreateAccount() {
-            return new PayFacBuilder(TransactionType.CreateAccount);
+        public PayFacBuilder<Transaction> CreateAccount() {
+            return new PayFacBuilder<Transaction>(TransactionType.CreateAccount);
         }
 
-        public PayFacBuilder EditAccount() {
-            return new PayFacBuilder(TransactionType.EditAccount);
+        public PayFacBuilder<Transaction> EditAccount() {
+            return new PayFacBuilder<Transaction>(TransactionType.EditAccount);
         }
 
-        public PayFacBuilder ResetPassword() {
-            return new PayFacBuilder(TransactionType.ResetPassword);
+        public PayFacBuilder<Transaction> ResetPassword() {
+            return new PayFacBuilder<Transaction>(TransactionType.ResetPassword);
         }
 
-        public PayFacBuilder RenewAccount() {
-            return new PayFacBuilder(TransactionType.RenewAccount);
+        public PayFacBuilder<Transaction> RenewAccount() {
+            return new PayFacBuilder<Transaction>(TransactionType.RenewAccount);
         }
 
-        public PayFacBuilder UpdateBeneficialOwnershipInfo() {
-            return new PayFacBuilder(TransactionType.UpdateBeneficialOwnership);
+        public PayFacBuilder<Transaction> UpdateBeneficialOwnershipInfo() {
+            return new PayFacBuilder<Transaction>(TransactionType.UpdateBeneficialOwnership);
         }
 
-        public PayFacBuilder DisownAccount() {
-            return new PayFacBuilder(TransactionType.DisownAccount);
+        public PayFacBuilder<Transaction> DisownAccount() {
+            return new PayFacBuilder<Transaction>(TransactionType.DisownAccount);
         }
 
-        public PayFacBuilder UploadDocumentChargeback() {
-            return new PayFacBuilder(TransactionType.UploadDocumentChargeback);
+        public PayFacBuilder<Transaction> UploadDocumentChargeback() {
+            return new PayFacBuilder<Transaction>(TransactionType.UploadDocumentChargeback);
         }
 
-        public PayFacBuilder UploadDocument() {
-            return new PayFacBuilder(TransactionType.UploadDocument);
+        public PayFacBuilder<Transaction> UploadDocument() {
+            return new PayFacBuilder<Transaction>(TransactionType.UploadDocument);
         }
 
-        public PayFacBuilder ObtainSSOKey() {
-            return new PayFacBuilder(TransactionType.ObtainSSOKey);
+        public PayFacBuilder<Transaction> ObtainSSOKey() {
+            return new PayFacBuilder<Transaction>(TransactionType.ObtainSSOKey);
         }
 
-        public PayFacBuilder UpdateBankAccountOwnershipInfo() {
-            return new PayFacBuilder(TransactionType.UpdateBankAccountOwnership);
+        public PayFacBuilder<Transaction> UpdateBankAccountOwnershipInfo() {
+            return new PayFacBuilder<Transaction>(TransactionType.UpdateBankAccountOwnership);
         }
 
-        public PayFacBuilder AddFunds() {
-            return new PayFacBuilder(TransactionType.AddFunds);
+        public PayFacBuilder<Transaction> AddFunds() {
+            return new PayFacBuilder<Transaction>(TransactionType.AddFunds);
         }
 
-        public PayFacBuilder SweepFunds() {
-            return new PayFacBuilder(TransactionType.SweepFunds);
+        public PayFacBuilder<Transaction> SweepFunds() {
+            return new PayFacBuilder<Transaction>(TransactionType.SweepFunds);
         }
 
-        public PayFacBuilder AddCardFlashFunds() {
-            return new PayFacBuilder(TransactionType.AddCardFlashFunds);
+        public PayFacBuilder<Transaction> AddCardFlashFunds() {
+            return new PayFacBuilder<Transaction>(TransactionType.AddCardFlashFunds);
         }
 
-        public PayFacBuilder PushMoneyToFlashFundsCard() {
-            return new PayFacBuilder(TransactionType.PushMoneyFlashFunds);
+        public PayFacBuilder<Transaction> PushMoneyToFlashFundsCard() {
+            return new PayFacBuilder<Transaction>(TransactionType.PushMoneyFlashFunds);
         }
 
-        public PayFacBuilder DisburseFunds() {
-            return new PayFacBuilder(TransactionType.DisburseFunds);
+        public PayFacBuilder<Transaction> DisburseFunds() {
+            return new PayFacBuilder<Transaction>(TransactionType.DisburseFunds);
         }
 
-        public PayFacBuilder SpendBack() {
-            return new PayFacBuilder(TransactionType.SpendBack);
+        public PayFacBuilder<Transaction> SpendBack() {
+            return new PayFacBuilder<Transaction>(TransactionType.SpendBack);
         }
 
-        public PayFacBuilder ReverseSplitPay() {
-            return new PayFacBuilder(TransactionType.ReverseSplitPay);
+        public PayFacBuilder<Transaction> ReverseSplitPay() {
+            return new PayFacBuilder<Transaction>(TransactionType.ReverseSplitPay);
         }
 
-        public PayFacBuilder SplitFunds() {
-            return new PayFacBuilder(TransactionType.SplitFunds);
+        public PayFacBuilder<Transaction> SplitFunds() {
+            return new PayFacBuilder<Transaction>(TransactionType.SplitFunds);
         }
 
-        public PayFacBuilder GetAccountDetails() {
-            return new PayFacBuilder(TransactionType.GetAccountDetails);
+        public PayFacBuilder<Transaction> GetAccountDetails() {
+            return new PayFacBuilder<Transaction>(TransactionType.GetAccountDetails);
         }
 
-        public PayFacBuilder GetAccountDetailsEnhanced() {
-            return new PayFacBuilder(TransactionType.GetAccountDetails, TransactionModifier.Additional);
+        public PayFacBuilder<Transaction> GetAccountDetailsEnhanced() {
+            return new PayFacBuilder<Transaction>(TransactionType.GetAccountDetails, TransactionModifier.Additional);
         }
 
-        public PayFacBuilder GetAccountBalance() {
-            return new PayFacBuilder(TransactionType.GetAccountBalance);
+        public PayFacBuilder<Transaction> GetAccountBalance() {
+            return new PayFacBuilder<Transaction>(TransactionType.GetAccountBalance);
         }
 
+        public PayFacBuilder<User> CreateMerchant() {
+            return new PayFacBuilder<User>(TransactionType.Create)
+                .WithModifier(TransactionModifier.Merchant);
+        }
+
+        public PayFacBuilder<User> GetMerchantInfo(string merchantId)
+        {
+            var userReference = new UserReference();
+            userReference.UserId = merchantId;
+            userReference.UserType = Entities.Enums.UserType.MERCHANT;
+
+            return new PayFacBuilder<User>(TransactionType.Fetch)
+                .WithModifier(TransactionModifier.Merchant)
+                .WithUserReference(userReference);
+        }
+       
         public void Dispose() {
         }
     }

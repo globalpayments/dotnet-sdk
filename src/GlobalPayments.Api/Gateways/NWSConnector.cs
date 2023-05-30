@@ -437,6 +437,11 @@ namespace GlobalPayments.Api.Gateways {
                 currencyCode = builder.Currency.ToUpper().Equals("USD") ? Iso4217_CurrencyCode.USD : Iso4217_CurrencyCode.CAD;
             }
 
+            decimal? transactionAmount = builder.Amount;
+            if (transactionAmount == null && paymentMethod is TransactionReference) {
+                transactionAmount = (paymentMethod as TransactionReference).OriginalApprovedAmount;
+            }
+
             // MTI
             string mti = MapMTI(builder);
             request.MessageTypeIndicator = mti;
@@ -465,6 +470,14 @@ namespace GlobalPayments.Api.Gateways {
                         dataCode.CardDataInputMode = cardData.ReaderPresent ? DE22_CardDataInputMode.KeyEntry : DE22_CardDataInputMode.Manual;
                         dataCode.CardHolderPresence = cardData.CardPresent ? DE22_CardHolderPresence.CardHolder_Present : DE22_CardHolderPresence.CardHolder_NotPresent;
                         dataCode.CardPresence = cardData.CardPresent ? DE22_CardPresence.CardPresent : DE22_CardPresence.CardNotPresent;
+
+                        if (cardData.OriginalEntryMethod == EntryMethod.Chip) {
+                            dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactEmv;
+                        }
+
+                        if (cardData.OriginalEntryMethod == EntryMethod.Swipe) {
+                            dataCode.CardDataInputMode = DE22_CardDataInputMode.MagStripe;
+                        }
                     }
                     else if (originalPaymentMethod is ITrackData track) {
                         if (track is IEncryptable && ((IEncryptable)track).EncryptionData != null) {
@@ -541,11 +554,7 @@ namespace GlobalPayments.Api.Gateways {
             request.Set(DataElementId.DE_003, processingCode);
 
             // DE 4: Amount, Transaction - n12 // C 1100, 1200, 1220, 1420
-            decimal? amount = builder.Amount;
-            if (amount == null && paymentMethod is TransactionReference reference) {
-                amount = reference.OriginalAmount;
-            }
-            request.Set(DataElementId.DE_004, StringUtils.ToNumeric(amount, 12));
+            request.Set(DataElementId.DE_004, StringUtils.ToNumeric(transactionAmount, 12));
 
             // DE 7: Date and Time, Transmission - n10 (MMDDhhmmss) // C
             request.Set(DataElementId.DE_007, DateTime.UtcNow.ToString("MMddhhmmss"));
@@ -735,11 +744,11 @@ namespace GlobalPayments.Api.Gateways {
                 DE54_AmountsAdditional amountsAdditional = new DE54_AmountsAdditional();
                 if (paymentMethod.PaymentMethodType.Equals(PaymentMethodType.EBT)) {
                     amountsAdditional.Put(DE54_AmountTypeCode.AmountCash, DE3_AccountType.CashBenefitAccount, currencyCode, builder.CashBackAmount);
-                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.CashBenefitAccount, currencyCode, (builder.Amount - builder.CashBackAmount));
+                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.CashBenefitAccount, currencyCode, (transactionAmount - builder.CashBackAmount));
                 }
                 else if (paymentMethod.PaymentMethodType.Equals(PaymentMethodType.Debit)) {
                     amountsAdditional.Put(DE54_AmountTypeCode.AmountCash, DE3_AccountType.PinDebitAccount, currencyCode, builder.CashBackAmount);
-                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.PinDebitAccount, currencyCode, (builder.Amount - builder.CashBackAmount));
+                    amountsAdditional.Put(DE54_AmountTypeCode.AmountGoodsAndServices, DE3_AccountType.PinDebitAccount, currencyCode, (transactionAmount - builder.CashBackAmount));
                 }
                 request.Set(DataElementId.DE_054, amountsAdditional);
             }
@@ -1144,7 +1153,10 @@ namespace GlobalPayments.Api.Gateways {
                         result.AvsResponseCode = cardIssuerData.Get("IAV");
                         result.CvnResponseCode = cardIssuerData.Get("ICV");
                     }
-                    
+
+                    if (additionalAmounts != null) {
+                        result.AvailableBalance = additionalAmounts.GetAmount(DE3_AccountType.CashCard_CashAccount, DE54_AmountTypeCode.AccountAvailableBalance);
+                    }
 
                     result.AuthorizedAmount = message.GetAmount(DataElementId.DE_004);
                     result.SystemTraceAuditNumber = request.GetString(DataElementId.DE_011);
@@ -1184,12 +1196,25 @@ namespace GlobalPayments.Api.Gateways {
 
                                 // original data elements
                                 MessageTypeIndicator = request.MessageTypeIndicator,
+                                OriginalApprovedAmount = message.GetAmount(DataElementId.DE_004),
                                 OriginalProcessingCode = request.GetString(DataElementId.DE_003),
                                 SystemTraceAuditNumber = request.GetString(DataElementId.DE_011),
-                                OriginalTransactionTime = request.GetString(DataElementId.DE_012)
-
+                                OriginalTransactionTime = request.GetString(DataElementId.DE_012),
+                                AcquiringInstitutionId = request.GetString(DataElementId.DE_032)
                         };
-                            // TODO: revisit this, reference.setAcquiringInstitutionId();
+
+
+                            // partial flag
+                            if (!String.IsNullOrEmpty(responseCode)) {
+                                if (responseCode.Equals("002")) {
+                                    reference.PartialApproval = true;
+                                }
+                                else if (responseCode.Equals("000")) {
+                                    string requestAmount = request.GetString(DataElementId.DE_004);
+                                    string responseAmount = message.GetString(DataElementId.DE_004);
+                                    reference.PartialApproval = !requestAmount.Equals(responseAmount);
+                                }
+                            }
 
                             // message control fields
                             if (messageControl != null) {
@@ -1649,6 +1674,10 @@ namespace GlobalPayments.Api.Gateways {
             // setting the accountType
             DE3_AccountType accountType = DE3_AccountType.Unspecified;
             if (paymentMethod is Credit credit) {
+                bool isVisa = false;
+                if (credit.CardType == "Visa")
+                    isVisa = true;
+
                 if (credit.FleetCard) {
                     accountType = DE3_AccountType.FleetAccount;
                 }
@@ -1658,8 +1687,53 @@ namespace GlobalPayments.Api.Gateways {
                 else if (credit.ReadyLinkCard) {
                     accountType = DE3_AccountType.PinDebitAccount;
                 }
+                else if (credit.CardType == "Unknown") {
+                    accountType = DE3_AccountType.PinDebitAccount; // Testing through scenarios in certification have shown this to be exclusive to debit. We can update logic if we find otherwise in the future.
+                }
                 else {
-                    accountType = DE3_AccountType.CreditAccount;
+                    if (isVisa) {
+                        EmvData tagData = null;
+                        TlvData aidTag = null;
+                        if (builder is AuthorizationBuilder) {
+                            tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder)?.TagData, EnableLogging);
+                            aidTag = tagData.GetTag("9F06");
+                        }
+                        else if (builder is ManagementBuilder) {
+                            tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                            aidTag = tagData.GetTag("9F06");
+                        }
+
+                        if (aidTag == null) {
+                            // If the other AID location was null, check the alternate location for a possible value
+                            aidTag = tagData.GetTag("4F");
+
+                            if (aidTag == null) {
+                                accountType = DE3_AccountType.CreditAccount;
+                            }
+                            else {
+                                // Visa US Common Debit is not going through Debit rails so we need to force it
+                                if (aidTag.GetValue() == "A0000000980840") {
+                                    accountType = DE3_AccountType.PinDebitAccount;
+                                }
+                                else {
+                                    accountType = DE3_AccountType.CreditAccount;
+                                }
+                            }
+
+                        }
+                        else {
+                            // Visa US Common Debit is not going through Debit rails so we need to force it
+                            if (aidTag.GetValue() == "A0000000980840") {
+                                accountType = DE3_AccountType.PinDebitAccount;
+                            }
+                            else  {
+                                accountType = DE3_AccountType.CreditAccount;
+                            }
+                        }
+                    }
+                    else {
+                        accountType = DE3_AccountType.CreditAccount;
+                    }
                 }
             }
             else if (paymentMethod is Debit) {
@@ -1786,7 +1860,23 @@ namespace GlobalPayments.Api.Gateways {
                         return "400";
                     }
                 case TransactionType.Void: {
-                        return "441";
+                        ManagementBuilder managementBuilder = (ManagementBuilder)(object)builder;
+                        TransactionReference paymentMethod = (TransactionReference)builder.PaymentMethod;
+                        bool partial = false;
+                        if (paymentMethod != null) {
+                            partial = paymentMethod.PartialApproval;
+                        }
+                        if (managementBuilder.VoidReason == VoidReason.DeviceTimeout && managementBuilder.ForcedReversal == true) {
+                            if (partial == true) {
+                                return "441";
+                            }
+                            else {
+                                return "444";
+                            }
+                        }
+                        else {
+                            return "441";
+                        }
                     }
                 case TransactionType.TimeRequest: {
                         return "641";
@@ -1965,7 +2055,42 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // DE48-11
-            messageControl.CardType = MapCardType(builder.PaymentMethod);
+            // We are checking the AID EMV tag for specific application values, as they should be run with specific card types they won't get caught by the mapping control.
+            TlvData aidTag = null;
+            bool maestroCard = false;
+            if (builder is AuthorizationBuilder) {
+                EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
+                aidTag = tagData.GetTag("9F06");
+            }
+            else if (builder is ManagementBuilder) {
+                EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                aidTag = tagData.GetTag("9F06");
+            }
+            // If the tag is still null, check the other potential AID location
+            if (aidTag == null) {
+                if (builder is AuthorizationBuilder) {
+                    EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
+                    aidTag = tagData.GetTag("4F");
+                }
+                else if (builder is ManagementBuilder) {
+                    EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                    aidTag = tagData.GetTag("4F");
+                }
+            }
+
+            // If we have a value by this point, we need to check the value to see if we should force PINDEBIT card type
+            if (aidTag != null) {
+                if (aidTag.GetValue() == "A0000000042203") {
+                    maestroCard = true;
+                }
+            }
+
+            if (maestroCard) {
+                messageControl.CardType = DE48_CardType.PINDebitCard;
+            }
+            else {
+                messageControl.CardType = MapCardType(builder.PaymentMethod);
+            }
 
             // DE48-14
             if (builder.PaymentMethod is IPinProtected) {
@@ -2373,7 +2498,7 @@ namespace GlobalPayments.Api.Gateways {
                 "580"
             };
 
-            decimal amount = request.GetAmount(DataElementId.DE_004);
+            decimal amount = response.GetAmount(DataElementId.DE_004);
             TransactionType transactionType = new TransactionType();
             PaymentMethodType paymentMethodType = new PaymentMethodType();
             if (builder != null) {
@@ -2604,8 +2729,8 @@ namespace GlobalPayments.Api.Gateways {
             }
             else if (transactionType.Equals(TransactionType.Void)) {
                 bool partial = false;
-                if (builder.Amount != null && paymentMethod != null) {
-                    partial = !builder.Amount.Equals(paymentMethod.OriginalAmount);
+                if (paymentMethod != null) {
+                    partial = paymentMethod.PartialApproval;
                 }
 
                 if (fallbackCode != null) {

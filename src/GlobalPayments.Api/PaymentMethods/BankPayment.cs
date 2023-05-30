@@ -1,13 +1,14 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.PaymentMethods.PaymentInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace GlobalPayments.Api.PaymentMethods
 {
-    public class BankPayment : IPaymentMethod
+    public class BankPayment : IPaymentMethod, IChargable, INotificationData
     {
         /// <summary>
         /// Merchant/Individual Name.
@@ -35,16 +36,20 @@ namespace GlobalPayments.Api.PaymentMethods
         public string ReturnUrl { get; set; }
     
         public string StatusUpdateUrl { get; set; }
-       
+
+        public string CancelUrl { get; set; }
+
         public BankPaymentType? BankPaymentType { get; set; }
+
+       public List<string> Countries { get; set; }       
 
         /// <summary>
         /// This is a mandatory request used to initiate an Open Banking transaction,
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public BankPaymentBuilder Charge(decimal? amount) {
-            return (new BankPaymentBuilder(TransactionType.Sale, this))
+        public AuthorizationBuilder Charge(decimal? amount = null) {
+            return (new AuthorizationBuilder(TransactionType.Sale, this))
                 .WithModifier(TransactionModifier.BankPayment)
                 .WithAmount(amount);
         }

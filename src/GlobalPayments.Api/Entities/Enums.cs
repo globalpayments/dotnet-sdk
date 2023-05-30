@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Utils;
 using System;
+using System.Runtime.Serialization;
 
 namespace GlobalPayments.Api.Entities {
     internal enum AliasAction {
@@ -15,18 +16,28 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a billing address.
         /// </summary>
+        [Description("BILLING")]
         Billing,
 
         /// <summary>
         /// Indicates a shipping address.
         /// </summary>
-        Shipping
+        [Description("SHIPPING")]
+        Shipping,
+
+        [Description("BUSINESS")]
+        Business,
     }
 
     /// <summary>
     /// Indicates a device type for out of scope / semi-integrated devices.
     /// </summary>
-    public enum DeviceType {
+    public enum DeviceType
+    {        
+        /// <summary>
+        /// Indicates PAX device.
+        /// </summary>
+        PAX_DEVICE,
         /// <summary>
         /// Indicates PAX D200 device.
         /// </summary>
@@ -57,7 +68,10 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a HeartSIP Lane 3000 device
         /// </summary>
         HPA_LANE3000,
-
+        /// <summary>
+        /// Indicates a UPA device
+        /// </summary>
+        UPA_DEVICE,
         /// <summary>
         /// Indicates a genius terminal
         /// </summary>
@@ -156,7 +170,11 @@ namespace GlobalPayments.Api.Entities {
 
         Ewic = 1 << 10,
 
-        BankPayment = 1 << 11
+        BankPayment = 1 << 11,
+
+        BNPL = 1 << 12,
+
+        Account_Funds = 1 << 13
     }
 
     /// <summary>
@@ -177,6 +195,11 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates proximity/contactless entry.
         /// </summary>
         Proximity,
+
+        /// <summary>
+        /// Indicates contact entry
+        /// </summary>
+        Chip
     }
 
     /// <summary>
@@ -313,6 +336,14 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a OpenBanking transaction
         /// </summary>
         BankPayment = 1 << 17,
+
+        [Description("MERCHANT")]
+        Merchant = 1 << 18,
+
+        /// <summary>
+        /// Indicates a Buy Now Pay Later transaction
+        /// </summary>
+        BuyNowPayLater = 1 << 19,
     }
 
     /// <summary>
@@ -364,18 +395,23 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a checking account.
         /// </summary>
         [Map(Target.GP_API, "CHECKING")] 
+        [Description("Checking")]
+        
+        [Map(Target.TransactionApi, "Checking")]
         CHECKING,
 
         /// <summary>
         /// Indicates a savings account.
         /// </summary>
         [Map(Target.GP_API, "SAVING")]
+        [Description("Savings")]
         SAVINGS,
 
         /// <summary>
         /// Indicates a credit account.
         /// </summary>
         [Map(Target.GP_API, "CREDIT")]
+        [Description("Credit")]
         CREDIT
     }
 
@@ -387,18 +423,21 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a personal check.
         /// </summary>
         [Map(Target.NWS, "0")]
+        [Description("Personal")]
         PERSONAL,
 
         /// <summary>
         /// Indicates a business check.
         /// </summary>
         [Map(Target.NWS, "3")]
+        [Description("Business")]
         BUSINESS,
 
         /// <summary>
         /// Indicates a payroll check.
         /// </summary>
         [Map(Target.NWS, "1")]
+        [Description("Payroll")]
         PAYROLL
     }
 
@@ -562,6 +601,12 @@ namespace GlobalPayments.Api.Entities {
         PayLinkDetail = 1 << 24,
 
         FindPayLinkPaged = 1 << 25,
+
+        FindMerchantsPaged = 1 << 26,
+
+        FindAccountsPaged = 1 << 27,
+
+        FindAccountDetail = 1 << 28
     }
 
     /// <summary>
@@ -745,6 +790,7 @@ namespace GlobalPayments.Api.Entities {
     {
         public const string APPLE_PAY = "APPLEPAY";
         public const string GOOGLE_PAY = "PAY_BY_GOOGLE";
+        public const string CLICK_TO_PAY = "CLICK_TO_PAY";
     }
 
     public static class DigitalWalletTokenFormat{
@@ -1091,5 +1137,46 @@ public enum ReasonCode {
     public enum ReportOutput {
         Print,
         ReturnData
+    }
+
+    public enum LanguageEnum {
+        [Description("en-US")]
+        En_Us,
+        [Description("en-CA")]
+        En_Ca,
+        [Description("fr-CA")]
+        Fr_Ca,
+        [Description("en-AU")]
+        En_Au,
+        [Description("en-NZ")]
+        En_Nz,
+        [Description("en-GB")]
+        En_Gb
+    }
+
+    public enum CountryCode {
+        [Description("840")]
+        Country_840,
+        [Description("124")]
+        Country_124,
+        [Description("036")]
+        Country_036,
+        [Description("554")]
+        Country_554,
+        [Description("826")]
+        Country_826
+    }
+
+    public enum EcomIndicator {
+        [Description("1")]
+        Indicator1,
+        [Description("2")]
+        Indicator2,
+        [Description("3")]
+        Indicator3,
+        [Description("5")]
+        Indicator5,
+        [Description("7")]
+        Indicator7
     }
 }

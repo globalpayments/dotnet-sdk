@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Mapping;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -10,9 +11,11 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider {
-        private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";        
-        public GpApiConfig GpApiConfig { get; set; }
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService
+    {
+        private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
+        public bool HasBuiltInMerchantManagementService => true;
+        public GpApiConfig GpApiConfig { get; set; }       
 
         private string _AccessToken;
         public string AccessToken {
@@ -34,6 +37,10 @@ namespace GlobalPayments.Api.Gateways {
 
         public string SerializeRequest(AuthorizationBuilder builder) {
             throw new NotImplementedException();
+        }
+
+        public bool SupportsOpenBanking() {
+            return true;
         }
 
         public GpApiConnector(GpApiConfig gpApiConfig)
@@ -77,22 +84,34 @@ namespace GlobalPayments.Api.Gateways {
 
                 AccessToken = response.Token;
 
-            if (accessTokenInfo == null)
-            {
+            if (accessTokenInfo == null) {
                 accessTokenInfo = new AccessTokenInfo();
             }
 
-            if (string.IsNullOrEmpty(accessTokenInfo.DataAccountName)) {
-                accessTokenInfo.DataAccountName = response.DataAccountName;
+            if (string.IsNullOrEmpty(accessTokenInfo.DataAccountID) &&
+                string.IsNullOrEmpty(accessTokenInfo.DataAccountName)) {
+                accessTokenInfo.DataAccountID = response.DataAccountID;
             }
-            if (string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountName)) {
-                accessTokenInfo.DisputeManagementAccountName = response.DisputeManagementAccountName;
+            if (string.IsNullOrEmpty(accessTokenInfo.TokenizationAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.TokenizationAccountID)) {
+                accessTokenInfo.TokenizationAccountID = response.TokenizationAccountID;
             }
-            if (string.IsNullOrEmpty(accessTokenInfo.TokenizationAccountName)) {
-                accessTokenInfo.TokenizationAccountName = response.TokenizationAccountName;
+            if (string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountID)) {
+                accessTokenInfo.DisputeManagementAccountID = response.DisputeManagementAccountID;
             }
-            if (string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountName)) {
-                accessTokenInfo.TransactionProcessingAccountName = response.TransactionProcessingAccountName;
+           
+            if (string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountID)) {
+                accessTokenInfo.TransactionProcessingAccountID = response.TransactionProcessingAccountID;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountName) &&
+                string.IsNullOrEmpty(accessTokenInfo.RiskAssessmentAccountID)) {
+                accessTokenInfo.RiskAssessmentAccountID = response.RiskAssessmentAccountID;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.MerchantManagementAccountName) &&
+               string.IsNullOrEmpty(accessTokenInfo.MerchantManagementAccountID)) {
+                accessTokenInfo.MerchantManagementAccountID = response.MerchantManagementAccountID;
             }
 
             GpApiConfig.AccessTokenInfo = accessTokenInfo;
@@ -220,5 +239,40 @@ namespace GlobalPayments.Api.Gateways {
             }
             return null;
         }
+
+        public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class 
+        {
+            T result = Activator.CreateInstance<T>();
+            if (string.IsNullOrEmpty(AccessToken)) {
+                SignIn();
+            }
+            GpApiRequest request = GpApiPayFacRequestBuilder<T>.BuildRequest(builder, this);
+
+            if (request != null){
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey); 
+                return GpApiMapping.MapMerchantEndpointResponse<T>(response);
+            }
+            return result;
+        }
+
+        public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class
+        {
+            throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessPayFac")} not supported");
+        }
+
+        public T ProcessFraud<T>(FraudBuilder<T> builder) where T : class
+        {
+            T result = Activator.CreateInstance<T>();
+            if (string.IsNullOrEmpty(AccessToken)) {
+                SignIn();
+            }
+            GpApiRequest request = GpApiSecureRequestBuilder<T>.BuildRequest(builder, this);
+
+            if (request != null) {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
+                return GpApiMapping.MapRiskAssessmentResponse<T>(response);
+            }
+            return result;
+        }      
     }
 }

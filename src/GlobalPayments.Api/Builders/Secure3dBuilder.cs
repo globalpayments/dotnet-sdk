@@ -6,73 +6,26 @@ using System;
 using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Builders {
-    public class Secure3dBuilder : BaseBuilder<ThreeDSecure> {
-        internal AgeIndicator? AccountAgeIndicator { get; set; }
-        internal DateTime? AccountChangeDate { get; set; }
-        internal DateTime? AccountCreateDate { get; set; }
-        internal AgeIndicator? AccountChangeIndicator { get; set; }
-        internal bool AddressMatchIndicator { get; set; }
-        internal decimal Amount { get; set; }
-        internal string ApplicationId { get; set; }
-        internal AuthenticationSource AuthenticationSource { get; set; }
-        internal AuthenticationRequestType AuthenticationRequestType { get; set; }
-        internal Address BillingAddress { get; set; }
-        internal BrowserData BrowserData { get; set; }
+    public class Secure3dBuilder : SecureBuilder<ThreeDSecure> {        
+        internal string ApplicationId { get; set; }        
+        internal AuthenticationRequestType AuthenticationRequestType { get; set; }        
         internal MobileData MobileData { get; set; }
-        internal ChallengeRequestIndicator? ChallengeRequestIndicator { get; set; }
-        internal string Currency { get; set; }
-        internal string CustomerAccountId { get; set; }
-        internal string CustomerAuthenticationData { get; set; }
-        internal CustomerAuthenticationMethod? CustomerAuthenticationMethod { get; set; }
-        internal DateTime? CustomerAuthenticationTimestamp { get; set; }
+        internal ChallengeRequestIndicator? ChallengeRequestIndicator { get; set; }        
         internal string CustomerEmail { get; set; }
         internal bool? DecoupledFlowRequest { get; set; }
         internal int? DecoupledFlowTimeout { get; set; }
-        internal string DecoupledNotificationUrl { get; set; }
-        internal string DeliveryEmail { get; set; }
-        internal DeliveryTimeFrame? DeliveryTimeframe { get; set; }
+        internal string DecoupledNotificationUrl { get; set; }        
         internal bool? EnableExemptionOptimization { get; set; }
         internal string EncodedData { get; set; }
-        internal JsonDoc EphemeralPublicKey { get; set; }
-        internal int? GiftCardCount { get; set; }
-        internal string GiftCardCurrency { get; set; }
-        internal decimal? GiftCardAmount { get; set; }
-        internal string HomeCountryCode { get; set; }
-        internal string HomeNumber { get; set; }
-        internal string IdempotencyKey { get; set; }
-        internal int? MaxNumberOfInstallments { get; set; }
+        internal JsonDoc EphemeralPublicKey { get; set; }        
+        internal string IdempotencyKey { get; set; }        
         internal int? MaximumTimeout { get; set; }
         internal MerchantDataCollection MerchantData { get; set; }
         internal MessageCategory MessageCategory { get; set; }
         internal MerchantInitiatedRequestType? MerchantInitiatedRequestType { get; set; }
         internal string MessageVersion { get; set; }
-        internal MethodUrlCompletion MethodUrlCompletion { get; set; }
-        internal string MobileCountryCode { get; set; }
-        internal string MobileNumber { get; set; }
-        internal int? NumberOfAddCardAttemptsInLast24Hours { get; set; }
-        internal int? NumberOfPurchasesInLastSixMonths { get; set; }
-        internal int? NumberOfTransactionsInLast24Hours { get; set; }
-        internal int? NumberOfTransactionsInLastYear { get; set; }
-        internal DateTime? OrderCreateDate { get; set; }
-        internal string OrderId { get; set; }
-        internal OrderTransactionType? OrderTransactionType { get; set; }
-        internal DateTime? PasswordChangeDate { get; set; }
-        internal AgeIndicator? PasswordChangeIndicator { get; set; }
-        internal DateTime? PaymentAccountCreateDate { get; set; }
-        internal AgeIndicator? PaymentAgeIndicator { get; set; }
-        internal string PayerAuthenticationResponse { get; set; }
-        internal IPaymentMethod PaymentMethod { get; set; }
-        internal DateTime? PreOrderAvailabilityDate { get; set; }
-        internal PreOrderIndicator? PreOrderIndicator { get; set; }
-        internal bool? PreviousSuspiciousActivity { get; set; }
-        internal string PriorAuthenticationData { get; set; }
-        internal PriorAuthenticationMethod? PriorAuthenticationMethod { get; set; }
-        internal string PriorAuthenticationTransactionId { get; set; }
-        internal DateTime? PriorAuthenticationTimestamp { get; set; }
-        internal DateTime? RecurringAuthorizationExpiryDate { get; set; }
-        internal int? RecurringAuthorizationFrequency { get; set; }
-        internal string ReferenceNumber { get; set; }
-        internal ReorderIndicator? ReorderIndicator { get; set; }
+        internal MethodUrlCompletion MethodUrlCompletion { get; set; }        
+        internal string PayerAuthenticationResponse { get; set; }        
         internal SdkInterface? SdkInterface { get; set; }
         internal string SdkTransactionId { get; set; }
         internal SdkUiType[] SdkUiTypes { get; set; }
@@ -83,15 +36,9 @@ namespace GlobalPayments.Api.Builders {
                 }
                 return null;
             }
-        }
-        internal Address ShippingAddress { get; set; }
-        internal DateTime? ShippingAddressCreateDate { get; set; }
-        internal AgeIndicator? ShippingAddressUsageIndicator { get; set; }
-        internal ShippingMethod? ShippingMethod { get; set; }
-        internal bool? ShippingNameMatchesCardHolderName { get; set; }
+        }        
         internal StoredCredential StoredCredential { get; set; }
-        internal ThreeDSecure ThreeDSecure { get; set; }
-        internal TransactionType TransactionType { get; set; }
+        internal ThreeDSecure ThreeDSecure { get; set; }        
         internal Secure3dVersion? Version {
             get {
                 if (ThreeDSecure != null) {
@@ -100,58 +47,70 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
-        internal bool? WhitelistStatus { get; set; }
-        internal string WorkCountryCode { get; set; }
-        internal string WorkNumber { get; set; }
-        public Secure3dBuilder WithAddress(Address address) {
+        internal bool? WhitelistStatus { get; set; }        
+        public Secure3dBuilder WithAddress(Address address)
+        {
             return WithAddress(address, AddressType.Billing);
         }
-        public Secure3dBuilder WithAddress(Address address, AddressType type) {
-            if (type.Equals(AddressType.Billing)) {
+        public Secure3dBuilder WithAddress(Address address, AddressType type)
+        {
+            if (type.Equals(AddressType.Billing))
+            {
                 BillingAddress = address;
             }
-            else {
+            else
+            {
                 ShippingAddress = address;
             }
             return this;
         }
-        public Secure3dBuilder WithAccountAgeIndicator(AgeIndicator ageIndicator) {
+        public Secure3dBuilder WithAccountAgeIndicator(AgeIndicator ageIndicator)
+        {
             AccountAgeIndicator = ageIndicator;
             return this;
         }
-        public Secure3dBuilder WithAccountChangeDate(DateTime accountChangeDate) {
+        public Secure3dBuilder WithAccountChangeDate(DateTime accountChangeDate)
+        {
             AccountChangeDate = accountChangeDate;
             return this;
         }
-        public Secure3dBuilder WithAccountCreateDate(DateTime accountCreateDate) {
+        public Secure3dBuilder WithAccountCreateDate(DateTime accountCreateDate)
+        {
             AccountCreateDate = accountCreateDate;
             return this;
         }
-        public Secure3dBuilder WithAccountChangeIndicator(AgeIndicator accountChangeIndicator) {
+        public Secure3dBuilder WithAccountChangeIndicator(AgeIndicator accountChangeIndicator)
+        {
             AccountChangeIndicator = accountChangeIndicator;
             return this;
         }
-        public Secure3dBuilder WithAddressMatchIndicator(bool value) {
+        public Secure3dBuilder WithAddressMatchIndicator(bool value)
+        {
             AddressMatchIndicator = value;
             return this;
         }
-        public Secure3dBuilder WithAmount(decimal value) {
+        public Secure3dBuilder WithAmount(decimal value)
+        {
             Amount = value;
             return this;
         }
-        public Secure3dBuilder WithApplicationId(string applicationId) {
+        public Secure3dBuilder WithApplicationId(string applicationId)
+        {
             ApplicationId = applicationId;
             return this;
         }
-        public Secure3dBuilder WithAuthenticationSource(AuthenticationSource value) {
+        public Secure3dBuilder WithAuthenticationSource(AuthenticationSource value)
+        {
             AuthenticationSource = value;
             return this;
         }
-        public Secure3dBuilder WithAuthenticationRequestType(AuthenticationRequestType value) {
+        public Secure3dBuilder WithAuthenticationRequestType(AuthenticationRequestType value)
+        {
             AuthenticationRequestType = value;
             return this;
         }
-        public Secure3dBuilder WithBrowserData(BrowserData value) {
+        public Secure3dBuilder WithBrowserData(BrowserData value)
+        {
             BrowserData = value;
             return this;
         }
@@ -160,99 +119,124 @@ namespace GlobalPayments.Api.Builders {
             MobileData = value;
             return this;
         }
-        public Secure3dBuilder WithChallengeRequestIndicator(ChallengeRequestIndicator value) {
+        public Secure3dBuilder WithChallengeRequestIndicator(ChallengeRequestIndicator value)
+        {
             ChallengeRequestIndicator = value;
             return this;
         }
-        public Secure3dBuilder WithCurrency(string value) {
+        public Secure3dBuilder WithCurrency(string value)
+        {
             Currency = value;
             return this;
         }
-        public Secure3dBuilder WithCustomerAccountId(string customerAccountId) {
+        public Secure3dBuilder WithCustomerAccountId(string customerAccountId)
+        {
             CustomerAccountId = customerAccountId;
             return this;
         }
-        public Secure3dBuilder WithCustomerAuthenticationData(string customerAuthenticationData) {
+        public Secure3dBuilder WithCustomerAuthenticationData(string customerAuthenticationData)
+        {
             CustomerAuthenticationData = customerAuthenticationData;
             return this;
         }
-        public Secure3dBuilder WithCustomerAuthenticationMethod(CustomerAuthenticationMethod customerAuthenticationMethod) {
+        public Secure3dBuilder WithCustomerAuthenticationMethod(CustomerAuthenticationMethod customerAuthenticationMethod)
+        {
             CustomerAuthenticationMethod = customerAuthenticationMethod;
             return this;
         }
-        public Secure3dBuilder WithCustomerAuthenticationTimestamp(DateTime customerAuthenticationTimestamp) {
+        public Secure3dBuilder WithCustomerAuthenticationTimestamp(DateTime customerAuthenticationTimestamp)
+        {
             CustomerAuthenticationTimestamp = customerAuthenticationTimestamp;
             return this;
         }
-        public Secure3dBuilder WithCustomerEmail(string value) {
+        public Secure3dBuilder WithCustomerEmail(string value)
+        {
             CustomerEmail = value;
             return this;
         }
-        public Secure3dBuilder WithDecoupledFlowRequest(bool value) {
+        public Secure3dBuilder WithDecoupledFlowRequest(bool value)
+        {
             DecoupledFlowRequest = value;
             return this;
         }
-        public Secure3dBuilder WithDecoupledFlowTimeout(int value) {
+        public Secure3dBuilder WithDecoupledFlowTimeout(int value)
+        {
             DecoupledFlowTimeout = value;
             return this;
         }
-        public Secure3dBuilder WithDecoupledNotificationUrl(string value) {
+        public Secure3dBuilder WithDecoupledNotificationUrl(string value)
+        {
             DecoupledNotificationUrl = value;
             return this;
         }
-        public Secure3dBuilder WithDeliveryEmail(string deliveryEmail) {
+        public Secure3dBuilder WithDeliveryEmail(string deliveryEmail)
+        {
             DeliveryEmail = deliveryEmail;
             return this;
         }
-        public Secure3dBuilder WithDeliveryTimeFrame(DeliveryTimeFrame deliveryTimeframe) {
+        public Secure3dBuilder WithDeliveryTimeFrame(DeliveryTimeFrame deliveryTimeframe)
+        {
             DeliveryTimeframe = deliveryTimeframe;
             return this;
         }
-        public Secure3dBuilder WithEnableExemptionOptimization(bool enableExemptionOptimization) {
+        public Secure3dBuilder WithEnableExemptionOptimization(bool enableExemptionOptimization)
+        {
             EnableExemptionOptimization = enableExemptionOptimization;
             return this;
         }
-        public Secure3dBuilder WithEncodedData(string encodedData) {
+        public Secure3dBuilder WithEncodedData(string encodedData)
+        {
             EncodedData = encodedData;
             return this;
         }
-        public Secure3dBuilder WithEphemeralPublicKey(string ephemeralPublicKey) {
+        public Secure3dBuilder WithEphemeralPublicKey(string ephemeralPublicKey)
+        {
             EphemeralPublicKey = JsonDoc.Parse(ephemeralPublicKey);
             return this;
         }
-        public Secure3dBuilder WithGiftCardCount(int? giftCardCount) {
+        public Secure3dBuilder WithGiftCardCount(int? giftCardCount)
+        {
             GiftCardCount = giftCardCount;
             return this;
         }
-        public Secure3dBuilder WithGiftCardCurrency(string giftCardCurrency) {
+        public Secure3dBuilder WithGiftCardCurrency(string giftCardCurrency)
+        {
             GiftCardCurrency = giftCardCurrency;
             return this;
         }
-        public Secure3dBuilder WithGiftCardAmount(decimal giftCardAmount) {
+        public Secure3dBuilder WithGiftCardAmount(decimal giftCardAmount)
+        {
             GiftCardAmount = giftCardAmount;
             return this;
         }
-        public Secure3dBuilder WithHomeNumber(string countryCode, string number) {
+        public Secure3dBuilder WithHomeNumber(string countryCode, string number)
+        {
             HomeCountryCode = countryCode;
             HomeNumber = number;
             return this;
         }
-        public Secure3dBuilder WithIdempotencyKey(string value) {
+        public Secure3dBuilder WithIdempotencyKey(string value)
+        {
             IdempotencyKey = value;
             return this;
         }
-        public Secure3dBuilder WithMaxNumberOfInstallments(int? maxNumberOfInstallments) {
+        public Secure3dBuilder WithMaxNumberOfInstallments(int? maxNumberOfInstallments)
+        {
             MaxNumberOfInstallments = maxNumberOfInstallments;
             return this;
         }
-        public Secure3dBuilder WithMaximumTimeout(int? maximumTimeout) {
+        public Secure3dBuilder WithMaximumTimeout(int? maximumTimeout)
+        {
             MaximumTimeout = maximumTimeout;
             return this;
         }
-        public Secure3dBuilder WithMerchantData(MerchantDataCollection value) {
+        public Secure3dBuilder WithMerchantData(MerchantDataCollection value)
+        {
             MerchantData = value;
-            if (MerchantData != null) {
-                if (ThreeDSecure == null) {
+            if (MerchantData != null)
+            {
+                if (ThreeDSecure == null)
+                {
                     ThreeDSecure = new ThreeDSecure();
                 }
                 ThreeDSecure.MerchantData = value;
@@ -260,188 +244,233 @@ namespace GlobalPayments.Api.Builders {
 
             return this;
         }
-        public Secure3dBuilder WithMessageCategory(MessageCategory value) {
+        public Secure3dBuilder WithMessageCategory(MessageCategory value)
+        {
             MessageCategory = value;
             return this;
         }
-        public Secure3dBuilder WithMerchantInitiatedRequestType(MerchantInitiatedRequestType merchantInitiatedRequestType) {
+        public Secure3dBuilder WithMerchantInitiatedRequestType(MerchantInitiatedRequestType merchantInitiatedRequestType)
+        {
             MerchantInitiatedRequestType = merchantInitiatedRequestType;
             return this;
         }
-        public Secure3dBuilder WithMessageVersion(string value) {
+        public Secure3dBuilder WithMessageVersion(string value)
+        {
             MessageVersion = value;
             return this;
         }
-        public Secure3dBuilder WithMethodUrlCompletion(MethodUrlCompletion value) {
+        public Secure3dBuilder WithMethodUrlCompletion(MethodUrlCompletion value)
+        {
             MethodUrlCompletion = value;
             return this;
         }
-        public Secure3dBuilder WithMobileNumber(string countryCode, string number) {
+        public Secure3dBuilder WithMobileNumber(string countryCode, string number)
+        {
             MobileCountryCode = countryCode;
             MobileNumber = number;
             return this;
         }
-        public Secure3dBuilder WithNumberOfAddCardAttemptsInLast24Hours(int? numberOfAddCardAttemptsInLast24Hours) {
+        public Secure3dBuilder WithNumberOfAddCardAttemptsInLast24Hours(int? numberOfAddCardAttemptsInLast24Hours)
+        {
             NumberOfAddCardAttemptsInLast24Hours = numberOfAddCardAttemptsInLast24Hours;
             return this;
         }
-        public Secure3dBuilder WithNumberOfPurchasesInLastSixMonths(int? numberOfPurchasesInLastSixMonths) {
+        public Secure3dBuilder WithNumberOfPurchasesInLastSixMonths(int? numberOfPurchasesInLastSixMonths)
+        {
             NumberOfPurchasesInLastSixMonths = numberOfPurchasesInLastSixMonths;
             return this;
         }
-        public Secure3dBuilder WithNumberOfTransactionsInLast24Hours(int? numberOfTransactionsInLast24Hours) {
+        public Secure3dBuilder WithNumberOfTransactionsInLast24Hours(int? numberOfTransactionsInLast24Hours)
+        {
             NumberOfTransactionsInLast24Hours = numberOfTransactionsInLast24Hours;
             return this;
         }
-        public Secure3dBuilder WithNumberOfTransactionsInLastYear(int? numberOfTransactionsInLastYear) {
+        public Secure3dBuilder WithNumberOfTransactionsInLastYear(int? numberOfTransactionsInLastYear)
+        {
             NumberOfTransactionsInLastYear = numberOfTransactionsInLastYear;
             return this;
         }
-        public Secure3dBuilder WithOrderCreateDate(DateTime value) {
+        public Secure3dBuilder WithOrderCreateDate(DateTime value)
+        {
             OrderCreateDate = value;
             return this;
         }
-        public Secure3dBuilder WithOrderId(string value) {
+        public Secure3dBuilder WithOrderId(string value)
+        {
             OrderId = value;
             return this;
         }
-        public Secure3dBuilder WithOrderTransactionType(OrderTransactionType orderTransactionType) {
+        public Secure3dBuilder WithOrderTransactionType(OrderTransactionType orderTransactionType)
+        {
             OrderTransactionType = orderTransactionType;
             return this;
         }
-        public Secure3dBuilder WithPasswordChangeDate(DateTime passwordChangeDate) {
+        public Secure3dBuilder WithPasswordChangeDate(DateTime passwordChangeDate)
+        {
             PasswordChangeDate = passwordChangeDate;
             return this;
         }
-        public Secure3dBuilder WithPasswordChangeIndicator(AgeIndicator passwordChangeIndicator) {
+        public Secure3dBuilder WithPasswordChangeIndicator(AgeIndicator passwordChangeIndicator)
+        {
             PasswordChangeIndicator = passwordChangeIndicator;
             return this;
         }
-        public Secure3dBuilder WithPaymentAccountCreateDate(DateTime paymentAccountCreateDate) {
+        public Secure3dBuilder WithPaymentAccountCreateDate(DateTime paymentAccountCreateDate)
+        {
             PaymentAccountCreateDate = paymentAccountCreateDate;
             return this;
         }
-        public Secure3dBuilder WithPaymentAccountAgeIndicator(AgeIndicator paymentAgeIndicator) {
+        public Secure3dBuilder WithPaymentAccountAgeIndicator(AgeIndicator paymentAgeIndicator)
+        {
             PaymentAgeIndicator = paymentAgeIndicator;
             return this;
         }
-        public Secure3dBuilder WithPayerAuthenticationResponse(string value) {
+        public Secure3dBuilder WithPayerAuthenticationResponse(string value)
+        {
             PayerAuthenticationResponse = value;
             return this;
         }
-        public Secure3dBuilder WithPaymentMethod(IPaymentMethod value) {
+        public Secure3dBuilder WithPaymentMethod(IPaymentMethod value)
+        {
             PaymentMethod = value;
-            if (value is ISecure3d) {
+            if (value is ISecure3d)
+            {
                 var secureEcom = ((ISecure3d)value).ThreeDSecure;
-                if (secureEcom != null) {
+                if (secureEcom != null)
+                {
                     ThreeDSecure = secureEcom;
                 }
             }
             return this;
         }
-        public Secure3dBuilder WithPreOrderAvailabilityDate(DateTime preOrderAvailabilityDate) {
+        public Secure3dBuilder WithPreOrderAvailabilityDate(DateTime preOrderAvailabilityDate)
+        {
             PreOrderAvailabilityDate = preOrderAvailabilityDate;
             return this;
         }
-        public Secure3dBuilder WithPreOrderIndicator(PreOrderIndicator preOrderIndicator) {
+        public Secure3dBuilder WithPreOrderIndicator(PreOrderIndicator preOrderIndicator)
+        {
             PreOrderIndicator = preOrderIndicator;
             return this;
         }
-        public Secure3dBuilder WithPreviousSuspiciousActivity(bool? previousSuspiciousActivity) {
+        public Secure3dBuilder WithPreviousSuspiciousActivity(bool? previousSuspiciousActivity)
+        {
             PreviousSuspiciousActivity = previousSuspiciousActivity;
             return this;
         }
-        public Secure3dBuilder WithPriorAuthenticationData(string priorAuthenticationData) {
+        public Secure3dBuilder WithPriorAuthenticationData(string priorAuthenticationData)
+        {
             PriorAuthenticationData = priorAuthenticationData;
             return this;
         }
-        public Secure3dBuilder WithPriorAuthenticationMethod(PriorAuthenticationMethod priorAuthenticationMethod) {
+        public Secure3dBuilder WithPriorAuthenticationMethod(PriorAuthenticationMethod priorAuthenticationMethod)
+        {
             PriorAuthenticationMethod = priorAuthenticationMethod;
             return this;
         }
-        public Secure3dBuilder WithPriorAuthenticationTransactionId(string priorAuthencitationTransactionId) {
+        public Secure3dBuilder WithPriorAuthenticationTransactionId(string priorAuthencitationTransactionId)
+        {
             PriorAuthenticationTransactionId = priorAuthencitationTransactionId;
             return this;
         }
-        public Secure3dBuilder WithPriorAuthenticationTimestamp(DateTime priorAuthenticationTimestamp) {
+        public Secure3dBuilder WithPriorAuthenticationTimestamp(DateTime priorAuthenticationTimestamp)
+        {
             PriorAuthenticationTimestamp = priorAuthenticationTimestamp;
             return this;
         }
-        public Secure3dBuilder WithRecurringAuthorizationExpiryDate(DateTime recurringAuthorizationExpiryDate) {
+        public Secure3dBuilder WithRecurringAuthorizationExpiryDate(DateTime recurringAuthorizationExpiryDate)
+        {
             RecurringAuthorizationExpiryDate = recurringAuthorizationExpiryDate;
             return this;
         }
-        public Secure3dBuilder WithRecurringAuthorizationFrequency(int? recurringAuthorizationFrequency) {
+        public Secure3dBuilder WithRecurringAuthorizationFrequency(int? recurringAuthorizationFrequency)
+        {
             RecurringAuthorizationFrequency = recurringAuthorizationFrequency;
             return this;
         }
-        public Secure3dBuilder WithReferenceNumber(string referenceNumber) {
+        public Secure3dBuilder WithReferenceNumber(string referenceNumber)
+        {
             ReferenceNumber = referenceNumber;
             return this;
         }
-        public Secure3dBuilder WithReorderIndicator(ReorderIndicator reorderIndicator) {
+        public Secure3dBuilder WithReorderIndicator(ReorderIndicator reorderIndicator)
+        {
             ReorderIndicator = reorderIndicator;
             return this;
         }
-        public Secure3dBuilder WithSdkInterface(SdkInterface sdkInterface) {
+        public Secure3dBuilder WithSdkInterface(SdkInterface sdkInterface)
+        {
             SdkInterface = sdkInterface;
             return this;
         }
-        public Secure3dBuilder WithSdkTransactionId(string sdkTransactionId) {
+        public Secure3dBuilder WithSdkTransactionId(string sdkTransactionId)
+        {
             SdkTransactionId = sdkTransactionId;
             return this;
         }
-        public Secure3dBuilder WithSdkUiTypes(params SdkUiType[] sdkUiTypes) {
+        public Secure3dBuilder WithSdkUiTypes(params SdkUiType[] sdkUiTypes)
+        {
             SdkUiTypes = sdkUiTypes;
             return this;
         }
-        public Secure3dBuilder WithServerTransactionId(string value) {
-            if (ThreeDSecure == null) {
+        public Secure3dBuilder WithServerTransactionId(string value)
+        {
+            if (ThreeDSecure == null)
+            {
                 ThreeDSecure = new ThreeDSecure();
             }
             ThreeDSecure.ServerTransactionId = value;
             return this;
         }
-        public Secure3dBuilder WithShippingAddressCreateDate(DateTime shippingAddressCreateDate) {
+        public Secure3dBuilder WithShippingAddressCreateDate(DateTime shippingAddressCreateDate)
+        {
             ShippingAddressCreateDate = shippingAddressCreateDate;
             return this;
         }
-        public Secure3dBuilder WithShippingAddressUsageIndicator(AgeIndicator shippingAddressUsageIndicator) {
+        public Secure3dBuilder WithShippingAddressUsageIndicator(AgeIndicator shippingAddressUsageIndicator)
+        {
             ShippingAddressUsageIndicator = shippingAddressUsageIndicator;
             return this;
         }
-        public Secure3dBuilder WithShippingMethod(ShippingMethod shippingMethod) {
+        public Secure3dBuilder WithShippingMethod(ShippingMethod shippingMethod)
+        {
             ShippingMethod = shippingMethod;
             return this;
         }
-        public Secure3dBuilder WithShippingNameMatchesCardHolderName(bool? shippingNameMatchesCardHolderName) {
+        public Secure3dBuilder WithShippingNameMatchesCardHolderName(bool? shippingNameMatchesCardHolderName)
+        {
             ShippingNameMatchesCardHolderName = shippingNameMatchesCardHolderName;
             return this;
         }
-        public Secure3dBuilder WithStoredCredential(StoredCredential storedCredential) {
+        public Secure3dBuilder WithStoredCredential(StoredCredential storedCredential)
+        {
             StoredCredential = storedCredential;
             return this;
         }
-        public Secure3dBuilder WithThreeDSecure(ThreeDSecure threeDSecure) {
+        public Secure3dBuilder WithThreeDSecure(ThreeDSecure threeDSecure)
+        {
             ThreeDSecure = threeDSecure;
             return this;
         }
-        public Secure3dBuilder WithTransactionType(TransactionType transactionType) {
+        public Secure3dBuilder WithTransactionType(TransactionType transactionType)
+        {
             TransactionType = transactionType;
             return this;
         }
-        public Secure3dBuilder WithWhitelistStatus(bool whitelistStatus) {
+        public Secure3dBuilder WithWhitelistStatus(bool whitelistStatus)
+        {
             WhitelistStatus = whitelistStatus;
             return this;
         }
-        public Secure3dBuilder WithWorkNumber(string countryCode, string number) {
+        public Secure3dBuilder WithWorkNumber(string countryCode, string number)
+        {
             WorkCountryCode = countryCode;
             WorkNumber = number;
             return this;
         }
 
         public Secure3dBuilder(TransactionType transactionType) {
-            AuthenticationSource = AuthenticationSource.BROWSER;
+            AuthenticationSource = Entities.AuthenticationSource.BROWSER;
             AuthenticationRequestType = AuthenticationRequestType.PAYMENT_TRANSACTION;
             MessageCategory = MessageCategory.PAYMENT_AUTHENTICATION;
 
@@ -495,7 +524,7 @@ namespace GlobalPayments.Api.Builders {
         public override ThreeDSecure Execute(string configName = "default") {
             return Execute(Secure3dVersion.Any, configName);
         }
-        public ThreeDSecure Execute(Secure3dVersion version, string configName = "default") {
+        public override ThreeDSecure Execute(Secure3dVersion version, string configName = "default") {
             Validations.Validate(this);
 
             // setup return object
@@ -622,6 +651,6 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => ShippingAddressUsageIndicator).DoesNotEqual(AgeIndicator.NO_CHANGE)
                 .When(() => ShippingAddressUsageIndicator).IsNotNull()
                 .Check(() => ShippingAddressUsageIndicator).DoesNotEqual(AgeIndicator.NO_ACCOUNT);
-        }
+        }        
     }
 }

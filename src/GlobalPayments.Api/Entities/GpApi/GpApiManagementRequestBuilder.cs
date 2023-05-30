@@ -5,10 +5,28 @@ using GlobalPayments.Api.Utils;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace GlobalPayments.Api.Entities {
+namespace GlobalPayments.Api.Entities
+{
     internal class GpApiManagementRequestBuilder {
+
+        private static Dictionary<string, List<string>> AllowedActions { get; set; }
+               
         internal static GpApiRequest BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
+            GetAllowedActions();
+
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+          
+            if (builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.BankPayment) {
+                var message = $"The {builder.TransactionType.ToString()} is not supported for {PaymentMethodName.BankPayment.ToString()}";
+                
+                if (AllowedActions[PaymentMethodType.BankPayment.ToString()] == null) {
+                    throw new BuilderException(message);                    
+                }
+                else if (!AllowedActions[PaymentMethodType.BankPayment.ToString()].Contains(builder.TransactionType.ToString())) {
+                    throw new BuilderException(message);
+                }
+            }
+            
             if (builder.TransactionType == TransactionType.Capture) {
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
@@ -38,9 +56,21 @@ namespace GlobalPayments.Api.Entities {
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("currency_conversion", builder.DccRateData?.DccId ?? null);
 
+                var endpoint = $"{merchantUrl}";
+
+                if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Account_Funds) {
+                    if (!string.IsNullOrEmpty(builder.FundsData?.MerchantId)) {
+                        endpoint = $"/merchants/{builder.FundsData.MerchantId}";
+                    }
+                    endpoint += $"/transfers/{builder.TransactionId}/reversal";
+                }
+                else {
+                    endpoint += $"/transactions/{builder.TransactionId}/reversal";
+                }
+
                 return new GpApiRequest {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/reversal",
+                    Endpoint = endpoint,
                     RequestBody = data.ToString(),
                 };
             }
@@ -183,15 +213,14 @@ namespace GlobalPayments.Api.Entities {
                       .Set("charge_items", lodginItems);
 
                       payload.Set("lodging", lodgingData);
-                    }
-
-                    return new GpApiRequest
-                    {
-                        Verb = HttpMethod.Post,
-                        Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/incremental",
-                        RequestBody = payload.ToString(),
-                    };
+                    }                    
                 }
+                return new GpApiRequest
+                {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/incremental",
+                    RequestBody = payload.ToString(),
+                };
             }
             else if (builder.TransactionType == TransactionType.Edit)
             {                
@@ -257,8 +286,44 @@ namespace GlobalPayments.Api.Entities {
                     RequestBody = payload.ToString(),
                 };
             }
+
+            //Transaction split
+            else if(builder.TransactionType == TransactionType.SplitFunds) {
+                var payment = builder.PaymentMethod;                
+                var transfer = new JsonDoc();
+                var split = new List<Dictionary<string, object>>();
+
+                var request = new Dictionary<string, object>();
+                request.Add("recipient_account_id", builder.FundsData.RecipientAccountId);
+                request.Add("reference", builder.Reference);
+                request.Add("description", builder.Description);
+                request.Add("amount", builder.Amount.ToNumericCurrencyString());
+
+                split.Add(request);
+
+                transfer.Set("transfers", split);
+                                
+                var endpoint = merchantUrl;
+                if (!string.IsNullOrEmpty(builder.FundsData.MerchantId)) {
+                    endpoint = $"/merchants/{builder.FundsData.MerchantId}";
+                }
+
+                return new GpApiRequest {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{endpoint}/transactions/{builder.TransactionId}/split",
+                    RequestBody = transfer.ToString(),
+                };
+            }
             
             return null;
+        }
+
+        private static void GetAllowedActions()
+        {
+            if (AllowedActions == null) {
+                AllowedActions = new Dictionary<string, List<string>>();
+                AllowedActions.Add(PaymentMethodType.BankPayment.ToString(), null);
+            }
         }
     }
 }

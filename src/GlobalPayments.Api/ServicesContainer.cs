@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
+using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 
 namespace GlobalPayments.Api {
@@ -40,6 +41,8 @@ namespace GlobalPayments.Api {
 
         internal PayrollConnector PayrollConnector { get; set; }
 
+        internal IFraudCheckService FraudService { get; set; }
+
         internal ISecure3dProvider GetSecure3DProvider(Secure3dVersion version) {
             if (_secure3dProviders.ContainsKey(version)) {
                 return _secure3dProviders[version];
@@ -60,9 +63,15 @@ namespace GlobalPayments.Api {
             else _secure3dProviders.Add(version, provider);
         }
 
-        internal void SetOpenBanking(IOpenBankingProvider provider) {
+        internal void SetOpenBankingProvider(IOpenBankingProvider provider) {
             if (this.OpenBankingProvider == null) {
                 this.OpenBankingProvider = provider;
+            }
+        }
+
+        internal void SetPayFacProvider(IPayFacProvider provider) {
+            if (this.PayFacProvider == null) {
+                this.PayFacProvider = provider;
             }
         }
 
@@ -228,6 +237,14 @@ namespace GlobalPayments.Api {
             throw new ApiException("The specified configuration has not been configured for gateway processing.");
         }
 
+        internal IFraudCheckService GetFraudCheckClient(string configName) {
+            if (_configurations.ContainsKey(configName))
+            {
+                return _configurations[configName].FraudService;
+            }
+
+            throw new ApiException("The specified configuration has not been configured for fraud check.");
+        }
         internal void removeConfiguration(String configName) {
             if(_configurations.ContainsKey(configName)) {
                 ConfiguredServices config = new ConfiguredServices();
@@ -235,6 +252,10 @@ namespace GlobalPayments.Api {
                     throw new ConfigurationException($"Failed to remove configuration: {configName}.");
                 }
             }
+        }
+
+        public static void RemoveConfig(string config = "default") {
+            Instance.removeConfiguration(config);
         }
 
         /// <summary>

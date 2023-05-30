@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Billing;
+using GlobalPayments.Api.Entities.TransactionApi.Request;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Network.Elements;
 using GlobalPayments.Api.Network.Entities;
@@ -65,8 +66,8 @@ namespace GlobalPayments.Api.Builders {
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
         public PhoneNumber HomePhone { get; set; }
         public PhoneNumber WorkPhone { get; set; }
-        public PhoneNumber ShippingPhone { get; set; }               
-        public RemittanceReferenceType RemittanceReferenceType { get; set; }
+        public PhoneNumber ShippingPhone { get; set; }
+        public RemittanceReferenceType? RemittanceReferenceType { get; set; }
         public string RemittanceReferenceValue { get; set; }
         public PhoneNumber MobilePhone { get; set; }
         internal string PosSequenceNumber { get; set; }
@@ -94,6 +95,8 @@ namespace GlobalPayments.Api.Builders {
         internal string CheckCustomerId { get; set; }
         internal string RawMICRData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
+        internal BNPLShippingMethod BNPLShippingMethod {get;set;}
+        internal bool MaskedDataResponse { get; set; }
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
@@ -101,6 +104,18 @@ namespace GlobalPayments.Api.Builders {
         }
         internal EmvLastChipRead EmvChipCondition { get; set; }
         internal DateTime LastRegisteredDate { get; set; }
+        internal DateTime ShippingDate { get; set; }
+        internal TransactionData TransactionData { get; set; }
+
+        public AuthorizationBuilder WithTransactionData(TransactionData value) {
+            TransactionData = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithShippingDate(DateTime value)  {
+            ShippingDate = value;
+            return this;
+        }
         /// <summary>
         /// Indicates the type of account provided; see the associated Type enumerations for specific values supported.
         /// </summary>
@@ -274,6 +289,15 @@ namespace GlobalPayments.Api.Builders {
                 if (PaymentMethod is TransactionReference) {
                     ((TransactionReference)PaymentMethod).ClientTransactionId = value;
                 }
+                else if(PaymentMethod is eCheck) {
+                    ClientTransactionId = value;
+                }
+                else if(PaymentMethod is ICardData) {
+                    ClientTransactionId = value;
+                }
+                else if (PaymentMethod is Credit) {
+                    ClientTransactionId = value;
+                }
                 else {
                     PaymentMethod = new TransactionReference {
                         ClientTransactionId = value
@@ -298,8 +322,7 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithFraudFilter(FraudFilterMode fraudFilter, FraudRuleCollection fraudRules = null)
-        {
+        public AuthorizationBuilder WithFraudFilter(FraudFilterMode fraudFilter, FraudRuleCollection fraudRules = null) {
             FraudFilterMode = fraudFilter;
             if(fraudRules != null)
                 FraudRules = fraudRules;
@@ -473,8 +496,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <param name="value">The shippingDiscount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithShippingDiscount(decimal? value)
-        {
+        public AuthorizationBuilder WithShippingDiscount(decimal? value) {
             ShippingDiscount = value;
             return this;
         }
@@ -484,8 +506,7 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <param name="value">The OrderDetails</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithOrderDetails(OrderDetails value)
-        {
+        public AuthorizationBuilder WithOrderDetails(OrderDetails value) {
             OrderDetails = value;
             return this;
         }
@@ -695,14 +716,12 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithPayLinkData(PayLinkData payLinkData)
-        {
+        public AuthorizationBuilder WithPayLinkData(PayLinkData payLinkData) {
             PayLinkData = payLinkData;
             return this;
         }
 
-        public AuthorizationBuilder WithPaymentLinkId(string paymentLinkId)
-        {
+        public AuthorizationBuilder WithPaymentLinkId(string paymentLinkId) {
             PaymentLinkId = paymentLinkId;
             return this;
         }
@@ -828,6 +847,12 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public AuthorizationBuilder WithMaskedDataResponse(bool value)
+        {
+            MaskedDataResponse = value;
+            return this;
+        }
+
         internal AuthorizationBuilder(TransactionType type, IPaymentMethod payment = null) : base(type) {
             WithPaymentMethod(payment);
         }
@@ -840,6 +865,12 @@ namespace GlobalPayments.Api.Builders {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
+            if (client.SupportsOpenBanking() && PaymentMethod is BankPayment) {
+            var obClient = ServicesContainer.Instance.GetOpenBanking(configName);
+                if (obClient != null && (obClient != client)) {
+                    return obClient.ProcessOpenBanking(this);
+                }
+            }
             return client.ProcessAuthorization(this);
         }
 
@@ -920,10 +951,8 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public AuthorizationBuilder WithPhoneNumber(string phoneCountryCode, string number, PhoneNumberType type)
-        {
-            var phoneNumber = new PhoneNumber
-            {
+        public AuthorizationBuilder WithPhoneNumber(string phoneCountryCode, string number, PhoneNumberType type) {
+            var phoneNumber = new PhoneNumber {
                 CountryCode = phoneCountryCode,
                 Number = number
             };
@@ -1053,6 +1082,15 @@ namespace GlobalPayments.Api.Builders {
         public AuthorizationBuilder WithRemittanceReference(RemittanceReferenceType remittanceReferenceType, string remittanceReferenceValue) {
             RemittanceReferenceType = remittanceReferenceType;
             RemittanceReferenceValue = remittanceReferenceValue;
+            return this;
+        }
+
+        public AuthorizationBuilder WithBNPLShippingMethod(BNPLShippingMethod value) {
+            if (!(PaymentMethod is BNPL)) {
+                throw new ArgumentException("The selected payment method doesn't support this property!");
+            }
+
+            BNPLShippingMethod = value;
             return this;
         }
     }

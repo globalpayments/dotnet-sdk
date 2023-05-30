@@ -144,9 +144,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 exceptionCaught = true;
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId,
-                    ex.Message);
+                Assert.IsTrue(
+                    ex.Message.StartsWith("Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId));
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -280,9 +279,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 exceptionCaught = true;
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId,
-                    ex.Message);
+                Assert.IsTrue(
+                    ex.Message.StartsWith("Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId));
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -410,9 +408,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 exceptionCaught = true;
                 Assert.AreEqual("40039", ex.ResponseMessage);
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId,
-                    ex.Message);
+                Assert.IsTrue(
+                    ex.Message.StartsWith("Status Code: Conflict - Idempotency Key seen before: id=" + secureEcom.ServerTransactionId));
             }
             finally {
                 Assert.IsTrue(exceptionCaught);

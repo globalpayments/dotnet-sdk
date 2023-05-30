@@ -15,19 +15,14 @@ namespace GlobalPayments.Api.Tests.GpApi
     {
         private static CreditCardData card;
         private static Address address;
-        private readonly string currency = "USD";
+        private const string CURRENCY = "USD";
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context) {
+        [TestInitialize]
+        public void TestInitialize() {
             ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppIdFraud,
-                AppKey = AppKeyFraud,
-                Environment = Environment.TEST,
+                AppId = AppId,
+                AppKey = AppKey,
                 Channel = Channel.CardNotPresent,
-                AccessTokenInfo = new AccessTokenInfo()
-                {
-                    TransactionProcessingAccountName = "transaction_processing"
-                },
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
             });
@@ -60,7 +55,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             
             foreach (var items in fraudFilters) {
                 var response = card.Charge(98.10m)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithAddress(address)
                     .WithFraudFilter(items.Key)
                     .Execute();
@@ -76,15 +71,15 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void FraudManagementDataSubmissionWithRules() {
-            const string rule1 = "2c49c2e6-5843-4275-9b92-8c9b6dc8e566";
-            const string rule2 = "2cfa3a28-f8f3-42f8-abbf-79b54e35de16";
+            const string rule1 = "0c93a6c9-7649-4822-b5ea-1efa356337fd";
+            const string rule2 = "a539d51a-abc1-4fff-a38e-b34e00ad0cc3";
 
             var rules = new FraudRuleCollection();
             rules.AddRule(rule1, FraudFilterMode.ACTIVE);
             rules.AddRule(rule2, FraudFilterMode.OFF);
 
             var response = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE, rules)
                 .Execute();
@@ -112,11 +107,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionWith_AllRulesActive() {
             var ruleList = new List<string> {
-                "2c49c2e6-5843-4275-9b92-8c9b6dc8e566",
-                "2cfa3a28-f8f3-42f8-abbf-79b54e35de16",
-                "21db158b-4541-4217-aa81-927596465547",
-                "6acbcb2e-79c7-40c3-8c17-b65c5fba2a54",
-                "a7da55fb-69c4-4c41-abb6-c4dded40354e"
+                "0c93a6c9-7649-4822-b5ea-1efa356337fd",
+                "a539d51a-abc1-4fff-a38e-b34e00ad0cc3",
+                "d023a19e-6985-4fda-bb9b-5d4e0dedbb1e"
             };
             
             var rules = new FraudRuleCollection();
@@ -125,7 +118,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             }
 
             var response = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE, rules)
                 .Execute();
@@ -145,11 +138,9 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionWith_AllRulesOff() {
             var ruleList = new List<string> {
-                "2c49c2e6-5843-4275-9b92-8c9b6dc8e566",
-                "2cfa3a28-f8f3-42f8-abbf-79b54e35de16",
-                "21db158b-4541-4217-aa81-927596465547",
-                "6acbcb2e-79c7-40c3-8c17-b65c5fba2a54",
-                "a7da55fb-69c4-4c41-abb6-c4dded40354e"
+                "0c93a6c9-7649-4822-b5ea-1efa356337fd",
+                "a539d51a-abc1-4fff-a38e-b34e00ad0cc3",
+                "d023a19e-6985-4fda-bb9b-5d4e0dedbb1e"
             };
             
             var rules = new FraudRuleCollection();
@@ -158,7 +149,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             }
 
             var response = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE, rules)
                 .Execute();
@@ -179,11 +170,11 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReleaseTransactionAfterFraudResultHold() {
+            card.CardHolderName = "Lenny Bruce";
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
-                .WithCustomerIpAddress("123.123.123.123")
                 .Execute();
 
             Assert.IsNotNull(trn);
@@ -191,8 +182,8 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
-
             Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            
             var trn2 = trn.Release()
                 .WithReasonCode(ReasonCode.FALSEPOSITIVE)
                 .Execute();
@@ -201,13 +192,13 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn2.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn2.ResponseMessage);
             Assert.IsNotNull(trn2.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn2.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(), trn2.FraudFilterResponse.FraudResponseResult);
         }
 
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle() {
             var trn = card.Authorize(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -227,7 +218,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             trn = trn.Release()
                .WithReasonCode(ReasonCode.FALSEPOSITIVE)
@@ -237,7 +228,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             trn = trn.Capture()
                     .Execute();
@@ -250,7 +241,7 @@ namespace GlobalPayments.Api.Tests.GpApi
          [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_HoldAndReleaseWithoutReasonCode() {
             var trn = card.Authorize(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -269,7 +260,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             trn = trn.Release()
                .Execute();
@@ -278,7 +269,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             trn = trn.Capture()
                     .Execute();
@@ -290,11 +281,11 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void CaptureTransactionAfterFraudResultHold() {
+            card.CardHolderName = "Lenny Bruce";
             var trn = card.Authorize(10.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
-                .WithCustomerIpAddress("123.123.123.123")
                 .Execute();
 
             Assert.IsNotNull(trn);
@@ -320,11 +311,11 @@ namespace GlobalPayments.Api.Tests.GpApi
         
         [TestMethod]
         public void RefundTransactionAfterFraudResultHold() {
+            card.CardHolderName = "Lenny Bruce";
             var trn = card.Charge(10.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
-                .WithCustomerIpAddress("123.123.123.123")
                 .Execute();
 
             Assert.IsNotNull(trn);
@@ -337,13 +328,13 @@ namespace GlobalPayments.Api.Tests.GpApi
             var errorFound = false;
             try {
                 trn.Refund()
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .Execute();
             }
             catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - The refund password you entered was incorrect ", e.Message);
-                Assert.AreEqual("50017", e.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - You can't refund a delayed transaction that has not been sent for settlement You are refunding money to a customer that has not been and never will be charged! ", e.Message);
+                Assert.AreEqual("40087", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
             }
@@ -352,7 +343,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_Charge() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -372,7 +363,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             trn = trn.Release()
                .WithReasonCode(ReasonCode.FALSEPOSITIVE)
@@ -382,7 +373,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
         }
         
         [TestMethod]
@@ -390,7 +381,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var idempotencyKey = Guid.NewGuid().ToString();
             
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .WithIdempotencyKey(idempotencyKey)
@@ -406,7 +397,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var exceptionCaught = false;
             try {
                 card.Charge(1)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithIdempotencyKey(idempotencyKey)
                     .Execute();
             }
@@ -424,7 +415,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_ChargeThenRefund() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
@@ -444,7 +435,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             trn = trn.Release()
                 .WithReasonCode(ReasonCode.FALSEPOSITIVE)
@@ -454,27 +445,21 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
-            
-            var errorFound = false;
-            try {
-                trn.Refund()
-                    .WithCurrency(currency)
-                    .Execute();
-            }
-            catch (GatewayException e) {
-                errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - The refund password you entered was incorrect ", e.Message);
-                Assert.AreEqual("50017", e.ResponseMessage);
-            } finally {
-                Assert.IsTrue(errorFound);
-            }
+            Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+
+            var refund = trn.Refund()
+                .WithCurrency(CURRENCY)
+                .Execute();
+
+            Assert.IsNotNull(refund);
+            Assert.AreEqual("SUCCESS", refund.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), refund.ResponseMessage);
         }
         
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_ChargePassive() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -494,7 +479,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
             trn = trn.Release()
                 .WithReasonCode(ReasonCode.FALSEPOSITIVE)
@@ -504,13 +489,13 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
         }
         
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_Charge_ThenReleaseWithoutHold() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -540,7 +525,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FraudManagementDataSubmissionFullCycle_Authorize_ThenReleaseWithoutHold() {
             var trn = card.Authorize(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -575,7 +560,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 }
 
                 var trn = card.Charge(98.10m)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithAddress(address)
                     .WithFraudFilter(FraudFilterMode.ACTIVE)
                     .Execute();
@@ -597,7 +582,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.AreEqual("SUCCESS", trn.ResponseCode);
                 Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
                 Assert.IsNotNull(trn.FraudFilterResponse);
-                Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+                Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
 
                 trn = trn.Release()
                     .WithReasonCode(reasonCode)
@@ -607,7 +592,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.AreEqual("SUCCESS", trn.ResponseCode);
                 Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
                 Assert.IsNotNull(trn.FraudFilterResponse);
-                Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(),
+                Assert.AreEqual(FraudFilterResult.RELEASE_SUCCESSFUL.ToString().ToUpper(),
                     trn.FraudFilterResponse.FraudResponseResult);
             }
         }
@@ -617,7 +602,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var idempotencyKey = Guid.NewGuid().ToString();
             
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .WithIdempotencyKey(idempotencyKey)
@@ -638,7 +623,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("SUCCESS", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
             
             var exceptionCaught = false;
             try {
@@ -682,7 +667,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void Release_InvalidReason() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -711,10 +696,10 @@ namespace GlobalPayments.Api.Tests.GpApi
         
         [TestMethod]
         public void HoldTransactionAfterFraudResultHold() {
+            card.CardHolderName = "Lenny Bruce";
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
-                .WithCustomerIpAddress("123.123.123.123")
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .Execute();
 
@@ -748,7 +733,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 }
 
                 var trn = card.Charge(98.10m)
-                    .WithCurrency(currency)
+                    .WithCurrency(CURRENCY)
                     .WithAddress(address)
                     .WithFraudFilter(FraudFilterMode.ACTIVE)
                     .Execute();
@@ -770,7 +755,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.AreEqual("SUCCESS", trn.ResponseCode);
                 Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
                 Assert.IsNotNull(trn.FraudFilterResponse);
-                Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
+                Assert.AreEqual(FraudFilterResult.HOLD_SUCCESSFUL.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseResult);
             }
         }
         
@@ -779,7 +764,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var idempotencyKey = Guid.NewGuid().ToString();
             
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.ACTIVE)
                 .WithIdempotencyKey(idempotencyKey)
@@ -834,7 +819,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void Hold_InvalidReason() {
             var trn = card.Charge(98.10m)
-                .WithCurrency(currency)
+                .WithCurrency(CURRENCY)
                 .WithAddress(address)
                 .WithFraudFilter(FraudFilterMode.PASSIVE)
                 .Execute();
@@ -871,14 +856,14 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .OrderBy(TransactionSortProperty.TimeCreated)
                     .Where(SearchCriteria.StartDate, startDate)
                     .And(SearchCriteria.EndDate, endDate)
-                    .And(SearchCriteria.RiskAssessmentResult, FraudFilterResult.HOLD)
+                    .And(SearchCriteria.RiskAssessmentResult, FraudFilterResult.PASS)
                     .Execute();
 
             Assert.IsTrue(response.Results.Count > 0);
             
             var trnSummary = response.Results[new Random().Next(1, response.Results.Count)];
             Assert.IsNotNull(trnSummary.FraudManagementResponse);
-            Assert.AreEqual(FraudFilterResult.HOLD.ToString().ToUpper(), trnSummary.FraudManagementResponse.FraudResponseResult);
+            Assert.AreEqual(FraudFilterResult.PASS.ToString().ToUpper(), trnSummary.FraudManagementResponse.FraudResponseResult);
         }
     }
 }

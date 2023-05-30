@@ -20,5 +20,6 @@ namespace GlobalPayments.Api.Services {
         public static Secure3dBuilder GetAuthenticationData() {
             return new Secure3dBuilder(TransactionType.VerifySignature);
         }
+
     }
 }

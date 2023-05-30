@@ -29,7 +29,7 @@ namespace GlobalPayments.Api.Services
                 .WithPayLinkId(payLinkId);
         }
 
-        public static TransactionReportBuilder<PagedResult<PayLinkSummary>> FindPayLink(int page, int pageSize)
+        public static ReportBuilder<PagedResult<PayLinkSummary>> FindPayLink(int page, int pageSize)
         {
             return (new TransactionReportBuilder<PagedResult<PayLinkSummary>>(ReportType.FindPayLinkPaged))
                 .WithPaging(page, pageSize);

@@ -26,6 +26,10 @@ namespace GlobalPayments.Api.Gateways {
         public ShaHashType ShaHashType { get; set; }
         public Secure3dVersion Version { get { return Secure3dVersion.One; } }
 
+        public bool SupportsOpenBanking() {
+            return true;
+        }
+
         #region transaction handling
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             var et = new ElementTree();
@@ -748,19 +752,23 @@ namespace GlobalPayments.Api.Gateways {
 
             // Build Request
             var request = et.Element("request")
-                .Set("type", MapRecurringRequestType(builder))
-                .Set("timestamp", timestamp);
+                .Set("timestamp", timestamp)
+                .Set("type", MapRecurringRequestType(builder));
             et.SubElement(request, "merchantid").Text(MerchantId);
+            et.SubElement(request, "channel", Channel);
             et.SubElement(request, "account", AccountId);
-            et.SubElement(request, "orderid", orderId);
 
             if (builder.TransactionType == TransactionType.Create || builder.TransactionType == TransactionType.Edit) {
                 if (builder.Entity is Customer) {
+                    et.SubElement(request, "orderid", orderId);
+
                     var customer = builder.Entity as Customer;
                     request.Append(BuildCustomer(et, customer));
                     et.SubElement(request, "sha1hash").Text(GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, null, null, customer.Key));
                 }
                 else if (builder.Entity is RecurringPaymentMethod) {
+                    et.SubElement(request, "orderid", orderId);
+
                     var payment = builder.Entity as RecurringPaymentMethod;
                     var cardElement = et.SubElement(request, "card");
                     et.SubElement(cardElement, "ref").Text(payment.Key ?? payment.Id);
@@ -787,6 +795,40 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(request, "sha1hash").Text(sha1hash);
                     }
                 }
+                //Schedule
+                else if(builder.Entity is Schedule)
+                {
+                    var schedule = builder.Entity as Schedule;
+                    var amount = schedule.Amount.ToNumericCurrencyString();
+                    var frequency = MapScheduleFrequency(schedule.Frequency);
+                    var hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, schedule.Id, amount, schedule.Currency, schedule.CustomerKey, frequency);
+                                        
+                    et.SubElement(request, "scheduleref", schedule.Id);
+                    et.SubElement(request, "alias", schedule.Name);
+                    et.SubElement(request, "orderidstub", schedule.OrderPrefix);
+                    et.SubElement(request, "transtype", "auth");
+                    et.SubElement(request, "schedule", frequency);
+                    
+                    if (schedule.StartDate != null) {
+                        et.SubElement(request, "startdate", schedule.StartDate?.ToString("yyyyMMdd"));
+                    }
+                    et.SubElement(request, "numtimes", schedule.NumberOfPayments);                    
+                    if (schedule.EndDate != null) {
+                        et.SubElement(request, "enddate", schedule.EndDate?.ToString("yyyyMMdd"));                        
+                    }
+                    et.SubElement(request, "payerref", schedule.CustomerKey);
+                    et.SubElement(request, "paymentmethod", schedule.PaymentKey);
+                    if (!string.IsNullOrEmpty(amount)) {
+                        et.SubElement(request, "amount", amount)
+                                .Set("currency", schedule.Currency);
+                    }
+
+                    et.SubElement(request, "prodid", schedule.ProductId ?? string.Empty);
+                    et.SubElement(request, "varref", schedule.PoNumber ?? string.Empty);
+                    et.SubElement(request, "custno", schedule.CustomerNumber);
+                    et.SubElement(request, "comment", schedule.Description);
+                    et.SubElement(request, "sha1hash").Text(hash);
+                }
             }
             else if (builder.TransactionType == TransactionType.Delete) {
                 if (builder.Entity is RecurringPaymentMethod) {
@@ -798,11 +840,58 @@ namespace GlobalPayments.Api.Gateways {
                     string sha1hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, payment.CustomerKey, payment.Key ?? payment.Id);
                     et.SubElement(request, "sha1hash").Text(sha1hash);
                 }
+                //Schedule
+                else if (builder.Entity is Schedule) {
+                    var schedule = builder.Entity as Schedule;
+                    et.SubElement(request, "scheduleref", schedule.Key);
+                    var hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, schedule.Key);
+                    et.SubElement(request, "sha1hash").Text(hash);
+                }
+            }
+            else if (builder.TransactionType == TransactionType.Fetch) {
+                if (builder.Entity is Schedule) {
+                    var scheduleRef = (builder.Entity as Schedule).Key;
+
+                    et.SubElement(request, "scheduleref", scheduleRef);                  
+
+                    string sha1hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, scheduleRef);
+                    et.SubElement(request, "sha1hash").Text(sha1hash);
+                }                
+            }
+            else if (builder.TransactionType == TransactionType.Search) {
+                if (builder is RecurringBuilder<List<Schedule>>) {
+                    string customerKey = string.Empty, paymentKey = string.Empty;
+                    if (builder.SearchCriteria.ContainsKey(SearchCriteria.CustomerId.ToString())) {
+                        customerKey = builder.SearchCriteria[SearchCriteria.CustomerId.ToString()];
+                        et.SubElement(request, "payerref", customerKey);
+                    }
+                    if (builder.SearchCriteria.ContainsKey(SearchCriteria.PaymentMethodKey.ToString())) {
+                        paymentKey = builder.SearchCriteria[SearchCriteria.PaymentMethodKey.ToString()];
+                        et.SubElement(request, "paymentmethod", paymentKey);
+                    }
+                    var hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, customerKey, paymentKey);
+
+                    et.SubElement(request, "sha1hash").Text(hash);
+                }
             }
 
             var response = DoTransaction(et.ToString(request));
             return MapRecurringResponse<TResult>(response, builder);
-        }             
+        }
+
+        private string MapScheduleFrequency(string frequency)
+        {
+            switch (frequency) {            
+                case ScheduleFrequency.BI_MONTHLY:
+                    return "bimonthly";
+                case ScheduleFrequency.SEMI_ANNUALLY:
+                    return "halfyearly";
+                case ScheduleFrequency.ANNUALLY:
+                    return "yearly";
+                default:
+                    return frequency;
+                }
+        }
 
         #endregion
 
@@ -975,7 +1064,61 @@ namespace GlobalPayments.Api.Gateways {
 
             // check response
             CheckResponse(root);
+            switch (builder.TransactionType)
+            {
+                case TransactionType.Create:
+                case TransactionType.Edit:
+                case TransactionType.Delete:
+                case TransactionType.Fetch:
+                    if (builder.Entity is Schedule) {
+                        builder.Entity = MapScheduleResponse(root, builder.Entity as Schedule);
+                    }
+                    break;                
+                case TransactionType.Search:
+                    if (builder is RecurringBuilder<List<Schedule>>) {
+                        return MapSchedulesSearchResponse(root) as TResult;
+                    }
+                    break;
+                
+                default:
+                    break;
+            }
+           
+
             return builder.Entity as TResult;
+        }
+
+        private List<Schedule> MapSchedulesSearchResponse(Element root)
+        {
+            var schedulesResponse = new List<Schedule>();
+            if (root.Has("schedules")) {               
+                foreach (Element schedule in root.Get("schedules").GetAll("schedule")) {
+                    if (schedule.Has("scheduleref")) {
+                        schedulesResponse.Add(MapScheduleResponse(schedule, new Schedule()));
+                    }
+                }
+            }
+
+            return schedulesResponse;
+        }
+
+        private Schedule MapScheduleResponse(Element root, Schedule entity)
+        {
+            var schedule = entity;
+            schedule.Amount = root.GetValue<string>("amount").ToAmount() ?? null;
+            schedule.Currency = root.GetAttribute<string>("currency") ?? null;
+            schedule.Id = root.GetValue<string>("scheduleref") ?? null;
+            schedule.Key = root.GetValue<string>("scheduleref") ?? null;
+            schedule.Name = root.GetValue<string>("alias") ?? null;
+            schedule.CustomerKey = root.GetValue<string>("payerref") ?? null;
+            schedule.NumberOfPayments = root.GetValue<string>("numtimes").ToInt32() ?? null;
+            schedule.CustomerNumber = root.GetValue<string>("custno") ?? null;
+            schedule.StartDate = root.GetValue<string>("startdate").ToDateTime("yyyyMMdd");
+            schedule.EndDate = root.GetValue<string>("enddate").ToDateTime("yyyyMMdd");
+            schedule.Description = root.GetValue<string>("comment") ?? null;
+            schedule.ResponseCode = root.GetValue<string>("result") ?? null;
+            schedule.ResponseMessage = root.GetValue<string>("message") ?? null;
+            return schedule;
         }
 
         private void CheckResponse(Element root, List<string> acceptedCodes = null) {
@@ -1140,6 +1283,8 @@ namespace GlobalPayments.Api.Gateways {
                         return "payer-new";
                     else if (entity is IPaymentMethod)
                         return "card-new";
+                    else if (entity is Schedule)
+                        return "schedule-new";
                     throw new UnsupportedTransactionException();
                 case TransactionType.Edit:
                     if (entity is Customer)
@@ -1150,6 +1295,16 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.Delete:
                     if (entity is RecurringPaymentMethod)
                         return "card-cancel-card";
+                    else if (entity is Schedule)
+                        return "schedule-delete";
+                    throw new UnsupportedTransactionException();
+                case TransactionType.Fetch:
+                    if (entity is Schedule)
+                        return "schedule-get";
+                    throw new UnsupportedTransactionException();
+                case TransactionType.Search:
+                    if (builder is RecurringBuilder<List<Schedule>>)
+                        return "schedule-search";
                     throw new UnsupportedTransactionException();
                 default:
                     throw new UnsupportedTransactionException();

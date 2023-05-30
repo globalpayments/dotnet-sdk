@@ -15,5 +15,7 @@ namespace GlobalPayments.Api.Entities
         public string AccountName { get; set; }
         public string AccountNumber { get; set; }
         public string Iban { get; set; }
+        public string RemittanceReferenceValue { get; set; }
+        public string RemittanceReferenceType { get; set; }
     }
 }

@@ -60,6 +60,7 @@ namespace GlobalPayments.Api.Entities {
         public string CardHolderLastName { get; set; }
 
         public string CardHolderName { get; set; }
+        public string CardPresent { get; set; }
 
         public string CardSwiped { get; set; }
 
@@ -96,6 +97,8 @@ namespace GlobalPayments.Api.Entities {
         public string CvnResponseCode { get; set; }
 
         public bool DebtRepaymentIndicator { get; set; }
+        public string DebitCreditIndicator { get; set; }
+
 
         public decimal? DepositAmount { get; set; }
 
@@ -131,6 +134,7 @@ namespace GlobalPayments.Api.Entities {
         public bool HasEcomPaymentData { get; set; }
 
         public bool HasEmvTags { get; set; }
+        public string HasLevelIII { get; set; }
 
         public string InvoiceNumber { get; set; }
 
@@ -176,7 +180,12 @@ namespace GlobalPayments.Api.Entities {
         public string MerchantId { get; set; }
 
         public string MerchantName { get; set; }
-
+        public string MerchantAddr1 { get; set; }
+        public string MerchantAddr2 { get; set; }
+        public string MerchantCity { get; set; }
+        public string MerchantState { get; set; }
+        public string MerchantZip { get; set; }
+        public string MerchantPhone { get; set; }
         public string MerchantNumber { get; set; }
         public string MerchantInvoiceNumber { get; set; }
         public string MerchantPONumber { get; set; }
@@ -200,6 +209,7 @@ namespace GlobalPayments.Api.Entities {
         public Customer PayorData { get; set; }
 
         public string PoNumber { get; set; }
+        public string ReaderPresent { get; set; }
 
         public string RecurringDataCode { get; set; }
 
@@ -212,6 +222,11 @@ namespace GlobalPayments.Api.Entities {
 
         public DateTime? ResponseDate { get; set; }
 
+        public string SaleReturnIndicator { get; set; }
+        /// <summary>
+        /// Name and Version of the SDK used for integration, where applicable
+        /// </summary>
+        public string SDKNameVersion { get; set; }
         public string ScheduleId { get; set; }
 
         public string SchemeReferenceData { get; set; }
@@ -233,6 +248,8 @@ namespace GlobalPayments.Api.Entities {
 
         public string SiteTrace { get; set; }
 
+        public int SiteId { get; set; }
+
         /// <summary>
         /// The transaction status.
         /// </summary>
@@ -245,6 +262,8 @@ namespace GlobalPayments.Api.Entities {
         public string TaxType { get; set; }
 
         public string TerminalId { get; set; }
+
+        public int TermOrdinal { get; set; }
 
         public string TerminalRefNumber { get; set; }
 
@@ -291,5 +310,11 @@ namespace GlobalPayments.Api.Entities {
         public BankPaymentResponse BankPaymentResponse { get; set; }
 
         public FraudManagementResponse FraudManagementResponse { get; set; }
+
+        public BNPLResponse BNPLResponse { get; set; }
+        
+        public string Fingerprint { get; set; }
+    
+        public string FingerprintIndicator { get; set; }
     }
 }

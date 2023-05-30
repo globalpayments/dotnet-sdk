@@ -51,12 +51,12 @@ namespace GlobalPayments.Api.Tests.Network {
 
             // gateway config
             NetworkGatewayConfig config = new NetworkGatewayConfig(NetworkGatewayType.NWS);
-            config.SecondaryEndpoint = "test.txns-c.secureexchange.net";
+            config.SecondaryEndpoint = "test.txns-e.secureexchange.net";
             config.PrimaryPort = 15031;
-            config.ServiceUrl = "test.txns-e.secureexchange.net";
+            config.ServiceUrl = "test.txns-c.secureexchange.net";
             config.SecondaryPort = 15031;
             config.CompanyId = "SPSA";
-            config.TerminalId = "NWSDOTNET21";
+            config.TerminalId = "NWSDOTNET01";
             config.UniqueDeviceId = "0001";
             config.MerchantType = "5542";
             config.AcceptorConfig = acceptorConfig;
@@ -142,10 +142,16 @@ namespace GlobalPayments.Api.Tests.Network {
 
             CreditSale(100);
             CreditSale(100);
-            CreditSale(10);
-            DebitSale(10);
-            DebitSale(10);
-            DebitSale(1);
+            Transaction lastSale = CreditSale(10);
+            //Transaction returnSale = CreditReturn(10);
+            //Transaction voidResponse = CreditVoid(returnSale);
+
+            CreditReverse(lastSale, 10m);
+            
+            
+            //DebitSale(10);
+            //DebitSale(10);
+            //DebitSale(1);
 
             BatchSummary response = BatchService.CloseBatch(BatchCloseType.EndOfShift);
             Assert.IsNotNull(response);
@@ -273,6 +279,14 @@ namespace GlobalPayments.Api.Tests.Network {
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
+            return response;
+        }
+
+        private Transaction CreditVoid(Transaction transactionToVoid) {
+            Transaction response = transactionToVoid.Void().Execute();
+            System.Diagnostics.Debug.WriteLine("Void:");
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             return response;
         }
 

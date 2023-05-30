@@ -42,7 +42,7 @@ namespace GlobalPayments.Api.Gateways {
             return sb.ToString();
         }
 
-        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null) {
+        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true) {
             HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
             };
@@ -53,8 +53,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Headers.Add(item.Key, item.Value);
             }
 
-            if(DynamicHeaders != null)
-            {
+            if(DynamicHeaders != null) {
                 foreach (var item in DynamicHeaders)
                 {
                     request.Headers.Add(item.Key, item.Value);
@@ -64,7 +63,14 @@ namespace GlobalPayments.Api.Gateways {
             HttpResponseMessage response = null;
             try {
                 if (verb != HttpMethod.Get && data != null) {
-                    request.Content = new StringContent(data, Encoding.UTF8, contentType ?? _contentType);
+                    if (isCharSet) {
+                        request.Content = new StringContent(data, Encoding.UTF8, contentType ?? _contentType);
+                    }
+                    else {
+                        var content = new StringContent(data, Encoding.UTF8, "application/json");
+                        content.Headers.ContentType.CharSet = "";
+                        request.Content = content;
+                    }
                 }
 
                 RequestLogger?.RequestSent(GenerateRequestLog(request));

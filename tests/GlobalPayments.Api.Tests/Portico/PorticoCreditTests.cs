@@ -78,6 +78,38 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(capture);
             Assert.AreEqual("00", capture.ResponseCode);
         }
+        
+       
+        [TestMethod]
+        public void CreditAuthorizationWithCommercialRequest()
+        {
+            var response = card.Authorize(14m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithCommercialRequest(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var capture = response.Capture(16m).WithGratuity(2m).Execute();
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("00", capture.ResponseCode);
+        }
+        [TestMethod]
+        public void CreditSaleWithCommercialRequest()
+        {
+            string clientTxnId = new Random().Next(100000000, 999999999).ToString();
+
+            var response = card.Charge(15m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithClientTransactionId(clientTxnId)
+                .WithCommercialRequest(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual(clientTxnId, response.ClientTransactionId);
+        }
 
         [TestMethod]
         public void CreditAuthWithConvenienceAmt() {
@@ -602,31 +634,16 @@ namespace GlobalPayments.Api.Tests {
 
             var commercialData = new CommercialData(TaxType.SALESTAX, CommercialIndicator.Level_III) {
                 PoNumber = "9876543210",
-                TaxAmount = 0.01m,
-                DestinationPostalCode = "85212",
-                DestinationCountryCode = "USA",
-                OriginPostalCode = "22193",
-                SummaryCommodityCode = "SCC",
-                VAT_InvoiceNumber = "UVATREF162",
-                OrderDate = DateTime.Now,
-                FreightAmount = 0.01m,
-                DutyAmount = 0.01m,
-                AdditionalTaxDetails = new AdditionalTaxDetails {
-                    TaxAmount = 0.01m,
-                    TaxRate = 0.04m,
-                }
+                TaxAmount = 0.01m,   
             };
             commercialData.AddLineItems(
                 new CommercialLineItem {
-                    ProductCode = "PRDCD1",
-                    UnitCost = 0.01m,
-                    Quantity = 1m,
-                    UnitOfMeasure = "METER",
                     Description = "PRODUCT 1 NOTES",
-                    // CommodityCode = "12DIGIT ACCO",
-                    DiscountDetails = new DiscountDetails {
-                        DiscountAmount = 0.50m
-                    }
+                    ProductCode = "PRDCD1",
+                    Quantity = 1m,
+                    TotalAmount = 0.01m,                    
+                    UnitOfMeasure = "METER",                 
+                    
                 }
             );
 

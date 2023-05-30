@@ -1,8 +1,10 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.PaymentMethods.PaymentInterfaces;
 
 namespace GlobalPayments.Api.PaymentMethods {
-    public class AlternativePaymentMethod: IPaymentMethod, IChargable {
+    public class AlternativePaymentMethod: IPaymentMethod, IChargable, INotificationData
+    {
         /// <summary>
         /// Returns Payment Method Type.
         /// </summary>

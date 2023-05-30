@@ -4,6 +4,124 @@
 
 #### Enhancements
 
+- GP-API: Manage fund transfers, splits and reverse splits in your partner network. 
+    - https://developer.globalpay.com/api/transfers
+    - https://developer.globalpay.com/api/transactions#/Split%20a%20Transaction%20Amount/splitTransaction
+
+## v5.1.7 (09/05/23)
+
+#### Enhancements
+
+- Portico Gateway: Enable CreditAuth transaction type for Apple Pay & Google Pay.
+- GP-ECOM: Added missing 3DS fields mapping for MOBILE_SDK.
+
+#### Bug fixes:
+
+- GP-ECOM: Fixed remittance_reference when it is null.
+- GP-API: Update token with usage_mode only.
+
+## v5.1.6 (02/05/23)
+
+#### Enhancements
+
+- GP-API: Manage merchant accounts for partner solution
+- NWS: Various backend updates (Chip EntryMethod support, DE56 updates, OriginalEntryMethod tracking)
+- End-to-end demo security enhancements
+
+#### Bug fixes:
+
+- General: MasterCard regex correction
+
+## v5.1.5 (30/03/23)
+
+#### Enhancements
+
+- GP-API: Updated some properties for merchant request.
+- GP-API: Added payer information on Transaction object.
+- Portico Gateway: Updated Portico TransactionDetail report mapping to include Invoice Number.
+
+## v5.1.4 (16/03/23)
+
+#### Enhancements
+
+- GP-ECOM: Added Payment Schedule that allows you to easily set up and manage recurring billing payments.
+
+## v5.1.3 (02/03/23)
+
+#### Enhancements
+
+- GP-API: Added as default the account_id instead of account_name for all GP-API requests.
+
+## v5.1.2 (23/02/23)
+
+#### Enhancements
+
+- GP-API: Added validation method for X-GP-SIGNATURE that is received from GP-API on the notification URL.
+
+## v5.1.1 (21/02/23)
+
+#### Enhancements
+
+- GP-API: Added Open Banking to let customers pay using their bank account.
+
+## v5.1.0 (02/02/23)
+
+#### Enhancements
+
+- GP-API: Added Risk Assessments that represents an analysis to determine the risk of fraud associated with a transaction, payer or payment method.
+- NWS: Gift Card Available Balance added to response
+
+#### Bug Fixes:
+
+- NWS: Out of balance issue related to gift cards
+
+## v5.0.6 (01/31/23)
+
+#### Enhancements
+
+- GP-API: Click To Pay added for merchants can give customers an easier, seamless checkout experience while also gaining access to Secure Remote Commerce network tokens
+
+## v5.0.5 (01/12/23)
+
+#### Enhancements
+
+- GP-API: Buy Now Pay Later payment method allows customers to repay the cost of their purchase over time instead of all at once
+- GP-API: Added exemption status to help reduce payment friction
+
+## v5.0.4 (01/10/23)
+
+#### Bug Fixes:
+
+- Portico Gateway: Fix for Level III data not being included in the CreditCPCEdit request
+
+## v5.0.3 (01/05/23)
+
+#### Enhancements
+
+- Portico: SdkNameVersion: Name and Version of the SDK used for integration, where applicable
+- Update device configuration to be generic
+- Transaction API: Add transaction api support for US and CA region
+
+## v5.0.2 (12/13/22)
+
+#### Enhancements
+
+- GP-API: Added brand_reference in the recurring transaction request
+- GP-API: Added Decoupled authentication
+- GP-API: Added onboarding merchant feature
+
+## v5.0.1 (11/15/22)
+
+#### Enhancements
+
+- Portico Gateway: add Ecommerce tag to CreditReturn transactions
+- Security enhancement in example application
+- Sanitize phone numbers and zip codes
+
+## v5.0.0 (11/01/22)
+
+#### Enhancements
+
 - Added phone country and retrieve the same by NumericCountryCode/ISO2/ISO3
 - Removed 3DS1 for GP-API and GP-ECOM
 
