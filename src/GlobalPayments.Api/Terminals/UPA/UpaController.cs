@@ -111,7 +111,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
             var baseRequest = doc.SubElement("data");
             baseRequest.Set("command", MapTransactionType(transType, transModifier, builder.RequestMultiUseToken, builder.Gratuity));
-            baseRequest.Set("EcrId", builder.EcrId.ToString());
+            baseRequest.Set("EcrId", builder.EcrId);
             baseRequest.Set("requestId", requestId.ToString());
 
             if (transType != TransactionType.Balance) {
@@ -226,7 +226,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             var baseRequest = doc.SubElement("data");
             // Possibly update the requestToken parameter in the future if necessary
             baseRequest.Set("command", MapTransactionType(transType, transModifier, false, builder.Gratuity));
-            baseRequest.Set("EcrId", builder.EcrId.ToString());
+            baseRequest.Set("EcrId", builder.EcrId);
             baseRequest.Set("requestId", requestId.ToString());
 
             var txnData = baseRequest.SubElement("data");

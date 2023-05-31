@@ -4,7 +4,7 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.UPA
 {
-    internal class TransactionResponse : ITerminalResponse {
+    public class TransactionResponse : ITerminalResponse {
         public TransactionResponse(JsonDoc root) {
             var response = root.Get("data");
             if (response == null) {
@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             }
 
             RequestId = response.GetValue<string>("requestId");
+            EcrId = response.GetValue<string>("EcrId");
             HydrateCmdResult(response);
             var responseData = response.Get("data");
             if (responseData == null) {
@@ -213,5 +214,6 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string ReferenceNumber { get; set; }
         public string CardHolderName { get; set; }
         public string RequestId { get; set; }
+        public string EcrId { get; set; }
     }
 }

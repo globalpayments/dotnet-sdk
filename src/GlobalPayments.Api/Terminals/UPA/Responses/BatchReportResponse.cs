@@ -19,7 +19,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                 throw new MessageException(INVALID_RESPONSE_FORMAT);
             }
 
-            EcrId = firstDataNode.GetValue<int>("EcrId");
+            EcrId = firstDataNode.GetValue<string>("EcrId");
             RequestId = firstDataNode.GetValue<int>("requestId");
 
             Status = cmdResult.GetValue<string>("result");
@@ -99,7 +99,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
         public string Message { get; set; }
         public string Response { get; set; }
-        public int EcrId { get; set; }
+        public string EcrId { get; set; }
         public int RequestId { get; set; }
         public string Result { get; set; }
         public string ErrorCode { get; set; }

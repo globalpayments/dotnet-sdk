@@ -66,7 +66,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
-        public TerminalAuthBuilder WithEcrId(int ecrId) {
+        public TerminalAuthBuilder WithEcrId(string ecrId) {
             EcrId = ecrId;
             return this;
         }
