@@ -13,6 +13,8 @@ namespace GlobalPayments.Api.Terminals.UPA
 
             RequestId = response.GetValue<string>("requestId");
             EcrId = response.GetValue<string>("EcrId");
+            TransactionType = response.GetValue<string>("response");
+
             HydrateCmdResult(response);
             var responseData = response.Get("data");
             if (responseData == null) {
@@ -41,16 +43,33 @@ namespace GlobalPayments.Api.Terminals.UPA
             TransactionId = host.GetValue<string>("responseId");
             TerminalRefNumber = host.GetValue<string>("tranNo");
             // TransactionDate = host.GetValue<DateTime>("respDateTime");
-            // GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
-            // GatewayResponsemessage = host.GetValue<string>("gatewayResponsemessage");
+            GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
+            GatewayResponseText = host.GetValue<string>("gatewayResponseMessage");
             ResponseCode = NormalizeResponseCode(host.GetValue<string>("responseCode"), host.GetValue<string>("partialApproval"));
             ResponseText = host.GetValue<string>("responseText");
             ApprovalCode = host.GetValue<string>("approvalCode");
             ReferenceNumber = host.GetValue<string>("referenceNumber");
-            AvsResponseCode = host.GetValue<string>("avsResultCode");
-            CvvResponseCode = host.GetValue<string>("cvvResultCode");
-            AvsResponseText = host.GetValue<string>("avsResultText");
-            CvvResponseText = host.GetValue<string>("cvvResultText");
+
+            AvsResponseCode = host.GetValue<string>("AvsResultCode");
+
+            if (string.IsNullOrEmpty(AvsResponseCode))
+                AvsResponseCode = "0";
+
+            CvvResponseCode = host.GetValue<string>("CvvResultCode");
+
+            if (string.IsNullOrEmpty(CvvResponseCode))
+                CvvResponseCode = "0";
+
+            AvsResponseText = host.GetValue<string>("AvsResultText");
+
+            if (string.IsNullOrEmpty(AvsResponseText))
+                AvsResponseText = "AVS Not Requested.";
+
+            CvvResponseText = host.GetValue<string>("CvvResultText");
+
+            if (string.IsNullOrEmpty(CvvResponseText))
+                CvvResponseText = "CVV Not Requested.";
+
             // AdditionalTipAmount = host.GetValue<decimal>("additionalTipAmount");
             // BaseAmount = host.GetValue<decimal>("baseAmount");
             TipAmount = host.GetValue<decimal>("tipAmount");
@@ -215,5 +234,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string CardHolderName { get; set; }
         public string RequestId { get; set; }
         public string EcrId { get; set; }
+        public string GatewayResponseCode { get; set; }
+        public string GatewayResponseText { get; set; }
     }
 }
