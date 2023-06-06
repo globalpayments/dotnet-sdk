@@ -85,7 +85,11 @@ namespace GlobalPayments.Api.Terminals.UPA
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
             // CavvResultCode = host.GetValue<string>("cavvResultCode");
             // TokenPANLast = host.GetValue<string>("tokenPANLast");
-            // PartialApproval = host.GetValue<string>("partialApproval");
+
+            var partialAmount = host.GetValue<string>("partialApproval");
+
+            PartialApproval = !string.IsNullOrEmpty(partialAmount) && !"0".Equals(partialAmount);
+
             // TraceNumber = host.GetValue<string>("traceNumber");
             AmountDue = BalanceAmount = host.GetValue<decimal>("balanceDue");
             // BaseDue = host.GetValue<decimal>("baseDue");
@@ -236,5 +240,6 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string EcrId { get; set; }
         public string GatewayResponseCode { get; set; }
         public string GatewayResponseText { get; set; }
+        public bool PartialApproval { get; set; }
     }
 }
