@@ -200,138 +200,114 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a dispute acceptance
         /// </summary>
-        DisputeAcceptance = 1L << 38,
+        DisputeAcceptance = 1L << 37,
 
         /// <summary>
         /// Indicates a dispute challenge
         /// </summary>
-        DisputeChallenge = 1L << 39,
-
-        /// <summary>
-        /// 
-        /// ProPay: Create Account
-        /// </summary>
-        CreateAccount = 1L << 40,
-
-        /// <summary>
-        /// ProPay: Edit Account
-        /// </summary>
-        EditAccount = 1L << 41,
+        DisputeChallenge = 1L << 38,
 
         /// <summary>
         /// ProPay: Reset Account Password
         /// </summary>
-        ResetPassword = 1L << 42,
+        ResetPassword = 1L << 39,
 
         /// <summary>
         /// ProPay: Renew Account
         /// </summary>
-        RenewAccount = 1L << 43,
+        RenewAccount = 1L << 40,
 
         /// <summary>
         /// ProPay: Update Beneficial Ownership Information
         /// </summary>
-        UpdateBeneficialOwnership = 1L << 44,
-
-        /// <summary>
-        /// ProPay: Disown an account
-        /// </summary>
-        DisownAccount = 1L << 45,
+        UpdateBeneficialOwnership = 1L << 41,
 
         /// <summary>
         /// ProPay: Upload a document to a ProPay account related to a chargeback
         /// </summary>
-        UploadDocumentChargeback = 1L << 46,
+        UploadDocumentChargeback = 1L << 42,
 
         /// <summary>
         /// ProPay: Upload a document to a ProPay account
         /// </summary>
-        UploadDocument = 1L << 47,
+        UploadDocument = 1L << 43,
 
         /// <summary>
         /// ProPay: Obtain a single-sign-on key
         /// </summary>
-        ObtainSSOKey = 1L << 48,
+        ObtainSSOKey = 1L << 44,
 
         /// <summary>
         /// ProPay: Update bank account ownership information
         /// </summary>
-        UpdateBankAccountOwnership = 1L << 49,
+        UpdateBankAccountOwnership = 1L << 45,
 
         /// <summary>
         /// ProPay: Add funds to a ProPay account (EFT)
         /// </summary>
-        AddFunds = 1L << 50,
+        AddFunds = 1L << 46,
 
         /// <summary>
         /// ProPay: Sweep funds from a ProPay account (EFT)
         /// </summary>
-        SweepFunds = 1L << 51,
+        SweepFunds = 1L << 47,
 
         /// <summary>
         /// ProPay: Add a card for Flash Funds
         /// </summary>
-        AddCardFlashFunds = 1L << 52,
+        AddCardFlashFunds = 1L << 48,
 
         /// <summary>
         /// ProPay: Move money out via Flash Funds
         /// </summary>
-        PushMoneyFlashFunds = 1L << 53,
+        PushMoneyFlashFunds = 1L << 49,
 
         /// <summary>
         /// ProPay: Disburse funds to a ProPay account
         /// </summary>
-        DisburseFunds = 1L << 54,
+        DisburseFunds = 1L << 50,
 
         /// <summary>
         /// ProPay: SpendBack Transaction
         /// </summary>
-        SpendBack = 1L << 55,
-
-        /// <summary>
-        /// ProPay: Roll back a SplitPay transaction
-        /// </summary>
-        ReverseSplitPay = 1L << 56,
+        SpendBack = 1L << 51,
 
         /// <summary>
         /// ProPay: Split funds from an existing transaction
         /// </summary>
-        SplitFunds = 1L << 57,
+        SplitFunds = 1L << 52,
 
         /// <summary>
         /// ProPay: Get Account details
         /// </summary>
-        GetAccountDetails = 1L << 58,
-
-        /// <summary>
-        /// ProPay: Get Account balance
-        /// </summary>
-        GetAccountBalance = 1L << 59,
+        GetAccountDetails = 1L << 53,
 
         /// <summary>
         /// Indicates a transaction reauthorization
         /// </summary>
-        Reauth = 1L << 60,
+        Reauth = 1L << 54,
 
         /// <summary>
         /// 
         /// </summary>
-        SiteConfig = 1L << 61,
+        SiteConfig = 1L << 55,
 
         /// <summary>
         /// 
         /// </summary>
-        TimeRequest = 1L << 62,
+        TimeRequest = 1L << 56,
 
         /// <summary>
         /// Get Token Information for the given token
         /// </summary>
-        GetTokenInfo = 1L << 63,
+        GetTokenInfo = 1L << 57,
 
-        PayLinkUpdate = 1L << 64,
+        PayLinkUpdate = 1L << 58,
 
-        RiskAssess = 65,
-        
-        TransferFunds = 66
+        RiskAssess = 1L << 59,
+
+        OrderDevice = 1 << 60,
+
+        TransferFunds = 1 << 61
     }
 }

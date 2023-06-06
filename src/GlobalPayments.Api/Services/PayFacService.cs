@@ -10,11 +10,11 @@ namespace GlobalPayments.Api.Services
 {
     public class PayFacService : IDisposable {
         public PayFacBuilder<Transaction> CreateAccount() {
-            return new PayFacBuilder<Transaction>(TransactionType.CreateAccount);
+            return new PayFacBuilder<Transaction>(TransactionType.Create);
         }
 
         public PayFacBuilder<Transaction> EditAccount() {
-            return new PayFacBuilder<Transaction>(TransactionType.EditAccount);
+            return new PayFacBuilder<Transaction>(TransactionType.Edit, TransactionModifier.Account);
         }
 
         public PayFacBuilder<Transaction> ResetPassword() {
@@ -30,7 +30,7 @@ namespace GlobalPayments.Api.Services
         }
 
         public PayFacBuilder<Transaction> DisownAccount() {
-            return new PayFacBuilder<Transaction>(TransactionType.DisownAccount);
+            return new PayFacBuilder<Transaction>(TransactionType.Deactivate);
         }
 
         public PayFacBuilder<Transaction> UploadDocumentChargeback() {
@@ -74,7 +74,7 @@ namespace GlobalPayments.Api.Services
         }
 
         public PayFacBuilder<Transaction> ReverseSplitPay() {
-            return new PayFacBuilder<Transaction>(TransactionType.ReverseSplitPay);
+            return new PayFacBuilder<Transaction>(TransactionType.Reversal);
         }
 
         public PayFacBuilder<Transaction> SplitFunds() {
@@ -90,7 +90,7 @@ namespace GlobalPayments.Api.Services
         }
 
         public PayFacBuilder<Transaction> GetAccountBalance() {
-            return new PayFacBuilder<Transaction>(TransactionType.GetAccountBalance);
+            return new PayFacBuilder<Transaction>(TransactionType.Balance);
         }
 
         public PayFacBuilder<User> CreateMerchant() {
@@ -108,7 +108,11 @@ namespace GlobalPayments.Api.Services
                 .WithModifier(TransactionModifier.Merchant)
                 .WithUserReference(userReference);
         }
-       
+
+        public PayFacBuilder<Transaction> OrderDevice() {
+            return new PayFacBuilder<Transaction>(TransactionType.OrderDevice);
+        }
+
         public void Dispose() {
         }
     }

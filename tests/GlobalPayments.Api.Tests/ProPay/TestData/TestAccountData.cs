@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.PaymentMethods;
 using System;
@@ -14,8 +15,10 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
                 AccountCountryCode = "USA",
                 AccountName = "MyBankAccount",
                 AccountNumber = "123456789",
-                AccountOwnershipType = "C",
-                RoutingNumber = "102000076"
+                AccountOwnershipType = "Personal",
+                RoutingNumber = "102000076",
+                AccountType = "Checking",
+                BankName = "First Union"
             };
 
             return bankAccountInformation;
@@ -33,6 +36,7 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
                 MonthlyBankCardVolume = "50000",
                 AverageTicket = "100",
                 HighestTicket = "300",
+                BusinessType = "D",
                 BusinessAddress = new Address()
                 {
                     StreetAddress1 = "123 Main St.",
@@ -46,7 +50,7 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
             return businessData;
         }
 
-        public static UserPersonalData GetUserPersonalData() {
+        public static UserPersonalData GetUserPersonalData(string dob = "01-01-1981") {
             Random rand = new Random((int)DateTime.Now.Ticks);
 
             var accountPersonalInformation = new UserPersonalData()
@@ -59,8 +63,14 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
                 PhonePIN = "1234",
                 SourceEmail = string.Format($"user{rand.Next(1, 10000)}@user.com"), // user1@user.com through user99999@user.com
                 SSN = "123456789",
-                DateOfBirth = "01-01-1981",
-                Tier = "TestEIN",
+                DateOfBirth = dob,
+                Tier = "test",
+                IpSignup = "4.14.150.145",
+                USCitizen = true,
+                BOAttestation = true,
+                TermsAcceptanceIP = "4.14.150.145",
+                TermsAcceptanceTimeStamp = "2022-10-27 12:57:08.2021237",
+                TermsVersion = ((int)PropayTermsVersion.MerchantUS).ToString(),
                 UserAddress = new Address()
                 {
                     StreetAddress1 = "123 Main St.",
@@ -150,8 +160,8 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
                 Number = "4111111111111111",
                 ExpMonth = 12,
                 ExpYear = 2025,
-                Cvn = "123",
-                CardHolderName = "Joe Smith"
+                Cvn = "999",
+                CardHolderName = "Sylvester Stallone"
             };
 
             return card;
@@ -161,7 +171,7 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
             var bankAccountInformation = new BankAccountData()
             {
                 AccountNumber = "123456789",
-                AccountType = "C",
+                AccountType = "Checking",
                 RoutingNumber = "102000076"
             };
 
@@ -189,7 +199,8 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
                 AccountNumber = "123456788",
                 AccountOwnershipType = "Personal",
                 AccountType = "C",
-                RoutingNumber = "102000076"
+                RoutingNumber = "102000076",
+                BankName = "My Bank"
             };
 
             return bankAccountInformation;
@@ -264,7 +275,7 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
         }
 
         public static DeviceData GetDeviceData(int numDeviceTypes = 1, bool withAttributes = true) {
-            List<string> deviceTypes = new List<string>() { "PAX S300", "PAX S500" };
+            List<string> deviceTypes = new List<string>() { "Secure Submit", "TestDevice" };
 
             var deviceData = new DeviceData();
             deviceData.Devices = new List<DeviceInfo>();
@@ -291,8 +302,81 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
 
             return deviceData;
         }
+        public static DeviceData GetDeviceForPhysicalDevice(int numDeviceTypes = 1, bool withAttributes = true) {
+            List<string> deviceTypes = new List<string>() { "TestDevice", "Secure Submit" };
 
-        public static string GetDocumentBase64String(string filepath) {
+            var deviceData = new DeviceData();
+            deviceData.Devices = new List<DeviceInfo>();
+
+            for (int i = 0; i < numDeviceTypes; i++) {
+                var deviceInfo = new DeviceInfo();
+                if (i >= deviceTypes.Count)
+                    break;
+                deviceInfo.Name = deviceTypes[i];
+                deviceInfo.Quantity = 1;
+                if (withAttributes) {
+                    deviceInfo.Attributes = new List<DeviceAttributeInfo>() {
+                            new DeviceAttributeInfo() {
+                                Name = "Canada.CP.Language",
+                                Value = "en"
+                            }
+                        };
+                }
+                deviceData.Devices.Add(deviceInfo);
+            }
+
+            return deviceData;
+        }
+
+
+        public static DeviceData GetDeviceDataForOrderDevice(int numDeviceTypes = 1, bool withAttributes = true) {
+            List<string> deviceTypes = new List<string>() { "Secure Submit" };
+
+            var deviceData = new DeviceData();
+            deviceData.Devices = new List<DeviceInfo>();
+
+            for (int i = 0; i < numDeviceTypes; i++) {
+                var deviceInfo = new DeviceInfo();
+                if (i >= deviceTypes.Count)
+                    break;
+                deviceInfo.Name = deviceTypes[i];
+                deviceInfo.Quantity = 1;
+                if (withAttributes) {
+                    deviceInfo.Attributes = new List<DeviceAttributeInfo>() {
+                            new DeviceAttributeInfo() {
+                                Name = "Heartland.AMD.OfficeKey",
+                                Value = "123456"
+                            }
+                        };
+                }
+                deviceData.Devices.Add(deviceInfo);
+            }
+
+            return deviceData;
+        }
+
+        public static OrderDevice GetOrderNewDeviceData() {
+            var orderDevice = new OrderDevice() {
+                AccountNum = 718580389,//718576800,
+                ShipTo = "Test Company",
+                ShipToContact = "John Q. Public",
+                ShipToAddress = "2675 W 600 N",
+                ShipToAddress2 = "Apt G",
+                ShipToCity = "Lindon",
+                ShipToState = "UT",
+                ShipToZip = "84042",
+                ShipToPhone = "801-555-1212",
+                CardholderName = "Johnny Cage",
+                CcNum = "4111111111111111",
+                ExpDate = "0427",
+                CVV2 = "999",
+                BillingZip = "84003"
+            };
+        
+            return orderDevice;
+        }
+
+    public static string GetDocumentBase64String(string filepath) {
             return Convert.ToBase64String(System.IO.File.ReadAllBytes(filepath));
         }
     }

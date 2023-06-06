@@ -418,7 +418,7 @@ namespace GlobalPayments.Api.Gateways {
             // dept repay indicator
             schedule.InvoiceNumber = response.GetValue<string>("invoiceNbr");
             schedule.PoNumber = response.GetValue<string>("poNumber");
-            schedule.Description = response.GetValue<string>("Description");
+            schedule.Description = response.GetValue<string>("description");
             // statusSetDate
             schedule.NextProcessingDate = response.GetValue<DateTime?>("nextProcessingDate", DateConverter);
             // previousProcessingDate

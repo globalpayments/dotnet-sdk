@@ -222,7 +222,26 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .WithFrequency(ScheduleFrequency.WEEKLY)
                 .WithStatus("Active")
                 .WithReprocessingCount(2)
+                .WithEndDate(DateTime.Parse("04/01/2027"))                
+                .Create();
+            Assert.IsNotNull(schedule);
+            Assert.IsNotNull(schedule.Key);
+        }
+        [TestMethod]
+        public void Test_001h_CreateSchedule_Credit_WithDescription()
+        {
+            var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
+            Assert.IsNotNull(paymentMethod);
+
+            var schedule = paymentMethod.AddSchedule(PaymentId("Credit"))
+                .WithAmount(30.02m)
+                .WithCurrency("USD")
+                .WithStartDate(DateTime.Parse("02/01/2027"))
+                .WithFrequency(ScheduleFrequency.WEEKLY)
+                .WithStatus("Active")
+                .WithReprocessingCount(2)
                 .WithEndDate(DateTime.Parse("04/01/2027"))
+                .WithDescription("Schedule Test")
                 .Create();
             Assert.IsNotNull(schedule);
             Assert.IsNotNull(schedule.Key);

@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- Heartland Profac: Device ordering
+
+## v5.1.8 (11/05/23)
+
+#### Enhancements
+
 - GP-API: Manage fund transfers, splits and reverse splits in your partner network. 
     - https://developer.globalpay.com/api/transfers
     - https://developer.globalpay.com/api/transactions#/Split%20a%20Transaction%20Amount/splitTransaction

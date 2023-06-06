@@ -344,6 +344,8 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a Buy Now Pay Later transaction
         /// </summary>
         BuyNowPayLater = 1 << 19,
+
+        Account = 1 << 20
     }
 
     /// <summary>

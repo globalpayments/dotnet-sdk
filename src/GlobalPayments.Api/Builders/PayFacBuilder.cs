@@ -68,6 +68,7 @@ namespace GlobalPayments.Api.Builders
         public BankAccountOwnershipData SecondaryBankAccountOwner { get; set; }
         public DocumentUploadData DocumentUploadData { get; set; }
         public SSORequestData SSORequestData { get; set; }
+        public OrderDevice OrderDevice { get; set; }
 
         public string Amount { get; set; }
         public string ReceivingAccountNumber { get; set; }
@@ -78,7 +79,12 @@ namespace GlobalPayments.Api.Builders
 
         public string ExternalID { get; set; }
         public string SourceEmail { get; set; }       
-        public string Description { get; set; }   
+        public string Description { get; set; }
+        public string GatewayTransactionId { get; set; }
+        public string GlobaltransId { get; set; }
+        public string GlobalTransSource { get; set; }
+        public string CardBrandTransactionId { get; set; }
+
         public List<Product> ProductData { get; set; }
         public List<Person> PersonsData { get; set; }
         
@@ -112,14 +118,14 @@ namespace GlobalPayments.Api.Builders
 
         protected override void SetupValidations() {
             // Account Management Methods
-            Validations.For(TransactionType.CreateAccount)
+            Validations.For(TransactionType.Create)
                 .With(TransactionModifier.None)
                 .Check(() => BeneficialOwnerData).IsNotNull()
                 .Check(() => BusinessData).IsNotNull()
                 .Check(() => UserPersonalData).IsNotNull()
                 .Check(() => CreditCardInformation).IsNotNull();
 
-            Validations.For(TransactionType.EditAccount)
+            Validations.For(TransactionType.Edit)
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull();
 
@@ -136,7 +142,7 @@ namespace GlobalPayments.Api.Builders
                 .Check(() => AccountNumber).IsNotNull()
                 .Check(() => BeneficialOwnerData).IsNotNull();
 
-            Validations.For(TransactionType.DisownAccount)
+            Validations.For(TransactionType.Deactivate)
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull();
 
@@ -193,7 +199,7 @@ namespace GlobalPayments.Api.Builders
                 .Check(() => ReceivingAccountNumber).IsNotNull()
                 .Check(() => AllowPending).IsNotNull();
 
-            Validations.For(TransactionType.ReverseSplitPay)
+            Validations.For(TransactionType.Reversal)
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull()
                 .Check(() => Amount).IsNotNull()
@@ -205,8 +211,8 @@ namespace GlobalPayments.Api.Builders
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull()
                 .Check(() => ReceivingAccountNumber).IsNotNull()
-                .Check(() => Amount).IsNotNull()
-                .Check(() => TransNum).IsNotNull();
+                .Check(() => Amount).IsNotNull();
+                //.Check(() => TransNum).IsNotNull();
 
             // Get Information Methods
 
@@ -241,7 +247,7 @@ namespace GlobalPayments.Api.Builders
                 .With(TransactionModifier.Additional)
                 .Check(() => AccountNumber).IsNotNull();
 
-            Validations.For(TransactionType.GetAccountBalance)
+            Validations.For(TransactionType.Balance)
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull();
 
@@ -257,7 +263,8 @@ namespace GlobalPayments.Api.Builders
                 .With(TransactionModifier.Merchant)
                 .Check(() => UserReference).PropertyOf(nameof(UserReference.UserId)).IsNotNull();
 
-            Validations.For(TransactionType.EditAccount)                
+            Validations.For(TransactionType.Edit)                
+                .With(TransactionModifier.Account)
                 .Check(() => AccountNumber).IsNotNull();
         }
 
@@ -489,6 +496,31 @@ namespace GlobalPayments.Api.Builders
 
         public PayFacBuilder<TResult> WithSourceEmail(string sourceEmail) {
             SourceEmail = sourceEmail;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithGatewayTransactionId(string gatewayTransactionId) {
+            GatewayTransactionId = gatewayTransactionId;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithGlobaltransId(string globaltransId) {
+            GlobaltransId = globaltransId;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithGlobalTransSource(string globalTransSource) {
+            GlobalTransSource = globalTransSource;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithCardBrandTransactionId(string cardBrandTransactionId) {
+            CardBrandTransactionId = cardBrandTransactionId;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithOrderDevice(OrderDevice orderDevice) {
+            OrderDevice = orderDevice;
             return this;
         }
     }

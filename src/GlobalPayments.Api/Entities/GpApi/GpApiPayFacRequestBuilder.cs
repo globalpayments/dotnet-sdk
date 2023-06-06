@@ -11,14 +11,14 @@ using System.Text;
 namespace GlobalPayments.Api.Entities
 {
     public class GpApiPayFacRequestBuilder<T> where T : class {
-        private static PayFacBuilder<T> _builder { get; set; }        
-        
+        private static PayFacBuilder<T> _builder { get; set; }
+
         internal static GpApiRequest BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway) {
             _builder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
-            switch (builder.TransactionType) {               
+            switch (builder.TransactionType) {
                 case TransactionType.Create:
-                    if (builder.TransactionModifier == TransactionModifier.Merchant) {                        
+                    if (builder.TransactionModifier == TransactionModifier.Merchant) {
                         var data = BuildCreateMerchantRequest();
 
                         return new GpApiRequest {
@@ -29,54 +29,55 @@ namespace GlobalPayments.Api.Entities
                     }
                     break;
                 case TransactionType.Edit:
-                 if (builder.TransactionModifier == TransactionModifier.Merchant) {
+                    if (builder.TransactionModifier == TransactionModifier.Merchant) {
                         return new GpApiRequest {
                             Verb = new HttpMethod("PATCH"),
                             Endpoint = $"{merchantUrl}/merchants/{_builder.UserReference.UserId}",
                             RequestBody = BuildEditMerchantRequest().ToString(),
-                        };                         
+                        };
+                    }
+                    else if (builder.TransactionModifier == TransactionModifier.Account) {
+                        var dataRequest = new JsonDoc();
+                        var paymentMethod = new Dictionary<string, object>();
+
+                        if (builder.CreditCardInformation != null) {
+                            var card = new Dictionary<string, object>();
+                            card.Add("name", builder.CreditCardInformation?.CardHolderName);
+                            card.Add("card", builder.CreditCardInformation is CreditCardData ? MapCreditCardInfo(builder.CreditCardInformation) : null);
+                            paymentMethod.Add("payment_method", card);
+                        }
+
+                        if ((builder.Addresses != null) && (builder.Addresses.ContainsKey(AddressType.Billing))) {
+                            paymentMethod.Add("billing_address",
+                                MapAddress(builder.Addresses[AddressType.Billing], "alpha2"));
+                        }
+
+                        dataRequest.Set("payer", paymentMethod);
+
+                        var endpoint = merchantUrl;
+                        if (!string.IsNullOrEmpty(builder.UserReference?.UserId)) {
+                            endpoint = $"/merchants/{builder.UserReference.UserId}";
+                        }
+
+                        return new GpApiRequest {
+                            Verb = new HttpMethod("PATCH"),
+                            Endpoint = $"{endpoint}/accounts/{_builder.AccountNumber}",
+                            RequestBody = dataRequest.ToString(),
+                        };
                     }
                     break;
                 case TransactionType.Fetch:
                     if (builder.TransactionModifier == TransactionModifier.Merchant) {
                         return new GpApiRequest {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}/merchants/{_builder.UserReference.UserId}",                            
+                            Endpoint = $"{merchantUrl}/merchants/{_builder.UserReference.UserId}",
                         };
                     }
                     break;
-                case TransactionType.EditAccount:
-                    var dataRequest = new JsonDoc();
-                    var paymentMethod = new Dictionary<string, object>();
-
-                    if (builder.CreditCardInformation != null) {
-                        var card = new Dictionary<string, object>();
-                        card.Add("name", builder.CreditCardInformation?.CardHolderName);
-                        card.Add("card", builder.CreditCardInformation is CreditCardData ? MapCreditCardInfo(builder.CreditCardInformation) : null);
-                        paymentMethod.Add("payment_method", card);
-                    }
-
-                    if ((builder.Addresses != null) && (builder.Addresses.ContainsKey(AddressType.Billing))){
-                        paymentMethod.Add("billing_address",
-                            MapAddress(builder.Addresses[AddressType.Billing], "alpha2"));
-                    }
-                    
-                    dataRequest.Set("payer", paymentMethod);
-
-                    var endpoint = merchantUrl;
-                    if (!string.IsNullOrEmpty(builder.UserReference?.UserId)) {
-                        endpoint = $"/merchants/{builder.UserReference.UserId}";
-                    }
-
-                    return new GpApiRequest {
-                        Verb = new HttpMethod("PATCH"),
-                        Endpoint = $"{endpoint}/accounts/{_builder.AccountNumber}",
-                        RequestBody = dataRequest.ToString(),
-                    };
                 default:
                     break;
             }
-           
+
             return null;
         }
 
@@ -88,11 +89,11 @@ namespace GlobalPayments.Api.Entities
                     countryCode = CountryUtils.GetCountryCodeByCountry(address.CountryCode);
                     break;
                 default:
-                countryCode = address.CountryCode;
+                    countryCode = address.CountryCode;
                     break;
             }
             var item = new Dictionary<string, object>();
-            if(!string.IsNullOrEmpty(functionKey))                
+            if(!string.IsNullOrEmpty(functionKey))
                 item.Add("functions", new string[] { functionKey });
             if (!string.IsNullOrEmpty(address?.StreetAddress1))
                 item.Add("line_1", address.StreetAddress1);
@@ -101,14 +102,14 @@ namespace GlobalPayments.Api.Entities
             if (!string.IsNullOrEmpty(address?.StreetAddress3))
                 item.Add("line_3", address.StreetAddress3);
             if (!string.IsNullOrEmpty(address?.City))
-                item.Add("city", address.City); 
+                item.Add("city", address.City);
             if (!string.IsNullOrEmpty(address?.PostalCode))
                 item.Add("postal_code", address.PostalCode);
             if (!string.IsNullOrEmpty(address?.State))
                 item.Add("state", address.State);
-            
+
             item.Add("country", countryCode);
-                        
+
             return item;
         }
 
@@ -119,7 +120,7 @@ namespace GlobalPayments.Api.Entities
             item.Add("number", value.Number);
             item.Add("expiry_month", value.ExpMonth.HasValue ? value.ExpMonth.ToString().PadLeft(2, '0') : string.Empty);
             item.Add("expiry_year", value.ExpYear.HasValue ? value.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
-            item.Add("cvv", value.Cvn);           
+            item.Add("cvv", value.Cvn);
             return item;
         }
 
@@ -131,22 +132,22 @@ namespace GlobalPayments.Api.Entities
             var merchantData = _builder.UserPersonalData;
             var data = new JsonDoc()
                         .Set("name", merchantData.UserName)
-                        .Set("legal_name", merchantData.LegalName)                        
+                        .Set("legal_name", merchantData.LegalName)
                         .Set("dba", merchantData.DBA)
                         .Set("merchant_category_code", merchantData.MerchantCategoryCode)
-                        .Set("website", merchantData.Website)                        
+                        .Set("website", merchantData.Website)
                         .Set("currency", merchantData.CurrencyCode)
                         .Set("tax_id_reference", merchantData.TaxIdReference)
                         .Set("notification_email", merchantData.NotificationEmail)
                         .Set("status",_builder.UserReference?.UserStatus.ToString() ?? null);
-            
+
             var notifications = new JsonDoc()
                .Set("status_url", merchantData.NotificationStatusUrl);
 
             if (notifications.HasKeys()) {
                 data.Set("notifications", notifications);
             }
-            
+
             return data;
         }
 
@@ -157,8 +158,8 @@ namespace GlobalPayments.Api.Entities
             data.Set("pricing_profile", merchantData.Tier)
                 .Set("description", _builder.Description)
                 .Set("type", merchantData.Type.ToString())
-                .Set("addresses", SetAddressList())                
-                .Set("payment_processing_statistics", SetPaymentStatistics());          
+                .Set("addresses", SetAddressList())
+                .Set("payment_processing_statistics", SetPaymentStatistics());
 
             data.Set("payment_methods", SetPaymentMethod())
                 .Set("persons", SetPersonList())
@@ -176,11 +177,11 @@ namespace GlobalPayments.Api.Entities
             return new JsonDoc()
                 .Set("total_monthly_sales_amount", _builder.PaymentStatistics.TotalMonthlySalesAmount.ToNumericCurrencyString())
                 .Set("average_ticket_sales_amount", _builder.PaymentStatistics.AverageTicketSalesAmount.ToNumericCurrencyString())
-                .Set("highest_ticket_sales_amount", _builder.PaymentStatistics.HighestTicketSalesAmount.ToNumericCurrencyString());          
+                .Set("highest_ticket_sales_amount", _builder.PaymentStatistics.HighestTicketSalesAmount.ToNumericCurrencyString());
         }
 
         private static List<Dictionary<string, object>> SetPersonList(string type = null)
-        {            
+        {
             if (_builder.PersonsData?.Count == 0 || _builder.PersonsData == null) {
                 return null;
             }
@@ -205,14 +206,14 @@ namespace GlobalPayments.Api.Entities
                     var contactPhone = new Dictionary<string, object>();
                     contactPhone.Add("country_code", person.HomePhone.CountryCode);
                     contactPhone.Add("subscriber_number", person.HomePhone.Number);
-                    
+
                     item.Add("contact_phone", contactPhone);
                 }
                 if (person.WorkPhone != null) {
                     var workPhone = new Dictionary<string, object>();
                     workPhone.Add("country_code", person.WorkPhone.CountryCode);
                     workPhone.Add("subscriber_number", person.WorkPhone.Number);
-               
+
                     item.Add("work_phone", workPhone);
                 }
                 personInfo.Add(item);
@@ -229,16 +230,16 @@ namespace GlobalPayments.Api.Entities
             data.Add("account_type", bankAccountData?.AccountType);
 
             var bank = new Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(bankAccountData?.BankName))            
-                bank.Add("name", bankAccountData?.BankName);            
-            if (!string.IsNullOrEmpty(bankAccountData?.RoutingNumber))            
+            if (!string.IsNullOrEmpty(bankAccountData?.BankName))
+                bank.Add("name", bankAccountData?.BankName);
+            if (!string.IsNullOrEmpty(bankAccountData?.RoutingNumber))
                 bank.Add("code", bankAccountData?.RoutingNumber); //@TODO confirmantion from GP-API team
-            
-                bank.Add("international_code", ""); //@TODO
-            
+
+            bank.Add("international_code", ""); //@TODO
+
             bank.Add("address", (bankAccountData.BankAddress != null) ? MapAddress(bankAccountData.BankAddress, "alpha2") : null);
 
-            data.Add("bank", bank);                
+            data.Add("bank", bank);
 
             return data;
         }
@@ -246,7 +247,7 @@ namespace GlobalPayments.Api.Entities
         private static Dictionary<string, object> SetCreditCardInfo(CreditCardData creditCardInformation) {
             var item = new Dictionary<string, object>();
             if(!string.IsNullOrEmpty(creditCardInformation?.CardHolderName))
-            item.Add("name", creditCardInformation?.CardHolderName);
+                item.Add("name", creditCardInformation?.CardHolderName);
             item.Add("number", creditCardInformation?.Number);
             item.Add("expiry_month", creditCardInformation?.ExpMonth);
             item.Add("expiry_year", creditCardInformation?.ExpYear);
@@ -263,7 +264,7 @@ namespace GlobalPayments.Api.Entities
                 }
                 var item = new Dictionary<string, object>();
                 item.Add("device", deviceInfo.Count > 0 ? deviceInfo : null);
-                item.Add("id", product.ProductId);                
+                item.Add("id", product.ProductId);
                 products.Add(item);
             }
             return products;
@@ -295,34 +296,34 @@ namespace GlobalPayments.Api.Entities
             }
             var merchantData = _builder.UserPersonalData;
             var addressList = new Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(merchantData?.UserAddress?.StreetAddress1)) {                
-                addressList.Add(AddressType.Business.ToString(), merchantData.UserAddress);               
+            if (!string.IsNullOrEmpty(merchantData?.UserAddress?.StreetAddress1)) {
+                addressList.Add(AddressType.Business.ToString(), merchantData.UserAddress);
             }
-            if (!string.IsNullOrEmpty(merchantData?.MailingAddress.StreetAddress1)) {                
-                addressList.Add(AddressType.Shipping.ToString(), merchantData.MailingAddress);               
+            if (!string.IsNullOrEmpty(merchantData?.MailingAddress.StreetAddress1)) {
+                addressList.Add(AddressType.Shipping.ToString(), merchantData.MailingAddress);
             }
             var addresses = new List<Dictionary<string, object>>();
-            foreach (KeyValuePair<string, object> address in addressList) {               
+            foreach (KeyValuePair<string, object> address in addressList) {
                 var item = new Dictionary<string, object>();
                 var dataAddress = ((Address)address.Value);
-                addresses.Add(MapAddress(dataAddress, "alpha2", address.Key));               
+                addresses.Add(MapAddress(dataAddress, "alpha2", address.Key));
             }
-                        
+
             return addresses;
         }
 
         private static JsonDoc BuildEditMerchantRequest()
         {
             var requestBody = SetMerchantInfo();
-            requestBody 
+            requestBody
                 //.Set("description", _builder.Description)
                 .Set("status_change_reason", _builder.StatusChangeReason?.ToString() ?? null)
                 .Set("addresses", SetAddressList() ?? null)
                 .Set("persons", SetPersonList("edit"))
                 .Set("payment_processing_statistics", SetPaymentStatistics())
                 .Set("payment_methods", SetPaymentMethod());
-            
-                return requestBody;
+
+            return requestBody;
         }
     }
 }

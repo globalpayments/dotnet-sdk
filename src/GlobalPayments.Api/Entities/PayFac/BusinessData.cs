@@ -43,6 +43,8 @@ namespace GlobalPayments.Api.Entities.PayFac
         /// The highest transaction amount; Value representing the number of pennies in USD, or the number of [currency] without decimals. Defaults to $300.00 if not sent.
         /// </summary>
         public string HighestTicket { get; set; }
+
+        public string BusinessType { get; set; }
         // The business' address
         public Address BusinessAddress { get; set; }
 

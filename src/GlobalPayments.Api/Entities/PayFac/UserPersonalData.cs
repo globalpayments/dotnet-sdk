@@ -66,6 +66,14 @@ namespace GlobalPayments.Api.Entities.PayFac
         /// ProPay account username. Must be unique in ProPay system. Username defaults to <sourceEmail> if userId is not provided
         /// </summary>
         public string UserID { get; set; }
+
+        public string IpSignup { get; set; }
+        public Boolean USCitizen { get; set; }
+        public Boolean BOAttestation { get; set; }
+        public string TermsAcceptanceIP { get; set; }
+        public string TermsAcceptanceTimeStamp { get; set; }
+        public string TermsVersion { get; set; }
+
         /// <summary>
         /// Merchant/Individual address
         /// </summary>
