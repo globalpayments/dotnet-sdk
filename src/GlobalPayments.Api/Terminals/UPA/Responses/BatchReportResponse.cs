@@ -5,7 +5,8 @@ using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.UPA
 {
-    public class BatchReportResponse : ITerminalReport {
+    public class BatchReportResponse : ITerminalReport
+    {
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
 
         public BatchReportResponse(JsonDoc root) {

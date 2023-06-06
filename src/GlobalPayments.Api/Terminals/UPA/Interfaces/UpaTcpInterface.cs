@@ -4,6 +4,8 @@ using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Net.Sockets;
+using log4net;
+using Newtonsoft.Json;
 
 namespace GlobalPayments.Api.Terminals.UPA {
     internal class UpaTcpInterface : IDeviceCommInterface {
@@ -11,6 +13,9 @@ namespace GlobalPayments.Api.Terminals.UPA {
         NetworkStream _stream;
         ITerminalConfiguration _settings;
         int _connectionCount = 0;
+
+        private readonly ILog _logger = LogManager.GetLogger(typeof(UpaTcpInterface));
+
         public event MessageSentEventHandler OnMessageSent;
 
         public UpaTcpInterface(ITerminalConfiguration settings) {
@@ -47,22 +52,26 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         public byte[] Send(IDeviceMessage message) {
             byte[] buffer = message.GetSendBuffer();
-
+            var msgValue = string.Empty;
             var readyReceived = false;
             byte[] responseMessage = null;
 
             Connect();
-            try {
+            try
+            {
                 var task = _stream.WriteAsync(buffer, 0, buffer.Length);
 
-                if (!task.Wait(_settings.Timeout)) {
+                if (!task.Wait(_settings.Timeout))
+                {
                     throw new MessageException("Terminal did not respond in the given timeout.");
                 }
 
-                do {
+                do
+                {
                     var rvalue = _stream.GetTerminalResponseAsync();
-                    if (rvalue != null) {
-                        var msgValue = GetResponseMessageType(rvalue);
+                    if (rvalue != null)
+                    {
+                        msgValue = GetResponseMessageType(rvalue);
 
                         switch (msgValue)
                         {
@@ -74,14 +83,18 @@ namespace GlobalPayments.Api.Terminals.UPA {
                                 readyReceived = true;
                                 break;
                             case UpaMessageType.Busy:
+                                Disconnect();
+                                Connect();
                                 break;
                             case UpaMessageType.TimeOut:
                                 break;
                             case UpaMessageType.Msg:
                                 responseMessage = TrimResponse(rvalue);
-                                if (IsNonReadyResponse(responseMessage)) {
+                                if (IsNonReadyResponse(responseMessage))
+                                {
                                     readyReceived = true; // since reboot doesn't return READY
                                 }
+
                                 SendAckMessageToDevice();
                                 break;
                             default:
@@ -96,10 +109,16 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     }
                 } while (!readyReceived);
 
+                if (responseMessage == null)
+                {
+                    throw new DeviceException("The device did not return the expected response.", msgValue);
+                }
+
                 return responseMessage;
             }
             catch (Exception exc) {
-                throw new MessageException(exc.Message, exc);
+                _logger.Error(exc);
+                throw;
             }
             finally {
                 OnMessageSent?.Invoke(message.ToString());
