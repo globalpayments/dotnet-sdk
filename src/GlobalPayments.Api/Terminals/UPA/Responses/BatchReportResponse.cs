@@ -52,7 +52,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                             OpenTnxId = batchRecord.GetValue<string>("openTnxId"),
                             TotalAmount = batchRecord.GetValue<decimal>("totalAmount"),
                             TotalCnt = batchRecord.GetValue<int>("totalCnt"),
-                            CreditCnt = batchRecord.GetValue<int>("credictCnt"),
+                            CreditCnt = batchRecord.GetValue<int>("creditCnt"),
                             CreditAmt = batchRecord.GetValue<decimal>("creditAmt"),
                             DebitCnt = batchRecord.GetValue<int>("debitCnt"),
                             DebitAmt = batchRecord.GetValue<decimal>("debitAmt"),
