@@ -4,9 +4,8 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum UserLevelRelationship
-    {
+    public enum UserLevelRelationship {
         SELF,
-        ACCOUNTS,
+        ACCOUNTS
     }
 }

@@ -1,5 +1,6 @@
-﻿using GlobalPayments.Api.Builders;
+﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.PaymentMethods.PaymentInterfaces;
@@ -8,11 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace GlobalPayments.Api.Entities {
-    internal class GpApiAuthorizationRequestBuilder {
+namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
+    internal class GpApiAuthorizationRequestBuilder : IRequestBuilder<AuthorizationBuilder> {
         private static AuthorizationBuilder Builder;
 
-        internal static GpApiRequest BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
+        public Request BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
             Builder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             var paymentMethod = new JsonDoc()
@@ -25,8 +26,7 @@ namespace GlobalPayments.Api.Entities {
                 //Digital Wallet
                 if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
                     var payment_token = new JsonDoc();
-                    switch (creditCardData.MobileType)
-                    {
+                    switch (creditCardData.MobileType) {
                         case EncyptedMobileType.CLICK_TO_PAY:
                             payment_token.Set("data", creditCardData.Token);
                             break;
@@ -38,8 +38,7 @@ namespace GlobalPayments.Api.Entities {
                             .Set("payment_token", payment_token);
 
                 }
-                else if (builder.TransactionModifier == TransactionModifier.DecryptedMobile)
-                {
+                else if (builder.TransactionModifier == TransactionModifier.DecryptedMobile) {
                     var tokenFormat = DigitalWalletTokenFormat.CARD_NUMBER;
                     digitalWallet
                         .Set("token", creditCardData.Token)
@@ -55,7 +54,7 @@ namespace GlobalPayments.Api.Entities {
             else
             {
                 if (builder.PaymentMethod is ICardData) {
-                var cardData = builder.PaymentMethod as ICardData;
+                    var cardData = builder.PaymentMethod as ICardData;
 
                     var card = new JsonDoc()
                     .Set("number", cardData.Number)
@@ -71,8 +70,7 @@ namespace GlobalPayments.Api.Entities {
 
                     card.Set("chip_condition", EnumConverter.GetMapping(Target.GP_API, builder.EmvChipCondition)); // [PREV_SUCCESS, PREV_FAILED]
 
-                    if (!(builder.TransactionType == TransactionType.Tokenize || builder.TransactionType == TransactionType.Verify))
-                    {
+                    if (!(builder.TransactionType == TransactionType.Tokenize || builder.TransactionType == TransactionType.Verify)) {
                         card.Set("cvv_indicator", cardData.CvnPresenceIndicator != 0 ? EnumConverter.GetMapping(Target.GP_API, cardData.CvnPresenceIndicator) : null); // [ILLEGIBLE, NOT_PRESENT, PRESENT]
                         card.Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT"); // [DEBIT, CREDIT]
                     }
@@ -90,26 +88,25 @@ namespace GlobalPayments.Api.Entities {
                             paymentMethod.Set("card", brand);
                         }
                     }
-                   
+
 
                     if (builder.TransactionType == TransactionType.Tokenize) {
                         var tokenizationData = new JsonDoc()
                             .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
-                            .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))                            
+                            .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                             .Set("card", card);
 
-                        return new GpApiRequest {
+                        return new Request {
                             Verb = HttpMethod.Post,
-                            Endpoint = $"{merchantUrl}/payment-methods",
+                            Endpoint = $"{merchantUrl}{GpApiRequest.PAYMENT_METHODS_ENDPOINT}",
                             RequestBody = tokenizationData.ToString(),
                         };
                     }
                     else if (builder.TransactionType == TransactionType.DccRateLookup)
                     {
                         // tokenized payment method
-                        if (builder.PaymentMethod is ITokenizable)
-                        {
+                        if (builder.PaymentMethod is ITokenizable) {
                             string token = ((ITokenizable)builder.PaymentMethod).Token;
                             if (!string.IsNullOrEmpty(token))
                             {
@@ -127,14 +124,14 @@ namespace GlobalPayments.Api.Entities {
                            .Set("country", gateway.GpApiConfig.Country)
                            .Set("payment_method", paymentMethod);
 
-                        return new GpApiRequest
-                        {
+                        return new Request {
                             Verb = HttpMethod.Post,
-                            Endpoint = $"{merchantUrl}/currency-conversions",
+                            Endpoint = $"{merchantUrl}{GpApiRequest.DCC_ENDPOINT}",
                             RequestBody = RequestData.ToString(),
                         };
                     }
-                    else if (builder.TransactionType == TransactionType.Verify) {
+                    else if (builder.TransactionType == TransactionType.Verify)
+                    {
                         if (builder.RequestMultiUseToken && string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
                             var tokenizationData = new JsonDoc()
                                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
@@ -144,12 +141,12 @@ namespace GlobalPayments.Api.Entities {
                                 .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
                                 .Set("card", card);
 
-                            return new GpApiRequest {
+                            return new Request {
                                 Verb = HttpMethod.Post,
-                                Endpoint = $"{merchantUrl}/payment-methods",
+                                Endpoint = $"{merchantUrl}{GpApiRequest.PAYMENT_METHODS_ENDPOINT}",
                                 RequestBody = tokenizationData.ToString(),
                             };
-                        }                    
+                        }
                         else
                         {
                             var verificationData = new JsonDoc()
@@ -170,16 +167,17 @@ namespace GlobalPayments.Api.Entities {
                                 );
                             }
 
-                            return new GpApiRequest {
+                            return new Request {
                                 Verb = HttpMethod.Post,
-                                Endpoint = $"{merchantUrl}/verifications",
+                                Endpoint = $"{merchantUrl}{GpApiRequest.VERIFICATIONS_ENDPOINT}",
                                 RequestBody = verificationData.ToString(),
                             };
                         }
                     }
-                    
+
                 }
-                else if (builder.PaymentMethod is ITrackData) {
+                else if (builder.PaymentMethod is ITrackData)
+                {
                     var track = builder.PaymentMethod as ITrackData;
 
                     var card = new JsonDoc()
@@ -202,14 +200,15 @@ namespace GlobalPayments.Api.Entities {
                             .Set("payment_method", paymentMethod)
                             .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null);
 
-                        return new GpApiRequest {
+                        return new Request {
                             Verb = HttpMethod.Post,
-                            Endpoint = $"{merchantUrl}/verifications",
+                            Endpoint = $"{merchantUrl}{GpApiRequest.VERIFICATIONS_ENDPOINT}",
                             RequestBody = verificationData.ToString(),
                         };
                     }
 
-                    if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Refund) {
+                    if (builder.TransactionType == TransactionType.Sale || builder.TransactionType == TransactionType.Refund)
+                    {
                         if (string.IsNullOrEmpty(track.Value)) {
                             card.Set("number", track.Pan);
                             card.Set("expiry_month", track.Expiry?.Substring(2, 2));
@@ -233,7 +232,7 @@ namespace GlobalPayments.Api.Entities {
                     if (!string.IsNullOrEmpty(token)) {
                         paymentMethod.Set("id", token);
                     }
-                }                
+                }
             }
             // payment method storage mode
             if (builder.RequestMultiUseToken) {
@@ -253,7 +252,7 @@ namespace GlobalPayments.Api.Entities {
                 var secureEcom = (builder.PaymentMethod as CreditCardData).ThreeDSecure;
                 if (secureEcom != null) {
                     var authentication = new JsonDoc().Set("id", secureEcom.ServerTransactionId);
-                    var three_ds =new JsonDoc().Set("exempt_status", secureEcom.ExemptStatus.ToString());
+                    var three_ds = new JsonDoc().Set("exempt_status", secureEcom.ExemptStatus.ToString());
                     authentication.Set("three_ds", three_ds);
 
                     paymentMethod.Set("authentication", authentication);
@@ -262,7 +261,7 @@ namespace GlobalPayments.Api.Entities {
                 paymentMethod.Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null);
             }
 
-            if(builder.PaymentMethod is EBT) {
+            if (builder.PaymentMethod is EBT) {
                 paymentMethod.Set("name", (builder.PaymentMethod as EBT).CardHolderName);
             }
 
@@ -300,7 +299,7 @@ namespace GlobalPayments.Api.Entities {
 
             if (builder.PaymentMethod is AlternativePaymentMethod) {
                 var alternatepaymentMethod = (AlternativePaymentMethod)builder.PaymentMethod;
-                
+
                 paymentMethod.Set("name", alternatepaymentMethod.AccountHolderName);
 
                 var apm = new JsonDoc()
@@ -368,7 +367,8 @@ namespace GlobalPayments.Api.Entities {
                 }
             }
 
-            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData) {
+            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData)
+            {
                 var payLinkData = builder.PayLinkData;
                 var requestData = new JsonDoc()
                     .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
@@ -383,11 +383,11 @@ namespace GlobalPayments.Api.Entities {
                     .Set("country", gateway.GpApiConfig.Country)
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
-                    .Set("currency", builder.Currency)                    
-                    .Set("allowed_payment_methods", GetAllowedPaymentMethod(payLinkData.AllowedPaymentMethods));                
+                    .Set("currency", builder.Currency)
+                    .Set("allowed_payment_methods", GetAllowedPaymentMethod(payLinkData.AllowedPaymentMethods));
 
                 requestData.Set("transactions", transaction)
-                    .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())                    
+                    .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                     .Set("shipping_amount", payLinkData.ShippingAmount.ToNumericCurrencyString())
                     .Set("shippable", payLinkData.IsShippable != null && payLinkData.IsShippable.Value ? "YES" : "NO")
                     .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
@@ -401,15 +401,15 @@ namespace GlobalPayments.Api.Entities {
                 requestData.Set("notifications", notification)
                     .Set("status", payLinkData.Status.ToString());
 
-                return new GpApiRequest
-                {
+                return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/links",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYLINK_ENDPOINT}",
                     RequestBody = requestData.ToString(),
-                };                
+                };
             }
 
-            if (builder.TransactionType == TransactionType.TransferFunds) {
+            if (builder.TransactionType == TransactionType.TransferFunds)
+            {
                 if (!(builder.PaymentMethod is AccountFunds)) {
                     throw new UnsupportedTransactionException("Payment method doesn't support funds transfers");
                 }
@@ -427,9 +427,10 @@ namespace GlobalPayments.Api.Entities {
                 if (!string.IsNullOrEmpty(fundsData.MerchantId)) {
                     endpoint = $"/merchants/{fundsData.MerchantId}";
                 }
-                return new GpApiRequest {
+                return new Request
+                {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{endpoint}/transfers",
+                    Endpoint = $"{endpoint}{GpApiRequest.TRANSFER_ENDPOINT}",
                     RequestBody = payload.ToString(),
                 };
             }
@@ -445,9 +446,9 @@ namespace GlobalPayments.Api.Entities {
                 .Set("amount", builder.Amount.ToNumericCurrencyString())
                 .Set("currency", builder.Currency)
                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString());
-                if (builder.PaymentMethod is CreditCardData && ((builder.PaymentMethod as CreditCardData).MobileType == EncyptedMobileType.CLICK_TO_PAY)) {
-                    data.Set("masked", builder.MaskedDataResponse ? "YES" : "NO");
-                }
+            if (builder.PaymentMethod is CreditCardData && ((builder.PaymentMethod as CreditCardData).MobileType == EncyptedMobileType.CLICK_TO_PAY)) {
+                data.Set("masked", builder.MaskedDataResponse ? "YES" : "NO");
+            }
             data.Set("description", builder.Description)
                 //.Set("order_reference", builder.OrderId)
                 .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
@@ -459,7 +460,7 @@ namespace GlobalPayments.Api.Entities {
                 .Set("ip_address", builder.CustomerIpAddress)
                 //.Set("site_reference", "") //
                 .Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
-                .Set("payment_method", paymentMethod) 
+                .Set("payment_method", paymentMethod)
                 .Set("risk_assessment", builder.FraudFilterMode != null ? MapFraudManagement(builder) : null)
                 .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
                 .Set("id", builder.PaymentLinkId) : null);
@@ -472,8 +473,7 @@ namespace GlobalPayments.Api.Entities {
             }
 
             // set order reference
-            if (!string.IsNullOrEmpty(builder.OrderId))
-            {
+            if (!string.IsNullOrEmpty(builder.OrderId)) {
                 var order = new JsonDoc()
                     .Set("reference", builder.OrderId);
 
@@ -481,14 +481,15 @@ namespace GlobalPayments.Api.Entities {
             }
 
             if (builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
-                SetOrderInformation(builder, ref data);                
+                SetOrderInformation(builder, ref data);
             }
 
-            if(builder.PaymentMethod is AlternativePaymentMethod || 
-                builder.PaymentMethod is BNPL || 
-                builder.PaymentMethod is BankPayment) {
+            if (builder.PaymentMethod is AlternativePaymentMethod ||
+                builder.PaymentMethod is BNPL ||
+                builder.PaymentMethod is BankPayment)
+            {
                 data.Set("notifications", SetNotificationUrls(builder));
-            }            
+            }
 
             // stored credential
             if (builder.StoredCredential != null) {
@@ -500,9 +501,9 @@ namespace GlobalPayments.Api.Entities {
                 data.Set("stored_credential", storedCredential);
             }
 
-            return new GpApiRequest {
+            return new Request {
                 Verb = HttpMethod.Post,
-                Endpoint = $"{merchantUrl}/transactions",
+                Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}",
                 RequestBody = data.ToString(),
             };
         }
@@ -860,6 +861,6 @@ namespace GlobalPayments.Api.Entities {
             }
 
             return requestBody;
-        }
+        }        
     }
 }

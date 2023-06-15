@@ -4,8 +4,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum StatusChangeReason
-    {
+    public enum StatusChangeReason {
         ACTIVE,
         CLOSED_BY_MERCHANT,
         CLOSED_BY_RISK,
@@ -16,6 +15,6 @@ namespace GlobalPayments.Api.Entities.Enums
         PENDING_IDENTITY_VALIDATION_AND_PAYMENT,
         PENDING_PAYMENT,
         UNKNOWN_STATUS,
-        REMOVE_PARTNERSHIP,
+        REMOVE_PARTNERSHIP
     }
 }

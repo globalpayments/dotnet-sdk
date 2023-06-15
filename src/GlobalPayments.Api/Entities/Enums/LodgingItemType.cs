@@ -4,8 +4,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum LodgingItemType
-    {
+    public enum LodgingItemType {
          RESTAURANT, 
          GIFT_SHOP,
          MINI_BAR,

@@ -6,6 +6,6 @@ namespace GlobalPayments.Api.Entities.Enums
 {
     public enum BankPaymentType {        
         FASTERPAYMENTS,
-        SEPA,
+        SEPA
     }
 }

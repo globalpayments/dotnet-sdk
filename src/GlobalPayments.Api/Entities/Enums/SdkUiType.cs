@@ -3,8 +3,7 @@ using System.ComponentModel;
 
 namespace GlobalPayments.Api.Entities
 {
-    public enum SdkUiType
-    {
+    public enum SdkUiType {
         [Map(Target.GP_API, "TEXT")]
         TEXT,
         [Map(Target.GP_API, "SINGLE_SELECT")]

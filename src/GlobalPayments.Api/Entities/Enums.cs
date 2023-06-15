@@ -102,6 +102,7 @@ namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Indicates a payment method type.
     /// </summary>
+    [Flags]
     public enum PaymentMethodType {
         /// <summary>
         /// Indicates a payment method reference.

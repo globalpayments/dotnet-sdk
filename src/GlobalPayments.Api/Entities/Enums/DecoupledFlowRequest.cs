@@ -4,9 +4,8 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum DecoupledFlowRequest
-    {
+    public enum DecoupledFlowRequest {
         DECOUPLED_PREFERRED,
-        DO_NOT_USE_DECOUPLED,
+        DO_NOT_USE_DECOUPLED
     }
 }

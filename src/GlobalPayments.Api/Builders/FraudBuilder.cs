@@ -23,6 +23,11 @@ namespace GlobalPayments.Api.Builders
         
         protected override void SetupValidations()
         {
+           
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE            
+            /// TO ADD
+            #endregion
+
             Validations.For(TransactionType.RiskAssess)               
                .Check(() => PaymentMethod).IsNotNull();       
         }

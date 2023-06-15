@@ -5,8 +5,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum FraudFilterResult
-    {
+    public enum FraudFilterResult {
         [Map(Target.GP_API, "PENDING_REVIEW")]
         HOLD,
 
@@ -26,6 +25,6 @@ namespace GlobalPayments.Api.Entities.Enums
         RELEASE_SUCCESSFUL,
 
         [Map(Target.GP_API, "HOLD_SUCCESSFULL")]
-        HOLD_SUCCESSFUL,
+        HOLD_SUCCESSFUL
     }
 }

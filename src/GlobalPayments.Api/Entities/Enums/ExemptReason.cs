@@ -3,7 +3,7 @@
         APPLY_EXEMPTION,
         CONTINUE,
         FORCE_SECURE,
-        BLOCK,
+        BLOCK
     }
 }
 

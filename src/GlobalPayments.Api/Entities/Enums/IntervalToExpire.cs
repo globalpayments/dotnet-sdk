@@ -28,6 +28,6 @@ namespace GlobalPayments.Api.Entities {
         TEN_MINUTES,
 
         [Map(Target.GP_API, "5_MINUTES")]
-        FIVE_MINUTES,
+        FIVE_MINUTES
     }
 }

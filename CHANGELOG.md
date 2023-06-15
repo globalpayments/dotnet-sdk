@@ -4,6 +4,13 @@
 
 #### Enhancements
 
+- GP-API: Improvements in the Request Builders, on GpApiRequest and TransactionType
+- GP-API Unit tests updates
+
+## v5.1.9 (06/06/23)
+
+#### Enhancements
+
 - Heartland Profac: Device ordering
 
 ## v5.1.8 (11/05/23)

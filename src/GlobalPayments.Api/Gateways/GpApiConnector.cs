@@ -1,6 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Builders.RequestBuilder.GpApi;
 using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Mapping;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -124,7 +124,7 @@ namespace GlobalPayments.Api.Gateways {
         public GpApiTokenResponse GetAccessToken() {
             AccessToken = null;
 
-            GpApiRequest request = GpApiSessionInfo.SignIn(GpApiConfig.AppId, GpApiConfig.AppKey, GpApiConfig.SecondsToExpire, GpApiConfig.IntervalToExpire, GpApiConfig.Permissions);
+            Request request = GpApiSessionInfo.SignIn(GpApiConfig.AppId, GpApiConfig.AppKey, GpApiConfig.SecondsToExpire, GpApiConfig.IntervalToExpire, GpApiConfig.Permissions);
 
             string response = base.DoTransaction(request.Verb, request.Endpoint, request.RequestBody);
 
@@ -177,9 +177,9 @@ namespace GlobalPayments.Api.Gateways {
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
-            }
+            }           
 
-            GpApiRequest request = GpApiAuthorizationRequestBuilder.BuildRequest(builder, this);
+            Request request = new GpApiAuthorizationRequestBuilder().BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
@@ -196,7 +196,7 @@ namespace GlobalPayments.Api.Gateways {
                 SignIn();
             }
 
-            GpApiRequest request = GpApiManagementRequestBuilder.BuildRequest(builder, this);
+            Request request = new GpApiManagementRequestBuilder().BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
@@ -213,7 +213,7 @@ namespace GlobalPayments.Api.Gateways {
                 SignIn();
             }
 
-            GpApiRequest request = GpApiReportRequestBuilder.BuildRequest(builder, this);
+            Request request = GpApiReportRequestBuilder.BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
@@ -230,7 +230,7 @@ namespace GlobalPayments.Api.Gateways {
                 SignIn();
             }
 
-            var request = GpApiSecure3DRequestBuilder.BuildRequest(builder, this);
+            var request = GpApiSecureRequestBuilder<ThreeDSecure>.BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
@@ -243,10 +243,11 @@ namespace GlobalPayments.Api.Gateways {
         public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class 
         {
             T result = Activator.CreateInstance<T>();
+            
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
-            GpApiRequest request = GpApiPayFacRequestBuilder<T>.BuildRequest(builder, this);
+            Request request = GpApiPayFacRequestBuilder<T>.BuildRequest(builder, this);
 
             if (request != null){
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey); 
@@ -266,7 +267,7 @@ namespace GlobalPayments.Api.Gateways {
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
-            GpApiRequest request = GpApiSecureRequestBuilder<T>.BuildRequest(builder, this);
+            Request request = GpApiSecureRequestBuilder<T>.BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);

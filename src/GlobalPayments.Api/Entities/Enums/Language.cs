@@ -7,6 +7,6 @@ namespace GlobalPayments.Api.Entities {
         English,
 
         [Map(Target.GP_API, "ES")]
-        Spanish,
+        Spanish
     }
 }

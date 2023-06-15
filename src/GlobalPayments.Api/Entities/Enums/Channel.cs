@@ -7,6 +7,6 @@ namespace GlobalPayments.Api.Entities {
         CardPresent,
 
         [Map(Target.GP_API, "CNP")]
-        CardNotPresent,
+        CardNotPresent
     }
 }
