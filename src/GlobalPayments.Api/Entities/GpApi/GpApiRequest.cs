@@ -21,5 +21,6 @@ namespace GlobalPayments.Api.Entities.GpApi {
         public const string RISK_ASSESSMENTS = "/risk-assessments";
         public const string ACCOUNTS_ENDPOINT = "/accounts";
         public const string TRANSFER_ENDPOINT = "/transfers";
+        public const string DEVICES = "/devices";
     }
 }

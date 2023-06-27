@@ -6,9 +6,8 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Gateways {
     internal class AmaryllisConnector : XmlGateway, IPaymentGateway {
-        public bool SupportsHostedPayments {
-            get { return false; }
-        }
+        public bool SupportsHostedPayments => false;
+        public bool SupportsOpenBanking => false;
 
         #region processing
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
@@ -244,10 +243,6 @@ namespace GlobalPayments.Api.Gateways {
             body.Append(transaction);
 
             return et.ToString(envelope);
-        }
-
-        public bool SupportsOpenBanking() {
-            return false;
         }
         #endregion
     }

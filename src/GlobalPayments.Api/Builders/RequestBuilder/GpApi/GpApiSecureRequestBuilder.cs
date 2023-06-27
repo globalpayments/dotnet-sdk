@@ -10,38 +10,46 @@ using System.Net.Http;
 using System.Text;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
-    public class GpApiSecureRequestBuilder<T> where T : class    {
+    internal class GpApiSecureRequestBuilder<T> : IRequestBuilder<SecureBuilder<T>> where T : class    {
         private static Secure3dBuilder _3dBuilder { get; set; }        
-        internal static Request BuildRequest(FraudBuilder<T> builder, GpApiConnector gateway) {           
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
-            switch (builder.TransactionType) {
-                case TransactionType.RiskAssess:
-                    var requestData = new JsonDoc()
-                        .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.RiskAssessmentAccountName)
-                        .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.RiskAssessmentAccountID)
-                        .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())
-                        .Set("source", builder.AuthenticationSource?.ToString())
-                        .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl)
-                        .Set("order", SetOrderParam(builder))
-                        .Set("payment_method", SetPaymentMethodParam(builder))
-                        .Set("payer", SetPayerParam(builder))
-                        .Set("payer_prior_three_ds_authentication_data", SetPayerPrior3DSAuthenticationDataParam(builder))
-                        .Set("recurring_authorization_data", SetRecurringAuthorizationDataParam(builder))
-                        .Set("payer_login_data", SetPayerLoginDataParam(builder))
-                        .Set("browser_data", SetBrowserDataParam(builder));
+        public Request BuildRequest(SecureBuilder<T> builder, GpApiConnector gateway) {
+            if (builder is FraudBuilder<T>) {
+                var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+                switch (builder.TransactionType) {
+                    case TransactionType.RiskAssess:
+                        var requestData = new JsonDoc()
+                            .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.RiskAssessmentAccountName)
+                            .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.RiskAssessmentAccountID)
+                            .Set("reference", builder.ReferenceNumber ?? Guid.NewGuid().ToString())
+                            .Set("source", builder.AuthenticationSource?.ToString())
+                            .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl)
+                            .Set("order", SetOrderParam(builder))
+                            .Set("payment_method", SetPaymentMethodParam(builder))
+                            .Set("payer", SetPayerParam(builder))
+                            .Set("payer_prior_three_ds_authentication_data", SetPayerPrior3DSAuthenticationDataParam(builder))
+                            .Set("recurring_authorization_data", SetRecurringAuthorizationDataParam(builder))
+                            .Set("payer_login_data", SetPayerLoginDataParam(builder))
+                            .Set("browser_data", SetBrowserDataParam(builder));
 
-                    return new Request {
-                        Verb = HttpMethod.Post,
-                        Endpoint = $"{merchantUrl}{GpApiRequest.RISK_ASSESSMENTS}",
-                        RequestBody = requestData.ToString(),
-                    };                
-                default:
-                    break;
+                        return new Request {
+                            Verb = HttpMethod.Post,
+                            Endpoint = $"{merchantUrl}{GpApiRequest.RISK_ASSESSMENTS}",
+                            RequestBody = requestData.ToString(),
+                        };
+                    default:
+                        break;
+                }
+
+                return null;
+            }
+            else if(builder is Secure3dBuilder) {
+               return BuildSecure3dBuilderRequest(builder as Secure3dBuilder, gateway);
             }
 
             return null;
+            
         }
-        internal static Request BuildRequest(Secure3dBuilder builder, GpApiConnector gateway) {
+        private Request BuildSecure3dBuilderRequest(Secure3dBuilder builder, GpApiConnector gateway) {
             _3dBuilder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
@@ -273,7 +281,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             }
             return null;
         }
-
 
         private static JsonDoc InitiateAuthenticationData(GpApiConfig config)
         {            

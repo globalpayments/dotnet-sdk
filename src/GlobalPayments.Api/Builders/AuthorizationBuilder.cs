@@ -865,7 +865,7 @@ namespace GlobalPayments.Api.Builders {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
-            if (client.SupportsOpenBanking() && PaymentMethod is BankPayment) {
+            if (client.SupportsOpenBanking && PaymentMethod is BankPayment) {
             var obClient = ServicesContainer.Instance.GetOpenBanking(configName);
                 if (obClient != null && (obClient != client)) {
                     return obClient.ProcessOpenBanking(this);

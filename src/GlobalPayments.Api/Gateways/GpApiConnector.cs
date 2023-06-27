@@ -11,13 +11,22 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService
-    {
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService, IDeviceCloudService {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
-        public bool HasBuiltInMerchantManagementService => true;
-        public GpApiConfig GpApiConfig { get; set; }       
 
         private string _AccessToken;
+        private string ReleaseVersion {
+            get {
+                try {
+                    return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
+                }
+                catch { return string.Empty; }
+            }
+        }
+
+        public GpApiConfig GpApiConfig { get; set; }
+        public Secure3dVersion Version { get { return Secure3dVersion.Any; } }
+
         public string AccessToken {
             get {
                 return _AccessToken;
@@ -31,47 +40,54 @@ namespace GlobalPayments.Api.Gateways {
                     Headers["Authorization"] = $"Bearer {_AccessToken}";
                 }
             }
-        }       
-
+        }
+        public bool HasBuiltInMerchantManagementService => true;
         public bool SupportsHostedPayments { get { return true; } }
+        public bool SupportsOpenBanking => true;
 
-        public string SerializeRequest(AuthorizationBuilder builder) {
-            throw new NotImplementedException();
-        }
 
-        public bool SupportsOpenBanking() {
-            return true;
-        }
-
-        public GpApiConnector(GpApiConfig gpApiConfig)
-        {   
+        public GpApiConnector(GpApiConfig gpApiConfig) {
             GpApiConfig = gpApiConfig;
-            Timeout = gpApiConfig.Timeout;            
-            RequestLogger = gpApiConfig.RequestLogger;            
+            Timeout = gpApiConfig.Timeout;
+            RequestLogger = gpApiConfig.RequestLogger;
             WebProxy = gpApiConfig.WebProxy;
 
             // Set required api version header
             Headers["X-GP-Version"] = "2021-03-22";
             Headers["Accept"] = "application/json";
             Headers["Accept-Encoding"] = "gzip";
-            Headers["x-gp-sdk"] = "net;version=" + getReleaseVersion();
+            Headers["x-gp-sdk"] = "net;version=" + ReleaseVersion;
 
             DynamicHeaders = gpApiConfig.DynamicHeaders;
         }
-               
 
-        //Get the SDK release version
-        private string getReleaseVersion()
-        {
-            try
-            {
-                return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
-            }
-            catch(Exception ex)
-            {
-                return string.Empty;
-            }
+
+        #region Interface Implementations
+       
+
+        public string SerializeRequest(AuthorizationBuilder builder) {
+            throw new NotImplementedException();
         }
+        
+        
+        public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class {
+            throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessPayFac")} not supported");
+        }       
+
+        public string ProcessPassThrough(JsonDoc rawRequest) {
+            if (string.IsNullOrEmpty(AccessToken)) {
+                SignIn();
+            }
+
+            Request request = new GpApiMiCRequestBuilder().BuildRequest(rawRequest.ToString(), this);
+
+            if (request != null) {
+                return DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+            }
+            return null;
+        }
+        #endregion
+
 
         public void SignIn() {
             AccessTokenInfo accessTokenInfo = GpApiConfig.AccessTokenInfo;
@@ -80,9 +96,9 @@ namespace GlobalPayments.Api.Gateways {
                 AccessToken = accessTokenInfo.Token;
                 return;
             }
-                var response = GetAccessToken();
+            var response = GetAccessToken();
 
-                AccessToken = response.Token;
+            AccessToken = response.Token;
 
             if (accessTokenInfo == null) {
                 accessTokenInfo = new AccessTokenInfo();
@@ -100,7 +116,7 @@ namespace GlobalPayments.Api.Gateways {
                 string.IsNullOrEmpty(accessTokenInfo.DisputeManagementAccountID)) {
                 accessTokenInfo.DisputeManagementAccountID = response.DisputeManagementAccountID;
             }
-           
+
             if (string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountName) &&
                 string.IsNullOrEmpty(accessTokenInfo.TransactionProcessingAccountID)) {
                 accessTokenInfo.TransactionProcessingAccountID = response.TransactionProcessingAccountID;
@@ -196,7 +212,7 @@ namespace GlobalPayments.Api.Gateways {
                 SignIn();
             }
 
-            Request request = new GpApiManagementRequestBuilder().BuildRequest(builder, this);
+            Request request = new Builders.RequestBuilder.GpApi.GpApiManagementRequestBuilder().BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
@@ -213,7 +229,7 @@ namespace GlobalPayments.Api.Gateways {
                 SignIn();
             }
 
-            Request request = GpApiReportRequestBuilder.BuildRequest(builder, this);
+            Request request = new GpApiReportRequestBuilder<T>().BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
@@ -221,16 +237,14 @@ namespace GlobalPayments.Api.Gateways {
                 return GpApiMapping.MapReportResponse<T>(response, builder.ReportType);
             }
             return null;
-        }
-
-        public Secure3dVersion Version { get { return Secure3dVersion.Any; } }
+        }       
 
         public Transaction ProcessSecure3d(Secure3dBuilder builder) {
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
 
-            var request = GpApiSecureRequestBuilder<ThreeDSecure>.BuildRequest(builder, this);
+            var request = new GpApiSecureRequestBuilder<ThreeDSecure>().BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
@@ -247,7 +261,7 @@ namespace GlobalPayments.Api.Gateways {
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
-            Request request = GpApiPayFacRequestBuilder<T>.BuildRequest(builder, this);
+            Request request = new GpApiPayFacRequestBuilder<T>().BuildRequest(builder, this);
 
             if (request != null){
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey); 
@@ -255,19 +269,14 @@ namespace GlobalPayments.Api.Gateways {
             }
             return result;
         }
-
-        public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class
-        {
-            throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessPayFac")} not supported");
-        }
-
+        
         public T ProcessFraud<T>(FraudBuilder<T> builder) where T : class
         {
             T result = Activator.CreateInstance<T>();
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
-            Request request = GpApiSecureRequestBuilder<T>.BuildRequest(builder, this);
+            Request request = new GpApiSecureRequestBuilder<T>().BuildRequest(builder, this);
 
             if (request != null) {
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);

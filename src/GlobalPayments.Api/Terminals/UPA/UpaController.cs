@@ -7,56 +7,48 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GlobalPayments.Api.Terminals.UPA
-{
-    public class UpaController : DeviceController
-    {
-        internal override IDeviceInterface ConfigureInterface()
-        {
-            if (_interface == null)
-            {
+namespace GlobalPayments.Api.Terminals.UPA {
+    public class UpaController : DeviceController {
+        internal override IDeviceInterface ConfigureInterface() {
+            if (_interface == null) {
                 _interface = new UpaInterface(this);
             }
             return _interface;
         }
-        internal override IDeviceCommInterface ConfigureConnector()
-        {
-            switch (_settings.ConnectionMode)
-            {
+        internal override IDeviceCommInterface ConfigureConnector() {
+            switch (_settings.ConnectionMode) {
                 case ConnectionModes.TCP_IP:
                     return new UpaTcpInterface(_settings);
                 case ConnectionModes.HTTP:
                 case ConnectionModes.SERIAL:
                 case ConnectionModes.SSL_TCP:
+                case ConnectionModes.MIC:
+                    return new UpaMicInterface(_settings);
                 default:
-                    throw new NotImplementedException();
+                    throw new ApiException("Connection method not implemented for the specified device.");
             }
         }
 
         internal UpaController(ITerminalConfiguration settings) : base(settings) { }
 
         #region overrides
-        internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder)
-        {
+        internal override ITerminalResponse ProcessTransaction(TerminalAuthBuilder builder) {
             var request = BuildProcessTransaction(builder);
             return DoTransaction(request);
         }
 
-        internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder)
-        {
+        internal override ITerminalResponse ManageTransaction(TerminalManageBuilder builder) {
             var request = BuildManageTransaction(builder);
             return DoTransaction(request);
         }
 
-        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder)
-        {
+        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
             var response = Send(BuildReportTransaction(builder));
 
             string jsonObject = Encoding.UTF8.GetString(response);
             var jsonParse = JsonDoc.Parse(jsonObject);
-            
-            switch (builder.ReportType)
-            {
+
+            switch (builder.ReportType) {
                 case TerminalReportType.GetSAFReport:
                     return new SafReportResponse(jsonParse);
                 case TerminalReportType.GetBatchReport:
@@ -82,8 +74,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             }
         }
 
-        internal IDeviceMessage BuildProcessTransaction(TerminalAuthBuilder builder)
-        {
+        internal IDeviceMessage BuildProcessTransaction(TerminalAuthBuilder builder) {
             var pmt = builder.PaymentMethodType;
             var transType = builder.TransactionType;
             var transModifier = builder.TransactionModifier;
@@ -115,13 +106,13 @@ namespace GlobalPayments.Api.Terminals.UPA
                 if (transType == TransactionType.Tokenize || transType == TransactionType.Verify) {
                     txnParams.Set("cardIsHSAFSA", isCardHSAFSA ? "1" : "0");
                 }
-                if(!IsTokenRequestApplicable(isTipAdjust, transType)) {
+                if (!IsTokenRequestApplicable(isTipAdjust, transType)) {
                     txnParams.Set("tokenRequest", builder.RequestMultiUseToken ? "1" : "0");
                 }
                 if (builder.PaymentMethod is CreditCardData) {
                     txnParams.Set("tokenValue", ((CreditCardData)builder.PaymentMethod).Token);
                 }
-                if (builder.RequestMultiUseToken && (transType == TransactionType.Sale || transType == TransactionType.Refund || transType == TransactionType.Verify 
+                if (builder.RequestMultiUseToken && (transType == TransactionType.Sale || transType == TransactionType.Refund || transType == TransactionType.Verify
                     || transType == TransactionType.Auth)) {
                     if (builder.CardOnFileIndicator != null) {
                         txnParams.Set("cardOnFileIndicator", EnumConverter.GetMapping(Target.UPA, builder.CardOnFileIndicator));
@@ -139,7 +130,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
                 if (transType != TransactionType.Verify && transType != TransactionType.Refund && !isTipAdjust && transType != TransactionType.Tokenize) {
                     var transaction = txnData.SubElement("transaction");
-                    if(transType == TransactionType.Auth) {
+                    if (transType == TransactionType.Auth) {
                         transaction.Set("amount", ToCurrencyString(builder.Amount));
                     }
                     else {
@@ -151,7 +142,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                         transaction.Set("processCPC", builder.ProcessCPC);
                         transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
                     }
-                    
+
                     transaction.Set("referenceNumber", builder.TerminalRefNumber);
                     transaction.Set("cardIsHSAFSA", isCardHSAFSA ? "1" : "0");
 
@@ -177,7 +168,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                 }
             }
 
-            return TerminalUtilities.BuildUpaRequest(doc.ToString());
+            return TerminalUtilities.BuildUpaRequest(doc);
         }
 
         internal IDeviceMessage BuildReportTransaction(TerminalReportBuilder builder) {
@@ -232,7 +223,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             transaction.Set("taxIndicator", builder.TaxExempt);
             transaction.Set("invoiceNbr", builder.InvoiceNumber);
             transaction.Set("processCPC", builder.ProcessCPC);
-            
+
             return TerminalUtilities.BuildUpaRequest(doc.ToString());
         }
 
@@ -274,8 +265,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
         #region Private Methods
         private string MapTransactionType(TransactionType type, TransactionModifier? modifier = null, bool requestToken = false, decimal? gratuity = null) {
-            switch (type)
-            {
+            switch (type) {
                 case TransactionType.Sale:
                     return UpaTransType.SALE_REDEEM;
                 case TransactionType.Void:
@@ -312,8 +302,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         }
 
         private string MapReportType(TerminalReportType type) {
-            switch (type)
-            {
+            switch (type) {
                 case TerminalReportType.GetSAFReport:
                     return UpaTransType.GetSAFReport;
                 case TerminalReportType.GetBatchReport:

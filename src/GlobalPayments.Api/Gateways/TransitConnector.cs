@@ -16,14 +16,13 @@ namespace GlobalPayments.Api.Gateways {
         public string MerchantId { get; set; }
         public string TransactionKey { get; set; }
         public Secure3dVersion Version { get; set; }
+        public bool SupportsHostedPayments => false;
+        public bool SupportsOpenBanking => false;
 
-        public bool SupportsHostedPayments { get { return false; } }
 
-        public bool SupportsOpenBanking() {
-            return false;
-        }
         public TransitConnector() {
         }
+
 
         public string GenerateKey(string userId, string password) {
             var et = new ElementTree();

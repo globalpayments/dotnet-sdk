@@ -11,11 +11,11 @@ using System.Text;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
 {
-    public class GpApiPayFacRequestBuilder<T> where T : class
+    internal class GpApiPayFacRequestBuilder<T> : IRequestBuilder<PayFacBuilder<T>> where T : class
     {
         private static PayFacBuilder<T> _builder { get; set; }
 
-        internal static Request BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway)
+        public Request BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway)
         {
             _builder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;

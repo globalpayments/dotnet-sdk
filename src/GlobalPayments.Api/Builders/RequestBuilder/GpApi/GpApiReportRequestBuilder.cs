@@ -6,8 +6,8 @@ using GlobalPayments.Api.Utils;
 using System.Net.Http;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
-    internal class GpApiReportRequestBuilder {
-        internal static Request BuildRequest<T>(ReportBuilder<T> builder, GpApiConnector gateway) where T : class {
+    internal class GpApiReportRequestBuilder<T> : IRequestBuilder<ReportBuilder<T>> where T : class {
+        public Request BuildRequest(ReportBuilder<T> builder, GpApiConnector gateway){
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             var request = new Request();
             if (builder is TransactionReportBuilder<T> trb) {                

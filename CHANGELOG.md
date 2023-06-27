@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- GP-API: UPA MiTC via GP-API.
+
+## v5.1.9 (15/06/23)
+
+#### Enhancements
+
 - GP-API: Improvements in the Request Builders, on GpApiRequest and TransactionType
 - GP-API Unit tests updates
 

@@ -1100,6 +1100,7 @@ public enum ReasonCode {
     }
 
     public enum Environment {
+        QA,
         TEST,
         PRODUCTION
     }

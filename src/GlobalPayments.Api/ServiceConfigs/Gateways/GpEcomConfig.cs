@@ -121,7 +121,7 @@ namespace GlobalPayments.Api {
                 services.SetSecure3dProvider(Entities.Secure3dVersion.Two, secure3d2);
             }
 
-            if (gateway.SupportsOpenBanking()) {
+            if (gateway.SupportsOpenBanking) {
                 var openBanking = new OpenBankingProvider();
                 openBanking.MerchantId = gateway.MerchantId;
                 openBanking.AccountId = gateway.AccountId;
