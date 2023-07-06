@@ -71,7 +71,7 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("authentication_source", builder.AuthenticationSource.ToString());
                 request.Set("authentication_request_type", builder.AuthenticationRequestType.ToString());
                 request.Set("message_category", builder.MessageCategory.ToString());
-                request.Set("message_version", "2.1.0");
+                request.Set("message_version", secureEcom.AcsEndVersion);
                 request.Set("server_trans_id", secureEcom.ServerTransactionId);
                 request.Set("merchant_id", MerchantId);
                 request.Set("account_id", AccountId);

@@ -9,6 +9,7 @@ namespace GlobalPayments.Api.Tests.GpApi
     [TestClass]
     public class GpApiDigitalWalletTests : BaseGpApiTests {
         private CreditCardData card;
+        private const string ClickToPayToken = "8144735251653223601";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
@@ -23,13 +24,13 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestInitialize]
         public void TestInitialize() {
             card = new CreditCardData {
-                CardHolderName = "James Mason#",
+                CardHolderName = "James Mason",
             };
         }
 
         [TestMethod]
-        public void ClickToPayEncrypted() {            
-            card.Token = "9113329269393758302";              
+        public void ClickToPayEncrypted() {
+            card.Token = ClickToPayToken;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -48,7 +49,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void ClickToPayEncryptedChargeThenSplitAmount()
         {
-            card.Token = "9113329269393758302";
+            card.Token = ClickToPayToken;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -71,7 +72,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void ClickToPayEncryptedChargeThenRefund()
         {
-            card.Token = "9113329269393758302";
+            card.Token = ClickToPayToken;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -97,7 +98,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void ClickToPayEncryptedChargeThenReverse()
         {
-            card.Token = "9113329269393758302";
+            card.Token = ClickToPayToken;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -122,7 +123,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         
         [TestMethod]
         public void ClickToPayEncryptedAuthorize() {            
-            card.Token = "9113329269393758302";              
+            card.Token = ClickToPayToken;              
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var errorFound = false;
@@ -144,7 +145,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         
         [TestMethod]
         public void ClickToPayEncryptedRefundStandalone() {            
-            card.Token = "9113329269393758302";              
+            card.Token = ClickToPayToken;              
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var errorFound = false;
@@ -258,10 +259,10 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void PayWithGooglePayEncrypted() {
             card.Token = "{\n" +
-                            "  \"signature\": \"MEQCIG5NDTGsgPrltVuuJQ0NYJnLUm1mo8JOW8vfLvt+ZtW6AiAZXJgnszos88b06ujEKubOMQNIuFdOgU+6ArRDGlZPoQ==\",\n" +
-                            "  \"protocolVersion\": \"ECv1\",\n" +
-                            "  \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"t+8CD+SWUl7VflMnwOqJedp7ZK71qnKX2tabp7px4C3d97ki1eb8vySoZoD8wbp7B2FDZPVGPDtUSUxz67JfwJ04sncw4KyDQiyShlxxdOakK/bnn+ooGHZ3jWA97hXVjtf1YecOCppzQIVk7F4RZZNgfIImQr4nDX5nm4BLN+TGsI4/m542xix45h+5e7y/xtyY/GFm8YwEfHQFCNY5edOr7h4nanDi/k//oQQG+ChOCKHtcmv4LpwtR2W737t5bTj+5mxXWu2sdAx6EnQGFOnmMKbNd1phcw4fdAHGtmxkW2LDUamXq5hnY99ECcl+Iqe75S6d3vQ3Lidk3k2lVVRtXTkxtCGvBOUy8okp4hndQL0665YOOIgEPengKfv3CIgUcKahKPyRVekaybDUalYpvyBvX2xIq+ilOo703z7pdL+FkILe7PC7RrEbnKLLJEv6\\\",\\\"ephemeralPublicKey\\\":\\\"BMLc+beu32XtPnrQ6D2z7IuICWl0gg9XmnKEync31BZ7NAvCa0BXTpLkyii+dDMPahj6xUoI0m7YES2UncrVkS8\\\\u003d\\\",\\\"tag\\\":\\\"QlvO9HQqmHXnlew8IzEWqr1AFSNL2wSc+HEb2IAd4YE\\\\u003d\\\"}\"\n" +
-                        "}";
+                         "    \"signature\": \"MEQCIDoMJc0jcHAzk846Y7BT6XVN/YrwypNtShE+nF/XWMiAAiAd0nhStaWT0Fw3mWjJXPRy4J+GXhdm5WOjlgEu9DS7pQ\\u003d\\u003d\",\n" +
+                         "    \"protocolVersion\": \"ECv1\",\n" +
+                         "    \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"c9G2ljhM/OK3IrJapYrVYCi/HUQOX9IZfPE7mSLhxe26R/fpCkXF8i0j9DhM7kttoQBa1KmzNwAP4kaIR9XQB/IZsnZ0YllS+Jo0KYmOoLfcW/OUFYzRXZGbvJZRts7PP4U/NPXDiSDQM7ACna7Nca9o5UBIrY4ZL8MLiIbdBI8BSlCdJYqw4kyXibY2C5QMG+2lzF3fn4kSsz2odC8c9BuW/2D2Rz2Lau9awUMtQUpIHI4W6VU8t1FtDWppWzPUbD0CBw88ZlBOdHTgu2OJE5bR/+NXz99Rn7h3hmqnnMu/0JNxryvZr+Ed1cmLqoVbRf+3ik5WVUsyOcQWrouH8vjOTVq208o8MbSA1wX0LK4gAWVnyRpPsUkz5KJOKvKWIzT3VlV7m9BxlVc7E4RQe7/QJO5LKVcV5cotKXdGK9YINLSyIwkLRcKR9qQ92Q4z0h4g\\\",\\\"ephemeralPublicKey\\\":\\\"BPUg4L7vjs5ucmOzR+GNmLxWp1LnEsFV/Bc6WQY6qgtyxT4HFnziN/3nkbspF0l4auZX1UjCV1scYjE910Lp2TU\\\\u003d\\\",\\\"tag\\\":\\\"x0md5a9GwLxoCWrxQYS4jJfPjuQv9ajrJMd5zNjbd+A\\\\u003d\\\"}\"\n" +
+                         "}";
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)
@@ -278,10 +279,10 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void GooglePayEncrypted_LinkedRefund() {
             card.Token = "{\n" +
-                            "  \"signature\": \"MEQCIG5NDTGsgPrltVuuJQ0NYJnLUm1mo8JOW8vfLvt+ZtW6AiAZXJgnszos88b06ujEKubOMQNIuFdOgU+6ArRDGlZPoQ==\",\n" +
-                            "  \"protocolVersion\": \"ECv1\",\n" +
-                            "  \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"t+8CD+SWUl7VflMnwOqJedp7ZK71qnKX2tabp7px4C3d97ki1eb8vySoZoD8wbp7B2FDZPVGPDtUSUxz67JfwJ04sncw4KyDQiyShlxxdOakK/bnn+ooGHZ3jWA97hXVjtf1YecOCppzQIVk7F4RZZNgfIImQr4nDX5nm4BLN+TGsI4/m542xix45h+5e7y/xtyY/GFm8YwEfHQFCNY5edOr7h4nanDi/k//oQQG+ChOCKHtcmv4LpwtR2W737t5bTj+5mxXWu2sdAx6EnQGFOnmMKbNd1phcw4fdAHGtmxkW2LDUamXq5hnY99ECcl+Iqe75S6d3vQ3Lidk3k2lVVRtXTkxtCGvBOUy8okp4hndQL0665YOOIgEPengKfv3CIgUcKahKPyRVekaybDUalYpvyBvX2xIq+ilOo703z7pdL+FkILe7PC7RrEbnKLLJEv6\\\",\\\"ephemeralPublicKey\\\":\\\"BMLc+beu32XtPnrQ6D2z7IuICWl0gg9XmnKEync31BZ7NAvCa0BXTpLkyii+dDMPahj6xUoI0m7YES2UncrVkS8\\\\u003d\\\",\\\"tag\\\":\\\"QlvO9HQqmHXnlew8IzEWqr1AFSNL2wSc+HEb2IAd4YE\\\\u003d\\\"}\"\n" +
-                        "}";
+                         "    \"signature\": \"MEQCIDoMJc0jcHAzk846Y7BT6XVN/YrwypNtShE+nF/XWMiAAiAd0nhStaWT0Fw3mWjJXPRy4J+GXhdm5WOjlgEu9DS7pQ\\u003d\\u003d\",\n" +
+                         "    \"protocolVersion\": \"ECv1\",\n" +
+                         "    \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"c9G2ljhM/OK3IrJapYrVYCi/HUQOX9IZfPE7mSLhxe26R/fpCkXF8i0j9DhM7kttoQBa1KmzNwAP4kaIR9XQB/IZsnZ0YllS+Jo0KYmOoLfcW/OUFYzRXZGbvJZRts7PP4U/NPXDiSDQM7ACna7Nca9o5UBIrY4ZL8MLiIbdBI8BSlCdJYqw4kyXibY2C5QMG+2lzF3fn4kSsz2odC8c9BuW/2D2Rz2Lau9awUMtQUpIHI4W6VU8t1FtDWppWzPUbD0CBw88ZlBOdHTgu2OJE5bR/+NXz99Rn7h3hmqnnMu/0JNxryvZr+Ed1cmLqoVbRf+3ik5WVUsyOcQWrouH8vjOTVq208o8MbSA1wX0LK4gAWVnyRpPsUkz5KJOKvKWIzT3VlV7m9BxlVc7E4RQe7/QJO5LKVcV5cotKXdGK9YINLSyIwkLRcKR9qQ92Q4z0h4g\\\",\\\"ephemeralPublicKey\\\":\\\"BPUg4L7vjs5ucmOzR+GNmLxWp1LnEsFV/Bc6WQY6qgtyxT4HFnziN/3nkbspF0l4auZX1UjCV1scYjE910Lp2TU\\\\u003d\\\",\\\"tag\\\":\\\"x0md5a9GwLxoCWrxQYS4jJfPjuQv9ajrJMd5zNjbd+A\\\\u003d\\\"}\"\n" +
+                         "}";
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)
@@ -304,10 +305,10 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void GooglePayEncrypted_Reverse() {
             card.Token = "{\n" +
-                            "  \"signature\": \"MEQCIG5NDTGsgPrltVuuJQ0NYJnLUm1mo8JOW8vfLvt+ZtW6AiAZXJgnszos88b06ujEKubOMQNIuFdOgU+6ArRDGlZPoQ==\",\n" +
-                            "  \"protocolVersion\": \"ECv1\",\n" +
-                            "  \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"t+8CD+SWUl7VflMnwOqJedp7ZK71qnKX2tabp7px4C3d97ki1eb8vySoZoD8wbp7B2FDZPVGPDtUSUxz67JfwJ04sncw4KyDQiyShlxxdOakK/bnn+ooGHZ3jWA97hXVjtf1YecOCppzQIVk7F4RZZNgfIImQr4nDX5nm4BLN+TGsI4/m542xix45h+5e7y/xtyY/GFm8YwEfHQFCNY5edOr7h4nanDi/k//oQQG+ChOCKHtcmv4LpwtR2W737t5bTj+5mxXWu2sdAx6EnQGFOnmMKbNd1phcw4fdAHGtmxkW2LDUamXq5hnY99ECcl+Iqe75S6d3vQ3Lidk3k2lVVRtXTkxtCGvBOUy8okp4hndQL0665YOOIgEPengKfv3CIgUcKahKPyRVekaybDUalYpvyBvX2xIq+ilOo703z7pdL+FkILe7PC7RrEbnKLLJEv6\\\",\\\"ephemeralPublicKey\\\":\\\"BMLc+beu32XtPnrQ6D2z7IuICWl0gg9XmnKEync31BZ7NAvCa0BXTpLkyii+dDMPahj6xUoI0m7YES2UncrVkS8\\\\u003d\\\",\\\"tag\\\":\\\"QlvO9HQqmHXnlew8IzEWqr1AFSNL2wSc+HEb2IAd4YE\\\\u003d\\\"}\"\n" +
-                        "}";
+                         "    \"signature\": \"MEQCIDoMJc0jcHAzk846Y7BT6XVN/YrwypNtShE+nF/XWMiAAiAd0nhStaWT0Fw3mWjJXPRy4J+GXhdm5WOjlgEu9DS7pQ\\u003d\\u003d\",\n" +
+                         "    \"protocolVersion\": \"ECv1\",\n" +
+                         "    \"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"c9G2ljhM/OK3IrJapYrVYCi/HUQOX9IZfPE7mSLhxe26R/fpCkXF8i0j9DhM7kttoQBa1KmzNwAP4kaIR9XQB/IZsnZ0YllS+Jo0KYmOoLfcW/OUFYzRXZGbvJZRts7PP4U/NPXDiSDQM7ACna7Nca9o5UBIrY4ZL8MLiIbdBI8BSlCdJYqw4kyXibY2C5QMG+2lzF3fn4kSsz2odC8c9BuW/2D2Rz2Lau9awUMtQUpIHI4W6VU8t1FtDWppWzPUbD0CBw88ZlBOdHTgu2OJE5bR/+NXz99Rn7h3hmqnnMu/0JNxryvZr+Ed1cmLqoVbRf+3ik5WVUsyOcQWrouH8vjOTVq208o8MbSA1wX0LK4gAWVnyRpPsUkz5KJOKvKWIzT3VlV7m9BxlVc7E4RQe7/QJO5LKVcV5cotKXdGK9YINLSyIwkLRcKR9qQ92Q4z0h4g\\\",\\\"ephemeralPublicKey\\\":\\\"BPUg4L7vjs5ucmOzR+GNmLxWp1LnEsFV/Bc6WQY6qgtyxT4HFnziN/3nkbspF0l4auZX1UjCV1scYjE910Lp2TU\\\\u003d\\\",\\\"tag\\\":\\\"x0md5a9GwLxoCWrxQYS4jJfPjuQv9ajrJMd5zNjbd+A\\\\u003d\\\"}\"\n" +
+                         "}";
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)

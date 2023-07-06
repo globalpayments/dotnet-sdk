@@ -4,6 +4,16 @@
 
 #### Enhancements
 
+- GP-API: Added integration examples using Hosted Fields (GP JS library), 3DS library
+
+#### Bug fixes:
+
+- GP-ECOM: Send the correct "message_version" in the initiate step on 3DS2
+
+## v5.2.0 (27/06/23)
+
+#### Enhancements
+
 - GP-API: UPA MiTC via GP-API.
 
 ## v5.1.9 (15/06/23)

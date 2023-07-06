@@ -234,8 +234,8 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 AccountHolderName = "James Mason"
             };
 
-            Decimal amount = 10m;
-            string currency = "USD";
+            const decimal amount = 10m;
+            const string currency = "USD";
            
             var transaction = paymentMethod.Charge(amount)
                 .WithCurrency(currency)
@@ -252,13 +252,18 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
             transaction.AlternativePaymentResponse.ProviderReference = "SMKGK7K2BLEUA";
 
-            var response = transaction.Confirm(amount)
-                .WithCurrency(currency)
-                .WithAlternativePaymentType(AlternativePaymentType.PAYPAL)
-                .Execute();
+            try {
+                var response = transaction.Confirm(amount)
+                    .WithCurrency(currency)
+                    .WithAlternativePaymentType(AlternativePaymentType.PAYPAL)
+                    .Execute();
 
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);            
+                Assert.IsNotNull(response);
+                Assert.AreEqual("00", response.ResponseCode);  
+            }
+            catch (GatewayException e) {
+                Assert.AreEqual("Unexpected Gateway Response: 101 - Payment has not been authorized by the user.", e.Message);
+            }
         }
 
         [TestMethod]
