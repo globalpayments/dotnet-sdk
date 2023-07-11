@@ -54,12 +54,10 @@ namespace GlobalPayments.Api.Builders {
         }
         public Secure3dBuilder WithAddress(Address address, AddressType type)
         {
-            if (type.Equals(AddressType.Billing))
-            {
+            if (type.Equals(AddressType.Billing)) {
                 BillingAddress = address;
             }
-            else
-            {
+            else {
                 ShippingAddress = address;
             }
             return this;
@@ -233,10 +231,8 @@ namespace GlobalPayments.Api.Builders {
         public Secure3dBuilder WithMerchantData(MerchantDataCollection value)
         {
             MerchantData = value;
-            if (MerchantData != null)
-            {
-                if (ThreeDSecure == null)
-                {
+            if (MerchantData != null) {
+                if (ThreeDSecure == null) {
                     ThreeDSecure = new ThreeDSecure();
                 }
                 ThreeDSecure.MerchantData = value;
@@ -333,11 +329,9 @@ namespace GlobalPayments.Api.Builders {
         public Secure3dBuilder WithPaymentMethod(IPaymentMethod value)
         {
             PaymentMethod = value;
-            if (value is ISecure3d)
-            {
+            if (value is ISecure3d) {
                 var secureEcom = ((ISecure3d)value).ThreeDSecure;
-                if (secureEcom != null)
-                {
+                if (secureEcom != null) {
                     ThreeDSecure = secureEcom;
                 }
             }
@@ -415,8 +409,7 @@ namespace GlobalPayments.Api.Builders {
         }
         public Secure3dBuilder WithServerTransactionId(string value)
         {
-            if (ThreeDSecure == null)
-            {
+            if (ThreeDSecure == null) {
                 ThreeDSecure = new ThreeDSecure();
             }
             ThreeDSecure.ServerTransactionId = value;
@@ -610,6 +603,11 @@ namespace GlobalPayments.Api.Builders {
         }
 
         public void setupValidations() {
+           
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE     
+            /// TO ADD
+            #endregion
+
             Validations.For(TransactionType.VerifyEnrolled)
                 .Check(() => PaymentMethod).IsNotNull();
 

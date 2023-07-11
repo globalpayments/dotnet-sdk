@@ -47,13 +47,13 @@ The project is compiled with environments compatible with `dotnet` tooling 2.0+ 
 To install via [Nuget Manager Console](https://docs.nuget.org/consume/package-manager-console):
 
 ```
-PM> Install-Package GlobalPayments.Api -Version 1.0.20-BETA
+PM> Install-Package GlobalPayments.Api
 ```
 
 To install via [`dotnet` CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/):
 
 ```
-dotnet add package GlobalPayments.Api --version 1.0.20-BETA
+dotnet add package GlobalPayments.Api
 ```
 
 To install via a Project Reference:

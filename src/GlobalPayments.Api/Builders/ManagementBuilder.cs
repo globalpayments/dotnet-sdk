@@ -492,10 +492,33 @@ namespace GlobalPayments.Api.Builders {
         }
 
         protected override void SetupValidations() {
-            Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release)
-                .Check(() => PaymentMethod).IsNotNull();
 
-            Validations.For(TransactionType.Capture | TransactionType.Hold | TransactionType.Release | TransactionType.Reauth)
+            
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE     
+            /// TO ADD
+            #endregion
+
+
+            Validations.For(TransactionType.Capture)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => TransactionId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Edit)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Hold)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => TransactionId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Release)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => TransactionId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Reauth)
                 .Check(() => TransactionId).IsNotNull();
 
             // TODO: Need level validations
@@ -504,15 +527,21 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.Refund)
                 .When(() => Amount).IsNotNull()
-                .Check(() => Currency).IsNotNull();
+                .Check(() => Currency).IsNotNull()
+                .Check(() => VoidReason).IsNull();
 
             Validations.For(TransactionType.VerifySignature)
                 .Check(() => PayerAuthenticationResponse).IsNotNull()
                 .Check(() => Amount).IsNotNull()
                 .Check(() => Currency).IsNotNull()
-                .Check(() => OrderId).IsNotNull();
+                .Check(() => OrderId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
 
-            Validations.For(TransactionType.TokenDelete | TransactionType.TokenUpdate)
+            Validations.For(TransactionType.TokenUpdate)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => PaymentMethod).Is<ITokenizable>();
+
+            Validations.For(TransactionType.TokenUpdate)
                 .Check(() => PaymentMethod).IsNotNull()
                 .Check(() => PaymentMethod).Is<ITokenizable>();
 
@@ -530,15 +559,10 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => FundsData).IsNotNull()
                 .Check(() => Amount).IsNotNull();
 
-            Validations.For(
-                TransactionType.Capture |
-                TransactionType.Edit |
-                TransactionType.Hold |
-                TransactionType.Release |
-                TransactionType.TokenUpdate |
-                TransactionType.TokenDelete |
-                TransactionType.VerifySignature |
-                TransactionType.Refund)
+            Validations.For(TransactionType.TokenUpdate)
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.TokenDelete)
                 .Check(() => VoidReason).IsNull();
         }
         public ManagementBuilder WithForcedReversal(bool value) {

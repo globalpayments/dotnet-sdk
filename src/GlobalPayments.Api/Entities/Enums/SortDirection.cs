@@ -7,6 +7,6 @@ namespace GlobalPayments.Api.Entities {
         Ascending,
 
         [Map(Target.GP_API, "DESC")]
-        Descending,
+        Descending
     }
 }

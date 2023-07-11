@@ -102,6 +102,7 @@ namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Indicates a payment method type.
     /// </summary>
+    [Flags]
     public enum PaymentMethodType {
         /// <summary>
         /// Indicates a payment method reference.
@@ -344,6 +345,8 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates a Buy Now Pay Later transaction
         /// </summary>
         BuyNowPayLater = 1 << 19,
+
+        Account = 1 << 20
     }
 
     /// <summary>
@@ -1097,6 +1100,7 @@ public enum ReasonCode {
     }
 
     public enum Environment {
+        QA,
         TEST,
         PRODUCTION
     }

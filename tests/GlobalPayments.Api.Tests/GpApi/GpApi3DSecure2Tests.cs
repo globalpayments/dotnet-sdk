@@ -1,5 +1,6 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
@@ -704,7 +705,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithServerTransactionId(initAuth.ServerTransactionId)
                 .Execute();
 
-            Assert.AreEqual(CHALLENGE_REQUIRED, getAuthData.Status);
+            Assert.AreEqual(Secure3dStatus.CHALLENGE_REQUIRED.ToString(), getAuthData.Status);
         }
 
         [TestMethod]

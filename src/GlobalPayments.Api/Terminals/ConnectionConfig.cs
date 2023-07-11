@@ -10,7 +10,8 @@ namespace GlobalPayments.Api.Terminals {
         SERIAL,
         TCP_IP,
         SSL_TCP,
-        HTTP
+        HTTP,
+        MIC
     }
 
     public enum BaudRate {
@@ -100,6 +101,12 @@ namespace GlobalPayments.Api.Terminals {
                     throw new ApiException("IpAddress is required for TCP or HTTP communication modes.");
                 if(string.IsNullOrEmpty(Port))
                     throw new ApiException("Port is required for TCP or HTTP communication modes.");
+            }
+
+            if (ConnectionMode == ConnectionModes.MIC) {
+                if (GatewayConfig == null) {
+                    throw new ApiException("gateway Config is required for the Meet In the Cloud Service.");
+                }
             }
         }
     }

@@ -4,8 +4,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum PayLinkStatus
-    {
+    public enum PayLinkStatus {
         ACTIVE,
         INACTIVE,
         CLOSED,

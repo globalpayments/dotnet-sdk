@@ -1,6 +1,5 @@
 ﻿namespace GlobalPayments.Api.Entities {
-    public enum PhoneNumberType
-    {
+    public enum PhoneNumberType {
         Home,
         Work,
         Shipping,

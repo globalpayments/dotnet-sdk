@@ -18,15 +18,15 @@ namespace GlobalPayments.Api.Gateways {
         public string SecretApiKey { get; set; }
         public string DeveloperId { get; set; }
         public string VersionNumber { get; set; }
-        public bool SupportsHostedPayments { get { return false; } }
+        public bool SupportsHostedPayments => false;
         public string UniqueDeviceId { get; set; }
         public string SDKNameVersion { get; set; }
+        public bool SupportsOpenBanking => false;
 
-        public bool SupportsOpenBanking() {
-            return false;
-        }
+
         public PorticoConnector() {
         }
+
 
         #region processing
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {

@@ -123,12 +123,17 @@ namespace GlobalPayments.Api.Builders {
         public TransactionReportBuilder(ReportType type) : base(type) { }
 
         protected override void SetupValidations() {
+            
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE 
+            
             Validations.For(ReportType.TransactionDetail)
                 .Check(() => TransactionId).IsNotNull();
 
             Validations.For(ReportType.Activity).Check(() => TransactionId).IsNull();
             Validations.For(ReportType.DocumentDisputeDetail).Check(() => DisputeDocumentId).IsNotNull();
             Validations.For(ReportType.PayLinkDetail).Check(() => PayLinkId).IsNotNull();
+
+            #endregion
         }
     }
 }

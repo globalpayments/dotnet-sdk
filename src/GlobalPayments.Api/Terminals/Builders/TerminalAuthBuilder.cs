@@ -227,23 +227,31 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         protected override void SetupValidations() {
-            Validations.For(TransactionType.Sale | TransactionType.Auth).Check(() => Amount).IsNotNull();
+
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE            
+            
+            Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
+            Validations.For(PaymentMethodType.EBT).With(TransactionType.Balance)
+                .When(() => Currency).IsNotNull()
+                .Check(() => Currency).DoesNotEqual(CurrencyType.VOUCHER);
+            Validations.For(PaymentMethodType.EBT).With(TransactionType.Refund).Check(() => AllowDuplicates).Equals(false);
+            Validations.For(PaymentMethodType.EBT).With(TransactionType.BenefitWithdrawal).Check(() => AllowDuplicates).Equals(false);
+
+            #endregion
+
+            Validations.For(TransactionType.Sale).Check(() => Amount).IsNotNull();
+            Validations.For(TransactionType.Auth).Check(() => Amount).IsNotNull();
+
             Validations.For(TransactionType.Refund).Check(() => Amount).IsNotNull();
             Validations.For(TransactionType.Refund)
                 .With(PaymentMethodType.Credit)
                 .When(() => TransactionId).IsNotNull()
-                .Check(() => AuthCode).IsNotNull();
-            Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
-            Validations.For(TransactionType.AddValue).Check(() => Amount).IsNotNull();
-
-            Validations.For(PaymentMethodType.EBT).With(TransactionType.Balance)
-                .When(() => Currency).IsNotNull()
-                .Check(() => Currency).DoesNotEqual(CurrencyType.VOUCHER);
+                .Check(() => AuthCode).IsNotNull();            
+            Validations.For(TransactionType.AddValue).Check(() => Amount).IsNotNull();            
             Validations.For(TransactionType.BenefitWithdrawal)
                 .When(() => Currency).IsNotNull()
                 .Check(() => Currency).Equals(CurrencyType.CASH_BENEFITS);
-            Validations.For(PaymentMethodType.EBT).With(TransactionType.Refund).Check(() => AllowDuplicates).Equals(false);
-            Validations.For(PaymentMethodType.EBT).With(TransactionType.BenefitWithdrawal).Check(() => AllowDuplicates).Equals(false);
+            
         }
     }
 }

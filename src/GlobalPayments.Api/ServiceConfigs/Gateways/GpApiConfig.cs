@@ -36,6 +36,10 @@ namespace GlobalPayments.Api {
         /// </summary>
         public string Country { get; set; } = "US";
         /// <summary>
+        /// Three letter ISO currency code for use with Card Present device processing
+        /// </summary>
+        public string DeviceCurrency { get; set; } = "USD";
+        /// <summary>
         /// The list of the permissions the integrator want the access token to have.
         /// </summary>
         public string[] Permissions { get; set; }
@@ -64,7 +68,9 @@ namespace GlobalPayments.Api {
 
         internal override void ConfigureContainer(ConfiguredServices services) {
             if (string.IsNullOrEmpty(ServiceUrl)) {
-                if (Environment.Equals(Entities.Environment.TEST))
+                if (Environment.Equals(Entities.Environment.QA))
+                    ServiceUrl = ServiceEndpoints.GP_API_QA;
+                else if (Environment.Equals(Entities.Environment.TEST))
                     ServiceUrl = ServiceEndpoints.GP_API_TEST;
                 else
                     ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION;

@@ -14,6 +14,6 @@ namespace GlobalPayments.Api.Entities {
         [Map(Target.GP_API, "MAINTAIN_PAYMENT_METHOD")]
         MaintainPaymentMethod,
         [Map(Target.GP_API, "MAINTAIN_PAYMENT_VERIFICATION")]
-        MaintainPaymentVerification,
+        MaintainPaymentVerification
     }
 }

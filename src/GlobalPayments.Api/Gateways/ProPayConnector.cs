@@ -42,7 +42,7 @@ namespace GlobalPayments.Api.Gateways {
         private void UpdateGatewaySettings<T>(PayFacBuilder<T> builder) where T : class {
             var certTransactions = new List<TransactionType>()
             {
-                TransactionType.EditAccount,
+                TransactionType.Edit,
                 TransactionType.ObtainSSOKey,
                 TransactionType.UpdateBankAccountOwnership,
                 TransactionType.AddFunds,
@@ -73,9 +73,9 @@ namespace GlobalPayments.Api.Gateways {
 
         public string MapRequestType<T>(PayFacBuilder<T> builder) where T : class {
             switch (builder.TransactionType) {
-                case TransactionType.CreateAccount:
+                case TransactionType.Create:
                     return "01";
-                case TransactionType.EditAccount:
+                case TransactionType.Edit:
                     return "42";
                 case TransactionType.ResetPassword:
                     return "32";
@@ -83,7 +83,7 @@ namespace GlobalPayments.Api.Gateways {
                     return "39";
                 case TransactionType.UpdateBeneficialOwnership:
                     return "44";
-                case TransactionType.DisownAccount:
+                case TransactionType.Deactivate:
                     return "41";
                 case TransactionType.UploadDocumentChargeback:
                     return "46";
@@ -105,7 +105,7 @@ namespace GlobalPayments.Api.Gateways {
                     return "02";
                 case TransactionType.SpendBack:
                     return "11";
-                case TransactionType.ReverseSplitPay:
+                case TransactionType.Reversal:
                     return "43";
                 case TransactionType.SplitFunds:
                     return "16";
@@ -115,8 +115,10 @@ namespace GlobalPayments.Api.Gateways {
                         return "19";
                     // If the TransactionModifier isn't "Additional" then it is either "None" or an unsupported value that should be treated as "None"
                     return "13";
-                case TransactionType.GetAccountBalance:
+                case TransactionType.Balance:
                     return "14";
+                case TransactionType.OrderDevice:
+                    return "430";
                 default:
                     throw new UnsupportedTransactionException();
             }
@@ -375,6 +377,12 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "externalId", builder.ExternalID);
             xml.SubElement(xmlTrans, "recAccntNum", builder.ReceivingAccountNumber);
             xml.SubElement(xmlTrans, "amount", builder.Amount);
+
+            xml.SubElement(xmlTrans, "gatewayTransactionId", builder.GatewayTransactionId);
+            xml.SubElement(xmlTrans, "globaltransId", builder.GlobaltransId);
+            xml.SubElement(xmlTrans, "globalTransSource", builder.GlobalTransSource);
+            xml.SubElement(xmlTrans, "cardBrandTransactionId", builder.CardBrandTransactionId);
+
             if (builder.AllowPending != null)
                 xml.SubElement(xmlTrans, "allowPending", builder.AllowPending == true ? "Y" : "N");
             xml.SubElement(xmlTrans, "password", builder.Password);
@@ -438,6 +446,10 @@ namespace GlobalPayments.Api.Gateways {
                 HydrateSSORequestData(xml, xmlTrans, builder.SSORequestData);
             }
 
+            if (builder.OrderDevice != null) {
+                HydrateOrderDeviceData(xml, xmlTrans, builder.OrderDevice);
+            }
+
             HydrateBankAccountOwnershipData(xml, xmlTrans, builder);
 
             xml.SubElement(xmlTrans, "ccAmount", builder.CCAmount);
@@ -466,6 +478,13 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "state", userPersonalData.UserAddress.State);
             xml.SubElement(xmlTrans, "zip", userPersonalData.UserAddress.PostalCode);
             xml.SubElement(xmlTrans, "country", userPersonalData.UserAddress.Country);
+
+            xml.SubElement(xmlTrans, "IpSignup", userPersonalData.IpSignup);
+            xml.SubElement(xmlTrans, "USCitizen", userPersonalData.USCitizen == true ? "true" : userPersonalData.USCitizen == false ? "false" : "");
+            xml.SubElement(xmlTrans, "bOAttestation", userPersonalData.BOAttestation == true ? "true" : userPersonalData.BOAttestation == false ? "false" : "");
+            xml.SubElement(xmlTrans, "TermsAcceptanceIP", userPersonalData.TermsAcceptanceIP);
+            xml.SubElement(xmlTrans, "TermsAcceptanceTimeStamp", userPersonalData.TermsAcceptanceTimeStamp);
+            xml.SubElement(xmlTrans, "TermsVersion", userPersonalData.TermsVersion == null ? "" : userPersonalData.TermsVersion.ToString());
         }
 
         private void HydrateBusinessData(ElementTree xml, Element xmlTrans, BusinessData businessData) {
@@ -478,19 +497,21 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "MonthlyBankCardVolume", businessData.MonthlyBankCardVolume);
             xml.SubElement(xmlTrans, "AverageTicket", businessData.AverageTicket);
             xml.SubElement(xmlTrans, "HighestTicket", businessData.HighestTicket);
+            xml.SubElement(xmlTrans, "BusinessType", businessData.BusinessType);
             xml.SubElement(xmlTrans, "BusinessAddress", businessData.BusinessAddress.StreetAddress1);
             xml.SubElement(xmlTrans, "BusinessAddress2", businessData.BusinessAddress.StreetAddress2);
             xml.SubElement(xmlTrans, "BusinessCity", businessData.BusinessAddress.City);
             xml.SubElement(xmlTrans, "BusinessCountry", businessData.BusinessAddress.Country);
             xml.SubElement(xmlTrans, "BusinessState", businessData.BusinessAddress.State);
-            xml.SubElement(xmlTrans, "BusinessZip", businessData.BusinessAddress.PostalCode);
+            xml.SubElement(xmlTrans, "BusinessZip", businessData.BusinessAddress.PostalCode);            
         }
 
         private void HydrateBankDetails<T>(ElementTree xml, Element xmlTrans, PayFacBuilder<T> builder) where T : class {
             if (builder.CreditCardInformation != null) {
-                xml.SubElement(xmlTrans, "NameOnCard", builder.CreditCardInformation.CardHolderName);
+                xml.SubElement(xmlTrans, "ccName", builder.CreditCardInformation.CardHolderName);
                 xml.SubElement(xmlTrans, "ccNum", builder.CreditCardInformation.Number);
                 xml.SubElement(xmlTrans, "expDate", builder.CreditCardInformation.ShortExpiry);
+                xml.SubElement(xmlTrans, "CVV2", builder.CreditCardInformation.Cvn);
             }
 
             if (builder.ACHInformation != null) {
@@ -692,6 +713,23 @@ namespace GlobalPayments.Api.Gateways {
             xml.SubElement(xmlTrans, "ReferrerUrl", ssoRequestData.ReferrerURL);
             xml.SubElement(xmlTrans, "IpAddress", ssoRequestData.IPAddress);
             xml.SubElement(xmlTrans, "IpSubnetMask", ssoRequestData.IPSubnetMask);
+        }
+
+        private void HydrateOrderDeviceData(ElementTree xml, Element xmlTrans, OrderDevice orderDeviceData ) {
+            xml.SubElement(xmlTrans, "accntNum", orderDeviceData.AccountNum.ToString());
+            xml.SubElement(xmlTrans, "shipTo", orderDeviceData.ShipTo);
+            xml.SubElement(xmlTrans, "shipToContact", orderDeviceData.ShipToContact);
+            xml.SubElement(xmlTrans, "shipToAddress", orderDeviceData.ShipToAddress);
+            xml.SubElement(xmlTrans, "shipToAddress2", orderDeviceData.ShipToAddress);
+            xml.SubElement(xmlTrans, "shipToCity", orderDeviceData.ShipToCity);
+            xml.SubElement(xmlTrans, "shipToState", orderDeviceData.ShipToState);
+            xml.SubElement(xmlTrans, "shipToZip", orderDeviceData.ShipToZip);
+            xml.SubElement(xmlTrans, "shipToPhone", orderDeviceData.ShipToPhone);
+            xml.SubElement(xmlTrans, "cardholderName", orderDeviceData.CardholderName);
+            xml.SubElement(xmlTrans, "CcNum", orderDeviceData.CcNum);
+            xml.SubElement(xmlTrans, "ExpDate", orderDeviceData.ExpDate);
+            xml.SubElement(xmlTrans, "CVV2", orderDeviceData.CVV2);
+            xml.SubElement(xmlTrans, "billingZip", orderDeviceData.BillingZip);
         }
 
         private void HydrateAccountRenewDetails(ElementTree xml, Element xmlTrans, RenewAccountData renewalAccountData) {

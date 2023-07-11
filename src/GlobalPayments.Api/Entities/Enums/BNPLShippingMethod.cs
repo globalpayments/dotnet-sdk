@@ -4,10 +4,9 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities
 {
-    public enum BNPLShippingMethod
-    {
+    public enum BNPLShippingMethod {
          DELIVERY,
          COLLECTION,
-         EMAIL,
+         EMAIL
     }
 }

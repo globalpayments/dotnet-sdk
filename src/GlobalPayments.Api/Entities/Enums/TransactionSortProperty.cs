@@ -31,6 +31,6 @@ namespace GlobalPayments.Api.Entities {
         /// Only available for Settled Transactions report
         /// </summary>
         [Map(Target.GP_API, "DEPOSIT_ID")]
-        DepositId,
+        DepositId
     }
 }

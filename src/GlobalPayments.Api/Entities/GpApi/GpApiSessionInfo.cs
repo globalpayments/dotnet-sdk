@@ -3,6 +3,7 @@ using System;
 using System.Text;
 using System.Security.Cryptography;
 using System.Net.Http;
+using GlobalPayments.Api.Entities.GpApi;
 
 namespace GlobalPayments.Api.Entities {
     internal class GpApiSessionInfo {
@@ -29,7 +30,7 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
-        internal static GpApiRequest SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null, string[] permissions = null) {
+        internal static Request SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null, string[] permissions = null) {
             string nonce = DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
             
             var request = new JsonDoc()
@@ -41,14 +42,14 @@ namespace GlobalPayments.Api.Entities {
                 .Set("interval_to_expire", EnumConverter.GetMapping(Target.GP_API, intervalToExpire))
                 .Set("permissions", permissions);
 
-            return new GpApiRequest {
+            return new Request {
                 Verb = HttpMethod.Post,
-                Endpoint = "/accesstoken",
+                Endpoint = $"{GpApiRequest.ACCESS_TOKEN_ENDPOINT}",
                 RequestBody = request.ToString()
             };
         }
 
-        internal static GpApiRequest SignOut() {
+        internal static Request SignOut() {
             throw new Exception("SignOut not implemented");
 
             //return new PayrollRequest

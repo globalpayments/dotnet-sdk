@@ -4,6 +4,35 @@
 
 #### Enhancements
 
+- GP-API: Added integration examples using Hosted Fields (GP JS library), 3DS library
+
+#### Bug fixes:
+
+- GP-ECOM: Send the correct "message_version" in the initiate step on 3DS2
+
+## v5.2.0 (27/06/23)
+
+#### Enhancements
+
+- GP-API: UPA MiTC via GP-API.
+
+## v5.1.9 (15/06/23)
+
+#### Enhancements
+
+- GP-API: Improvements in the Request Builders, on GpApiRequest and TransactionType
+- GP-API Unit tests updates
+
+## v5.1.9 (06/06/23)
+
+#### Enhancements
+
+- Heartland Profac: Device ordering
+
+## v5.1.8 (11/05/23)
+
+#### Enhancements
+
 - GP-API: Manage fund transfers, splits and reverse splits in your partner network. 
     - https://developer.globalpay.com/api/transfers
     - https://developer.globalpay.com/api/transactions#/Split%20a%20Transaction%20Amount/splitTransaction

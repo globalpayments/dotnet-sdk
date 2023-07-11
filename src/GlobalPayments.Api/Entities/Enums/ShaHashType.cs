@@ -7,6 +7,6 @@ namespace GlobalPayments.Api.Entities.Enums
     public enum ShaHashType {
         SHA1,
         SHA256,
-        SHA512,
+        SHA512
     }
 }

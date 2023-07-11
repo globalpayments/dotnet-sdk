@@ -31,6 +31,6 @@ namespace GlobalPayments.Api.Entities {
         Funded,
 
         [Map(Target.GP_API, "REJECTED")]
-        Rejected,
+        Rejected
     }
 }

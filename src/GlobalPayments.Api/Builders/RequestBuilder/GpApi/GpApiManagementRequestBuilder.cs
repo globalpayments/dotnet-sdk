@@ -1,17 +1,18 @@
-﻿using GlobalPayments.Api.Builders;
+﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace GlobalPayments.Api.Entities
+namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
 {
-    internal class GpApiManagementRequestBuilder {
+    internal class GpApiManagementRequestBuilder : IRequestBuilder<ManagementBuilder> {
 
         private static Dictionary<string, List<string>> AllowedActions { get; set; }
                
-        internal static GpApiRequest BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
+        public Request BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
             GetAllowedActions();
 
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
@@ -33,9 +34,9 @@ namespace GlobalPayments.Api.Entities
                     .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
                     .Set("currency_conversion", builder.DccRateData?.DccId ?? null);
 
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/capture",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/capture",
                     RequestBody = data.ToString(),
                 };
             }
@@ -45,9 +46,9 @@ namespace GlobalPayments.Api.Entities
                     .Set("currency_conversion", builder.DccRateData == null ? null : new JsonDoc()
                         .Set("id", builder.DccRateData?.DccId));
 
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/refund",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/refund",
                     RequestBody = data.ToString(),
                 };
             }
@@ -60,15 +61,15 @@ namespace GlobalPayments.Api.Entities
 
                 if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Account_Funds) {
                     if (!string.IsNullOrEmpty(builder.FundsData?.MerchantId)) {
-                        endpoint = $"/merchants/{builder.FundsData.MerchantId}";
+                        endpoint = $"{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{builder.FundsData.MerchantId}";
                     }
-                    endpoint += $"/transfers/{builder.TransactionId}/reversal";
+                    endpoint += $"{GpApiRequest.TRANSFER_ENDPOINT}/{builder.TransactionId}/reversal";
                 }
                 else {
-                    endpoint += $"/transactions/{builder.TransactionId}/reversal";
+                    endpoint += $"{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/reversal";
                 }
 
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
                     Endpoint = endpoint,
                     RequestBody = data.ToString(),
@@ -90,36 +91,36 @@ namespace GlobalPayments.Api.Entities
                     .Set("name", !string.IsNullOrEmpty(cardData.CardHolderName) ? cardData.CardHolderName : null)
                     .Set("card", card);
 
-                return new GpApiRequest {
+                return new Request {
                     Verb = new HttpMethod("PATCH"),
-                    Endpoint = $"{merchantUrl}/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYMENT_METHODS_ENDPOINT}/{(builder.PaymentMethod as ITokenizable).Token}",
                     RequestBody = data.ToString(),
                 };
             }
             else if (builder.TransactionType == TransactionType.TokenDelete && builder.PaymentMethod is ITokenizable) {
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Delete,
-                    Endpoint = $"{merchantUrl}/payment-methods/{(builder.PaymentMethod as ITokenizable).Token}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYMENT_METHODS_ENDPOINT}/{(builder.PaymentMethod as ITokenizable).Token}",
                 };
             }
             else if (builder.TransactionType == TransactionType.DisputeAcceptance) {
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/disputes/{builder.DisputeId}/acceptance",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.DISPUTES_ENDPOINT}/{builder.DisputeId}/acceptance",
                 };
             }
             else if (builder.TransactionType == TransactionType.DisputeChallenge) {
                 var data = new JsonDoc()
                     .Set("documents", builder.DisputeDocuments);
 
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/disputes/{builder.DisputeId}/challenge",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.DISPUTES_ENDPOINT}/{builder.DisputeId}/challenge",
                     RequestBody = data.ToString(),
                 };
             }
             else if (builder.TransactionType == TransactionType.BatchClose) {
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
                     Endpoint = $"{merchantUrl}/batches/{builder.BatchReference}",
                 };
@@ -154,9 +155,9 @@ namespace GlobalPayments.Api.Entities
                     }
                 }
 
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/reauthorization",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/reauthorization",
                     RequestBody = data.ToString(),
                 };
             }
@@ -176,10 +177,10 @@ namespace GlobalPayments.Api.Entities
                     var data = new JsonDoc()
                         .Set("payment_method", payment_method);
 
-                    return new GpApiRequest
+                    return new Request
                     {
                         Verb = HttpMethod.Post,
-                        Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/confirmation",
+                        Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/confirmation",
                         RequestBody = data.ToString(),
                     };
                 }
@@ -215,10 +216,10 @@ namespace GlobalPayments.Api.Entities
                       payload.Set("lodging", lodgingData);
                     }                    
                 }
-                return new GpApiRequest
+                return new Request
                 {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/incremental",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/incremental",
                     RequestBody = payload.ToString(),
                 };
             }
@@ -235,10 +236,10 @@ namespace GlobalPayments.Api.Entities
                         .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
                         .Set("payment_method", payment_method);
 
-                    return new GpApiRequest
+                    return new Request
                     {
                         Verb = HttpMethod.Post,
-                        Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/adjustment",
+                        Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/adjustment",
                         RequestBody = payload.ToString(),
                     };
                 
@@ -264,10 +265,10 @@ namespace GlobalPayments.Api.Entities
                     .Set("expiration_date", payLinkData.ExpirationDate ?? null)
                     .Set("images", payLinkData.Images ?? null);
 
-                return new GpApiRequest
+                return new Request
                 {
                     Verb = new HttpMethod("PATCH"),
-                    Endpoint = $"{merchantUrl}/links/{builder.PaymentLinkId}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYLINK_ENDPOINT}/{builder.PaymentLinkId}",
                     RequestBody = payload.ToString(),
                 };
 
@@ -279,10 +280,10 @@ namespace GlobalPayments.Api.Entities
 
                 var endpoint = builder.TransactionType == TransactionType.Release ? "release" : builder.TransactionType == TransactionType.Hold ? "hold" : null;
 
-                return new GpApiRequest
+                return new Request
                 {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/transactions/{builder.TransactionId}/{endpoint}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/{endpoint}",
                     RequestBody = payload.ToString(),
                 };
             }
@@ -308,9 +309,9 @@ namespace GlobalPayments.Api.Entities
                     endpoint = $"/merchants/{builder.FundsData.MerchantId}";
                 }
 
-                return new GpApiRequest {
+                return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{endpoint}/transactions/{builder.TransactionId}/split",
+                    Endpoint = $"{endpoint}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/split",
                     RequestBody = transfer.ToString(),
                 };
             }

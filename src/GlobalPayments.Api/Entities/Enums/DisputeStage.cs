@@ -28,6 +28,6 @@ namespace GlobalPayments.Api.Entities {
         Compliance,
 
         [Map(Target.GP_API, "GOODFAITH")]
-        Goodfaith,
+        Goodfaith
     }
 }

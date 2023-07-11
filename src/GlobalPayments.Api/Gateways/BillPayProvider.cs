@@ -11,19 +11,20 @@ namespace GlobalPayments.Api.Gateways {
         /// Gets or sets the merchant credentials to be used in each SOAP request
         /// </summary>
         public Credentials Credentials { get; set; }
+        public IRequestLogger RequestLogger { get; set; }
+        public IWebProxy WebProxy { get; set; }
 
         /// <summary>
         /// Gets or sets whether or not the bill data is loaded into our system.
         /// </summary>
         public bool IsBillDataHosted { get; set; }
-
         public int Timeout { get; set; }
-
         public string ServiceUrl { get; set; }
 
-        public IRequestLogger RequestLogger { get; set; }
-
-        public IWebProxy WebProxy { get; set; }
+        public bool SupportsOpenBanking => false;
+        public bool SupportsHostedPayments => true;
+        public bool SupportsRetrieval => false;
+        public bool SupportsUpdatePaymentDetails => false;
 
         /// <summary>
         /// Invokes a request against the BillPay gateway using the AuthorizationBuilder
@@ -72,16 +73,6 @@ namespace GlobalPayments.Api.Gateways {
 
         public string SerializeRequest(AuthorizationBuilder builder) {
             throw new UnsupportedTransactionException();
-        }
-
-        public bool SupportsHostedPayments => true;
-
-        public bool SupportsRetrieval => false;
-
-        public bool SupportsUpdatePaymentDetails => false;
-
-        public bool SupportsOpenBanking() {
-            return false;
         }
     }
 }

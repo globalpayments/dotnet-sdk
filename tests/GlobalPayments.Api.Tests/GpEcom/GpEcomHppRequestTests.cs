@@ -246,7 +246,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithClientTransactionId("My Legal Entity")
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"COMMENT1\":\"Mobile Channel\",\"CUST_NUM\":\"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\",\"PROD_ID\":\"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\",\"VAR_REF\":\"My Legal Entity\",\"HPP_LANG\":\"EN\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_PAYMENT_BUTTON\":\"Place Order\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"061609f85a8e0191dc7f487f8278e71898a2ee2d\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"COMMENT1\":\"Mobile Channel\",\"CUST_NUM\":\"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\",\"PROD_ID\":\"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"VAR_REF\":\"My Legal Entity\",\"HPP_LANG\":\"EN\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_PAYMENT_BUTTON\":\"Place Order\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"061609f85a8e0191dc7f487f8278e71898a2ee2d\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -276,7 +276,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"7116c49826367c6513efdc0cc81e243b8095d78f\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"7116c49826367c6513efdc0cc81e243b8095d78f\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -307,7 +307,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"4dcf4e5e2d43855fe31cdc097e985a895868563e\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"4dcf4e5e2d43855fe31cdc097e985a895868563e\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -338,7 +338,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"5fe76a45585d9793fd162ab8a3cd4a42991417df\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"5fe76a45585d9793fd162ab8a3cd4a42991417df\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -370,7 +370,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"f0cf097fe769a6a5a6254eee631e51709ba34c90\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"0\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"f0cf097fe769a6a5a6254eee631e51709ba34c90\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -400,7 +400,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"0\",\"PAYER_EXIST\":\"0\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"7116c49826367c6513efdc0cc81e243b8095d78f\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"0\",\"PAYER_EXIST\":\"0\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"7116c49826367c6513efdc0cc81e243b8095d78f\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -431,7 +431,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"4dcf4e5e2d43855fe31cdc097e985a895868563e\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"4dcf4e5e2d43855fe31cdc097e985a895868563e\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -462,7 +462,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"5fe76a45585d9793fd162ab8a3cd4a42991417df\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"5fe76a45585d9793fd162ab8a3cd4a42991417df\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -494,7 +494,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"0\",\"PAYER_EXIST\":\"1\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"f0cf097fe769a6a5a6254eee631e51709ba34c90\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"OFFER_SAVE_CARD\":\"0\",\"PAYER_EXIST\":\"1\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"f0cf097fe769a6a5a6254eee631e51709ba34c90\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -525,7 +525,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"HPP_SELECT_STORED_CARD\":\"376a2598-412d-4805-9f47-c177d5605853\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"4dcf4e5e2d43855fe31cdc097e985a895868563e\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"HPP_SELECT_STORED_CARD\":\"376a2598-412d-4805-9f47-c177d5605853\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"4dcf4e5e2d43855fe31cdc097e985a895868563e\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -557,7 +557,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"HPP_SELECT_STORED_CARD\":\"376a2598-412d-4805-9f47-c177d5605853\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"f0cf097fe769a6a5a6254eee631e51709ba34c90\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"HPP_SELECT_STORED_CARD\":\"376a2598-412d-4805-9f47-c177d5605853\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"f0cf097fe769a6a5a6254eee631e51709ba34c90\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -995,7 +995,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .Serialize();
 
             // var expectedJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"CURRENCY\": \"EUR\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"1384392a30abbd7a1993e33c308bf9a2bd354d48\", \"AUTO_SETTLE_FLAG\": \"1\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"HPP_VERSION\": \"2\", \"CARD_STORAGE_ENABLE\": \"1\", \"PMT_REF\": \"ca46344d-4292-47dc-9ced-e8a42ce66977\", \"PAYER_REF\": \"376a2598-412d-4805-9f47-c177d5605853\", \"HPP_FRAUDFILTER_MODE\": \"PASSIVE\"}";
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"1384392a30abbd7a1993e33c308bf9a2bd354d48\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"1384392a30abbd7a1993e33c308bf9a2bd354d48\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -1025,7 +1025,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"c10b55c16276366ced59174cbab20a6eeeec16c9\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PAYER_REF\":\"376a2598-412d-4805-9f47-c177d5605853\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"c10b55c16276366ced59174cbab20a6eeeec16c9\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -1055,7 +1055,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"73236b35e253215380a9bf2f7a1f11ac23204224\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"73236b35e253215380a9bf2f7a1f11ac23204224\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -1085,7 +1085,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"5fe76a45585d9793fd162ab8a3cd4a42991417df\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"5fe76a45585d9793fd162ab8a3cd4a42991417df\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 
@@ -1116,7 +1116,8 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
             var shippingAddress = new Address {
                 Country = "GB",
-                PostalCode = "654|123"
+                PostalCode = "654",
+                StreetAddress1 = "123"
             };
 
             var testHostedPaymentData = new HostedPaymentData {
@@ -1137,7 +1138,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"RETURN_TSS\":\"1\",\"DCC_ENABLE\":\"1\",\"CUST_NUM\":\"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\",\"HPP_SELECT_STORED_CARD\":\"376a2598-412d-4805-9f47-c177d5605853\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"PROD_ID\":\"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\",\"SHIPPING_CODE\":\"654123|\",\"SHIPPING_CO\":\"GB\",\"HPP_SHIPPING_POSTALCODE\":\"654|123\",\"HPP_SHIPPING_COUNTRY\":\"826\",\"BILLING_CODE\":\"50001|\",\"BILLING_CO\":\"US\",\"HPP_BILLING_POSTALCODE\":\"50001\",\"HPP_BILLING_COUNTRY\":\"840\",\"HPP_LANG\":\"EN\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_PAYMENT_BUTTON\":\"Place Order\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"1384392a30abbd7a1993e33c308bf9a2bd354d48\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"RETURN_TSS\":\"1\",\"DCC_ENABLE\":\"1\",\"CUST_NUM\":\"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\",\"HPP_SELECT_STORED_CARD\":\"376a2598-412d-4805-9f47-c177d5605853\",\"OFFER_SAVE_CARD\":\"1\",\"PAYER_EXIST\":\"1\",\"PMT_REF\":\"ca46344d-4292-47dc-9ced-e8a42ce66977\",\"PROD_ID\":\"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"SHIPPING_CODE\":\"654|123\",\"SHIPPING_CO\":\"GB\",\"HPP_SHIPPING_STREET1\": \"123\",\"HPP_SHIPPING_POSTALCODE\":\"654\",\"HPP_SHIPPING_COUNTRY\":\"826\",\"BILLING_CODE\":\"50001|\",\"BILLING_CO\":\"US\",\"HPP_BILLING_POSTALCODE\":\"50001\",\"HPP_BILLING_COUNTRY\":\"840\",\"HPP_LANG\":\"EN\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_PAYMENT_BUTTON\":\"Place Order\",\"CARD_STORAGE_ENABLE\":\"1\",\"HPP_FRAUDFILTER_MODE\":\"PASSIVE\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"1384392a30abbd7a1993e33c308bf9a2bd354d48\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
         
@@ -1192,7 +1193,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(testHostedPaymentData)
                 .Serialize();
 
-            var expectedJson = "{\"MERCHANT_ID\":\"heartlandgpsandbox\",\"ACCOUNT\":\"hpp\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"HPP_CUSTOMER_COUNTRY\":\"DE\",\"HPP_CUSTOMER_FIRSTNAME\":\"James\",\"HPP_CUSTOMER_LASTNAME\":\"Mason\",\"HPP_NAME\":\"James Mason\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/returnUrl\",\"HPP_TX_STATUS_URL\":\"https://www.example.com/statusUrl\",\"PM_METHODS\":\"ASTROPAY_DIRECT|AURA|BALOTO_CASH|BANAMEX\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"647d071bdcb8d9da5f29688a787863a39dc51ef3\"}";
+            var expectedJson = "{\"MERCHANT_ID\":\"heartlandgpsandbox\",\"ACCOUNT\":\"hpp\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"HPP_CUSTOMER_COUNTRY\":\"DE\",\"HPP_CUSTOMER_FIRSTNAME\":\"James\",\"HPP_CUSTOMER_LASTNAME\":\"Mason\",\"HPP_NAME\":\"James Mason\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/returnUrl\",\"HPP_TX_STATUS_URL\":\"https://www.example.com/statusUrl\",\"PM_METHODS\":\"ASTROPAY_DIRECT|AURA|BALOTO_CASH|BANAMEX\",\"HPP_VERSION\":\"2\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"SHA1HASH\":\"647d071bdcb8d9da5f29688a787863a39dc51ef3\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
 

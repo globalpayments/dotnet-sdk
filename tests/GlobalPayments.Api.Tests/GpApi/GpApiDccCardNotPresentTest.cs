@@ -302,7 +302,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         private decimal GetDccAmount(Transaction dccDetails) {
-            var rate = dccDetails.DccRateData.CardHolderRate.Value;
+            var rate = dccDetails.DccRateData.CardHolderRate.GetValueOrDefault(0);
             return Amount * rate;
         }
     }

@@ -29,21 +29,56 @@ namespace GlobalPayments.Api.Gateways {
         public string Region { get; set; }
         public string AccountCredential { get; set; }
         public string AppSecret { get; set; }
-        public bool SupportsHostedPayments { get { return true; } }
+        public bool SupportsHostedPayments => true;
+        public bool SupportsOpenBanking => false;
 
-        public bool SupportsOpenBanking() {
-            return false;
-        }
-
-        public string SerializeRequest(AuthorizationBuilder builder) {
-            throw new NotImplementedException();
-        }
 
         internal TransactionApiConnector() {
             // Set required api version header
             Headers["X-GP-Api-Key"] = "qeG6EWZOiAwk4jsiHzsh2BN8VkN2rdAs";
             Headers["X-GP-Version"] = "2021-04-08";
         }
+
+
+        #region Interface Implementations
+        public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
+            SignIn();
+            TransactionApiRequest request = TransactionApiAuthorizationRequestBuilder.BuildRequest(builder, this);
+
+            if (request != null)
+            {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                return TransactionApiMapping.MapResponse(response, builder.TransactionType);
+            }
+            return null;
+        }
+
+        public Transaction ManageTransaction(ManagementBuilder builder) {
+            SignIn();
+            TransactionApiRequest request = TransactionApiManagementRequestBuilder.BuildRequest(builder, this);
+
+            if (request != null) {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                return TransactionApiMapping.MapResponse(response, builder.TransactionType,((TransactionReference)builder.PaymentMethod).OriginalTransactionType);
+            }
+            return null;
+        }
+
+        public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
+            SignIn();
+            TransactionApiRequest request = TransactionApiReportRequestBuilder.BuildRequest(builder, this);
+
+            if (request != null) {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                return TransactionApiMapping.MapReportResponse<T>(response, builder.ReportType);
+            }
+            return null;
+        }
+
+        public string SerializeRequest(AuthorizationBuilder builder) {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public void SignIn() {
                 AccessToken = GetAccessToken();
@@ -83,40 +118,6 @@ namespace GlobalPayments.Api.Gateways {
                 throw new GatewayException($"Status Code: {response.StatusCode}", responseMessage: response.RawResponse);
             }
             return response.RawResponse;
-        }
-
-        public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
-            SignIn();
-            TransactionApiRequest request = TransactionApiAuthorizationRequestBuilder.BuildRequest(builder, this);
-
-            if (request != null)
-            {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
-                return TransactionApiMapping.MapResponse(response, builder.TransactionType);
-            }
-            return null;
-        }
-
-        public Transaction ManageTransaction(ManagementBuilder builder) {
-            SignIn();
-            TransactionApiRequest request = TransactionApiManagementRequestBuilder.BuildRequest(builder, this);
-
-            if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
-                return TransactionApiMapping.MapResponse(response, builder.TransactionType,((TransactionReference)builder.PaymentMethod).OriginalTransactionType);
-            }
-            return null;
-        }
-
-        public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
-            SignIn();
-            TransactionApiRequest request = TransactionApiReportRequestBuilder.BuildRequest(builder, this);
-
-            if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
-                return TransactionApiMapping.MapReportResponse<T>(response, builder.ReportType);
-            }
-            return null;
         }
     }
 }

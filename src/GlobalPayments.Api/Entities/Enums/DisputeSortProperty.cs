@@ -31,6 +31,6 @@ namespace GlobalPayments.Api.Entities {
         FromAdjustmentTimeCreated,
 
         [Map(Target.GP_API, "to_adjustment_time_created")]
-        ToAdjustmentTimeCreated,
+        ToAdjustmentTimeCreated
     }
 }

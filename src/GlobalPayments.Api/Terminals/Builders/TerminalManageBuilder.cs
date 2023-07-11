@@ -99,9 +99,17 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         protected override void SetupValidations() {
+          
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE          
+
+            Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
+
+            #endregion
+
+
             Validations.For(TransactionType.Capture).Check(() => TransactionId).IsNotNull();
             Validations.For(TransactionType.Void).When(() => ClientTransactionId).IsNull().Check(() => TransactionId).IsNotNull();
-            Validations.For(PaymentMethodType.Gift).Check(() => Currency).IsNotNull();
+            
         }
     }
 }

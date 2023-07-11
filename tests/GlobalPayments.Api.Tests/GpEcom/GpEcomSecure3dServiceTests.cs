@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text;
+using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
@@ -153,6 +153,130 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 else Assert.Fail("Signature verification Assert.Failed.");
             }
             else Assert.Fail("Card not enrolled.");
+        }
+        
+        [TestMethod]
+        public void FullCycle_v2_FrictionlessCards() {
+            var pairs = new Dictionary<string, string> {
+                { "4263970000005262", "2.1.0" },
+                { "4222000006724235", "2.1.0" },
+                { "4222000006285344", "2.2.0" },
+                { "4222000009719489", "2.2.0" }
+            };
+
+            foreach (var cardSample in pairs) {
+                card.Number = cardSample.Key;
+                // check enrollment
+                var secureEcom = Secure3dService.CheckEnrollment(card)
+                    .Execute();
+                Assert.IsNotNull(secureEcom);
+
+                // create card data
+                card.ExpMonth = 12;
+                card.ExpYear = 2025;
+                card.CardHolderName = "John Smith";
+
+                if (secureEcom.Enrolled.Equals("True")) {
+                    Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+
+                    // initiate authentication
+                    ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                        .WithAmount(10.01m)
+                        .WithCurrency("GBP")
+                        //.WithChallengeRequestIndicator(ChallengeRequestIndicator.NO_PREFERENCE)
+                        .WithOrderCreateDate(DateTime.Now)
+                        .WithAddress(billingAddress, AddressType.Billing)
+                        .WithAddress(shippingAddress, AddressType.Shipping)
+                        .WithBrowserData(browserData)
+                        .Execute();
+                    
+                    Assert.IsNotNull(initAuth);
+                    Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
+                    Assert.AreEqual("AUTHENTICATION_SUCCESSFUL", initAuth.Status);
+                    Assert.IsFalse(initAuth.ChallengeMandated);
+                    Assert.IsNotNull(initAuth.AcsTransactionId);
+                    Assert.IsNotNull(initAuth.AcsReferenceNumber);
+                    Assert.IsNotNull(initAuth.AuthenticationValue);
+                    Assert.IsNotNull(initAuth.ServerTransactionId);
+                    Assert.AreEqual("05", initAuth.Eci);
+                    Assert.AreEqual(cardSample.Value, initAuth.AcsEndVersion);
+
+                    // get authentication data
+                    secureEcom = Secure3dService.GetAuthenticationData()
+                        .WithServerTransactionId(initAuth.ServerTransactionId)
+                        .Execute();
+                    card.ThreeDSecure = secureEcom;
+
+                    if (secureEcom.Status.Equals("AUTHENTICATION_SUCCESSFUL"))
+                    {
+                        Transaction response = card.Charge(10.01m)
+                            .WithCurrency("USD")
+                            .Execute();
+                        Assert.IsNotNull(response);
+                        Assert.AreEqual("00", response.ResponseCode);
+                    }
+                    else Assert.Fail("Signature verification Assert.Failed.");
+                }
+                else Assert.Fail("Card not enrolled.");
+            }
+        }
+        
+        [TestMethod]
+        public void FullCycle_v2_ChallengeRequiredCards() {
+            var pairs = new Dictionary<string, string> {
+                { "4012001038488884", "2.1.0" },
+                { "4222000001227408", "2.2.0" }
+            };
+
+            foreach (var cardSample in pairs) {
+                card.Number = cardSample.Key;
+
+                ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)
+                    .Execute(Secure3dVersion.Two);
+                Assert.IsNotNull(secureEcom);
+
+                if (secureEcom.Enrolled.Equals("True"))
+                {
+                    Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+
+                    // initiate authentication
+                    ThreeDSecure initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                        .WithAmount(250m)
+                        .WithCurrency("USD")
+                        .WithOrderCreateDate(DateTime.Now)
+                        .WithOrderId(secureEcom.OrderId)
+                        .WithAddress(billingAddress, AddressType.Billing)
+                        .WithAddress(shippingAddress, AddressType.Shipping)
+                        .WithMethodUrlCompletion(MethodUrlCompletion.NO)
+                        .WithBrowserData(browserData)
+                        .Execute();
+
+                    Assert.IsNotNull(initAuth);
+                    Assert.AreEqual("CHALLENGE_REQUIRED", initAuth.Status);
+                    Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
+                    Assert.IsNotNull(initAuth.AcsTransactionId);
+                    Assert.IsNotNull(initAuth.AcsReferenceNumber);
+                    Assert.IsNotNull(initAuth.AuthenticationType);
+                    Assert.IsNull(initAuth.Eci);
+                    Assert.AreEqual(cardSample.Value, initAuth.AcsEndVersion);
+
+                    // get authentication data
+                    secureEcom = Secure3dService.GetAuthenticationData()
+                        .WithServerTransactionId(initAuth.ServerTransactionId)
+                        .Execute();
+                    card.ThreeDSecure = secureEcom;
+
+                    if (secureEcom.Status.Equals("CHALLENGE_REQUIRED")) {
+                        Transaction response = card.Charge(10.01m)
+                            .WithCurrency("USD")
+                            .Execute();
+                        Assert.IsNotNull(response);
+                        Assert.AreEqual("00", response.ResponseCode);
+                    }
+                    else Assert.Fail("Signature verification failed.");
+                }
+                else Assert.Fail("Card not enrolled.");
+            }
         }
 
         [TestMethod]

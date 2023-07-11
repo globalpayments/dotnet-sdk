@@ -865,7 +865,7 @@ namespace GlobalPayments.Api.Builders {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
-            if (client.SupportsOpenBanking() && PaymentMethod is BankPayment) {
+            if (client.SupportsOpenBanking && PaymentMethod is BankPayment) {
             var obClient = ServicesContainer.Instance.GetOpenBanking(configName);
                 if (obClient != null && (obClient != client)) {
                     return obClient.ProcessOpenBanking(this);
@@ -893,41 +893,8 @@ namespace GlobalPayments.Api.Builders {
         }
 
         protected override void SetupValidations() {
-            Validations.For(TransactionType.Auth | TransactionType.Sale | TransactionType.Refund | TransactionType.AddValue)
-                .With(TransactionModifier.None)
-                .Check(() => Amount).IsNotNull()
-                .Check(() => Currency).IsNotNull()
-                .Check(() => PaymentMethod).IsNotNull();
-
-            Validations.For(TransactionType.Auth | TransactionType.Sale)
-                .With(TransactionModifier.HostedRequest)
-                .Check(() => Amount).IsNotNull()
-                .Check(() => Currency).IsNotNull();
-
-            Validations.For(TransactionType.Verify)
-                .With(TransactionModifier.HostedRequest)
-                .Check(() => Currency).IsNotNull();
-
-            Validations.For(TransactionType.Auth | TransactionType.Sale)
-                .With(TransactionModifier.Offline)
-                .Check(() => Amount).IsNotNull()
-                .Check(() => Currency).IsNotNull()
-                .Check(() => OfflineAuthCode).IsNotNull();
-
-            Validations.For(TransactionType.BenefitWithdrawal).With(TransactionModifier.CashBack)
-                .Check(() => Amount).IsNotNull()
-                .Check(() => Currency).IsNotNull()
-                .Check(() => PaymentMethod).IsNotNull();
-
-            Validations.For(TransactionType.Balance).Check(() => PaymentMethod).IsNotNull();
-
-            Validations.For(TransactionType.Alias)
-                .Check(() => AliasAction).IsNotNull()
-                .Check(() => Alias).IsNotNull();
-
-            Validations.For(TransactionType.Replace).Check(() => ReplacementCard).IsNotNull();
-
-            Validations.For(PaymentMethodType.Debit).When(() => ReversalReasonCode).IsNotNull().Check(() => TransactionType).Equals(TransactionType.Reversal);
+           
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE            
 
             Validations.For(PaymentMethodType.Debit | PaymentMethodType.Credit)
                 .When(() => HasEmvFallbackData).IsTrue()
@@ -937,11 +904,90 @@ namespace GlobalPayments.Api.Builders {
                 .When(() => TagData).IsNotNull()
                 .Check(() => HasEmvFallbackData).IsFalse();
 
-            Validations.For(TransactionType.Auth | TransactionType.Sale)
+            Validations.For(PaymentMethodType.Recurring)
+                .Check(() => ShippingAmt).IsNull();
+
+            Validations.For(PaymentMethodType.Debit)
+                .When(() => ReversalReasonCode).IsNotNull()
+                .Check(() => TransactionType).Equals(TransactionType.Reversal);
+
+            #endregion
+
+
+
+            Validations.For(TransactionType.Auth)
+                .With(TransactionModifier.None)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => PaymentMethod).IsNotNull();
+
+            Validations.For(TransactionType.Sale)
+                .With(TransactionModifier.None)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => PaymentMethod).IsNotNull();
+
+            Validations.For(TransactionType.Refund)
+                .With(TransactionModifier.None)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => PaymentMethod).IsNotNull();
+
+            Validations.For(TransactionType.AddValue)
+                .With(TransactionModifier.None)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => PaymentMethod).IsNotNull();
+
+            Validations.For(TransactionType.Auth)
+                .With(TransactionModifier.HostedRequest)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull();
+
+            Validations.For(TransactionType.Sale)
+                .With(TransactionModifier.HostedRequest)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull();
+
+            Validations.For(TransactionType.Verify)
+                .With(TransactionModifier.HostedRequest)
+                .Check(() => Currency).IsNotNull();
+
+            Validations.For(TransactionType.Auth)
+                .With(TransactionModifier.Offline)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => OfflineAuthCode).IsNotNull();
+
+            Validations.For(TransactionType.Sale)
+                .With(TransactionModifier.Offline)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => OfflineAuthCode).IsNotNull();
+
+            Validations.For(TransactionType.BenefitWithdrawal)
+                .With(TransactionModifier.CashBack)
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => PaymentMethod).IsNotNull();
+
+            Validations.For(TransactionType.Balance)
+                .Check(() => PaymentMethod).IsNotNull();
+
+            Validations.For(TransactionType.Alias)
+                .Check(() => AliasAction).IsNotNull()
+                .Check(() => Alias).IsNotNull();
+
+            Validations.For(TransactionType.Replace)
+                .Check(() => ReplacementCard).IsNotNull();           
+
+            Validations.For(TransactionType.Auth)
                 .With(TransactionModifier.EncryptedMobile)
                 .Check(() => PaymentMethod).IsNotNull();
 
-            Validations.For(PaymentMethodType.Recurring).Check(() => ShippingAmt).IsNull();
+            Validations.For(TransactionType.Sale)
+                .With(TransactionModifier.EncryptedMobile)
+                .Check(() => PaymentMethod).IsNotNull();            
         }
 
         /// <summary>

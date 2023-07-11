@@ -4,8 +4,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum RiskAssessmentStatus
-    {
+    public enum RiskAssessmentStatus {
         ACCEPTED,
         REJECTED,
         CHALLENGE,

@@ -6,6 +6,6 @@ namespace GlobalPayments.Api.Entities {
         Single,
 
         [Map(Target.GP_API, "MULTIPLE")]
-        Multiple,
+        Multiple
     }
 }

@@ -118,7 +118,7 @@ namespace GlobalPayments.Api.Utils {
         }
     }
 
-    internal class Element {
+    internal class Element : IRawRequestBuilder {
         private XmlDocument doc;
         private XmlElement element;
 

@@ -11,11 +11,13 @@ namespace GlobalPayments.Api.Gateways {
         public string MerchantKey { get; set; }
         public string RegisterNumber { get; set; }
         public string TerminalId { get; set; }
+        public bool SupportsHostedPayments => false;
+        public bool SupportsOpenBanking => false;
 
-        public bool SupportsHostedPayments { get { return false; } }
 
         public GeniusConnector() : base() {
         }
+
 
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             ElementTree et = new ElementTree();
@@ -304,10 +306,6 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             return response;
-        }
-
-        public bool SupportsOpenBanking() {
-            return false;
         }
     }
 }
