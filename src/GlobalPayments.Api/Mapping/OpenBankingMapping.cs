@@ -15,15 +15,18 @@ namespace GlobalPayments.Api.Mapping
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
 
-                transaction.TransactionId = json.GetValue<string>("ob_trans_id");
+                transaction.TransactionId = json.Get("order")?.GetValue<string>("id");
+                transaction.ClientTransactionId = json.GetValue<string>("ob_trans_id");
                 transaction.PaymentMethodType = PaymentMethodType.BankPayment;
-                transaction.OrderId = json.Get("order")?.GetValue<string>("id");
-                transaction.ResponseMessage = json.GetValue<string>("status");
+                transaction.OrderId = json.Get("order")?.GetValue<string>("id") ?? null;
+                transaction.ResponseMessage = json.GetValue<string>("status") ?? null;
 
                 BankPaymentResponse obResponse = new BankPaymentResponse();
-                obResponse.RedirectUrl = json.GetValue<string>("redirect_url");
-                obResponse.PaymentStatus = json.GetValue<string>("status");
-                obResponse.Id = json.GetValue<string>("ob_trans_id");
+                obResponse.RedirectUrl = json.GetValue<string>("redirect_url") ?? null;
+                obResponse.PaymentStatus = json.GetValue<string>("status") ?? null;
+                obResponse.Id = json.GetValue<string>("ob_trans_id") ?? null;
+                obResponse.Amount = json.Get("order")?.GetValue<string>("amount").ToAmount();
+                obResponse.Currency = json.Get("order")?.GetValue<string>("currency") ?? null;
                 transaction.BankPaymentResponse = obResponse;
             }
 

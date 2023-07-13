@@ -9,6 +9,7 @@ namespace GlobalPayments.Api.Gateways
     public interface IOpenBankingProvider
     {
         bool SupportsHostedPayments { get; }
-        Transaction ProcessOpenBanking(AuthorizationBuilder builder);        
+        Transaction ProcessOpenBanking(AuthorizationBuilder builder);
+        Transaction ManageOpenBanking(ManagementBuilder builder);
     }
 }

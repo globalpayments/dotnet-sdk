@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
@@ -149,7 +150,7 @@ namespace end_to_end
             });
 
 
-            if (status != "CHALLENGE_REQUIRED")
+            if (status != Secure3dStatus.CHALLENGE_REQUIRED.ToString())
             {
                 // Frictionless flow
                 response = JsonConvert.SerializeObject(new

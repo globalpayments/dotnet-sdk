@@ -14,10 +14,12 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void ReportActivity() {
-            var summary = ReportingService.Activity()
-                .WithStartDate(DateTime.UtcNow.AddDays(-7))
-                .WithEndDate(DateTime.UtcNow.AddDays(-1))
+        public void ReportActivity()
+        {
+            List<TransactionSummary> summary = ReportingService.Activity()
+                .WithTimeZoneConversion(TimeZoneConversion.Merchant)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-2))
+                .And(SearchCriteria.EndDate, DateTime.UtcNow)
                 .Execute();
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.Count > 0);
@@ -25,13 +27,14 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void ReportTransactionDetail() {
-            TransactionSummary response = ReportingService.TransactionDetail("1038021900").Execute();
+            TransactionSummary response = ReportingService.TransactionDetail("1873988120").Execute();
             Assert.IsNotNull(response);
             Assert.IsTrue(response is TransactionSummary);
         }
 
         [TestMethod]
-        public void ReportFindTransactionWithCriteria() {
+        public void ReportFindTransactionWithCriteria()
+        {
             List<TransactionSummary> summary = ReportingService.FindTransactions()
                 .WithTimeZoneConversion(TimeZoneConversion.Merchant)
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-30))
@@ -43,7 +46,7 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void ReportFindTransactionWithTransactionId() {
-            List<TransactionSummary> summary = ReportingService.FindTransactions("1038021900").Execute();
+            List<TransactionSummary> summary = ReportingService.FindTransactions("1873988120").Execute();
             Assert.IsNotNull(summary);
         }
 
@@ -57,12 +60,14 @@ namespace GlobalPayments.Api.Tests.Portico {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
-
-            var summary = ReportingService.Activity()
-                .WithStartDate(DateTime.UtcNow.AddDays(-7))
-                .WithEndDate(DateTime.UtcNow.AddDays(-1))
+            List<TransactionSummary> summary = ReportingService.Activity()
+                .WithTimeZoneConversion(TimeZoneConversion.Merchant)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-2))
+                .And(SearchCriteria.EndDate, DateTime.UtcNow)
                 .Execute();
+
             Assert.IsNotNull(summary);
+            Assert.IsTrue(summary.Count > 0);
         }
     }
 }

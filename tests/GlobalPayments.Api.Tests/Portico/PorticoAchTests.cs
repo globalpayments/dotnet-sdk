@@ -18,12 +18,13 @@ namespace GlobalPayments.Api.Tests {
 
             check = new eCheck {
                 AccountNumber = "24413815",
-                RoutingNumber = "490000018",
+                RoutingNumber = "061000104",
                 CheckType = CheckType.PERSONAL,
                 SecCode = SecCode.PPD,
                 AccountType = AccountType.CHECKING,
                 EntryMode = EntryMethod.Manual,
                 CheckHolderName = "John Doe",
+                CheckName = "John Doe",
                 DriversLicenseNumber = "09876543210",
                 DriversLicenseState = "TX",
                 PhoneNumber = "8003214567",

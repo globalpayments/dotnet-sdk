@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
@@ -87,7 +88,7 @@ namespace end_to_end
                 messageVersion = messageVersion
             }); 
 
-            if (enrolled == "ENROLLED" && messageVersion == Secure3dVersion.Two) {
+            if (enrolled == Secure3dStatus.ENROLLED.ToString() && messageVersion == Secure3dVersion.Two) {
                 responseJson = JsonConvert.SerializeObject(new
                 {
                     enrolled = enrolled,

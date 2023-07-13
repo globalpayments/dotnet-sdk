@@ -10,15 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApi3DSecure2Tests : BaseGpApiTests {
-        #region Constants
-
-        private const string AVAILABLE = "AVAILABLE";
-        private const string CHALLENGE_REQUIRED = "CHALLENGE_REQUIRED";
-        private const string ENROLLED = "ENROLLED";
-        private const string SUCCESS_AUTHENTICATED = "SUCCESS_AUTHENTICATED";
-
-        #endregion
-
+       
         private CreditCardData card;
         private readonly Address shippingAddress;
         private readonly BrowserData browserData;
@@ -105,7 +97,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
 
@@ -116,7 +108,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
 
@@ -130,7 +122,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
 
             var exceptionCaught = false;
@@ -164,7 +156,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
 
@@ -177,7 +169,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithChallengeRequestIndicator(preference)
                     .Execute();
 
-                AssertThreeDSResponse(secureEcom, AVAILABLE);
+                AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
                 Assert.IsFalse(secureEcom.ChallengeMandated);
             }
         }
@@ -191,7 +183,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithAuthenticationSource(source)
                     .Execute();
 
-                AssertThreeDSResponse(secureEcom, AVAILABLE);
+                AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
                 Assert.IsFalse(secureEcom.ChallengeMandated);
             }
         }
@@ -209,7 +201,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 })
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
 
@@ -250,7 +242,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
 
@@ -265,7 +257,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
 
             var exceptionCaught = false;
@@ -300,7 +292,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
 
@@ -315,7 +307,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithChallengeRequestIndicator(preference)
                     .Execute();
 
-                AssertThreeDSResponse(secureEcom, AVAILABLE);
+                AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
                 Assert.IsFalse(secureEcom.ChallengeMandated);
             }
         }
@@ -335,7 +327,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 })
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
         }
        
@@ -351,7 +343,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -363,7 +355,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithBrowserData(browserData)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -376,7 +368,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -389,7 +381,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithBrowserData(browserData)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
 
             var exceptionCaught = false;
@@ -428,7 +420,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
                 .WithAmount(Amount)
@@ -440,7 +432,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithBrowserData(browserData)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -452,7 +444,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithAmount(Amount)
                     .Execute();
 
-                AssertThreeDSResponse(secureEcom, AVAILABLE);
+                AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
                 var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                     .WithAmount(Amount)
@@ -464,7 +456,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithBrowserData(browserData)
                     .Execute();
 
-                AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+                AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
                 Assert.IsTrue(initAuth.ChallengeMandated);
             }
         }
@@ -476,7 +468,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -485,7 +477,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithBrowserData(browserData)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -499,7 +491,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -511,7 +503,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithBrowserData(browserData)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -523,7 +515,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithAmount(Amount)
                     .Execute();
 
-                AssertThreeDSResponse(secureEcom, AVAILABLE);
+                AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
                 var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                     .WithAmount(Amount)
@@ -536,7 +528,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithBrowserData(browserData)
                     .Execute();
 
-                AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+                AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
                 Assert.IsTrue(initAuth.ChallengeMandated);
             }
         }
@@ -548,7 +540,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -563,7 +555,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithGiftCardCurrency(Currency)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -574,7 +566,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -588,7 +580,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithDeliveryTimeFrame(DeliveryTimeFrame.ELECTRONIC_DELIVERY)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -599,7 +591,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -615,7 +607,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithShippingAddressUsageIndicator(AgeIndicator.LESS_THAN_THIRTY_DAYS)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -682,7 +674,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -698,7 +690,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithShippingAddressUsageIndicator(AgeIndicator.LESS_THAN_THIRTY_DAYS)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
 
             var getAuthData = Secure3dService.GetAuthenticationData()
@@ -715,7 +707,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
                 .WithAmount(Amount)
@@ -727,7 +719,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithBrowserData(browserData)
                 .Execute();
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsTrue(initAuth.ChallengeMandated);
 
             var exceptionCaught = false;
@@ -761,7 +753,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute(Secure3dVersion.Two);
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.AreEqual("ENROLLED", secureEcom.Enrolled);
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
@@ -774,7 +766,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAddress(shippingAddress, AddressType.Shipping)
                 .Execute(Secure3dVersion.Two);
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
             Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
             Assert.IsNotNull(initAuth.AcsInterface);
             Assert.IsNotNull(initAuth.AcsUiTemplate);
@@ -791,7 +783,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute(Secure3dVersion.Two);
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.AreEqual("ENROLLED", secureEcom.Enrolled);
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
@@ -805,7 +797,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAddress(shippingAddress, AddressType.Shipping)                
                 .Execute(Secure3dVersion.Two);
 
-            AssertThreeDSResponse(initAuth, CHALLENGE_REQUIRED);
+            AssertThreeDSResponse(initAuth, Secure3dStatus.CHALLENGE_REQUIRED.ToString());
         }
 
         [TestMethod]
@@ -819,8 +811,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute(Secure3dVersion.Two);
 
             Assert.IsNotNull(secureEcom);
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
-            Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), secureEcom.Enrolled);
             Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
 
             ThreeDSecure initAuth =
@@ -836,9 +828,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                         .Execute(Secure3dVersion.Two);
 
             Assert.IsNotNull(initAuth);            
-            Assert.AreEqual(ENROLLED, initAuth.Enrolled);
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), initAuth.Enrolled);
             Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
-            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.AreEqual(Secure3dStatus.SUCCESS_AUTHENTICATED.ToString(), initAuth.Status);
             Assert.AreEqual("YES", initAuth.LiabilityShift);
             Assert.IsFalse(initAuth.ChallengeMandated);
             Assert.IsNotNull(initAuth.IssuerAcsUrl);
@@ -876,8 +868,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAuthenticationSource(AuthenticationSource.MOBILE_SDK)
                 .Execute(Secure3dVersion.Two);
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
-            Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), secureEcom.Enrolled);
 
             ThreeDSecure initAuth =
                 Secure3dService
@@ -893,9 +885,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                         .Execute(Secure3dVersion.Two);
 
             Assert.IsNotNull(initAuth);
-            Assert.AreEqual(ENROLLED, initAuth.Enrolled);
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), initAuth.Enrolled);
             Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
-            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.AreEqual(Secure3dStatus.SUCCESS_AUTHENTICATED.ToString(), initAuth.Status);
             Assert.AreEqual("YES", initAuth.LiabilityShift);
             Assert.IsFalse(initAuth.ChallengeMandated);
             Assert.IsNotNull(initAuth.IssuerAcsUrl);
@@ -919,7 +911,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
@@ -931,9 +923,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(initAuth);
-            Assert.AreEqual(ENROLLED, initAuth.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), initAuth.Enrolled, "Card not enrolled");
             Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
-            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.AreEqual(Secure3dStatus.SUCCESS_AUTHENTICATED.ToString(), initAuth.Status);
             Assert.IsFalse(initAuth.ChallengeMandated);
             Assert.IsNotNull(initAuth.IssuerAcsUrl);
             Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
@@ -958,7 +950,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithAmount(Amount)
                     .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
@@ -971,9 +963,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(initAuth);
-            Assert.AreEqual(ENROLLED, initAuth.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), initAuth.Enrolled, "Card not enrolled");
             Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
-            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.AreEqual(Secure3dStatus.SUCCESS_AUTHENTICATED.ToString(), initAuth.Status);
             Assert.IsFalse(initAuth.ChallengeMandated);
             Assert.IsNotNull(initAuth.IssuerAcsUrl);
             Assert.IsNotNull(initAuth.PayerAuthenticationRequest);
@@ -995,7 +987,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithAmount(Amount)
                     .Execute();
 
-            AssertThreeDSResponse(secureEcom, AVAILABLE);
+            AssertThreeDSResponse(secureEcom, Secure3dStatus.AVAILABLE.ToString());
             Assert.IsFalse(secureEcom.ChallengeMandated);
 
             var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
@@ -1008,9 +1000,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(initAuth);
-            Assert.AreEqual(ENROLLED, initAuth.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), initAuth.Enrolled, "Card not enrolled");
             Assert.AreEqual(Secure3dVersion.Two, initAuth.Version);
-            Assert.AreEqual(CHALLENGE_REQUIRED, initAuth.Status);
+            Assert.AreEqual(Secure3dStatus.CHALLENGE_REQUIRED.ToString(), initAuth.Status);
             Assert.IsTrue(initAuth.ChallengeMandated);
         }
 
@@ -1018,7 +1010,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private void AssertThreeDSResponse(ThreeDSecure secureEcom, string status) {
             Assert.IsNotNull(secureEcom);
-            Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dStatus.ENROLLED.ToString(), secureEcom.Enrolled, "Card not enrolled");
             Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
             Assert.AreEqual(status, secureEcom.Status);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);

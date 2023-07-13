@@ -4,6 +4,12 @@
 
 #### Enhancements
 
+- GP-ECOM: Add refund for transaction with open banking
+
+## v5.2.1 (06/07/23)
+
+#### Enhancements
+
 - GP-API: Added integration examples using Hosted Fields (GP JS library), 3DS library
 
 #### Bug fixes:

@@ -158,7 +158,6 @@ namespace GlobalPayments.Api.Gateways
             }
         }
 
-
         public static BankPaymentType? GetBankPaymentType(string currency) {
             switch (currency) {
                 case "EUR":
@@ -181,5 +180,43 @@ namespace GlobalPayments.Api.Gateways
             return response.RawResponse;
         }
 
+        public Transaction ManageOpenBanking(ManagementBuilder builder)
+        {
+            string timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp();            
+            var amount = builder.Amount != null ? builder.Amount.ToNumericCurrencyString() : null;
+
+            JsonDoc request = new JsonDoc();                 
+        
+            switch (builder.TransactionType) {
+            case TransactionType.Refund:
+                   
+               string hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, MerchantId, AccountId, timestamp, builder.TransactionId, builder.ClientTransactionId, amount);
+               
+                SetAuthorizationHeader(hash);
+                    request.Set("merchant_id", MerchantId)
+                              .Set("account_id", AccountId)
+                              .Set("request_timestamp", timestamp);
+
+                    JsonDoc order = new JsonDoc();
+                    order.Set("id", builder.TransactionId)
+                          .Set("ob_trans_id", builder.ClientTransactionId)
+                          .Set("amount", amount)
+                          .Set("description", builder.Description);
+
+                    request.Set("order", order);
+
+                    break;
+                default:
+                    break;
+            }
+
+            try {
+                string rawResponse = DoTransaction(HttpMethod.Post, "/refunds", request.ToString());
+                return OpenBankingMapping.MapResponse(rawResponse);
+            }
+            catch (GatewayException gatewayException) {
+                throw gatewayException;
+            }
+        }
     }
 }

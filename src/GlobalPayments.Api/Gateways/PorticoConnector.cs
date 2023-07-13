@@ -1170,18 +1170,19 @@ namespace GlobalPayments.Api.Gateways {
             throw new NotImplementedException();
         }
 
-        private string MapReportType(ReportType type) {
-            switch (type) {
+        private string MapReportType(ReportType type)
+        {
+            switch (type)
+            {
                 case ReportType.Activity:
-                case ReportType.TransactionDetail:
-                    return "ReportTxnDetail";
                 case ReportType.FindTransactions:
                     return "FindTransactions";
+                case ReportType.TransactionDetail:
+                    return "ReportTxnDetail";
                 default:
                     throw new UnsupportedTransactionException();
             }
         }
-
         private bool HasToken(IPaymentMethod paymentMethod, out string tokenValue) {
             tokenValue = null;
 

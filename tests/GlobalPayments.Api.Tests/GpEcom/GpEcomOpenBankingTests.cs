@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
@@ -15,13 +16,14 @@ namespace GlobalPayments.Api.Tests.GpEcom
     {
         private const decimal AMOUNT = 7.8m;
         private const string CURRENCY = "GBP";
+        private string RemittanceReferenceValue = "Nike Bounce Shoes";
 
         [TestInitialize]
         public void TestInitialize() {
             var config = new GpEcomConfig {
                 MerchantId = "openbankingsandbox",
                 SharedSecret = "sharedsecret",
-                AccountId = "internet",
+                AccountId = "internet3",
                 EnableBankPayment = true,
                 ShaHashType = ShaHashType.SHA512,
                 RequestLogger = new RequestConsoleLogger()
@@ -36,10 +38,12 @@ namespace GlobalPayments.Api.Tests.GpEcom
 
             var transaction = bankPayment.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
-                .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
+                .WithRemittanceReference(RemittanceReferenceType.TEXT, RemittanceReferenceValue)
                 .Execute();
 
             AssertTransactionResponse(transaction);
+
+            Debug.Write(transaction.BankPaymentResponse.RedirectUrl);
 
             Thread.Sleep(2000);
 
@@ -99,6 +103,8 @@ namespace GlobalPayments.Api.Tests.GpEcom
                 .Execute();
 
             AssertTransactionResponse(transaction);
+
+            Debug.Write(transaction.BankPaymentResponse.RedirectUrl);
 
             Thread.Sleep(2000);
 
@@ -464,6 +470,80 @@ namespace GlobalPayments.Api.Tests.GpEcom
             }
         }
 
+        [TestMethod]
+        public void FasterPaymentsRefund()
+        {
+            var bankPayment = FasterPaymentsConfig();
+
+            var trn = bankPayment.Charge(AMOUNT)
+                .WithCurrency("GBP")
+                .WithRemittanceReference(RemittanceReferenceType.TEXT, RemittanceReferenceValue)
+                .Execute();
+
+            AssertTransactionResponse(trn);
+
+            Debug.Write(trn.BankPaymentResponse.RedirectUrl);
+
+            Thread.Sleep(45000);
+
+            var refund = trn.Refund(AMOUNT)
+                .WithCurrency("GBP")
+                .Execute();
+
+            Assert.AreEqual(BankPaymentStatus.INITIATION_REJECTED.ToString(), refund.ResponseMessage);
+            Assert.IsNotNull(refund.TransactionId);
+            Assert.IsNotNull(refund.ClientTransactionId);
+            Assert.IsNull(refund.BankPaymentResponse.RedirectUrl);
+
+            var response = ReportingService.BankPaymentDetail(trn.BankPaymentResponse.Id, 1, 1)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(1, response.Results.Count);
+            Assert.AreEqual(trn.BankPaymentResponse.Id, response.Results[0].TransactionId);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.Iban);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.SortCode);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.AccountNumber);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.AccountName);
+        }
+
+        [TestMethod]
+        public void SEPARefund()
+        {
+            var bankPayment = SepaConfig();
+
+            var trn = bankPayment.Charge(AMOUNT)
+                .WithCurrency("EUR")
+                .WithRemittanceReference(RemittanceReferenceType.TEXT, RemittanceReferenceValue)
+                .Execute();
+
+            AssertTransactionResponse(trn);
+
+            Debug.Write(trn.BankPaymentResponse.RedirectUrl);
+
+            Thread.Sleep(45000);
+
+            var refund = trn.Refund(AMOUNT)
+                .WithCurrency("EUR")
+                .Execute();
+
+            Assert.AreEqual(BankPaymentStatus.INITIATION_FAILED.ToString(), refund.ResponseMessage);
+            Assert.IsNotNull(refund.TransactionId);
+            Assert.IsNotNull(refund.ClientTransactionId);
+            Assert.IsNull(refund.BankPaymentResponse.RedirectUrl);
+
+            var response = ReportingService.BankPaymentDetail(trn.BankPaymentResponse.Id, 1, 1)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(1, response.Results.Count);
+            Assert.AreEqual(trn.BankPaymentResponse.Id, response.Results[0].TransactionId);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.Iban);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.SortCode);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.AccountNumber);
+            Assert.IsNull(response.Results[0].BankPaymentResponse.AccountName);
+        }
+
         private static BankPayment FasterPaymentsConfig() =>
             new BankPayment {
                 AccountNumber = "12345678",
@@ -471,6 +551,7 @@ namespace GlobalPayments.Api.Tests.GpEcom
                 AccountName = "AccountName",
                 ReturnUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
                 StatusUpdateUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net"
+               
             };
 
         private static BankPayment SepaConfig() =>
