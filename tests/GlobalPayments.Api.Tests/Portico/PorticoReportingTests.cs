@@ -9,7 +9,8 @@ namespace GlobalPayments.Api.Tests.Portico {
     public class PorticoReportingTests {
         public PorticoReportingTests() {
             ServicesContainer.ConfigureService(new PorticoConfig {
-                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w"
+                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
+                IsSafDataSupported = true
             });
         }
 
@@ -39,6 +40,7 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .WithTimeZoneConversion(TimeZoneConversion.Merchant)
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-30))
                 .And(SearchCriteria.EndDate, DateTime.UtcNow)
+                .And(SearchCriteria.SAFIndicator, "Y")
                 .Execute();
 
             Assert.IsNotNull(summary);

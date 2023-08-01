@@ -13,7 +13,8 @@ namespace GlobalPayments.Api.Tests {
         [TestInitialize]
         public void Init() {
             ServicesContainer.ConfigureService(new PorticoConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                IsSafDataSupported = true
             });
 
             check = new eCheck {

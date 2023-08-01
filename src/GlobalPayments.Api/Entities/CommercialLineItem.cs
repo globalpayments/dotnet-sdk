@@ -15,6 +15,14 @@
         public string UPC { get; set; }
         public decimal? TaxAmount { get; set; }
         public string TaxName { get; set; }
+        /// <summary>
+        /// Supported values:
+        ///
+        /// - 0 - No discount applied
+        /// - 1 - Tax was calculated before the discount was applied
+        /// - 2 - Tax was calculated after the discount was applied
+        /// </summary>
+        public int? TaxTreatment { get; set; }
         public decimal? TaxPercentage { get; set; }
         public decimal? TotalAmount { get; set; }
     }

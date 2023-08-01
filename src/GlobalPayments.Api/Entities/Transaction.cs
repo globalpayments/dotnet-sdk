@@ -101,7 +101,22 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The type of card used in the transaction.
         /// </summary>
-        public string CardType { get; set; }
+        public string CardType
+        {
+            get
+            {
+                return TransactionReference?.CardType;
+            }
+            set
+            {
+                if (TransactionReference == null)
+                {
+                    TransactionReference = new TransactionReference();
+                }
+                TransactionReference.CardType = value;
+            }
+        }
+
 
         /// <summary>
         /// The last four digits of the card number used in
@@ -639,7 +654,30 @@ namespace GlobalPayments.Api.Entities {
                 }
             };
         }
-
+        /// <summary>
+        /// Creates a `Transaction` object from a stored transaction ID.
+        /// </summary>
+        /// <remarks>
+        /// Used to expose management requests on the original transaction
+        /// at a later date/time.
+        /// </remarks>
+        /// <param name="transactionId">The original transaction ID</param>
+        /// <param name="paymentMethodType">payment method of original transaction</param>
+        /// <param name="CardType"> card type of the original transaction
+        /// The original payment method type. Defaults to `PaymentMethodType.Credit`.
+        /// </param>
+        public static Transaction FromId(string transactionId, Entities.CardType cardType, PaymentMethodType paymentMethodType = PaymentMethodType.Credit)
+        {
+            return new Transaction
+            {
+                TransactionReference = new TransactionReference
+                {
+                    TransactionId = transactionId,
+                    PaymentMethodType = paymentMethodType,
+                    CardType = cardType.ToString(),
+                }
+            };
+        }
         /// <summary>
         /// Creates a `Transaction` object from a stored transaction ID.
         /// </summary>

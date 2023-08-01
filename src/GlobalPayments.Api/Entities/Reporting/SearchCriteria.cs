@@ -85,7 +85,8 @@ namespace GlobalPayments.Api.Entities {
         PayLinkStatus,
         PaymentMethodUsageMode,
         Description,
-        ExpirationDate
+        ExpirationDate,
+        SAFIndicator
     }
 
     public enum DataServiceCriteria {
@@ -335,6 +336,7 @@ namespace GlobalPayments.Api.Entities {
         internal string Timezone { get; set; }
 
         internal string Version { get; set; }
+        internal string SAFIndicator { get; set; }
 
         internal SearchCriteriaBuilder(ReportBuilder<TResult> reportBuilder) {
             _reportBuilder = reportBuilder;

@@ -4,6 +4,18 @@
 
 #### Enhancements
 
+- Portico: Support Store and Forward mode for transactions.
+- Portico: FindTransactions report allows to search using SAFIndicator.
+- Portico: Allow transactions to be updated with level 2 and level 3 info after an authorization using FindId method
+
+#### Bug fixes:
+
+- Pax: Support partial authorizations
+
+## v5.2.2 (13/07/23)
+
+#### Enhancements
+
 - GP-ECOM: Add refund for transaction with open banking
 
 ## v5.2.1 (06/07/23)

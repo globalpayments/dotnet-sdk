@@ -22,7 +22,7 @@ namespace GlobalPayments.Api.Gateways {
         public string UniqueDeviceId { get; set; }
         public string SDKNameVersion { get; set; }
         public bool SupportsOpenBanking => false;
-
+        public bool IsSafDataSupported { get; set; }
 
         public PorticoConnector() {
         }
@@ -83,8 +83,8 @@ namespace GlobalPayments.Api.Gateways {
                             et.SubElement(holder, "FirstName", names[0]);
                             et.SubElement(holder, "LastName", names[1]);
                         }
-                        else { 
-                            et.SubElement(holder, "FirstName", check.CheckHolderName); 
+                        else {
+                            et.SubElement(holder, "FirstName", check.CheckHolderName);
                         }
                     }
                     et.SubElement(holder, "CheckName", check.CheckName);
@@ -160,7 +160,7 @@ namespace GlobalPayments.Api.Gateways {
                             et.SubElement(Secure3D, "AuthenticationValue", secureEcom.Cavv);
                             et.SubElement(Secure3D, "ECI", secureEcom.Eci);
                             et.SubElement(Secure3D, "DirectoryServerTxnId", secureEcom.Xid);
-                        }                        
+                        }
                         if (IsAppleOrGooglePay(secureEcom.PaymentDataSource))
                         {
                             var WalletData = et.SubElement(block1, "WalletData");
@@ -184,10 +184,7 @@ namespace GlobalPayments.Api.Gateways {
                             block1.Remove("CardHolderData");
                         }
                     }
-
                 }
-                
-
                 // recurring data
                 if (builder.TransactionModifier == TransactionModifier.Recurring) {
                     var recurring = et.SubElement(block1, "RecurringData");
@@ -485,7 +482,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (
                     builder.TransactionType == TransactionType.Reversal
                     || (
-                        builder.PaymentMethod != null 
+                        builder.PaymentMethod != null
                         && builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH
                     )
                 ) {
@@ -507,9 +504,9 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
                     }
 
-                    if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod.PaymentMethodType is PaymentMethodType.Credit) {                       
-                        
-                        var isVisa = (builder.CardType == "Visa");
+                    if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod.PaymentMethodType is PaymentMethodType.Credit) {
+                       
+                        var isVisa = (builder.CardType.ToLowerInvariant() == "visa");
                         var cpc = et.SubElement(root, "CorporateData");
                         var data = et.SubElement(cpc, isVisa ? "Visa" : "MC");
 
@@ -639,6 +636,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(criteria, "BuyerEmailAddress", trb.SearchBuilder.BuyerEmailAddress);
                     et.SubElement(criteria, "AltPaymentStatus", trb.SearchBuilder.AltPaymentStatus);
                     et.SubElement(criteria, "FullyCapturedInd", trb.SearchBuilder.FullyCaptured);
+                    et.SubElement(criteria, "SAFIndicator", trb.SearchBuilder.SAFIndicator);
                 }
             }
 
@@ -668,7 +666,10 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(header, "UniqueDeviceId", UniqueDeviceId);
 
             et.SubElement(header, "SDKNameVersion", SDKNameVersion != null ? SDKNameVersion : "net;version=" + getReleaseVersion());
-
+            Element safData = et.SubElement(header, "SAFData");
+            et.SubElement(safData, "SAFIndicator", IsSafDataSupported ? "Y" : "N");
+            et.SubElement(safData, "SAFOrigDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+            
             // Transaction
             var trans = et.SubElement(version1, "Transaction");
             trans.Append(transaction);
@@ -845,7 +846,7 @@ namespace GlobalPayments.Api.Gateways {
                         TransactionDate = root.GetValue<DateTime>("TxnUtcDT", "ReqUtcDT"),
                         TransactionId = root.GetValue<string>("GatewayTxnId"),
                         TransactionStatus = root.GetValue<string>("TxnStatus"),
-                        Username = root.GetValue<string>("UserName"),                      
+                        Username = root.GetValue<string>("UserName"),
 
                         Description = root.GetValue<string>("Description"),
                         InvoiceNumber = root.GetValue<string>("InvoiceNbr"),
@@ -954,7 +955,7 @@ namespace GlobalPayments.Api.Gateways {
                     MerchantAddr2 = response.GetValue<string>("MerchAddr2"),
                     MerchantCity = response.GetValue<string>("MerchCity"),
                     MerchantZip = response.GetValue<string>("MerchZip"),
-                    MerchantPhone = response.GetValue<string>("MerchPhone"),                    
+                    MerchantPhone = response.GetValue<string>("MerchPhone"),         
                     TransactionStatus = response.GetValue<string>("TxnStatus"),
                     CardType = response.GetValue<string>("CardType"),
                     MaskedCardNumber = response.GetValue<string>("MaskedCardNbr"),
@@ -972,14 +973,13 @@ namespace GlobalPayments.Api.Gateways {
                     ConvenienceAmount = response.GetValue<decimal>("ConvenienceAmtInfo"),
                     IssuerResponseCode = response.GetValue<string>("IssuerRspCode", "RspCode"),
                     IssuerResponseMessage = response.GetValue<string>("IssuerRspText", "RspText"),
-                    IssuerTransactionId = response.GetValue<string>("IssTxnId"),            
+                    IssuerTransactionId = response.GetValue<string>("IssTxnId"),
                     SDKNameVersion = response.GetValue<string>("SDKNameVersion"),
                     InvoiceNumber = response.GetValue<string>("InvoiceNbr"),
 
                 };
                 rvalue = summary as T;
                 return rvalue;
-                
             }
             return rvalue;
         }
@@ -1209,7 +1209,7 @@ namespace GlobalPayments.Api.Gateways {
         private string getReleaseVersion()
         {
             try
-            {               
+            {
                 return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
             }
             catch (Exception ex)
@@ -1234,21 +1234,20 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(lineItem, "ItemTotalAmt", item.TotalAmount);
                 et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
 
-                if (!isVisa) {
-                    continue;
+                if (isVisa)
+                {
+                    et.SubElement(lineItem, "ItemTaxTreatment", item.TaxTreatment);
+                    // The schema says these fields should be allowed, but they are not currently accepted.
+                    // et.SubElement(lineItem, "ItemCommodityCode", item.CommodityCode);
+                    // et.SubElement(lineItem, "UnitCost", item.UnitCost);
+                    // et.SubElement(lineItem, "VATTaxAmt", item.TaxAmount);
+                    // et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails?.DiscountAmount);
                 }
-
-                et.SubElement(lineItem, "ItemCommodityCode ", item.CommodityCode);
-                et.SubElement(lineItem, "UnitCost", item.UnitCost);
-                et.SubElement(lineItem, "VATTaxAmt", item.TaxAmount);
-                et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails?.DiscountAmount);
-
 
                 //et.SubElement(lineItem, "ExtendedItemAmount", item.ExtendedAmount);
                 // The schema says this field should exist, but it's not currently allowed.
-                // et.SubElement(lineItem, "ItemCommodityCode", item.CommodityCode);
                 // et.SubElement(lineItem, "VATTaxRate", null);
-                // et.SubElement(lineItem, "ItemTaxTreatment", null);
+
             }
 
         }

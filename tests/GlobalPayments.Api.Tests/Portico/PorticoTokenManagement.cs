@@ -10,7 +10,8 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         public PorticoTokenManagement() {
             ServicesContainer.ConfigureService(new PorticoConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                IsSafDataSupported = true
             });
 
             try {
