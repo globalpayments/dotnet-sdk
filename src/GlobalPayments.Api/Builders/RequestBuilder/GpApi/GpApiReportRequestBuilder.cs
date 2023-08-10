@@ -268,7 +268,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}{GpApiRequest.PAYLINK_ENDPOINT}",
                         };
-
+                        request.AddQueryStringParam("page", trb.Page?.ToString());
+                        request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
                         request.AddQueryStringParam("from_time_created", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("to_time_created", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, trb.Order));

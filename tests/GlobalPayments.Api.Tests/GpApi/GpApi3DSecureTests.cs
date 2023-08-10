@@ -265,6 +265,125 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
+        
+        [TestMethod]
+        public void FrictionlessFullCycle_v2_Verify3DS() {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+            
+            // Check enrollment
+            var secureEcom = Secure3dService.CheckEnrollment(card)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .Execute();
+
+            Assert.IsNotNull(secureEcom);
+            Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(AVAILABLE, secureEcom.Status);
+
+            // Initiate authentication
+            var initAuth = Secure3dService.InitiateAuthentication(card, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithBrowserData(browserData)
+                .Execute();
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+
+            // Get authentication data
+            secureEcom = Secure3dService.GetAuthenticationData()
+                .WithServerTransactionId(initAuth.ServerTransactionId)
+                .Execute();
+
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+
+            card.ThreeDSecure = secureEcom;
+            
+            var verifyResponse = card.Verify()
+                .WithCurrency(Currency)
+                .Execute();
+
+            Assert.IsNotNull(verifyResponse);
+            Assert.AreEqual(Success, verifyResponse.ResponseCode);
+            Assert.AreEqual("VERIFIED", verifyResponse.ResponseMessage);
+
+            // Create transaction
+            var response = card.Charge(Amount)
+                .WithCurrency(Currency)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+        }
+        
+        [TestMethod]
+        public void FrictionlessFullCycle_v2_Verify3DS_TokenizedCard() {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+            
+            // Tokenize payment method
+            var tokenizedCard = new CreditCardData {
+                Token = card.Tokenize()
+            };
+            
+            Assert.IsNotNull(tokenizedCard.Token);
+
+            // Check enrollment
+            var secureEcom = Secure3dService.CheckEnrollment(tokenizedCard)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .Execute();
+
+            Assert.IsNotNull(secureEcom);
+            Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
+            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(AVAILABLE, secureEcom.Status);
+
+            // Initiate authentication
+            var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithBrowserData(browserData)
+                .Execute();
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+
+            // Get authentication data
+            secureEcom = Secure3dService.GetAuthenticationData()
+                .WithServerTransactionId(initAuth.ServerTransactionId)
+                .Execute();
+
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+
+            tokenizedCard.ThreeDSecure = secureEcom;
+            
+            var verifyResponse = tokenizedCard.Verify()
+                .WithCurrency(Currency)
+                .Execute();
+
+            Assert.IsNotNull(verifyResponse);
+            Assert.AreEqual(Success, verifyResponse.ResponseCode);
+            Assert.AreEqual("VERIFIED", verifyResponse.ResponseMessage);
+
+            // Create transaction
+            var response = tokenizedCard.Charge(Amount)
+                .WithCurrency(Currency)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+        }
 
         [DataTestMethod]
         [DataRow(GpApi3DSTestCards.CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_1, SUCCESS_ATTEMPT_MADE)]

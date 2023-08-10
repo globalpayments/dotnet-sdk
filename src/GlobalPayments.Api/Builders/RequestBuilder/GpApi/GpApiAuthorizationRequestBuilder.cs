@@ -155,17 +155,28 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                                 .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("currency", builder.Currency)
-                                .Set("country", gateway.GpApiConfig.Country)
-                                .Set("payment_method", paymentMethod);
+                                .Set("country", gateway.GpApiConfig.Country);
+                                
 
-                            if (builder.PaymentMethod is ITokenizable && !string.IsNullOrEmpty((builder.PaymentMethod as ITokenizable).Token)) {
-                                verificationData.Remove("payment_method");
-                                verificationData.Set("payment_method", new JsonDoc()
-                                    .Set("entry_mode", GetEntryMode(builder, gateway.GpApiConfig.Channel))
-                                    .Set("id", (builder.PaymentMethod as ITokenizable).Token)
-                                    .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
-                                );
+                            if (builder.PaymentMethod is ITokenizable || builder.PaymentMethod is CreditCardData) {
+                                if (hasToken) {
+                                    paymentMethod
+                                        .Set("id", (builder.PaymentMethod as ITokenizable).Token)
+                                        .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null);
+                                }
+                                
+                                //Authentication
+                                if (builder.PaymentMethod is CreditCardData) {
+                                    paymentMethod.Set("name", (builder.PaymentMethod as CreditCardData).CardHolderName);
+
+                                    var secureEcom = (builder.PaymentMethod as CreditCardData).ThreeDSecure;
+                                    if (secureEcom != null) {
+                                        var authentication = new JsonDoc().Set("id", secureEcom.ServerTransactionId);
+                                        paymentMethod.Set("authentication", authentication);
+                                    }
+                                }                                
                             }
+                            verificationData.Set("payment_method", paymentMethod);
 
                             return new Request {
                                 Verb = HttpMethod.Post,

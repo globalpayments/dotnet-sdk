@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Bug fixes:
+
+- GP-API: Included in the verify request the authentication field with tokenizable card or without it.
+
+## v5.2.3 (01/08/23)
+
 #### Enhancements
 
 - Portico: Support Store and Forward mode for transactions.
