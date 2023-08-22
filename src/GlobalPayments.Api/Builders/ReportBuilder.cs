@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Gateways;
+using System;
 
 namespace GlobalPayments.Api.Builders {
     public abstract class ReportBuilder<TResult> : BaseBuilder<TResult> where TResult : class {
@@ -13,8 +14,11 @@ namespace GlobalPayments.Api.Builders {
         internal DisputeSortProperty? DisputeOrderBy { get; set; }
         internal StoredPaymentMethodSortProperty? StoredPaymentMethodOrderBy { get; set; }
         internal ActionSortProperty? ActionOrderBy { get; set; }
-        internal PayLinkSortProperty? PayLinkOrderBy { get; set; }
+        internal PayByLinkSortProperty? PayByLinkOrderBy { get; set; }
         internal string TransactionId { get; set; }
+
+        internal DateTime? StartDate { get; set; }
+        internal DateTime? EndDate { get; set; }
 
         private SearchCriteriaBuilder<TResult> _searchBuilder;
         internal SearchCriteriaBuilder<TResult> SearchBuilder {
@@ -110,8 +114,8 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public ReportBuilder<TResult> OrderBy(PayLinkSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
-            PayLinkOrderBy = orderBy;
+        public ReportBuilder<TResult> OrderBy(PayByLinkSortProperty orderBy, SortDirection direction = SortDirection.Ascending) {
+            PayByLinkOrderBy = orderBy;
             Order = direction;
             return this;
         }
@@ -150,6 +154,17 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        public ReportBuilder<TResult> WithStartDate(DateTime? value)
+        {
+            StartDate = value;
+            return this;
+        }
+
+        public ReportBuilder<TResult> WithEndDate(DateTime? value)
+        {
+            EndDate = value;
+            return this;
+        }
         /// <summary>
         /// Sets the gateway deposit reference as criteria for the report.
         /// </summary>

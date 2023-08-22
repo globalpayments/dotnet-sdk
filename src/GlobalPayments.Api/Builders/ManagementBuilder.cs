@@ -247,8 +247,8 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public ManagementBuilder WithPayLinkData(PayLinkData payLinkData) {
-            PayLinkData = payLinkData;            
+        public ManagementBuilder WithPayByLinkData(PayByLinkData payByLinkData) {
+            PayByLinkData = payByLinkData;            
             return this;
         }
 
@@ -556,12 +556,12 @@ namespace GlobalPayments.Api.Builders {
             Validations.For(TransactionType.TokenUpdate)
                 .Check(() => PaymentMethod).Is<CreditCardData>();
 
-            Validations.For(TransactionType.PayLinkUpdate)
-               .Check(() => PayLinkData).IsNotNull()
+            Validations.For(TransactionType.PayByLinkUpdate)
+               .Check(() => PayByLinkData).IsNotNull()
                .Check(() => Amount).IsNotNull()
-               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageMode)).IsNotNull()
-               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageLimit)).IsNotNull()
-               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.Type)).IsNotNull();
+               .Check(() => PayByLinkData).PropertyOf(nameof(PayByLinkData.UsageMode)).IsNotNull()
+               .Check(() => PayByLinkData).PropertyOf(nameof(PayByLinkData.UsageLimit)).IsNotNull()
+               .Check(() => PayByLinkData).PropertyOf(nameof(PayByLinkData.Type)).IsNotNull();
        
             Validations.For(TransactionType.SplitFunds)
                 .Check(() => FundsData).IsNotNull()

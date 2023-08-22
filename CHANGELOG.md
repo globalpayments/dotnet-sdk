@@ -2,6 +2,17 @@
 
 ## Latest
 
+#### Enhancements
+
+- GP-API: Rename PayLink to PayByLink
+- Added builder methods WithStartDate and WithEndDate to the Report builder
+
+#### Bug fixes:
+
+- NWS: Fixed multiple null reference exceptions when attempting transactions without passing in TagData
+
+## v5.2.4 (10/08/23)
+
 #### Bug fixes:
 
 - GP-API: Included in the verify request the authentication field with tokenizable card or without it.

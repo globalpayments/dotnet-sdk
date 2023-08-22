@@ -378,43 +378,43 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 }
             }
 
-            if (builder.TransactionType == TransactionType.Create && builder.PayLinkData is PayLinkData)
+            if (builder.TransactionType == TransactionType.Create && builder.PayByLinkData is PayByLinkData)
             {
-                var payLinkData = builder.PayLinkData;
+                var payByLinkData = builder.PayByLinkData;
                 var requestData = new JsonDoc()
                     .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
-                    .Set("usage_limit", payLinkData.UsageLimit.ToString())
-                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payLinkData.UsageMode))
-                    .Set("images", payLinkData.Images)
+                    .Set("usage_limit", payByLinkData.UsageLimit.ToString())
+                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payByLinkData.UsageMode))
+                    .Set("images", payByLinkData.Images)
                     .Set("description", builder.Description ?? null)
-                    .Set("type", payLinkData.Type?.ToString())
-                    .Set("expiration_date", payLinkData.ExpirationDate ?? null);
+                    .Set("type", payByLinkData.Type?.ToString())
+                    .Set("expiration_date", payByLinkData.ExpirationDate ?? null);
 
                 var transaction = new JsonDoc()
                     .Set("country", gateway.GpApiConfig.Country)
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                     .Set("currency", builder.Currency)
-                    .Set("allowed_payment_methods", GetAllowedPaymentMethod(payLinkData.AllowedPaymentMethods));
+                    .Set("allowed_payment_methods", GetAllowedPaymentMethod(payByLinkData.AllowedPaymentMethods));
 
                 requestData.Set("transactions", transaction)
                     .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
-                    .Set("shipping_amount", payLinkData.ShippingAmount.ToNumericCurrencyString())
-                    .Set("shippable", payLinkData.IsShippable != null && payLinkData.IsShippable.Value ? "YES" : "NO")
+                    .Set("shipping_amount", payByLinkData.ShippingAmount.ToNumericCurrencyString())
+                    .Set("shippable", payByLinkData.IsShippable != null && payByLinkData.IsShippable.Value ? "YES" : "NO")
                     .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
-                    .Set("name", payLinkData.Name ?? null);
+                    .Set("name", payByLinkData.Name ?? null);
 
                 var notification = new JsonDoc()
-                    .Set("cancel_url", payLinkData.CancelUrl)
-                    .Set("return_url", payLinkData.ReturnUrl)
-                    .Set("status_url", payLinkData.StatusUpdateUrl);
+                    .Set("cancel_url", payByLinkData.CancelUrl)
+                    .Set("return_url", payByLinkData.ReturnUrl)
+                    .Set("status_url", payByLinkData.StatusUpdateUrl);
 
                 requestData.Set("notifications", notification)
-                    .Set("status", payLinkData.Status.ToString());
+                    .Set("status", payByLinkData.Status.ToString());
 
                 return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYLINK_ENDPOINT}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYBYLINK_ENDPOINT}",
                     RequestBody = requestData.ToString(),
                 };
             }

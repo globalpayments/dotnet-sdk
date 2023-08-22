@@ -716,8 +716,8 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithPayLinkData(PayLinkData payLinkData) {
-            PayLinkData = payLinkData;
+        public AuthorizationBuilder WithPayByLinkData(PayByLinkData payByLinkData) {
+            PayByLinkData = payByLinkData;
             return this;
         }
 

@@ -51,7 +51,19 @@ namespace GlobalPayments.Api.Tests.Portico {
             List<TransactionSummary> summary = ReportingService.FindTransactions("1873988120").Execute();
             Assert.IsNotNull(summary);
         }
-
+        [TestMethod]
+        public void FindTransByDate()
+        {
+            var items = ReportingService.FindTransactions()
+                .WithTimeZoneConversion(TimeZoneConversion.Merchant)
+                .WithStartDate(DateTime.Today.AddDays(-10))
+                .WithEndDate(DateTime.Today)
+                .Execute();
+            Assert.IsNotNull(items);
+            var item = ReportingService.TransactionDetail(items[0].TransactionId)
+                .Execute();
+            Assert.IsNotNull(item);
+        }
         [TestMethod]
         public void ReportFindTransactionNoCriteria() {
             List<TransactionSummary> summary = ReportingService.FindTransactions().Execute();

@@ -131,7 +131,7 @@ namespace GlobalPayments.Api.Entities {
 
         public BankPaymentResponse BankPaymentResponse { get; set; }
 
-        public PayLinkResponse PayLinkResponse { get; set; }
+        public PayByLinkResponse PayByLinkResponse { get; set; }
 
         private List<TransferFundsAccountDetails> _transfersFundsAccounts;
         public List<TransferFundsAccountDetails> TransfersFundsAccounts

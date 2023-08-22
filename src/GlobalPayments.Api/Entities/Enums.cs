@@ -601,9 +601,9 @@ namespace GlobalPayments.Api.Entities {
 
         FindBankPayment = 1 << 23,
 
-        PayLinkDetail = 1 << 24,
+        PayByLinkDetail = 1 << 24,
 
-        FindPayLinkPaged = 1 << 25,
+        FindPayByLinkPaged = 1 << 25,
 
         FindMerchantsPaged = 1 << 26,
 

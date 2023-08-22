@@ -244,31 +244,31 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     };
                 
             }
-            else if (builder.TransactionType == TransactionType.PayLinkUpdate)
+            else if (builder.TransactionType == TransactionType.PayByLinkUpdate)
             {
-                var payLinkData = builder.PayLinkData;
+                var payByLinkData = builder.PayByLinkData;
 
                 var payload = new JsonDoc()
-                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payLinkData.UsageMode) ?? null)
-                    .Set("usage_limit", payLinkData.UsageLimit ?? null)
-                    .Set("name", payLinkData.Name ?? null)
+                    .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, payByLinkData.UsageMode) ?? null)
+                    .Set("usage_limit", payByLinkData.UsageLimit ?? null)
+                    .Set("name", payByLinkData.Name ?? null)
                     .Set("description", builder.Description ?? null)
-                    .Set("type", payLinkData.Type.ToString() ?? null)
-                    .Set("status", payLinkData.Status.ToString() ?? null)
-                    .Set("shippable", payLinkData.IsShippable != null && payLinkData.IsShippable.Value ? "YES" : "NO" )
-                    .Set("shipping_amount", payLinkData.ShippingAmount.ToNumericCurrencyString());
+                    .Set("type", payByLinkData.Type.ToString() ?? null)
+                    .Set("status", payByLinkData.Status.ToString() ?? null)
+                    .Set("shippable", payByLinkData.IsShippable != null && payByLinkData.IsShippable.Value ? "YES" : "NO" )
+                    .Set("shipping_amount", payByLinkData.ShippingAmount.ToNumericCurrencyString());
 
                 var transaction = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString() ?? null);
 
                 payload.Set("transactions", transaction)
-                    .Set("expiration_date", payLinkData.ExpirationDate ?? null)
-                    .Set("images", payLinkData.Images ?? null);
+                    .Set("expiration_date", payByLinkData.ExpirationDate ?? null)
+                    .Set("images", payByLinkData.Images ?? null);
 
                 return new Request
                 {
                     Verb = new HttpMethod("PATCH"),
-                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYLINK_ENDPOINT}/{builder.PaymentLinkId}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.PAYBYLINK_ENDPOINT}/{builder.PaymentLinkId}",
                     RequestBody = payload.ToString(),
                 };
 

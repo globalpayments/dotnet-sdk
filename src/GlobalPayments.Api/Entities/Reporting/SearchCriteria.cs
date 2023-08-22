@@ -82,7 +82,7 @@ namespace GlobalPayments.Api.Entities {
         UniqueDeviceId,
         Username,
         Version,
-        PayLinkStatus,
+        PayByLinkStatus,
         PaymentMethodUsageMode,
         Description,
         ExpirationDate,
@@ -264,7 +264,7 @@ namespace GlobalPayments.Api.Entities {
 
         internal string BankPaymentId { get; set; }
 
-        internal string PayLinkId { get; set; }
+        internal string PayByLinkId { get; set; }
 
         internal Address Address { get; set; }       
 
@@ -274,7 +274,7 @@ namespace GlobalPayments.Api.Entities {
     
         public DateTime? ExpirationDate { get; set; }
     
-        public PayLinkStatus? PayLinkStatus { get; set; }
+        public PayByLinkStatus? PayByLinkStatus { get; set; }
 
         public MerchantAccountStatus? AccountStatus { get; set; }
 

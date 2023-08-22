@@ -254,19 +254,19 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                         return request;
 
-                    case ReportType.PayLinkDetail:
+                    case ReportType.PayByLinkDetail:
                         return new Request
                         {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}{GpApiRequest.PAYLINK_ENDPOINT}/{trb.SearchBuilder.PayLinkId}",
+                            Endpoint = $"{merchantUrl}{GpApiRequest.PAYBYLINK_ENDPOINT}/{trb.SearchBuilder.PayByLinkId}",
                         };
 
 
-                    case ReportType.FindPayLinkPaged:
+                    case ReportType.FindPayByLinkPaged:
                         request = new Request
                         {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}{GpApiRequest.PAYLINK_ENDPOINT}",
+                            Endpoint = $"{merchantUrl}{GpApiRequest.PAYBYLINK_ENDPOINT}",
                         };
                         request.AddQueryStringParam("page", trb.Page?.ToString());
                         request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
@@ -274,7 +274,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         request.AddQueryStringParam("to_time_created", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-dd"));
                         request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, trb.Order));
                         request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, trb.ActionOrderBy));
-                        request.AddQueryStringParam("status", trb.SearchBuilder.PayLinkStatus?.ToString());
+                        request.AddQueryStringParam("status", trb.SearchBuilder.PayByLinkStatus?.ToString());
                         request.AddQueryStringParam("usage_mode", trb.SearchBuilder.PaymentMethodUsageMode?.ToString());
                         request.AddQueryStringParam("name", trb.SearchBuilder.DisplayName);
                         request.AddQueryStringParam("amount", trb.SearchBuilder.Amount.ToNumericCurrencyString());

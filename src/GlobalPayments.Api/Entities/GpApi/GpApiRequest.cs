@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Entities.GpApi {
         public const string ACTIONS_ENDPOINT = "/actions";
         public const string MERCHANT_MANAGEMENT_ENDPOINT = "/merchants";
         public const string DCC_ENDPOINT = "/currency-conversions";
-        public const string PAYLINK_ENDPOINT = "/links";
+        public const string PAYBYLINK_ENDPOINT = "/links";
         public const string RISK_ASSESSMENTS = "/risk-assessments";
         public const string ACCOUNTS_ENDPOINT = "/accounts";
         public const string TRANSFER_ENDPOINT = "/transfers";

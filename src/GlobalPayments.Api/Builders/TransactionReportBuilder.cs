@@ -21,7 +21,7 @@ namespace GlobalPayments.Api.Builders {
         }
        
         internal string DisputeDocumentId { get; set; }
-        internal string PayLinkId { get; set; }
+        internal string PayByLinkId { get; set; }
        
 
         /// <summary>
@@ -113,10 +113,10 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public TransactionReportBuilder<TResult> WithPayLinkId(string payLinkId)
+        public TransactionReportBuilder<TResult> WithPayByLinkId(string payByLinkId)
         {
-            SearchBuilder.PayLinkId = payLinkId;
-            PayLinkId = payLinkId;
+            SearchBuilder.PayByLinkId = payByLinkId;
+            PayByLinkId = payByLinkId;
             return this;
         }
 
@@ -131,7 +131,7 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(ReportType.Activity).Check(() => TransactionId).IsNull();
             Validations.For(ReportType.DocumentDisputeDetail).Check(() => DisputeDocumentId).IsNotNull();
-            Validations.For(ReportType.PayLinkDetail).Check(() => PayLinkId).IsNotNull();
+            Validations.For(ReportType.PayByLinkDetail).Check(() => PayByLinkId).IsNotNull();
 
             #endregion
         }
