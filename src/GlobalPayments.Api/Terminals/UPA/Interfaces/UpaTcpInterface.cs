@@ -134,10 +134,19 @@ namespace GlobalPayments.Api.Terminals.UPA {
             );
         }
 
-        private string GetResponseMessageType(byte[] response) {
+        private string GetResponseMessageType(byte[] response)
+        {
             var jsonObject = System.Text.Encoding.UTF8.GetString(TrimResponse(response));
-            var jsonDoc = JsonDoc.Parse(jsonObject);
-            return jsonDoc.GetValue<string>("message");
+            try
+            {
+                var jsonDoc = JsonDoc.Parse(jsonObject);
+                return jsonDoc.GetValue<string>("message");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"{ex.Message} : Response - {jsonObject}");
+                throw;
+            }
         }
 
         private void SendAckMessageToDevice() {
