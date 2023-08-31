@@ -36,6 +36,7 @@ namespace GlobalPayments.Api.Tests.GpEcom
 
             newCustomer = new Customer {
                 Key = CustomerId,
+                Id = "E8953893489",
                 Title = "Mr.",
                 FirstName = "James",
                 LastName = "Mason",

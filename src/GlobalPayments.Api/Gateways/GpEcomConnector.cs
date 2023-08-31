@@ -1395,7 +1395,7 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(phone, "mobile", customer.MobilePhone);
 
             et.SubElement(payer, "email", customer.Email);
-
+            et.SubElement(payer, "custnum", customer.Id);
             // comments
             return payer;
         }

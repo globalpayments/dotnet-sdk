@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Bug fixes:
+
+- GP-ECOM: Added custnum from Customer on payer_new request
+
+## v6.0.0 (22/08/23)
+
 #### Enhancements
 
 - GP-API: Rename PayLink to PayByLink
