@@ -9,6 +9,7 @@ namespace GlobalPayments.Api.Entities {
         public string Endpoint { get; set; }
         public string RequestBody { get; set; }
         public Dictionary<string, string> QueryStringParams { get; }
+        public static Dictionary<string, string> MaskedValues { get; set; }
 
         internal Request() {
             QueryStringParams = new Dictionary<string, string>();

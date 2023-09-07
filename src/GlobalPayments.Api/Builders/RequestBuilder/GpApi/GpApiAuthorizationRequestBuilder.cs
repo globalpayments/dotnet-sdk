@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.PaymentMethods.PaymentInterfaces;
 using GlobalPayments.Api.Utils;
@@ -12,8 +13,10 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
     internal class GpApiAuthorizationRequestBuilder : IRequestBuilder<AuthorizationBuilder> {
         private static AuthorizationBuilder Builder;
+        private static Dictionary<string, string> MaskedValues;
 
         public Request BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
+            DisposeMaskedValues();
             Builder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             var paymentMethod = new JsonDoc()
@@ -75,6 +78,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         card.Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT"); // [DEBIT, CREDIT]
                     }
 
+                    var maskedValue = new Dictionary<string, string>();
+                    maskedValue.Add("payment_method.card.expiry_month", card.GetValue<string>("expiry_month"));
+                    maskedValue.Add("payment_method.card.expiry_year", card.GetValue<string>("expiry_year"));
+                    maskedValue.Add("payment_method.card.cvv", card.GetValue<string>("cvv"));
+                    MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
+
+                    MaskedValues = ProtectSensitiveData.HideValue("payment_method.card.number", card.GetValue<string>("number"), 4, 6);
+
                     var hasToken = builder.PaymentMethod is ITokenizable tokenData && !string.IsNullOrEmpty(tokenData.Token);
 
                     if (!hasToken) {
@@ -96,6 +107,17 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                             .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                             .Set("card", card);
+
+                        var maskedVValue = new Dictionary<string, string>();
+                        maskedVValue.Add("card.expiry_month", card.GetValue<string>("expiry_month"));
+                        maskedVValue.Add("card.expiry_year", card.GetValue<string>("expiry_year"));
+                        maskedVValue.Add("card.cvv", card.GetValue<string>("cvv"));
+
+                        DisposeMaskedValues();
+                        MaskedValues = ProtectSensitiveData.HideValues(maskedVValue);
+                        MaskedValues = ProtectSensitiveData.HideValue("card.number", card.GetValue<string>("number"), 4, 6);
+
+                        Request.MaskedValues = MaskedValues;
 
                         return new Request {
                             Verb = HttpMethod.Post,
@@ -124,6 +146,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                            .Set("country", gateway.GpApiConfig.Country)
                            .Set("payment_method", paymentMethod);
 
+                        Request.MaskedValues = MaskedValues;
+
                         return new Request {
                             Verb = HttpMethod.Post,
                             Endpoint = $"{merchantUrl}{GpApiRequest.DCC_ENDPOINT}",
@@ -140,6 +164,17 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                                 .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                                 .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
                                 .Set("card", card);
+
+                            var maskedVValue = new Dictionary<string, string>();
+                            maskedVValue.Add("card.expiry_month", card.GetValue<string>("expiry_month"));
+                            maskedVValue.Add("card.expiry_year", card.GetValue<string>("expiry_year"));
+                            maskedVValue.Add("card.cvv", card.GetValue<string>("cvv"));
+
+                            DisposeMaskedValues();
+                            MaskedValues = ProtectSensitiveData.HideValues(maskedVValue);
+                            MaskedValues = ProtectSensitiveData.HideValue("card.number", card.GetValue<string>("number"), 4, 6);
+
+                            Request.MaskedValues = MaskedValues;
 
                             return new Request {
                                 Verb = HttpMethod.Post,
@@ -178,6 +213,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             }
                             verificationData.Set("payment_method", paymentMethod);
 
+                            Request.MaskedValues = MaskedValues;
+
                             return new Request {
                                 Verb = HttpMethod.Post,
                                 Endpoint = $"{merchantUrl}{GpApiRequest.VERIFICATIONS_ENDPOINT}",
@@ -210,6 +247,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             .Set("country", gateway.GpApiConfig.Country)
                             .Set("payment_method", paymentMethod)
                             .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null);
+
+                        //Request.MaskedValues = MaskedValues;
 
                         return new Request {
                             Verb = HttpMethod.Post,
@@ -306,6 +345,12 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                 paymentMethod.Set("bank_transfer", bankTransfer);
 
+                DisposeMaskedValues();
+                var maskedValue = new Dictionary<string, string>();
+                maskedValue.Add("payment_method.bank_transfer.account_number", check.AccountNumber);
+                maskedValue.Add("payment_method.bank_transfer.bank.code", check.RoutingNumber);
+
+                MaskedValues = ProtectSensitiveData.HideValues(maskedValue, 4);                
             }
 
             if (builder.PaymentMethod is AlternativePaymentMethod) {
@@ -344,6 +389,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 bankTransfer.Set("remittance_reference", remittance);
 
                 paymentMethod.Set("bank_transfer", bankTransfer);
+
+                DisposeMaskedValues();
+                var maskedValue = new Dictionary<string, string>();
+                maskedValue.Add("payment_method.bank_transfer.account_number", bankTransfer.GetValue<string>("account_number"));
+                maskedValue.Add("payment_method.bank_transfer.iban", bankTransfer.GetValue<string>("iban"));
+
+                MaskedValues = ProtectSensitiveData.HideValues(maskedValue, 4);
             }
 
             if (builder.PaymentMethod is BNPL) {
@@ -512,11 +564,19 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 data.Set("stored_credential", storedCredential);
             }
 
+            Request.MaskedValues = MaskedValues;
+
             return new Request {
                 Verb = HttpMethod.Post,
                 Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}",
                 RequestBody = data.ToString(),
             };
+        }
+
+        private static void DisposeMaskedValues()
+        {
+            MaskedValues = null;
+            ProtectSensitiveData.DisposeCollection();
         }
 
         private static JsonDoc SetNotificationUrls(AuthorizationBuilder builder)

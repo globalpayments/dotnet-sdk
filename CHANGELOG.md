@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Enhancements
+
+- Enhance logs based on environment (GP-API & GP-ECOM)
+
+## v6.0.1 (31/08/23)
+
 #### Bug fixes:
 
 - GP-ECOM: Added custnum from Customer on payer_new request

@@ -102,6 +102,7 @@ namespace GlobalPayments.Api {
             var gateway = new GpApiConnector(gpApiConfig);
 
             gateway.ServiceUrl = ServiceUrl;
+            gateway.Environment = Environment;
 
             services.GatewayConnector = gateway;
             services.ReportingService = gateway;

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 
@@ -12,6 +13,8 @@ namespace GlobalPayments.Api.Gateways {
     internal class GpEcomConnector : XmlGateway, IPaymentGateway, IRecurringService, IReportingService {
         private static Dictionary<string, string> mapCardType = new Dictionary<string, string> { { "DinersClub", "Diners" } };
 
+
+        private static Dictionary<string, string> MaskedValues;
         public string MerchantId { get; set; }
         public string AccountId { get; set; }
         public string SharedSecret { get; set; }
@@ -30,6 +33,7 @@ namespace GlobalPayments.Api.Gateways {
 
         #region transaction handling
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
+            MaskedValues = null;
             var et = new ElementTree();
             string timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp();
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
@@ -100,10 +104,15 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(cardElement, "chname").Text(card.CardHolderName);
                     et.SubElement(cardElement, "type", MapCardType(CardUtils.GetBaseCardType(card.CardType)).ToUpper());
 
+                    MaskedValues = ProtectSensitiveData.HideValue("request.card.expdate", card.ShortExpiry);
+                    MaskedValues = ProtectSensitiveData.HideValue("request.card.number", card.Number, 4, 6);
+
                     if (card.Cvn != null) {
                         var cvnElement = et.SubElement(cardElement, "cvn");
                         et.SubElement(cvnElement, "number", card.Cvn);
                         et.SubElement(cvnElement, "presind", (int)card.CvnPresenceIndicator);
+
+                        MaskedValues = ProtectSensitiveData.HideValue("request.card.cvn.number", card.Cvn);
                     }
                 }
 
@@ -355,6 +364,7 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
             #endregion
+            Request.MaskedValues = MaskedValues;
 
             var response = DoTransaction(et.ToString(request));
             return MapResponse(response, builder);
@@ -755,6 +765,9 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(cardElement, "chname").Text(card.CardHolderName);
                         et.SubElement(cardElement, "type").Text(MapCardType(CardUtils.GetBaseCardType(card.CardType)));
 
+                        MaskedValues = ProtectSensitiveData.HideValue("request.card.expdate", expiry);
+                        MaskedValues = ProtectSensitiveData.HideValue("request.card.number", card.Number, 4, 6);
+
                         if (payment.StoredCredential != null) {
                             Element storedCredentialElement = et.SubElement(request, "storedcredential");
                             et.SubElement(storedCredentialElement, "srd", payment.StoredCredential.SchemeId);
@@ -846,6 +859,8 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(request, "sha1hash").Text(hash);
                 }
             }
+
+            Request.MaskedValues = MaskedValues;
 
             var response = DoTransaction(et.ToString(request));
             return MapRecurringResponse<TResult>(response, builder);

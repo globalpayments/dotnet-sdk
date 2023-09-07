@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System;
@@ -11,8 +12,10 @@ using System.Text;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
     internal class GpApiSecureRequestBuilder<T> : IRequestBuilder<SecureBuilder<T>> where T : class    {
-        private static Secure3dBuilder _3dBuilder { get; set; }        
+        private static Secure3dBuilder _3dBuilder { get; set; }
+        private static Dictionary<string, string> MaskedValues;
         public Request BuildRequest(SecureBuilder<T> builder, GpApiConnector gateway) {
+            DisposeMaskedValues();
             if (builder is FraudBuilder<T>) {
                 var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
                 switch (builder.TransactionType) {
@@ -30,6 +33,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             .Set("recurring_authorization_data", SetRecurringAuthorizationDataParam(builder))
                             .Set("payer_login_data", SetPayerLoginDataParam(builder))
                             .Set("browser_data", SetBrowserDataParam(builder));
+
+                        Request.MaskedValues = MaskedValues;
 
                         return new Request {
                             Verb = HttpMethod.Post,
@@ -50,6 +55,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             
         }
         private Request BuildSecure3dBuilderRequest(Secure3dBuilder builder, GpApiConnector gateway) {
+            DisposeMaskedValues();
             _3dBuilder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
@@ -70,6 +76,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         .Set("expiry_year", cardData.ExpYear?.ToString().PadLeft(4, '0').Substring(2, 2));
 
                     paymentMethod.Set("card", card);
+
+                    MaskPaymentMethodSensitiveData(card);
                 }
 
                 var notifications = new JsonDoc()
@@ -91,6 +99,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     .Set("stored_credential", storedCredential.HasKeys() ? storedCredential : null)
                     .Set("payment_method", paymentMethod)
                     .Set("notifications", notifications.HasKeys() ? notifications : null);
+
+                Request.MaskedValues = MaskedValues;
 
                 return new Request {
                     Verb = HttpMethod.Post,
@@ -120,6 +130,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         .Set("expiry_year", cardData.ExpYear?.ToString().PadLeft(4, '0').Substring(2, 2));
 
                     paymentMethod.Set("card", card);
+
+                    MaskPaymentMethodSensitiveData(card);
                 }
                 #endregion
 
@@ -244,6 +256,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     .Set("mobile_data", mobileData.HasKeys() && builder.AuthenticationSource == AuthenticationSource.MOBILE_SDK ? mobileData : null)
                     .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl);
 
+                Request.MaskedValues = MaskedValues;
+
                 return new Request {
                     Verb = HttpMethod.Post,
                     Endpoint = $"{merchantUrl}{GpApiRequest.AUTHENTICATIONS_ENDPOINT}/{builder.ServerTransactionId}/initiate",
@@ -280,6 +294,16 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             }
             return null;
+        }
+
+        private void MaskPaymentMethodSensitiveData(JsonDoc card)
+        {
+            var maskedValue = new Dictionary<string, string>();
+            maskedValue.Add("payment_method.card.expiry_month", card.GetValue<string>("expiry_month"));
+            maskedValue.Add("payment_method.card.expiry_year", card.GetValue<string>("expiry_year"));
+
+            MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
+            MaskedValues = ProtectSensitiveData.HideValue("payment_method.card.number", card.GetValue<string>("number"), 4, 6);
         }
 
         private static JsonDoc InitiateAuthenticationData(GpApiConfig config)
@@ -483,44 +507,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             return order.HasKeys() ? order : null;
         }
-
-        //private static JsonDoc SetOrderParam()
-        //{
-        //    var order = new JsonDoc()
-        //        .Set("time_created_reference", _builder.OrderCreateDate?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
-        //        .Set("amount", _builder.Amount.ToNumericCurrencyString())
-        //        .Set("currency", _builder.Currency)
-        //        .Set("reference", _builder.ReferenceNumber)
-        //        .Set("address_match_indicator", _builder.AddressMatchIndicator)
-        //        .Set("gift_card_count", _builder.GiftCardCount)
-        //        .Set("gift_card_currency", _builder.GiftCardCurrency)
-        //        .Set("gift_card_amount", _builder.GiftCardAmount.ToNumericCurrencyString())
-        //        .Set("delivery_email", _builder.DeliveryEmail)
-        //        .Set("delivery_timeframe", _builder.DeliveryTimeframe?.ToString())
-        //        .Set("shipping_method", _builder.ShippingMethod?.ToString())
-        //        .Set("shipping_name_matches_cardholder_name", _builder.ShippingNameMatchesCardHolderName)
-        //        .Set("preorder_indicator", _builder.PreOrderIndicator?.ToString())
-        //        .Set("preorder_availability_date", _builder.PreOrderAvailabilityDate?.ToString("yyyy-MM-dd"))
-        //        .Set("reorder_indicator", _builder.ReorderIndicator?.ToString())
-        //        .Set("category", _builder.MessageCategory.ToString())
-        //        .Set("transaction_type", _builder.OrderTransactionType.ToString());
-
-        //    if (_builder.ShippingAddress != null)
-        //    {
-        //        var shippingAddress = new JsonDoc()
-        //            .Set("line1", _builder.ShippingAddress.StreetAddress1)
-        //            .Set("line2", _builder.ShippingAddress.StreetAddress2)
-        //            .Set("line3", _builder.ShippingAddress.StreetAddress3)
-        //            .Set("city", _builder.ShippingAddress.City)
-        //            .Set("postal_code", _builder.ShippingAddress.PostalCode)
-        //            .Set("state", _builder.ShippingAddress.State)
-        //            .Set("country", _builder.ShippingAddress.CountryCode);
-
-        //        order.Set("shipping_address", shippingAddress);
-        //    }
-
-        //    return order.HasKeys() ? order : null;
-        //}
+       
 
         private static JsonDoc VerifyEnrolled(GpApiConfig config)
         {            
@@ -563,6 +550,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                 paymentMethod.Set("card", card)
                 .Set("name", !string.IsNullOrEmpty(cardData.CardHolderName) ? cardData.CardHolderName : null);
+
+                var maskedValue = new Dictionary<string, string>();
+                maskedValue.Add("payment_method.card.expiry_month", card.GetValue<string>("expiry_month"));
+                maskedValue.Add("payment_method.card.expiry_year", card.GetValue<string>("expiry_year"));
+
+                MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
+                MaskedValues = ProtectSensitiveData.HideValue("payment_method.card.number", cardData.Number, 4, 6);
             }
 
             return paymentMethod;            
@@ -576,6 +570,12 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     .Set("sequence", EnumConverter.GetMapping(Target.GP_API, _3dBuilder.StoredCredential?.Sequence));
 
             return storedCredential.HasKeys() ? storedCredential : null;            
+        }
+
+        private static void DisposeMaskedValues()
+        {
+            MaskedValues = null;
+            ProtectSensitiveData.DisposeCollection();
         }
     }
 }

@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.Gateways;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System;
@@ -14,6 +15,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
     internal class GpApiPayFacRequestBuilder<T> : IRequestBuilder<PayFacBuilder<T>> where T : class
     {
         private static PayFacBuilder<T> _builder { get; set; }
+        private static Dictionary<string, string> MaskedValues;
 
         public Request BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway)
         {
@@ -25,6 +27,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     if (builder.TransactionModifier == TransactionModifier.Merchant)
                     {
                         var data = BuildCreateMerchantRequest();
+
+                        Request.MaskedValues = MaskedValues;
 
                         return new Request
                         {
@@ -54,7 +58,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                             var card = new Dictionary<string, object>();
                             card.Add("name", builder.CreditCardInformation?.CardHolderName);
                             card.Add("card", builder.CreditCardInformation is CreditCardData ? MapCreditCardInfo(builder.CreditCardInformation) : null);
-                            paymentMethod.Add("payment_method", card);
+                            paymentMethod.Add("payment_method", card);                            
                         }
 
                         if ((builder.Addresses != null) && (builder.Addresses.ContainsKey(AddressType.Billing)))
@@ -137,6 +141,15 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             item.Add("expiry_month", value.ExpMonth.HasValue ? value.ExpMonth.ToString().PadLeft(2, '0') : string.Empty);
             item.Add("expiry_year", value.ExpYear.HasValue ? value.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
             item.Add("cvv", value.Cvn);
+
+            var maskedValue = new Dictionary<string, string>();
+            maskedValue.Add("payer.payment_method.card.expiry_month", value.ExpMonth.HasValue ? value.ExpMonth.ToString().PadLeft(2, '0') : string.Empty);
+            maskedValue.Add("payer.payment_method.card.expiry_year", value.ExpYear.HasValue ? value.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
+            maskedValue.Add("payer.payment_method.card.cvv", value.Cvn);
+
+            MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
+            MaskedValues = ProtectSensitiveData.HideValue("payer.payment_method.card.number", value.Number, 4, 6);
+
             return item;
         }
 
@@ -276,6 +289,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             item.Add("number", creditCardInformation?.Number);
             item.Add("expiry_month", creditCardInformation?.ExpMonth);
             item.Add("expiry_year", creditCardInformation?.ExpYear);
+
+            var maskedValue = new Dictionary<string, string>();
+            maskedValue.Add("payment_methods;list.card.expiry_month", creditCardInformation?.ExpMonth.ToString().PadLeft(2, '0') ?? string.Empty);
+            maskedValue.Add("payment_methods;list.card.expiry_year", creditCardInformation?.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) ?? string.Empty);            
+
+            MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
+            MaskedValues = ProtectSensitiveData.HideValue("payment_methods;list.card.number", creditCardInformation?.Number, 4, 6);
+
             return item;
         }
 

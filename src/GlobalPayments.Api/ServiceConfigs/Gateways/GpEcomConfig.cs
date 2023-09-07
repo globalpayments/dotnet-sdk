@@ -87,7 +87,8 @@ namespace GlobalPayments.Api {
                 ServiceUrl = ServiceUrl,
                 HostedPaymentConfig = HostedPaymentConfig,
                 RequestLogger = RequestLogger,
-                WebProxy = WebProxy
+                WebProxy = WebProxy,
+                Environment = Environment
             };
             services.GatewayConnector = gateway;
             services.RecurringConnector = gateway;
@@ -114,7 +115,8 @@ namespace GlobalPayments.Api {
                     ChallengeNotificationUrl = ChallengeNotificationUrl,
                     Timeout = Timeout,
                     RequestLogger = RequestLogger,
-                    WebProxy = WebProxy
+                    WebProxy = WebProxy,
+                    Environment = Environment
                     //secure3d2.EnableLogging = EnableLogging
                 };
 
@@ -131,6 +133,7 @@ namespace GlobalPayments.Api {
                 openBanking.Timeout = gateway.Timeout;
                 openBanking.RequestLogger = RequestLogger;
                 openBanking.WebProxy = WebProxy;
+                openBanking.Environment = Environment;
 
                 services.SetOpenBankingProvider(openBanking);
             }

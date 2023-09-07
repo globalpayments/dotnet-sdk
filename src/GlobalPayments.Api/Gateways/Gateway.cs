@@ -7,6 +7,9 @@ using GlobalPayments.Api.Entities;
 using System.Threading.Tasks;
 using GlobalPayments.Api.Logging;
 using System.Net;
+using Newtonsoft.Json;
+using GlobalPayments.Api.Utils;
+using System.Xml.Linq;
 
 namespace GlobalPayments.Api.Gateways {
     internal abstract class Gateway {
@@ -20,14 +23,19 @@ namespace GlobalPayments.Api.Gateways {
         public string ServiceUrl { get; set; }
 
         public Dictionary<string, string> DynamicHeaders;
+       
+        public Entities.Environment Environment { get; set; }
+
+        public Dictionary<string, string> MaskedRequestData;
 
         public Gateway(string contentType) {
             Headers = new Dictionary<string, string>();
             _contentType = contentType;
             DynamicHeaders = new Dictionary<string, string>();
+            MaskedRequestData = new Dictionary<string, string>();
         }
 
-        private string GenerateRequestLog(HttpRequestMessage request) {
+        private string GenerateRequestLog(HttpRequestMessage request, bool isXml = false) {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"{request.Method.ToString()} {request.RequestUri}");
             foreach (var header in request.Headers) {
@@ -37,12 +45,18 @@ namespace GlobalPayments.Api.Gateways {
                 foreach (var header in request.Content.Headers) {
                     sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
                 }
-                sb.AppendLine(request.Content.ReadAsStringAsync().Result);
+                if (MaskedRequestData.Count > 0 && Environment == Entities.Environment.PRODUCTION) {
+                    var data = request.Content.ReadAsStringAsync().Result;
+                    sb.AppendLine(MaskSensitiveData(data, isXml));
+                }
+                else { sb.AppendLine(request.Content.ReadAsStringAsync().Result); }
+                
             }
             return sb.ToString();
         }
+                
 
-        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true) {
+        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false) {
             HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
             };
@@ -73,7 +87,7 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 }
 
-                RequestLogger?.RequestSent(GenerateRequestLog(request));
+                RequestLogger?.RequestSent(GenerateRequestLog(request, isXml));
                 
                 response = httpClient.SendAsync(request).Result;
 
@@ -90,7 +104,8 @@ namespace GlobalPayments.Api.Gateways {
             catch (Exception exc) {
                 throw new GatewayException("Error occurred while communicating with gateway.", exc);
             }
-            finally { }
+            finally {         
+            }
         }
 
         protected async Task<GatewayResponse> SendRequestAsync(string endpoint, MultipartFormDataContent content) {
@@ -157,6 +172,56 @@ namespace GlobalPayments.Api.Gateways {
             if (queryStringParams == null || queryStringParams.Count == 0)
                 return string.Empty;
             return string.Format("?{0}", string.Join("&", queryStringParams.Select(kvp => string.Format("{0}={1}", Uri.EscapeDataString(kvp.Key), Uri.EscapeDataString(kvp.Value)))));
+        }
+
+        private string MaskSensitiveData(string data, bool isXml = false)
+        {
+            if (isXml) {
+                var xml = XDocument.Parse(data);
+                data = JsonConvert.SerializeXNode(xml);
+            }
+
+            var dataParsed = JsonDoc.Parse(data);
+            foreach (var maskedItem in MaskedRequestData) {
+                var key = maskedItem.Key;
+                var parts = key.Split('.');
+                var value = maskedItem.Value;
+                if (parts.Length > 1) {
+                    var cont = 0;
+                    JsonDoc valueToReplace = new JsonDoc();
+                    for (int i = 0; i < parts.Length; i++) {
+                        if (i < parts.Length - 1) {
+                            var list = parts[i].Split(';');                            
+                            if (cont == 0) {                                
+                                valueToReplace = list.Length > 1 ? dataParsed?.GetArray<JsonDoc>(list[0]).FirstOrDefault() : dataParsed.Has(parts[i]) ?  dataParsed?.Get(parts[i]) : null;
+                                cont++;
+                            }
+                            else {
+                                valueToReplace = list.Length > 1 ? valueToReplace?.GetArray<JsonDoc>(list[0]).FirstOrDefault() : valueToReplace.Has(parts[i]) ?  valueToReplace?.Get(parts[i]) : null;
+                            }
+                        }
+                        else {
+                            if (valueToReplace != null && valueToReplace.Has(parts[i])) {
+                                valueToReplace?.Remove(parts[i]);
+                                valueToReplace?.Set(parts[i], value);
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (dataParsed != null && dataParsed.Has(key)) {
+                        dataParsed?.Remove(key);
+                        dataParsed?.Set(key, value);
+                    }
+                }
+            }
+
+            if (isXml)  {
+                var des = JsonConvert.DeserializeXNode(dataParsed.ToString());
+                return des.ToString();
+            }          
+            
+            return dataParsed.ToString();            
         }
     }
 }

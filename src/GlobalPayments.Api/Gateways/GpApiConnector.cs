@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Builders.RequestBuilder.GpApi;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.Mapping;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -163,15 +164,26 @@ namespace GlobalPayments.Api.Gateways {
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
-            try {
+            try
+            {
+                if (Request.MaskedValues != null) {
+                    MaskedRequestData = Request.MaskedValues;
+                }
                 return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
             }
-            catch (GatewayException ex) {
-                if (ex.ResponseCode == "NOT_AUTHENTICATED" && !string.IsNullOrEmpty(GpApiConfig.AppId) && !string.IsNullOrEmpty(GpApiConfig.AppKey)) {
+            catch (GatewayException ex)
+            {
+                if (ex.ResponseCode == "NOT_AUTHENTICATED" && !string.IsNullOrEmpty(GpApiConfig.AppId) && !string.IsNullOrEmpty(GpApiConfig.AppKey))
+                {
                     SignIn();
                     return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
                 }
                 throw ex;
+            }
+            finally {
+                Request.MaskedValues = null;
+                ProtectSensitiveData.DisposeCollection();
+                MaskedRequestData = new Dictionary<string, string>();
             }
         }
 
@@ -247,6 +259,10 @@ namespace GlobalPayments.Api.Gateways {
             var request = new GpApiSecureRequestBuilder<ThreeDSecure>().BuildRequest(builder, this);
 
             if (request != null) {
+                if (Request.MaskedValues != null) {
+                    MaskedRequestData = Request.MaskedValues;
+                }
+
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
 
                 return GpApiMapping.Map3DSecureData(response);
