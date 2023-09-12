@@ -1,0 +1,20 @@
+ Volume in drive D is D Drive
+ Volume Serial Number is C6B3-DE8E
+
+ Directory of D:\Source\Repositories\HSS\BlueBear\BlueBridge.CardPresent\dotnet-sdk
+
+11/10/2022  01:53 PM    <DIR>          .
+11/10/2022  01:53 PM    <DIR>          ..
+11/10/2022  11:01 AM             2,289 .gitignore
+11/10/2022  11:01 AM               438 .travis.yml
+11/10/2022  11:01 AM            12,930 CHANGELOG.md
+11/10/2022  01:54 PM                 0 dir.txt
+11/10/2022  11:01 AM           109,984 Doxyfile
+11/10/2022  11:01 AM    <DIR>          examples
+11/10/2022  11:01 AM             2,166 GlobalPayments.Api.sln
+11/10/2022  11:01 AM            15,439 LICENSE.md
+11/10/2022  11:01 AM             5,601 README.md
+11/10/2022  11:01 AM    <DIR>          src
+11/10/2022  11:01 AM    <DIR>          tests
+               8 File(s)        148,847 bytes
+               5 Dir(s)  122,987,163,648 bytes free

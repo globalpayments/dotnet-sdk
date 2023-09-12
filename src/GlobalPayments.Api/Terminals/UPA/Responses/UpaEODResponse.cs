@@ -19,10 +19,12 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
             Status = cmdResult.GetValue<string>("result");
 
+            EcrId = firstDataNode.GetValue<string>("EcrId");
+            RequestId = firstDataNode.GetValue<int>("requestId");
+
             // Log error info if it's there
-            var errorCode = cmdResult.GetValue<string>("errorCode");
-            var errorMsg = cmdResult.GetValue<string>("errorMessage");
-            DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
+            DeviceResponseCode = cmdResult.GetValue<string>("errorCode");
+            DeviceResponseText = cmdResult.GetValue<string>("errorMessage");
 
             // Unlike in other response types, this data should always be here, even if the Status is "Failed"
             var secondDataNode = firstDataNode.Get("data");
@@ -62,6 +64,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
         public IBatchReportResponse BatchReportResponse { get; set; }
         public string RespDateTime { get; set; }
         public int BatchId { get; set; }
+        public string EcrId { get; set; }
+        public int RequestId { get; set; }
         public int GatewayResponseCode { get; set; }
         public string GatewayResponseMessage { get; set; }
 

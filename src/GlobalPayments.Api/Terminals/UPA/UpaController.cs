@@ -6,9 +6,13 @@ using GlobalPayments.Api.Utils;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using log4net;
 
 namespace GlobalPayments.Api.Terminals.UPA {
     public class UpaController : DeviceController {
+
+        private readonly ILog _logger = LogManager.GetLogger(typeof(UpaController));
+
         internal override IDeviceInterface ConfigureInterface() {
             if (_interface == null) {
                 _interface = new UpaInterface(this);
@@ -46,6 +50,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var response = Send(BuildReportTransaction(builder));
 
             string jsonObject = Encoding.UTF8.GetString(response);
+
+            if(_logger.IsDebugEnabled)
+                _logger.Debug($"Raw Response: {jsonObject}");
+
             var jsonParse = JsonDoc.Parse(jsonObject);
 
             switch (builder.ReportType) {
@@ -95,7 +103,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
             var baseRequest = doc.SubElement("data");
             baseRequest.Set("command", MapTransactionType(transType, transModifier, builder.RequestMultiUseToken, builder.Gratuity));
-            baseRequest.Set("EcrId", builder.EcrId.ToString());
+            baseRequest.Set("EcrId", builder.EcrId);
             baseRequest.Set("requestId", requestId.ToString());
 
             if (transType != TransactionType.Balance) {
@@ -210,7 +218,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var baseRequest = doc.SubElement("data");
             // Possibly update the requestToken parameter in the future if necessary
             baseRequest.Set("command", MapTransactionType(transType, transModifier, false, builder.Gratuity));
-            baseRequest.Set("EcrId", builder.EcrId.ToString());
+            baseRequest.Set("EcrId", builder.EcrId);
             baseRequest.Set("requestId", requestId.ToString());
 
             var txnData = baseRequest.SubElement("data");
@@ -257,6 +265,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
 
             string jsonObject = Encoding.UTF8.GetString(response);
+
+            if(_logger.IsDebugEnabled)
+                _logger.Debug($"Raw Response: {jsonObject}");
+
             var jsonParse = JsonDoc.Parse(jsonObject);
 
             return new TransactionResponse(jsonParse);

@@ -4,7 +4,8 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.UPA
 {
-    internal class TransactionResponse: ITerminalResponse {
+
+    public class TransactionResponse : ITerminalResponse {
         #region Properties
         public decimal? AvailableBalance { get; set; }
         public string TransactionId { get; set; }
@@ -52,31 +53,31 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string ReferenceNumber { get; set; }
         public string CardHolderName { get; set; }
         public string RequestId { get; set; }
+        public string EcrId { get; set; }
+        public string GatewayResponseCode { get; set; }
+        public string GatewayResponseText { get; set; }
+        public bool PartialApproval { get; set; }
         #endregion
 
 
         public TransactionResponse(JsonDoc root) {
-            if (!isGpApiResponse(root)) {
-                var response = root.Get("data");
-                if (response == null) {
-                    return;
-                }
+            var response = root.Get("data");
+            if (response == null) {
+                return;
+            }
 
-                RequestId = response.GetValue<string>("requestId");
-                HydrateCmdResult(response);
-                var responseData = response.Get("data");
-                if (responseData == null) {
-                    return;
-                }
-                HydrateHostData(responseData);
-                HydratePaymentData(responseData);
-                HydrateEmvData(responseData);
+            RequestId = response.GetValue<string>("requestId");
+            EcrId = response.GetValue<string>("EcrId");
+            TransactionType = response.GetValue<string>("response");
+
+            HydrateCmdResult(response);
+            var responseData = response.Get("data");
+            if (responseData == null) {
+                return;
             }
-            else {
-                RequestId = root.GetValue<string>("id");
-                DeviceResponseText = root.GetValue<string>("status");
-                ResponseText = root.Get("action").GetValue<string>("result_code");
-            }
+            HydrateHostData(responseData);
+            HydratePaymentData(responseData);
+            HydrateEmvData(responseData);
         }
 
         private bool isGpApiResponse(JsonDoc root) {
@@ -101,16 +102,33 @@ namespace GlobalPayments.Api.Terminals.UPA
             TransactionId = host.GetValue<string>("responseId");
             TerminalRefNumber = host.GetValue<string>("tranNo");
             // TransactionDate = host.GetValue<DateTime>("respDateTime");
-            // GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
-            // GatewayResponsemessage = host.GetValue<string>("gatewayResponsemessage");
+            GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
+            GatewayResponseText = host.GetValue<string>("gatewayResponseMessage");
             ResponseCode = NormalizeResponseCode(host.GetValue<string>("responseCode"), host.GetValue<string>("partialApproval"));
             ResponseText = host.GetValue<string>("responseText");
             ApprovalCode = host.GetValue<string>("approvalCode");
             ReferenceNumber = host.GetValue<string>("referenceNumber");
-            AvsResponseCode = host.GetValue<string>("avsResultCode");
-            CvvResponseCode = host.GetValue<string>("cvvResultCode");
-            AvsResponseText = host.GetValue<string>("avsResultText");
-            CvvResponseText = host.GetValue<string>("cvvResultText");
+
+            AvsResponseCode = host.GetValue<string>("AvsResultCode");
+
+            if (string.IsNullOrEmpty(AvsResponseCode))
+                AvsResponseCode = "0";
+
+            CvvResponseCode = host.GetValue<string>("CvvResultCode");
+
+            if (string.IsNullOrEmpty(CvvResponseCode))
+                CvvResponseCode = "0";
+
+            AvsResponseText = host.GetValue<string>("AvsResultText");
+
+            if (string.IsNullOrEmpty(AvsResponseText))
+                AvsResponseText = "AVS Not Requested.";
+
+            CvvResponseText = host.GetValue<string>("CvvResultText");
+
+            if (string.IsNullOrEmpty(CvvResponseText))
+                CvvResponseText = "CVV Not Requested.";
+
             // AdditionalTipAmount = host.GetValue<decimal>("additionalTipAmount");
             // BaseAmount = host.GetValue<decimal>("baseAmount");
             TipAmount = host.GetValue<decimal>("tipAmount");
@@ -126,9 +144,13 @@ namespace GlobalPayments.Api.Terminals.UPA
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
             // CavvResultCode = host.GetValue<string>("cavvResultCode");
             // TokenPANLast = host.GetValue<string>("tokenPANLast");
-            // PartialApproval = host.GetValue<string>("partialApproval");
+
+            var partialAmount = host.GetValue<string>("partialApproval");
+
+            PartialApproval = !string.IsNullOrEmpty(partialAmount) && !"0".Equals(partialAmount);
+
             // TraceNumber = host.GetValue<string>("traceNumber");
-            // BalanceDue = host.GetValue<decimal>("balanceDue");
+            AmountDue = BalanceAmount = host.GetValue<decimal>("balanceDue");
             // BaseDue = host.GetValue<decimal>("baseDue");
             // TaxDue = host.GetValue<decimal>("taxDue");
             // TipDue = host.GetValue<decimal>("tipDue");
@@ -228,10 +250,12 @@ namespace GlobalPayments.Api.Terminals.UPA
             return retValue;
         }
 
+
         public static TransactionResponse ParseResponse(string rawResponse) {
             JsonDoc response = JsonDoc.Parse(rawResponse);
             // TODO: We might have to scope the document down depending on what response we actually get from the message endpoint
             return new TransactionResponse(response);
         }
+
     }
 }
