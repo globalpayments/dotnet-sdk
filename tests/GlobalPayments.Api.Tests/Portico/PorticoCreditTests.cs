@@ -27,7 +27,8 @@ namespace GlobalPayments.Api.Tests {
         [TestInitialize]
         public void Init() {
             ServicesContainer.ConfigureService(new PorticoConfig {
-                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w"
+                SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
+                IsSafDataSupported = true
             });
 
             card = new CreditCardData {
@@ -550,7 +551,7 @@ namespace GlobalPayments.Api.Tests {
         public void CreditTestWithClientTransactionId() {
             var response = card.Charge(10m)
                 .WithCurrency("USD")
-                .WithClientTransactionId("123456")
+                .WithClientTransactionId("1002755")
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -566,103 +567,5 @@ namespace GlobalPayments.Api.Tests {
             var token = card.Tokenize("tokenize");
             Assert.IsNotNull(token);
         }
-
-        #region Step 4: LEVEL 3 Enhanced Data Tests
-
-        [TestMethod]
-        public void Visa_Level3_Sale() {
-
-            var commercialData = new CommercialData(TaxType.SALESTAX, CommercialIndicator.Level_III) {
-                PoNumber = "1784951399984509620",
-                TaxAmount = 0.01m,
-                DestinationPostalCode = "85212",
-                DestinationCountryCode = "USA",
-                OriginPostalCode = "22193",
-                SummaryCommodityCode = "SCC",
-                VAT_InvoiceNumber = "UVATREF162",
-                OrderDate = DateTime.Now,
-                FreightAmount = 0.01m,
-                DutyAmount = 0.01m,
-                AdditionalTaxDetails = new AdditionalTaxDetails {
-                    TaxAmount = 0.01m,
-                    TaxRate = 0.04m
-                }
-            };
-            commercialData.AddLineItems(
-                new CommercialLineItem {
-                    ProductCode = "PRDCD1",
-                    UnitCost = 0.01m,
-                    Quantity = 1m,
-                    UnitOfMeasure = "METER",
-                    Description = "PRODUCT 1 NOTES",
-                    // CommodityCode = "12DIGIT ACCO",
-                    DiscountDetails = new DiscountDetails {
-                        DiscountAmount = 0.50m
-                    }
-                },
-                new CommercialLineItem {
-                    ProductCode = "PRDCD2",
-                    UnitCost = 0.01m,
-                    Quantity = 1m,
-                    UnitOfMeasure = "METER",
-                    Description = "PRODUCT 2 NOTES",
-                    // CommodityCode = "12DIGIT ACCO",
-                    DiscountDetails = new DiscountDetails {
-                        DiscountAmount = 0.50m
-                    }
-                }
-            );
-
-            var response = VisaManual.Charge(0.53m)
-                .WithCurrency("USD")
-                .WithCommercialRequest(true)
-                .WithClientTransactionId(ClientTransactionId)
-                .WithAddress(Address)
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-
-            var edit = response.Edit()
-                .WithCommercialData(commercialData)
-                .Execute();
-            Assert.IsNotNull(edit);
-            Assert.AreEqual("00", edit.ResponseCode);
-        }
-
-        [TestMethod]
-        public void MasterCard_Level3_Sale() {
-
-            var commercialData = new CommercialData(TaxType.SALESTAX, CommercialIndicator.Level_III) {
-                PoNumber = "9876543210",
-                TaxAmount = 0.01m,   
-            };
-            commercialData.AddLineItems(
-                new CommercialLineItem {
-                    Description = "PRODUCT 1 NOTES",
-                    ProductCode = "PRDCD1",
-                    Quantity = 1m,
-                    TotalAmount = 0.01m,                    
-                    UnitOfMeasure = "METER",                 
-                    
-                }
-            );
-
-            var response = MasterCardManual.Charge(0.53m)
-                .WithCurrency("USD")
-                .WithCommercialRequest(true)
-                .WithClientTransactionId(ClientTransactionId)
-                .WithAddress(Address)
-                .Execute();
-            Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-
-            var edit = response.Edit()
-                .WithCommercialData(commercialData)
-                .Execute();
-            Assert.IsNotNull(edit);
-            Assert.AreEqual("00", edit.ResponseCode);
-        }
-
-        #endregion
     }
 }

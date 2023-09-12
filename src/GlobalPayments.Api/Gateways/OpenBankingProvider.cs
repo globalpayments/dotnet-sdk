@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.Mapping;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -19,7 +20,7 @@ namespace GlobalPayments.Api.Gateways
         public bool SupportsHostedPayments => false;
         public ShaHashType ShaHashType { get; set; }
 
-        //public $shaHashType;
+        private Dictionary<string, string> MaskedValues;
 
         public OpenBankingProvider() {
             this.Headers["Accept"] = "application/json";
@@ -63,6 +64,11 @@ namespace GlobalPayments.Api.Gateways
                           .Set("iban", bankPaymentType.Equals(BankPaymentType.SEPA) ? paymentMethod.Iban : null)
                           .Set("name", paymentMethod.AccountName);
 
+                    var maskedValue = new Dictionary<string, string>();
+                    maskedValue.Add("payment.destination.account_number", destination.GetValue<string>("account_number"));
+                    maskedValue.Add("payment.destination.iban", destination.GetValue<string>("iban"));
+
+                    MaskedValues = ProtectSensitiveData.HideValues(maskedValue, 4);
 
                     JsonDoc remittance_reference = new JsonDoc();
                     remittance_reference.Set("type", builder.RemittanceReferenceType != null ? builder.RemittanceReferenceType.ToString() : null)
@@ -86,6 +92,8 @@ namespace GlobalPayments.Api.Gateways
 
             try
             {
+                Request.MaskedValues = MaskedValues;
+
                 string rawResponse = DoTransaction(HttpMethod.Post, "/payments", request.ToString());
                 return OpenBankingMapping.MapResponse(rawResponse);
             }
@@ -158,7 +166,6 @@ namespace GlobalPayments.Api.Gateways
             }
         }
 
-
         public static BankPaymentType? GetBankPaymentType(string currency) {
             switch (currency) {
                 case "EUR":
@@ -181,5 +188,43 @@ namespace GlobalPayments.Api.Gateways
             return response.RawResponse;
         }
 
+        public Transaction ManageOpenBanking(ManagementBuilder builder)
+        {
+            string timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp();            
+            var amount = builder.Amount != null ? builder.Amount.ToNumericCurrencyString() : null;
+
+            JsonDoc request = new JsonDoc();                 
+        
+            switch (builder.TransactionType) {
+            case TransactionType.Refund:
+                   
+               string hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, MerchantId, AccountId, timestamp, builder.TransactionId, builder.ClientTransactionId, amount);
+               
+                SetAuthorizationHeader(hash);
+                    request.Set("merchant_id", MerchantId)
+                              .Set("account_id", AccountId)
+                              .Set("request_timestamp", timestamp);
+
+                    JsonDoc order = new JsonDoc();
+                    order.Set("id", builder.TransactionId)
+                          .Set("ob_trans_id", builder.ClientTransactionId)
+                          .Set("amount", amount)
+                          .Set("description", builder.Description);
+
+                    request.Set("order", order);
+
+                    break;
+                default:
+                    break;
+            }
+
+            try {
+                string rawResponse = DoTransaction(HttpMethod.Post, "/refunds", request.ToString());
+                return OpenBankingMapping.MapResponse(rawResponse);
+            }
+            catch (GatewayException gatewayException) {
+                throw gatewayException;
+            }
+        }
     }
 }

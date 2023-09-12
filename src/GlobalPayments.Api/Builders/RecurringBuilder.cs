@@ -33,8 +33,22 @@ namespace GlobalPayments.Api.Builders {
         }
 
         protected override void SetupValidations() {
-            Validations.For(TransactionType.Edit | TransactionType.Delete | TransactionType.Fetch).Check(() => Key).IsNotNull();
-            Validations.For(TransactionType.Search).Check(() => SearchCriteria).IsNotNull();
+           
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE     
+            /// TO ADD
+            #endregion
+
+            Validations.For(TransactionType.Edit)
+                .Check(() => Key).IsNotNull();
+
+            Validations.For(TransactionType.Delete)
+                .Check(() => Key).IsNotNull();
+
+            Validations.For(TransactionType.Fetch)
+                .Check(() => Key).IsNotNull();
+
+            Validations.For(TransactionType.Search)
+                .Check(() => SearchCriteria).IsNotNull();
         }
     }
 }

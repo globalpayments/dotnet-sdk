@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
+using System.Linq;
 
 namespace GlobalPayments.Api.Builders {
     internal class Validations {
@@ -31,6 +32,11 @@ namespace GlobalPayments.Api.Builders {
 
                 if (key.HasFlag(value)) {
                     foreach (var validation in rules[key]) {
+                        Type enumType = key.GetType();
+                        var hasFlagAttribute = enumType.GetTypeInfo().CustomAttributes.Any(x => x.AttributeType == typeof(FlagsAttribute));
+
+                        if (!(hasFlagAttribute) && !(value.Equals(key))) continue;
+
                         if (validation.clause == null) continue;
 
                         // modifier

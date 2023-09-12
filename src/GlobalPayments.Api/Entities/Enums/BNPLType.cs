@@ -6,8 +6,7 @@ using System.Text;
 namespace GlobalPayments.Api.Entities.Enums
 {
     [MapTarget(Target.GP_API)]
-    public enum BNPLType
-    {
+    public enum BNPLType {
         [Map(Target.GP_API, "AFFIRM")]
         AFFIRM,
 
@@ -15,6 +14,6 @@ namespace GlobalPayments.Api.Entities.Enums
         CLEARPAY,
 
         [Map(Target.GP_API, "KLARNA")]
-        KLARNA,
+        KLARNA
     }
 }

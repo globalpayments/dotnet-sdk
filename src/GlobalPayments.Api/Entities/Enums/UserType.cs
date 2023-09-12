@@ -5,9 +5,8 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum UserType
-    {
+    public enum UserType {
         [Description("MERCHANT")]
-        MERCHANT,
+        MERCHANT
     }
 }

@@ -2,8 +2,7 @@
 
 namespace GlobalPayments.Api.Entities {
     [MapTarget(Target.GP_API)]
-    public enum PaymentMethodName
-    {
+    public enum PaymentMethodName {
         [Map(Target.GP_API, "APM")]
         APM,
 
@@ -21,6 +20,6 @@ namespace GlobalPayments.Api.Entities {
         BankPayment,
 
         [Map(Target.GP_API, "BNPL")]
-        BNPL,
+        BNPL
     }
 }

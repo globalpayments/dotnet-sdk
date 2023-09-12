@@ -14,6 +14,6 @@ namespace GlobalPayments.Api.Entities {
 
         //Only for Settlement disputes
         [Map(Target.GP_API, "FUNDED")]
-        Funded,
+        Funded
     }
 }

@@ -15,7 +15,8 @@ namespace GlobalPayments.Api.Tests.Portico {
                 SiteId = 124992,
                 DeviceId = 145,
                 Username = "9158402",
-                Password = "$Test1234"
+                Password = "$Test1234",
+                IsSafDataSupported = true
             });
 
             track = new DebitTrackData {

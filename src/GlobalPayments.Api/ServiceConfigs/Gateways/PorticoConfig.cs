@@ -84,7 +84,7 @@ namespace GlobalPayments.Api {
         /// If false, use the Canadian ProPay endpoints
         /// </summary>
         public bool ProPayUS { get; set; } = true;
-
+        public bool IsSafDataSupported { get; set; }
         private string PayPlanEndpoint {
             get {
                 if (
@@ -124,8 +124,8 @@ namespace GlobalPayments.Api {
                 UniqueDeviceId = UniqueDeviceId,
                 RequestLogger = RequestLogger,
                 WebProxy = WebProxy,
-                SDKNameVersion = SDKNameVersion,               
-
+                SDKNameVersion = SDKNameVersion,
+                IsSafDataSupported = IsSafDataSupported,
             };
             services.GatewayConnector = gateway;
 

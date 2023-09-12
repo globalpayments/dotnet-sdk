@@ -37,7 +37,7 @@ namespace GlobalPayments.Api.Utils {
         }
     }
 
-    public class JsonDoc {
+    public class JsonDoc : IRawRequestBuilder {
         Dictionary<string, object> _dict;
         IRequestEncoder _encoder;
 

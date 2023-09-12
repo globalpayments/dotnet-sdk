@@ -247,8 +247,8 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public ManagementBuilder WithPayLinkData(PayLinkData payLinkData) {
-            PayLinkData = payLinkData;            
+        public ManagementBuilder WithPayByLinkData(PayByLinkData payByLinkData) {
+            PayByLinkData = payByLinkData;            
             return this;
         }
 
@@ -488,14 +488,45 @@ namespace GlobalPayments.Api.Builders {
             base.Execute(configName);
 
             var client = ServicesContainer.Instance.GetClient(configName);
+            if (client.SupportsOpenBanking &&
+                PaymentMethod is TransactionReference &&
+            PaymentMethod.PaymentMethodType == PaymentMethodType.BankPayment) {
+            var obClient = ServicesContainer.Instance.GetOpenBanking(configName);
+                if (obClient != client) {
+                    return obClient.ManageOpenBanking(this);
+                }
+            }
             return client.ManageTransaction(this);
         }
 
         protected override void SetupValidations() {
-            Validations.For(TransactionType.Capture | TransactionType.Edit | TransactionType.Hold | TransactionType.Release)
-                .Check(() => PaymentMethod).IsNotNull();
 
-            Validations.For(TransactionType.Capture | TransactionType.Hold | TransactionType.Release | TransactionType.Reauth)
+            
+            #region ENUM VALIDATION WITH FLAG ATTRIBUTE     
+            /// TO ADD
+            #endregion
+
+
+            Validations.For(TransactionType.Capture)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => TransactionId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Edit)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Hold)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => TransactionId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Release)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => TransactionId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.Reauth)
                 .Check(() => TransactionId).IsNotNull();
 
             // TODO: Need level validations
@@ -504,41 +535,42 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.Refund)
                 .When(() => Amount).IsNotNull()
-                .Check(() => Currency).IsNotNull();
+                .Check(() => Currency).IsNotNull()
+                .Check(() => VoidReason).IsNull();
 
             Validations.For(TransactionType.VerifySignature)
                 .Check(() => PayerAuthenticationResponse).IsNotNull()
                 .Check(() => Amount).IsNotNull()
                 .Check(() => Currency).IsNotNull()
-                .Check(() => OrderId).IsNotNull();
+                .Check(() => OrderId).IsNotNull()
+                .Check(() => VoidReason).IsNull();
 
-            Validations.For(TransactionType.TokenDelete | TransactionType.TokenUpdate)
+            Validations.For(TransactionType.TokenUpdate)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => PaymentMethod).Is<ITokenizable>();
+
+            Validations.For(TransactionType.TokenUpdate)
                 .Check(() => PaymentMethod).IsNotNull()
                 .Check(() => PaymentMethod).Is<ITokenizable>();
 
             Validations.For(TransactionType.TokenUpdate)
                 .Check(() => PaymentMethod).Is<CreditCardData>();
 
-            Validations.For(TransactionType.PayLinkUpdate)
-               .Check(() => PayLinkData).IsNotNull()
+            Validations.For(TransactionType.PayByLinkUpdate)
+               .Check(() => PayByLinkData).IsNotNull()
                .Check(() => Amount).IsNotNull()
-               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageMode)).IsNotNull()
-               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.UsageLimit)).IsNotNull()
-               .Check(() => PayLinkData).PropertyOf(nameof(PayLinkData.Type)).IsNotNull();
+               .Check(() => PayByLinkData).PropertyOf(nameof(PayByLinkData.UsageMode)).IsNotNull()
+               .Check(() => PayByLinkData).PropertyOf(nameof(PayByLinkData.UsageLimit)).IsNotNull()
+               .Check(() => PayByLinkData).PropertyOf(nameof(PayByLinkData.Type)).IsNotNull();
        
             Validations.For(TransactionType.SplitFunds)
                 .Check(() => FundsData).IsNotNull()
                 .Check(() => Amount).IsNotNull();
 
-            Validations.For(
-                TransactionType.Capture |
-                TransactionType.Edit |
-                TransactionType.Hold |
-                TransactionType.Release |
-                TransactionType.TokenUpdate |
-                TransactionType.TokenDelete |
-                TransactionType.VerifySignature |
-                TransactionType.Refund)
+            Validations.For(TransactionType.TokenUpdate)
+                .Check(() => VoidReason).IsNull();
+
+            Validations.For(TransactionType.TokenDelete)
                 .Check(() => VoidReason).IsNull();
         }
         public ManagementBuilder WithForcedReversal(bool value) {

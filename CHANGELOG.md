@@ -4,6 +4,82 @@
 
 #### Enhancements
 
+- Enhance logs based on environment (GP-API & GP-ECOM)
+
+## v6.0.1 (31/08/23)
+
+#### Bug fixes:
+
+- GP-ECOM: Added custnum from Customer on payer_new request
+
+## v6.0.0 (22/08/23)
+
+#### Enhancements
+
+- GP-API: Rename PayLink to PayByLink
+- Added builder methods WithStartDate and WithEndDate to the Report builder
+
+#### Bug fixes:
+
+- NWS: Fixed multiple null reference exceptions when attempting transactions without passing in TagData
+
+## v5.2.4 (10/08/23)
+
+#### Bug fixes:
+
+- GP-API: Included in the verify request the authentication field with tokenizable card or without it.
+
+## v5.2.3 (01/08/23)
+
+#### Enhancements
+
+- Portico: Support Store and Forward mode for transactions.
+- Portico: FindTransactions report allows to search using SAFIndicator.
+- Portico: Allow transactions to be updated with level 2 and level 3 info after an authorization using FindId method
+
+#### Bug fixes:
+
+- Pax: Support partial authorizations
+
+## v5.2.2 (13/07/23)
+
+#### Enhancements
+
+- GP-ECOM: Add refund for transaction with open banking
+
+## v5.2.1 (06/07/23)
+
+#### Enhancements
+
+- GP-API: Added integration examples using Hosted Fields (GP JS library), 3DS library
+
+#### Bug fixes:
+
+- GP-ECOM: Send the correct "message_version" in the initiate step on 3DS2
+
+## v5.2.0 (27/06/23)
+
+#### Enhancements
+
+- GP-API: UPA MiTC via GP-API.
+
+## v5.1.9 (15/06/23)
+
+#### Enhancements
+
+- GP-API: Improvements in the Request Builders, on GpApiRequest and TransactionType
+- GP-API Unit tests updates
+
+## v5.1.9 (06/06/23)
+
+#### Enhancements
+
+- Heartland Profac: Device ordering
+
+## v5.1.8 (11/05/23)
+
+#### Enhancements
+
 - GP-API: Manage fund transfers, splits and reverse splits in your partner network. 
     - https://developer.globalpay.com/api/transfers
     - https://developer.globalpay.com/api/transactions#/Split%20a%20Transaction%20Amount/splitTransaction

@@ -11,7 +11,8 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         public PorticoEcommerceTests() {
             ServicesContainer.ConfigureService(new PorticoConfig {
-                SecretApiKey = "skapi_cert_MZ64BQBBoHAA5N2pWWCvZ7c1HTKDM2g_4HsnyC6rIQ"
+                SecretApiKey = "skapi_cert_MZ64BQBBoHAA5N2pWWCvZ7c1HTKDM2g_4HsnyC6rIQ",
+                IsSafDataSupported = true
             });
 
             card = TestCards.VisaManual();

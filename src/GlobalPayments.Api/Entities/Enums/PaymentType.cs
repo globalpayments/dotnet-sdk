@@ -7,6 +7,6 @@ namespace GlobalPayments.Api.Entities {
         Refund,
 
         [Map(Target.GP_API, "SALE")]
-        Sale,
+        Sale
     }
 }

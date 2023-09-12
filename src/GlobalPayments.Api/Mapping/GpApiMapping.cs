@@ -62,11 +62,11 @@ namespace GlobalPayments.Api.Mapping {
                         return transaction;
                     case LINK_CREATE:
                     case LINK_EDIT:
-                        transaction.PayLinkResponse = MapPayLinkResponse(json);
+                        transaction.PayByLinkResponse = MapPayByLinkResponse(json);
                         if (json.Has("transactions")) {
                             var trn = json.Get("transactions");
                             transaction.BalanceAmount = trn.GetValue<string>("amount").ToAmount();
-                            transaction.PayLinkResponse.AllowedPaymentMethods = GetAllowedPaymentMethods(trn);
+                            transaction.PayByLinkResponse.AllowedPaymentMethods = GetAllowedPaymentMethods(trn);
                         }
                         return transaction;
                     case TRANSFER:
@@ -268,24 +268,24 @@ namespace GlobalPayments.Api.Mapping {
             return transaction;
         }
 
-        public static PayLinkResponse MapPayLinkResponse(JsonDoc doc) 
+        public static PayByLinkResponse MapPayByLinkResponse(JsonDoc doc) 
         {
-            var payLinkResponse = new PayLinkResponse();
-            payLinkResponse.Id = doc.GetValue<string>("id");
-            payLinkResponse.AccountName = doc.GetValue<string>("account_name");
-            payLinkResponse.Url = doc.GetValue<string>("url");
-            payLinkResponse.Status = GetPayLinkStatus(doc);
-            payLinkResponse.Type = GetPayLinkType(doc);
-            payLinkResponse.UsageMode = GetPaymentMethodUsageMode(doc);
-            payLinkResponse.UsageLimit = doc.GetValue<int>("usage_limit");
-            payLinkResponse.Reference = doc.GetValue<string>("reference");
-            payLinkResponse.Name = doc.GetValue<string>("name");
-            payLinkResponse.Description = doc.GetValue<string>("description");            
-            payLinkResponse.ViewedCount = doc.GetValue<string>("viewed_count");
-            payLinkResponse.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
-            payLinkResponse.IsShippable = GetIsShippable(doc);
+            var payByLinkResponse = new PayByLinkResponse();
+            payByLinkResponse.Id = doc.GetValue<string>("id");
+            payByLinkResponse.AccountName = doc.GetValue<string>("account_name");
+            payByLinkResponse.Url = doc.GetValue<string>("url");
+            payByLinkResponse.Status = GetPayByLinkStatus(doc);
+            payByLinkResponse.Type = GetPayByLinkType(doc);
+            payByLinkResponse.UsageMode = GetPaymentMethodUsageMode(doc);
+            payByLinkResponse.UsageLimit = doc.GetValue<int>("usage_limit");
+            payByLinkResponse.Reference = doc.GetValue<string>("reference");
+            payByLinkResponse.Name = doc.GetValue<string>("name");
+            payByLinkResponse.Description = doc.GetValue<string>("description");
+            payByLinkResponse.ViewedCount = doc.GetValue<string>("viewed_count");
+            payByLinkResponse.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
+            payByLinkResponse.IsShippable = GetIsShippable(doc);
 
-            return payLinkResponse;
+            return payByLinkResponse;
         }
 
         private static void MapBNPLResponse(JsonDoc response, ref Transaction transaction) {
@@ -394,9 +394,9 @@ namespace GlobalPayments.Api.Mapping {
             return summary;
         }
 
-        public static PayLinkSummary MapPayLinkSummary(JsonDoc doc)
+        public static PayByLinkSummary MapPayByLinkSummary(JsonDoc doc)
         {
-            var summary = new PayLinkSummary();            
+            var summary = new PayByLinkSummary();            
             
             summary.MerchantId = doc.GetValue<string>("merchant_id");
             summary.MerchantName = doc.GetValue<string>("merchant_name");
@@ -404,8 +404,8 @@ namespace GlobalPayments.Api.Mapping {
             summary.AccountName = doc.GetValue<string>("account_name");
             summary.Id = doc.GetValue<string>("id");
             summary.Url = doc.GetValue<string>("url");
-            summary.Status = GetPayLinkStatus(doc);
-            summary.Type = GetPayLinkType(doc);             
+            summary.Status = GetPayByLinkStatus(doc);
+            summary.Type = GetPayByLinkType(doc);             
             summary.UsageMode = GetPaymentMethodUsageMode(doc);
             summary.UsageLimit = doc.GetValue<string>("usage_limit");            
             summary.Reference = doc.GetValue<string>("reference");
@@ -467,18 +467,18 @@ namespace GlobalPayments.Api.Mapping {
             return List;
         }
 
-        private static PayLinkType? GetPayLinkType(JsonDoc doc) 
+        private static PayByLinkType? GetPayByLinkType(JsonDoc doc) 
         {
             if (doc.Has("type")) {
-                return (PayLinkType)Enum.Parse(typeof(PayLinkType), doc.GetValue<string>("type").ToUpper());                            
+                return (PayByLinkType)Enum.Parse(typeof(PayByLinkType), doc.GetValue<string>("type").ToUpper());                            
             }
             return null;
         }
 
-        private static PayLinkStatus? GetPayLinkStatus(JsonDoc doc) 
+        private static PayByLinkStatus? GetPayByLinkStatus(JsonDoc doc) 
         {
             if (doc.Has("status")) {
-                return (PayLinkStatus)Enum.Parse(typeof(PayLinkStatus), doc.GetValue<string>("status"));                
+                return (PayByLinkStatus)Enum.Parse(typeof(PayByLinkStatus), doc.GetValue<string>("status"));                
             }
             return null;            
         }
@@ -553,14 +553,14 @@ namespace GlobalPayments.Api.Mapping {
                     (result as PagedResult<ActionSummary>).Add(MapActionSummary(doc));
                 }
             }
-            else if (reportType == ReportType.FindPayLinkPaged && result is PagedResult<PayLinkSummary>) {
-                SetPagingInfo(result as PagedResult<PayLinkSummary>, json);
+            else if (reportType == ReportType.FindPayByLinkPaged && result is PagedResult<PayByLinkSummary>) {
+                SetPagingInfo(result as PagedResult<PayByLinkSummary>, json);
                 foreach (var doc in json.GetArray<JsonDoc>("links") ?? Enumerable.Empty<JsonDoc>()) {
-                    (result as PagedResult<PayLinkSummary>).Add(MapPayLinkSummary(doc));
+                    (result as PagedResult<PayByLinkSummary>).Add(MapPayByLinkSummary(doc));
                 }                
             }
-            else if (reportType == ReportType.PayLinkDetail && result is PayLinkSummary) {
-                    result = MapPayLinkSummary(json) as T;
+            else if (reportType == ReportType.PayByLinkDetail && result is PayByLinkSummary) {
+                    result = MapPayByLinkSummary(json) as T;
             }
             else if (reportType == ReportType.FindMerchantsPaged && result is PagedResult<MerchantSummary>) {
                 SetPagingInfo(result as PagedResult<MerchantSummary>, json);

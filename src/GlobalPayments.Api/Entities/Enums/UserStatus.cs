@@ -4,11 +4,10 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum UserStatus
-    {
+    public enum UserStatus {
         ACTIVE,
         INACTIVE,
         UNDER_REVIEW,
-        DECLINED,
+        DECLINED
     }
 }

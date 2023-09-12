@@ -13,6 +13,6 @@ namespace GlobalPayments.Api.Entities {
         Type,
         
         [Map(Target.GP_API, "DEPOSIT_ID")]
-        DepositId,
+        DepositId
     }
 }

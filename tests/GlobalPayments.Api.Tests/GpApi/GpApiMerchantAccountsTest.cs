@@ -247,8 +247,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         #region Transfer and Split
         [TestMethod]
-        public void TransferFunds()
-        {
+        public void TransferFunds() {
             var merchants = GetMerchants();
 
             var merchantSender = merchants.FirstOrDefault();
@@ -278,8 +277,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         [TestMethod]
-        public void TransferFunds_WithoutSenderAccountName()
-        {
+        public void TransferFunds_WithoutSenderAccountName() {
             var merchants = GetMerchants();
 
             var merchantSender = merchants.FirstOrDefault();
@@ -290,7 +288,6 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var funds = new AccountFunds();
             funds.AccountId = accountSender.Id;
-            //funds.AccountName = accountSender.Name;
             funds.RecipientAccountId = accountRecipient.Id;
             funds.MerchantId = merchantSender.Id;
             funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
@@ -309,8 +306,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         [TestMethod]
-        public void TransferFunds_WithoutUsableBalanceMode()
-        {
+        public void TransferFunds_WithoutUsableBalanceMode() {
             var merchants = GetMerchants();
 
             var merchantSender = merchants.FirstOrDefault();
@@ -324,10 +320,8 @@ namespace GlobalPayments.Api.Tests.GpApi
             funds.AccountName = accountSender.Name;
             funds.RecipientAccountId = accountRecipient.Id;
             funds.MerchantId = merchantSender.Id;
-            //funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
 
             var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
-
 
             var transfer = funds.Transfer(0.01m)
                 .WithClientTransactionId("")
@@ -339,11 +333,9 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
             Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
         }
-               
 
         [TestMethod]
-        public void TransferFunds_WithoutSenderAccountId()
-        {
+        public void TransferFunds_WithoutSenderAccountId() {
             var merchants = GetMerchants();
 
             var merchantSender = merchants.FirstOrDefault();
@@ -353,7 +345,6 @@ namespace GlobalPayments.Api.Tests.GpApi
             var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
 
             var funds = new AccountFunds();
-            //funds.AccountId = accountSender.Id;
             funds.AccountName = accountSender.Name;
             funds.RecipientAccountId = accountRecipient.Id;
             funds.MerchantId = merchantSender.Id;
@@ -370,7 +361,79 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual(0.01m, transfer.BalanceAmount);
             Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
             Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+        }
+        
+        [TestMethod]
+        public void TransferFunds_OnlyMandatoryFields() {
+            var merchants = GetMerchants();
 
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+
+            var transfer = funds.Transfer(10m)
+                .Execute();
+
+            Assert.IsNotNull(transfer.TransactionId);
+            Assert.AreEqual(10m, transfer.BalanceAmount);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
+        }
+        
+        [TestMethod]
+        public void TransferFunds_WithIdempotency() {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var idempotencyKey = Guid.NewGuid().ToString();
+            var transfer = funds.Transfer(10m)
+                .WithClientTransactionId("")
+                .WithDescription(description)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+
+            Assert.IsNotNull(transfer.TransactionId);
+            Assert.AreEqual(10m, transfer.BalanceAmount);
+            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            
+            var exceptionCaught = false;
+            try {
+                funds.Transfer(10m)
+                    .WithClientTransactionId("")
+                    .WithDescription(description)
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={transfer.TransactionId}, status=CAPTURED",
+                    ex.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         #endregion
@@ -378,49 +441,70 @@ namespace GlobalPayments.Api.Tests.GpApi
         #region Transfer error scenarios
 
         [TestMethod]
-        public void TransferFunds_WithoutRecipientAccountId()
-        {
+        public void TransferFunds_WithoutRecipientAccountId() {
             var merchants = GetMerchants();
 
             var merchantSender = merchants.FirstOrDefault();
-            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
-
             var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
-            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
 
             var funds = new AccountFunds();
             funds.AccountId = accountSender.Id;
             funds.AccountName = accountSender.Name;
-            //funds.RecipientAccountId = accountRecipient.Id;
             funds.MerchantId = merchantSender.Id;
             funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
 
             var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
 
             var exceptionCaught = false;
-            try
-            {
-                var transfer = funds.Transfer(0.01m)
+            try {
+                funds.Transfer(0.01m)
                    .WithClientTransactionId("")
                    .WithDescription(description)
                    .Execute();
-            }
-            catch (GatewayException ex)
-            {
+            } catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields recipient_account_id, recipient_account_name.", ex.Message);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
                 Assert.AreEqual("40007", ex.ResponseMessage);
-            }
-            finally
-            {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
 
         [TestMethod]
-        public void TransferFunds_WithoutSenderAccountIdAndAccountName()
-        {
+        public void TransferFunds_WithoutSenderAccountIdAndAccountName() {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
+
+            var exceptionCaught = false;
+            try {
+                funds.Transfer(0.01m)
+                   .WithClientTransactionId("")
+                   .WithDescription(description)
+                   .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields account_id, account_name.", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40007", ex.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
+        [TestMethod]
+        public void TransferFunds_WithoutMerchantId() {
             var merchants = GetMerchants();
 
             var merchantSender = merchants.FirstOrDefault();
@@ -430,39 +514,27 @@ namespace GlobalPayments.Api.Tests.GpApi
             var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
 
             var funds = new AccountFunds();
-            //funds.AccountId = accountSender.Id;
-            //funds.AccountName = accountSender.Name;
+            funds.AccountId = accountSender.Id;
             funds.RecipientAccountId = accountRecipient.Id;
-            funds.MerchantId = merchantSender.Id;
             funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
 
-            var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
-
             var exceptionCaught = false;
-            try
-            {
-                var transfer = funds.Transfer(0.01m)
-                   .WithClientTransactionId("")
-                   .WithDescription(description)
-                   .Execute();
-            }
-            catch (GatewayException ex)
-            {
+            try {
+                funds.Transfer(0.01m)
+                    .WithClientTransactionId("")
+                    .Execute();
+            } catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields account_id, account_name.", ex.Message);
-                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("40007", ex.ResponseMessage);
-            }
-            finally
-            {
+                Assert.AreEqual("Status Code: Forbidden - Access token and merchant info do not match", ex.Message);
+                Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
+                Assert.AreEqual("40003", ex.ResponseMessage);
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
-
         
         [TestMethod]
-        public void TransferFunds_WithoutAmount()
-        {
+        public void TransferFunds_WithoutAmount() {
             var merchants = GetMerchants();
 
             var merchantSender = merchants.FirstOrDefault();
@@ -481,29 +553,103 @@ namespace GlobalPayments.Api.Tests.GpApi
             var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
 
             var exceptionCaught = false;
-            try
-            {
-                var transfer = funds.Transfer()
+            try {
+                funds.Transfer()
                    .WithClientTransactionId("")
                    .WithDescription(description)
                    .Execute();
-            }
-            catch (GatewayException ex)
-            {
+            } catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following fields amount", ex.Message);
                 Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
                 Assert.AreEqual("40005", ex.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
             }
-            finally
-            {
+        }
+        
+        [TestMethod]
+        public void TransferFunds_WithRandomAccountId() {
+            var merchants = GetMerchants();
+
+            var merchantSender = merchants.FirstOrDefault();
+            var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
+
+            var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = Guid.NewGuid().ToString();
+            funds.RecipientAccountId = accountRecipient.Id;
+            funds.MerchantId = merchantSender.Id;
+
+            var exceptionCaught = false;
+            try {
+                funds.Transfer(2m)
+                    .WithClientTransactionId("")
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.IsTrue(ex.Message.Contains("Status Code: BadRequest - Merchant configuration does not exist for the following combination:"));
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40041", ex.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
+        [TestMethod]
+        public void TransferFunds_WithRandomRecipientId() {
+            var merchants = GetMerchants();
+            var merchantSender = merchants.FirstOrDefault();
+            var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+
+            var funds = new AccountFunds();
+            funds.AccountId = accountSender.Id;
+            funds.AccountName = accountSender.Name;
+            funds.RecipientAccountId = Guid.NewGuid().ToString();
+            funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
+
+            var exceptionCaught = false;
+            try {
+                funds.Transfer(2m)
+                    .WithClientTransactionId("")
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - Transfers may only be initiated between accounts under the same partner program", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40041", ex.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
+        [TestMethod]
+        public void TransferFunds_WithRandomMerchantId() {
+            var funds = new AccountFunds {
+                AccountId = Guid.NewGuid().ToString(),
+                RecipientAccountId = Guid.NewGuid().ToString(),
+                MerchantId = Guid.NewGuid().ToString()
+            };
+
+            var exceptionCaught = false;
+            try {
+                funds.Transfer(2m)
+                    .WithClientTransactionId("")
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: NotFound - Retrieve information about this transaction is not supported", ex.Message);
+                Assert.AreEqual("INVALID_TRANSACTION_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40042", ex.ResponseMessage);
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
        
         #endregion
 
-       
 
         [TestMethod]
         public void EditAccountInformation_WithoutCardDetails() {

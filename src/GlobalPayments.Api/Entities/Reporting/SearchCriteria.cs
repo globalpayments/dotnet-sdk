@@ -82,10 +82,11 @@ namespace GlobalPayments.Api.Entities {
         UniqueDeviceId,
         Username,
         Version,
-        PayLinkStatus,
+        PayByLinkStatus,
         PaymentMethodUsageMode,
         Description,
-        ExpirationDate
+        ExpirationDate,
+        SAFIndicator
     }
 
     public enum DataServiceCriteria {
@@ -263,7 +264,7 @@ namespace GlobalPayments.Api.Entities {
 
         internal string BankPaymentId { get; set; }
 
-        internal string PayLinkId { get; set; }
+        internal string PayByLinkId { get; set; }
 
         internal Address Address { get; set; }       
 
@@ -273,7 +274,7 @@ namespace GlobalPayments.Api.Entities {
     
         public DateTime? ExpirationDate { get; set; }
     
-        public PayLinkStatus? PayLinkStatus { get; set; }
+        public PayByLinkStatus? PayByLinkStatus { get; set; }
 
         public MerchantAccountStatus? AccountStatus { get; set; }
 
@@ -335,6 +336,7 @@ namespace GlobalPayments.Api.Entities {
         internal string Timezone { get; set; }
 
         internal string Version { get; set; }
+        internal string SAFIndicator { get; set; }
 
         internal SearchCriteriaBuilder(ReportBuilder<TResult> reportBuilder) {
             _reportBuilder = reportBuilder;

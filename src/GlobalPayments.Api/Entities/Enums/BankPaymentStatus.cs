@@ -24,5 +24,8 @@ namespace GlobalPayments.Api.Entities.Enums
         FAILURE_DECLINED,
         STATUS_NOT_AVAILABLE,
         PAYMENT_NOT_COMPLETED,
+        INITIATION_PROCESSING,
+        INITIATION_REJECTED,
+        INITIATION_FAILED
     }
 }

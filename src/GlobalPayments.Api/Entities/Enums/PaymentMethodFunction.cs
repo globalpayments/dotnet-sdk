@@ -5,8 +5,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum PaymentMethodFunction
-    {
+    public enum PaymentMethodFunction {
         [Description("PRIMARY_PAYOUT")]
         PRIMARY_PAYOUT,
 
@@ -14,6 +13,6 @@ namespace GlobalPayments.Api.Entities.Enums
         SECONDARY_PAYOUT,
 
         [Description("ACCOUNT_ACTIVATION_FEE")]
-        ACCOUNT_ACTIVATION_FEE,
+        ACCOUNT_ACTIVATION_FEE
     }
 }

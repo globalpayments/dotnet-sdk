@@ -4,8 +4,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities.Enums
 {
-    public enum MerchantAccountType
-    {
+    public enum MerchantAccountType {
         TRANSACTION_PROCESSING,
         DATA_SERVICES,
         DISPUTE_MANAGEMENT,

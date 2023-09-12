@@ -25,6 +25,6 @@ namespace GlobalPayments.Api.Entities {
         Moto,
 
         [Map(Target.GP_API, "SWIPE")]
-        Swipe,
+        Swipe
     }
 }

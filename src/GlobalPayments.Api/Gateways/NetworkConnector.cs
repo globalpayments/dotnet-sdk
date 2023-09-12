@@ -34,13 +34,14 @@ namespace GlobalPayments.Api.Gateways {
         public string UniqueDeviceId { get; set; }
         public LinkedList<Transaction> ResentTransactions { get; set; }
         public Transaction ResentBatch { get; set; }
-        public bool SupportsHostedPayments { get { return false; } }
-        public abstract Transaction ManageTransaction(ManagementBuilder builder);
+        public bool SupportsHostedPayments => false;
+        public bool SupportsOpenBanking => false;
+
 
         public abstract Transaction ProcessAuthorization(AuthorizationBuilder builder);
+
+        public abstract Transaction ManageTransaction(ManagementBuilder builder);
+
         public abstract string SerializeRequest(AuthorizationBuilder builder);
-        public bool SupportsOpenBanking() {
-            return false;
-        }
     }
 }

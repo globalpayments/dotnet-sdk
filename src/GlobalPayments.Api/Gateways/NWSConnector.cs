@@ -1695,17 +1695,23 @@ namespace GlobalPayments.Api.Gateways {
                         EmvData tagData = null;
                         TlvData aidTag = null;
                         if (builder is AuthorizationBuilder) {
-                            tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder)?.TagData, EnableLogging);
-                            aidTag = tagData.GetTag("9F06");
+                            if ((builder as AuthorizationBuilder).TagData != null) {
+                                tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder)?.TagData, EnableLogging);
+                                aidTag = tagData.GetTag("9F06");
+                            }
                         }
                         else if (builder is ManagementBuilder) {
-                            tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
-                            aidTag = tagData.GetTag("9F06");
+                            if ((builder as ManagementBuilder).TagData != null) {
+                                tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                                aidTag = tagData.GetTag("9F06");
+                            }
                         }
 
                         if (aidTag == null) {
-                            // If the other AID location was null, check the alternate location for a possible value
-                            aidTag = tagData.GetTag("4F");
+                            if (tagData != null) {
+                                // If the other AID location was null, check the alternate location for a possible value
+                                aidTag = tagData.GetTag("4F");
+                            }
 
                             if (aidTag == null) {
                                 accountType = DE3_AccountType.CreditAccount;
@@ -2056,25 +2062,34 @@ namespace GlobalPayments.Api.Gateways {
 
             // DE48-11
             // We are checking the AID EMV tag for specific application values, as they should be run with specific card types they won't get caught by the mapping control.
+            // We also need to null check the TagData property because ParseTagData does not handle null checking itself.
             TlvData aidTag = null;
             bool maestroCard = false;
             if (builder is AuthorizationBuilder) {
-                EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
-                aidTag = tagData.GetTag("9F06");
+                if ((builder as AuthorizationBuilder).TagData != null) {
+                    EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
+                    aidTag = tagData.GetTag("9F06");
+                }
             }
             else if (builder is ManagementBuilder) {
-                EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
-                aidTag = tagData.GetTag("9F06");
+                if ((builder as ManagementBuilder).TagData != null) {
+                    EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                    aidTag = tagData.GetTag("9F06");
+                }
             }
             // If the tag is still null, check the other potential AID location
             if (aidTag == null) {
                 if (builder is AuthorizationBuilder) {
-                    EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
-                    aidTag = tagData.GetTag("4F");
+                    if ((builder as AuthorizationBuilder).TagData != null) {
+                        EmvData tagData = EmvUtils.ParseTagData((builder as AuthorizationBuilder).TagData, EnableLogging);
+                        aidTag = tagData.GetTag("4F");
+                    }
                 }
                 else if (builder is ManagementBuilder) {
-                    EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
-                    aidTag = tagData.GetTag("4F");
+                    if ((builder as ManagementBuilder).TagData != null) {
+                        EmvData tagData = EmvUtils.ParseTagData((builder as ManagementBuilder).TagData, EnableLogging);
+                        aidTag = tagData.GetTag("4F");
+                    }
                 }
             }
 

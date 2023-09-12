@@ -8,6 +8,6 @@ namespace GlobalPayments.Api.Entities {
         SHIP_TO_STORE,       
         DIGITAL_GOODS,        
         TRAVEL_AND_EVENT_TICKETS,       
-        OTHER,
+        OTHER
     }
 }
