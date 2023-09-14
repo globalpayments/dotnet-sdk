@@ -136,15 +136,19 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-
+            
             var response = _device.Authorize(12m)
-                .WithAllowDuplicates(true)
+                .WithAllowDuplicates(true) 
                 .Execute();
+
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
+            var origrefnum = response.ReferenceNumber;
+
             var captureResponse = _device.Capture(12m)
                 .WithTransactionId(response.TransactionId)
+                .WithOrigECRRefNumber(origrefnum)
                 .Execute();
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode);
@@ -241,7 +245,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Cvn = "123"
             };
 
-            var returnResponse = _device.Refund(14m)
+            var returnResponse = _device.Refund(14m)                
                 .WithPaymentMethod(card)
                 .Execute();
             Assert.IsNotNull(returnResponse);

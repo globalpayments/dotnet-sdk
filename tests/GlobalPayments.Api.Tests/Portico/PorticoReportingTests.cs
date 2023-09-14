@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using GlobalPayments.Api.PaymentMethods;
 
 namespace GlobalPayments.Api.Tests.Portico {
     [TestClass]
@@ -82,6 +83,38 @@ namespace GlobalPayments.Api.Tests.Portico {
 
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.Count > 0);
+        }
+        [TestMethod]
+        public void EcomWithDirectMarketDataInvoiceAndShipDate()
+        {
+            EcommerceInfo ecom = new EcommerceInfo
+            {
+                ShipDay = DateTime.Now.AddDays(1).Day,
+                ShipMonth = DateTime.Now.AddDays(1).Month
+            };
+            CreditCardData card = new CreditCardData
+            {
+                Number = "4111111111111111",
+                ExpMonth = 12,
+                ExpYear = 2025,
+                Cvn = "123",
+                CardHolderName = " UnitTest "
+            };
+
+            Transaction response = card.Charge(11m)
+                .WithCurrency("USD")
+                .WithEcommerceInfo(ecom)
+                .WithInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var item = ReportingService.TransactionDetail(response.TransactionId)
+                .Execute();
+            Assert.IsNotNull(item);
+            Assert.AreEqual(ecom.ShipDay.ToString(), item.ShippingDay.ToString());
+            Assert.AreEqual(ecom.ShipMonth.ToString(), item.ShippingMonth.ToString());
         }
     }
 }

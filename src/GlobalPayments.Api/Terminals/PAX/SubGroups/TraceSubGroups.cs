@@ -13,12 +13,15 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public string TransactionNumber { get; set; }
         public string TimeStamp { get; set; }
         public string ClientTransactionId { get; set; }
+        public string OrigECRRefNumber { get; set; }
 
         public string GetElementString() {
             var sb = new StringBuilder();
             sb.Append(ReferenceNumber);
             sb.Append((char)ControlCodes.US);
             sb.Append(InvoiceNumber);
+            sb.Append((char)ControlCodes.US);
+            sb.Append(OrigECRRefNumber);
             sb.Append((char)ControlCodes.US);
             sb.Append(AuthCode);
             sb.Append((char)ControlCodes.US);

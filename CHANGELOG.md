@@ -3,6 +3,14 @@
 ## Latest
 
 #### Enhancements
+ 
+- GP-ECOM Support parseResponse for status_url on HostedService (HPP APMs)
+- Portico Gateway: Added ShippingDay and ShippingMonth to Transaction Summary for Transaction Detail report output
+- Pax: Added OrigECRRefNum to request trace
+
+## v6.0.3 (09/14/23)
+
+#### Enhancements
 
 - Enhance logs based on environment (GP-API & GP-ECOM)
 

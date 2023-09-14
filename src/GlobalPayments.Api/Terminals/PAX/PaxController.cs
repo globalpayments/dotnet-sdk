@@ -203,7 +203,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
             var account = new AccountRequest();
             var trace = new TraceRequest {
                 ReferenceNumber = requestId.ToString(),
-                ClientTransactionId = builder.ClientTransactionId
+                ClientTransactionId = builder.ClientTransactionId,
+                OrigECRRefNumber = builder.OrigECRRefNumber,
             };
             var extData = new ExtDataSubGroup();
 

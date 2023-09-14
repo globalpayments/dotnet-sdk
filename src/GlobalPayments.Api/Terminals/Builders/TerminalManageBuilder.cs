@@ -9,6 +9,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal CurrencyType? Currency { get; set; }
         internal decimal? Gratuity { get; set; }
         public string TerminalRefNumber { get; set; }
+        internal string OrigECRRefNumber { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -26,12 +27,15 @@ namespace GlobalPayments.Api.Terminals.Builders {
             TerminalRefNumber = terminalRefNumber;
             return this;
         }
-
         public TerminalManageBuilder WithEcrId(int ecrId) {
             EcrId = ecrId;
             return this;
         }
-
+        public TerminalManageBuilder WithOrigECRRefNumber(string origECRRefNumber)
+        {
+            OrigECRRefNumber = origECRRefNumber;
+            return this;
+        }
         public TerminalManageBuilder WithAmount(decimal? amount) {
             Amount = amount;
             return this;

@@ -461,16 +461,13 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .WithPaymentStatistics(paymentStatistics)
                     .Execute();
             }
-            catch (GatewayException ex)
-            {
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following fields name",
                     ex.Message);
                 Assert.AreEqual("40005", ex.ResponseMessage);
-            }
-            finally
-            {
+            } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -484,24 +481,17 @@ namespace GlobalPayments.Api.Tests.GpApi
             var persons = GetPersonList();
             var paymentStatistics = GetPaymentStatistics();
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields legal_name",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -542,24 +532,18 @@ namespace GlobalPayments.Api.Tests.GpApi
             var persons = GetPersonList();
             var paymentStatistics = GetPaymentStatistics();
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields dba",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -571,24 +555,18 @@ namespace GlobalPayments.Api.Tests.GpApi
             var persons = GetPersonList();
             var paymentStatistics = GetPaymentStatistics();
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields website",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -600,25 +578,18 @@ namespace GlobalPayments.Api.Tests.GpApi
             var persons = GetPersonList();
             var paymentStatistics = GetPaymentStatistics();
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - Request expects the following fields notifications.status_url",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -652,24 +623,17 @@ namespace GlobalPayments.Api.Tests.GpApi
             var productData = GetProductList();
             var persons = GetPersonList();
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - Request expects the following fields payment_processing_statistics.total_monthly_sales_amount",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -680,25 +644,18 @@ namespace GlobalPayments.Api.Tests.GpApi
             var paymentStatistics = GetPaymentStatistics();
             paymentStatistics.TotalMonthlySalesAmount = null;
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - Request expects the following fields payment_processing_statistics.total_monthly_sales_amount",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -709,25 +666,18 @@ namespace GlobalPayments.Api.Tests.GpApi
             var paymentStatistics = GetPaymentStatistics();
             paymentStatistics.AverageTicketSalesAmount = null;
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - Request expects the following fields payment_processing_statistics.average_ticket_sales_amount",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -738,25 +688,18 @@ namespace GlobalPayments.Api.Tests.GpApi
             var paymentStatistics = GetPaymentStatistics();
             paymentStatistics.HighestTicketSalesAmount = null;
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithDescription("Merchant Business Description")
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - Request expects the following fields payment_processing_statistics.highest_ticket_sales_amount",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithDescription("Merchant Business Description")
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
 
         [TestMethod]
@@ -766,23 +709,17 @@ namespace GlobalPayments.Api.Tests.GpApi
             var persons = GetPersonList();
             var paymentStatistics = GetPaymentStatistics();
 
-            var exceptionCaught = false;
-            try {
-                _service.CreateMerchant()
-                    .WithUserPersonalData(merchantData)
-                    .WithProductData(productData)
-                    .WithPersonsData(persons)
-                    .WithPaymentStatistics(paymentStatistics)
-                    .Execute();
-            } catch (GatewayException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields description",
-                    ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
+            var merchant = _service.CreateMerchant()
+                .WithUserPersonalData(merchantData)
+                .WithProductData(productData)
+                .WithPersonsData(persons)
+                .WithPaymentStatistics(paymentStatistics)
+                .Execute();
+
+            Assert.IsInstanceOfType(merchant, typeof(User));
+            Assert.AreEqual("SUCCESS", merchant.ResponseCode);
+            Assert.AreEqual(UserStatus.UNDER_REVIEW, merchant.UserReference.UserStatus);
+            Assert.IsNotNull(merchant.UserReference.UserId);
         }
         
         #endregion            

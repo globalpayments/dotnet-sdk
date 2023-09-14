@@ -976,7 +976,8 @@ namespace GlobalPayments.Api.Gateways {
                     IssuerTransactionId = response.GetValue<string>("IssTxnId"),
                     SDKNameVersion = response.GetValue<string>("SDKNameVersion"),
                     InvoiceNumber = response.GetValue<string>("InvoiceNbr"),
-
+                    ShippingDay = response.GetValue<int>("DirectMktShipDay"),
+                    ShippingMonth = response.GetValue<int>("DirectMktShipMonth"),
                 };
                 rvalue = summary as T;
                 return rvalue;

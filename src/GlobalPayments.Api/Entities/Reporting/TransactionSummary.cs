@@ -245,7 +245,8 @@ namespace GlobalPayments.Api.Entities {
         /// The originally requested shipping amount.
         /// </summary>
         public decimal? ShippingAmount { get; set; }
-
+        public int? ShippingDay { get; set; }
+        public int? ShippingMonth { get; set; }
         public string SiteTrace { get; set; }
 
         public int SiteId { get; set; }
