@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
+using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals {
@@ -173,6 +174,50 @@ namespace GlobalPayments.Api.Terminals {
         #region IDisposable
         public void Dispose() {
             _controller.Dispose();
+        }
+        TerminalManageBuilder IDeviceInterface.RefundById(decimal amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public TerminalAuthBuilder CreditSale(decimal amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public TerminalAuthBuilder CreditRefund(decimal amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public TerminalManageBuilder CreditVoid()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public TerminalAuthBuilder DebitSale(decimal amount)
+        {
+            throw new System.NotImplementedException();
+        }      
+
+        public TerminalManageBuilder DebitVoid()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public TerminalManageBuilder VoidRefund()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public DeviceResponse GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        TerminalReportBuilder IDeviceInterface.GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType)
+        {
+            throw new System.NotImplementedException();
         }
         #endregion
     }

@@ -1,4 +1,6 @@
-﻿using GlobalPayments.Api.Terminals.Abstractions;
+﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.PAX;
 using GlobalPayments.Api.Terminals.UPA;
 using System;
@@ -8,6 +10,9 @@ using System.Reflection;
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalReportBuilder {
         internal TerminalReportType ReportType { get; set; }
+        internal string TransactionId { get; set; }
+        internal TransactionType TransactionType { get; set; }
+        internal TransactionIdType TransactionIdType { get; set; }
 
         private TerminalSearchBuilder _searchBuilder;
         internal TerminalSearchBuilder SearchBuilder {
@@ -21,6 +26,12 @@ namespace GlobalPayments.Api.Terminals.Builders {
 
         public TerminalReportBuilder(TerminalReportType reportType) {
             ReportType = reportType;
+        }
+        public TerminalReportBuilder(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType)
+        {
+            TransactionType = transactionType;
+            TransactionId = transactionId;
+            TransactionIdType = transactionIdType;
         }
 
         public TerminalSearchBuilder Where<T>(PaxSearchCriteria criteria, T value) {

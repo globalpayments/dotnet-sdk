@@ -80,7 +80,11 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a Nucleus terminal
         /// </summary>
-        NUCLEUS_SATURN_1000
+        NUCLEUS_SATURN_1000,
+        /// <summary>
+        /// Indicates a genius verifone P400
+        /// </summary>
+        GENIUS_VERIFONE_P400,
 
     }
 

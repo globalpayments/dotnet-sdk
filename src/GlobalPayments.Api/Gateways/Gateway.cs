@@ -59,6 +59,7 @@ namespace GlobalPayments.Api.Gateways {
         protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false) {
             HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
+
             };
 
             var queryString = BuildQueryString(queryStringParams);

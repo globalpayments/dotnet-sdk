@@ -1,4 +1,5 @@
-﻿using GlobalPayments.Api.Terminals.Abstractions;
+﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Terminals.Abstractions;
 
 namespace GlobalPayments.Api.Terminals {
     public class DeviceResponse : IDeviceResponse {
@@ -32,5 +33,6 @@ namespace GlobalPayments.Api.Terminals {
         /// ECR reference number for the transaction
         /// </summary>
         public string ReferenceNumber { get; set; }
+
     }
 }

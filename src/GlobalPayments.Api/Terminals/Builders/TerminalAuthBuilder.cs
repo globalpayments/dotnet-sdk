@@ -42,6 +42,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal int? ProcessCPC { get; set; }
         public string Token { get; set; }
         public DateTime ShippingDate { get; set; }
+        internal bool AllowPartialAuth { get; set; }
 
         internal string TransactionId {
             get {
@@ -58,6 +59,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
 
         public TerminalAuthBuilder WithLineItemRight(string lineItemRight) {
             LineItemRight = lineItemRight;
+            return this;
+        }
+        public TerminalAuthBuilder WithAllowPartialAuth(bool value)
+        {
+            AllowPartialAuth = value;
             return this;
         }
 
@@ -205,6 +211,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
+            
         }
 
         public TerminalAuthBuilder WithShippingDate(DateTime value) {

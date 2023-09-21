@@ -4,6 +4,12 @@
 
 #### Enhancements
  
+- Verifone P400: Added initial Meet-In-The-Cloud connectivity support for this device
+
+## v6.0.4 (09/21/23)
+
+#### Enhancements
+ 
 - GP-ECOM Support parseResponse for status_url on HostedService (HPP APMs)
 - Portico Gateway: Added ShippingDay and ShippingMonth to Transaction Summary for Transaction Detail report output
 - Pax: Added OrigECRRefNum to request trace

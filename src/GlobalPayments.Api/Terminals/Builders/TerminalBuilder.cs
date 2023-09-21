@@ -7,6 +7,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal PaymentMethodType PaymentMethodType { get; set; }
         internal int ReferenceNumber { get; set; }
         internal int EcrId { get; set; }
+        internal string ClerkNumber { get; set; }
 
         public T WithPaymentMethodType(PaymentMethodType value) {
             PaymentMethodType = value;
@@ -18,6 +19,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
         public T WithRequestId(int value) {
             ReferenceNumber = value;
+            return this as T;
+        }
+        public T WithClerkNumber(string value)
+        {
+            ClerkNumber = value;
             return this as T;
         }
 

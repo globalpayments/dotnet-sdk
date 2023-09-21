@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
+using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals {
@@ -41,15 +42,20 @@ namespace GlobalPayments.Api.Terminals {
         #region Credit Calls
         //TerminalAuthBuilder CreditAuth(decimal? amount = null);
         //TerminalManageBuilder CreditCapture(decimal? amount = null);
-        //TerminalAuthBuilder CreditRefund(decimal? amount = null);
-        //TerminalAuthBuilder CreditSale(decimal? amount = null);
+        TerminalAuthBuilder CreditRefund(decimal amount);
+        TerminalAuthBuilder CreditSale(decimal amount);
         //TerminalAuthBuilder CreditVerify();
-        //TerminalManageBuilder CreditVoid();
+        TerminalManageBuilder CreditVoid();
         #endregion
 
         #region Debit Calls
-        //TerminalAuthBuilder DebitSale(decimal? amount = null);
+        TerminalAuthBuilder DebitSale(decimal amount);
         //TerminalAuthBuilder DebitRefund(decimal? amount = null);
+        #endregion
+
+        #region Voids
+        TerminalManageBuilder DebitVoid();
+        TerminalManageBuilder VoidRefund();
         #endregion
 
         #region Gift Calls
@@ -72,6 +78,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Balance();
         TerminalManageBuilder Capture(decimal? amount = null);
         TerminalAuthBuilder Refund(decimal? amount = null);
+        TerminalManageBuilder RefundById(decimal amount);
         TerminalAuthBuilder Sale(decimal? amount = null);
         TerminalAuthBuilder Verify();
         TerminalManageBuilder Void();
@@ -80,6 +87,10 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Tokenize();
         TerminalAuthBuilder AuthCompletion();
         TerminalManageBuilder DeletePreAuth();
+        #endregion
+
+        #region Report Calls        
+        TerminalReportBuilder GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType);
         #endregion
     }
 }
