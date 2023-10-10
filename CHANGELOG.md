@@ -1,12 +1,25 @@
 # Changelog
 
-## Latest
+## Latest - v6.0.5 (10/10/23)
+
+#### Enhancements
+
+- GP-API: Add a new alternative payment method, ALIPAY
+- GP-API: Upload Merchant Documentation - https://developer.globalpay.com/api/merchants
+- GP-API: Credit Or Debit a Funds Management Account (FMA) - https://developer.globalpay.com/api/funds
+
+#### Bug fixes:
+
+- GP-ECOM: HostedService supports SHA256.
+- GP-ECOM: 24 Hours clock format (HH) Timestamp from DCC
+
+## v6.0.4 (09/21/23)
 
 #### Enhancements
  
 - Verifone P400: Added initial Meet-In-The-Cloud connectivity support for this device
 
-## v6.0.4 (09/21/23)
+## v6.0.3 (09/14/23)
 
 #### Enhancements
  
@@ -14,7 +27,7 @@
 - Portico Gateway: Added ShippingDay and ShippingMonth to Transaction Summary for Transaction Detail report output
 - Pax: Added OrigECRRefNum to request trace
 
-## v6.0.3 (09/14/23)
+## v6.0.2 (09/07/23)
 
 #### Enhancements
 

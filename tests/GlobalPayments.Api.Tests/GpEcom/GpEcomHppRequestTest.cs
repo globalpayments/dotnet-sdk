@@ -249,6 +249,38 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             var expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"COMMENT1\":\"Mobile Channel\",\"CUST_NUM\":\"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\",\"PROD_ID\":\"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\",\"HPP_CHALLENGE_REQUEST_INDICATOR\": \"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\": false,\"VAR_REF\":\"My Legal Entity\",\"HPP_LANG\":\"EN\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"CARD_PAYMENT_BUTTON\":\"Place Order\",\"HPP_VERSION\":\"2\",\"SHA1HASH\":\"061609f85a8e0191dc7f487f8278e71898a2ee2d\"}";
             Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
         }
+        
+        [TestMethod]
+        // testing COMMENT1, CUST_NUM, PROD_ID, VAR_REF, HPP_LANG, CARD_PAYMENT_BUTTON
+        public void BasicHostedPaymentData_SHA() {
+            var service = new HostedService(new GpEcomConfig {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+                ShaHashType = ShaHashType.SHA256,
+                HostedPaymentConfig = new HostedPaymentConfig {
+                    ResponseUrl = "https://www.example.com/response",
+                    Version = "2",
+                },
+            });
+            
+            var testHostedPaymentData = new HostedPaymentData {
+                CustomerNumber = "a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa",
+                ProductId = "a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f",
+            };
+            
+            var hppJson = service.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithTimestamp("20170725154824")
+                .WithOrderId("GTI5Yxb0SumL_TkDMCAxQA")
+                .WithHostedPaymentData(testHostedPaymentData)
+                .WithDescription("Mobile Channel")
+                .WithClientTransactionId("My Legal Entity")
+                .Serialize();
+
+            const string expectedJson = "{\"MERCHANT_ID\":\"MerchantId\",\"ACCOUNT\":\"internet\",\"ORDER_ID\":\"GTI5Yxb0SumL_TkDMCAxQA\",\"AMOUNT\":\"1999\",\"CURRENCY\":\"EUR\",\"TIMESTAMP\":\"20170725154824\",\"AUTO_SETTLE_FLAG\":\"1\",\"COMMENT1\":\"Mobile Channel\",\"CUST_NUM\":\"a028774f-beff-47bc-bd6e-ed7e04f5d758a028774f-btefa\",\"PROD_ID\":\"a0b38df5-b23c-4d82-88fe-2e9c47438972-b23c-4d82-88f\",\"HPP_CHALLENGE_REQUEST_INDICATOR\":\"NO_PREFERENCE\",\"HPP_ENABLE_EXEMPTION_OPTIMIZATION\":false,\"VAR_REF\":\"My Legal Entity\",\"MERCHANT_RESPONSE_URL\":\"https://www.example.com/response\",\"HPP_VERSION\":\"2\",\"SHA256HASH\":\"d23f0076aea69b39dc6d268ce30bf631470969b6e20560ad352f8edd87d4481c\"}";
+            Assert.AreEqual(true, JsonComparator.AreEqual(expectedJson, hppJson));
+        }
 
         [TestMethod]
         public void StoreCardNewCustomerNoRefs() {

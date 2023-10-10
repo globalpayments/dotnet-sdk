@@ -133,8 +133,8 @@ namespace GlobalPayments.Api.Entities {
 
         public PayByLinkResponse PayByLinkResponse { get; set; }
 
-        private List<TransferFundsAccountDetails> _transfersFundsAccounts;
-        public List<TransferFundsAccountDetails> TransfersFundsAccounts
+        private List<FundsAccountDetails> _transfersFundsAccounts;
+        public List<FundsAccountDetails> TransfersFundsAccounts
         {
             get {
                 return _transfersFundsAccounts;
@@ -145,7 +145,7 @@ namespace GlobalPayments.Api.Entities {
                 }
                 if (value.Count > 0) {
                     if(TransactionReference.TransfersFundsAccounts == null) {
-                        TransactionReference.TransfersFundsAccounts = new List<TransferFundsAccountDetails>();
+                        TransactionReference.TransfersFundsAccounts = new List<FundsAccountDetails>();
                     }
                     TransactionReference.TransfersFundsAccounts = value;
                 }

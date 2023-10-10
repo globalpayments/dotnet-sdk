@@ -5,7 +5,6 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static GlobalPayments.Api.Tests.GpApi.GpApiAvsCheckTestCards;
-using Environment = GlobalPayments.Api.Entities.Environment;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
@@ -835,7 +834,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 {
                     ServicesContainer.ConfigureService(new GpApiConfig
                     {
-                        Environment = Environment.TEST,
                         AppId = AppId,
                         AppKey = AppKey,
                         SecondsToExpire = 60,
@@ -858,7 +856,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CreditSaleWithEntryMethod() {
             foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod))) {
                 ServicesContainer.ConfigureService(new GpApiConfig {
-                    Environment = Environment.TEST,
                     AppId = AppId,
                     AppKey = AppKey,
                     SecondsToExpire = 60,

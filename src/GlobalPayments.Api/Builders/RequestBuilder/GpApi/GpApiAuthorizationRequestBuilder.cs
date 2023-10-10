@@ -520,9 +520,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 .Set("convenience_amount", builder.ConvenienceAmount.ToNumericCurrencyString())
                 .Set("country", gateway.GpApiConfig.Country)
                 //.Set("language", EnumConverter.GetMapping(Target.GP_API, Language))
-                .Set("ip_address", builder.CustomerIpAddress)
-                //.Set("site_reference", "") //
-                .Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
+                .Set("ip_address", builder.CustomerIpAddress);
+                //.Set("site_reference", "") //            
+                data.Set("merchant_category", builder.MerchantCategory.ToString() ?? null);
+            
+            data.Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
                 .Set("payment_method", paymentMethod)
                 .Set("risk_assessment", builder.FraudFilterMode != null ? MapFraudManagement(builder) : null)
                 .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
@@ -932,6 +934,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             }
 
             return requestBody;
-        }        
+        }
     }
 }

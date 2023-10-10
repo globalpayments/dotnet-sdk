@@ -704,8 +704,8 @@ namespace GlobalPayments.Api.Gateways {
 
             xml.SubElement(xmlTrans, docNameTag, docUploadData.DocumentName);
             xml.SubElement(xmlTrans, "TransactionReference", docUploadData.TransactionReference);
-            xml.SubElement(xmlTrans, "DocCategory", docUploadData.DocCategory);
-            xml.SubElement(xmlTrans, docTypeTag, docUploadData.DocType);
+            xml.SubElement(xmlTrans, "DocCategory", docUploadData.DocCategory.ToString().ToLower());
+            xml.SubElement(xmlTrans, docTypeTag, docUploadData.DocType.ToString().ToLower());
             xml.SubElement(xmlTrans, "Document", docUploadData.Document);
         }
 

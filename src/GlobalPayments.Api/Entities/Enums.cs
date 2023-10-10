@@ -997,7 +997,8 @@ public enum ReasonCode {
         WECHAT_PAY,
         ZIMPLER,
         UK_DIRECT_DEBIT,
-        PAYBYBANKAPP
+        PAYBYBANKAPP,
+        ALIPAY
     }
 
     public enum CardType {

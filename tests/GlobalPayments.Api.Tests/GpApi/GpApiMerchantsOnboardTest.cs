@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.PayFac;
-using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Environment = GlobalPayments.Api.Entities.Environment;
 
 namespace GlobalPayments.Api.Tests.GpApi
 {
@@ -32,7 +30,6 @@ namespace GlobalPayments.Api.Tests.GpApi
             ServicesContainer.ConfigureService(new GpApiConfig {
                 AppId = AppIdForMerchant,
                 AppKey = AppKeyForMerchant,
-                Environment = Environment.TEST,
                 Channel = Channel.CardNotPresent,
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true
@@ -47,6 +44,8 @@ namespace GlobalPayments.Api.Tests.GpApi
             };
         }
 
+        #region Onboard Merchant
+        
         [TestMethod]
         public void BoardMerchant() {
             var merchantData = GetMerchantData();
@@ -182,6 +181,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.IsTrue(exceptionCaught);
             }
         }
+        
+        #endregion
 
         [TestMethod]
         public void GetMerchantInfo() {
@@ -237,7 +238,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void SearchMerchants() {
-            var merchants = _reportingService.FindMerchants(1, 100)
+            var merchants = _reportingService.FindMerchants(1, 10)
                 .Execute();
 
             Assert.IsTrue(merchants.TotalRecordCount > 0);
@@ -251,7 +252,6 @@ namespace GlobalPayments.Api.Tests.GpApi
             {
                 AppId = AppIdForMerchant,
                 AppKey = AppKeyForMerchant,
-                Environment = Environment.TEST,
                 Channel = Channel.CardNotPresent,                
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true,
@@ -722,7 +722,153 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsNotNull(merchant.UserReference.UserId);
         }
         
-        #endregion            
+        #endregion
+
+        #region Upload Documents
+        
+        [TestMethod]
+        public void UploadMerchantDocs()
+        {
+            var documentDetail = new DocumentUploadData();
+            documentDetail.Document = "VGVzdGluZw==";
+
+            documentDetail.DocType = FileType.TIF;
+            documentDetail.DocCategory = DocumentCategory.IDENTITY_VERIFICATION;            
+           
+            var merchant = User.FromId("MER_5096d6b88b0b49019c870392bd98ddac", UserType.MERCHANT);
+            var response = merchant.UploadDocument(documentDetail)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.IsNotNull(response.Document);
+            Assert.IsNotNull(response.Document.Id);
+            Assert.AreEqual(FileType.TIF, response.Document.Format);
+            Assert.AreEqual(DocumentCategory.IDENTITY_VERIFICATION, response.Document.Category);            
+        }
+
+        [TestMethod]
+        public void UploadMerchantDocs_AllDocumentFormats()
+        {
+            var documentDetail = new DocumentUploadData {
+                Document = "VGVzdGluZw==",
+                DocCategory = DocumentCategory.IDENTITY_VERIFICATION
+            };
+
+            foreach (FileType fileType in Enum.GetValues(typeof(FileType))) {
+                var merchant = User.FromId("MER_5096d6b88b0b49019c870392bd98ddac", UserType.MERCHANT);
+                
+                documentDetail.DocType = fileType;
+
+                var response = merchant.UploadDocument(documentDetail)
+                 .Execute();
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual("SUCCESS", response.ResponseCode);
+                Assert.IsNotNull(response.Document);
+                Assert.IsNotNull(response.Document.Id);
+                Assert.AreEqual(fileType, response.Document.Format);
+                Assert.AreEqual(DocumentCategory.IDENTITY_VERIFICATION, response.Document.Category);
+            }
+        }
+
+        [TestMethod]
+        public void UploadMerchantDocs_AllDocumentCategories()
+        {
+            var documentDetail = new DocumentUploadData {
+                Document = "VGVzdGluZw==",
+                DocType = FileType.TIF,
+                DocCategory = DocumentCategory.IDENTITY_VERIFICATION
+            };
+
+            foreach (DocumentCategory documentCategory in Enum.GetValues(typeof(DocumentCategory))) {
+                var merchant = User.FromId("MER_5096d6b88b0b49019c870392bd98ddac", UserType.MERCHANT);
+                var categoryEnum = EnumConverter.GetMapping(Target.GP_API, documentCategory);
+                if (string.IsNullOrEmpty(categoryEnum))
+                    continue;
+
+                documentDetail.DocCategory = documentCategory;
+
+                var response = merchant.UploadDocument(documentDetail)
+                .Execute();
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual("SUCCESS", response.ResponseCode);
+                Assert.IsNotNull(response.Document);
+                Assert.IsNotNull(response.Document.Id);
+                Assert.AreEqual(FileType.TIF, response.Document.Format);
+                Assert.AreEqual(documentCategory, response.Document.Category);
+            }
+        }
+        
+        [TestMethod]
+        public void UploadMerchantDocs_MissingDocFormat()
+        {
+            var documentDetail = new DocumentUploadData {
+                Document = "VGVzdGluZw==",
+                DocCategory = DocumentCategory.IDENTITY_VERIFICATION
+            };
+
+            var merchant = User.FromId("MER_5096d6b88b0b49019c870392bd98ddac", UserType.MERCHANT);
+            var exceptionCaught = false;
+            try {
+               merchant.UploadDocument(documentDetail)
+                .Execute();
+            } catch (BuilderException e) {
+                exceptionCaught = true;
+                Assert.AreEqual("DocType cannot be null for this transaction type.", e.Message);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
+        [TestMethod]
+        public void UploadMerchantDocs_MissingDocCategory()
+        {
+            var documentDetail = new DocumentUploadData {
+                Document = "VGVzdGluZw==",
+                DocType = FileType.TIF,
+            };
+
+            var merchant = User.FromId("MER_5096d6b88b0b49019c870392bd98ddac", UserType.MERCHANT);
+            var exceptionCaught = false;
+            try {
+                merchant.UploadDocument(documentDetail)
+                .Execute();
+            } catch (GatewayException e) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest -  Request expects the following fields: function", e.Message);
+                Assert.AreEqual("MANDATORY_DATA_MISSING", e.ResponseCode);
+                Assert.AreEqual("40251", e.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
+        [TestMethod]
+        public void UploadMerchantDocs_MissingDocBaseContent()
+        {
+            var documentDetail = new DocumentUploadData {
+                DocType = FileType.TIF,
+                DocCategory = DocumentCategory.IDENTITY_VERIFICATION
+            };
+
+            var merchant = User.FromId("MER_5096d6b88b0b49019c870392bd98ddac", UserType.MERCHANT);
+            var exceptionCaught = false;
+            try {
+                merchant.UploadDocument(documentDetail)
+                  .Execute();
+            } catch (GatewayException e) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest -  Request expects the following fields: b64_content", e.Message);
+                Assert.AreEqual("MANDATORY_DATA_MISSING", e.ResponseCode);
+                Assert.AreEqual("40251", e.ResponseMessage);
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+        
+        #endregion
         
         private List<Person> GetPersonList(string type = null) {
             var persons = new List<Person>();

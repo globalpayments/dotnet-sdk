@@ -702,7 +702,7 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.DynamicDescriptor != null) {
                 request.Set("CHARGE_DESCRIPTION", builder.DynamicDescriptor);
             }
-            request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray()));
+            request.Set($"{ShaHashType.ToString()}HASH", GenerationUtils.GenerateHash(SharedSecret, ShaHashType, toHash.ToArray()));
             return request.ToString();
         }
         public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
@@ -1028,7 +1028,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 string exchangeTimestamp = root.GetValue<string>("exchangeratesourcetimestamp");
                 if (!string.IsNullOrEmpty(exchangeTimestamp)) {
-                    dccRateData.ExchangeRateSourceTimestamp = DateTime.ParseExact(exchangeTimestamp, "yyyyMMdd hh:mm", CultureInfo.InvariantCulture);
+                    dccRateData.ExchangeRateSourceTimestamp = DateTime.ParseExact(exchangeTimestamp, "yyyyMMdd HH:mm", CultureInfo.InvariantCulture);
                 }
 
                 result.DccRateData = dccRateData;
