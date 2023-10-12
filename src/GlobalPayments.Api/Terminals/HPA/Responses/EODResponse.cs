@@ -128,6 +128,11 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             return BatchReportResponse;
         }
 
+        public IBatchReportResponse getSafReportResponse()
+        {
+            return BatchReportResponse;
+        }
+
         public ISAFResponse getSAFResponse() {
             return SAFResponse;
         }
@@ -169,6 +174,14 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             }
             else if (Command.Equals(EODCommandType.GET_BATCH_REPORT, StringComparison.OrdinalIgnoreCase)) {
                 if (_batchReportMessageBuilder == null) {
+                    _batchReportMessageBuilder = new StringBuilder();
+                }
+                _batchReportMessageBuilder.Append(currentMessage).Append('\r');
+            }
+            else if (Command.Equals(EODCommandType.GET_SAF_REPORT, StringComparison.OrdinalIgnoreCase))
+            {
+                if (_batchReportMessageBuilder == null)
+                {
                     _batchReportMessageBuilder = new StringBuilder();
                 }
                 _batchReportMessageBuilder.Append(currentMessage).Append('\r');

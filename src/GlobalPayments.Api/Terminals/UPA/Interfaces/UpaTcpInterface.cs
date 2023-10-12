@@ -12,6 +12,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
         ITerminalConfiguration _settings;
         int _connectionCount = 0;
         public event MessageSentEventHandler OnMessageSent;
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         public UpaTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;

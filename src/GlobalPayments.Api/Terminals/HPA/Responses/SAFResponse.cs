@@ -6,7 +6,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.HPA.Responses {
-    public class SAFResponse : SipBaseResponse, ISAFResponse {
+    public class SAFResponse : SipBaseResponse, ISAFResponse, ITerminalReport {
         public decimal? TotalAmount { get; set; }
         public int TotalCount { get; set; }
 
@@ -14,7 +14,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
         public Dictionary<SummaryType, SummaryResponse> Pending { get; set; }
         public Dictionary<SummaryType, SummaryResponse> Declined { get; set; }
 
-        private string LastCategory;
+        private string LastCategory = "";
         private TransactionSummary LastTransactionSummary;
 
         public SAFResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }
@@ -23,7 +23,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             base.MapResponse(response);
 
             string category = response.GetValue<string>("TableCategory") ?? "";
-            if (category == null) {
+            if (String.IsNullOrEmpty(category)) {
                 category = LastCategory;
             }
             var fieldValues = new Dictionary<string, string>();
@@ -32,32 +32,44 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             }
 
             if (category.EndsWith("SUMMARY", StringComparison.OrdinalIgnoreCase)) {
-                var summary = new SummaryResponse {
-                    SummaryType = MapSummaryType(category),
-                    Count = fieldValues.GetValue<int>("Count"),
-                    Amount = fieldValues.GetAmount("Amount"),
-                    TotalAmount = fieldValues.GetAmount("Total Amount"),
-                    AuthorizedAmount = fieldValues.GetAmount("Authorized Amount"),
-                    AmountDue = fieldValues.GetAmount("Balance Due Amount"),
-                };
+                SummaryType ReportSummaryType = MapSummaryType(category);
 
-                if (category.Contains("APPROVED")) {
-                    if(Approved==null) {
-                        Approved = new Dictionary<SummaryType, SummaryResponse>();
+                if (ReportSummaryType != SummaryType.Unknown)
+                {
+                    var summary = new SummaryResponse
+                    {
+                        SummaryType = MapSummaryType(category),
+                        Count = fieldValues.GetValue<int>("Count"),
+                        Amount = fieldValues.GetAmount("Amount"),
+                        TotalAmount = fieldValues.GetAmount("Total Amount"),
+                        AuthorizedAmount = fieldValues.GetAmount("Authorized Amount"),
+                        AmountDue = fieldValues.GetAmount("Balance Due Amount"),
+                    };
+
+                    if (category.Contains("APPROVED"))
+                    {
+                        if (Approved == null)
+                        {
+                            Approved = new Dictionary<SummaryType, SummaryResponse>();
+                        }
+                        Approved.Add(summary.SummaryType, summary);
                     }
-                    Approved.Add(summary.SummaryType, summary);
-                }
-                else if (category.StartsWith("PENDING")) {
-                    if (Pending == null) {
-                        Pending = new Dictionary<SummaryType, SummaryResponse>();
+                    else if (category.StartsWith("PENDING"))
+                    {
+                        if (Pending == null)
+                        {
+                            Pending = new Dictionary<SummaryType, SummaryResponse>();
+                        }
+                        Pending.Add(summary.SummaryType, summary);
                     }
-                    Pending.Add(summary.SummaryType, summary);
-                }
-                else if (category.StartsWith("DECLINED")) {
-                    if (Declined == null) {
-                        Declined = new Dictionary<SummaryType, SummaryResponse>();
+                    else if (category.StartsWith("DECLINED"))
+                    {
+                        if (Declined == null)
+                        {
+                            Declined = new Dictionary<SummaryType, SummaryResponse>();
+                        }
+                        Declined.Add(summary.SummaryType, summary);
                     }
-                    Declined.Add(summary.SummaryType, summary);
                 }
             }
             else if (category.EndsWith("RECORD", StringComparison.OrdinalIgnoreCase)) {
@@ -77,7 +89,6 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                         AuthCode = fieldValues.GetValue<string>("ApprovalCode"),
                         IssuerResponseCode = fieldValues.GetValue<string>("ResponseCode"),
                         IssuerResponseMessage = fieldValues.GetValue<string>("ResponseText"),
-                        HostTimeout = (bool)fieldValues.GetBoolean("HostTimeOut"),
                         // BaseAmount - Not doing this one
                         TaxAmount = fieldValues.GetAmount("TaxAmount"),
                         GratuityAmount = fieldValues.GetAmount("TipAmount"),
@@ -85,6 +96,9 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                         AuthorizedAmount = fieldValues.GetAmount("Authorized Amount"),
                         AmountDue = fieldValues.GetAmount("Balance Due Amount")
                     };
+                    if (fieldValues.GetBoolean("HostTimeOut") != null) {
+                        trans.HostTimeout = (bool)fieldValues.GetBoolean("HostTimeOut");
+                    }
                 }
                 if (!(category.Equals(LastCategory))) {
                     if (category.StartsWith("APPROVED")) {
@@ -130,7 +144,35 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             else if (category.Equals(SAFReportType.DECLINED_VOID, StringComparison.OrdinalIgnoreCase)) {
                 return SummaryType.VoidDeclined;
             }
-            else throw new ApiException(string.Format("Unknown Category Value: {0}", category));
+            else if (category.Equals(SAFReportType.PROVISIONAL, StringComparison.OrdinalIgnoreCase))
+            {      
+                return SummaryType.Provsional;
+            }
+            else if (category.Equals(SAFReportType.DISCARDED, StringComparison.OrdinalIgnoreCase))
+            {       
+                return SummaryType.Discarded;
+            }
+            else if (category.Equals(SAFReportType.REVERSAL, StringComparison.OrdinalIgnoreCase))
+            {         
+                return SummaryType.Reversal;
+            }
+            else if (category.Equals(SAFReportType.EMV_DECLINED, StringComparison.OrdinalIgnoreCase))
+            {     
+                return SummaryType.EmvDeclined;
+            }
+            else if (category.Equals(SAFReportType.ATTACHMENT, StringComparison.OrdinalIgnoreCase))
+            {       
+                return SummaryType.Attachment;
+            }
+            else if (category.Equals(SAFReportType.PROVISIONAL_VOID, StringComparison.OrdinalIgnoreCase))
+            {  
+                return SummaryType.VoidProvisional;
+            }
+            else if (category.Equals(SAFReportType.DISCARDED_VOID, StringComparison.OrdinalIgnoreCase))
+            {   
+                return SummaryType.VoidDiscarded;
+            }
+            return SummaryType.Unknown;
         }
     }
 }

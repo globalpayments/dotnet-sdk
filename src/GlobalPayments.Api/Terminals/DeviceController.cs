@@ -34,11 +34,18 @@ namespace GlobalPayments.Api.Terminals {
 
         public event MessageSentEventHandler OnMessageSent;
 
-        internal DeviceController(ITerminalConfiguration settings) {
+        public event MessageReceivedEventHandler OnMessageReceived;
+
+        internal DeviceController(ITerminalConfiguration settings)
+        {
             _settings = settings;
             _connector = ConfigureConnector();
-            _connector.OnMessageSent += (message) => {
+            _connector.OnMessageSent += (message) =>
+            {
                 OnMessageSent?.Invoke(message);
+            };
+            _connector.OnMessageReceived += (message) => {
+                OnMessageReceived?.Invoke(message);
             };
         }
 

@@ -12,6 +12,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         public event MessageSentEventHandler OnMessageSent;
 
+        public event MessageReceivedEventHandler OnMessageReceived;
+
         public UpaMicInterface(ITerminalConfiguration config) {
             _config = config;
             _gatewayConfig = _config.GatewayConfig as GpApiConfig;

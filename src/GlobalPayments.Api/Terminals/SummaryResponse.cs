@@ -10,7 +10,15 @@ namespace GlobalPayments.Api.Terminals {
         VoidPending,
         Declined,
         VoidDeclined,
-        OfflineApproved
+        OfflineApproved,
+        Provsional,
+        Discarded,
+        VoidProvisional,
+        VoidDiscarded,
+        Reversal,
+        EmvDeclined,
+        Attachment,
+        Unknown
     }
 
     public class SummaryResponse {

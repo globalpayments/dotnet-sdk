@@ -10,11 +10,15 @@ namespace GlobalPayments.Api.Terminals {
         protected IRequestIdProvider _requestIdProvider;
 
         public event MessageSentEventHandler OnMessageSent;
+        public event MessageReceivedEventHandler OnMessageReceived;
         public string EcrId { get; set; }
         internal DeviceInterface(T controller) {
             _controller = controller;
             _controller.OnMessageSent += (message) => {
                 OnMessageSent?.Invoke(message);
+            };
+            _controller.OnMessageReceived += (message) => {
+                OnMessageReceived?.Invoke(message);
             };
             _requestIdProvider = _controller.RequestIdProvider;
         }
@@ -91,6 +95,11 @@ namespace GlobalPayments.Api.Terminals {
 
         #region Batching
         public virtual IBatchCloseResponse BatchClose() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
+        public virtual IBatchClearResponse BatchClear()
+        {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 

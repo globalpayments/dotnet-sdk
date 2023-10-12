@@ -1046,6 +1046,14 @@ public enum ReasonCode {
         public const string APPROVED_VOID = "APPROVED SAF VOID SUMMARY";
         public const string PENDING_VOID = "PENDING SAF VOID SUMMARY";
         public const string DECLINED_VOID = "DECLINED SAF VOID SUMMARY";
+        public const string PROVISIONAL = "PROVISIONAL SAF SUMMARY";                    
+        public const string DISCARDED = "DISCARDED SAF SUMMARY";                        
+        public const string REVERSAL = "REVERSAL SUMMARY";                              
+        public const string EMV_DECLINED = "EMV OFFLINE DECLINE SUMMARY";               
+        public const string ATTACHMENT = "ATTACHMENT SUMMARY";                          
+        public const string PROVISIONAL_VOID = "PROVISIONAL SAF VOID SUMMARY";          
+        public const string DISCARDED_VOID = "DISCARDED SAF VOID SUMMARY";              
+
     }
 
     internal static class EODCommandType {
@@ -1060,6 +1068,7 @@ public enum ReasonCode {
         public const string EMV_PARAMETER_DOWNLOAD = "EMVPDL";
         public const string EMV_CRYPTOGRAM_TYPE = "EMVTC";
         public const string GET_BATCH_REPORT = "GetBatchReport";
+        public const string GET_SAF_REPORT = "GetSAFReport";
     }
 
     internal static class CardSummaryType {

@@ -1,4 +1,18 @@
 # Changelog
+## Latest - v6.0.6 (10/12/23)
+
+#### Enhancements
+
+- Added OnMessageReceived event handler to device interface
+- [HPA] Support for GetSafReport
+- [Pax] Support for Batch Clear
+- [Portico] mapping fields in Portico's transaction detail report raw response to SDK's transaction detail report
+- [Portico] Added Commercial Data Tax Amount and PO number to level 2 sale transaction. 
+- [Portico] Add cardholder email
+
+#### Bug fixes:
+
+- GP-ECOM: HPP using card and apm together
 
 ## Latest - v6.0.5 (10/10/23)
 

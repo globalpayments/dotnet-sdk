@@ -102,13 +102,20 @@ namespace GlobalPayments.Api.Terminals.PAX {
             var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.B00_BATCH_CLOSE, DateTime.Now.ToString("YYYYMMDDhhmmss")));
             return new BatchCloseResponse(response);
         }
+        public override IBatchClearResponse BatchClear()
+        {
+            //var response = controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.B04_BATCH_CLEAR));
+            //return new PaxTerminalResponse(response, PAX_MSG_ID.B05_RSP_BATCH_CLEAR);
+            var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.B04_BATCH_CLEAR, "01")); //Sending specific Credit EDC type.
+            return new BatchClearResponse(response);
+        }
         #endregion
 
         #region Credit Methods
         //public TerminalAuthBuilder CreditAuth(decimal? amount = null) {
         //    return new TerminalAuthBuilder(TransactionType.Auth, PaymentMethodType.Credit).WithAmount(amount);
         //}
-        
+
         //public TerminalManageBuilder CreditCapture(decimal? amount = null) {
         //    return new TerminalManageBuilder(TransactionType.Capture, PaymentMethodType.Credit).WithAmount(amount);
         //}
@@ -182,6 +189,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
         //public TerminalAuthBuilder GiftBalance() {
         //    return new TerminalAuthBuilder(TransactionType.Balance, PaymentMethodType.Gift).WithCurrency(CurrencyType.CURRENCY);
         //}
-        #endregion        
+        #endregion
     }
 }

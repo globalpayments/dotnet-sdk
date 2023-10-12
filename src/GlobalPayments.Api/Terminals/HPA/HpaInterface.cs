@@ -117,6 +117,12 @@ namespace GlobalPayments.Api.Terminals.HPA {
         public override TerminalReportBuilder LocalDetailReport() {
             throw new NotImplementedException();
         }
+
+        public override TerminalReportBuilder GetSAFReport()
+        {
+            return new TerminalReportBuilder(TerminalReportType.GetSAFReport);
+        }
+
         #endregion
 
         #region Batching

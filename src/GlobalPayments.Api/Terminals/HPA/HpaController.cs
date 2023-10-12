@@ -70,8 +70,9 @@ namespace GlobalPayments.Api.Terminals.HPA {
             return response;
         }
 
-        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder) {
-            throw new NotImplementedException();
+        internal override ITerminalReport ProcessReport(TerminalReportBuilder builder)
+        {
+            return SendAdminMessage<SAFResponse>(new HpaAdminBuilder(HPA_MSG_ID.GET_SAF_REPORT));
         }
 
         internal string BuildProcessTransaction(TerminalAuthBuilder builder) {
@@ -119,6 +120,9 @@ namespace GlobalPayments.Api.Terminals.HPA {
              if ((builder.TransactionType == TransactionType.Capture)||(builder.TransactionType == TransactionType.Void))
                     et.SubElement(request, "RequestId", requestId);
             et.SubElement(request, "TransactionId", builder.TransactionId);
+            
+            if (builder.Amount != null)
+                et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericCurrencyString());
 
             if (builder.Gratuity != null)
                 et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());

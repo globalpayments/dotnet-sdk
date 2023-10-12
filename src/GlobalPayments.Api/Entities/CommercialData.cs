@@ -40,7 +40,8 @@ namespace GlobalPayments.Api.Entities {
         public TaxType TaxType { get; private set; }
 
         public string VAT_InvoiceNumber { get; set; }
-
+        public decimal? VATTaxAmtFreight { get; set; }
+        public decimal? VATTaxRateFreight { get; set; }
         public CommercialData(TaxType taxType, CommercialIndicator level = CommercialIndicator.Level_II) {
             TaxType = taxType;
             CommercialIndicator = level;

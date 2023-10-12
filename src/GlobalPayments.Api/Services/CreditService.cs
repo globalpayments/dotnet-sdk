@@ -59,5 +59,16 @@ namespace GlobalPayments.Api.Services {
                     TransactionId = transactionId
                 });
         }
+
+        public AuthorizationBuilder AdditionalAuth(string transactionId = null)
+        {
+            return new AuthorizationBuilder(TransactionType.Auth)
+                .WithModifier(TransactionModifier.Additional)
+                .WithPaymentMethod(new TransactionReference
+                {
+                    PaymentMethodType = PaymentMethodType.Credit,
+                    TransactionId = transactionId
+                });
+        }
     }
 }

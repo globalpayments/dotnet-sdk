@@ -12,6 +12,8 @@ namespace GlobalPayments.Api.Terminals.Genius
     {
         private GeniusController _controller;
 
+        public event MessageReceivedEventHandler OnMessageReceived;
+
         string IDeviceInterface.EcrId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         internal GeniusInterface(GeniusController controller)
@@ -242,7 +244,11 @@ namespace GlobalPayments.Api.Terminals.Genius
         {
             throw new NotImplementedException();
         }
+        public IBatchClearResponse BatchClear()
+        {
+            throw new NotImplementedException();
+        }
 
-    }
+    }       
 }
 

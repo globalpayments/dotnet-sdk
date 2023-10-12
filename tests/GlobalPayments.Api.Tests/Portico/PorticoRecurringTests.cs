@@ -3,6 +3,7 @@ using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Portico {
@@ -34,6 +35,8 @@ namespace GlobalPayments.Api.Tests.Portico {
                 Password = "summer%1151",
                 Environment = Entities.Environment.TEST
             }, "LegacyCreds");
+
+        
         }
 
         [TestMethod]
@@ -212,10 +215,10 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void Test_001h_CreateSchedule_Credit() {
+        public void Test_001h_CreateSchedule_Credit_WithDescription()
+        {
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
             Assert.IsNotNull(paymentMethod);
-
             var schedule = paymentMethod.AddSchedule(PaymentId("Credit"))
                 .WithAmount(30.02m)
                 .WithCurrency("USD")
@@ -223,13 +226,17 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .WithFrequency(ScheduleFrequency.WEEKLY)
                 .WithStatus("Active")
                 .WithReprocessingCount(2)
-                .WithEndDate(DateTime.Parse("04/01/2027"))                
+                .WithEndDate(DateTime.Parse("04/01/2027"))
+                .WithDescription("Schedule Test")
                 .Create();
+
             Assert.IsNotNull(schedule);
             Assert.IsNotNull(schedule.Key);
+
         }
+
         [TestMethod]
-        public void Test_001h_CreateSchedule_Credit_WithDescription()
+        public void Test_001h_CreateSchedule_Credit()
         {
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
             Assert.IsNotNull(paymentMethod);
@@ -242,11 +249,11 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .WithStatus("Active")
                 .WithReprocessingCount(2)
                 .WithEndDate(DateTime.Parse("04/01/2027"))
-                .WithDescription("Schedule Test")
                 .Create();
             Assert.IsNotNull(schedule);
             Assert.IsNotNull(schedule.Key);
         }
+
 
         [TestMethod]
         public void Test_001i_CreateSchedule_ACH() {
@@ -277,7 +284,8 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void Test_002c_FindSchedule() {
+        public void Test_002c_FindSchedule()
+        {
             var schedule = Schedule.Find(PaymentId("Credit"));
             Assert.IsNotNull(schedule);
         }
@@ -330,11 +338,12 @@ namespace GlobalPayments.Api.Tests.Portico {
             paymentMethod.SaveChanges();
         }
 
-        //[TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
-        //public void Test_004c_EditPaymentMethodsMethod() {
-        //    var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
-        //    paymentMethod.PaymentMethod = new CreditCardData();
-        //}
+        [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
+        public void Test_004c_EditPaymentMethodsMethod()
+        {
+            var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
+            paymentMethod.PaymentMethod = new CreditCardData();
+        }
 
         [TestMethod]
         public void Test_004d_EditSchedule() {

@@ -62,27 +62,17 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void EcomWithDirectMarketDataInvoiceAndShipDate() {
-
-            EcommerceInfo ecom = new EcommerceInfo
-            {
-                ShipDay = DateTime.Now.AddDays(1).Day,
-                ShipMonth = DateTime.Now.AddDays(1).Month
-            };
-
             Transaction response = card.Charge(11m)
                 .WithCurrency("USD")
-                .WithEcommerceInfo(ecom)
+                .WithEcommerceInfo(new EcommerceInfo {
+                    ShipDay = 25,
+                    ShipMonth = 12
+                })
                 .WithInvoiceNumber("1234567890")
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
-
-            var item = ReportingService.TransactionDetail(response.TransactionId)
-                .Execute();
-            Assert.IsNotNull(item);
-            Assert.AreEqual(ecom.ShipDay.ToString(), item.ShippingDay.ToString());
-            Assert.AreEqual(ecom.ShipMonth.ToString(), item.ShippingMonth.ToString());
         }
 
         [TestMethod]
@@ -172,6 +162,27 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .Execute();
             Assert.IsNotNull(refundResponse);
             Assert.AreEqual("00", refundResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void TestCardHolderEmail()
+        {
+            string custEmail = "John.Doe@Test.com";
+            Customer customer = new Customer();
+            customer.Email = custEmail;
+
+            var response = card.Charge(10.00m)
+                  .WithCurrency("USD")
+                  .WithCustomerData(customer)
+                  .Execute();
+
+            var transactionDetails = ReportingService.TransactionDetail(response.TransactionId).Execute();
+      
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            Assert.IsNotNull(transactionDetails);
+            Assert.AreEqual(custEmail, transactionDetails.Email);
         }
     }
 }

@@ -32,8 +32,10 @@ namespace GlobalPayments.Api.Gateways {
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
             var et = new ElementTree();
 
+            string transactionName = MapTransactionType(builder);
+
             // build request
-            var transaction = et.Element(MapTransactionType(builder));
+            var transaction = et.Element(transactionName);
             var block1 = et.SubElement(transaction, "Block1");
             if (builder.TransactionType.HasFlag(TransactionType.Sale) || builder.TransactionType.HasFlag(TransactionType.Auth)) {
                 if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.ACH) {
@@ -64,6 +66,8 @@ namespace GlobalPayments.Api.Gateways {
                 && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift
                 && builder.TransactionType != TransactionType.Tokenize
                 && builder.TransactionType != TransactionType.Reversal
+                && transactionName != "CreditAdditionalAuth"
+                && transactionName != "CreditIncrementalAuth"
             ) {
                 var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
                 var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
@@ -73,6 +77,10 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
                     et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
                     et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
+                }
+
+                if (builder.CustomerData != null) {
+                    et.SubElement(holder, isCheck ? "EmailAddress" : "CardHolderEmail", builder.CustomerData.Email);
                 }
 
                 if (isCheck) {
@@ -371,6 +379,14 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
 
+            if (builder.CommercialData != null)
+            {
+                var cd = builder.CommercialData;
+                var cpc = et.SubElement(block1, "CPCData");
+                et.SubElement(cpc, "CardHolderPONbr", cd.PoNumber);
+                et.SubElement(cpc, "TaxType", cd.TaxType.ToString());
+                et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
+            }
             // dynamic descriptor
             et.SubElement(block1, "TxnDescriptor", builder.DynamicDescriptor);
 
@@ -522,8 +538,8 @@ namespace GlobalPayments.Api.Gateways {
                             et.SubElement(data, "DestinationCountryCode", cd.DestinationCountryCode);
                             et.SubElement(data, "InvoiceRefNbr", cd.VAT_InvoiceNumber);
                             et.SubElement(data, "OrderDate", cd.OrderDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
-                            et.SubElement(data, "VATTaxAmtFreight", cd.AdditionalTaxDetails?.TaxAmount ?? cd.TaxAmount);
-                            et.SubElement(data, "VATTaxRateFreight", cd.AdditionalTaxDetails?.TaxRate);
+                            et.SubElement(data, "VATTaxAmtFreight", cd.VATTaxAmtFreight ?? cd.AdditionalTaxDetails?.TaxAmount ??  cd.TaxAmount);
+                            et.SubElement(data, "VATTaxRateFreight", cd.VATTaxRateFreight ?? cd.AdditionalTaxDetails?.TaxRate );
                             // et.SubElement(data, "TaxTreatment", null);
                             // et.SubElement(data, "DiscountTreatment", null);
                         }
@@ -578,6 +594,17 @@ namespace GlobalPayments.Api.Gateways {
                     }
                     else {
                         et.SubElement(tokenActions, "Delete");
+                    }
+                }
+            }
+            else
+            {
+                if (builder.TransactionType == TransactionType.BatchClose)
+                {                    
+                    if (builder.batchDeviceId != null)
+                    {
+                        var batchDeviceId = builder.batchDeviceId.ToString();
+                        transaction.Set("deviceId", batchDeviceId);
                     }
                 }
             }
@@ -954,6 +981,7 @@ namespace GlobalPayments.Api.Gateways {
                     MerchantAddr1 = response.GetValue<string>("MerchAddr1"),
                     MerchantAddr2 = response.GetValue<string>("MerchAddr2"),
                     MerchantCity = response.GetValue<string>("MerchCity"),
+                    MerchantState = response.GetValue<string>("MerchState"),
                     MerchantZip = response.GetValue<string>("MerchZip"),
                     MerchantPhone = response.GetValue<string>("MerchPhone"),         
                     TransactionStatus = response.GetValue<string>("TxnStatus"),
@@ -970,15 +998,92 @@ namespace GlobalPayments.Api.Gateways {
                     CashBackAmount = response.GetValue<decimal>("CashbackAmtInfo"),
                     CardHolderFirstName = response.GetValue<string>("CardHolderFirstName"),
                     CardHolderLastName = response.GetValue<string>("CardHolderLastName"),
+                    Email = response.GetValue<string>("CardHolderEmail"),
                     ConvenienceAmount = response.GetValue<decimal>("ConvenienceAmtInfo"),
                     IssuerResponseCode = response.GetValue<string>("IssuerRspCode", "RspCode"),
                     IssuerResponseMessage = response.GetValue<string>("IssuerRspText", "RspText"),
                     IssuerTransactionId = response.GetValue<string>("IssTxnId"),
                     SDKNameVersion = response.GetValue<string>("SDKNameVersion"),
-                    InvoiceNumber = response.GetValue<string>("InvoiceNbr"),
+                    InvoiceNumber = response.GetValue<string>("InvoiceNbr"),  // not in the raw response
+                    ShippingInvoiceNbr = response.GetValue<string>("DirectMktInvoiceNbr"),
                     ShippingDay = response.GetValue<int>("DirectMktShipDay"),
                     ShippingMonth = response.GetValue<int>("DirectMktShipMonth"),
+                    TaxAmount = response.GetValue<decimal>("TaxAmt", "TaxAmtInfo", "CPCTaxAmt"),
+                    SurchargeAmount = response.GetValue<decimal>("SurchargeAmtInfo"),
+                    Currency = response.GetValue<string>("MerchCurrencyText"),
+                    TaxType = response.GetValue<string>("CPCTaxType"),
+                    PoNumber = response.GetValue<string>("CPCCardHolderPONbr"),
                 };
+                if (response.Has("CorporateData") && response.Has("CPCTaxType"))
+                {
+                    
+                    bool ignoreCase = true;
+                    string taxType = response.GetValue<string>("CPCTaxType").Substring(response.GetValue<string>("CPCTaxType").IndexOf('-') + 1, response.GetValue<string>("CPCTaxType").Length-(response.GetValue<string>("CPCTaxType").IndexOf('-') + 1));
+                    if(response.Has("Visa"))
+                    { 
+                        CommercialData commercialData = new CommercialData((TaxType)Enum.Parse(typeof(TaxType), taxType,ignoreCase))
+                        {
+                            SummaryCommodityCode = response.GetValue<string>("SummaryCommodityCode"),
+                            FreightAmount = response.GetValue<decimal>("FreightAmt"),
+                            DutyAmount = response.GetValue<decimal>("DutyAmt"),
+                            DestinationPostalCode = response.GetValue<string>("DestinationPostalZipCode"),
+                            OriginPostalCode = response.GetValue<string>("ShipFromPostalZipCode"),
+                            DestinationCountryCode = response.GetValue<string>("DestinationCountryCode"),
+                            VAT_InvoiceNumber = response.GetValue<string>("InvoiceRefNbr"),
+                            OrderDate = response.GetValue<DateTime>("OrderDate"),
+                            PoNumber = response.GetValue<string>("CPCCardHolderPONbr"),
+                        };
+                        summary.CommercialData = commercialData;
+                        
+                        foreach (var lineItemDetail in response.GetAll("LineItemDetail"))
+                        {
+                            var lid = new CommercialLineItem
+                            {
+                                Description = lineItemDetail.GetValue<string>("ItemDescription"),
+                                ProductCode = lineItemDetail.GetValue<string>("ProductCode"),
+                                Quantity = lineItemDetail.GetValue<decimal>("Quantity"),
+                                UnitOfMeasure = lineItemDetail.GetValue<string>("UnitOfMeasure"),
+                                DiscountDetails = new DiscountDetails
+                                {
+                                    DiscountAmount = lineItemDetail.GetValue<decimal>("DiscountAmt"),
+                                },
+                        };
+
+                            summary.CommercialData.AddLineItems(lid);
+                        }
+                    }
+                    else  //Mastercard
+                    {
+                        CommercialData commercialData = new CommercialData((TaxType)System.Enum.Parse(typeof(TaxType), taxType, ignoreCase))
+                        {
+                            SummaryCommodityCode = response.GetValue<string>("SummaryCommodityCode"),
+                            FreightAmount = response.GetValue<decimal>("FreightAmt"),
+                            DutyAmount = response.GetValue<decimal>("DutyAmt"),
+                            DestinationPostalCode = response.GetValue<string>("DestinationPostalZipCode"),
+                            OriginPostalCode = response.GetValue<string>("ShipFromPostalZipCode"),
+                            DestinationCountryCode = response.GetValue<string>("DestinationCountryCode"),
+                            VAT_InvoiceNumber = response.GetValue<string>("InvoiceRefNbr"),
+                            OrderDate = response.GetValue<DateTime>("OrderDate"),
+                            PoNumber = response.GetValue<string>("CPCCardHolderPONbr"),
+                            
+                        };
+                        summary.CommercialData = commercialData;
+
+                        foreach (var lineItemDetail in response.GetAll("LineItemDetail"))
+                        {
+                            var lid = new CommercialLineItem
+                            {
+                                Description = lineItemDetail.GetValue<string>("ItemDescription"),
+                                ProductCode = lineItemDetail.GetValue<string>("ProductCode"),
+                                Quantity = lineItemDetail.GetValue<decimal>("Quantity"),
+                                UnitOfMeasure = lineItemDetail.GetValue<string>("UnitOfMeasure"),
+
+                            };
+                            summary.CommercialData.AddLineItems(lid);
+                        }
+                    }
+
+                }
                 rvalue = summary as T;
                 return rvalue;
             }
@@ -1238,6 +1343,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (isVisa)
                 {
                     et.SubElement(lineItem, "ItemTaxTreatment", item.TaxTreatment);
+                    et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails.DiscountAmount);
                     // The schema says these fields should be allowed, but they are not currently accepted.
                     // et.SubElement(lineItem, "ItemCommodityCode", item.CommodityCode);
                     // et.SubElement(lineItem, "UnitCost", item.UnitCost);

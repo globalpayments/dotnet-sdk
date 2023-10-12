@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
@@ -534,16 +535,39 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.HostedPaymentData != null) {
                 AlternativePaymentType[] PaymentTypes = builder.HostedPaymentData.PresetPaymentMethods;
                 HostedPaymentMethods[] HostedPaymentMethods = builder.HostedPaymentData.HostedPaymentMethods;
-                if (PaymentTypes != null) {
-                    PaymentValues = string.Join("|", PaymentTypes);
-                }
-                if (HostedPaymentMethods != null)
-                {
-                    if (PaymentValues != null) {
-                        PaymentValues = string.Join("|", new string[] { PaymentValues, string.Join("|", HostedPaymentMethods) });
+                
+                if (HostedPaymentMethods != null) {
+                    if (HostedPaymentMethods.ToList().Contains(Entities.HostedPaymentMethods.CARDS)) {
+                        List<Entities.HostedPaymentMethods> cardItem = new List<HostedPaymentMethods>();
+                        List<Entities.HostedPaymentMethods> Items = new List<HostedPaymentMethods>();
+                        foreach (var hosted in HostedPaymentMethods) {
+                            if (hosted == Entities.HostedPaymentMethods.CARDS) {
+                                cardItem.Add(hosted);
+                            }
+                            else {
+                                Items.Add(hosted);
+                            }
+                        }
+                        if(cardItem.Count > 0) {
+                            PaymentValues = string.Join("|", new string[] { string.Join("|", cardItem)});
+                            if(Items.Count > 0) {
+                                PaymentValues = string.Join("|", new string[] { PaymentValues, string.Join("|", Items) });
+                            }
+                        }
+                        else {
+                            PaymentValues = string.Join("|", Items);
+                        }
                     }
                     else {
                         PaymentValues = string.Join("|", HostedPaymentMethods);
+                    }
+                }
+                if (PaymentTypes != null) {
+                    if (PaymentValues != null) {
+                        PaymentValues = string.Join("|", new string[] { PaymentValues, string.Join("|", PaymentTypes) });
+                    }
+                    else {
+                        PaymentValues = string.Join("|", PaymentTypes);
                     }
                 }
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);

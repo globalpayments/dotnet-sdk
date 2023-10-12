@@ -4,6 +4,8 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Utils;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Messaging;
+using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class PaxTcpInterface : IDeviceCommInterface {
@@ -14,6 +16,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
         int _connectionCount = 0;
         
         public event MessageSentEventHandler OnMessageSent;
+
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         public PaxTcpInterface(ITerminalConfiguration settings) {
             _settings = settings;
@@ -30,7 +34,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         public void Disconnect() {
-            _connectionCount--;
+            if (_connectionCount > 0) {
+                _connectionCount--;
+            }
             if (_connectionCount == 0) {
                 _stream?.Dispose();
                 _stream = null;
@@ -42,20 +48,26 @@ namespace GlobalPayments.Api.Terminals.PAX {
 
         public byte[] Send(IDeviceMessage message) {
             byte[] buffer = message.GetSendBuffer();
+            byte[] rvalue = null;
 
-            Connect();
-            try {
+            try
+            {
+                Connect();
+            
                 for (int i = 0; i < 3; i++) {
                     _stream.WriteAsync(buffer, 0, buffer.Length).Wait();
 
-                    var rvalue = _stream.GetTerminalResponseAsync();
+                    rvalue = _stream.GetTerminalResponseAsync();
                     if (rvalue != null) {
                         byte lrc = rvalue[rvalue.Length - 1]; // Should be the LRC
+                        Array.Resize(ref rvalue, rvalue.Length - 1);
                         if (lrc != TerminalUtilities.CalculateLRC(rvalue)) {
                             SendControlCode(ControlCodes.NAK);
                         }
                         else {
                             SendControlCode(ControlCodes.ACK);
+                            Array.Resize(ref rvalue, rvalue.Length + 1);
+                            rvalue[rvalue.Length - 1] = lrc;
                             return rvalue;
                         }
                     }
@@ -72,6 +84,14 @@ namespace GlobalPayments.Api.Terminals.PAX {
             }
             finally {
                 OnMessageSent?.Invoke(message.ToString());
+                if (rvalue != null)
+                {
+                    OnMessageReceived?.Invoke(Encoding.UTF8.GetString(rvalue, 0, rvalue.Length));
+                }
+                else
+                {
+                    OnMessageReceived?.Invoke("Terminal did not respond");
+                }
                 Disconnect();
             }
         }

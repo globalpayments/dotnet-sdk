@@ -8,6 +8,7 @@ using GlobalPayments.Api.Terminals.Messaging;
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
+        event MessageReceivedEventHandler OnMessageReceived;
         string EcrId { get; set; }
         #region Admin Calls
         void Cancel();
@@ -36,6 +37,7 @@ namespace GlobalPayments.Api.Terminals {
 
         #region Batch Calls
         IBatchCloseResponse BatchClose();
+        IBatchClearResponse BatchClear();
         IEODResponse EndOfDay();
         #endregion
 

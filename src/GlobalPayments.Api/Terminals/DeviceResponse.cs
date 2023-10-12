@@ -18,6 +18,11 @@ namespace GlobalPayments.Api.Terminals {
         /// </summary>
         public string Version { get; set; }
 
+        /// <summary>
+        /// the unique id of the terminal - Serial Number for Pax
+        /// </summary>
+        public string DeviceId { get; set; }
+
         // Functional
         /// <summary>
         /// response code returned by the device
