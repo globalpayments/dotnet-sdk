@@ -2,17 +2,22 @@
 using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Certifications {
+namespace GlobalPayments.Api.Tests.Certifications.Portico
+{
     [TestClass]
-    public class CheckCertification {
+    public class CheckCertification
+    {
         Address address;
 
-        public CheckCertification() {
-            ServicesContainer.ConfigureService(new PorticoConfig {
+        public CheckCertification()
+        {
+            ServicesContainer.ConfigureService(new PorticoConfig
+            {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
 
-            address = new Address {
+            address = new Address
+            {
                 StreetAddress1 = "123 Main St.",
                 City = "Downtown",
                 State = "NJ",
@@ -23,7 +28,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         #region ACH Debit - Consumer
 
         [TestMethod]
-        public void checks_001ConsumerPersonalChecking() {
+        public void checks_001ConsumerPersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.PPD, CheckType.PERSONAL, AccountType.CHECKING);
 
             var response = check.Charge(11.00m)
@@ -40,7 +46,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_002ConsumerBusinessChecking() {
+        public void checks_002ConsumerBusinessChecking()
+        {
             var check = TestChecks.Certification(SecCode.PPD, CheckType.BUSINESS, AccountType.CHECKING);
             var response = check.Charge(12.00m)
                 .WithCurrency("USD")
@@ -51,7 +58,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_003ConsumerPersonalSavings() {
+        public void checks_003ConsumerPersonalSavings()
+        {
             var check = TestChecks.Certification(SecCode.PPD, CheckType.PERSONAL, AccountType.SAVINGS);
             var response = check.Charge(13.00m)
                 .WithCurrency("USD")
@@ -62,7 +70,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_004ConsumerBusinessSavings() {
+        public void checks_004ConsumerBusinessSavings()
+        {
             var check = TestChecks.Certification(SecCode.PPD, CheckType.BUSINESS, AccountType.SAVINGS);
             var response = check.Charge(14.00m)
                 .WithCurrency("USD")
@@ -73,7 +82,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_005CorporatePersonalChecking() {
+        public void checks_005CorporatePersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.CCD, CheckType.PERSONAL, AccountType.CHECKING, "Heartland Pays");
             var response = check.Charge(15.00m)
                 .WithCurrency("USD")
@@ -93,7 +103,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         #region ACH Debit - Corporate
 
         [TestMethod]
-        public void checks_006CorporateBuisnessChecking() {
+        public void checks_006CorporateBuisnessChecking()
+        {
             var check = TestChecks.Certification(SecCode.CCD, CheckType.BUSINESS, AccountType.CHECKING, "Heartland Pays");
             var response = check.Charge(16.00m)
                 .WithCurrency("USD")
@@ -104,7 +115,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_007CorporatePersonalSavings() {
+        public void checks_007CorporatePersonalSavings()
+        {
             var check = TestChecks.Certification(SecCode.CCD, CheckType.PERSONAL, AccountType.SAVINGS, "Heartland Pays");
             var response = check.Charge(17.00m)
                 .WithCurrency("USD")
@@ -115,7 +127,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_008CorporateBuisnessSavings() {
+        public void checks_008CorporateBuisnessSavings()
+        {
             var check = TestChecks.Certification(SecCode.CCD, CheckType.BUSINESS, AccountType.SAVINGS, "Heartland Pays");
             var response = check.Charge(18.00m)
                 .WithCurrency("USD")
@@ -130,7 +143,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         #region eGold Checking Tests
 
         [TestMethod]
-        public void checks_009EgoldPersonalChecking() {
+        public void checks_009EgoldPersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.PERSONAL, AccountType.CHECKING);
             var response = check.Charge(11.00m)
                 .WithCurrency("USD")
@@ -141,7 +155,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_010EgoldBuisnessChecking() {
+        public void checks_010EgoldBuisnessChecking()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.BUSINESS, AccountType.CHECKING);
             var response = check.Charge(12.00m)
                 .WithCurrency("USD")
@@ -157,7 +172,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_011EgoldPersonalSavings() {
+        public void checks_011EgoldPersonalSavings()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.PERSONAL, AccountType.SAVINGS);
             var response = check.Charge(13.00m)
                 .WithCurrency("USD")
@@ -168,7 +184,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_012EgoldBusinessSavings() {
+        public void checks_012EgoldBusinessSavings()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.BUSINESS, AccountType.SAVINGS);
             var response = check.Charge(14.00m)
                 .WithCurrency("USD")
@@ -183,7 +200,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         #region eSilver 
 
         [TestMethod]
-        public void checks_013EsilverPersonalChecking() {
+        public void checks_013EsilverPersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.PERSONAL, AccountType.CHECKING);
             var response = check.Charge(15.00m)
                 .WithCurrency("USD")
@@ -194,7 +212,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_014EsilverBuisnessChecking() {
+        public void checks_014EsilverBuisnessChecking()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.BUSINESS, AccountType.CHECKING);
             var response = check.Charge(16.00m)
                 .WithCurrency("USD")
@@ -210,7 +229,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_015EsilverPersonalSavings() {
+        public void checks_015EsilverPersonalSavings()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.PERSONAL, AccountType.SAVINGS);
             var response = check.Charge(17.00m)
                 .WithCurrency("USD")
@@ -221,7 +241,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_016EsilverBuisnessSavings() {
+        public void checks_016EsilverBuisnessSavings()
+        {
             var check = TestChecks.Certification(SecCode.POP, CheckType.BUSINESS, AccountType.SAVINGS);
             var response = check.Charge(18.00m)
                 .WithCurrency("USD")
@@ -236,7 +257,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         #region Bronze
 
         [TestMethod, Ignore]
-        public void checks_017EbronzePersonalChecking() {
+        public void checks_017EbronzePersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.EBRONZE, CheckType.PERSONAL, AccountType.CHECKING);
             check.CheckVerify = true;
             var response = check.Charge(19.00m)
@@ -248,7 +270,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void checks_018EbronzePersonalChecking() {
+        public void checks_018EbronzePersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.EBRONZE, CheckType.PERSONAL, AccountType.CHECKING);
             check.CheckVerify = true;
             var response = check.Charge(20.00m)
@@ -260,7 +283,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void checks_019EbronzePersonalChecking() {
+        public void checks_019EbronzePersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.EBRONZE, CheckType.PERSONAL, AccountType.SAVINGS);
             check.CheckVerify = true;
             var response = check.Charge(21.00m)
@@ -272,7 +296,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void checks_020EbronzeBusinessSavings() {
+        public void checks_020EbronzeBusinessSavings()
+        {
             var check = TestChecks.Certification(SecCode.EBRONZE, CheckType.BUSINESS, AccountType.SAVINGS);
             check.CheckVerify = true;
             var response = check.Charge(22.00m)
@@ -288,7 +313,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         #region Checks-by-Web
 
         [TestMethod]
-        public void checks_021WebPersonalChecking() {
+        public void checks_021WebPersonalChecking()
+        {
             var check = TestChecks.Certification(SecCode.WEB, CheckType.PERSONAL, AccountType.CHECKING);
             var response = check.Charge(23.00m)
                 .WithCurrency("USD")
@@ -299,7 +325,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_022WebBuisnessChecking() {
+        public void checks_022WebBuisnessChecking()
+        {
             var check = TestChecks.Certification(SecCode.WEB, CheckType.BUSINESS, AccountType.CHECKING);
             var response = check.Charge(24.00m)
                 .WithCurrency("USD")
@@ -310,7 +337,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_023WebPersonalSavings() {
+        public void checks_023WebPersonalSavings()
+        {
             var check = TestChecks.Certification(SecCode.WEB, CheckType.PERSONAL, AccountType.SAVINGS);
             var response = check.Charge(25.00m)
                 .WithCurrency("USD")
@@ -326,7 +354,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void checks_024WebBusinessSavings() {
+        public void checks_024WebBusinessSavings()
+        {
             var check = TestChecks.Certification(SecCode.WEB, CheckType.BUSINESS, AccountType.SAVINGS);
             var response = check.Charge(5.00m)
                 .WithCurrency("USD")

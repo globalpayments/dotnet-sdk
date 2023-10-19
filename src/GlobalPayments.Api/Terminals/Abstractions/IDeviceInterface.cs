@@ -1,5 +1,6 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Genius.Enums;
@@ -24,8 +25,12 @@ namespace GlobalPayments.Api.Terminals {
         string SendCustomMessage(DeviceMessage message);
         IDeviceResponse SendFile(SendFileType fileType, string filePath);
         ISAFResponse SendStoreAndForward();
+        ISAFResponse DeleteSaf(string safreferenceNumer, string tranNo=null);
+        IDeviceResponse RegisterPOS(string appName, int launchOrder = 0, bool remove = false, int silent = 0);
         IDeviceResponse SetStoreAndForwardMode(bool enabled);
         IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
+        IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData);
+        ISignatureResponse PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption);
         #endregion
 
         #region reporting
@@ -85,7 +90,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Verify();
         TerminalManageBuilder Void();
         TerminalAuthBuilder Withdrawal(decimal? amount = null);
-        TerminalAuthBuilder TipAdjust(decimal? amount = null);
+        TerminalManageBuilder TipAdjust(decimal? amount = null);
         TerminalAuthBuilder Tokenize();
         TerminalAuthBuilder AuthCompletion();
         TerminalManageBuilder DeletePreAuth();

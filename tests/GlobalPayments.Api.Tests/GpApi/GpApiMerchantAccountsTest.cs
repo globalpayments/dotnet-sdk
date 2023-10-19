@@ -265,15 +265,15 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
 
-            var transfer = funds.Transfer(10m)
+            var transfer = funds.Transfer(1m)
                 .WithClientTransactionId("")
                 .WithDescription(description)
                 .Execute();
 
             Assert.IsNotNull(transfer.TransactionId);
-            Assert.AreEqual(10m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(1m, transfer.BalanceAmount);
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
 
         [TestMethod]
@@ -301,8 +301,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(transfer.TransactionId);
             Assert.AreEqual(0.01m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
 
         [TestMethod]
@@ -330,8 +330,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(transfer.TransactionId);
             Assert.AreEqual(0.01m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
 
         [TestMethod]
@@ -359,8 +359,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(transfer.TransactionId);
             Assert.AreEqual(0.01m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
         
         [TestMethod]
@@ -377,13 +377,14 @@ namespace GlobalPayments.Api.Tests.GpApi
             funds.AccountId = accountSender.Id;
             funds.RecipientAccountId = accountRecipient.Id;
             funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
 
-            var transfer = funds.Transfer(10m)
+            var transfer = funds.Transfer(0.11m)
                 .Execute();
 
             Assert.IsNotNull(transfer.TransactionId);
-            Assert.AreEqual(10m, transfer.BalanceAmount);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(0.11m, transfer.BalanceAmount);
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
             Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
         
@@ -407,20 +408,20 @@ namespace GlobalPayments.Api.Tests.GpApi
             var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
 
             var idempotencyKey = Guid.NewGuid().ToString();
-            var transfer = funds.Transfer(10m)
+            var transfer = funds.Transfer(1m)
                 .WithClientTransactionId("")
                 .WithDescription(description)
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
 
             Assert.IsNotNull(transfer.TransactionId);
-            Assert.AreEqual(10m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(1m, transfer.BalanceAmount);
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
             
             var exceptionCaught = false;
             try {
-                funds.Transfer(10m)
+                funds.Transfer(1m)
                     .WithClientTransactionId("")
                     .WithDescription(description)
                     .WithIdempotencyKey(idempotencyKey)
@@ -429,7 +430,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 exceptionCaught = true;
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40039", ex.ResponseMessage);
-                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={transfer.TransactionId}, status=CAPTURED",
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={transfer.TransactionId}, status=SUCCESS",
                     ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);

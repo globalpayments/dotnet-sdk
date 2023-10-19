@@ -186,6 +186,22 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
+        public void CardBlockingPaymentRequest()
+        {
+            var cardTypesBlocked = new BlockedCardType();
+            cardTypesBlocked.Commercialdebit = true;
+            cardTypesBlocked.Consumerdebit = true;
+
+            var authorization = card.Authorize(14)
+                .WithCurrency("USD")
+                .WithBlockedCardType(cardTypesBlocked)
+                .Execute();
+
+            Assert.IsNotNull(authorization);
+            Assert.AreEqual("00", authorization.ResponseCode);
+        }
+
+        [TestMethod]
         public void CreditFraudResponse() {
             var billingAddress = new Address {
                 StreetAddress1 = "Flat 123",

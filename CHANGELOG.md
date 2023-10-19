@@ -1,5 +1,28 @@
 # Changelog
-## Latest - v6.0.6 (10/12/23)
+
+## Latest - v7.0.0 (10/19/23)
+
+#### Enhancements
+
+- UPA: SignatureData
+- UPA: Line Item 
+- UPA: GetSAF report
+- UPA: Incremental Auth
+- UPA: Start Card
+- UPA: DeleteSAF
+- UPA: Register POS command
+- UPA: Added Ref/Saf reference number 
+- UPA: Modified builder for AdjustTip
+- GP-ECOM: Limit what card types to accept for payment or storage (HPP & API)
+    * https://developer.globalpay.com/hpp/card-blocking
+    * https://developer.globalpay.com/api/card-blocking
+
+#### Bug fixes:
+
+- Portico: Fix logic to check if CreditCardData.Token value null instead of CreditCardData.MobileType value null.
+- Transit: Fixed transactions with amount bigger than 1000.
+
+## v6.0.6 (10/12/23)
 
 #### Enhancements
 
@@ -14,7 +37,7 @@
 
 - GP-ECOM: HPP using card and apm together
 
-## Latest - v6.0.5 (10/10/23)
+## v6.0.5 (10/10/23)
 
 #### Enhancements
 

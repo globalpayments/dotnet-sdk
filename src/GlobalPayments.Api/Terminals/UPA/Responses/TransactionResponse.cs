@@ -48,6 +48,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string ResponseText { get; set; }
         public string ApprovalCode { get; set; }
         public decimal? TipAmount { get; set; }
+        public decimal? BaseAmount { get; set; }
         public decimal? CashBackAmount { get; set; }
         public string ReferenceNumber { get; set; }
         public string CardHolderName { get; set; }
@@ -57,21 +58,24 @@ namespace GlobalPayments.Api.Terminals.UPA
 
         public TransactionResponse(JsonDoc root) {
             if (!isGpApiResponse(root)) {
-                var response = root.Get("data");
-                if (response == null) {
-                    return;
-                }
-
-                RequestId = response.GetValue<string>("requestId");
-                HydrateCmdResult(response);
-                var responseData = response.Get("data");
-                if (responseData == null) {
-                    return;
-                }
-                HydrateHostData(responseData);
-                HydratePaymentData(responseData);
-                HydrateEmvData(responseData);
+            var response = root.Get("data");
+            if (response == null) {
+                return;
             }
+
+            RequestId = response.GetValue<string>("requestId");
+            HydrateCmdResult(response);
+            var responseData = response.Get("data");
+            if (responseData == null) {
+                return;
+            }
+            HydrateHostData(responseData);
+            HydratePaymentData(responseData);
+            HydrateTransactionData(responseData);
+            HydrateEmvData(responseData);
+            HydrateDccData(responseData);
+            HydrateHeaderData(responseData);
+        }
             else {
                 RequestId = root.GetValue<string>("id");
                 DeviceResponseText = root.GetValue<string>("status");
@@ -159,6 +163,76 @@ namespace GlobalPayments.Api.Terminals.UPA
             ExpirationDate = payment.GetValue<string>("expiryDate");
         }
 
+        protected void HydrateHeaderData(JsonDoc headerData) {
+            if (headerData == null) {
+                return;
+            }
+            var acquisitionType = headerData.GetValue<string>("acquisitionType");
+            var LuhnCheckPassed = headerData.GetValue<string>("LuhnCheckPassed");
+            var dataEncryptionType = headerData.GetValue<string>("dataEncryptionType");
+            var EmvTags = headerData.GetValue<string>("EmvTags");
+            var expDate = headerData.GetValue<string>("expDate");
+            var Cvv = headerData.GetValue<decimal>("Cvv");
+            var ScannedData = headerData.GetValue<string>("ScannedData");
+            HydratePanData(headerData);
+            HydrateTrackData(headerData);
+            HydratePinDUKPTData(headerData);
+            Hydrate3DesDukptData(headerData);
+        }
+
+        protected void HydratePanData(JsonDoc data) {
+            var panData = data.Get("Pan");
+            if (panData == null) {
+                return;
+            }
+            var clearPAN = panData.GetValue<string>("clearPAN");
+            var maskedPAN = panData.GetValue<string>("maskedPAN");
+            var encryptedPAN = panData.GetValue<string>("encryptedPAN");
+        }
+
+        protected void HydrateTrackData(JsonDoc data) {
+            var trackData = data.Get("trackData");
+            if (trackData == null) {
+                return;
+            }
+            var clearTrack2 = trackData.GetValue<string>("clearTrack2");
+            var maskedTrack2 = trackData.GetValue<string>("maskedTrack2");
+            var clearTrack1 = trackData.GetValue<string>("clearTrack1");
+            var maskedTrack1 = trackData.GetValue<string>("maskedTrack1");
+            var clearTrack3 = trackData.GetValue<string>("clearTrack3");
+            var maskedTrack3 = trackData.GetValue<string>("maskedTrack3");
+        }
+
+        protected void HydratePinDUKPTData(JsonDoc data) {
+            var pinDUKPT = data.Get("PinDUKPT");
+            if (pinDUKPT == null) {
+                return;
+            }
+            var pinBlock = pinDUKPT.GetValue<string>("PinBlock");
+            var Ksn = pinDUKPT.GetValue<string>("Ksn");
+        }
+
+        protected void Hydrate3DesDukptData(JsonDoc data) {
+            var desDukpt = data.Get("3DesDukpt");
+            if (desDukpt == null) {
+                return;
+            }
+            var encryptedBlob = desDukpt.GetValue<string>("encryptedBlob");
+            var Ksn = desDukpt.GetValue<string>("Ksn");
+        }
+
+        protected void HydrateTransactionData(JsonDoc data)
+        {
+            var transaction = data.Get("transaction");
+            if (transaction == null)
+            {
+                return;
+            }
+            TipAmount = transaction.GetValue<decimal>("tipAmount");
+            TransactionAmount = transaction.GetValue<decimal>("totalAmount");
+            BaseAmount = transaction.GetValue<decimal>("baseAmount");            
+        }
+
         protected void HydrateEmvData(JsonDoc data) {
             var emv = data.Get("emv");
             if (emv == null) {
@@ -206,6 +280,16 @@ namespace GlobalPayments.Api.Terminals.UPA
             // TacOnline = emv.TacOnline;
         }
 
+        protected void HydrateDccData(JsonDoc data) {
+            var dcc = data.Get("dcc");
+            if (dcc == null)
+                return;
+            ExchangeRate = dcc.GetValue<decimal>("exchangeRate");
+            MarkUp = dcc.GetValue<decimal>("markUp");
+            TransactionCurrency = dcc.GetValue<string>("transactionCurrency");
+            DccTransactionAmount = dcc.GetValue<string>("transactionAmount");
+        }
+
         protected string NormalizeResponseCode(string responseCode, string partialApproval) {
             if (partialApproval == "1") {
                 return "10";
@@ -228,10 +312,16 @@ namespace GlobalPayments.Api.Terminals.UPA
             return retValue;
         }
 
-        public static TransactionResponse ParseResponse(string rawResponse) {
+        public static TransactionResponse ParseResponse(string rawResponse)
+        {
             JsonDoc response = JsonDoc.Parse(rawResponse);
             // TODO: We might have to scope the document down depending on what response we actually get from the message endpoint
             return new TransactionResponse(response);
         }
+        public decimal? ExchangeRate { get; set; }
+        public decimal? MarkUp { get; set; }
+        public string TransactionCurrency { get; set; }
+        public string DccTransactionAmount { get; set; }
     }
 }
+

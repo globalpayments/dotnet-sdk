@@ -6,14 +6,18 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Certifications {
+namespace GlobalPayments.Api.Tests.Certifications.Portico
+{
     [TestClass]
-    public class LodgingCertification {
+    public class LodgingCertification
+    {
         private CreditCardData card;
         private CreditTrackData track;
 
-        public LodgingCertification() {
-            ServicesContainer.ConfigureService(new PorticoConfig {
+        public LodgingCertification()
+        {
+            ServicesContainer.ConfigureService(new PorticoConfig
+            {
                 SiteId = 144101,
                 LicenseId = 144012,
                 DeviceId = 6402470,
@@ -26,14 +30,17 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_000_CloseBatch() {
-            try {
+        public void Lodging_000_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }
@@ -43,7 +50,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Check In/Check Out (Single Stay) - SALE : SWIPED
         */
         [TestMethod]
-        public void Lodging_001_SaleVisaSwiped_SingleStay() {
+        public void Lodging_001_SaleVisaSwiped_SingleStay()
+        {
             track = TestCards.VisaSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -58,7 +66,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_002a_SaleMasterSwiped_SingleStay() {
+        public void Lodging_002a_SaleMasterSwiped_SingleStay()
+        {
             track = TestCards.MasterCardSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -73,7 +82,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_002b_SaleMaster24Swiped_SingleStay() {
+        public void Lodging_002b_SaleMaster24Swiped_SingleStay()
+        {
             track = TestCards.MasterCard24Swipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -88,7 +98,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_003_SaleDiscoverSwiped_SingleStay() {
+        public void Lodging_003_SaleDiscoverSwiped_SingleStay()
+        {
             track = TestCards.DiscoverSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -103,7 +114,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_004_SaleAmexSwiped_SingleStay() {
+        public void Lodging_004_SaleAmexSwiped_SingleStay()
+        {
             track = TestCards.AmexSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -118,7 +130,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_005_SaleJcbSwiped_SingleStay() {
+        public void Lodging_005_SaleJcbSwiped_SingleStay()
+        {
             track = TestCards.JcbSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -136,7 +149,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Check In/Check Out (Single Stay) - SALE : KEYED, CARD PRESENT
         */
         [TestMethod]
-        public void Lodging_006_SaleVisaKeyed_CardPresent_SingleStay() {
+        public void Lodging_006_SaleVisaKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.VisaManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -151,7 +165,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_007a_SaleMasterKeyed_CardPresent_SingleStay() {
+        public void Lodging_007a_SaleMasterKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -166,7 +181,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_007b_SaleMaster2SeriesKeyed_CardPresent_SingleStay() {
+        public void Lodging_007b_SaleMaster2SeriesKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.MasterCardSeries2Manual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -181,7 +197,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_008_SaleDiscoverManualKeyed_CardPresent_SingleStay() {
+        public void Lodging_008_SaleDiscoverManualKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.DiscoverManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -196,7 +213,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_009_SaleAmexManualKeyed_CardPresent_SingleStay() {
+        public void Lodging_009_SaleAmexManualKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.AmexManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -211,7 +229,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_010_SaleJcbManualKeyed_CardPresent_SingleStay() {
+        public void Lodging_010_SaleJcbManualKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.JcbManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -229,7 +248,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Check In/Check Out (Single Stay) - SALE : KEYED, CARD NOT PRESENT
         */
         [TestMethod]
-        public void Lodging_011_SaleVisaManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_011_SaleVisaManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.VisaManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -244,7 +264,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_012a_SaleMasterManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_012a_SaleMasterManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.MasterCardManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -259,7 +280,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_012b_SaleMaster2SeriesManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_012b_SaleMaster2SeriesManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.MasterCardSeries2Manual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -274,7 +296,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_013_SaleDiscoverManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_013_SaleDiscoverManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.DiscoverManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -289,7 +312,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_014_SaleAmexManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_014_SaleAmexManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.AmexManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -304,7 +328,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_015_SaleJcbManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_015_SaleJcbManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.JcbManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -323,7 +348,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Check In/Check Out - AUTHORIZATIONS : SWIPED
         */
         [TestMethod]
-        public void Lodging_016_AuthVisaSwiped_SingleStay() {
+        public void Lodging_016_AuthVisaSwiped_SingleStay()
+        {
             track = TestCards.VisaSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -343,7 +369,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_017a_AuthMasterSwiped_SingleStay() {
+        public void Lodging_017a_AuthMasterSwiped_SingleStay()
+        {
             track = TestCards.MasterCardSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -362,7 +389,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_017b_AuthMaster24Swiped_SingleStay() {
+        public void Lodging_017b_AuthMaster24Swiped_SingleStay()
+        {
             track = TestCards.MasterCard24Swipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -381,7 +409,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_018_AuthDiscoverSwiped_SingleStay() {
+        public void Lodging_018_AuthDiscoverSwiped_SingleStay()
+        {
             track = TestCards.DiscoverSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -400,7 +429,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_019_AuthAmexSwiped_SingleStay() {
+        public void Lodging_019_AuthAmexSwiped_SingleStay()
+        {
             track = TestCards.AmexSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -419,7 +449,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_020_AuthJcbSwiped_SingleStay() {
+        public void Lodging_020_AuthJcbSwiped_SingleStay()
+        {
             track = TestCards.JcbSwipe();
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -441,7 +472,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Check In/Check Out - AUTHORIZATIONS : KEYED, CARD PRESENT
         */
         [TestMethod]
-        public void Lodging_021_AuthVisaKeyed_CardPresent_SingleStay() {
+        public void Lodging_021_AuthVisaKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.VisaManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -460,7 +492,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_022_AuthMasterKeyed_CardPresent_SingleStay() {
+        public void Lodging_022_AuthMasterKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -479,7 +512,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_023_AuthDiscoverKeyed_CardPresent_SingleStay() {
+        public void Lodging_023_AuthDiscoverKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.DiscoverManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -498,7 +532,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_024_AuthAmexKeyed_CardPresent_SingleStay() {
+        public void Lodging_024_AuthAmexKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.AmexManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -517,7 +552,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_025_AuthJcbKeyed_CardPresent_SingleStay() {
+        public void Lodging_025_AuthJcbKeyed_CardPresent_SingleStay()
+        {
             card = TestCards.JcbManual(true, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -539,7 +575,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Check In/Check Out - AUTHORIZATIONS : KEYED, CARD NOT PRESENT
         */
         [TestMethod]
-        public void Lodging_026_AuthVisaManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_026_AuthVisaManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.VisaManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -558,7 +595,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_027_AuthMasterManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_027_AuthMasterManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.MasterCardManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -577,7 +615,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_028_AuthDiscoverManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_028_AuthDiscoverManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.DiscoverManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -596,7 +635,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_029_AuthAmexManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_029_AuthAmexManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.AmexManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -615,7 +655,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_030_AuthJcbManualKeyed_CardNotPresent_SingleStay() {
+        public void Lodging_030_AuthJcbManualKeyed_CardNotPresent_SingleStay()
+        {
             card = TestCards.JcbManual(false, true);
 
             var lodgingData = new LodgingData { StayDuration = 1 };
@@ -637,12 +678,14 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Advanced Deposit - SALES
         */
         [TestMethod]
-        public void Lodging_031_SaleVisaManualKeyed_AdvancedDeposit() {
+        public void Lodging_031_SaleVisaManualKeyed_AdvancedDeposit()
+        {
             card = TestCards.VisaManual(false, true);
 
-            var lodgingData = new LodgingData {
-                    StayDuration = 1,
-                    AdvancedDepositType = AdvancedDepositType.CARD_DEPOSIT
+            var lodgingData = new LodgingData
+            {
+                StayDuration = 1,
+                AdvancedDepositType = AdvancedDepositType.CARD_DEPOSIT
             };
 
             Transaction response = card.Charge(41m)
@@ -655,12 +698,14 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_032_SaleAmexManualKeyed_AdvancedDeposit() {
+        public void Lodging_032_SaleAmexManualKeyed_AdvancedDeposit()
+        {
             card = TestCards.AmexManual(false, true);
 
-            var lodgingData = new LodgingData {
-                    StayDuration = 2,
-                    AdvancedDepositType = AdvancedDepositType.CARD_DEPOSIT
+            var lodgingData = new LodgingData
+            {
+                StayDuration = 2,
+                AdvancedDepositType = AdvancedDepositType.CARD_DEPOSIT
             };
 
             Transaction response = card.Charge(80m)
@@ -676,10 +721,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             No Show - SALES
         */
         [TestMethod]
-        public void Lodging_033_SaleMasterManualKeyed_NoShow() {
+        public void Lodging_033_SaleMasterManualKeyed_NoShow()
+        {
             card = TestCards.MasterCardManual(false, true);
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 NoShow = true
             };
@@ -694,10 +741,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_034_SaleAmexManualKeyed_NoShow() {
+        public void Lodging_034_SaleAmexManualKeyed_NoShow()
+        {
             card = TestCards.AmexManual(false, true);
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 AdvancedDepositType = AdvancedDepositType.ASSURED_RESERVATION,
                 NoShow = true
@@ -716,10 +765,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Visa Prestigious Property - SALES
         */
         [TestMethod]
-        public void Lodging_035_SaleVisaSwiped_PrestigiousProperty() {
+        public void Lodging_035_SaleVisaSwiped_PrestigiousProperty()
+        {
             track = TestCards.VisaSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PrestigiousPropertyLimit = PrestigiousPropertyLimit.LIMIT_500
             };
@@ -734,10 +785,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_036_SaleVisaSwiped_PrestigiousProperty() {
+        public void Lodging_036_SaleVisaSwiped_PrestigiousProperty()
+        {
             track = TestCards.VisaSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PrestigiousPropertyLimit = PrestigiousPropertyLimit.LIMIT_1000
             };
@@ -752,10 +805,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_037_SaleVisaSwiped_PrestigiousProperty() {
+        public void Lodging_037_SaleVisaSwiped_PrestigiousProperty()
+        {
             track = TestCards.VisaSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PrestigiousPropertyLimit = PrestigiousPropertyLimit.LIMIT_1500
             };
@@ -773,10 +828,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Visa Prestigious Property - AUTHORIZATIONS
         */
         [TestMethod]
-        public void Lodging_038_AuthVisaSwiped_PrestigiousProperty() {
+        public void Lodging_038_AuthVisaSwiped_PrestigiousProperty()
+        {
             track = TestCards.VisaSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PrestigiousPropertyLimit = PrestigiousPropertyLimit.LIMIT_500
             };
@@ -795,10 +852,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_039_AuthVisaSwiped_PrestigiousProperty() {
+        public void Lodging_039_AuthVisaSwiped_PrestigiousProperty()
+        {
             track = TestCards.VisaSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PrestigiousPropertyLimit = PrestigiousPropertyLimit.LIMIT_1000
             };
@@ -817,10 +876,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_040_AuthVisaSwiped_PrestigiousProperty() {
+        public void Lodging_040_AuthVisaSwiped_PrestigiousProperty()
+        {
             track = TestCards.VisaSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PrestigiousPropertyLimit = PrestigiousPropertyLimit.LIMIT_1500
             };
@@ -842,10 +903,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             MasterCard Preferred Customer - SALES
         */
         [TestMethod]
-        public void Lodging_041_SaleMasterSwiped_PreferredCustomer() {
+        public void Lodging_041_SaleMasterSwiped_PreferredCustomer()
+        {
             track = TestCards.MasterCardSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PreferredCustomer = true
             };
@@ -860,10 +923,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_042_SaleMasterManualKeyed_PreferredCustomer() {
+        public void Lodging_042_SaleMasterManualKeyed_PreferredCustomer()
+        {
             card = TestCards.MasterCardManual(false, true);
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 2,
                 PreferredCustomer = true
             };
@@ -881,10 +946,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             MasterCard Preferred Customer - AUTHORIZATIONS
         */
         [TestMethod]
-        public void Lodging_043_AuthMasterSwiped_PreferredCustomer() {
+        public void Lodging_043_AuthMasterSwiped_PreferredCustomer()
+        {
             track = TestCards.MasterCardSwipe();
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 1,
                 PreferredCustomer = true
             };
@@ -903,10 +970,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_044_AuthMasterManualKeyed_PreferredCustomer() {
+        public void Lodging_044_AuthMasterManualKeyed_PreferredCustomer()
+        {
             card = TestCards.MasterCardManual(false, true);
 
-            var lodgingData = new LodgingData {
+            var lodgingData = new LodgingData
+            {
                 StayDuration = 2,
                 PreferredCustomer = true
             };
@@ -928,7 +997,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Additional / Extra Charges - SALES
         */
         [TestMethod]
-        public void Lodging_045_SaleVisaSwiped_ExtraCharges() {
+        public void Lodging_045_SaleVisaSwiped_ExtraCharges()
+        {
             track = TestCards.VisaSwipe();
 
             var lodgingData = new LodgingData()
@@ -944,7 +1014,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_045a_SaleVisaSwiped_ExtraChargesEdit() {
+        public void Lodging_045a_SaleVisaSwiped_ExtraChargesEdit()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Charge(49m)
@@ -967,7 +1038,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_046_SaleMasterSwiped_ExtraCharges() {
+        public void Lodging_046_SaleMasterSwiped_ExtraCharges()
+        {
             track = TestCards.MasterCardSwipe();
 
             var lodgingData = new LodgingData()
@@ -985,7 +1057,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_046a_SaleMasterSwiped_ExtraChargesEdit() {
+        public void Lodging_046a_SaleMasterSwiped_ExtraChargesEdit()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Charge(50m)
@@ -1010,7 +1083,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_047_SaleDiscoverSwiped_ExtraCharges() {
+        public void Lodging_047_SaleDiscoverSwiped_ExtraCharges()
+        {
             track = TestCards.DiscoverSwipe();
 
             var lodgingData = new LodgingData()
@@ -1026,7 +1100,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_047a_SaleDiscoverSwiped_ExtraChargesEdit() {
+        public void Lodging_047a_SaleDiscoverSwiped_ExtraChargesEdit()
+        {
             track = TestCards.DiscoverSwipe();
 
             Transaction response = track.Charge(51m)
@@ -1052,7 +1127,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Additional / Extra Charges - AUTHORIZATIONS
         */
         [TestMethod]
-        public void Lodging_048_AuthVisaSwiped_ExtraCharges() {
+        public void Lodging_048_AuthVisaSwiped_ExtraCharges()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Authorize(49m)
@@ -1073,7 +1149,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_049_AuthMasterSwiped_ExtraCharges() {
+        public void Lodging_049_AuthMasterSwiped_ExtraCharges()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Authorize(50m)
@@ -1096,7 +1173,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_050_AuthDiscoverSwiped_ExtraCharges() {
+        public void Lodging_050_AuthDiscoverSwiped_ExtraCharges()
+        {
             track = TestCards.DiscoverSwipe();
 
             Transaction response = track.Authorize(51m)
@@ -1120,7 +1198,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Partial Approvals - SALES
         */
         [TestMethod]
-        public void Lodging_051_SaleMasterSwiped_PartialApproval() {
+        public void Lodging_051_SaleMasterSwiped_PartialApproval()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Charge(130m)
@@ -1133,7 +1212,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_052_SaleDiscoverManualKeyed_PartialApproval() {
+        public void Lodging_052_SaleDiscoverManualKeyed_PartialApproval()
+        {
             card = TestCards.DiscoverManual(true, true);
 
             Transaction response = card.Charge(145m)
@@ -1150,7 +1230,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Partial Approvals - AUTHORIZATIONS
         */
         [TestMethod]
-        public void Lodging_053_AuthMasterSwiped_PartialApproval() {
+        public void Lodging_053_AuthMasterSwiped_PartialApproval()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Authorize(130m)
@@ -1167,7 +1248,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_054_AuthDiscoverManualKeyed_PartialApproval() {
+        public void Lodging_054_AuthDiscoverManualKeyed_PartialApproval()
+        {
             card = TestCards.DiscoverManual(true, true);
 
             Transaction response = card.Authorize(145m)
@@ -1188,7 +1270,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             CARD VERIFY
         */
         [TestMethod]
-        public void Lodging_055_VerifyVisaSwiped() {
+        public void Lodging_055_VerifyVisaSwiped()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Verify()
@@ -1199,7 +1282,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_056_VerifyMasterManualKeyed() {
+        public void Lodging_056_VerifyMasterManualKeyed()
+        {
             card = TestCards.MasterCardManual(false, true);
 
             Transaction response = card.Verify()
@@ -1210,7 +1294,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_057_VerifyDiscoverSwiped() {
+        public void Lodging_057_VerifyDiscoverSwiped()
+        {
             track = TestCards.DiscoverSwipe();
 
             Transaction response = track.Verify()
@@ -1224,7 +1309,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             FORCE / VOICE AUTHORIZATIONS
         */
         [TestMethod]
-        public void Lodging_058_OfflineAuth() {
+        public void Lodging_058_OfflineAuth()
+        {
             card = TestCards.VisaManual(true, true);
 
             Transaction response = card.Authorize(52m)
@@ -1239,7 +1325,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             RETURN
         */
         [TestMethod]
-        public void Lodging_059_ReturnByCard() {
+        public void Lodging_059_ReturnByCard()
+        {
             card = TestCards.DiscoverManual(false, true);
 
             Transaction response = card.Refund(53m)
@@ -1253,7 +1340,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             RETURN by TxnID
         */
         [TestMethod]
-        public void Lodging_059a_ReturnByTxnId_Visa() {
+        public void Lodging_059a_ReturnByTxnId_Visa()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Charge(53m)
@@ -1271,7 +1359,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_059b_ReturnByTxnId_MasterCard() {
+        public void Lodging_059b_ReturnByTxnId_MasterCard()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             Transaction response = card.Charge(54m)
@@ -1292,7 +1381,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             LEVEL II Corporate Purchase Card - SALES
         */
         [TestMethod]
-        public void Lodging_060_LevelII_Sale_Visa_TaxNotUsed() {
+        public void Lodging_060_LevelII_Sale_Visa_TaxNotUsed()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Charge(112.34m)
@@ -1303,7 +1393,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("B", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1315,7 +1406,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_061_LevelII_Sale_Visa_SalesTax() {
+        public void Lodging_061_LevelII_Sale_Visa_SalesTax()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Charge(112.34m)
@@ -1327,7 +1419,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("R", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -1339,7 +1432,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_062_LevelII_Sale_Visa_TaxExempt() {
+        public void Lodging_062_LevelII_Sale_Visa_TaxExempt()
+        {
             card = TestCards.VisaManual(true, true);
 
             Transaction response = card.Charge(123.45m)
@@ -1358,7 +1452,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_063_LevelII_Sale_VisaManual_SalesTax() {
+        public void Lodging_063_LevelII_Sale_VisaManual_SalesTax()
+        {
             card = TestCards.VisaManual(true, true);
 
             Transaction response = card.Charge(134.56m)
@@ -1369,7 +1464,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m,
                 PoNumber = "9876543210"
             };
@@ -1382,7 +1478,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_064_LevelII_Sale_Master_TaxNotUsed() {
+        public void Lodging_064_LevelII_Sale_Master_TaxNotUsed()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Charge(111.06m)
@@ -1393,7 +1490,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1405,7 +1503,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_065_LevelII_Sale_Master_SalesTax() {
+        public void Lodging_065_LevelII_Sale_Master_SalesTax()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Charge(111.07m)
@@ -1416,7 +1515,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -1428,7 +1528,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_066_LevelII_Sale_MasterManual_SalesTax() {
+        public void Lodging_066_LevelII_Sale_MasterManual_SalesTax()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             Transaction response = card.Charge(111.08m)
@@ -1439,7 +1540,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m,
                 PoNumber = "9876543210"
             };
@@ -1452,7 +1554,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_067_LevelII_Sale_MasterManual_TaxExempt() {
+        public void Lodging_067_LevelII_Sale_MasterManual_TaxExempt()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             Transaction response = card.Charge(111.09m)
@@ -1463,7 +1566,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1475,7 +1579,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_068_LevelII_Sale_Amex_SalesTax() {
+        public void Lodging_068_LevelII_Sale_Amex_SalesTax()
+        {
             track = TestCards.AmexSwipe();
 
             Transaction response = track.Charge(111.10m)
@@ -1486,7 +1591,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m,
                 PoNumber = "9876543210"
             };
@@ -1499,7 +1605,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_069_LevelII_Sale() {
+        public void Lodging_069_LevelII_Sale()
+        {
             track = TestCards.AmexSwipe();
 
             Transaction response = track.Charge(111.11m)
@@ -1510,7 +1617,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -1522,7 +1630,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_070_LevelII_Sale_Amex_TaxNotUsed() {
+        public void Lodging_070_LevelII_Sale_Amex_TaxNotUsed()
+        {
             card = TestCards.AmexManual(true, true);
 
             Transaction response = card.Charge(111.12m)
@@ -1533,7 +1642,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1545,7 +1655,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_071_LevelII_Sale_AmexManual_TaxExempt() {
+        public void Lodging_071_LevelII_Sale_AmexManual_TaxExempt()
+        {
             card = TestCards.AmexManual(true, true);
 
             Transaction response = card.Charge(111.13m)
@@ -1556,7 +1667,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1571,7 +1683,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             LEVEL II Corporate Purchase Card - AUTHORIZATIONS
         */
         [TestMethod]
-        public void Lodging_072_LevelII_Authorization_Visa_TaxNotUsed() {
+        public void Lodging_072_LevelII_Authorization_Visa_TaxNotUsed()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Authorize(112.34m)
@@ -1582,7 +1695,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("B", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1598,7 +1712,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_073_LevelII_Authorization_Visa_SalesTax() {
+        public void Lodging_073_LevelII_Authorization_Visa_SalesTax()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Authorize(112.34m)
@@ -1610,7 +1725,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("B", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -1626,7 +1742,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_074_LevelII_Authorization_VisaManual_TaxExempt() {
+        public void Lodging_074_LevelII_Authorization_VisaManual_TaxExempt()
+        {
             card = TestCards.VisaManual(true, true);
 
             Transaction response = card.Authorize(123.45m)
@@ -1649,7 +1766,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_075_LevelII_Authorization_VisaManual_SalesTax() {
+        public void Lodging_075_LevelII_Authorization_VisaManual_SalesTax()
+        {
             card = TestCards.VisaManual(true, true);
 
             Transaction response = card.Authorize(134.56m)
@@ -1660,7 +1778,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m,
                 PoNumber = "9876543210"
             };
@@ -1677,7 +1796,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_076_LevelII_Authorization_Master_TaxNotUsed() {
+        public void Lodging_076_LevelII_Authorization_Master_TaxNotUsed()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Authorize(111.06m)
@@ -1688,7 +1808,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1704,7 +1825,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_077_LevelII_Authorization_Master_SalesTax() {
+        public void Lodging_077_LevelII_Authorization_Master_SalesTax()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Authorize(111.07m)
@@ -1715,7 +1837,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -1731,7 +1854,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_078_LevelII_Authorization_MasterManual_SalesTax() {
+        public void Lodging_078_LevelII_Authorization_MasterManual_SalesTax()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             Transaction response = card.Authorize(111.08m)
@@ -1742,7 +1866,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m,
                 PoNumber = "9876543210"
             };
@@ -1759,7 +1884,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_079_LevelII_Authorization_MasterManual_TaxExempt() {
+        public void Lodging_079_LevelII_Authorization_MasterManual_TaxExempt()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             Transaction response = card.Authorize(111.09m)
@@ -1770,7 +1896,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1786,7 +1913,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_080_LevelII_Authorization_Amex_SalesTax() {
+        public void Lodging_080_LevelII_Authorization_Amex_SalesTax()
+        {
             track = TestCards.AmexSwipe();
 
             Transaction response = track.Authorize(111.10m)
@@ -1797,7 +1925,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m,
                 PoNumber = "9876543210"
             };
@@ -1814,7 +1943,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_081_LevelII_Authorization() {
+        public void Lodging_081_LevelII_Authorization()
+        {
             track = TestCards.AmexSwipe();
 
             Transaction response = track.Authorize(111.11m)
@@ -1825,7 +1955,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -1841,7 +1972,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_082_LevelII_Authorization_AmexManual_TaxNotUsed() {
+        public void Lodging_082_LevelII_Authorization_AmexManual_TaxNotUsed()
+        {
             card = TestCards.AmexManual(true, true);
 
             Transaction response = card.Authorize(111.12m)
@@ -1852,7 +1984,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1868,7 +2001,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_083_LevelII_Authorization_AmexManual_TaxExempt() {
+        public void Lodging_083_LevelII_Authorization_AmexManual_TaxExempt()
+        {
             card = TestCards.AmexManual(true, true);
 
             Transaction response = card.Authorize(111.13m)
@@ -1879,7 +2013,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1898,7 +2033,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Incremental Authorizations - SALES
         */
         [TestMethod]
-        public void Lodging_084_IncrementalAuth_VisaSale() {
+        public void Lodging_084_IncrementalAuth_VisaSale()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Charge(115m)
@@ -1916,7 +2052,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_IncrementalAuth_SaleWithCOF() {
+        public void Lodging_IncrementalAuth_SaleWithCOF()
+        {
             CreditCardData card = TestCards.VisaManual(true, true);
 
             Transaction response = card.Charge(115m)
@@ -1944,7 +2081,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_085_IncrementalAuth_MasterSale() {
+        public void Lodging_085_IncrementalAuth_MasterSale()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Charge(116m)
@@ -1964,7 +2102,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Incremental Authorizations - AUTHORIZATIONS
         */
         [TestMethod]
-        public void Lodging_086_IncrementalAuth_VisaAuth() {
+        public void Lodging_086_IncrementalAuth_VisaAuth()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Authorize(115m)
@@ -1985,7 +2124,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_087_IncrementalAuth_MasterAuth() {
+        public void Lodging_087_IncrementalAuth_MasterAuth()
+        {
             track = TestCards.MasterCardSwipe();
 
             Transaction response = track.Authorize(116m)
@@ -2009,7 +2149,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             ONLINE VOID / REVERSAL (Required)
         */
         [TestMethod]
-        public void Lodging_088_OnlineVoid_Visa() {
+        public void Lodging_088_OnlineVoid_Visa()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Charge(122m)
@@ -2024,7 +2165,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_089_OnlineVoid_Master() {
+        public void Lodging_089_OnlineVoid_Master()
+        {
             card = TestCards.MasterCardManual(true, true);
 
             Transaction response = card.Charge(124m)
@@ -2039,7 +2181,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_090_OnlineVoid_DiscoverManual() {
+        public void Lodging_090_OnlineVoid_DiscoverManual()
+        {
             card = TestCards.DiscoverManual(false, true);
 
             Transaction response = card.Charge(125m)
@@ -2054,7 +2197,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_091_OnlineVoid_Discover() {
+        public void Lodging_091_OnlineVoid_Discover()
+        {
             track = TestCards.DiscoverSwipe();
 
             Transaction response = track.Charge(155m)
@@ -2075,7 +2219,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             ONLINE VOID / REVERSAL FOR INCREMENTALS
         */
         [TestMethod]
-        public void Lodging_092_IncrementalReversal_Visa() {
+        public void Lodging_092_IncrementalReversal_Visa()
+        {
             track = TestCards.VisaSwipe();
 
             Transaction response = track.Charge(126m)
@@ -2102,7 +2247,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_093_IncrementalReversal_Discover() {
+        public void Lodging_093_IncrementalReversal_Discover()
+        {
             track = TestCards.DiscoverSwipe();
 
             Transaction response = track.Charge(127m)
@@ -2132,8 +2278,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
             PIN DEBIT CARD FUNCTIONS - SALE
         */
         [TestMethod]
-        public void Lodging_094_DebitSale_Visa() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.VisaSwipe(), "32539F50C245A6A93D123412324000AA");
+        public void Lodging_094_DebitSale_Visa()
+        {
+            DebitTrackData track = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             Transaction response = track.Charge(139m)
                     .WithCurrency("USD")
@@ -2143,8 +2290,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_095_DebitSale_Master() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.MasterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+        public void Lodging_095_DebitSale_Master()
+        {
+            DebitTrackData track = TestCards.MasterCardSwipe().AsDebit("F505AD81659AA42A3D123412324000AB");
 
             Transaction response = track.Charge(135m)
                     .WithCurrency("USD")
@@ -2158,8 +2306,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
             PARTIALLY - APPROVED PURCHASE
         */
         [TestMethod]
-        public void Lodging_096_DebitPartialApproval() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.MasterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+        public void Lodging_096_DebitPartialApproval()
+        {
+            DebitTrackData track = TestCards.MasterCardSwipe().AsDebit("F505AD81659AA42A3D123412324000AB");
 
             Transaction response = track.Charge(33m)
                     .WithCurrency("USD")
@@ -2172,8 +2321,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_096a_DebitPartialApproval() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.VisaSwipe(), "32539F50C245A6A93D123412324000AA");
+        public void Lodging_096a_DebitPartialApproval()
+        {
+            DebitTrackData track = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             Transaction response = track.Charge(44m)
                     .WithCurrency("USD")
@@ -2188,8 +2338,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
             RETURN
         */
         [TestMethod]
-        public void Lodging_097_DebitReturn() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.VisaSwipe(), "32539F50C245A6A93D123412324000AA");
+        public void Lodging_097_DebitReturn()
+        {
+            DebitTrackData track = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             Transaction response = track.Refund(40m)
                     .WithCurrency("USD")
@@ -2202,8 +2353,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
             ONLINE VOID / REVERSAL (Required)
         */
         [TestMethod]
-        public void Lodging_098_DebitReversal_Visa() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.VisaSwipe(), "32539F50C245A6A93D123412324000AA");
+        public void Lodging_098_DebitReversal_Visa()
+        {
+            DebitTrackData track = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             Transaction response = track.Charge(142m)
                     .WithCurrency("USD")
@@ -2220,8 +2372,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_099_DebitReversal_Master() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.MasterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+        public void Lodging_099_DebitReversal_Master()
+        {
+            DebitTrackData track = TestCards.MasterCardSwipe().AsDebit("F505AD81659AA42A3D123412324000AB");
 
             Transaction response = track.Charge(44m)
                     .WithCurrency("USD")
@@ -2243,7 +2396,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             CONTACTLESS - Sales
         */
         [TestMethod]
-        public void Lodging_100_ContactlessSale_Visa() {
+        public void Lodging_100_ContactlessSale_Visa()
+        {
             track = TestCards.VisaSwipe(EntryMethod.Proximity);
 
             Transaction response = track.Charge(6m)
@@ -2255,7 +2409,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_101_ContactlessSale_Master() {
+        public void Lodging_101_ContactlessSale_Master()
+        {
             track = TestCards.MasterCardSwipe(EntryMethod.Proximity);
 
             Transaction response = track.Charge(6m)
@@ -2280,7 +2435,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_103_ContactlessSale_Amex() {
+        public void Lodging_103_ContactlessSale_Amex()
+        {
             track = TestCards.AmexSwipe(EntryMethod.Proximity);
 
             Transaction response = track.Charge(9m)
@@ -2295,7 +2451,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             TIME OUT REVERSAL (TOR)
         */
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void Lodging_104_TimeOutReversal_Discover() {
+        public void Lodging_104_TimeOutReversal_Discover()
+        {
             track = TestCards.DiscoverSwipe();
 
             string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
@@ -2314,7 +2471,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void Lodging_105_TimeOutReversal_Master() {
+        public void Lodging_105_TimeOutReversal_Master()
+        {
             track = TestCards.MasterCardSwipe();
 
             string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
@@ -2333,7 +2491,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void Lodging_106_TimeOutReversal_Jcb() {
+        public void Lodging_106_TimeOutReversal_Jcb()
+        {
             track = TestCards.JcbSwipe();
 
             string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
@@ -2352,7 +2511,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void Lodging_107_TimeOutReversal_Visa() {
+        public void Lodging_107_TimeOutReversal_Visa()
+        {
             track = TestCards.VisaSwipe();
 
             string clientTransactionId = new Random().Next(10000000, 90000000).ToString();
@@ -2371,14 +2531,17 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_999_CloseBatch() {
-            try {
+        public void Lodging_999_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }
@@ -2389,8 +2552,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
        */
 
         [TestMethod]
-        public void Lodging_246_DebitSale_Master() {
-            DebitTrackData track = TestCards.AsDebit(TestCards.MasterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+        public void Lodging_246_DebitSale_Master()
+        {
+            DebitTrackData track = TestCards.MasterCardSwipe().AsDebit("F505AD81659AA42A3D123412324000AB");
 
             Transaction response = track.Charge(3.73m)
                     .WithCurrency("USD")
@@ -2401,7 +2565,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void Lodging_247_DebitSaleVisaKeyed_CardPresent() {
+        public void Lodging_247_DebitSaleVisaKeyed_CardPresent()
+        {
             card = TestCards.VisaManual(true, true);
 
             Transaction response = card.Charge(3.70m)

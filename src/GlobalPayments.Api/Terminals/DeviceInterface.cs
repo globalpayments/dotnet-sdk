@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Genius.Enums;
@@ -43,6 +44,10 @@ namespace GlobalPayments.Api.Terminals {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
+        public virtual ISignatureResponse PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
         public virtual IInitializeResponse Initialize() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
@@ -78,6 +83,12 @@ namespace GlobalPayments.Api.Terminals {
         public virtual ISAFResponse SendStoreAndForward() {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+        public virtual ISAFResponse DeleteSaf(string safRefNumber, string tranNo="")  {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }        
+        public virtual IDeviceResponse RegisterPOS(string appName, int launchOrder = 0, bool remove = false, int silent = 0) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
 
         public virtual IDeviceResponse SetStoreAndForwardMode(bool enabled) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
@@ -88,7 +99,11 @@ namespace GlobalPayments.Api.Terminals {
         }
 
         public virtual IDeviceResponse SendSaf() {
-            throw new System.NotImplementedException();
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+
+        public virtual IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
         #endregion
@@ -161,7 +176,7 @@ namespace GlobalPayments.Api.Terminals {
                 .WithAmount(amount);
         }
 
-        public virtual TerminalAuthBuilder TipAdjust(decimal? amount) {
+        public virtual TerminalManageBuilder TipAdjust(decimal? amount) {
             throw new System.NotImplementedException();
         }
         public virtual TerminalAuthBuilder EodProcessing() {
@@ -178,6 +193,7 @@ namespace GlobalPayments.Api.Terminals {
         public virtual TerminalManageBuilder DeletePreAuth() {
             throw new System.NotImplementedException();
         }
+
         #endregion
 
         #region IDisposable
@@ -228,6 +244,7 @@ namespace GlobalPayments.Api.Terminals {
         {
             throw new System.NotImplementedException();
         }
+        
         #endregion
     }
 }

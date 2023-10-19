@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.0.114",
+                IpAddress = "192.168.1.130",
                 Port = "8081",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -25,10 +25,10 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(_device);
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         // Store and Forward is not currently supported
         public void GetSafReport() {
-            var report = _device.GetSAFReport().Where(UpaSearchCriteria.EcrId, 13).And(UpaSearchCriteria.ReportOutput, ReportOutput.Print)
+            var report = _device.GetSAFReport().Where(UpaSearchCriteria.EcrId, 13).And(UpaSearchCriteria.ReportOutput, ReportOutput.ReturnData)
                 .Execute() as SafReportResponse;
             Assert.IsNotNull(report);
             Assert.AreEqual("Success", report.Status);

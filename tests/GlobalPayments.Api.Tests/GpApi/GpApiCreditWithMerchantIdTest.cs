@@ -556,7 +556,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CardTokenizationThenPayingWithToken_SingleToMultiUse()
         {
-            var token = card.Tokenize(paymentMethodUsageMode: PaymentMethodUsageMode.Single);
+            var permissions = new[] { "PMT_POST_Create_Single" };
+            var gpApiConfig = new GpApiConfig {
+                AppId = AppId,
+                AppKey = AppKey,
+                RequestLogger = new RequestConsoleLogger(),
+                Permissions = permissions
+            };
+
+            ServicesContainer.ConfigureService(gpApiConfig, "singleUseToken");
+            var token = card.Tokenize(paymentMethodUsageMode: PaymentMethodUsageMode.Single, configName:"singleUseToken");
 
             Assert.IsNotNull(token);
 

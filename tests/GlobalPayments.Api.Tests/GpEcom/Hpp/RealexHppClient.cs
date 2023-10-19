@@ -46,6 +46,32 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
             var billingCode = json.GetValue<string>("BILLING_CODE");
             var billingCountry = json.GetValue<string>("BILLING_CO");
             var fraudFilterMode = json.GetValue<string>("HPP_FRAUDFILTER_MODE");
+            BlockedCardType cardTypesBlocking = null;
+
+            if (!string.IsNullOrEmpty(json.GetValue<string>("BLOCK_CARD_TYPE"))) {
+                var cardTypes = json.GetValue<string>("BLOCK_CARD_TYPE");
+                cardTypesBlocking = new BlockedCardType();
+                foreach (var cardType in cardTypes.Split("|")) {
+                    var cardTypeEnum = EnumConverter.FromDescription<BlockCardType>(cardType);
+                    switch (cardTypeEnum)
+                    {
+                        case BlockCardType.COMMERCIAL_CREDIT:
+                            cardTypesBlocking.Commercialcredit = true;
+                            break;
+                        case BlockCardType.COMMERCIAL_DEBIT:
+                            cardTypesBlocking.Commercialdebit = true;
+                            break;
+                        case BlockCardType.CONSUMER_CREDIT:
+                            cardTypesBlocking.Consumercredit = true;
+                            break;
+                        case BlockCardType.CONSUMER_DEBIT:
+                            cardTypesBlocking.Consumerdebit = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }                
+            }
 
 
             List<string> hashParam = new List<string>
@@ -187,6 +213,10 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
                 {
                     gatewayRequest.WithFraudFilter((FraudFilterMode)Enum.Parse(typeof(FraudFilterMode), fraudFilterMode), getFraudFilterRules(json));
                 }
+                if (cardTypesBlocking != null)
+                {
+                    gatewayRequest.WithBlockedCardType(cardTypesBlocking); 
+                }
 
                 var gatewayResponse = gatewayRequest.Execute("realexResponder");
                 if (gatewayResponse.ResponseCode.Equals("00") || gatewayResponse.ResponseCode.Equals("01"))
@@ -300,7 +330,8 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
                 response.Set("SHA1HASH", GenerationUtils.GenerateHash(_sharedSecret, trans.Timestamp, merchantId, trans.OrderId, trans.ResponseCode, trans.ResponseMessage, trans.TransactionId, trans.AuthorizationCode));
                 response.Set("DCC_INFO_REQUST", request.GetValue<string>("DCC_INFO"));
                 response.Set("HPP_FRAUDFILTER_MODE", request.GetValue<string>("HPP_FRAUDFILTER_MODE"));
-                if (trans?.FraudResponse?.Rules != null)
+                response.Set("BLOCK_CARD_TYPE", request.GetValue<string>("BLOCK_CARD_TYPE"));
+            if (trans?.FraudResponse?.Rules != null)
                 {
                     response.Set("HPP_FRAUDFILTER_RESULT", trans.FraudResponse?.Result);
 

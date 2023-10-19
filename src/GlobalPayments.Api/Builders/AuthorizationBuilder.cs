@@ -7,6 +7,8 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Network.Elements;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using System.Reflection;
+using System.Linq;
 
 namespace GlobalPayments.Api.Builders {
     /// <summary>
@@ -97,6 +99,7 @@ namespace GlobalPayments.Api.Builders {
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
         internal BNPLShippingMethod BNPLShippingMethod {get;set;}
         internal bool MaskedDataResponse { get; set; }
+        internal BlockedCardType CardTypesBlocking { get; set; }
         internal MerchantCategory? MerchantCategory { get; set; }
         internal bool HasEmvFallbackData {
             get {
@@ -850,6 +853,16 @@ namespace GlobalPayments.Api.Builders {
 
         public AuthorizationBuilder WithMaskedDataResponse(bool value) {
             MaskedDataResponse = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithBlockedCardType(BlockedCardType cardTypesBlocking) {
+            var hasNulls = cardTypesBlocking.GetType().GetProperties().All(p => p.GetValue(cardTypesBlocking) == null);
+            if (hasNulls) {            
+                throw new BuilderException("No properties set on the object");
+            }
+            CardTypesBlocking = cardTypesBlocking;
+
             return this;
         }
 

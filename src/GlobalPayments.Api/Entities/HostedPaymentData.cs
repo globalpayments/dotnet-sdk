@@ -142,6 +142,8 @@ namespace GlobalPayments.Api.Entities {
         
         public bool EnableExemptionOptimization { get; set; }
 
+        public BlockCardType[] BlockCardTypes { get; set; }
+
         /// <summary>
         /// Determine whether or not the address and contact information must be provided in the HPP request and  whether they will/won't be editable by the customer.
         /// </summary>

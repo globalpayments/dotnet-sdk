@@ -218,6 +218,8 @@ namespace GlobalPayments.Api.Entities {
         /// The reference number provided by the issuer.
         /// </summary>
         public string ReferenceNumber { get; set; }
+        public string SafReferenceNumber { get; set; }
+        public string TranNo { get; set; }
 
         public int? RepeatCount { get; set; }
 

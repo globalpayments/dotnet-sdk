@@ -334,6 +334,7 @@ namespace GlobalPayments.Api.Entities {
 
         OrderDevice = 66,
 
-        TransferFunds = 67
+        TransferFunds = 67,        
+       
     }
 }

@@ -185,7 +185,7 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(WalletData, "PaymentSource", CreditCardData.PaymentSource);
                         et.SubElement(WalletData, "Cryptogram", CreditCardData.Cryptogram);
                         et.SubElement(WalletData, "ECI", CreditCardData.Eci);
-                        if (CreditCardData.MobileType != null)
+                        if (CreditCardData.Token != null)
                         {
                             et.SubElement(WalletData, "DigitalPaymentToken", CreditCardData.Token);
                             block1.Remove("CardData");

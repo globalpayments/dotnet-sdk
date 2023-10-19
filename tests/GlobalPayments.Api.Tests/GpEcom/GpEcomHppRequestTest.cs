@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
@@ -1451,6 +1452,92 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             Assert.IsNotNull(hppJson);
             Assert.IsTrue(hppJson.Contains("\"HPP_BILLING_COUNTRY\":\"530\""));
             Assert.IsTrue(hppJson.Contains("\"BILLING_CO\":\"AN\""));
+        }
+
+        [TestMethod]
+        public void CardBlockingPayment()
+        {
+            var config = new GpEcomConfig();
+            config.MerchantId = "heartlandgpsandbox";
+            config.AccountId = "hpp";
+            config.SharedSecret = "secret";
+            config.ServiceUrl = "https://pay.sandbox.realexpayments.com/pay";
+
+            config.HostedPaymentConfig = new HostedPaymentConfig();
+            config.HostedPaymentConfig.Version = HppVersion.VERSION_1;
+
+            var client = new RealexHppClient(config.ServiceUrl, config.SharedSecret);
+            var service = new HostedService(config);
+
+            var hostedPaymentData = new HostedPaymentData();
+            hostedPaymentData.CustomerCountry = "DE";
+            hostedPaymentData.CustomerFirstName = "James";
+            hostedPaymentData.CustomerLastName = "Mason";
+            hostedPaymentData.MerchantResponseUrl = "https://www.example.com/returnUrl";
+            hostedPaymentData.TransactionStatusUrl = "https://www.example.com/statusUrl";
+            var blockCardTypes = new BlockCardType[]{ BlockCardType.COMMERCIAL_CREDIT, BlockCardType.COMMERCIAL_DEBIT};
+            hostedPaymentData.BlockCardTypes = blockCardTypes;
+
+            var blockCardTypesToValidate = string.Join("|", new[] { EnumConverter.GetDescription(BlockCardType.COMMERCIAL_CREDIT), EnumConverter.GetDescription(BlockCardType.COMMERCIAL_DEBIT) });
+
+            var json = service.Charge(10.01m)
+                .WithCurrency("EUR")
+                .WithHostedPaymentData(hostedPaymentData)
+                .Serialize();           
+        
+            var response = client.SendRequest(json);
+            var parsedResponse = service.ParseResponse(response, true);
+            Assert.AreEqual(blockCardTypesToValidate, parsedResponse.ResponseValues["BLOCK_CARD_TYPE"]);
+
+            Assert.AreEqual("00", parsedResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void CardBlockingPayment_AllCardTypes()
+        {
+            var config = new GpEcomConfig();
+            config.MerchantId = "heartlandgpsandbox";
+            config.AccountId = "hpp";
+            config.SharedSecret = "secret";
+            config.ServiceUrl = "https://pay.sandbox.realexpayments.com/pay";
+
+            config.HostedPaymentConfig = new HostedPaymentConfig();
+            config.HostedPaymentConfig.Version = HppVersion.VERSION_1;
+
+            var client = new RealexHppClient(config.ServiceUrl, config.SharedSecret);
+            var service = new HostedService(config);
+
+            var hostedPaymentData = new HostedPaymentData();
+            hostedPaymentData.CustomerCountry = "DE";
+            hostedPaymentData.CustomerFirstName = "James";
+            hostedPaymentData.CustomerLastName = "Mason";
+            hostedPaymentData.MerchantResponseUrl = "https://www.example.com/returnUrl";
+            hostedPaymentData.TransactionStatusUrl = "https://www.example.com/statusUrl";
+
+            var blockCardTypes = new BlockCardType[] { BlockCardType.CONSUMER_CREDIT, BlockCardType.CONSUMER_DEBIT, BlockCardType.COMMERCIAL_CREDIT, BlockCardType.COMMERCIAL_DEBIT };
+            hostedPaymentData.BlockCardTypes = blockCardTypes;
+
+            var blockCardTypesToValidate = string.Join("|", new[] { EnumConverter.GetDescription(BlockCardType.CONSUMER_CREDIT), EnumConverter.GetDescription(BlockCardType.CONSUMER_DEBIT),
+                EnumConverter.GetDescription(BlockCardType.COMMERCIAL_CREDIT), EnumConverter.GetDescription(BlockCardType.COMMERCIAL_DEBIT) });
+
+
+            var json = service.Charge(10.01m)
+                .WithCurrency("EUR")
+                .WithHostedPaymentData(hostedPaymentData)
+                .Serialize();   
+
+            var exceptionCaught = false;
+            try
+            {
+                var response = client.SendRequest(json);
+            }
+            catch (Exception e) {
+                exceptionCaught = true;
+                Assert.AreEqual("Unexpected Gateway Response: 561 - All card types are blocked, invalid request", e.Message);
+            } finally
+            {
+                Assert.IsTrue(exceptionCaught);
+            }
         }
 
         [TestMethod]

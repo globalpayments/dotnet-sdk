@@ -1,5 +1,6 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Genius.Builders;
@@ -220,7 +221,7 @@ namespace GlobalPayments.Api.Terminals.Genius
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.TipAdjust(decimal? amount)
+        TerminalManageBuilder IDeviceInterface.TipAdjust(decimal? amount)
         {
             throw new NotImplementedException();
         }
@@ -249,6 +250,19 @@ namespace GlobalPayments.Api.Terminals.Genius
             throw new NotImplementedException();
         }
 
-    }       
+        ISAFResponse IDeviceInterface.DeleteSaf(string safreferenceNumer, string tranNo) {
+            throw new NotImplementedException();
+        }
+
+        IDeviceResponse IDeviceInterface.RegisterPOS(string appName, int launchOrder, bool remove, int silent) {
+            throw new NotImplementedException();
+        }
+        IDeviceResponse IDeviceInterface.StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData) {
+            throw new NotImplementedException();
+        }
+        ISignatureResponse IDeviceInterface.PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption) {
+            throw new NotImplementedException();
+        }
+    }
 }
 

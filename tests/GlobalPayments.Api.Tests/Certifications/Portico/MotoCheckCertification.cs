@@ -1,20 +1,24 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Certifications {
+namespace GlobalPayments.Api.Tests.Certifications.Portico
+{
     [TestClass]
-    public class EcomCheckCertification {
+    public class MotoCheckCertification
+    {
         Address address;
 
-        public EcomCheckCertification() {
-            ServicesContainer.ConfigureService(new PorticoConfig {
-                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
+        public MotoCheckCertification()
+        {
+            ServicesContainer.ConfigureService(new PorticoConfig
+            {
+                SecretApiKey = "skapi_cert_MRCQAQBC_VQACBE0rFaZlbDDPieMGP06JDAtjyS7NQ"
             });
 
-            address = new Address {
+            address = new Address
+            {
                 StreetAddress1 = "6860 Dallas Pkwy",
                 City = "Dallas",
                 State = "TX",
@@ -23,8 +27,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_001_PersonalChecking() {
-            eCheck check = new eCheck {
+        public void ecomm_001_PersonalChecking()
+        {
+            eCheck check = new eCheck
+            {
                 RoutingNumber = "490000018",
                 AccountNumber = "24413815",
                 AccountType = AccountType.CHECKING,
@@ -46,8 +52,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_002_BusinessChecking() {
-            eCheck check = new eCheck {
+        public void ecomm_002_BusinessChecking()
+        {
+            eCheck check = new eCheck
+            {
                 RoutingNumber = "490000018",
                 AccountNumber = "24413815",
                 AccountType = AccountType.CHECKING,
@@ -69,8 +77,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_003_PersonalSavings() {
-            eCheck check = new eCheck {
+        public void ecomm_003_PersonalSavings()
+        {
+            eCheck check = new eCheck
+            {
                 RoutingNumber = "490000018",
                 AccountNumber = "24413815",
                 AccountType = AccountType.SAVINGS,
@@ -97,8 +107,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_004_BusinessSavings() {
-            eCheck check = new eCheck {
+        public void ecomm_004_BusinessSavings()
+        {
+            eCheck check = new eCheck
+            {
                 RoutingNumber = "490000018",
                 AccountNumber = "24413815",
                 AccountType = AccountType.SAVINGS,

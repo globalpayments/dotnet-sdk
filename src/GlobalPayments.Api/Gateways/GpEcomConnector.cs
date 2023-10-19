@@ -115,6 +115,25 @@ namespace GlobalPayments.Api.Gateways {
 
                         MaskedValues = ProtectSensitiveData.HideValue("request.card.cvn.number", card.Cvn);
                     }
+
+                    // Card block
+                    if (builder.CardTypesBlocking != null) {
+                        var cardTypes = builder.CardTypesBlocking;
+                       
+                        var cardTypeBlock = et.SubElement(request, "blockcard");
+                        if (cardTypes.Commercialcredit.HasValue) {
+                            et.SubElement(cardTypeBlock, "commercialcredit", cardTypes.Commercialcredit.ToString().ToLower());
+                        }
+                        if (cardTypes.Commercialdebit.HasValue) {
+                            et.SubElement(cardTypeBlock, "commercialdebit", cardTypes.Commercialdebit.ToString().ToLower());
+                        }
+                        if (cardTypes.Consumercredit.HasValue) {
+                            et.SubElement(cardTypeBlock, "consumercredit", cardTypes.Consumercredit.ToString().ToLower());
+                        }
+                        if (cardTypes.Consumerdebit.HasValue) {
+                            et.SubElement(cardTypeBlock, "consumerdebit", cardTypes.Consumerdebit.ToString().ToLower());
+                        }                   
+                    }
                 }
 
                 string hash = string.Empty;
@@ -569,6 +588,10 @@ namespace GlobalPayments.Api.Gateways {
                     else {
                         PaymentValues = string.Join("|", PaymentTypes);
                     }
+                }
+                var blockCardTypes = builder.HostedPaymentData.BlockCardTypes?.ToList();
+                if(blockCardTypes != null) {                    
+                   request.Set("BLOCK_CARD_TYPE", string.Join("|", blockCardTypes.Select(x => EnumConverter.GetDescription(x)))) ;
                 }
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
                 if (HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null) {
