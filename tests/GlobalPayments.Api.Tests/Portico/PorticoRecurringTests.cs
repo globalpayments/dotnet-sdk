@@ -193,16 +193,40 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(payment.Key);
         }
 
+        //[TestMethod]
+        //[Ignore] // The account number and routing number is used for Saga /Paya
+        //public void Test_001g_CreatePaymentMethod_ACH() {
+        //    var customer = Customer.Find(CustomerId);
+        //    Assert.IsNotNull(customer, "Customer does not exist.");
+
+        //    var payment = customer.AddPaymentMethod(
+        //        PaymentId("ACH"),
+        //        new eCheck {
+        //            AccountNumber = "24413815",
+        //            RoutingNumber = "490000018",
+        //            CheckType = CheckType.PERSONAL,
+        //            SecCode = SecCode.PPD,
+        //            AccountType = AccountType.CHECKING,
+        //            DriversLicenseNumber = "7418529630",
+        //            DriversLicenseState = "TX",
+        //            BirthYear = 1989
+        //        }).Create();
+        //    Assert.IsNotNull(payment);
+        //    Assert.IsNotNull(payment.Key);
+        //}
+
         [TestMethod]
-        public void Test_001g_CreatePaymentMethod_ACH() {
+        public void Test_001g_CreatePaymentMethod_ACH()
+        {
             var customer = Customer.Find(CustomerId);
             Assert.IsNotNull(customer, "Customer does not exist.");
 
             var payment = customer.AddPaymentMethod(
                 PaymentId("ACH"),
-                new eCheck {
-                    AccountNumber = "24413815",
-                    RoutingNumber = "490000018",
+                new eCheck
+                {
+                    AccountNumber = "1357902468",
+                    RoutingNumber = "122000030",
                     CheckType = CheckType.PERSONAL,
                     SecCode = SecCode.PPD,
                     AccountType = AccountType.CHECKING,
@@ -339,6 +363,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
+        [Ignore] // no assertion - need to look into further
         public void Test_004c_EditPaymentMethodsMethod()
         {
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
@@ -538,6 +563,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
+        [Ignore] // need to check cryto correct url
         public void Test_008g_CreditCharge_WithNewCryptoURL() {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"

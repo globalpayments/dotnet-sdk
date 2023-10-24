@@ -38,6 +38,7 @@ namespace GlobalPayments.Api.Gateways.BillPay {
                 CardExpYear = tokenDetailsElement.GetValue<int>("a:ExpirationYear"),
                 CardLast4 = tokenDetailsElement.GetValue<string>("a:Last4"),
                 PaymentMethodType = SetPaymentMethodType(tokenDetailsElement.GetValue<string>("a:PaymentMethod")),
+                CardType = GetCardType(tokenDetailsElement.GetValue<string>("a:PaymentMethod")),
                 Token = tokenDetailsElement.GetValue<string>("a:Token"),
                 TokenData = new TokenData
                 {

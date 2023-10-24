@@ -91,7 +91,28 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
+        [TestMethod]
+        public void EcomRefundWithTxnIDWithSecureEcommerceWithoutMobileType()
+        {
+            card.ThreeDSecure = new ThreeDSecure
+            {
+                PaymentDataSource = PaymentDataSourceType.APPLEPAY,
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "7",
+            };
+            Transaction response = card.Charge(10m)
+                .WithCurrency("USD")
+                .WithInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
 
+            var refundResponse = Transaction.FromId(response.TransactionId).Refund(10m).WithCurrency("USD").Execute();
+
+            Assert.IsNotNull(refundResponse);
+            Assert.AreEqual("00", refundResponse.ResponseCode);
+        }
 
         [TestMethod]
         public void EcomWithSecureEcommerceWithoutMobileType() {
@@ -108,7 +129,22 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
-
+        [TestMethod]
+        public void EcomRefundWithSecureEcommerceWithoutMobileType()
+        {
+            card.ThreeDSecure = new ThreeDSecure
+            {
+                PaymentDataSource = PaymentDataSourceType.APPLEPAY,
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "7",
+            };
+            Transaction response = card.Refund(10m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
         [TestMethod]
         public void EcomSaleWithSecureEcommerceWalletDataWithMobileType() {
            

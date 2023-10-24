@@ -169,7 +169,7 @@ namespace GlobalPayments.Api.Gateways {
                             et.SubElement(Secure3D, "ECI", secureEcom.Eci);
                             et.SubElement(Secure3D, "DirectoryServerTxnId", secureEcom.Xid);
                         }
-                        if (IsAppleOrGooglePay(secureEcom.PaymentDataSource))
+                        if (IsAppleOrGooglePay(secureEcom.PaymentDataSource) && builder.TransactionType != TransactionType.Refund)
                         {
                             var WalletData = et.SubElement(block1, "WalletData");
                             et.SubElement(WalletData, "PaymentSource", secureEcom.PaymentDataSource);
@@ -179,7 +179,7 @@ namespace GlobalPayments.Api.Gateways {
                     }
                     //WalletData Element
                     if ((CreditCardData.MobileType == MobilePaymentMethodType.APPLEPAY || CreditCardData.MobileType == MobilePaymentMethodType.GOOGLEPAY)
-                        && !string.IsNullOrEmpty(CreditCardData.PaymentSource) && IsAppleOrGooglePay(CreditCardData.PaymentSource))
+                        && !string.IsNullOrEmpty(CreditCardData.PaymentSource) && IsAppleOrGooglePay(CreditCardData.PaymentSource) && builder.TransactionType != TransactionType.Refund)
                     {
                         var WalletData = et.SubElement(block1, "WalletData");
                         et.SubElement(WalletData, "PaymentSource", CreditCardData.PaymentSource);
@@ -1332,31 +1332,36 @@ namespace GlobalPayments.Api.Gateways {
 
             var lineItems = et.SubElement(parent, "LineItems");
 
-            foreach (var item in items) {
+            foreach (var item in items) 
+            {
                 var lineItem = et.SubElement(lineItems, "LineItemDetail");
                 et.SubElement(lineItem, "ItemDescription", item.Description);
                 et.SubElement(lineItem, "ProductCode", item.ProductCode);
                 et.SubElement(lineItem, "Quantity", item.Quantity);
                 et.SubElement(lineItem, "ItemTotalAmt", item.TotalAmount);
-                et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
 
-                if (isVisa)
+                if (isVisa )
                 {
                     et.SubElement(lineItem, "ItemTaxTreatment", item.TaxTreatment);
-                    et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails.DiscountAmount);
+
+                    if (item.TotalAmount == null)
+                    {
+                        et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
+                        et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails?.DiscountAmount);
+                    }
                     // The schema says these fields should be allowed, but they are not currently accepted.
                     // et.SubElement(lineItem, "ItemCommodityCode", item.CommodityCode);
                     // et.SubElement(lineItem, "UnitCost", item.UnitCost);
                     // et.SubElement(lineItem, "VATTaxAmt", item.TaxAmount);
-                    // et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails?.DiscountAmount);
                 }
-
+                else 
+                {
+                    et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
+                }
                 //et.SubElement(lineItem, "ExtendedItemAmount", item.ExtendedAmount);
                 // The schema says this field should exist, but it's not currently allowed.
                 // et.SubElement(lineItem, "VATTaxRate", null);
-
             }
-
         }
     }
 }

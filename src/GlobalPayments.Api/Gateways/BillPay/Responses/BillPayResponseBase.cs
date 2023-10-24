@@ -61,5 +61,24 @@ namespace GlobalPayments.Api.Gateways.BillPay {
 
             return paymentMethodType;
         }
+
+        /// <summary>
+        /// Convert a string value cardType to a CardType enum value
+        /// </summary>
+        /// <param name="cardType">A string representing the card type</param>
+        /// <returns>The enumeration value of the specified card type, if supported</returns>
+        internal string GetCardType(string cardType)
+        {
+            if (cardType.Contains("Visa"))
+                return CardType.VISA.ToString();
+            else if (cardType.Contains("Mastercard"))
+                return CardType.MC.ToString();
+            else if (cardType.Contains("Discover"))
+                return CardType.DISC.ToString();
+            else if (cardType.Contains("AmericanExpress"))
+                return CardType.AMEX.ToString();
+            else
+                return string.Empty;
+        }
     }
 }

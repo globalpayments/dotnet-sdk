@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v7.0.0 (10/19/23)
+## Latest - v7.0.1 (10/24/23)
+
+#### Enhancements
+- [Portico] Mapped CardType property in transaction to card brand
+- [Portico] Fix Line Item Details to only add UnitOfMeasure and DiscountAmt only if ItemTotalAmt is null
+
+## v7.0.0 (10/19/23)
 
 #### Enhancements
 
