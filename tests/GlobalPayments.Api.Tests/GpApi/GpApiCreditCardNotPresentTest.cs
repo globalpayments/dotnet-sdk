@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
     public class GpApiCreditCardNotPresentTest : BaseGpApiTests {
         private CreditCardData card;
         private const decimal AMOUNT = 7.8m;
-        private const string CURRENCY = "USD";
+        private const string CURRENCY = "GBP";
 
         [TestInitialize]
         public void TestInitialize() {
@@ -25,6 +25,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 // RequestLogger = new RequestFileLogger(@"C:\temp\transit\finger.txt"),
                 RequestLogger = new RequestConsoleLogger(),
                 EnableLogging = true,
+                Country = "US",
+                AccessTokenInfo = new AccessTokenInfo() { TransactionProcessingAccountName = "transaction_processing" }
                 // DO NO DELETE - usage example for some settings
                 // DynamicHeaders = new Dictionary<string, string>
                 // {
@@ -391,6 +393,25 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditVerificationWithStoredCredentials()
+        {
+           var storeCredentials = new StoredCredential();
+            storeCredentials.Initiator = StoredCredentialInitiator.Merchant;
+            storeCredentials.Type = StoredCredentialType.Installment;
+            storeCredentials.Sequence = StoredCredentialSequence.Subsequent;
+            storeCredentials.Reason = StoredCredentialReason.Incremental;
+
+            var response = card.Verify()
+                .WithCurrency(CURRENCY)
+                .WithStoredCredential(storeCredentials)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
         }
 
         [TestMethod]

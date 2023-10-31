@@ -213,6 +213,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             }
                             verificationData.Set("payment_method", paymentMethod);
 
+                            if (builder.StoredCredential != null) {
+                                SetRequestStoredCredentials(builder.StoredCredential, verificationData);
+                            }
+
                             Request.MaskedValues = MaskedValues;
 
                             return new Request {
@@ -558,12 +562,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             // stored credential
             if (builder.StoredCredential != null) {
-                data.Set("initiator", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Initiator));
-                var storedCredential = new JsonDoc()
-                    .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Type))
-                    .Set("reason", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Reason))
-                    .Set("sequence", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Sequence));
-                data.Set("stored_credential", storedCredential);
+                SetRequestStoredCredentials(builder.StoredCredential, data);               
             }
 
             Request.MaskedValues = MaskedValues;
@@ -573,6 +572,16 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}",
                 RequestBody = data.ToString(),
             };
+        }
+
+        private void SetRequestStoredCredentials(StoredCredential storedCredential, JsonDoc request)
+        {
+            request.Set("initiator", EnumConverter.GetMapping(Target.GP_API, storedCredential.Initiator));
+                var storedCredentialJson = new JsonDoc()
+                    .Set("model", EnumConverter.GetMapping(Target.GP_API, storedCredential.Type))
+                    .Set("reason", EnumConverter.GetMapping(Target.GP_API, storedCredential.Reason))
+                    .Set("sequence", EnumConverter.GetMapping(Target.GP_API, storedCredential.Sequence));
+            request.Set("stored_credential", storedCredentialJson);            
         }
 
         private static void DisposeMaskedValues()

@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v7.0.1 (10/24/23)
+## Latest - v7.0.2 (10/30/23)
+
+#### Enhancements
+- [PAX] TipAdjust -Adding tip after the Sale.
+- [PAX] Tiprequest flag
+
+## v7.0.1 (10/24/23)
 
 #### Enhancements
 - [Portico] Mapped CardType property in transaction to card brand

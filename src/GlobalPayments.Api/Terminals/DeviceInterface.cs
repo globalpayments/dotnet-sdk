@@ -177,7 +177,8 @@ namespace GlobalPayments.Api.Terminals {
         }
 
         public virtual TerminalManageBuilder TipAdjust(decimal? amount) {
-            throw new System.NotImplementedException();
+            return new TerminalManageBuilder(TransactionType.Edit, PaymentMethodType.Credit)
+                .WithGratuity(amount);
         }
         public virtual TerminalAuthBuilder EodProcessing() {
             throw new System.NotImplementedException();

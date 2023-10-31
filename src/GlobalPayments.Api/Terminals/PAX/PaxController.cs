@@ -214,9 +214,18 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 amounts.TransactionAmount = "{0:c}".FormatWith(_amount).ToNumeric();
             }
 
-            // ADDING THIS HERE CAUSES IT TO FAIL SKIPPING IT HERE
-            //if (gratuity.HasValue)
-            //    amounts.TipAmount = "{0:c}".FormatWith(gratuity).ToNumeric();
+            if (builder.TransactionType == TransactionType.Edit && builder.Gratuity.HasValue)
+            {
+                /*
+                - Transaction Type 06 : ADJUST: Used for additional charges or gratuity.
+                - Typically used for tip adjustment.
+                - Set the amount to Transaction Amount, not the Tip Amount */
+                var _tipRequest = 1;
+                var _gratuityAmount = builder.Gratuity;
+                amounts.TipAmount = null;
+                amounts.TransactionAmount = "{0:c}".FormatWith(_gratuityAmount).ToNumeric();
+                extData[EXT_DATA.TIP_REQUEST] = _tipRequest.ToString();
+            }
 
             if (builder.PaymentMethod != null) {
                 if (builder.PaymentMethod is TransactionReference) {
@@ -321,6 +330,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
                     return requestToken ? PAX_TXN_TYPE.TOKENIZE : PAX_TXN_TYPE.VERIFY;
                 case TransactionType.Void:
                     return PAX_TXN_TYPE.VOID;
+                case TransactionType.Edit:
+                    return PAX_TXN_TYPE.ADJUST;
                 default:
                     throw new UnsupportedTransactionException();
             }
