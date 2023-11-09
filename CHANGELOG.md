@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v7.0.2 (10/30/23)
+## Latest - v7.0.3 (11/07/23)
+
+#### Enhancements
+- [UPA] Mapped the tokenRspCode and tokenRspMsg to response
+
+## v7.0.2 (10/30/23)
 
 #### Enhancements
 - [PAX] TipAdjust -Adding tip after the Sale.

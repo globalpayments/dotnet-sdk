@@ -10,6 +10,8 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string TransactionId { get; set; }
         public string TerminalRefNumber { get; set; }
         public string Token { get; set; }
+        public string TokenResponseCode { get; set; }
+        public string TokenResponseMessage { get; set; }
         public string CardBrandTransId { get; set; }
         public string SignatureStatus { get; set; }
         public byte[] SignatureData { get; set; }
@@ -124,7 +126,9 @@ namespace GlobalPayments.Api.Terminals.UPA
             TransactionAmount = host.GetValue<decimal>("totalAmount");
             MerchantFee = host.GetValue<decimal>("surcharge");
             Token = host.GetValue<string>("tokenValue");
-            if(host.GetValue("cardBrandTransId") != null)
+            TokenResponseCode = host.GetValue<string>("tokenRspCode");
+            TokenResponseMessage = host.GetValue<string>("tokenRspMsg");
+            if (host.GetValue("cardBrandTransId") != null)
                 CardBrandTransId = host.GetValue<string>("cardBrandTransId");
             // TxnDescriptor = host.GetValue<string>("txnDescriptor");
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
