@@ -181,6 +181,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             TaxExemptId = taxExemptId;
             return this;
         }
+
         public TerminalAuthBuilder WithToken(string value) {
             if (PaymentMethod == null || !(PaymentMethod is CreditCardData))
                 PaymentMethod = new CreditCardData();
@@ -231,7 +232,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
-            
         }
 
         public TerminalAuthBuilder WithShippingDate(DateTime value) {
@@ -261,6 +261,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Validations.For(PaymentMethodType.EBT).With(TransactionType.Balance)
                 .When(() => Currency).IsNotNull()
                 .Check(() => Currency).DoesNotEqual(CurrencyType.VOUCHER);
+            
             Validations.For(PaymentMethodType.EBT).With(TransactionType.Refund).Check(() => AllowDuplicates).Equals(false);
             Validations.For(PaymentMethodType.EBT).With(TransactionType.BenefitWithdrawal).Check(() => AllowDuplicates).Equals(false);
 

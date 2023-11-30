@@ -7,246 +7,196 @@ using GlobalPayments.Api.Terminals.Genius.Builders;
 using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
 
-namespace GlobalPayments.Api.Terminals.Genius
-{
-    internal class GeniusInterface : IDeviceInterface
-    {
+namespace GlobalPayments.Api.Terminals.Genius {
+    internal class GeniusInterface : IDeviceInterface {
         private GeniusController _controller;
 
         public event MessageReceivedEventHandler OnMessageReceived;
 
         string IDeviceInterface.EcrId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        internal GeniusInterface(GeniusController controller)
-        {
+        internal GeniusInterface(GeniusController controller) {
             _controller = controller;
         }
 
-        event MessageSentEventHandler IDeviceInterface.OnMessageSent
-        {
-            add
-            {
+        event MessageSentEventHandler IDeviceInterface.OnMessageSent {
+            add {
                 throw new NotImplementedException();
             }
 
-            remove
-            {
+            remove {
                 throw new NotImplementedException();
             }
         }
 
-        public TerminalAuthBuilder CreditSale(decimal amount)
-        {
+        public TerminalAuthBuilder CreditSale(decimal amount) {
             return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Credit).WithAmount(amount);
         }
 
-        public TerminalAuthBuilder CreditRefund(decimal amount)
-        {
+        public TerminalAuthBuilder CreditRefund(decimal amount) {
             return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.Credit).WithAmount(amount);
         }
-        public TerminalManageBuilder RefundById(decimal amount)
-        {
+        public TerminalManageBuilder RefundById(decimal? amount) {
             return new MitcManageBuilder(TransactionType.Sale, PaymentMethodType.Credit, TransactionType.Refund).WithAmount(amount);
         }
-        public TerminalReportBuilder GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType)
-        {
+        public TerminalReportBuilder GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType) {
             return new TerminalReportBuilder(transactionType, transactionId, transactionIdType);
         }
 
-        public TerminalManageBuilder CreditVoid()
-        {
+        public TerminalManageBuilder CreditVoid() {
             return new MitcManageBuilder(TransactionType.Sale, PaymentMethodType.Credit, TransactionType.Void);
         }
-        public TerminalManageBuilder DebitVoid()
-        {
+        public TerminalManageBuilder DebitVoid() {
             return new MitcManageBuilder(TransactionType.Sale, PaymentMethodType.Debit, TransactionType.Void);
         }
-        public TerminalManageBuilder VoidRefund()
-        {
+        public TerminalManageBuilder VoidRefund() {
             return new MitcManageBuilder(TransactionType.Refund, PaymentMethodType.Credit, TransactionType.Void);
         }
 
-        public TerminalAuthBuilder DebitSale(decimal amount)
-        {
+        public TerminalAuthBuilder DebitSale(decimal amount) {
             return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Debit).WithAmount(amount);
         }
 
-        void IDeviceInterface.Cancel()
-        {
+        void IDeviceInterface.Cancel() {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.CloseLane()
-        {
+        IDeviceResponse IDeviceInterface.CloseLane() {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.DisableHostResponseBeep()
-        {
+        IDeviceResponse IDeviceInterface.DisableHostResponseBeep() {
             throw new NotImplementedException();
         }
 
-        ISignatureResponse IDeviceInterface.GetSignatureFile()
-        {
+        ISignatureResponse IDeviceInterface.GetSignatureFile() {
             throw new NotImplementedException();
         }
 
-        IInitializeResponse IDeviceInterface.Initialize()
-        {
+        IInitializeResponse IDeviceInterface.Initialize() {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.LineItem(string leftText, string rightText, string runningLeftText, string runningRightText)
-        {
+        IDeviceResponse IDeviceInterface.LineItem(string leftText, string rightText, string runningLeftText, string runningRightText) {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.OpenLane()
-        {
+        IDeviceResponse IDeviceInterface.OpenLane() {
             throw new NotImplementedException();
         }
 
-        ISignatureResponse IDeviceInterface.PromptForSignature(string transactionId)
-        {
+        ISignatureResponse IDeviceInterface.PromptForSignature(string transactionId) {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.Reboot()
-        {
+        IDeviceResponse IDeviceInterface.Reboot() {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.Reset()
-        {
+        IDeviceResponse IDeviceInterface.Reset() {
             throw new NotImplementedException();
         }
 
-        string IDeviceInterface.SendCustomMessage(DeviceMessage message)
-        {
+        string IDeviceInterface.SendCustomMessage(DeviceMessage message) {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.SendFile(SendFileType fileType, string filePath)
-        {
+        IDeviceResponse IDeviceInterface.SendFile(SendFileType fileType, string filePath) {
             throw new NotImplementedException();
         }
 
-        ISAFResponse IDeviceInterface.SendStoreAndForward()
-        {
+        ISAFResponse IDeviceInterface.SendStoreAndForward() {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.SetStoreAndForwardMode(bool enabled)
-        {
+        IDeviceResponse IDeviceInterface.SetStoreAndForwardMode(bool enabled) {
             throw new NotImplementedException();
         }
 
-        IDeviceResponse IDeviceInterface.StartCard(PaymentMethodType paymentMethodType)
-        {
+        IDeviceResponse IDeviceInterface.StartCard(PaymentMethodType paymentMethodType) {
             throw new NotImplementedException();
         }
 
-        TerminalReportBuilder IDeviceInterface.LocalDetailReport()
-        {
+        TerminalReportBuilder IDeviceInterface.LocalDetailReport() {
             throw new NotImplementedException();
         }
 
-        TerminalReportBuilder IDeviceInterface.GetSAFReport()
-        {
+        TerminalReportBuilder IDeviceInterface.GetSAFReport() {
             throw new NotImplementedException();
         }
 
-        TerminalReportBuilder IDeviceInterface.GetBatchReport()
-        {
+        TerminalReportBuilder IDeviceInterface.GetBatchReport() {
             throw new NotImplementedException();
         }
 
-        TerminalReportBuilder IDeviceInterface.GetOpenTabDetails()
-        {
+        TerminalReportBuilder IDeviceInterface.GetOpenTabDetails() {
             throw new NotImplementedException();
         }
 
-        IBatchCloseResponse IDeviceInterface.BatchClose()
-        {
+        IBatchCloseResponse IDeviceInterface.BatchClose() {
             throw new NotImplementedException();
         }
 
-        IEODResponse IDeviceInterface.EndOfDay()
-        {
+        IEODResponse IDeviceInterface.EndOfDay() {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.AddValue(decimal? amount)
-        {
+        TerminalAuthBuilder IDeviceInterface.AddValue(decimal? amount) {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.Authorize(decimal? amount)
-        {
+        TerminalAuthBuilder IDeviceInterface.Authorize(decimal? amount) {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.Balance()
-        {
+        TerminalAuthBuilder IDeviceInterface.Balance() {
             throw new NotImplementedException();
         }
 
-        TerminalManageBuilder IDeviceInterface.Capture(decimal? amount)
-        {
+        TerminalManageBuilder IDeviceInterface.Capture(decimal? amount) {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.Refund(decimal? amount)
-        {
+        TerminalAuthBuilder IDeviceInterface.Refund(decimal? amount) {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.Sale(decimal? amount)
-        {
+        TerminalAuthBuilder IDeviceInterface.Sale(decimal? amount) {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.Verify()
-        {
+        TerminalAuthBuilder IDeviceInterface.Verify() {
             throw new NotImplementedException();
         }
 
-        TerminalManageBuilder IDeviceInterface.Void()
-        {
+        TerminalManageBuilder IDeviceInterface.Void() {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.Withdrawal(decimal? amount)
-        {
+        TerminalAuthBuilder IDeviceInterface.Withdrawal(decimal? amount) {
             throw new NotImplementedException();
         }
 
-        TerminalManageBuilder IDeviceInterface.TipAdjust(decimal? amount)
-        {
+        TerminalManageBuilder IDeviceInterface.TipAdjust(decimal? amount) {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.Tokenize()
-        {
+        TerminalAuthBuilder IDeviceInterface.Tokenize() {
             throw new NotImplementedException();
         }
 
-        TerminalAuthBuilder IDeviceInterface.AuthCompletion()
-        {
+        TerminalAuthBuilder IDeviceInterface.AuthCompletion() {
             throw new NotImplementedException();
         }
 
-        TerminalManageBuilder IDeviceInterface.DeletePreAuth()
-        {
+        TerminalManageBuilder IDeviceInterface.DeletePreAuth() {
             throw new NotImplementedException();
         }
 
-        void IDisposable.Dispose()
-        {
+        void IDisposable.Dispose() {
             throw new NotImplementedException();
         }
-        public IBatchClearResponse BatchClear()
-        {
+        public IBatchClearResponse BatchClear() {
             throw new NotImplementedException();
         }
 
@@ -261,6 +211,9 @@ namespace GlobalPayments.Api.Terminals.Genius
             throw new NotImplementedException();
         }
         ISignatureResponse IDeviceInterface.PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption) {
+            throw new NotImplementedException();
+        }
+        public TerminalManageBuilder IncreasePreAuth(decimal amount) {
             throw new NotImplementedException();
         }
     }

@@ -5,6 +5,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Genius;
 using GlobalPayments.Api.Terminals.UPA;
 using GlobalPayments.Api.Terminals.Genius.ServiceConfigs;
+using GlobalPayments.Api.Terminals.Diamond;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
@@ -13,7 +14,8 @@ namespace GlobalPayments.Api.Terminals {
         SSL_TCP,
         HTTP,		
         MIC,
-        MEET_IN_THE_CLOUD
+        MEET_IN_THE_CLOUD,       
+        DIAMOND_CLOUD
     }
 
     public enum BaudRate {
@@ -90,6 +92,14 @@ namespace GlobalPayments.Api.Terminals {
                 //break;
                 case DeviceType.UPA_DEVICE:                
                     services.DeviceController = new UpaController(this);
+                    break;
+                case DeviceType.PAX_ARIES8:
+                case DeviceType.PAX_A80:
+                case DeviceType.PAX_A35:
+                case DeviceType.PAX_A920:
+                case DeviceType.PAX_A77:
+                case DeviceType.NEXGO_N5:
+                    services.DeviceController = new DiamondController(this as DiamondCloudConfig);
                     break;
                 case DeviceType.GENIUS_VERIFONE_P400:
                     services.DeviceController = new GeniusController(this);

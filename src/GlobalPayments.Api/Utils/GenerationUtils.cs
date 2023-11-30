@@ -125,10 +125,23 @@ namespace GlobalPayments.Api.Utils {
             return GenerateHash(toHash, secret);
         }
 
-        public static string GenerateHash(string secret, ShaHashType shaType = ShaHashType.SHA1, params string[] fields)
-        {
+        public static string GenerateHash(string secret, ShaHashType shaType = ShaHashType.SHA1, params string[] fields) {
             var toHash = string.Join(".", fields);
             return GenerateHash(toHash, secret, shaType);
+        }
+
+        public static string HMACSHA256Hash(string data, string secretKey) {
+            var secret = Encoding.UTF8.GetBytes(secretKey);
+            // Initialize the keyed hash object.
+            using (HMACSHA256 hmac = new HMACSHA256(secret)) {
+                var dataConverted = Encoding.UTF8.GetBytes(data);
+
+                // Compute the hash of the input file.
+                byte[] hashValue = hmac.ComputeHash(dataConverted);
+                // Reset inStream to the beginning of the file.
+
+                return BitConverter.ToString(hashValue).Replace("-", "").ToLower();
+            }
         }
 
         /// <summary>

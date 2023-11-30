@@ -63,6 +63,27 @@ namespace GlobalPayments.Api.Utils {
             return default(T);
         }
 
+        /// <summary>
+        /// Get an enum when the value represented in the enum class is a char through a string
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T FromCharToObject<T>(string value) {
+            if (!string.IsNullOrEmpty(value)) {
+                return (T)Enum.ToObject(typeof(T), Char.Parse(value));
+            }
+            return default(T);
+        }
+
+       
+        public static T GetEnumFromValue<T>(string value) {
+            if (!string.IsNullOrEmpty(value)) {                
+                return (T)Enum.Parse(typeof(T), value);
+            }
+            return default(T);
+        }
+
         public static string GetMapping(Target target, object value) {
             if (value is Enum) {
                 var mappings = value.GetType().GetRuntimeField(value.ToString()).GetCustomAttributes<MapAttribute>();

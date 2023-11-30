@@ -80,8 +80,10 @@ namespace GlobalPayments.Api.Terminals.UPA
         }
             else {
                 RequestId = root.GetValue<string>("id");
+                TransactionId = RequestId;
                 DeviceResponseText = root.GetValue<string>("status");
                 ResponseText = root.Get("action").GetValue<string>("result_code");
+                DeviceResponseCode = ResponseText;
             }
         }
 

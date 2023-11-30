@@ -96,13 +96,13 @@ namespace GlobalPayments.Api.Terminals {
         public static DeviceMessage BuildUpaAdminRequest(int requestId, string ecrId, string txnType, string lineItemLeft = null, string lineItemRight = null, int? displayOption = null) {
             var doc = new JsonDoc();
             doc.Set("message", UpaMessageType.Msg);
-            var data = doc.SubElement("data");
-            data.Set("command", txnType);
-            data.Set("EcrId", ecrId);
-            data.Set("requestId", requestId);
+            var baseRequest = doc.SubElement("data");
+            baseRequest.Set("command", txnType);
+            baseRequest.Set("EcrId", ecrId);
+            baseRequest.Set("requestId", requestId.ToString());
 
             if ((!string.IsNullOrEmpty(lineItemLeft) || !string.IsNullOrEmpty(lineItemRight)) || displayOption.HasValue) {
-                var request = data.SubElement("data");
+                var request = baseRequest.SubElement("data");
                 var requestParams = request.SubElement("params");
                 requestParams.Set("lineItemLeft", lineItemLeft);
                 requestParams.Set("lineItemRight", lineItemRight);
@@ -150,8 +150,9 @@ namespace GlobalPayments.Api.Terminals {
             return new DeviceMessage<T>(doc, buffer);
         }
         public static DeviceMessage BuildUpaRequest(string jsonRequest) {
+            var json = JsonDoc.Parse(jsonRequest);
             byte[] buffer = BuildRawUpaRequest(jsonRequest);
-            return new DeviceMessage(buffer);
+            return new DeviceMessage<JsonDoc>(json, buffer);
         }
 
         public static byte CalculateLRC(byte[] buffer) {

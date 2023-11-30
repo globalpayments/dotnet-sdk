@@ -30,6 +30,9 @@
         public const string Transaction_API_TEST = "https://api.pit.paygateway.com/transactions";
         public const string OPEN_BANKING_TEST = "https://api.sandbox.globalpay-ecommerce.com/openbanking";
         public const string OPEN_BANKING_PRODUCTION = "https://api.globalpay-ecommerce.com/openbanking";
+        public const string DIAMOND_CLOUD_TEST = "https://qr-cert.simpletabcloud.com/tomcat/command";
+        public const string DIAMOND_CLOUD_PROD = "https://qr.simpletabcloud.com/tomcat/command";
+        public const string DIAMOND_CLOUD_PROD_EU= "https://qreu.simpletabcloud.com/tomcat/command";
         public const string GENIUS_MITC_PRODUCTION = "https://api.paygateway.com/transactions";
         public const string GENIUS_MITC_TEST = "https://api.pit.paygateway.com/transactions";
     }

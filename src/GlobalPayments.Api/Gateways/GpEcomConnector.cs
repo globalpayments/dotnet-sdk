@@ -675,7 +675,9 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_BILLING_POSTALCODE", builder.BillingAddress.PostalCode);
                 request.Set("HPP_BILLING_COUNTRY", CountryUtils.GetNumericCodeByCountry(builder.BillingAddress.Country));
             }
-            request.Set("CUST_NUM", builder.CustomerId);
+            if (!request.Has("CUST_NUM")) {
+                request.Set("CUST_NUM", builder.CustomerId);
+            }
             request.Set("VAR_REF", builder.ClientTransactionId);
             request.Set("HPP_LANG", HostedPaymentConfig.Language);
             request.Set("MERCHANT_RESPONSE_URL", HostedPaymentConfig.ResponseUrl);

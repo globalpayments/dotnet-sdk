@@ -85,7 +85,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Balance();
         TerminalManageBuilder Capture(decimal? amount = null);
         TerminalAuthBuilder Refund(decimal? amount = null);
-        TerminalManageBuilder RefundById(decimal amount);
+        TerminalManageBuilder RefundById(decimal? amount = null);
         TerminalAuthBuilder Sale(decimal? amount = null);
         TerminalAuthBuilder Verify();
         TerminalManageBuilder Void();
@@ -94,6 +94,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Tokenize();
         TerminalAuthBuilder AuthCompletion();
         TerminalManageBuilder DeletePreAuth();
+        TerminalManageBuilder IncreasePreAuth(decimal amount);
         #endregion
 
         #region Report Calls        

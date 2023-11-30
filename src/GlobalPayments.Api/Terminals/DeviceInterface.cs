@@ -181,71 +181,64 @@ namespace GlobalPayments.Api.Terminals {
                 .WithGratuity(amount);
         }
         public virtual TerminalAuthBuilder EodProcessing() {
-            throw new System.NotImplementedException();
+            throw new UnsupportedTransactionException("This method is not supported by the currently configured device.");
         }
 
         public virtual TerminalAuthBuilder Tokenize() {
-            throw new System.NotImplementedException();
+            throw new UnsupportedTransactionException("This method is not supported by the currently configured device.");
         }
 
         public virtual TerminalAuthBuilder AuthCompletion() {
-            throw new System.NotImplementedException();
+            throw new UnsupportedTransactionException("This method is not supported by the currently configured device.");
         }
         public virtual TerminalManageBuilder DeletePreAuth() {
-            throw new System.NotImplementedException();
+            throw new UnsupportedTransactionException("This method is not supported by the currently configured device.");
         }
 
+        public virtual TerminalManageBuilder IncreasePreAuth(decimal amount) {
+            throw new UnsupportedTransactionException("This method is not supported by the currently configured device.");
+        }        
         #endregion
 
         #region IDisposable
         public void Dispose() {
             _controller.Dispose();
         }
-        TerminalManageBuilder IDeviceInterface.RefundById(decimal amount)
-        {
-            throw new System.NotImplementedException();
+        public virtual TerminalManageBuilder RefundById(decimal? amount) {
+            throw new UnsupportedTransactionException("This method is not supported by the currently configured device.");
         }
 
-        public TerminalAuthBuilder CreditSale(decimal amount)
-        {
-            throw new System.NotImplementedException();
+        public TerminalAuthBuilder CreditSale(decimal amount) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
-        public TerminalAuthBuilder CreditRefund(decimal amount)
-        {
-            throw new System.NotImplementedException();
+        public TerminalAuthBuilder CreditRefund(decimal amount) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
-        public TerminalManageBuilder CreditVoid()
-        {
-            throw new System.NotImplementedException();
+        public TerminalManageBuilder CreditVoid() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
-        public TerminalAuthBuilder DebitSale(decimal amount)
-        {
-            throw new System.NotImplementedException();
+        public TerminalAuthBuilder DebitSale(decimal amount) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }      
 
-        public TerminalManageBuilder DebitVoid()
-        {
-            throw new System.NotImplementedException();
+        public TerminalManageBuilder DebitVoid() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
-        public TerminalManageBuilder VoidRefund()
-        {
-            throw new System.NotImplementedException();
+        public TerminalManageBuilder VoidRefund() {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
-        public DeviceResponse GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType)
-        {
-            throw new System.NotImplementedException();
+        public DeviceResponse GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
 
-        TerminalReportBuilder IDeviceInterface.GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType)
-        {
-            throw new System.NotImplementedException();
+        TerminalReportBuilder IDeviceInterface.GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
-        
         #endregion
     }
 }

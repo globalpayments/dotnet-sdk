@@ -172,6 +172,16 @@ namespace GlobalPayments.Api.Utils {
             return null;
         }
 
+        public static bool IsJson(string json) {
+            try {
+                var parsed = JsonConvert.DeserializeObject(json);
+                return true;
+            }
+            catch (Exception) {
+                return false;
+            }            
+        }
+
         public static T ParseSingleValue<T>(string json, string name, IRequestEncoder encoder = null) {
             var doc = Parse(json, encoder);
             return doc.GetValue<T>(name);

@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Genius.Enums;
+using GlobalPayments.Api.Terminals.Diamond.Entities.Enums;
 using GlobalPayments.Api.Terminals.PAX;
 using GlobalPayments.Api.Terminals.UPA;
 using System;
@@ -27,8 +28,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         public TerminalReportBuilder(TerminalReportType reportType) {
             ReportType = reportType;
         }
-        public TerminalReportBuilder(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType)
-        {
+        public TerminalReportBuilder(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType) {
             TransactionType = transactionType;
             TransactionId = transactionId;
             TransactionIdType = transactionIdType;
@@ -37,7 +37,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         public TerminalSearchBuilder Where<T>(PaxSearchCriteria criteria, T value) {
             return SearchBuilder.And(criteria, value);
         }
-
+        public TerminalSearchBuilder Where<T>(DiamondCloudSearchCriteria criteria, T value) {
+            return SearchBuilder.And(criteria, value);
+        }
         public TerminalSearchBuilder Where<T>(UpaSearchCriteria criteria, T value) {
             return SearchBuilder.And(criteria, value);
         }
@@ -55,7 +57,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal int? RecordNumber { get; set; }
         internal int? TerminalReferenceNumber { get; set; }
         internal string AuthCode { get; set; }
-        internal string ReferenceNumber { get; set; }
+        public string ReferenceNumber { get; set; }
         internal int? MerchantId { get; set; }
         internal string MerchantName { get; set; }
         internal int Batch { get; set; }
@@ -71,6 +73,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         public TerminalSearchBuilder And<T>(UpaSearchCriteria criteria, T value) {
+            SetProperty(criteria.ToString(), value);
+            return this;
+        }
+
+        public TerminalSearchBuilder And<T>(DiamondCloudSearchCriteria criteria, T value) {
             SetProperty(criteria.ToString(), value);
             return this;
         }
