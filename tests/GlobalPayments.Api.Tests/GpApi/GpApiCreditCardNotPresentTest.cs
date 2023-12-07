@@ -15,25 +15,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestInitialize]
         public void TestInitialize() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                // RequestLogger = new RequestFileLogger(@"C:\temp\transit\finger.txt"),
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-                Country = "US",
-                AccessTokenInfo = new AccessTokenInfo() { TransactionProcessingAccountName = "transaction_processing" }
-                // DO NO DELETE - usage example for some settings
-                // DynamicHeaders = new Dictionary<string, string>
-                // {
-                //     ["x-gp-platform"] = "prestashop;version=1.7.2",
-                //     ["x-gp-extension"] = "coccinet;version=2.4.1"
-                // }
-            });
+            ServicesContainer.RemoveConfig();
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             card = new CreditCardData {
                 Number = "4263970000005262",
@@ -859,18 +843,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleWithManualEntryMethod()
         {
-            foreach (Channel channel in Enum.GetValues(typeof(Channel))) 
-            {
+            foreach (Channel channel in Enum.GetValues(typeof(Channel))) {
                 foreach (ManualEntryMethod entryMethod in Enum.GetValues(typeof(ManualEntryMethod)))
                 {
-                    ServicesContainer.ConfigureService(new GpApiConfig
-                    {
-                        AppId = AppId,
-                        AppKey = AppKey,
-                        SecondsToExpire = 60,
-                        Channel = channel,
-                        RequestLogger = new RequestConsoleLogger()
-                    });
+                    var gpApiConfig = GpApiConfigSetup(AppId, AppKey, channel);
+                    ServicesContainer.ConfigureService(gpApiConfig);
+                    
                     card.Cvn = "123";
                     card.EntryMethod = entryMethod;
 
@@ -885,15 +863,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditSaleWithEntryMethod() {
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
+            
             foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod))) {
-                ServicesContainer.ConfigureService(new GpApiConfig {
-                    AppId = AppId,
-                    AppKey = AppKey,
-                    SecondsToExpire = 60,
-                    Channel = Channel.CardPresent,
-                    RequestLogger = new RequestConsoleLogger()
-                });
-
                 var creditTrackData = new CreditTrackData {
                     TrackData =
                         "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",

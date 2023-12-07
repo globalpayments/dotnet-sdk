@@ -27,6 +27,8 @@ namespace GlobalPayments.Api.Mapping {
         private const string TRANSFER = "TRANSFER";
         private const string DOCUMENT_UPLOAD = "DOCUMENT_UPLOAD";
         private const string FUNDS = "FUNDS";
+        private const string FILE_CREATE = "FILE_CREATE";
+        private const string FILE_SINGLE = "FILE_SINGLE";
 
         public static Transaction MapResponse(string rawResponse) {
             Transaction transaction = new Transaction();
@@ -235,9 +237,9 @@ namespace GlobalPayments.Api.Mapping {
             var paymentMethodApm = json.Get("payment_method")?.Get("apm");
             apm.RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url") ?? (paymentMethodApm.GetValue<string>("redirect_url") ?? null);
             if (paymentMethodApm.Has("provider")) {
-                apm.ProviderName = paymentMethodApm?.Get("provider").GetValue<string>("name") ?? null;
-                apm.ProviderReference = paymentMethodApm?.Get("provider").GetValue<string>("merchant_identifier") ?? null;
-                apm.TimeCreatedReference = paymentMethodApm?.Get("provider").GetValue<DateTime?>("time_created_reference") ?? null;
+                apm.ProviderName = paymentMethodApm?.Get("provider")?.GetValue<string>("name") ?? paymentMethodApm?.GetValue<string>("provider") ?? null;
+                apm.ProviderReference = paymentMethodApm?.Get("provider")?.GetValue<string>("merchant_identifier") ?? null;
+                apm.TimeCreatedReference = paymentMethodApm?.Get("provider")?.GetValue<DateTime?>("time_created_reference") ?? null;
             }
             else {
                 apm.ProviderName = paymentMethodApm?.GetValue<string>("provider");
@@ -372,11 +374,13 @@ namespace GlobalPayments.Api.Mapping {
                         summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BankPayment);
                         var bankPaymentResponse = new BankPaymentResponse();
                         bankPaymentResponse.Iban = bankTransfer?.GetValue<string>("iban");
+                        bankPaymentResponse.MaskedIbanLast4 = bankTransfer?.GetValue<string>("masked_iban_last4");
                         bankPaymentResponse.AccountNumber = bankTransfer?.GetValue<string>("account_number");
                         bankPaymentResponse.AccountName = bankTransfer?.Get("bank").GetValue<string>("name");
                         bankPaymentResponse.SortCode = bankTransfer?.Get("bank").GetValue<string>("code");
                         bankPaymentResponse.RemittanceReferenceValue = bankTransfer?.Get("remittance_reference")?.GetValue<string>("value");
                         bankPaymentResponse.RemittanceReferenceType = bankTransfer?.Get("remittance_reference")?.GetValue<string>("type");
+                        summary.AccountNumberLast4 = bankTransfer?.GetValue<string>("masked_account_number_last4");
                         summary.BankPaymentResponse = bankPaymentResponse;
                     }
                     else {
@@ -1109,6 +1113,49 @@ namespace GlobalPayments.Api.Mapping {
             }
 
             return result;
+        }
+
+        public static FileProcessor MapFileProcessingResponse(string rawResponse) { 
+            var fp = new FileProcessor();
+            if (!string.IsNullOrEmpty(rawResponse)) {
+                JsonDoc json = JsonDoc.Parse(rawResponse);
+                string actionType = json.Get("action")?.GetValue<string>("type");
+                switch (actionType) {
+                    case FILE_CREATE:
+                        MapGeneralFileProcessingResponse(json, fp);
+                        fp.CreatedDate = json.GetValue<string>("time_created");
+                        fp.UploadUrl = json.GetValue<string>("url");
+                        fp.ExpirationDate = json.GetValue<string>("expiration_date");
+                        break;
+                    case FILE_SINGLE:
+                        MapGeneralFileProcessingResponse(json, fp);                        
+                        if (json.Has("response_files")) {
+                            fp.FilesUploaded = new List<FileUploaded>();
+                            foreach (var responseFile in json.GetArray<JsonDoc>("response_files") ?? Enumerable.Empty<JsonDoc>()) {
+                                var file = new FileUploaded();
+                                file.Url = responseFile.GetValue<string>("url");
+                                file.TimeCreated = responseFile.GetValue<string>("time_created");
+                                file.ExpirationDate = responseFile.GetValue<string>("expiration_date");
+                                file.FileName = responseFile.GetValue<string>("name");
+                                file.FileId = responseFile.GetValue<string>("response_file_id");
+                                fp.FilesUploaded.Add(file);
+                            }                           
+                        }
+                        break;
+                    default:
+                        throw new UnsupportedTransactionException($"Unknown action type {actionType}");
+                }
+            }
+
+            return fp;
+        }
+
+        private static void MapGeneralFileProcessingResponse(JsonDoc json, FileProcessor fp)
+        {
+            fp.ResourceId = json.GetValue<string>("id");
+            fp.Status = fp.ResponseMessage = json.GetValue<string>("status");
+            fp.TotalRecordCount = json.GetValue<string>("total_record_count") ?? null;
+            fp.ResponseCode = json.Get("action")?.GetValue<string>("result_code");
         }
 
         private static List<PaymentMethodList> MapMerchantPaymentMethod(JsonDoc json)

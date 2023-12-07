@@ -6,7 +6,6 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
@@ -24,17 +23,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.RemoveConfig();
-            config = new GpApiConfig {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Channel = Channel.CardNotPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                // RequestLogger = new RequestFileLogger(@"C:\temp\transit\finger.txt"),
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-            };
+            
+            config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
         }
 

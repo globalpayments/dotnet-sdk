@@ -1,5 +1,6 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
@@ -25,9 +26,18 @@ namespace GlobalPayments.Api.Terminals {
         string SendCustomMessage(DeviceMessage message);
         IDeviceResponse SendFile(SendFileType fileType, string filePath);
         ISAFResponse SendStoreAndForward();
+        ISafDeleteFileResponse DeleteStoreAndForwardFile(SafIndicator safIndicator);
         ISAFResponse DeleteSaf(string safreferenceNumer, string tranNo=null);
         IDeviceResponse RegisterPOS(string appName, int launchOrder = 0, bool remove = false, int silent = 0);
         IDeviceResponse SetStoreAndForwardMode(bool enabled);
+        IDeviceResponse SetStoreAndForwardMode(SafMode safMode);
+        IDeviceResponse SetStoreAndForwardMode(SafMode safMode, string startDateTime = null
+            , string endDateTime = null, string durationInDays = null, string maxNumber = null, string totalCeilingAmount = null
+            , string ceilingAmountPerCardType = null, string haloPerCardType = null, string safUploadMode = null
+            , string autoUploadIntervalTimeInMilliseconds = null, string deleteSafConfirmation = null);
+        ISafParamsResponse GetStoreAndForwardParams();
+        ISafSummaryReport GetSafSummaryReport(SafIndicator safIndicator);
+        ISafUploadResponse SafUpload(SafIndicator safUploadIndicator); 
         IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
         IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData);
         ISignatureResponse PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption);

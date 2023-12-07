@@ -17,13 +17,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestInitialize]
         public void TestInitialize() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            ServicesContainer.RemoveConfig();
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             creditTrackData = new CreditTrackData {
                 Value =
@@ -411,12 +407,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CloseBatch_CardNotPresentChannel() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent
-            }, "GP_API_CONFIG_NAME");
-
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig, "GP_API_CONFIG_NAME");
+            
             var creditCardData = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = ExpMonth,

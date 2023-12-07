@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,8 +16,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "10.12.220.172",
-                //IpAddress = "192.168.0.31",
+                IpAddress = "192.168.1.30",
                 Port = "10009",
                 RequestIdProvider = new RandomIdProvider()
             });
@@ -45,7 +45,88 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
             _device.Cancel();
         }
+        [TestMethod]
+        public void SetSAFMode()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]A54[FS]1.35[FS]"));
+            };
 
+            var response = _device.SetStoreAndForwardMode(SafMode.STAY_OFFLINE);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("OK", response.DeviceResponseText);
+        }
+        [TestMethod]
+        public void SetSAFModeParams()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]A54[FS]1.35[FS]"));
+            };
+            string start = null; // DateTime.Now.ToString("yyyyMMddHHmmss");  //  
+            string end = null; // DateTime.Now.AddDays(1).ToString("yyyyMMddHHmmss");  // 
+            string days = null; //= "1";  //
+            string max = null; //= "50"; //
+            string totalCeiling = null; //= "200000"; //
+            string totalCeilingCardType = null; //= "4000"; //
+            string haloPerCard = null; //= "200"; // "      "; //
+            string uploadMode = ""; //"1"; //; 
+            string autoUploadTime = null; //= "1000"; //
+            string deleteSaf = null; //= ""; //
+
+            var response = _device.SetStoreAndForwardMode(SafMode.STAY_OFFLINE, start, end,days, max, totalCeiling, totalCeilingCardType, haloPerCard, uploadMode, autoUploadTime, deleteSaf);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("OK", response.DeviceResponseText);
+        }
+        [TestMethod]
+        public void GetSAFModeParams()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]A78[FS]1.35[FS]"));
+            };
+
+            var response = _device.GetStoreAndForwardParams();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("OK", response.DeviceResponseText);
+        }
+        [TestMethod]
+        public void UploadSaf()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]B08[FS]1.35[FS]"));
+            };
+
+            var response = _device.SafUpload(SafIndicator.ALL_TRANSACTIONS);
+            Assert.IsNotNull(response);
+            Assert.IsTrue("OK" == response.DeviceResponseText || "NOT FOUND" == response.DeviceResponseText);
+        }
+        [TestMethod]
+        public void DeleteSafRecords()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]B10[FS]1.35[FS]"));
+            };
+
+            var response = _device.DeleteStoreAndForwardFile(SafIndicator.NEWLY_STORED_TRANSACTIONS);
+            Assert.IsNotNull(response);
+            Assert.IsTrue("OK" == response.DeviceResponseText || "NOT FOUND" == response.DeviceResponseText);
+        }
+        [TestMethod]
+        public void GetSafSummaryReport()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]R10[FS]1.35[FS]"));
+            };
+
+            var response = _device.GetSafSummaryReport(SafIndicator.ALL_TRANSACTIONS);
+            Assert.IsNotNull(response);
+            Assert.IsTrue("OK" == response.DeviceResponseText || "NOT FOUND" == response.DeviceResponseText);
+        }
         [TestMethod]
         public void Reset() {
             _device.OnMessageSent += (message) => {

@@ -11,6 +11,7 @@ namespace GlobalPayments.Api.Entities {
         const string TRANSACTION_PROCESSING_ACCOUNT_NAME_PREFIX = "TRA_";
         const string RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX = "RAA_";
         const string MERCHANT_MANAGEMENT_ACCOUNT_NAME_PREFIX = "MMA_";
+        const string FILE_PROCESSING_ACCOUNT_NAME_PREFIX = "FPA_";
 
         internal string Token { get; private set; }
         internal string Type { get; private set; }
@@ -28,6 +29,7 @@ namespace GlobalPayments.Api.Entities {
         internal string TransactionProcessingAccountName { get { return GetAccountName(TRANSACTION_PROCESSING_ACCOUNT_NAME_PREFIX); } }
         internal string RiskAssessmentAccountName { get { return GetAccountName(RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX); } }
         internal string MerchantManagementAccountName { get { return GetAccountName(MERCHANT_MANAGEMENT_ACCOUNT_NAME_PREFIX); } }
+        internal string FileProcessingAccountName { get { return GetAccountName(FILE_PROCESSING_ACCOUNT_NAME_PREFIX); } }
 
         internal string DataAccountID { get { return GetAccountID(DATA_ACCOUNT_NAME_PREFIX); } }
         internal string DisputeManagementAccountID { get { return GetAccountID(DISPUTE_MANAGEMENT_ACCOUNT_NAME_PREFIX); } }
@@ -35,6 +37,7 @@ namespace GlobalPayments.Api.Entities {
         internal string TransactionProcessingAccountID { get { return GetAccountID(TRANSACTION_PROCESSING_ACCOUNT_NAME_PREFIX); } }
         internal string RiskAssessmentAccountID { get { return GetAccountID(RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX); } }
         internal string MerchantManagementAccountID { get { return GetAccountID(MERCHANT_MANAGEMENT_ACCOUNT_NAME_PREFIX); } }
+        internal string FileProcessingAccountID { get { return GetAccountID(FILE_PROCESSING_ACCOUNT_NAME_PREFIX); } }
 
         private string GetAccountID(string accountPrefix) {
             return Accounts?.Where(a => a.Id.StartsWith(accountPrefix)).Select(a => a.Id).FirstOrDefault();

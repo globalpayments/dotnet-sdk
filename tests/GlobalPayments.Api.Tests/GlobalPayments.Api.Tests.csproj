@@ -12,7 +12,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="FileProcessing\FilesToUpload\202310261147-Create-Token-Tokenization-FPR-1000records.csv.encrypted.txt" />
+    <None Remove="FileProcessing\FilesToUpload\202310261147CreateToken-TokenizationFPR-new.csv.encrypted.txt" />
     <None Remove="ProPay\TestData\GlobalSDK.PFX" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="FileProcessing\FilesToUpload\202310261147-Create-Token-Tokenization-FPR-1000records.csv.encrypted.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileProcessing\FilesToUpload\202310261147CreateToken-TokenizationFPR-new.csv.encrypted.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

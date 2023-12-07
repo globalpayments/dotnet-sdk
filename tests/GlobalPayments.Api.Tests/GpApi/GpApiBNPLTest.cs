@@ -6,9 +6,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Environment = GlobalPayments.Api.Entities.Environment;
 
 namespace GlobalPayments.Api.Tests.GpApi
 {
@@ -22,14 +20,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestInitialize]
         public void TestInitialize() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Environment = Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             paymentMethod = new BNPL {
                 BNPLType = BNPLType.AFFIRM,

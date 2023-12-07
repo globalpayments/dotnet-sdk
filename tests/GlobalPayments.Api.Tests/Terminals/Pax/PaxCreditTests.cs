@@ -31,7 +31,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.Sale(10m)
+            var response = _device.Sale(20m)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -154,7 +154,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode);
         }
-
+ 
         [TestMethod]
         public void CreditAuth_CaptureManual() {
             _device.OnMessageSent += (message) => {

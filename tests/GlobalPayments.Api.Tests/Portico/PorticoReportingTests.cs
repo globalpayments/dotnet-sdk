@@ -616,5 +616,37 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.AreEqual(details.CommercialData.PoNumber, "9876543210");
             Assert.IsTrue(details.TaxType.ToUpper().Contains("SALESTAX"));
         }
+
+        [TestMethod]
+        public void ValidateResponseDateAndTransactionDateIsMappedInTransactionSummary()
+        {
+            var responseMasterCard = MasterCardManual.Charge(13)
+               .WithCurrency("USD")
+               .WithAddress(Address)
+               .Execute();
+                Assert.IsNotNull(responseMasterCard);
+                Assert.AreEqual("00", responseMasterCard.ResponseCode);
+
+            var responseVisa = VisaManual.Charge(17)
+               .WithCurrency("USD")
+               .WithAddress(Address)
+               .Execute();
+                Assert.IsNotNull(responseVisa);
+                Assert.AreEqual("00", responseVisa.ResponseCode);
+
+            var items = ReportingService.FindTransactions()
+               .WithStartDate(DateTime.Today.AddDays(-1))
+               .WithEndDate(DateTime.Today)
+               .Execute();
+
+            Assert.IsNotNull(items[0].ResponseDate);
+            Assert.IsNotNull(items[0].TransactionDate);
+
+            var item = ReportingService.TransactionDetail(items[0].TransactionId)
+                .Execute();
+
+            Assert.IsNotNull (item.ResponseDate);
+            Assert.IsNotNull(item.TransactionDate);
+        }
     }
 }

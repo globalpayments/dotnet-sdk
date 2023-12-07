@@ -3,7 +3,6 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -20,17 +19,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private const string CURRENCY = "USD";
         private const decimal AMOUNT = 10m;
 
-
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.RemoveConfig();
-            ServicesContainer.ConfigureService(new GpApiConfig
-            {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger()
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             address = new Address {
                 StreetAddress1 = "Apartment 852",
@@ -82,20 +75,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCustomer(customer)
                 .Execute();
 
-            assertResponse(response, TransactionStatus.Captured);
+            AssertResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod]
         public void CreditSaleThenSplit()
         {
-            var config = new GpApiConfig {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Environment = Entities.Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            };
+            var config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
 
             var merchants = GetMerchants();
@@ -133,7 +119,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithDescription("Split Test")
                 .Execute();
 
-            assertResponse(splitResponse, TransactionStatus.Captured);
+            AssertResponse(splitResponse, TransactionStatus.Captured);
 
             ServicesContainer.RemoveConfig(merchantConfigName);
             Thread.Sleep(30000);
@@ -142,15 +128,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleThenSplitThenReverse_WithConfigMerchantId()
         {
-            var config = new GpApiConfig {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Environment = Entities.Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            };
-            ServicesContainer.ConfigureService(config);
+            var gpApiConfig = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             var merchants = GetMerchants();
 
@@ -158,11 +137,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var merchantId = merchantProcessing.Id;
             var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
 
-            config.MerchantId = merchantId;
-            config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };           
+            gpApiConfig.MerchantId = merchantId;
+            gpApiConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };           
 
             var merchantConfigName = "config_" + merchantId;
-            ServicesContainer.ConfigureService(config, merchantConfigName);
+            ServicesContainer.ConfigureService(gpApiConfig, merchantConfigName);
 
             var transaction = eCheck.Charge(AMOUNT)
                .WithCurrency(CURRENCY)
@@ -191,7 +170,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithDescription(transferDescription)
                 .Execute();
 
-            assertResponse(splitResponse, TransactionStatus.Captured);
+            AssertResponse(splitResponse, TransactionStatus.Captured);
 
             Assert.IsNotNull(splitResponse.TransfersFundsAccounts);
 
@@ -207,7 +186,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var reverse = trfTransaction.Reverse()
                 .Execute(merchantConfigName);
 
-            assertResponse(reverse, TransactionStatus.Funded);
+            AssertResponse(reverse, TransactionStatus.Funded);
 
             ServicesContainer.RemoveConfig(merchantConfigName);
             Thread.Sleep(30000);
@@ -216,15 +195,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleThenSplitThenReverse_WithFundsData()
         {
-            var config = new GpApiConfig
-            {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Environment = Entities.Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            };
+            var config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
 
             var merchants = GetMerchants();
@@ -266,7 +237,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithDescription(transferDescription)
                 .Execute();
 
-            assertResponse(splitResponse, TransactionStatus.Captured);
+            AssertResponse(splitResponse, TransactionStatus.Captured);
 
             Assert.IsNotNull(splitResponse.TransfersFundsAccounts);
 
@@ -283,7 +254,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithFundsData(fundsData)
                 .Execute();
 
-            assertResponse(reverse, TransactionStatus.Funded);
+            AssertResponse(reverse, TransactionStatus.Funded);
 
             ServicesContainer.RemoveConfig(merchantConfigName);
             Thread.Sleep(30000);
@@ -292,15 +263,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleThenSplit_WithoutFundsData()
         {
-            var config = new GpApiConfig
-            {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Environment = Entities.Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            };
+            var config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
 
             var transaction = new Transaction {TransactionId = Guid.NewGuid().ToString() };
@@ -329,14 +292,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleThenSplit_WithoutAmount()
         {
-            var config = new GpApiConfig {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Environment = Entities.Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            };
+            var config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
 
             var merchants = GetMerchants();
@@ -390,14 +346,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleThenSplit_WithoutRecipientId()
         {
-            var config = new GpApiConfig { 
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Environment = Entities.Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            };
+            var config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
 
             var merchants = GetMerchants();
@@ -461,7 +410,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAddress(address)
                 .Execute();
 
-            assertResponse(response, TransactionStatus.Captured);
+            AssertResponse(response, TransactionStatus.Captured);
         }
 
         [TestMethod, Ignore]
@@ -493,7 +442,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency("USD")
                 .Execute();
 
-            assertResponse(resp, TransactionStatus.Captured);
+            AssertResponse(resp, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -530,10 +479,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithBankTransferDetails(eCheckReauth)
                 .Execute();
 
-            assertResponse(resp, TransactionStatus.Captured);
+            AssertResponse(resp, TransactionStatus.Captured);
         }
 
-        private void assertResponse(Transaction response, TransactionStatus transactionStatus) {
+        private void AssertResponse(Transaction response, TransactionStatus transactionStatus) {
             Assert.IsNotNull(response);
             Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), response?.ResponseMessage);
@@ -542,7 +491,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private List<MerchantSummary> GetMerchants()
         {
             var merchants = new ReportingService().FindMerchants(1, 10)
-              .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
+              .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Descending)
               .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)
               .Execute();
 
@@ -552,7 +501,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private MerchantAccountSummary GetAccountByType(string merchantSenderId, MerchantAccountType merchantAccountType)
         {
             var response = ReportingService.FindAccounts(1, 10)
-                   .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
+                   .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Descending)
                    .Where(SearchCriteria.StartDate, StartDate)
                    .And(SearchCriteria.EndDate, EndDate)
                     .And(DataServiceCriteria.MerchantId, merchantSenderId)

@@ -7,7 +7,6 @@ using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi
@@ -27,13 +26,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             ServicesContainer.RemoveConfig();
 
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            var gpApiConfig = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             card = new CreditCardData {
                 Number = "4263970000005262",
@@ -248,14 +242,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void SearchMerchantAccounts()
         {
-            var config = new GpApiConfig
-            {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Channel = Channel.CardNotPresent,                
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-            };          
+            var config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(config);
 
             var merchants = _reportingService.FindMerchants(1, 10)
                 .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)

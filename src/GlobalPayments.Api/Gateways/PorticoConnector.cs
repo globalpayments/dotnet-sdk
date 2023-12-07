@@ -22,7 +22,7 @@ namespace GlobalPayments.Api.Gateways {
         public string UniqueDeviceId { get; set; }
         public string SDKNameVersion { get; set; }
         public bool SupportsOpenBanking => false;
-        public bool IsSafDataSupported { get; set; }
+        public bool? IsSafDataSupported = null;
 
         public PorticoConnector() {
         }
@@ -693,9 +693,12 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(header, "UniqueDeviceId", UniqueDeviceId);
 
             et.SubElement(header, "SDKNameVersion", SDKNameVersion != null ? SDKNameVersion : "net;version=" + getReleaseVersion());
-            Element safData = et.SubElement(header, "SAFData");
-            et.SubElement(safData, "SAFIndicator", IsSafDataSupported ? "Y" : "N");
-            et.SubElement(safData, "SAFOrigDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+
+            if (IsSafDataSupported != null) {
+                Element safData = et.SubElement(header, "SAFData");
+                et.SubElement(safData, "SAFIndicator", (bool)IsSafDataSupported ? "Y" : "N");
+                et.SubElement(safData, "SAFOrigDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+            }
             
             // Transaction
             var trans = et.SubElement(version1, "Transaction");
@@ -836,8 +839,11 @@ namespace GlobalPayments.Api.Gateways {
             var doc = new ElementTree(rawResponse).Get(MapReportType(reportType));
 
             T rvalue = Activator.CreateInstance<T>();
-            if (reportType.HasFlag(ReportType.FindTransactions) | reportType.HasFlag(ReportType.Activity)) {
-                Func<Element, TransactionSummary> hydrateTransactionSummary = (root) => {
+            if (reportType.HasFlag(ReportType.FindTransactions) | reportType.HasFlag(ReportType.Activity)) {           
+                Func<Element, TransactionSummary> hydrateTransactionSummary = (root) =>
+                {
+                    var headerElement = response.Get("Header");
+            
                     var summary = new TransactionSummary {
                         AccountDataSource = root.GetValue<string>("AcctDataSrc"),
                         Amount = root.GetValue<decimal>("Amt"),
@@ -862,7 +868,7 @@ namespace GlobalPayments.Api.Gateways {
                         PaymentType = root.GetValue<string>("PaymentType"),
                         PoNumber = root.GetValue<string>("CardHolderPONbr"),
                         ReferenceNumber = root.GetValue<string>("RefNbr"),
-                        ResponseDate = root.GetValue<DateTime>("RspDT"),
+                        ResponseDate = headerElement.GetValue<DateTime>("RspDT"),
                         ServiceName = root.GetValue<string>("ServiceName"),
                         SettlementAmount = root.GetValue<decimal>("SettlementAmt"),
                         ShippingAmount = root.GetValue<decimal>("ShippingAmtInfo"),
@@ -870,7 +876,7 @@ namespace GlobalPayments.Api.Gateways {
                         Status = root.GetValue<string>("Status", "TxnStatus"),
                         TaxAmount = root.GetValue<decimal>("TaxAmt", "TaxAmtInfo"),
                         TaxType = root.GetValue<string>("TaxType"),
-                        TransactionDate = root.GetValue<DateTime>("TxnUtcDT", "ReqUtcDT"),
+                        TransactionDate = root.GetValue<DateTime>("RspDT"),
                         TransactionId = root.GetValue<string>("GatewayTxnId"),
                         TransactionStatus = root.GetValue<string>("TxnStatus"),
                         Username = root.GetValue<string>("UserName"),
@@ -966,7 +972,11 @@ namespace GlobalPayments.Api.Gateways {
             }
             if (reportType.HasFlag(ReportType.TransactionDetail))
             {
+                var reportDetailsElement = response.Get("ReportTxnDetail");
+             
                 var summary = new TransactionSummary {
+                    ResponseDate = response.GetValue<DateTime>("RspDT"),
+                    TransactionDate = reportDetailsElement.GetValue<DateTime>("RspDT"),
                     TransactionId = response.GetValue<string>("GatewayTxnId"),
                     SiteId = response.GetValue<int>("SiteId"),
                     MerchantName = response.GetValue<string>("MerchName"),

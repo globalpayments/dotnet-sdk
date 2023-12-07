@@ -493,7 +493,7 @@ namespace GlobalPayments.Api.Builders {
                 PaymentMethod is TransactionReference &&
             PaymentMethod.PaymentMethodType == PaymentMethodType.BankPayment) {
             var obClient = ServicesContainer.Instance.GetOpenBanking(configName);
-                if (obClient != client) {
+                if (obClient != null && obClient != client) {
                     return obClient.ManageOpenBanking(this);
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Builders.RequestBuilder.GpApi;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Gateways.Interfaces;
 using GlobalPayments.Api.Logging;
 using GlobalPayments.Api.Mapping;
 using GlobalPayments.Api.PaymentMethods;
@@ -12,7 +13,7 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService, IDeviceCloudService {
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService, IDeviceCloudService, IFileProcessingService {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
 
         private string _AccessToken;
@@ -89,6 +90,18 @@ namespace GlobalPayments.Api.Gateways {
         }
         #endregion
 
+        public FileProcessor ProcessFileUpload(FileProcessingBuilder builder) {
+            if (string.IsNullOrEmpty(AccessToken)) {
+                SignIn();
+            }
+            var request = new GpApiFileProcessingRequestBuilder().BuildRequest(builder, this);
+            if (request != null) {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);               
+                return GpApiMapping.MapFileProcessingResponse(response);
+            }
+            return null;            
+        }
+
 
         public void SignIn() {
             AccessTokenInfo accessTokenInfo = GpApiConfig.AccessTokenInfo;
@@ -129,6 +142,11 @@ namespace GlobalPayments.Api.Gateways {
             if (string.IsNullOrEmpty(accessTokenInfo.MerchantManagementAccountName) &&
                string.IsNullOrEmpty(accessTokenInfo.MerchantManagementAccountID)) {
                 accessTokenInfo.MerchantManagementAccountID = response.MerchantManagementAccountID;
+            }
+            if (string.IsNullOrEmpty(accessTokenInfo.FileProcessingAccountName) &&
+               string.IsNullOrEmpty(accessTokenInfo.FileProcessingAccountID))
+            {
+                accessTokenInfo.FileProcessingAccountID = response.FileProcessingAccountID;
             }
 
             GpApiConfig.AccessTokenInfo = accessTokenInfo;

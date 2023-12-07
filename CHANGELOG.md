@@ -1,6 +1,15 @@
 # Changelog
 
-## Latest - v8.0.0 (11/30/23)
+## Latest - v8.0.1 (12/06/23)
+
+#### Enhancements 
+
+- [Portico]: Fix SAFData element was being included with all transactions.
+- [Portico]: Map response date & transaction date in TransactionSummary for ReportingService.
+- [GP-API]: Add missing properties to authentication->three_ds (message_version, eci,server_trans_reference, ds_trans_reference,value).
+- [GP-API]: File Processing.
+
+## Lv8.0.0 (11/30/23)
 
 #### Enhancements
 

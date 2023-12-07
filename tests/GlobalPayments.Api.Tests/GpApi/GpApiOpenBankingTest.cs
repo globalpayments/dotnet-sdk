@@ -6,34 +6,27 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi
 {
     [TestClass]
-    public class GpApiOpenBankingTest : BaseGpApiTests
-    {
-        private const string currency = "GBP";
-        private const decimal amount = 10.99m;
+    public class GpApiOpenBankingTest : BaseGpApiTests {
+        private const string CURRENCY = "GBP";
+        private const decimal AMOUNT = 10.99m;
 
         [TestInitialize]
         public void TestInitialize() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         [TestMethod]
         public void FasterPaymentsCharge() {
             var bankPayment = FasterPaymentsConfig();
 
-            var trn = bankPayment.Charge(amount)
-                .WithCurrency(currency)
+            var trn = bankPayment.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
                 .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                 .Execute();
 
@@ -47,16 +40,17 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(response);
             Assert.AreEqual(trn.TransactionId, response.TransactionId);
+            Assert.IsNotNull(response.AccountNumberLast4);
             Assert.IsNotNull(response.BankPaymentResponse.SortCode);
+            Assert.IsNotNull(response.BankPaymentResponse.AccountName);
             Assert.IsNull(response.BankPaymentResponse.Iban);
-            Assert.IsNotNull(response.BankPaymentResponse.AccountNumber);
         }
 
         [TestMethod]
-        public void SEPACharge() {
+        public void SepaCharge() {
             var bankPayment = SepaConfig();
 
-            var trn = bankPayment.Charge(amount)
+            var trn = bankPayment.Charge(AMOUNT)
                 .WithCurrency("EUR")
                 .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                 .Execute();
@@ -70,13 +64,13 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(response);
             Assert.AreEqual(trn.TransactionId, response.TransactionId);
-            Assert.IsNotNull(response.BankPaymentResponse?.Iban);
+            Assert.IsNotNull(response.BankPaymentResponse?.MaskedIbanLast4);
             Assert.IsNull(response.BankPaymentResponse?.SortCode);
             Assert.IsNull(response.BankPaymentResponse?.AccountNumber);
         }
 
         [TestMethod]
-        public void ReportFindOBTransactionsByStartDateAndEndDate() {
+        public void ReportFindObTransactionsByStartDateAndEndDate() {
             var response = ReportingService.FindTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated)
                 .Where(SearchCriteria.StartDate, StartDate)
@@ -88,18 +82,19 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsTrue(response.Results is List<TransactionSummary>);
 
             foreach (var rs in response.Results) {
-                Assert.AreEqual(EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BankPayment), rs.PaymentType.ToString().ToUpper());
+                Assert.AreEqual(EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BankPayment),
+                    rs.PaymentType.ToUpper());
                 Assert.IsTrue(EndDate >= rs.TransactionDate);
                 Assert.IsTrue(StartDate <= rs.TransactionDate);
             }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsChargeThenRefund() {
             var bankPayment = FasterPaymentsConfig();
 
-            var trn = bankPayment.Charge(amount)
-                .WithCurrency(currency)
+            var trn = bankPayment.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
                 .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                 .Execute();
 
@@ -109,22 +104,23 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                trn.Refund(amount)
-                    .WithCurrency(currency)
+                trn.Refund(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .Execute();
-            } catch (BuilderException e) {
+            } 
+            catch (BuilderException e) {
                 errorFound = true;
                 Assert.AreEqual("The Refund is not supported for BankPayment", e.Message);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void SepaChargeThenRefund() {
             var bankPayment = SepaConfig();
 
-            var trn = bankPayment.Charge(amount)
+            var trn = bankPayment.Charge(AMOUNT)
                 .WithCurrency("EUR")
                 .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                 .Execute();
@@ -135,54 +131,61 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                trn.Refund(amount)
-                    .WithCurrency(currency)
+                trn.Refund(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .Execute();
-            } catch (BuilderException e) {
+            } 
+            catch (BuilderException e) {
                 errorFound = true;
                 Assert.AreEqual("The Refund is not supported for BankPayment", e.Message);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsMissingRemittanceReference() {
             var bankPayment = FasterPaymentsConfig();
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsMissingRemittanceReferenceValue() {
             var bankPayment = FasterPaymentsConfig();
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, null)
                     .Execute();
-            } catch (GatewayException e) {
+            } 
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsMissingReturnUrl() {
             var bankPayment = FasterPaymentsConfig();
@@ -190,19 +193,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            } 
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsMissingStatusUrl() {
             var bankPayment = FasterPaymentsConfig();
@@ -210,19 +216,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            } 
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsMissingAccountNumber() {
             var bankPayment = FasterPaymentsConfig();
@@ -230,19 +239,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsMissingAccountName() {
             var bankPayment = FasterPaymentsConfig();
@@ -250,19 +262,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields payment_method.bank_transfer.bank.name", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadRequest - Request expects the following fields payment_method.bank_transfer.bank.name",
+                    e.Message);
                 Assert.AreEqual("40005", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void FasterPaymentsMissingSortCode() {
             var bankPayment = FasterPaymentsConfig();
@@ -270,17 +285,20 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
 
         [TestMethod]
@@ -289,19 +307,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
+                bankPayment.Charge(AMOUNT)
                     .WithCurrency("EUR")
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void SepaChargeMissingIban() {
             var bankPayment = SepaConfig();
@@ -309,19 +330,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
+                bankPayment.Charge(AMOUNT)
                     .WithCurrency("EUR")
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void SepaChargeMissingAccountName() {
             var bankPayment = SepaConfig();
@@ -329,55 +353,64 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
+                bankPayment.Charge(AMOUNT)
                     .WithCurrency("EUR")
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields payment_method.bank_transfer.bank.name", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadRequest - Request expects the following fields payment_method.bank_transfer.bank.name",
+                    e.Message);
                 Assert.AreEqual("40005", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
         public void SepaChargeMissingInvalidCurrency() {
             var bankPayment = SepaConfig();
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
-                    .WithCurrency(currency)
+                bankPayment.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
-        
+
         [TestMethod]
-        public void SepaChargeMissingCADCurrency() {
+        public void SepaChargeMissingCadCurrency() {
             var bankPayment = SepaConfig();
 
             var errorFound = false;
             try {
-                bankPayment.Charge(amount)
+                bankPayment.Charge(AMOUNT)
                     .WithCurrency("CAD")
                     .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                     .Execute();
-            } catch (GatewayException e) {
+            }
+            catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", e.Message);
+                Assert.AreEqual(
+                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    e.Message);
                 Assert.AreEqual("50046", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
-            }     
+            }
         }
 
         private void AssertOpenBankingResponse(Transaction trn) {
@@ -387,23 +420,25 @@ namespace GlobalPayments.Api.Tests.GpApi
         }
 
         private BankPayment FasterPaymentsConfig() {
-            var bankPayment = new BankPayment();
-            bankPayment.AccountNumber = "99999999";
-            bankPayment.SortCode = "407777";
-            bankPayment.AccountName = "Minal";
-            bankPayment.Countries = new List<string>() { "GB", "IE" };
-            bankPayment.ReturnUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net";
-            bankPayment.StatusUpdateUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net";
+            var bankPayment = new BankPayment {
+                AccountNumber = "99999999",
+                SortCode = "407777",
+                AccountName = "Minal",
+                Countries = new List<string>() { "GB", "IE" },
+                ReturnUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
+                StatusUpdateUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net"
+            };
 
             return bankPayment;
         }
 
         private BankPayment SepaConfig() {
-            var bankPayment = new BankPayment();
-            bankPayment.Iban = "GB33BUKB20201555555555";
-            bankPayment.AccountName = "AccountName";
-            bankPayment.ReturnUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net";
-            bankPayment.StatusUpdateUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net";
+            var bankPayment = new BankPayment {
+                Iban = "GB33BUKB20201555555555",
+                AccountName = "AccountName",
+                ReturnUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net",
+                StatusUpdateUrl = "https://7b8e82a17ac00346e91e984f42a2a5fb.m.pipedream.net"
+            };
 
             return bankPayment;
         }

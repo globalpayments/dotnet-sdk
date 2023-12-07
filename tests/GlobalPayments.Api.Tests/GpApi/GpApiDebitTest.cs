@@ -1,6 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
@@ -14,13 +13,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         [TestInitialize]

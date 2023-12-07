@@ -5,9 +5,7 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Environment = GlobalPayments.Api.Entities.Environment;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
@@ -21,22 +19,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestInitialize]
         public void TestInitialize() {
-            config = new GpApiConfig {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Channel = Channel.CardNotPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestConsoleLogger(),
-                // DO NO DELETE - usage example for some settings
-                //DynamicHeaders = new Dictionary<string, string>
-                //{
-                //    ["x-gp-platform"] = "prestashop;version=1.7.2",
-                //    ["x-gp-extension"] = "coccinet;version=2.4.1"
-                //}
-            };
-            
+            config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
 
             card = new CreditCardData {
@@ -557,12 +540,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CardTokenizationThenPayingWithToken_SingleToMultiUse()
         {
             var permissions = new[] { "PMT_POST_Create_Single" };
-            var gpApiConfig = new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                RequestLogger = new RequestConsoleLogger(),
-                Permissions = permissions
-            };
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            gpApiConfig.Permissions = permissions;
 
             ServicesContainer.ConfigureService(gpApiConfig, "singleUseToken");
             var token = card.Tokenize(paymentMethodUsageMode: PaymentMethodUsageMode.Single, configName:"singleUseToken");
@@ -712,19 +691,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditVerify_CP() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                Environment = Environment.TEST,
-                AppId = "zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz",
-                AppKey = "GAMlgEojm6hxZTLI",
-                SecondsToExpire = 60,
-                Channel = Channel.CardPresent,
-                MerchantId = merchantId,
-                AccessTokenInfo = new AccessTokenInfo {
-                    TransactionProcessingAccountName = "transaction_processing",
-                    TokenizationAccountName = "transaction_processing"
-                },
-                RequestLogger = new RequestConsoleLogger()
-            });
+            var gpApiConfig = GpApiConfigSetup("zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz", "GAMlgEojm6hxZTLI", Channel.CardNotPresent);
+            gpApiConfig.AccessTokenInfo = new AccessTokenInfo {
+                TransactionProcessingAccountName = "transaction_processing",
+                TokenizationAccountName = "transaction_processing"
+            };
+            ServicesContainer.ConfigureService(gpApiConfig);
             card.CardPresent = true;
             card.Cvn = "123";
             
@@ -741,19 +713,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CreditSaleWithManualEntryMethod() {
             foreach (Channel channel in Enum.GetValues(typeof(Channel))) {
                 foreach (ManualEntryMethod entryMethod in Enum.GetValues(typeof(ManualEntryMethod))) {
-                    ServicesContainer.ConfigureService(new GpApiConfig {
-                        Environment = Environment.TEST,
-                        AppId = "zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz",
-                        AppKey = "GAMlgEojm6hxZTLI",
-                        SecondsToExpire = 60,
-                        Channel = channel,
-                        MerchantId = merchantId,
-                        AccessTokenInfo = new AccessTokenInfo {
-                            TransactionProcessingAccountName = "transaction_processing",
-                            TokenizationAccountName = "transaction_processing"
-                        },
-                        RequestLogger = new RequestConsoleLogger()
-                    });
+                    var gpApiConfig = GpApiConfigSetup("zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz", "GAMlgEojm6hxZTLI", channel);
+                    gpApiConfig.AccessTokenInfo = new AccessTokenInfo {
+                        TransactionProcessingAccountName = "transaction_processing",
+                        TokenizationAccountName = "transaction_processing"
+                    };
+                    gpApiConfig.MerchantId = merchantId;
+                    ServicesContainer.ConfigureService(gpApiConfig);
+                    
                     if (channel == Channel.CardPresent)
                         card.CardPresent = true;
                     card.Cvn = "123";
@@ -773,19 +740,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleWithEntryMethod() {
             foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod))) {
-                ServicesContainer.ConfigureService(new GpApiConfig {
-                    Environment = Environment.TEST,
-                    AppId = "zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz",
-                    AppKey = "GAMlgEojm6hxZTLI",
-                    SecondsToExpire = 60,
-                    Channel = Channel.CardPresent,
-                    AccessTokenInfo = new AccessTokenInfo {
-                        TransactionProcessingAccountName = "transaction_processing",
-                        TokenizationAccountName = "transaction_processing"
-                    },
-                    MerchantId = merchantId,
-                    RequestLogger = new RequestConsoleLogger()
-                });
+                var gpApiConfig = GpApiConfigSetup("zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz", "GAMlgEojm6hxZTLI", Channel.CardPresent);
+                gpApiConfig.AccessTokenInfo = new AccessTokenInfo {
+                    TransactionProcessingAccountName = "transaction_processing",
+                    TokenizationAccountName = "transaction_processing"
+                };
+                gpApiConfig.MerchantId = merchantId;
+                ServicesContainer.ConfigureService(gpApiConfig);
 
                 var creditTrackData = new CreditTrackData {
                     TrackData =

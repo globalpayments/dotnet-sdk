@@ -6,7 +6,6 @@ using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
@@ -34,16 +33,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Country = "GB",
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         public GpApi3DSecureTest() {
@@ -678,21 +669,44 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void ExemptionSaleTransaction()
-        {
+        public void ExemptionSaleTransaction() {
             card.Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_2;
 
-            var threeDS = new ThreeDSecure();
-            threeDS.ExemptStatus = ExemptStatus.LOW_VALUE;
-            card.ThreeDSecure = threeDS;
-        
+            ThreeDSecure threeDs = new ThreeDSecure {
+                ExemptStatus = ExemptStatus.LOW_VALUE
+            };
+            card.ThreeDSecure = threeDs;
+
             var response = card.Charge(Amount)
-                        .WithCurrency(Currency)
-                        .Execute();
+                .WithCurrency(Currency)
+                .Execute();
 
             Assert.IsNotNull(response);
             Assert.AreEqual("SUCCESS", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+        }
+
+        [TestMethod]
+        public void ChargeTransaction_WithRandom3DSValues() {
+            card.Number = GpApi3DSTestCards.CARD_CHALLENGE_REQUIRED_V2_1;
+
+            ThreeDSecure threeDs = new ThreeDSecure {
+                AuthenticationValue = Guid.NewGuid().ToString(),
+                DirectoryServerTransactionId = Guid.NewGuid().ToString(),
+                ServerTransactionId = Guid.NewGuid().ToString(),
+                Eci = Guid.NewGuid().ToString(),
+                MessageVersion = Guid.NewGuid().ToString()
+            };
+            
+            card.ThreeDSecure = threeDs;
+
+            var response = card.Charge(Amount)
+                    .WithCurrency(Currency)
+                    .Execute();
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
         }
     }
 
