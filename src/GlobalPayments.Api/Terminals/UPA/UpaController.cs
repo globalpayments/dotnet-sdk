@@ -264,7 +264,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 return null;
             }
 
-            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonObject = Encoding.UTF8.GetString(response);
 
             if(_logger.IsDebugEnabled)
                 _logger.Debug($"Raw Response: {jsonObject}");

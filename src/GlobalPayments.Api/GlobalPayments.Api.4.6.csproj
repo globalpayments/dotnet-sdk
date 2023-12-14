@@ -655,6 +655,9 @@
     <Compile Include="Terminals\SummaryResponse.cs" />
     <Compile Include="Terminals\TerminalReportType.cs" />
     <Compile Include="Terminals\TerminalUtilities.cs" />
+    <Compile Include="Terminals\UPA\Interfaces\MessageEventArgs.cs" />
+    <Compile Include="Terminals\UPA\Interfaces\StreamBuffer.cs" />
+    <Compile Include="Terminals\UPA\Interfaces\TcpClientAsync.cs" />
     <Compile Include="Terminals\UPA\Interfaces\UpaMicInterface.cs" />
     <Compile Include="Terminals\UPA\Interfaces\UpaTcpInterface.cs" />
     <Compile Include="Terminals\UPA\Request\BaseRequest.cs" />

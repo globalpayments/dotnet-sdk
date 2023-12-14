@@ -1,77 +1,82 @@
-﻿using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.Terminals.Abstractions;
+﻿using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Utils;
 using System;
-using System.Net.Sockets;
+using System.Net;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using log4net;
-using Newtonsoft.Json;
 
-namespace GlobalPayments.Api.Terminals.UPA {
-    internal class UpaTcpInterface : IDeviceCommInterface {
-        TcpClient _client;
-        NetworkStream _stream;
-        ITerminalConfiguration _settings;
-        int _connectionCount = 0;
+namespace GlobalPayments.Api.Terminals.UPA
+{
+    internal class UpaTcpInterface : IDeviceCommInterface
+    {
+
+        private readonly ITerminalConfiguration _settings;
 
         private readonly ILog _logger = LogManager.GetLogger(typeof(UpaTcpInterface));
 
         public event MessageSentEventHandler OnMessageSent;
 
-        public UpaTcpInterface(ITerminalConfiguration settings) {
+        public UpaTcpInterface(ITerminalConfiguration settings)
+        {
             _settings = settings;
         }
 
-        public void Connect() {
-            int connectionTimestamp = Int32.Parse(DateTime.Now.ToString("mmssfff"));
+        public void Connect()
+        {
 
-            if (_client == null) {
-                _client = new TcpClient();
-                _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
-
-                if (Int32.Parse(DateTime.Now.ToString("mmssfff")) > connectionTimestamp + _settings.Timeout) {
-                    throw new MessageException("Connection not established within the specified timeout.");
-                }
-
-                _stream = _client.GetStream();
-                _stream.ReadTimeout = _settings.Timeout;
-            }
-            _connectionCount++;
         }
 
-        public void Disconnect() {
-            _connectionCount--;
-            if (_connectionCount == 0) {
-                _stream?.Dispose();
-                _stream = null;
+        public void Disconnect()
+        {
 
-                _client?.Dispose();
-                _client = null;
-            }
         }
 
-        public byte[] Send(IDeviceMessage message) {
-            byte[] buffer = message.GetSendBuffer();
-            var msgValue = string.Empty;
-            var readyReceived = false;
+        public byte[] Send(IDeviceMessage deviceMessage)
+        {
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+
+            var tcs = new TaskCompletionSource<bool>();
+
+            var serverIsBusy = false;
+
             byte[] responseMessage = null;
 
-            Connect();
-            try
+            var buffer = deviceMessage.GetSendBuffer();
+
+            var readyReceived = false;
+
+            var client = new TcpClientAsync
             {
-                var task = _stream.WriteAsync(buffer, 0, buffer.Length);
-
-                if (!task.Wait(_settings.Timeout))
+                IpAddress = IPAddress.Parse(_settings.IpAddress),
+                Port = int.Parse(_settings.Port),
+                AutoReconnect = false,
+                ConnectedCallback = async (c, isReconnected) =>
                 {
-                    throw new MessageException("Terminal did not respond in the given timeout.");
-                }
+                    await c.Send(new ArraySegment<byte>(buffer, 0, buffer.Length), token);
 
-                do
+                    OnMessageSent?.Invoke(deviceMessage.ToString());
+
+                    while (true)
+                    {
+                        await c.StreamBuffer.WaitAsync(token);
+                        if (c.IsClosing)
+                        {
+                            break;
+                        }
+                    }
+                },
+                ReceivedCallback = async (c, count) =>
                 {
-                    var rvalue = _stream.GetTerminalResponseAsync();
+                    var bytes = await c.StreamBuffer.DequeueAsync(count, token);
+
+                    var rvalue = bytes.GetTerminalResponseAsync();
                     if (rvalue != null)
                     {
-                        msgValue = GetResponseMessageType(rvalue);
+                        var msgValue = GetResponseMessageType(rvalue);
 
                         switch (msgValue)
                         {
@@ -80,11 +85,17 @@ namespace GlobalPayments.Api.Terminals.UPA {
                             case UpaMessageType.Nak:
                                 break;
                             case UpaMessageType.Ready:
+                                if (serverIsBusy)
+                                {
+                                    await c.Send(new ArraySegment<byte>(buffer, 0, buffer.Length), token);
+                                    OnMessageSent?.Invoke(deviceMessage.ToString());
+                                    serverIsBusy = false;
+                                }
+
                                 readyReceived = true;
                                 break;
                             case UpaMessageType.Busy:
-                                Disconnect();
-                                Connect();
+                                serverIsBusy = true;
                                 break;
                             case UpaMessageType.TimeOut:
                                 break;
@@ -95,48 +106,61 @@ namespace GlobalPayments.Api.Terminals.UPA {
                                     readyReceived = true; // since reboot doesn't return READY
                                 }
 
-                                SendAckMessageToDevice();
+                                await SendAckMessageToDevice(c);
                                 break;
                             default:
                                 throw new Exception("Message field value is unknown in API response.");
                         }
                     }
+
+                    if (responseMessage != null)
+                    {
+                        c.Disconnect();
+                    }
+                },
+                ClosedCallback = (c, r) => { tcs.SetResult(true); }
+            };
+
+            client.Message += ClientOnMessage();
+
+            var t = Task.WhenAny(client.RunAsync(), tcs.Task);
+
+            t.Wait(token);
+
+            client.Message -= ClientOnMessage();
+
+            client.Dispose();
+
+            return responseMessage;
+
+            EventHandler<MessageEventArgs> ClientOnMessage()
+            {
+                return (s, a) =>
+                {
+                    if (a.Exception == null)
+                    {
+                        _logger.Debug($"Client: {a.Message}");
+                    }
                     else
                     {
-                        // Reset the connection before the next attempt
-                        Disconnect();
-                        Connect();
+                        _logger.Error($"Client: {a.Message}", a.Exception);
                     }
-                } while (!readyReceived);
-
-                if (responseMessage == null)
-                {
-                    throw new DeviceException("The device did not return the expected response.", msgValue);
-                }
-
-                return responseMessage;
-            }
-            catch (Exception exc) {
-                _logger.Error(exc);
-                throw;
-            }
-            finally {
-                OnMessageSent?.Invoke(message.ToString());
-                Disconnect();
+                };
             }
         }
 
-        private byte[] TrimResponse(byte[] value) {
-                return System.Text.Encoding.UTF8.GetBytes(
-                    System.Text.Encoding.UTF8.GetString(value)
-                        .TrimStart((char)ControlCodes.STX, (char)ControlCodes.LF)
-                        .TrimEnd((char)ControlCodes.LF, (char)ControlCodes.ETX)
-            );
+        private static byte[] TrimResponse(byte[] value)
+        {
+            var json = Encoding.UTF8.GetString(value)
+                .TrimStart((char)ControlCodes.STX, (char)ControlCodes.LF)
+                .TrimEnd((char)ControlCodes.LF, (char)ControlCodes.ETX);
+
+            return Encoding.UTF8.GetBytes(json);
         }
 
         private string GetResponseMessageType(byte[] response)
         {
-            var jsonObject = System.Text.Encoding.UTF8.GetString(TrimResponse(response));
+            var jsonObject = Encoding.UTF8.GetString(TrimResponse(response));
             try
             {
                 var jsonDoc = JsonDoc.Parse(jsonObject);
@@ -149,28 +173,32 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
         }
 
-        private void SendAckMessageToDevice() {
+        private static async Task SendAckMessageToDevice(TcpClientAsync c)
+        {
             var doc = new JsonDoc();
             doc.Set("message", UpaMessageType.Ack);
 
             var message = TerminalUtilities.BuildUpaRequest(doc.ToString());
             var ackBuffer = message.GetSendBuffer();
 
-            _stream.Write(ackBuffer, 0, ackBuffer.Length);
+            await c.Send(new ArraySegment<byte>(ackBuffer, 0, ackBuffer.Length));
         }
 
-        private bool IsNonReadyResponse(byte[] responseMessage) {
-            var responseMessageString = System.Text.Encoding.UTF8.GetString(responseMessage);
+        private static bool IsNonReadyResponse(byte[] responseMessage)
+        {
+            var responseMessageString = Encoding.UTF8.GetString(responseMessage);
             var response = JsonDoc.Parse(responseMessageString);
             var data = response.Get("data");
-            if (data == null) {
+            if (data == null)
+            {
                 return false;
             }
+
             var cmdResult = data.Get("cmdResult");
             return (
-                    data.GetValue<string>("response") == UpaTransType.Reboot ||
-                    (cmdResult != null && cmdResult.GetValue<string>("result") == "Failed")
-                );
+                data.GetValue<string>("response") == UpaTransType.Reboot ||
+                (cmdResult != null && cmdResult.GetValue<string>("result") == "Failed")
+            );
         }
     }
 }
