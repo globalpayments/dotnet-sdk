@@ -12,22 +12,10 @@ namespace GlobalPayments.Api.Tests.GpApi
     public class FileProcessingTest : BaseGpApiTests {
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "fWkEqBHQNyLrWCAtp1vCWDbo10kf5jr6",
-                AppKey = "EkOH93AQKuGlj8Ty",
-                Country = "US",
-                Channel = Channel.CardPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                AccessTokenInfo = new AccessTokenInfo {
-                    TransactionProcessingAccountName = "transaction_processing"
-                },
-                StatusUrl = "https://eo9faqlbl8wkwmx.m.pipedream.net/",
-                // RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt"),
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            ServicesContainer.RemoveConfig();
+            var gpApiConfig = GpApiConfigSetup("fWkEqBHQNyLrWCAtp1vCWDbo10kf5jr6", "EkOH93AQKuGlj8Ty", Channel.CardPresent);
+            gpApiConfig.StatusUrl = "https://eo9faqlbl8wkwmx.m.pipedream.net/";
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         [TestMethod]

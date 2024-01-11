@@ -1364,7 +1364,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             var config = new GpEcomConfig();
             config.MerchantId = "openbankingsandbox";
             config.SharedSecret = "sharedsecret";
-            config.AccountId = "internet3";
+            config.AccountId = "internet";
             config.ServiceUrl = "https://pay.sandbox.realexpayments.com/pay";
             config.EnableBankPayment = true;
             config.HostedPaymentConfig = new HostedPaymentConfig

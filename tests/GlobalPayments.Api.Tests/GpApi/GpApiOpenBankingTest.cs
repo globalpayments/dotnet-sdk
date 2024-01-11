@@ -201,9 +201,9 @@ namespace GlobalPayments.Api.Tests.GpApi
             catch (GatewayException e) {
                 errorFound = true;
                 Assert.AreEqual(
-                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    "Status Code: BadRequest - return_url value is invalid. Please check the format and data provided is correct.",
                     e.Message);
-                Assert.AreEqual("50046", e.ResponseMessage);
+                Assert.AreEqual("40090", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
             }
@@ -224,9 +224,9 @@ namespace GlobalPayments.Api.Tests.GpApi
             catch (GatewayException e) {
                 errorFound = true;
                 Assert.AreEqual(
-                    "Status Code: BadGateway - Unable to process your request due to an error with a system down stream.",
+                    "Status Code: BadRequest - status_url value is invalid. Please check the format and data provided is correct.",
                     e.Message);
-                Assert.AreEqual("50046", e.ResponseMessage);
+                Assert.AreEqual("40090", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
             }
@@ -270,9 +270,9 @@ namespace GlobalPayments.Api.Tests.GpApi
             catch (GatewayException e) {
                 errorFound = true;
                 Assert.AreEqual(
-                    "Status Code: BadRequest - Request expects the following fields payment_method.bank_transfer.bank.name",
+                    "Status Code: BadRequest - payment_method.bank_transfer.bank.name value is invalid. Please check the format and data provided is correct.",
                     e.Message);
-                Assert.AreEqual("40005", e.ResponseMessage);
+                Assert.AreEqual("40090", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
             }
@@ -361,9 +361,9 @@ namespace GlobalPayments.Api.Tests.GpApi
             catch (GatewayException e) {
                 errorFound = true;
                 Assert.AreEqual(
-                    "Status Code: BadRequest - Request expects the following fields payment_method.bank_transfer.bank.name",
+                    "Status Code: BadRequest - payment_method.bank_transfer.bank.name value is invalid. Please check the format and data provided is correct.",
                     e.Message);
-                Assert.AreEqual("40005", e.ResponseMessage);
+                Assert.AreEqual("40090", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
             }

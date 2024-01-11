@@ -306,7 +306,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void StoredCredential_ReceiptIn() {
-            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("03e28f0e-492e-80bd-20ec318e9334", "3c4af936-483e-a393-f558bec2fb2a");
+            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("20190729-GlobalApi", "20190729-GlobalApi-Credit");
 
             StoredCredential storedCredential = new StoredCredential {
                 Type = StoredCredentialType.Recurring,
@@ -326,7 +326,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void StoredCredential_ReceiptIn_OTB() {
-            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("03e28f0e-492e-80bd-20ec318e9334", "3c4af936-483e-a393-f558bec2fb2a");
+            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("20190729-GlobalApi", "20190729-GlobalApi-Credit");
 
             StoredCredential storedCredential = new StoredCredential {
                 Type = StoredCredentialType.Recurring,

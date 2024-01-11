@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v8.0.1 (12/06/23)
+## Latest - v8.0.3 (01/11/24)
+
+#### Bug fixes 
+
+- [ProPay]: ProPay mapping response for achOut and flashFunds separately.
+- [Transit]: Amount in refund transaction bigger than 999.
+
+## v8.0.1 (12/06/23)
 
 #### Enhancements 
 

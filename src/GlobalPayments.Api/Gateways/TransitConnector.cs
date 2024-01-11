@@ -202,7 +202,7 @@ namespace GlobalPayments.Api.Gateways {
                 .Set("developerID", DeveloperId)
                 .Set("deviceID", DeviceId)
                 .Set("transactionKey", TransactionKey)
-                .Set("transactionAmount", builder.Amount.ToCurrencyString())
+                .Set("transactionAmount", builder.Amount.ToCurrencyString(true))
                 .Set("tip", builder.Gratuity.ToCurrencyString())
                 .Set("transactionID", builder.TransactionId)
                 .Set("isPartialShipment", builder.MultiCapture ? "Y" : null)

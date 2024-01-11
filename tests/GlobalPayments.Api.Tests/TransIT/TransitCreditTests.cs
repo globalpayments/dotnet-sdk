@@ -64,6 +64,27 @@ namespace GlobalPayments.Api.Tests.TransIT {
         }
 
         [TestMethod]
+        public void Refund_Manual_AmountBiggerThan1000()
+        {
+            decimal amount = 2156.56m;
+            var response = card.Charge(amount)
+                .WithCurrency("USD")
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+            Assert.AreEqual(amount, response.AuthorizedAmount);
+
+            var refundResponse = Transaction.FromId(response.TransactionId)
+               .Refund(amount)
+               .WithCurrency("USD")
+               .Execute();
+
+            Assert.IsNotNull(refundResponse);
+            Assert.AreEqual("00", refundResponse.ResponseCode);
+            Assert.AreEqual(amount, response.AuthorizedAmount);
+        }
+
+        [TestMethod]
         public void Sale_Swiped() {
             var response = track.Charge(AMOUNT)
                 .WithCurrency("USD")
@@ -91,18 +112,19 @@ namespace GlobalPayments.Api.Tests.TransIT {
 
         [TestMethod]
         public void Auth_Swiped() {
-            var response = track.Authorize(AMOUNT)
+            decimal amount = 2156.56m;
+            var response = track.Authorize(amount)
                 .WithCurrency("USD")
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
-            Assert.AreEqual(AMOUNT, response.AuthorizedAmount);
+            Assert.AreEqual(amount, response.AuthorizedAmount);
 
             var captureResponse = response.Capture()
                 .Execute();
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode, captureResponse.ResponseMessage);
-            Assert.AreEqual(AMOUNT, response.AuthorizedAmount);
+            Assert.AreEqual(amount, response.AuthorizedAmount);
         }
 
         [TestMethod]
