@@ -134,11 +134,11 @@ namespace GlobalPayments.Api.Terminals.UPA
                 {
                     if (a.Exception == null)
                     {
-                        _logger.Debug($"Client: {a.Message}");
+                        _logger.Debug($"Tcp Client: {a.Message}");
                     }
                     else
                     {
-                        _logger.Error($"Client: {a.Message}", a.Exception);
+                        _logger.Error($"Tcp Client: {a.Message}", a.Exception);
                     }
                 };
             }
