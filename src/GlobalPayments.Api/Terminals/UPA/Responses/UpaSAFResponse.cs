@@ -69,6 +69,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                                         TransactionType = record.GetValue<string>("transactionType"),
                                         TerminalRefNumber = record.GetValue<string>("transId"), // The sample XML says tranNo?
                                         ReferenceNumber = record.GetValue<string>("referenceNumber"),
+                                        SafReferenceNumber = record.GetValue<string>("safReferenceNumber"),                                        
                                         GratuityAmount = record.GetValue<decimal>("tipAmount"),
                                         TaxAmount = record.GetValue<decimal>("taxAmount"),
                                         Amount = record.GetValue<decimal>("baseAmount"),

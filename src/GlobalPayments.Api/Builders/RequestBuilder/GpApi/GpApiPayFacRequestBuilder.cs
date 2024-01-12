@@ -21,6 +21,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
         {
             _builder = builder;
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            Validate(builder.TransactionType, gateway);
             switch (builder.TransactionType)
             {
                 case TransactionType.Create:
@@ -93,11 +94,57 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                         };
                     }
                     break;
+                case TransactionType.AddFunds:
+                    var dataFunds = new JsonDoc();
+                    dataFunds.Set("account_id", builder.AccountNumber)
+                        .Set("type", builder.PaymentMethodType.ToString() ?? null)
+                        .Set("amount", builder.Amount)
+                        .Set("currency", builder.Currency ?? null)
+                        .Set("payment_method", builder.PaymentMethodName.ToString() ?? null)
+                        .Set("reference", builder.ClientTransactionId ?? GenerationUtils.GenerateOrderId());
+                    return new Request
+                    {
+                        Verb = HttpMethod.Post,
+                        Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{_builder.UserReference.UserId}/settlement/funds",
+                        RequestBody = dataFunds.ToString(),
+                    };
+                    
+                    break;
+                case TransactionType.UploadDocument:
+                    var requestData = new JsonDoc();
+                    requestData.Set("function", builder.DocumentUploadData.DocCategory.ToString())
+                        .Set("b64_content", builder.DocumentUploadData.Document)
+                        .Set("format", builder.DocumentUploadData.DocType.ToString());
+                    return new Request
+                    {
+                            Verb = HttpMethod.Post,
+                            Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{_builder.UserReference.UserId}/documents",
+                            RequestBody = requestData.ToString()
+                    };                    
+                    break;
                 default:
                     break;
             }
 
             return null;
+        }
+
+        private void Validate(TransactionType transactionType, GpApiConnector gateway)
+        {
+            string errorMsg = string.Empty;
+            switch (transactionType) {
+                case TransactionType.AddFunds:
+                    if (string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) && string.IsNullOrEmpty(_builder.UserReference?.UserId)) {
+                        errorMsg = "property UserId or config MerchantId cannot be null for this transactionType";
+                    }
+                    break;
+                default:
+                break;
+            }
+
+            if (!string.IsNullOrEmpty(errorMsg)) {
+                throw new GatewayException(errorMsg);
+            }
         }
 
         private static Dictionary<string, object> MapAddress(Address address, string countryCodeType = null, string functionKey = null)

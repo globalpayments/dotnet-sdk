@@ -8,8 +8,7 @@ using System.Text;
 
 namespace GlobalPayments.Api.Entities
 {
-    public class User
-    {
+    public class User {
         /// <summary>
         /// This is a label to identify the user
         /// </summary>
@@ -24,11 +23,11 @@ namespace GlobalPayments.Api.Entities
         /// The date and time the resource object was last changed.
         /// </summary>
         public DateTime? TimeLastUpdated { get; set; }
-        
+
         public string Email { get; set; }
-        
+
         public List<Address> Addresses { get; set; }
-        
+
         public PhoneNumber ContactPhone { get; set; }
 
         /// <summary>
@@ -46,7 +45,11 @@ namespace GlobalPayments.Api.Entities
 
         public List<Person> PersonList { get; set; }
 
-        public List<PaymentMethodList> PaymentMethods { get; set; }       
+        public List<PaymentMethodList> PaymentMethods { get; set; }
+
+        public Document Document { get; set; }
+
+        public FundsAccountDetails FundsAccountDetails { get; set; }
 
         /// <summary>
         /// Creates an `User` object from an existing user ID.
@@ -75,5 +78,26 @@ namespace GlobalPayments.Api.Entities
 
             return builder;
         }
+
+        public PayFacBuilder<User> UploadDocument(DocumentUploadData data)
+        {
+            PayFacBuilder<User> builder = new PayFacBuilder<User>(TransactionType.UploadDocument)
+                         .WithUserReference(this.UserReference)
+                         .WithDocumentUploadData(data);
+
+            if (UserReference.UserType != null) {
+                builder = builder.WithModifier(EnumConverter.FromDescription<TransactionModifier>(UserReference.UserType.ToString()));
+            }
+            return builder;
+        }
+
+        public PayFacBuilder<User> AddFunds()
+        {
+            PayFacBuilder<User> builder = new PayFacBuilder<User>(TransactionType.AddFunds)
+                         .WithUserReference(this.UserReference);
+            
+            return builder;
+        }
+        
     }
 }

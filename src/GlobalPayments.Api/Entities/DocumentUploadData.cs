@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GlobalPayments.Api.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
@@ -17,14 +18,14 @@ namespace GlobalPayments.Api.Entities
         /// <summary>
         /// The file format of the Document to be uploaded. This property MUST be set if using the Document property directly, but will be set automatically if using the DocumentPath property
         /// </summary>
-        private string _docType;
-        public string DocType
+        private FileType? _docType;
+        public FileType? DocType
         {
             get { return _docType; }
             set
             {
-                if (_validDocTypes.Contains(value)) {
-                    _docType = value;
+                if (_validDocTypes.Contains(value.Value.ToString())) {
+                    _docType = value.Value;
                 }
                 else {
                     throw new Exception("The provided file type is not supported.");
@@ -41,15 +42,15 @@ namespace GlobalPayments.Api.Entities
         /// The type of document you've been asked to provide by ProPay's Risk team. Valid values are:
         /// Verification, FraudHolds, Underwriting, RetrievalRequest
         /// </summary>
-        public string DocCategory { get; set; }
+        public DocumentCategory? DocCategory { get; set; }
         public string DocumentPath { 
             set
             {
                 var docPath = value;
                 if (docPath != null) {
-                        var docType = docPath.Substring(docPath.LastIndexOf('.') + 1);
+                        var docType = docPath.Substring(docPath.LastIndexOf('.') + 1).ToUpper();
                         if (_validDocTypes.Contains(docType)) {
-                            DocType = docType;
+                            DocType = (FileType)Enum.Parse(typeof(FileType), docType);
                             Document = Convert.ToBase64String(System.IO.File.ReadAllBytes(docPath));
                         }
                         else {
@@ -65,15 +66,15 @@ namespace GlobalPayments.Api.Entities
         private ReadOnlyCollection<string> _validDocTypes { get; } = new ReadOnlyCollection<string>(
             new string[]
             {
-                "tif",
-                "tiff",
-                "bmp",
-                "jpg",
-                "jpeg",
-                "gif",
-                "png",
-                "doc",
-                "docx"
+                "TIF",
+                "TIFF",
+                "BMP",
+                "JPG",
+                "JPEG",
+                "GIF",
+                "PNG",
+                "DOC",
+                "DOCX"
             }
         );
     }

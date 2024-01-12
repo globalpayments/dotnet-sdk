@@ -6,12 +6,9 @@ using GlobalPayments.Api.Utils;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using log4net;
 
 namespace GlobalPayments.Api.Terminals.UPA {
     public class UpaController : DeviceController {
-
-        private readonly ILog _logger = LogManager.GetLogger(typeof(UpaController));
 
         internal override IDeviceInterface ConfigureInterface() {
             if (_interface == null) {
@@ -51,9 +48,6 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
             string jsonObject = Encoding.UTF8.GetString(response);
 
-            if(_logger.IsDebugEnabled)
-                _logger.Debug($"Raw Response: {jsonObject}");
-
             var jsonParse = JsonDoc.Parse(jsonObject);
 
             switch (builder.ReportType) {
@@ -67,27 +61,20 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
         }
 
-        private bool IsTokenRequestApplicable(bool isTipAdjust, TransactionType transactionType) {
-            if (isTipAdjust) {
-                return true;
-            }
-            else {
-                switch (transactionType) {
-                    case TransactionType.Tokenize:
-                    case TransactionType.Refund:
-                        return true;
-                    default:
-                        return false;
-                }
-            }
+        private bool IsTokenRequestApplicable(TransactionType transactionType) {            
+            switch (transactionType) {
+                case TransactionType.Tokenize:
+                case TransactionType.Refund:
+                    return true;
+            default:
+                    return false;
+            }            
         }
 
         internal IDeviceMessage BuildProcessTransaction(TerminalAuthBuilder builder) {
             var pmt = builder.PaymentMethodType;
             var transType = builder.TransactionType;
             var transModifier = builder.TransactionModifier;
-            bool isTipAdjust = IsTipAdjust(transType, builder.Gratuity);
-            bool isCardHSAFSA = IsCardHSAFSA(builder.AutoSubstantiation);
 
             if (pmt != PaymentMethodType.Credit && pmt != PaymentMethodType.Debit && pmt != PaymentMethodType.EBT) {
                 throw new UnsupportedTransactionException("The supplied payment method type is not supported");
@@ -103,7 +90,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
             var baseRequest = doc.SubElement("data");
             baseRequest.Set("command", MapTransactionType(transType, transModifier, builder.RequestMultiUseToken, builder.Gratuity));
-            baseRequest.Set("EcrId", builder.EcrId);
+            baseRequest.Set("EcrId", builder.EcrId.ToString());
             baseRequest.Set("requestId", requestId.ToString());
 
             if (transType != TransactionType.Balance) {
@@ -111,10 +98,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
                 var txnParams = txnData.SubElement("params");
                 txnParams.Set("clerkId", builder.ClerkId);
-                if (transType == TransactionType.Tokenize || transType == TransactionType.Verify) {
-                    txnParams.Set("cardIsHSAFSA", isCardHSAFSA ? "1" : "0");
-                }
-                if (!IsTokenRequestApplicable(isTipAdjust, transType)) {
+                
+                if (!IsTokenRequestApplicable(transType)) {
                     txnParams.Set("tokenRequest", builder.RequestMultiUseToken ? "1" : "0");
                 }
                 if (builder.PaymentMethod is CreditCardData) {
@@ -129,17 +114,19 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 }
                 txnParams.Set("lineItemLeft", builder.LineItemLeft);
                 txnParams.Set("lineItemRight", builder.LineItemRight);
-
+                if (transType == TransactionType.Auth)
+                    txnParams.Set("invoiceNbr", builder.InvoiceNumber);
                 if (builder.ShippingDate != DateTime.MinValue && builder.InvoiceNumber != null) {
                     txnParams.Set("directMktInvoiceNbr", builder.InvoiceNumber);
                     txnParams.Set("directMktShipMonth", builder.ShippingDate.Month.ToString("00"));
                     txnParams.Set("directMktShipDay", builder.ShippingDate.Day.ToString("00"));
                 }
 
-                if (transType != TransactionType.Verify && transType != TransactionType.Refund && !isTipAdjust && transType != TransactionType.Tokenize) {
+                if (transType != TransactionType.Verify && transType != TransactionType.Refund && transType != TransactionType.Tokenize) {
                     var transaction = txnData.SubElement("transaction");
                     if (transType == TransactionType.Auth) {
                         transaction.Set("amount", ToCurrencyString(builder.Amount));
+                        transaction.Set("preAuthAmount", ToCurrencyString(builder.PreAuthAmount));
                     }
                     else {
                         transaction.Set("baseAmount", ToCurrencyString(builder.Amount));
@@ -152,13 +139,13 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     }
 
                     transaction.Set("referenceNumber", builder.TerminalRefNumber);
-                    transaction.Set("cardIsHSAFSA", isCardHSAFSA ? "1" : "0");
 
 
                     transaction.Set("prescriptionAmount", ToCurrencyString(builder.PrescriptionAmount));
                     transaction.Set("clinicAmount", ToCurrencyString(builder.ClinicAmount));
                     transaction.Set("dentalAmount", ToCurrencyString(builder.DentalAmount));
                     transaction.Set("visionOpticalAmount", ToCurrencyString(builder.VisionOpticalAmount));
+                    transaction.Set("cardAcquisition", EnumConverter.GetMapping(Target.UPA, builder.CardAcquisition));
                 }
 
                 if (transType == TransactionType.Refund) {
@@ -166,14 +153,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     transaction.Set("totalAmount", ToCurrencyString(builder.Amount));
                     transaction.Set("invoiceNbr", builder.InvoiceNumber);
                     transaction.Set("referenceNumber", builder.TerminalRefNumber);
-                }
-
-                if (isTipAdjust) {
-                    var transaction = txnData.SubElement("transaction");
-                    transaction.Set("tranNo", builder.TerminalRefNumber);
-                    transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
-                    transaction.Set("invoiceNbr", builder.InvoiceNumber);
-                }
+                }              
             }
 
             return TerminalUtilities.BuildUpaRequest(doc);
@@ -208,6 +188,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var transType = builder.TransactionType;
             var transModifier = builder.TransactionModifier;
             int requestId = builder.ReferenceNumber;
+            bool isTipAdjust = IsTipAdjust(transType, builder.Gratuity);
+
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
             }
@@ -218,19 +200,29 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var baseRequest = doc.SubElement("data");
             // Possibly update the requestToken parameter in the future if necessary
             baseRequest.Set("command", MapTransactionType(transType, transModifier, false, builder.Gratuity));
-            baseRequest.Set("EcrId", builder.EcrId);
+            baseRequest.Set("EcrId", builder.EcrId.ToString());
             baseRequest.Set("requestId", requestId.ToString());
 
             var txnData = baseRequest.SubElement("data");
 
             var transaction = txnData.SubElement("transaction");
-            transaction.Set("referenceNumber", builder.TransactionId ?? StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0'));
-            transaction.Set("amount", ToCurrencyString(builder.Amount));
-            transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
-            transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
-            transaction.Set("taxIndicator", builder.TaxExempt);
-            transaction.Set("invoiceNbr", builder.InvoiceNumber);
-            transaction.Set("processCPC", builder.ProcessCPC);
+            if (isTipAdjust)
+            {               
+                transaction.Set("tranNo", builder.TerminalRefNumber);
+                transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
+                transaction.Set("invoiceNbr", builder.InvoiceNumber);
+            }
+            else
+            {
+                transaction.Set("referenceNumber", builder.TransactionId ?? StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0'));
+                transaction.Set("amount", ToCurrencyString(builder.Amount));
+                transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
+                transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
+                transaction.Set("taxIndicator", builder.TaxExempt);
+                transaction.Set("invoiceNbr", builder.InvoiceNumber);
+                transaction.Set("processCPC", builder.ProcessCPC);
+            }
+            
 
             return TerminalUtilities.BuildUpaRequest(doc.ToString());
         }
@@ -265,9 +257,6 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
 
             var jsonObject = Encoding.UTF8.GetString(response);
-
-            if(_logger.IsDebugEnabled)
-                _logger.Debug($"Raw Response: {jsonObject}");
 
             var jsonParse = JsonDoc.Parse(jsonObject);
 
@@ -330,20 +319,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
         bool IsTipAdjust(TransactionType transType, decimal? gratuity) {
             return (transType == TransactionType.Edit &&
                 (gratuity != null || gratuity > 0m));
-        }
-
-        private bool IsCardHSAFSA(AutoSubstantiation autoSubstantiation) {
-            if (autoSubstantiation != null) {
-                return (autoSubstantiation.PrescriptionSubTotal > 0m ||
-                        autoSubstantiation.ClinicSubTotal > 0m ||
-                        autoSubstantiation.DentalSubTotal > 0m ||
-                        autoSubstantiation.VisionSubTotal > 0m ||
-                        autoSubstantiation.CopaySubTotal > 0m ||
-                        autoSubstantiation.TotalHealthcareAmount > 0m);
-            }
-            else
-                return false;
-        }
+        }       
 
         protected string ToCurrencyString(decimal? dec) {
             if (!dec.HasValue) {

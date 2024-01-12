@@ -14,14 +14,17 @@ namespace GlobalPayments.Api.Terminals.UPA
     {
 
         private readonly ITerminalConfiguration _settings;
-
         private readonly ILog _logger = LogManager.GetLogger(typeof(UpaTcpInterface));
+        private readonly CancellationTokenSource _tokenSource;
 
         public event MessageSentEventHandler OnMessageSent;
+
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         public UpaTcpInterface(ITerminalConfiguration settings)
         {
             _settings = settings;
+            _tokenSource = new CancellationTokenSource();
         }
 
         public void Connect()
@@ -31,13 +34,12 @@ namespace GlobalPayments.Api.Terminals.UPA
 
         public void Disconnect()
         {
-
+            _tokenSource.Cancel();
         }
 
         public byte[] Send(IDeviceMessage deviceMessage)
         {
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
+            var token = _tokenSource.Token;
 
             var tcs = new TaskCompletionSource<bool>();
 
@@ -46,8 +48,6 @@ namespace GlobalPayments.Api.Terminals.UPA
             byte[] responseMessage = null;
 
             var buffer = deviceMessage.GetSendBuffer();
-
-            var readyReceived = false;
 
             var client = new TcpClientAsync
             {
@@ -77,7 +77,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                     if (rvalue != null)
                     {
                         var msgValue = GetResponseMessageType(rvalue);
-
+                        OnMessageSent?.Invoke($"Server Response: {msgValue}");
                         switch (msgValue)
                         {
                             case UpaMessageType.Ack:
@@ -88,11 +88,9 @@ namespace GlobalPayments.Api.Terminals.UPA
                                 if (serverIsBusy)
                                 {
                                     await c.Send(new ArraySegment<byte>(buffer, 0, buffer.Length), token);
-                                    OnMessageSent?.Invoke(deviceMessage.ToString());
+                                    OnMessageSent?.Invoke("Resending Request...");
                                     serverIsBusy = false;
                                 }
-
-                                readyReceived = true;
                                 break;
                             case UpaMessageType.Busy:
                                 serverIsBusy = true;
@@ -101,11 +99,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                                 break;
                             case UpaMessageType.Msg:
                                 responseMessage = TrimResponse(rvalue);
-                                if (IsNonReadyResponse(responseMessage))
-                                {
-                                    readyReceived = true; // since reboot doesn't return READY
-                                }
-
+                                OnMessageSent?.Invoke($"Sending {UpaMessageType.Ack}...");
                                 await SendAckMessageToDevice(c);
                                 break;
                             default:
@@ -115,6 +109,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
                     if (responseMessage != null)
                     {
+                        OnMessageReceived?.Invoke(Encoding.UTF8.GetString(responseMessage));
                         c.Disconnect();
                     }
                 },
@@ -173,7 +168,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             }
         }
 
-        private static async Task SendAckMessageToDevice(TcpClientAsync c)
+        private static Task SendAckMessageToDevice(TcpClientAsync c)
         {
             var doc = new JsonDoc();
             doc.Set("message", UpaMessageType.Ack);
@@ -181,7 +176,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             var message = TerminalUtilities.BuildUpaRequest(doc.ToString());
             var ackBuffer = message.GetSendBuffer();
 
-            await c.Send(new ArraySegment<byte>(ackBuffer, 0, ackBuffer.Length));
+            return c.Send(new ArraySegment<byte>(ackBuffer, 0, ackBuffer.Length));
         }
 
         private static bool IsNonReadyResponse(byte[] responseMessage)

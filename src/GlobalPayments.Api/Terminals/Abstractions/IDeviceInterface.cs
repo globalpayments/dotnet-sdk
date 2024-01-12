@@ -1,12 +1,16 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
+using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
 
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
+        event MessageReceivedEventHandler OnMessageReceived;
         string EcrId { get; set; }
         #region Admin Calls
         void Cancel();
@@ -22,8 +26,21 @@ namespace GlobalPayments.Api.Terminals {
         string SendCustomMessage(DeviceMessage message);
         IDeviceResponse SendFile(SendFileType fileType, string filePath);
         ISAFResponse SendStoreAndForward();
+        ISafDeleteFileResponse DeleteStoreAndForwardFile(SafIndicator safIndicator);
+        ISAFResponse DeleteSaf(string safreferenceNumer, string tranNo=null);
+        IDeviceResponse RegisterPOS(string appName, int launchOrder = 0, bool remove = false, int silent = 0);
         IDeviceResponse SetStoreAndForwardMode(bool enabled);
+        IDeviceResponse SetStoreAndForwardMode(SafMode safMode);
+        IDeviceResponse SetStoreAndForwardMode(SafMode safMode, string startDateTime = null
+            , string endDateTime = null, string durationInDays = null, string maxNumber = null, string totalCeilingAmount = null
+            , string ceilingAmountPerCardType = null, string haloPerCardType = null, string safUploadMode = null
+            , string autoUploadIntervalTimeInMilliseconds = null, string deleteSafConfirmation = null);
+        ISafParamsResponse GetStoreAndForwardParams();
+        ISafSummaryReport GetSafSummaryReport(SafIndicator safIndicator);
+        ISafUploadResponse SafUpload(SafIndicator safUploadIndicator); 
         IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
+        IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData);
+        ISignatureResponse PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption);
         #endregion
 
         #region reporting
@@ -35,21 +52,27 @@ namespace GlobalPayments.Api.Terminals {
 
         #region Batch Calls
         IBatchCloseResponse BatchClose();
+        IBatchClearResponse BatchClear();
         IEODResponse EndOfDay();
         #endregion
 
         #region Credit Calls
         //TerminalAuthBuilder CreditAuth(decimal? amount = null);
         //TerminalManageBuilder CreditCapture(decimal? amount = null);
-        //TerminalAuthBuilder CreditRefund(decimal? amount = null);
-        //TerminalAuthBuilder CreditSale(decimal? amount = null);
+        TerminalAuthBuilder CreditRefund(decimal amount);
+        TerminalAuthBuilder CreditSale(decimal amount);
         //TerminalAuthBuilder CreditVerify();
-        //TerminalManageBuilder CreditVoid();
+        TerminalManageBuilder CreditVoid();
         #endregion
 
         #region Debit Calls
-        //TerminalAuthBuilder DebitSale(decimal? amount = null);
+        TerminalAuthBuilder DebitSale(decimal amount);
         //TerminalAuthBuilder DebitRefund(decimal? amount = null);
+        #endregion
+
+        #region Voids
+        TerminalManageBuilder DebitVoid();
+        TerminalManageBuilder VoidRefund();
         #endregion
 
         #region Gift Calls
@@ -72,14 +95,20 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder Balance();
         TerminalManageBuilder Capture(decimal? amount = null);
         TerminalAuthBuilder Refund(decimal? amount = null);
+        TerminalManageBuilder RefundById(decimal? amount = null);
         TerminalAuthBuilder Sale(decimal? amount = null);
         TerminalAuthBuilder Verify();
         TerminalManageBuilder Void();
         TerminalAuthBuilder Withdrawal(decimal? amount = null);
-        TerminalAuthBuilder TipAdjust(decimal? amount = null);
+        TerminalManageBuilder TipAdjust(decimal? amount = null);
         TerminalAuthBuilder Tokenize();
         TerminalAuthBuilder AuthCompletion();
         TerminalManageBuilder DeletePreAuth();
+        TerminalManageBuilder IncreasePreAuth(decimal amount);
+        #endregion
+
+        #region Report Calls        
+        TerminalReportBuilder GetTransactionDetails(TransactionType transactionType, string transactionId, TransactionIdType transactionIdType);
         #endregion
     }
 }

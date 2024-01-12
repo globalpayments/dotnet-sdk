@@ -43,6 +43,7 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
                 Status = root.GetValue<string>("MultipleMessage");
                 DeviceResponseCode = NormalizeResponse(root.GetValue<string>("Result"));
                 DeviceResponseText = root.GetValue<string>("ResultText");
+                DeviceId = root.GetValue<string>("DeviceId");
 
                 if ((DeviceResponseCode.Equals("00", StringComparison.OrdinalIgnoreCase)) || (DeviceResponseCode.Equals("2501", StringComparison.OrdinalIgnoreCase))){
                     MapResponse(root);
@@ -127,6 +128,11 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
         /// the approval code issued by the device
         /// </summary>
         public string ApprovalCode { get; set; }
+
+        /// <summary>
+        /// transaction was approved by the terminal in SAF mode
+        /// </summary>
+        public string StoreAndForward { get; set; }
 
         /// <summary>
         /// the amount of the transaction

@@ -23,6 +23,7 @@ namespace GlobalPayments.Api.Builders {
                 return null;
             }
         }
+        internal decimal? batchDeviceId { get; set; }
         internal string BatchReference { get; set; }
         internal IEnumerable<Bill> Bills { get; set; }
         internal string CardType {
@@ -492,7 +493,7 @@ namespace GlobalPayments.Api.Builders {
                 PaymentMethod is TransactionReference &&
             PaymentMethod.PaymentMethodType == PaymentMethodType.BankPayment) {
             var obClient = ServicesContainer.Instance.GetOpenBanking(configName);
-                if (obClient != client) {
+                if (obClient != null && obClient != client) {
                     return obClient.ManageOpenBanking(this);
                 }
             }

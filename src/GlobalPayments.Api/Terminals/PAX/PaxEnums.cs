@@ -31,6 +31,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public const string A52_COMPLETE_CONTACTLESS_EMV = "A52";
         public const string A54_SET_SAF_PARAMETERS = "A54";
         public const string A56_SHOW_TEXTBOX = "A56";
+        public const string A78_GET_SAF_PARAMETERS = "A78";
 
         // TRANSACTION REQUESTS
         public const string T00_DO_CREDIT = "T00";
@@ -86,6 +87,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public const string A53_RSP_COMPLETE_CONTACTLESS_EMV = "A53";
         public const string A55_RSP_SET_SAF_PARAMETERS = "A55";
         public const string A57_RSP_SHOW_TEXTBOX = "A57";
+        public const string A79_RSP_GET_SAF_PARAMETERS = "A79";
 
         // TRANSACTION RESPONSES
         public const string T01_RSP_DO_CREDIT = "T01";

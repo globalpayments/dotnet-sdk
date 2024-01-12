@@ -27,10 +27,11 @@ namespace GlobalPayments.Api.Terminals.HPA.Responses {
             TransactionId = response.GetValue<string>("ResponseId", "TransactionId");
             ResponseText = response.GetValue<string>("ResponseText", "ResultText");
             SignatureStatus = response.GetValue<string>("SignatureLine");
-            // StoreAndForward
+            StoreAndForward = response.GetValue<string>("StoreAndForward");
             // TipAdjustAllowed
             TerminalRefNumber = response.GetValue<string>("ReferenceNumber");
             TransactionAmount = response.GetValue<string>("AuthorizedAmount").ToAmount();
+            TipAmount = response.GetValue<string>("TipAmount").ToAmount();
 
             // EMV
             ApplicationId = response.GetValue<string>("EMV_AID");

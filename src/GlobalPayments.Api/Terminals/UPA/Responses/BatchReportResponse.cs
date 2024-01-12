@@ -25,8 +25,9 @@ namespace GlobalPayments.Api.Terminals.UPA
 
             Status = cmdResult.GetValue<string>("result");
             if (string.IsNullOrEmpty(Status)) {
-                DeviceResponseCode = cmdResult.GetValue<string>("errorCode");
-                DeviceResponseText = cmdResult.GetValue<string>("errorMessage");
+                var errorCode = cmdResult.GetValue<string>("errorCode");
+                var errorMsg = cmdResult.GetValue<string>("errorMessage");
+                DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
             }
             else {
                 // If the Status is not "Success", there is either nothing to process, or something else went wrong.
@@ -83,8 +84,9 @@ namespace GlobalPayments.Api.Terminals.UPA
                     }
                 }
                 else { // the only other option is "Failed"
-                    DeviceResponseCode = cmdResult.GetValue<string>("errorCode");
-                    DeviceResponseText = cmdResult.GetValue<string>("errorMessage");
+                    var errorCode = cmdResult.GetValue<string>("errorCode");
+                    var errorMsg = cmdResult.GetValue<string>("errorMessage");
+                    DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
                 }
             }
         }

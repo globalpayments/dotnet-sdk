@@ -84,7 +84,7 @@ namespace GlobalPayments.Api {
         /// If false, use the Canadian ProPay endpoints
         /// </summary>
         public bool ProPayUS { get; set; } = true;
-        public bool IsSafDataSupported { get; set; }
+        public bool? IsSafDataSupported { get; set; } = null;
         private string PayPlanEndpoint {
             get {
                 if (

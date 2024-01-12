@@ -61,7 +61,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
     }
 
     public class PaxTerminalResponse : PaxBaseResponse, ITerminalResponse {
-        protected List<string> acceptedCodes = new List<string> { "000000", "100011", "000002" };
+        protected List<string> acceptedCodes = new List<string> { "000000", "000100", "100011", "000002" };
 
         /// <summary>
         /// response code returned by the gateway
@@ -246,9 +246,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
         public string TerminalVerificationResults { get; set; }
 
         public decimal? MerchantFee { get; set; }
-
-        public string RequestId { get; }
-
         public int TranNo { get; set; }
 
         internal PaxTerminalResponse(byte[] buffer, params string[] messageIds) : base(buffer, messageIds) { }

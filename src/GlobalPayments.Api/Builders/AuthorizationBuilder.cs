@@ -7,6 +7,8 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Network.Elements;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using System.Reflection;
+using System.Linq;
 
 namespace GlobalPayments.Api.Builders {
     /// <summary>
@@ -97,6 +99,8 @@ namespace GlobalPayments.Api.Builders {
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
         internal BNPLShippingMethod BNPLShippingMethod {get;set;}
         internal bool MaskedDataResponse { get; set; }
+        internal BlockedCardType CardTypesBlocking { get; set; }
+        internal MerchantCategory? MerchantCategory { get; set; }
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
@@ -847,9 +851,23 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithMaskedDataResponse(bool value)
-        {
+        public AuthorizationBuilder WithMaskedDataResponse(bool value) {
             MaskedDataResponse = value;
+            return this;
+        }
+
+        public AuthorizationBuilder WithBlockedCardType(BlockedCardType cardTypesBlocking) {
+            var hasNulls = cardTypesBlocking.GetType().GetProperties().All(p => p.GetValue(cardTypesBlocking) == null);
+            if (hasNulls) {            
+                throw new BuilderException("No properties set on the object");
+            }
+            CardTypesBlocking = cardTypesBlocking;
+
+            return this;
+        }
+
+        public AuthorizationBuilder WithMerchantCategory(MerchantCategory value) {
+            MerchantCategory = value;
             return this;
         }
 
@@ -987,7 +1005,27 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.Sale)
                 .With(TransactionModifier.EncryptedMobile)
-                .Check(() => PaymentMethod).IsNotNull();            
+                .Check(() => PaymentMethod).IsNotNull();          
+
+            Validations.For(TransactionType.Sale)
+                .With(TransactionModifier.AlternativePaymentMethod)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()                
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.StatusUpdateUrl)).IsNotNull()
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.ReturnUrl)).IsNotNull()
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.AccountHolderName)).IsNotNull();
+
+            Validations.For(TransactionType.Auth)
+                .With(TransactionModifier.AlternativePaymentMethod)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => Amount).IsNotNull()
+                .Check(() => Currency).IsNotNull()
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.StatusUpdateUrl)).IsNotNull()
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.ReturnUrl)).IsNotNull()
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.AccountHolderName)).IsNotNull();
+
+
         }
 
         /// <summary>

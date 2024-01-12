@@ -8,6 +8,7 @@ using System.IO;
 using System.Drawing.Imaging;
 using GlobalPayments.Api.Terminals.UPA;
 using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.Entities.UPA;
 
 namespace GlobalPayments.Api.Terminals {
     public class TerminalUtilities {
@@ -36,7 +37,7 @@ namespace GlobalPayments.Api.Terminals {
 
             // Begin Message
             buffer.Add((byte)ControlCodes.STX);
-
+            
             // Add Message ID
             foreach (char c in messageId)
                 buffer.Add((byte)c);
@@ -95,13 +96,13 @@ namespace GlobalPayments.Api.Terminals {
         public static DeviceMessage BuildUpaAdminRequest(int requestId, string ecrId, string txnType, string lineItemLeft = null, string lineItemRight = null, int? displayOption = null) {
             var doc = new JsonDoc();
             doc.Set("message", UpaMessageType.Msg);
-            var data = doc.SubElement("data");
-            data.Set("command", txnType);
-            data.Set("EcrId", ecrId);
-            data.Set("requestId", requestId);
+            var baseRequest = doc.SubElement("data");
+            baseRequest.Set("command", txnType);
+            baseRequest.Set("EcrId", ecrId);
+            baseRequest.Set("requestId", requestId.ToString());
 
             if ((!string.IsNullOrEmpty(lineItemLeft) || !string.IsNullOrEmpty(lineItemRight)) || displayOption.HasValue) {
-                var request = data.SubElement("data");
+                var request = baseRequest.SubElement("data");
                 var requestParams = request.SubElement("params");
                 requestParams.Set("lineItemLeft", lineItemLeft);
                 requestParams.Set("lineItemRight", lineItemRight);
@@ -112,8 +113,9 @@ namespace GlobalPayments.Api.Terminals {
 
             return BuildUpaRequest(doc.ToString());
         }
-
+        
         public static byte[] BuildRawUpaRequest(string jsonRequest) {
+
             jsonRequest = jsonRequest.Replace("ecrId", "EcrId");
 
             jsonRequest = jsonRequest.Replace("<LF>", "\r\n");
@@ -148,8 +150,9 @@ namespace GlobalPayments.Api.Terminals {
             return new DeviceMessage<T>(doc, buffer);
         }
         public static DeviceMessage BuildUpaRequest(string jsonRequest) {
+            var json = JsonDoc.Parse(jsonRequest);
             byte[] buffer = BuildRawUpaRequest(jsonRequest);
-            return new DeviceMessage(buffer);
+            return new DeviceMessage<JsonDoc>(json, buffer);
         }
 
         public static byte CalculateLRC(byte[] buffer) {
@@ -163,7 +166,6 @@ namespace GlobalPayments.Api.Terminals {
                 lrc = (byte)(lrc ^ buffer[i]);
             return lrc;
         }
-
         public static byte[] BuildSignatureImage(string pathData, int width = 150) {
             Func<string, Point> toPoint = (coord) => {
                 var xy = coord.Split(',');
@@ -184,7 +186,7 @@ namespace GlobalPayments.Api.Terminals {
             var index = 0;
             var coordinate = coordinates[index++];
             do {
-                if (coordinate == "0,65535")
+                if(coordinate == "0,65535")
                     coordinate = coordinates[index++];
                 var start = toPoint(coordinate);
 

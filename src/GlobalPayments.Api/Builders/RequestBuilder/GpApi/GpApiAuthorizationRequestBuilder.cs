@@ -213,6 +213,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             }
                             verificationData.Set("payment_method", paymentMethod);
 
+                            if (builder.StoredCredential != null) {
+                                SetRequestStoredCredentials(builder.StoredCredential, verificationData);
+                            }
+
                             Request.MaskedValues = MaskedValues;
 
                             return new Request {
@@ -302,7 +306,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 var secureEcom = (builder.PaymentMethod as CreditCardData).ThreeDSecure;
                 if (secureEcom != null) {
                     var authentication = new JsonDoc().Set("id", secureEcom.ServerTransactionId);
-                    var three_ds = new JsonDoc().Set("exempt_status", secureEcom.ExemptStatus.ToString());
+                    var three_ds = new JsonDoc()
+                        .Set("exempt_status", secureEcom.ExemptStatus?.ToString())
+                        .Set("message_version", secureEcom.MessageVersion)
+                        .Set("eci", secureEcom.Eci)
+                        .Set("server_trans_reference", secureEcom.ServerTransactionId)
+                        .Set("ds_trans_reference", secureEcom.DirectoryServerTransactionId)
+                        .Set("value", secureEcom.AuthenticationValue);
                     authentication.Set("three_ds", three_ds);
 
                     paymentMethod.Set("authentication", authentication);
@@ -520,9 +530,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 .Set("convenience_amount", builder.ConvenienceAmount.ToNumericCurrencyString())
                 .Set("country", gateway.GpApiConfig.Country)
                 //.Set("language", EnumConverter.GetMapping(Target.GP_API, Language))
-                .Set("ip_address", builder.CustomerIpAddress)
-                //.Set("site_reference", "") //
-                .Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
+                .Set("ip_address", builder.CustomerIpAddress);
+                //.Set("site_reference", "") //            
+                data.Set("merchant_category", builder.MerchantCategory.ToString() ?? null);
+            
+            data.Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
                 .Set("payment_method", paymentMethod)
                 .Set("risk_assessment", builder.FraudFilterMode != null ? MapFraudManagement(builder) : null)
                 .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
@@ -556,12 +568,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             // stored credential
             if (builder.StoredCredential != null) {
-                data.Set("initiator", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Initiator));
-                var storedCredential = new JsonDoc()
-                    .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Type))
-                    .Set("reason", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Reason))
-                    .Set("sequence", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential.Sequence));
-                data.Set("stored_credential", storedCredential);
+                SetRequestStoredCredentials(builder.StoredCredential, data);               
             }
 
             Request.MaskedValues = MaskedValues;
@@ -571,6 +578,16 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}",
                 RequestBody = data.ToString(),
             };
+        }
+
+        private void SetRequestStoredCredentials(StoredCredential storedCredential, JsonDoc request)
+        {
+            request.Set("initiator", EnumConverter.GetMapping(Target.GP_API, storedCredential.Initiator));
+                var storedCredentialJson = new JsonDoc()
+                    .Set("model", EnumConverter.GetMapping(Target.GP_API, storedCredential.Type))
+                    .Set("reason", EnumConverter.GetMapping(Target.GP_API, storedCredential.Reason))
+                    .Set("sequence", EnumConverter.GetMapping(Target.GP_API, storedCredential.Sequence));
+            request.Set("stored_credential", storedCredentialJson);            
         }
 
         private static void DisposeMaskedValues()
@@ -932,6 +949,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             }
 
             return requestBody;
-        }        
+        }
     }
 }

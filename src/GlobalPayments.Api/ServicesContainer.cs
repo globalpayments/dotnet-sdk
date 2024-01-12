@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
+using GlobalPayments.Api.Gateways.Interfaces;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 
@@ -42,6 +43,8 @@ namespace GlobalPayments.Api {
         internal PayrollConnector PayrollConnector { get; set; }
 
         internal IFraudCheckService FraudService { get; set; }
+
+        internal IFileProcessingService FileProcessingService { get; set; }
 
         internal ISecure3dProvider GetSecure3DProvider(Secure3dVersion version) {
             if (_secure3dProviders.ContainsKey(version)) {
@@ -244,6 +247,14 @@ namespace GlobalPayments.Api {
             }
 
             throw new ApiException("The specified configuration has not been configured for fraud check.");
+        }
+        internal IFileProcessingService GetFileProcessingClient(string configName)
+        {
+            if (_configurations.ContainsKey(configName)) {
+                return _configurations[configName].FileProcessingService;
+            }
+
+            throw new ApiException("The specified configuration has not been configured for file processing.");
         }
         internal void removeConfiguration(String configName) {
             if(_configurations.ContainsKey(configName)) {

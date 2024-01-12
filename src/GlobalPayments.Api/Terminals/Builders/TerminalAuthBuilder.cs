@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
 using System;
@@ -17,6 +18,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             }
         }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
+        internal Lodging Lodging { get; set; }
         internal decimal? CashBackAmount { get; set; }
         internal string ClientTransactionId { get; set; }
         internal CurrencyType? Currency { get; set; }
@@ -42,6 +44,9 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal int? ProcessCPC { get; set; }
         public string Token { get; set; }
         public DateTime ShippingDate { get; set; }
+        public decimal? PreAuthAmount { get; set; }
+        public AcquisitionType? CardAcquisition { get; set; }
+        internal bool AllowPartialAuth { get; set; }
 
         internal string TransactionId {
             get {
@@ -60,14 +65,25 @@ namespace GlobalPayments.Api.Terminals.Builders {
             LineItemRight = lineItemRight;
             return this;
         }
+        public TerminalAuthBuilder WithAllowPartialAuth(bool value)
+        {
+            AllowPartialAuth = value;
+            return this;
+        }
 
         public TerminalAuthBuilder WithAddress(Address address) {
             Address = address;
             return this;
         }
 
-        public TerminalAuthBuilder WithEcrId(string ecrId) {
+        public TerminalAuthBuilder WithEcrId(int ecrId) {
             EcrId = ecrId;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithEcrId(string ecrId)
+        {
+            EcrId = int.Parse(ecrId);
             return this;
         }
 
@@ -79,6 +95,17 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Amount = amount;
             return this;
         }
+
+        public TerminalAuthBuilder WithPreAuthAmount(decimal? preAuthAmount) {
+            PreAuthAmount = preAuthAmount;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithCardAcquisition(AcquisitionType cardAcquisition) {
+            CardAcquisition = cardAcquisition;
+            return this;
+        }
+
         public TerminalAuthBuilder WithAuthCode(string value) {
             if (PaymentMethod == null || !(PaymentMethod is TransactionReference))
                 PaymentMethod = new TransactionReference();
@@ -93,6 +120,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
         /// <returns>TerminalAuthBuilder</returns>
         public TerminalAuthBuilder WithAutoSubstantiation(AutoSubstantiation value) {
             AutoSubstantiation = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithLodging(Lodging value) {
+            Lodging = value;
             return this;
         }
         public TerminalAuthBuilder WithCashBack(decimal? amount) {
@@ -155,6 +187,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             TaxExemptId = taxExemptId;
             return this;
         }
+
         public TerminalAuthBuilder WithToken(string value) {
             if (PaymentMethod == null || !(PaymentMethod is CreditCardData))
                 PaymentMethod = new CreditCardData();
@@ -234,6 +267,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Validations.For(PaymentMethodType.EBT).With(TransactionType.Balance)
                 .When(() => Currency).IsNotNull()
                 .Check(() => Currency).DoesNotEqual(CurrencyType.VOUCHER);
+            
             Validations.For(PaymentMethodType.EBT).With(TransactionType.Refund).Check(() => AllowDuplicates).Equals(false);
             Validations.For(PaymentMethodType.EBT).With(TransactionType.BenefitWithdrawal).Check(() => AllowDuplicates).Equals(false);
 
@@ -246,8 +280,8 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Validations.For(TransactionType.Refund)
                 .With(PaymentMethodType.Credit)
                 .When(() => TransactionId).IsNotNull()
-                .Check(() => AuthCode).IsNotNull();            
-            Validations.For(TransactionType.AddValue).Check(() => Amount).IsNotNull();            
+                .Check(() => AuthCode).IsNotNull();
+            Validations.For(TransactionType.AddValue).Check(() => Amount).IsNotNull();
             Validations.For(TransactionType.BenefitWithdrawal)
                 .When(() => Currency).IsNotNull()
                 .Check(() => Currency).Equals(CurrencyType.CASH_BENEFITS);

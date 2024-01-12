@@ -1,7 +1,8 @@
-﻿using GlobalPayments.Api.Terminals.Abstractions;
+﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Terminals.Abstractions;
 
 namespace GlobalPayments.Api.Terminals {
-    public class DeviceResponse : IDeviceResponse {
+    public class DeviceResponse : IDeviceResponse, IBatchCloseResponse, ITerminalReport {
         /// <summary>
         /// device status at the time of transaction
         /// </summary>
@@ -16,6 +17,11 @@ namespace GlobalPayments.Api.Terminals {
         /// the version of software the terminal is running
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// the unique id of the terminal - Serial Number for Pax
+        /// </summary>
+        public string DeviceId { get; set; }
 
         // Functional
         /// <summary>
@@ -32,5 +38,11 @@ namespace GlobalPayments.Api.Terminals {
         /// ECR reference number for the transaction
         /// </summary>
         public string ReferenceNumber { get; set; }
+
+        public string SequenceNumber { get; set; }
+
+        public string TotalCount { get; set; }
+
+        public string TotalAmount { get; set; }
     }
 }

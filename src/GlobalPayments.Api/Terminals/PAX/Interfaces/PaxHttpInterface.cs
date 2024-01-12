@@ -6,6 +6,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Messaging;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     internal class PaxHttpInterface : IDeviceCommInterface {
@@ -13,6 +14,8 @@ namespace GlobalPayments.Api.Terminals.PAX {
         WebRequest _client;
 
         public event MessageSentEventHandler OnMessageSent;
+
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         public PaxHttpInterface(ITerminalConfiguration settings) {
             _settings = settings;
@@ -42,6 +45,14 @@ namespace GlobalPayments.Api.Terminals.PAX {
                         var rec_buffer = await sr.ReadToEndAsync();
                         foreach (char c in rec_buffer)
                             buffer.Add((byte)c);
+                    }
+                    if (buffer.ToArray().Length > 0)
+                    {
+                        OnMessageReceived?.Invoke(Encoding.UTF8.GetString(buffer.ToArray(), 0, buffer.ToArray().Length));
+                    }
+                    else
+                    {
+                        OnMessageReceived?.Invoke("Terminal did not respond");
                     }
                     return buffer.ToArray();
                 }).Result;

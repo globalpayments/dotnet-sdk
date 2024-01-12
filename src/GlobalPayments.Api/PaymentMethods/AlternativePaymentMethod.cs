@@ -64,6 +64,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder Charge(decimal? amount = null) {
             return new AuthorizationBuilder(TransactionType.Sale, this)
+                 .WithModifier(TransactionModifier.AlternativePaymentMethod)
                  .WithAmount(amount);
         }
 

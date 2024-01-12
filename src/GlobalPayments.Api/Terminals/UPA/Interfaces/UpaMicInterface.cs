@@ -12,6 +12,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         public event MessageSentEventHandler OnMessageSent;
 
+        public event MessageReceivedEventHandler OnMessageReceived;
+
         public UpaMicInterface(ITerminalConfiguration config) {
             _config = config;
             _gatewayConfig = _config.GatewayConfig as GpApiConfig;
@@ -26,7 +28,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
         public byte[] Send(IDeviceMessage message) {
             Connect();
 
-            string requestId = message.GetRequestField<JsonDoc>("data").GetValue<string>("requestId");
+            string requestId = message.GetRequestField<JsonDoc>("data")?.GetValue<string>("requestId");
 
             var request = new JsonDoc();
             request.Set("merchant_id", _gatewayConfig.MerchantId);

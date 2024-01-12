@@ -13,6 +13,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
         public const string REBOOT = "Reboot";
         public const string BATCH_CLOSE = "BatchClose";
         public const string GET_BATCH_REPORT = "GetBatchReport";
+        public const string GET_SAF_REPORT = "GetSAFReport";
         public const string CREDIT_SALE = "Sale";
         public const string CREDIT_REFUND = "Refund";
         public const string CREDIT_VOID = "Void";

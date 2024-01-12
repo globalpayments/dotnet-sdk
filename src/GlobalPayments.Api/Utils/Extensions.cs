@@ -32,10 +32,11 @@ namespace GlobalPayments.Api.Utils {
             }
             return amount;
         }
-
-        public static string ToCurrencyString(this decimal? dec) {
+        
+        public static string ToCurrencyString(this decimal? dec, bool withoutThousandsSign = false) {
             if (dec != null) {
-                return Regex.Replace(string.Format("{0:c}", dec), "[^0-9.,]", "");
+                var patternString = !(withoutThousandsSign) ? "[^0-9.,]" : "[^0-9.]";
+                return Regex.Replace(string.Format("{0:c}", dec), patternString, "");
             }
             return null;
         }

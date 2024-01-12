@@ -13,11 +13,13 @@ namespace GlobalPayments.Api.Entities
         public string TransactionProcessingAccountName { get; set; }
         public string RiskAssessmentAccountName { get; set; }
         public string MerchantManagementAccountName { get; set; }
+        public string FileProcessingAccountName { get; set; }
         public string DataAccountID { get; set; }
         public string DisputeManagementAccountID { get; set; }
         public string TokenizationAccountID { get; set; }
         public string TransactionProcessingAccountID { get; set; }
         public string RiskAssessmentAccountID { get; set; }
         public string MerchantManagementAccountID { get; set; }
+        public string FileProcessingAccountID { get; set; }
     }
 }

@@ -343,13 +343,12 @@ namespace GlobalPayments.Api.Gateways {
 
         private AccountBalanceResponseData GetACHOutBalanceInfoFromResponse(Element root) {
             if (root.Has("achOut")) {
-                return new AccountBalanceResponseData()
-                {
-                    Enabled = root.GetValue<string>("enabled"),
-                    LimitRemaining = root.GetValue<string>("limitRemaining"),
-                    TransferFee = root.GetValue<string>("transferFee"),
-                    FeeType = root.GetValue<string>("feeType"),
-                    AccountLastFour = root.GetValue<string>("accountLastFour")
+                return new AccountBalanceResponseData() {
+                    Enabled = root.Get("achOut").GetValue<string>("enabled"),
+                    LimitRemaining = root.Get("achOut").GetValue<string>("limitRemaining"),
+                    TransferFee = root.Get("achOut").GetValue<string>("transferFee"),
+                    FeeType = root.Get("achOut").GetValue<string>("feeType"),
+                    AccountLastFour = root.Get("achOut").GetValue<string>("accountLastFour")
                 };
             }
             return null;
@@ -357,13 +356,12 @@ namespace GlobalPayments.Api.Gateways {
 
         private AccountBalanceResponseData GetFlashFundsBalanceInfoFromResponse(Element root) {
             if (root.Has("flashFunds")) {
-                return new AccountBalanceResponseData()
-                {
-                    Enabled = root.GetValue<string>("enabled"),
-                    LimitRemaining = root.GetValue<string>("limitRemaining"),
-                    TransferFee = root.GetValue<string>("transferFee"),
-                    FeeType = root.GetValue<string>("feeType"),
-                    AccountLastFour = root.GetValue<string>("accountLastFour")
+                return new AccountBalanceResponseData() {
+                    Enabled = root.Get("flashFunds").GetValue<string>("enabled"),
+                    LimitRemaining = root.Get("flashFunds").GetValue<string>("limitRemaining"),
+                    TransferFee = root.Get("flashFunds").GetValue<string>("transferFee"),
+                    FeeType = root.Get("flashFunds").GetValue<string>("feeType"),
+                    AccountLastFour = root.Get("flashFunds").GetValue<string>("accountLastFour")
                 };
             }
             return null;
@@ -704,8 +702,8 @@ namespace GlobalPayments.Api.Gateways {
 
             xml.SubElement(xmlTrans, docNameTag, docUploadData.DocumentName);
             xml.SubElement(xmlTrans, "TransactionReference", docUploadData.TransactionReference);
-            xml.SubElement(xmlTrans, "DocCategory", docUploadData.DocCategory);
-            xml.SubElement(xmlTrans, docTypeTag, docUploadData.DocType);
+            xml.SubElement(xmlTrans, "DocCategory", docUploadData.DocCategory.ToString().ToLower());
+            xml.SubElement(xmlTrans, docTypeTag, docUploadData.DocType.ToString().ToLower());
             xml.SubElement(xmlTrans, "Document", docUploadData.Document);
         }
 

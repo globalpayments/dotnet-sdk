@@ -12,22 +12,6 @@ namespace GlobalPayments.Api.Entities {
         public ApiException(string message = null, Exception innerException = null) : base(message, innerException) { }
     }
 
-    public class DeviceException : Exception
-    {
-        /// <param name="message">The exception message</param>
-        /// <param name="state">The device state</param>
-        public DeviceException(string message, string state) : base(message)
-        {
-            State = state;
-        }
-
-        /// <summary>
-        /// Gets the state.
-        /// </summary>
-        /// <value>The state.</value>
-        public string State { get; }
-    }
-
     /// <summary>
     /// A builder error occurred. Check the method calls against the builder.
     /// </summary>

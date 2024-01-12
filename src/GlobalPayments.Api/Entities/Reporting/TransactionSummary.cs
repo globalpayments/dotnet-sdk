@@ -78,7 +78,8 @@ namespace GlobalPayments.Api.Entities {
         /// The client transaction ID sent in the authorization request.
         /// </summary>
         public string ClientTransactionId { get; set; }
-
+        public CommercialData CommercialData { get; set; }
+        public CommercialLineItem CommercialLineItem { get; set; }
         public string CompanyName { get; set; }
 
         /// <summary>
@@ -217,6 +218,8 @@ namespace GlobalPayments.Api.Entities {
         /// The reference number provided by the issuer.
         /// </summary>
         public string ReferenceNumber { get; set; }
+        public string SafReferenceNumber { get; set; }
+        public string TranNo { get; set; }
 
         public int? RepeatCount { get; set; }
 
@@ -245,6 +248,9 @@ namespace GlobalPayments.Api.Entities {
         /// The originally requested shipping amount.
         /// </summary>
         public decimal? ShippingAmount { get; set; }
+        public string ShippingInvoiceNbr { get; set; }
+        public int? ShippingMonth { get; set; }
+        public int? ShippingDay { get; set; }
 
         public string SiteTrace { get; set; }
 
@@ -316,5 +322,6 @@ namespace GlobalPayments.Api.Entities {
         public string Fingerprint { get; set; }
     
         public string FingerprintIndicator { get; set; }
+        public string Email { get; set;}
     }
 }

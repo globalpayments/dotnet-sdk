@@ -21,10 +21,10 @@ namespace GlobalPayments.Api.Entities.Enums
         [Map(Target.GP_API, "ERROR")]
         ERROR,
 
-        [Map(Target.GP_API, "RELEASE_SUCCESSFULL")]
+        [Map(Target.GP_API, "RELEASE_SUCCESSFUL")]
         RELEASE_SUCCESSFUL,
 
-        [Map(Target.GP_API, "HOLD_SUCCESSFULL")]
+        [Map(Target.GP_API, "HOLD_SUCCESSFUL")]
         HOLD_SUCCESSFUL
     }
 }

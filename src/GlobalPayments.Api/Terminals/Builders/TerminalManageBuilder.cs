@@ -5,10 +5,21 @@ using GlobalPayments.Api.Terminals.Abstractions;
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalManageBuilder : TerminalBuilder<TerminalManageBuilder> {
         internal decimal? Amount { get; set; }
-        internal string ClientTransactionId { get; set; }
+        public string ClientTransactionId { get; set; }
         internal CurrencyType? Currency { get; set; }
         internal decimal? Gratuity { get; set; }
         public string TerminalRefNumber { get; set; }
+        internal string OrigECRRefNumber { get; set; }
+        public Customer Customer { get; set; }
+        public string MessageAuthCode { get; set; }
+        public string ReasonCode { get; set; }
+        public string TrackingId { get; set; }
+        public string SignatureImage { get; set; }
+        public string SignatureFormat { get; set; }
+        public string SignatureLine { get; set; }
+        public string SoftDescriptor { get; set; }
+
+
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -26,12 +37,20 @@ namespace GlobalPayments.Api.Terminals.Builders {
             TerminalRefNumber = terminalRefNumber;
             return this;
         }
-
-        public TerminalManageBuilder WithEcrId(string ecrId) {
+        public TerminalManageBuilder WithEcrId(int ecrId) {
             EcrId = ecrId;
             return this;
         }
-
+        public TerminalManageBuilder WithEcrId(string ecrId)
+        {
+            EcrId = int.Parse(ecrId);
+            return this;
+        }
+        public TerminalManageBuilder WithOrigECRRefNumber(string origECRRefNumber)
+        {
+            OrigECRRefNumber = origECRRefNumber;
+            return this;
+        }
         public TerminalManageBuilder WithAmount(decimal? amount) {
             Amount = amount;
             return this;
@@ -81,6 +100,49 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
+        public TerminalManageBuilder WithCustomer(Customer customer)
+        {
+            Customer = customer;
+            return this;
+        }
+        public TerminalManageBuilder WithMessageAuthCode(string messageAuthCode)
+        {
+            MessageAuthCode = messageAuthCode;
+            return this;
+        }
+        public TerminalManageBuilder WithReasonCode(string reasonCode)
+        {
+            ReasonCode = reasonCode;
+            return this;
+        }
+        public TerminalManageBuilder WithTrackingId(string trackingId)
+        {
+            TrackingId = trackingId;
+            return this;
+        }
+
+        public TerminalManageBuilder WithSignatureImage(string signatureImage)
+        {
+            SignatureImage = signatureImage;
+            return this;
+        }
+        public TerminalManageBuilder WithSignatureFormat(string signatureFormat)
+        {
+            SignatureFormat = signatureFormat;
+            return this;
+        }
+        public TerminalManageBuilder WithSignatureLine(string signatureLine)
+        {
+            SignatureLine = signatureLine;
+            return this;
+        }
+        public TerminalManageBuilder WithSoftDescriptor(string softDescriptor)
+        {
+            SoftDescriptor = softDescriptor;
+            return this;
+        }
+
+
         internal TerminalManageBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
         }
 
@@ -107,8 +169,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
             #endregion
 
 
-            Validations.For(TransactionType.Capture).Check(() => TransactionId).IsNotNull();
+            Validations.For(TransactionType.Capture).Check(() => TransactionId).IsNotNull()
+                .Check(() => Amount).IsNotNull();
+            Validations.For(TransactionType.Auth).With(TransactionModifier.Incremental).Check(() => TransactionId).IsNotNull();
             Validations.For(TransactionType.Void).When(() => ClientTransactionId).IsNull().Check(() => TransactionId).IsNotNull();
+            Validations.For(TransactionType.Refund).Check(() => TransactionId).IsNotNull();
             
         }
     }

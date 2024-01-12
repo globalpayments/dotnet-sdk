@@ -4,14 +4,18 @@ using GlobalPayments.Api.Terminals.HPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Genius;
 using GlobalPayments.Api.Terminals.UPA;
+using GlobalPayments.Api.Terminals.Genius.ServiceConfigs;
+using GlobalPayments.Api.Terminals.Diamond;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
         SERIAL,
         TCP_IP,
         SSL_TCP,
-        HTTP,
-        MIC
+        HTTP,		
+        MIC,
+        MEET_IN_THE_CLOUD,       
+        DIAMOND_CLOUD
     }
 
     public enum BaudRate {
@@ -68,6 +72,7 @@ namespace GlobalPayments.Api.Terminals {
         public string Port { get; set; }
         public IRequestIdProvider RequestIdProvider { get; set; }
         public GatewayConfig GatewayConfig { get; set; }
+        public MitcConfig GeniusMitcConfig { get; set; }
 
         public ConnectionConfig() {
             Timeout = -1;
@@ -88,6 +93,17 @@ namespace GlobalPayments.Api.Terminals {
                 case DeviceType.UPA_DEVICE:                
                     services.DeviceController = new UpaController(this);
                     break;
+                case DeviceType.PAX_ARIES8:
+                case DeviceType.PAX_A80:
+                case DeviceType.PAX_A35:
+                case DeviceType.PAX_A920:
+                case DeviceType.PAX_A77:
+                case DeviceType.NEXGO_N5:
+                    services.DeviceController = new DiamondController(this as DiamondCloudConfig);
+                    break;
+                case DeviceType.GENIUS_VERIFONE_P400:
+                    services.DeviceController = new GeniusController(this);
+                    break;
                 default:
                     break;
             }
@@ -102,10 +118,11 @@ namespace GlobalPayments.Api.Terminals {
                 if(string.IsNullOrEmpty(Port))
                     throw new ApiException("Port is required for TCP or HTTP communication modes.");
             }
-
-            if (ConnectionMode == ConnectionModes.MIC) {
-                if (GatewayConfig == null) {
-                    throw new ApiException("gateway Config is required for the Meet In the Cloud Service.");
+            else if(ConnectionMode == ConnectionModes.MEET_IN_THE_CLOUD)
+            {
+                if(this.GeniusMitcConfig== null)
+                {
+                    throw new ConfigurationException("meetInTheCloudConfig object is required for this connection method");
                 }
             }
         }

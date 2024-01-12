@@ -33,6 +33,14 @@ namespace GlobalPayments.Api.Builders
         /// Required for partners ordering Portico devices. Valid values: [ UTC, PT, MST, MT, CT, ET, HST, AT, AST, AKST, ACT, EET, EAT, MET, NET, PLT, IST, BST, VST, CTT, JST, ACT, AET, SST, NST, MIT, CNT, AGT, CAT ]
         /// </summary>
         public string TimeZone { get; set; }
+       
+        public PaymentMethodName? PaymentMethodName { get; set; }
+      
+        public PaymentMethodType? PaymentMethodType { get; set; }
+
+        public string Currency { get; set; }
+
+        public string ClientTransactionId{ get; set; }
 
         /// <summary>
         /// Business Data - Required for business validated accounts. May also be required for personal validated accounts
@@ -160,6 +168,12 @@ namespace GlobalPayments.Api.Builders
                 .With(TransactionModifier.None)
                 .Check(() => AccountNumber).IsNotNull()
                 .Check(() => DocumentUploadData).IsNotNull();
+
+            Validations.For(TransactionType.UploadDocument)
+               .With(TransactionModifier.Merchant)               
+               .Check(() => DocumentUploadData).IsNotNull()
+               .Check(() => DocumentUploadData).PropertyOf(nameof(DocumentUploadData.DocType)).IsNotNull();
+
 
             Validations.For(TransactionType.ObtainSSOKey)
                 .With(TransactionModifier.None)
@@ -359,6 +373,26 @@ namespace GlobalPayments.Api.Builders
         /// </summary>
         public PayFacBuilder<TResult> WithTimeZone(string timezone) {
             TimeZone = timezone;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithPaymentMethodType(PaymentMethodType? paymentMethodType) {
+            PaymentMethodType = paymentMethodType;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithPaymentMethodName(PaymentMethodName? paymentMethodName) {
+            PaymentMethodName = paymentMethodName;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithCurrency(string currency) {
+            Currency = currency;
+            return this;
+        }
+
+        public PayFacBuilder<TResult> WithClientTransactionId(string value) {
+            ClientTransactionId = value;
             return this;
         }
 

@@ -18,6 +18,8 @@ namespace GlobalPayments.Api.Terminals.Genius.Interfaces {
 
         public event MessageSentEventHandler OnMessageSent;
 
+        public event MessageReceivedEventHandler OnMessageReceived;
+
         public GeniusHttpInterface(ITerminalConfiguration settings) {
             _settings = settings;
             _gatewayConfig = settings.GatewayConfig as GeniusConfig;

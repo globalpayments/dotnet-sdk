@@ -36,6 +36,24 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\..\Certificates\BlueBridge.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,17 +69,20 @@
     <Compile Include="Builders\AuthorizationBuilder.cs" />
     <Compile Include="Builders\BaseBuilder.cs" />
     <Compile Include="Builders\BillingBuilder.cs" />
+    <Compile Include="Builders\FileProcessingBuilder.cs" />
     <Compile Include="Builders\FraudBuilder.cs" />
     <Compile Include="Builders\ManagementBuilder.cs" />
     <Compile Include="Builders\PayFacBuilder.cs" />
     <Compile Include="Builders\RecurringBuilder.cs" />
     <Compile Include="Builders\ReportBuilder.cs" />
     <Compile Include="Builders\RequestBuilder\GpApi\GpApiAuthorizationRequestBuilder.cs" />
+    <Compile Include="Builders\RequestBuilder\GpApi\GpApiFileProcessingRequestBuilder.cs" />
     <Compile Include="Builders\RequestBuilder\GpApi\GpApiManagementRequestBuilder.cs" />
     <Compile Include="Builders\RequestBuilder\GpApi\GpApiMiCRequestBuilder.cs" />
     <Compile Include="Builders\RequestBuilder\GpApi\GpApiPayFacRequestBuilder.cs" />
     <Compile Include="Builders\RequestBuilder\GpApi\GpApiReportRequestBuilder.cs" />
     <Compile Include="Builders\RequestBuilder\GpApi\GpApiSecureRequestBuilder.cs" />
+    <Compile Include="Builders\RequestBuilder\RequestBuilderValidations.cs" />
     <Compile Include="Builders\ResubmitBuilder.cs" />
     <Compile Include="Builders\Secure3dBuilder.cs" />
     <Compile Include="Builders\SecureBuilder.cs" />
@@ -86,6 +107,7 @@
     <Compile Include="Entities\Billing\LoadSecurePayResponse.cs" />
     <Compile Include="Entities\Billing\TokenData.cs" />
     <Compile Include="Entities\Billing\TokenResponse.cs" />
+    <Compile Include="Entities\BlockedCardType.cs" />
     <Compile Include="Entities\BNPLResponse.cs" />
     <Compile Include="Entities\BrowserData.cs" />
     <Compile Include="Entities\Card.cs" />
@@ -101,10 +123,12 @@
     <Compile Include="Entities\DecisionManager.cs" />
     <Compile Include="Entities\DiscountDetails.cs" />
     <Compile Include="Entities\DisputeDocument.cs" />
+    <Compile Include="Entities\Document.cs" />
     <Compile Include="Entities\DocumentUploadData.cs" />
     <Compile Include="Entities\EcommerceInfo.cs" />
     <Compile Include="Entities\EncryptionData.cs" />
     <Compile Include="Entities\Enums.cs" />
+    <Compile Include="Entities\Enums\AcquisitionType.cs" />
     <Compile Include="Entities\Enums\ActionSortProperty.cs" />
     <Compile Include="Entities\Enums\AdvancedDepositType.cs" />
     <Compile Include="Entities\Enums\AgeIndicator.cs" />
@@ -113,8 +137,10 @@
     <Compile Include="Entities\Enums\BankPaymentType.cs" />
     <Compile Include="Entities\Enums\BillingLoadType.cs" />
     <Compile Include="Entities\Enums\BillPresentment.cs" />
+    <Compile Include="Entities\Enums\BlockCardType.cs" />
     <Compile Include="Entities\Enums\BNPLShippingMethod.cs" />
     <Compile Include="Entities\Enums\BNPLType.cs" />
+    <Compile Include="Entities\Enums\CardTypeFilter.cs" />
     <Compile Include="Entities\Enums\ChallengeRequestIndicator.cs" />
     <Compile Include="Entities\Enums\Channel.cs" />
     <Compile Include="Entities\Enums\CommercialIndicator.cs" />
@@ -132,12 +158,16 @@
     <Compile Include="Entities\Enums\DisputeSortProperty.cs" />
     <Compile Include="Entities\Enums\DisputeStage.cs" />
     <Compile Include="Entities\Enums\DisputeStatus.cs" />
+    <Compile Include="Entities\Enums\DocumentCategory.cs" />
     <Compile Include="Entities\Enums\EmvFallbackCondition.cs" />
     <Compile Include="Entities\Enums\EmvLastChipRead.cs" />
     <Compile Include="Entities\Enums\ExemptReason.cs" />
     <Compile Include="Entities\Enums\ExemptStatus.cs" />
     <Compile Include="Entities\Enums\ExtraChargeType.cs" />
+    <Compile Include="Entities\Enums\FileProcessingActionType.cs" />
+    <Compile Include="Entities\Enums\FileType.cs" />
     <Compile Include="Entities\Enums\FraudFilterResult.cs" />
+    <Compile Include="Entities\Enums\FundsStatus.cs" />
     <Compile Include="Entities\Enums\GatewayProvider.cs" />
     <Compile Include="Entities\Enums\HostedPaymentType.cs" />
     <Compile Include="Entities\Enums\IntervalToExpire.cs" />
@@ -146,6 +176,7 @@
     <Compile Include="Entities\Enums\MerchantAccountsSortProperty.cs" />
     <Compile Include="Entities\Enums\MerchantAccountStatus.cs" />
     <Compile Include="Entities\Enums\MerchantAccountType.cs" />
+    <Compile Include="Entities\Enums\MerchantCategory.cs" />
     <Compile Include="Entities\Enums\MerchantInitiatedRequestType.cs" />
     <Compile Include="Entities\Enums\NetGrossIndicator.cs" />
     <Compile Include="Entities\Enums\OrderTransactionType.cs" />
@@ -166,10 +197,13 @@
     <Compile Include="Entities\Enums\PriorAuthenticationMethod.cs" />
     <Compile Include="Entities\Enums\ProPayAccountStatus.cs" />
     <Compile Include="Entities\Enums\PropayTermsVersion.cs" />
+    <Compile Include="Entities\Enums\Region.cs" />
     <Compile Include="Entities\Enums\RemittanceReferenceType.cs" />
     <Compile Include="Entities\Enums\ReorderIndicator.cs" />
     <Compile Include="Entities\Enums\Risk.cs" />
     <Compile Include="Entities\Enums\RiskAssessmentStatus.cs" />
+    <Compile Include="Entities\Enums\SafIndicator.cs" />
+    <Compile Include="Entities\Enums\SafMode.cs" />
     <Compile Include="Entities\Enums\SdkInterface.cs" />
     <Compile Include="Entities\Enums\SdkUiType.cs" />
     <Compile Include="Entities\Enums\Secure3dStatus.cs" />
@@ -198,10 +232,13 @@
     <Compile Include="Entities\Enums\UserType.cs" />
     <Compile Include="Entities\Enums\VoidReason.cs" />
     <Compile Include="Entities\Exceptions.cs" />
+    <Compile Include="Entities\FileProcessor.cs" />
+    <Compile Include="Entities\FileUploaded.cs" />
     <Compile Include="Entities\FraudManagementResponse.cs" />
     <Compile Include="Entities\FraudResponse.cs" />
     <Compile Include="Entities\FraudRule.cs" />
     <Compile Include="Entities\FraudRuleCollection.cs" />
+    <Compile Include="Entities\FundsAccountDetails.cs" />
     <Compile Include="Entities\FundsData.cs" />
     <Compile Include="Entities\GpApi\AccessTokenInfo.cs" />
     <Compile Include="Entities\GpApi\GpApiAccount.cs" />
@@ -214,6 +251,7 @@
     <Compile Include="Entities\HostedPaymentData.cs" />
     <Compile Include="Entities\IRecurringEntity.cs" />
     <Compile Include="Entities\IRequestBuilder.cs" />
+    <Compile Include="Entities\Lodging.cs" />
     <Compile Include="Entities\LodgingItems.cs" />
     <Compile Include="Entities\Lodging\LodgingData.cs" />
     <Compile Include="Entities\MaskedValueCollection.cs" />
@@ -298,8 +336,11 @@
     <Compile Include="Entities\TransactionApi\TransactionApiSessionInfo.cs" />
     <Compile Include="Entities\TransactionApi\TransactionApiStatusCode.cs" />
     <Compile Include="Entities\TransactionApi\TransactionApiTokenResponse.cs" />
-    <Compile Include="Entities\TransferFundsAccountDetails.cs" />
+    <Compile Include="Entities\UPA\ProcessingIndicator.cs" />
+    <Compile Include="Entities\UPA\UpaParam.cs" />
+    <Compile Include="Entities\UPA\UpaTransactionData.cs" />
     <Compile Include="Entities\User.cs" />
+    <Compile Include="Entities\UserAccount.cs" />
     <Compile Include="Entities\UserLinks.cs" />
     <Compile Include="Gateways\AmaryllisConnector.cs" />
     <Compile Include="Gateways\BillPayProvider.cs" />
@@ -364,6 +405,7 @@
     <Compile Include="Gateways\HttpClientHandlerBuilder.cs" />
     <Compile Include="Gateways\Interfaces\IBillingProvider.cs" />
     <Compile Include="Gateways\Interfaces\IDeviceCloudService.cs" />
+    <Compile Include="Gateways\Interfaces\IFileProcessingService.cs" />
     <Compile Include="Gateways\Interfaces\IFraudCheckService.cs" />
     <Compile Include="Gateways\Interfaces\IOpenBankingProvider.cs" />
     <Compile Include="Gateways\Interfaces\IPayFacProvider.cs" />
@@ -560,8 +602,10 @@
     <Compile Include="Services\CheckService.cs" />
     <Compile Include="Services\CreditService.cs" />
     <Compile Include="Services\DebitService.cs" />
+    <Compile Include="Services\DeviceCloudService.cs" />
     <Compile Include="Services\DeviceService.cs" />
     <Compile Include="Services\EbtService.cs" />
+    <Compile Include="Services\FileProcessingService.cs" />
     <Compile Include="Services\FraudService.cs" />
     <Compile Include="Services\GiftService.cs" />
     <Compile Include="Services\GpApiService.cs" />
@@ -574,6 +618,7 @@
     <Compile Include="Services\Secure3dService.cs" />
     <Compile Include="Services\TableService.cs" />
     <Compile Include="Services\TransitService.cs" />
+    <Compile Include="Terminals\Abstractions\IBatchClearResponse.cs" />
     <Compile Include="Terminals\Abstractions\IBatchCloseResponse.cs" />
     <Compile Include="Terminals\Abstractions\IBatchReportResponse.cs" />
     <Compile Include="Terminals\Abstractions\ICardBrandSummary.cs" />
@@ -586,7 +631,11 @@
     <Compile Include="Terminals\Abstractions\IRequestIdProvider.cs" />
     <Compile Include="Terminals\Abstractions\IRequestSubGroup.cs" />
     <Compile Include="Terminals\Abstractions\IResponseSubGroup.cs" />
+    <Compile Include="Terminals\Abstractions\ISafDeleteFileResponse.cs" />
+    <Compile Include="Terminals\Abstractions\ISafParamsResponse.cs" />
     <Compile Include="Terminals\Abstractions\ISAFResponse.cs" />
+    <Compile Include="Terminals\Abstractions\ISafSummaryReport.cs" />
+    <Compile Include="Terminals\Abstractions\ISafUploadResponse.cs" />
     <Compile Include="Terminals\Abstractions\ISignatureResponse.cs" />
     <Compile Include="Terminals\Builders\HpaAdminBuilder.cs" />
     <Compile Include="Terminals\Builders\TerminalAuthBuilder.cs" />
@@ -599,13 +648,32 @@
     <Compile Include="Terminals\DeviceInterface.cs" />
     <Compile Include="Terminals\DeviceMessage.cs" />
     <Compile Include="Terminals\DeviceResponse.cs" />
+    <Compile Include="Terminals\DiamondCloudConfig.cs" />
+    <Compile Include="Terminals\Diamond\DiamondController.cs" />
+    <Compile Include="Terminals\Diamond\Entities\DiamondCloudRequest.cs" />
+    <Compile Include="Terminals\Diamond\Entities\Enums\AuthorizationMethod.cs" />
+    <Compile Include="Terminals\Diamond\Entities\Enums\AuthorizationType.cs" />
+    <Compile Include="Terminals\Diamond\Entities\Enums\CardSource.cs" />
+    <Compile Include="Terminals\Diamond\Entities\Enums\DiamondCloudSearchCriteria.cs" />
+    <Compile Include="Terminals\Diamond\Entities\Enums\DiamondCloudTransactionType.cs" />
+    <Compile Include="Terminals\Diamond\Entities\Enums\TransactionResult.cs" />
+    <Compile Include="Terminals\Diamond\Interfaces\DiamondHttpInterface.cs" />
+    <Compile Include="Terminals\Diamond\Interfaces\DiamondInterface.cs" />
+    <Compile Include="Terminals\Diamond\Responses\DiamondCloudResponse.cs" />
     <Compile Include="Terminals\Extensions\BinaryReaderExtensions.cs" />
     <Compile Include="Terminals\Extensions\BitConverterExtensions.cs" />
     <Compile Include="Terminals\Extensions\ListExtensions.cs" />
     <Compile Include="Terminals\Extensions\NetworkStreamExtensions.cs" />
+    <Compile Include="Terminals\Genius\Builders\MitcManageBuilder.cs" />
+    <Compile Include="Terminals\Genius\Enums\MitcRequestType.cs" />
+    <Compile Include="Terminals\Genius\Enums\TransactionIdType.cs" />
     <Compile Include="Terminals\Genius\GeniusController.cs" />
     <Compile Include="Terminals\Genius\GeniusInterface.cs" />
     <Compile Include="Terminals\Genius\Interfaces\GeniusHttpInterface.cs" />
+    <Compile Include="Terminals\Genius\Interfaces\MitcGateway.cs" />
+    <Compile Include="Terminals\Genius\Request\GeniusMitcRequest.cs" />
+    <Compile Include="Terminals\Genius\Responses\MitcResponse.cs" />
+    <Compile Include="Terminals\Genius\ServiceConfigs\MitcConfig.cs" />
     <Compile Include="Terminals\HPA\HpaController.cs" />
     <Compile Include="Terminals\HPA\HpaEnums.cs" />
     <Compile Include="Terminals\HPA\HpaFileUpload.cs" />
@@ -624,12 +692,14 @@
     <Compile Include="Terminals\HPA\Responses\SipKvpResponse.cs" />
     <Compile Include="Terminals\HPA\Responses\SipSendFileResponse.cs" />
     <Compile Include="Terminals\Messaging\BroadcastMessageEventHandler.cs" />
+    <Compile Include="Terminals\Messaging\MessageReceivedEventHandler.cs" />
     <Compile Include="Terminals\Messaging\MessageSentEventHandler.cs" />
     <Compile Include="Terminals\PAX\Interfaces\PaxHttpInterface.cs" />
     <Compile Include="Terminals\PAX\Interfaces\PaxTcpInterface.cs" />
     <Compile Include="Terminals\PAX\PaxController.cs" />
     <Compile Include="Terminals\PAX\PaxEnums.cs" />
     <Compile Include="Terminals\PAX\PaxInterface.cs" />
+    <Compile Include="Terminals\PAX\Responses\BatchClearResponse.cs" />
     <Compile Include="Terminals\PAX\Responses\BatchCloseResponse.cs" />
     <Compile Include="Terminals\PAX\Responses\CashResponse.cs" />
     <Compile Include="Terminals\PAX\Responses\CheckResponse.cs" />
@@ -641,6 +711,10 @@
     <Compile Include="Terminals\PAX\Responses\InitializeResponse.cs" />
     <Compile Include="Terminals\PAX\Responses\LocalDetailReport.cs" />
     <Compile Include="Terminals\PAX\Responses\ResetResponse.cs" />
+    <Compile Include="Terminals\PAX\Responses\SafDeleteFileResponse.cs" />
+    <Compile Include="Terminals\PAX\Responses\SafParamsResponse.cs" />
+    <Compile Include="Terminals\PAX\Responses\SafSummaryReport.cs" />
+    <Compile Include="Terminals\PAX\Responses\SafUploadResponse.cs" />
     <Compile Include="Terminals\PAX\Responses\SignatureResponse.cs" />
     <Compile Include="Terminals\PAX\SubGroups\AccountSubGroups.cs" />
     <Compile Include="Terminals\PAX\SubGroups\AmountSubGroups.cs" />
@@ -665,15 +739,20 @@
     <Compile Include="Terminals\UPA\Request\RequestParams.cs" />
     <Compile Include="Terminals\UPA\Request\RootRequest.cs" />
     <Compile Include="Terminals\UPA\Request\TransactionRequest.cs" />
+    <Compile Include="Terminals\UPA\Responses\BasicResponse.cs" />
     <Compile Include="Terminals\UPA\Responses\BatchRecordResponse.cs" />
     <Compile Include="Terminals\UPA\Responses\BatchReportResponse.cs" />
     <Compile Include="Terminals\UPA\Responses\BatchTransactionResponse.cs" />
+    <Compile Include="Terminals\UPA\Responses\CmdResult.cs" />
+    <Compile Include="Terminals\UPA\Responses\Data.cs" />
     <Compile Include="Terminals\UPA\Responses\OpenTab.cs" />
     <Compile Include="Terminals\UPA\Responses\OpenTabDetailsResponse.cs" />
     <Compile Include="Terminals\UPA\Responses\SafReportResponse.cs" />
     <Compile Include="Terminals\UPA\Responses\TransactionResponse.cs" />
     <Compile Include="Terminals\UPA\Responses\UpaEODResponse.cs" />
+    <Compile Include="Terminals\UPA\Responses\UpaGiftCardResponse.cs" />
     <Compile Include="Terminals\UPA\Responses\UpaSAFResponse.cs" />
+    <Compile Include="Terminals\UPA\Responses\UpaSignatureResponse.cs" />
     <Compile Include="Terminals\UPA\UpaController.cs" />
     <Compile Include="Terminals\UPA\UpaInterface.cs" />
     <Compile Include="Terminals\UPA\UpaMessageType.cs" />

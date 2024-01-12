@@ -40,7 +40,7 @@ namespace GlobalPayments.Api.Services
         public PayFacBuilder<Transaction> UploadDocument() {
             return new PayFacBuilder<Transaction>(TransactionType.UploadDocument);
         }
-
+        
         public PayFacBuilder<Transaction> ObtainSSOKey() {
             return new PayFacBuilder<Transaction>(TransactionType.ObtainSSOKey);
         }

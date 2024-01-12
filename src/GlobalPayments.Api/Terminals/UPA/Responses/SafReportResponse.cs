@@ -68,6 +68,8 @@ namespace GlobalPayments.Api.Terminals.UPA
                                     TransactionType = record.GetValue<string>("transactionType"),
                                     TerminalRefNumber = record.GetValue<string>("transId"), // The sample XML says tranNo?
                                     ReferenceNumber = record.GetValue<string>("referenceNumber"),
+                                    SafReferenceNumber = record.GetValue<string>("safReferenceNumber"),
+                                    TranNo = record.GetValue<string>("tranNo"),
                                     GratuityAmount = record.GetValue<decimal>("tipAmount"),
                                     TaxAmount = record.GetValue<decimal>("taxAmount"),
                                     Amount = record.GetValue<decimal>("baseAmount"),
@@ -127,7 +129,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                     return SummaryType.Declined;
             }
         }
-        SafReport ReportResult;
+        public SafReport ReportResult;
 
         public string Status { get; set; }
         public string Command { get; set; }

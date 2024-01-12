@@ -9,5 +9,10 @@ namespace GlobalPayments.Api.Services {
             }
             return ServicesContainer.Instance.GetDeviceInterface(configName);
         }
+
+        public static IDeviceInterface FindDeviceController(string configName = "default")
+        {
+            return ServicesContainer.Instance.GetDeviceInterface(configName);
+        }
     }
 }

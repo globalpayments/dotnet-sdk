@@ -1,7 +1,5 @@
-﻿namespace GlobalPayments.Api.Terminals.UPA
-{
-    internal class UpaTransType
-    {
+﻿namespace GlobalPayments.Api.Terminals.UPA {
+    internal class UpaTransType {
         public const string SALE_REDEEM = "Sale";
         public const string Void = "Void";
         public const string Refund = "Refund";
@@ -20,5 +18,10 @@
         public const string AuthCompletion = "AuthCompletion";
         public const string DeletePreAuth = "DeletePreAuth";
         public const string GetOpenTabDetails = "GetOpenTabDetails";
+        public const string StartCardTransaction = "StartCardTransaction";
+        public const string DeleteSAF = "DeleteSAF";
+        public const string RegisterPOS = "RegisterPOS";
+        public const string GetSignature = "GetSignature";
+
     }
 }

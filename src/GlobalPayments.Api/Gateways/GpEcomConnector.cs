@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
@@ -113,6 +114,25 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(cvnElement, "presind", (int)card.CvnPresenceIndicator);
 
                         MaskedValues = ProtectSensitiveData.HideValue("request.card.cvn.number", card.Cvn);
+                    }
+
+                    // Card block
+                    if (builder.CardTypesBlocking != null) {
+                        var cardTypes = builder.CardTypesBlocking;
+                       
+                        var cardTypeBlock = et.SubElement(request, "blockcard");
+                        if (cardTypes.Commercialcredit.HasValue) {
+                            et.SubElement(cardTypeBlock, "commercialcredit", cardTypes.Commercialcredit.ToString().ToLower());
+                        }
+                        if (cardTypes.Commercialdebit.HasValue) {
+                            et.SubElement(cardTypeBlock, "commercialdebit", cardTypes.Commercialdebit.ToString().ToLower());
+                        }
+                        if (cardTypes.Consumercredit.HasValue) {
+                            et.SubElement(cardTypeBlock, "consumercredit", cardTypes.Consumercredit.ToString().ToLower());
+                        }
+                        if (cardTypes.Consumerdebit.HasValue) {
+                            et.SubElement(cardTypeBlock, "consumerdebit", cardTypes.Consumerdebit.ToString().ToLower());
+                        }                   
                     }
                 }
 
@@ -534,17 +554,44 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.HostedPaymentData != null) {
                 AlternativePaymentType[] PaymentTypes = builder.HostedPaymentData.PresetPaymentMethods;
                 HostedPaymentMethods[] HostedPaymentMethods = builder.HostedPaymentData.HostedPaymentMethods;
-                if (PaymentTypes != null) {
-                    PaymentValues = string.Join("|", PaymentTypes);
-                }
-                if (HostedPaymentMethods != null)
-                {
-                    if (PaymentValues != null) {
-                        PaymentValues = string.Join("|", new string[] { PaymentValues, string.Join("|", HostedPaymentMethods) });
+                
+                if (HostedPaymentMethods != null) {
+                    if (HostedPaymentMethods.ToList().Contains(Entities.HostedPaymentMethods.CARDS)) {
+                        List<Entities.HostedPaymentMethods> cardItem = new List<HostedPaymentMethods>();
+                        List<Entities.HostedPaymentMethods> Items = new List<HostedPaymentMethods>();
+                        foreach (var hosted in HostedPaymentMethods) {
+                            if (hosted == Entities.HostedPaymentMethods.CARDS) {
+                                cardItem.Add(hosted);
+                            }
+                            else {
+                                Items.Add(hosted);
+                            }
+                        }
+                        if(cardItem.Count > 0) {
+                            PaymentValues = string.Join("|", new string[] { string.Join("|", cardItem)});
+                            if(Items.Count > 0) {
+                                PaymentValues = string.Join("|", new string[] { PaymentValues, string.Join("|", Items) });
+                            }
+                        }
+                        else {
+                            PaymentValues = string.Join("|", Items);
+                        }
                     }
                     else {
                         PaymentValues = string.Join("|", HostedPaymentMethods);
                     }
+                }
+                if (PaymentTypes != null) {
+                    if (PaymentValues != null) {
+                        PaymentValues = string.Join("|", new string[] { PaymentValues, string.Join("|", PaymentTypes) });
+                    }
+                    else {
+                        PaymentValues = string.Join("|", PaymentTypes);
+                    }
+                }
+                var blockCardTypes = builder.HostedPaymentData.BlockCardTypes?.ToList();
+                if(blockCardTypes != null) {                    
+                   request.Set("BLOCK_CARD_TYPE", string.Join("|", blockCardTypes.Select(x => EnumConverter.GetDescription(x)))) ;
                 }
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
                 if (HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null) {
@@ -628,7 +675,9 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("HPP_BILLING_POSTALCODE", builder.BillingAddress.PostalCode);
                 request.Set("HPP_BILLING_COUNTRY", CountryUtils.GetNumericCodeByCountry(builder.BillingAddress.Country));
             }
-            request.Set("CUST_NUM", builder.CustomerId);
+            if (!request.Has("CUST_NUM")) {
+                request.Set("CUST_NUM", builder.CustomerId);
+            }
             request.Set("VAR_REF", builder.ClientTransactionId);
             request.Set("HPP_LANG", HostedPaymentConfig.Language);
             request.Set("MERCHANT_RESPONSE_URL", HostedPaymentConfig.ResponseUrl);
@@ -702,7 +751,7 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.DynamicDescriptor != null) {
                 request.Set("CHARGE_DESCRIPTION", builder.DynamicDescriptor);
             }
-            request.Set("SHA1HASH", GenerationUtils.GenerateHash(SharedSecret, toHash.ToArray()));
+            request.Set($"{ShaHashType.ToString()}HASH", GenerationUtils.GenerateHash(SharedSecret, ShaHashType, toHash.ToArray()));
             return request.ToString();
         }
         public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
@@ -1028,7 +1077,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 string exchangeTimestamp = root.GetValue<string>("exchangeratesourcetimestamp");
                 if (!string.IsNullOrEmpty(exchangeTimestamp)) {
-                    dccRateData.ExchangeRateSourceTimestamp = DateTime.ParseExact(exchangeTimestamp, "yyyyMMdd hh:mm", CultureInfo.InvariantCulture);
+                    dccRateData.ExchangeRateSourceTimestamp = DateTime.ParseExact(exchangeTimestamp, "yyyyMMdd HH:mm", CultureInfo.InvariantCulture);
                 }
 
                 result.DccRateData = dccRateData;

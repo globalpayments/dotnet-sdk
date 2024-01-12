@@ -7,6 +7,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Terminals.Extensions;
 using GlobalPayments.Api.Utils;
+using System.Text;
 
 namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
     internal class HpaTcpInterface : IDeviceCommInterface {
@@ -16,6 +17,8 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
         List<byte> message_queue;
 
         public event MessageSentEventHandler OnMessageSent;
+
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         public HpaTcpInterface(ITerminalConfiguration settings) {
             this._settings = settings;
@@ -85,11 +88,11 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
         }
 
         public byte[] Send(IDeviceMessage message) {
-            Connect();
-
             var str_message = message.ToString();
             message_queue = new List<byte>();
             try {
+                Connect();
+
                 byte[] buffer = message.GetSendBuffer();
 
                 if (_stream != null) {
@@ -110,7 +113,16 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
             }
             finally {
                 OnMessageSent?.Invoke(message.ToString().Substring(2));
-                if (message.KeepAlive) {
+                if (message_queue.ToArray().Length > 0)
+                {
+                    OnMessageReceived?.Invoke(Encoding.UTF8.GetString(message_queue.ToArray(), 0, message_queue.ToArray().Length));
+                }
+                else
+                {
+                    OnMessageReceived?.Invoke("Terminal did not respond");
+                }
+                if (!message.KeepAlive)
+                {
                     Disconnect();
                 }
             }

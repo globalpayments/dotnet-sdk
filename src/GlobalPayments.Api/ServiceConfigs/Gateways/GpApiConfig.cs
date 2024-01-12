@@ -62,6 +62,8 @@ namespace GlobalPayments.Api {
 
         public string MerchantId { get; set; }
 
+        public string StatusUrl { get; set; }
+
         public Dictionary<string, string> DynamicHeaders { get; set; }
 
         public GpApiConfig() : base(GatewayProvider.GP_API) { }
@@ -97,6 +99,7 @@ namespace GlobalPayments.Api {
                 MerchantId = MerchantId,
                 AccessTokenInfo = AccessTokenInfo,
                 Environment = Environment,
+                StatusUrl = StatusUrl
             };
 
             var gateway = new GpApiConnector(gpApiConfig);
@@ -107,6 +110,7 @@ namespace GlobalPayments.Api {
             services.GatewayConnector = gateway;
             services.ReportingService = gateway;
             services.FraudService = gateway;
+            services.FileProcessingService = gateway;
             
             services.SetPayFacProvider(gateway);
             services.SetSecure3dProvider(Secure3dVersion.One, gateway);
