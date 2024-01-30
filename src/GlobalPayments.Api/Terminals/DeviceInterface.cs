@@ -116,6 +116,12 @@ namespace GlobalPayments.Api.Terminals
         public virtual IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData) {
             throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
         }
+        public virtual IDeviceResponse DeleteResource(string fileName) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
+        public virtual IDeviceResponse UpdateResource(UpdateResourceFileType fileType, byte[] fileData, bool isHttpDeviceConnectionMode) {
+            throw new UnsupportedTransactionException("This function is not supported by the currently configured device.");
+        }
         #endregion
 
         #region Batching

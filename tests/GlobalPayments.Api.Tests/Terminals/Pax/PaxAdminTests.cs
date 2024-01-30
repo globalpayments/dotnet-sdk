@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
@@ -44,6 +45,33 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             _device.Cancel();
+        }
+        [TestMethod]
+        public void UploadResourceFile()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]A18[FS]1.35[FS]"));
+            };
+            bool isHttpConnectionMode = false;
+            //the test file only works for pax android devices A35, a920, a920 pro, a77 Aries 8, etc.
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"TestData\mt30_ad1.zip");
+            byte[] fileData = File.ReadAllBytes(path);
+            var response = _device.UpdateResource(UpdateResourceFileType.RESOURCE_FILE, fileData, isHttpConnectionMode);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("OK", response.DeviceResponseText);
+        }
+        [TestMethod]
+        public void DeleteResourceFile()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.StartsWith("[STX]A22[FS]1.35[FS]"));
+            };
+
+            var response = _device.DeleteResource("mt30_ad1.png");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("OK", response.DeviceResponseText);
         }
         [TestMethod]
         public void SetSAFMode()

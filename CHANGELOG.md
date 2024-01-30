@@ -1,6 +1,17 @@
 # Changelog
 
-## Latest - v8.0.3 (01/11/24)
+## Latest - v8.0.4 (01/30/24)
+
+### Enhancement
+
+- [Portico]: Added accountNumberLast4 property for RecurringPaymentMethod response.
+- [PAX]: Added Update Resource[A18][A19] and Delete Image [A22][A23] request and response.
+
+### Bug Fixes
+
+- [MEET-IN-THE-CLOUD][UPA]: Fix endOfDay.
+
+## v8.0.3 (01/11/24)
 
 #### Bug fixes 
 

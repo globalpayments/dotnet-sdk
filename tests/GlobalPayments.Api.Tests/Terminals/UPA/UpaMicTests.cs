@@ -236,5 +236,22 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 Assert.IsTrue(exceptionCaught);
             }
         }
+
+        [TestMethod]
+        public void EndOfDay()
+        {
+            try
+            {
+                _device.EcrId = "13";
+                var response = _device.EndOfDay();
+                Assert.IsNotNull(response);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+            }
+            catch (ApiException exc)
+            {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
     }
 }

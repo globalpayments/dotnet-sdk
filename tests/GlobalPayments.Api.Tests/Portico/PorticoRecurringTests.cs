@@ -302,9 +302,12 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void Test_002b_FindPaymentMethod() {
+        public void Test_002b_FindPaymentMethod_And_Confirm_AccountNumberLast4() {
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
             Assert.IsNotNull(paymentMethod);
+
+            // confirm RecurringPaymentMethod object includes card last 4
+            Assert.AreEqual("1111", paymentMethod.AccountNumberLast4);
         }
 
         [TestMethod]

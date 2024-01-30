@@ -7,40 +7,52 @@ namespace GlobalPayments.Api.Terminals.UPA {
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
 
         public UpaEODResponse(JsonDoc root) {
-            var firstDataNode = root.Get("data");
-            if (firstDataNode == null) {
-                throw new MessageException(INVALID_RESPONSE_FORMAT);
+            if (!isGpApiResponse(root)) {
+                var firstDataNode = root.Get("data");
+                if (firstDataNode == null) {
+                    throw new MessageException(INVALID_RESPONSE_FORMAT);
+                }
+
+                var cmdResult = firstDataNode.Get("cmdResult");
+                if (cmdResult == null) {
+                    throw new MessageException(INVALID_RESPONSE_FORMAT);
+                }
+
+                Status = cmdResult.GetValue<string>("result");
+
+                // Log error info if it's there
+                var errorCode = cmdResult.GetValue<string>("errorCode");
+                var errorMsg = cmdResult.GetValue<string>("errorMessage");
+                DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
+
+                // Unlike in other response types, this data should always be here, even if the Status is "Failed"
+                var secondDataNode = firstDataNode.Get("data");
+                if (secondDataNode == null) {
+                    throw new MessageException(INVALID_RESPONSE_FORMAT);
+                }
+                Multiplemessage = secondDataNode.GetValue<string>("multipleMessage");
+
+                var host = secondDataNode.Get("host");
+
+                if (host != null) {
+                    RespDateTime = host.GetValue<string>("respDateTime");
+                    BatchId = host.GetValue<int>("batchId");
+                    GatewayResponseCode = host.GetValue<int>("gatewayResponseCode");
+                    GatewayResponseMessage = host.GetValue<string>("gatewayResponseMessage");
+                }
             }
-
-            var cmdResult = firstDataNode.Get("cmdResult");
-            if (cmdResult == null) {
-                throw new MessageException(INVALID_RESPONSE_FORMAT);
-            }
-
-            Status = cmdResult.GetValue<string>("result");
-
-            // Log error info if it's there
-            var errorCode = cmdResult.GetValue<string>("errorCode");
-            var errorMsg = cmdResult.GetValue<string>("errorMessage");
-            DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
-
-            // Unlike in other response types, this data should always be here, even if the Status is "Failed"
-            var secondDataNode = firstDataNode.Get("data");
-            if (secondDataNode == null) {
-                throw new MessageException(INVALID_RESPONSE_FORMAT);
-            }
-            Multiplemessage = secondDataNode.GetValue<string>("multipleMessage");
-
-            var host = secondDataNode.Get("host");
-
-            if (host != null) {
-                RespDateTime = host.GetValue<string>("respDateTime");
-                BatchId = host.GetValue<int>("batchId");
-                GatewayResponseCode = host.GetValue<int>("gatewayResponseCode");
-                GatewayResponseMessage = host.GetValue<string>("gatewayResponseMessage");
+            else {
+                RequestId = root.GetValue<string>("id");                
+                DeviceResponseText = root.GetValue<string>("status");
+                DeviceResponseCode = root.Get("action").GetValue<string>("result_code"); ;
             }
         }
 
+        private bool isGpApiResponse(JsonDoc root) {
+            return !root.Has("data");
+        }
+
+        public string RequestId { get; set; }
         public string Multiplemessage { get; set; }
 
         public IDeviceResponse AttachmentResponse { get; set; }
