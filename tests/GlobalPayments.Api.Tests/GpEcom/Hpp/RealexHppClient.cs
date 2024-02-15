@@ -151,7 +151,7 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
             }
 
             // check hash
-            var newhash = GenerationUtils.GenerateHash(_sharedSecret, hashParam.ToArray());
+            var newhash = GenerationUtils.GenerateHash(_sharedSecret, _shaHashType, hashParam.ToArray());
             if (!newhash.Equals(requestHash)) {
                 return BadRequest("Incorrect hash. Please check your code and the Developers Documentation.");
             }
@@ -161,6 +161,7 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
                 MerchantId = merchantId,
                 AccountId = account,
                 SharedSecret = _sharedSecret,
+                ShaHashType = _shaHashType,
                 RequestLogger = new RequestConsoleLogger()
             }, "realexResponder");                       
 
@@ -327,7 +328,7 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
                 response.Set("CARD_PAYMENT_BUTTON", request.GetValue<string>("CARD_PAYMENT_BUTTON"));
                 response.Set("MESSAGE", trans.ResponseMessage);
                 response.Set("AMOUNT", trans.AuthorizedAmount);
-                response.Set("SHA1HASH", GenerationUtils.GenerateHash(_sharedSecret, trans.Timestamp, merchantId, trans.OrderId, trans.ResponseCode, trans.ResponseMessage, trans.TransactionId, trans.AuthorizationCode));
+                response.Set($"{_shaHashType}HASH", GenerationUtils.GenerateHash(_sharedSecret, _shaHashType, trans.Timestamp, merchantId, trans.OrderId, trans.ResponseCode, trans.ResponseMessage, trans.TransactionId, trans.AuthorizationCode));
                 response.Set("DCC_INFO_REQUST", request.GetValue<string>("DCC_INFO"));
                 response.Set("HPP_FRAUDFILTER_MODE", request.GetValue<string>("HPP_FRAUDFILTER_MODE"));
                 response.Set("BLOCK_CARD_TYPE", request.GetValue<string>("BLOCK_CARD_TYPE"));

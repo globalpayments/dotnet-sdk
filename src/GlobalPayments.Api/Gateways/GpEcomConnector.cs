@@ -138,16 +138,16 @@ namespace GlobalPayments.Api.Gateways {
 
                 string hash = string.Empty;
                 if (builder.TransactionType == TransactionType.Verify)
-                    hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, card.Number);
+                    hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, timestamp, MerchantId, orderId, card.Number);
                 else {
                     if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.APPLEPAY)
-                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, amount, builder.Currency, card.Token);
+                        hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, timestamp, MerchantId, orderId, amount, builder.Currency, card.Token);
                     else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile && card.MobileType == MobilePaymentMethodType.GOOGLEPAY)
-                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
+                        hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Token);
                     else
-                        hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Number);
+                        hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, card.Number);
                 }
-                et.SubElement(request, "sha1hash").Text(hash);
+                et.SubElement(request, $"{ShaHashType.ToString().ToLower()}hash").Text(hash);
             }
             else if (builder.PaymentMethod is AlternativePaymentMethod) { 
                 BuildAlternativePaymentMethod(builder, request, ref et);
@@ -162,7 +162,7 @@ namespace GlobalPayments.Api.Gateways {
                 // issueno
                 string hash = string.Empty;
                 hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, ((AlternativePaymentMethod)builder.PaymentMethod).AlternativePaymentMethodType.ToString().ToLower());
-                et.SubElement(request, "sha1hash").Text(hash);
+                et.SubElement(request, $"{ShaHashType.ToString().ToLower()}hash").Text(hash);
             }
             if (builder.PaymentMethod is RecurringPaymentMethod) {
                 var recurring = builder.PaymentMethod as RecurringPaymentMethod;
@@ -178,9 +178,9 @@ namespace GlobalPayments.Api.Gateways {
 
                 string hash = string.Empty;
                 if (builder.TransactionType == TransactionType.Verify)
-                    hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, recurring.CustomerKey);
-                else hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, recurring.CustomerKey);
-                et.SubElement(request, "sha1hash").Text(hash);
+                    hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, timestamp, MerchantId, orderId, recurring.CustomerKey);
+                else hash = GenerationUtils.GenerateHash(SharedSecret, ShaHashType, timestamp, MerchantId, orderId, builder.Amount.ToNumericCurrencyString(), builder.Currency, recurring.CustomerKey);
+                et.SubElement(request, $"{ShaHashType.ToString().ToLower()}hash").Text(hash);
             }
             else {
                 // TODO: Token Processing

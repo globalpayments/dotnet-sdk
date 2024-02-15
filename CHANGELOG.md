@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v8.0.4 (01/30/24)
+## Latest - v8.0.5 (02/15/24)
+
+## Enhancement
+
+- [GP-ECOM]: Supported Sha256 for HPP.
+- [Portico]: Map customer name in ReportingService response.
+
+## v8.0.4 (01/30/24)
 
 ### Enhancement
 

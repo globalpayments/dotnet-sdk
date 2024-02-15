@@ -220,5 +220,33 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(transactionDetails);
             Assert.AreEqual(custEmail, transactionDetails.Email);
         }
+
+
+        [TestMethod]
+        public void ValidateCustomerFirstAndLastNameInResposeWhenCustDataIsPassed()
+        {
+            Customer customer = new Customer();
+            customer.FirstName = "First name Test";
+            customer.LastName = "Last  name Test";
+
+            Transaction response = card.Charge(10m)
+                .WithCurrency("USD")
+                .WithCustomerData(customer)
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var resp = ReportingService.FindTransactions()
+                .WithTimeZoneConversion(TimeZoneConversion.Merchant)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-2))
+                .And(SearchCriteria.EndDate, DateTime.UtcNow)
+                .Execute();
+
+            Assert.IsNotNull(resp);
+            Assert.AreEqual(customer.FirstName, resp[0].CustomerFirstName);
+            Assert.AreEqual(customer.LastName, resp[0].CustomerLastName);
+        }
     }
 }

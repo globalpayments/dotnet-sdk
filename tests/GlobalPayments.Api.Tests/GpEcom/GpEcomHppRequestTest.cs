@@ -16,17 +16,21 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         RealexHppClient _client;
         private string firstConfig = "firstConfig";
         private string secondConfig = "secondConfig";
+        private const ShaHashType _shahashType = ShaHashType.SHA1;
 
         public GpEcomHppRequestTest() {
-            _client = new RealexHppClient("https://pay.sandbox.realexpayments.com/pay", "secret");
-            _service = new HostedService(new GpEcomConfig {
+            _client = new RealexHppClient("https://pay.sandbox.realexpayments.com/pay", "secret", _shahashType);
+            _service = new HostedService(new GpEcomConfig
+            {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "hpp",
                 SharedSecret = "secret",
-                HostedPaymentConfig = new HostedPaymentConfig {
+                HostedPaymentConfig = new HostedPaymentConfig
+                {
                     Language = "GB",
                     ResponseUrl = "http://requestb.in/10q2bjb1"
                 },
+                ShaHashType = _shahashType,
                 RequestLogger = new RequestConsoleLogger()
             });
         }
@@ -89,6 +93,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "3dsecure",
                 SharedSecret = "secret",
+                ShaHashType = _shahashType,
                 HostedPaymentConfig = new HostedPaymentConfig {
                     Language = "GB",
                 },
@@ -773,7 +778,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 MerchantId = "heartlandgpsandbox",
                 AccountId = "hpp",
                 SharedSecret = "secret",
-
+                ShaHashType = _shahashType,
                 HostedPaymentConfig = new HostedPaymentConfig
                 {
                     ResponseUrl = "https://www.example.com/response",
@@ -801,7 +806,15 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         [TestMethod]
         public void FraudFilterParseResponseWithoutFraudRules()
         {
-            var json = "{  \"MERCHANT_ID\": \"aGVhcnRsYW5kZ3BzYW5kYm94\",  \"ACCOUNT\": \"aHBw\",  \"ORDER_ID\": \"VHdWZGVpU1ZlMHFJb05DMG1OVjJyZw==\",  \"TIMESTAMP\": \"MjAyMTA4MjYyMTU1MjU=\",  \"RESULT\": \"MDA=\",  \"PASREF\": \"MTYzMDAxMTMyNTg5NzM4OTI=\",  \"AUTHCODE\": \"MTIzNDU=\",  \"AVSPOSTCODERESULT\": \"TQ==\",  \"CVNRESULT\": \"TQ==\",  \"MERCHANT_RESPONSE_URL\": \"aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vcmVzcG9uc2U=\",  \"MESSAGE\": \"WyB0ZXN0IHN5c3RlbSBdIEF1dGhvcmlzZWQ=\",  \"SHA1HASH\": \"MjM5NGFmZjNlZDgzNTUwYWEwOTZmMGMzZWJkMjUyYzBlOGUzN2ZmYQ==\",}";
+            var json = string.Empty;
+            if (_shahashType == ShaHashType.SHA1)
+            {
+                json = "{  \"MERCHANT_ID\": \"aGVhcnRsYW5kZ3BzYW5kYm94\",  \"ACCOUNT\": \"aHBw\",  \"ORDER_ID\": \"VHdWZGVpU1ZlMHFJb05DMG1OVjJyZw==\",  \"TIMESTAMP\": \"MjAyMTA4MjYyMTU1MjU=\",  \"RESULT\": \"MDA=\",  \"PASREF\": \"MTYzMDAxMTMyNTg5NzM4OTI=\",  \"AUTHCODE\": \"MTIzNDU=\",  \"AVSPOSTCODERESULT\": \"TQ==\",  \"CVNRESULT\": \"TQ==\",  \"MERCHANT_RESPONSE_URL\": \"aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vcmVzcG9uc2U=\",  \"MESSAGE\": \"WyB0ZXN0IHN5c3RlbSBdIEF1dGhvcmlzZWQ=\",  \"SHA1HASH\": \"MjM5NGFmZjNlZDgzNTUwYWEwOTZmMGMzZWJkMjUyYzBlOGUzN2ZmYQ==\",}";
+            }
+            else
+            {
+                json = "{\"MERCHANT_ID\":\"aGVhcnRsYW5kZ3BzYW5kYm94\",\"ACCOUNT\":\"aHBw\",\"ORDER_ID\":\"YndQSnM1cHJ3a0dCZDB2UkUwMG5vZw==\",\"TIMESTAMP\":\"MjAyNDAyMTIxNjQ0NDQ=\",\"RESULT\":\"MDA=\",\"PASREF\":\"MTcwNzc1NjI4NDIwNzk1MDI=\",\"AUTHCODE\":\"MTIzNDU2\",\"AVSPOSTCODERESULT\":\"TQ==\",\"CVNRESULT\":\"TQ==\",\"HPP_LANG\":\"R0I=\",\"BILLING_CO\":\"SUU=\",\"MERCHANT_RESPONSE_URL\":\"aHR0cDovL3JlcXVlc3RiLmluLzEwcTJiamIx\",\"MESSAGE\":\"WyB0ZXN0IHN5c3RlbSBdIEF1dGhvcmlzZWQ=\",\"SHA256HASH\":\"NjVmODcyNjA5M2ZhZTEzMTY5YzNiODdkMGU0NTkyNzAzOGUxOGI1YjlhMTdmYzQ2YmViMjM3ODQ2YTg5MzY2Ng==\",}";
+            }
             var parsedResponse = _service.ParseResponse(json, true);
             Assert.IsNotNull(parsedResponse);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
