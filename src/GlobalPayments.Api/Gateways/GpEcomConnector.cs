@@ -83,6 +83,9 @@ namespace GlobalPayments.Api.Gateways {
             {
                 var autoSettle = builder.TransactionType == TransactionType.Sale ? "1" : builder.MultiCapture == true ? "MULTI" : "0";
                 et.SubElement(request, "autosettle").Set("flag", autoSettle);
+                if (builder.TransactionType == TransactionType.Auth) {
+                    et.SubElement(request, "estnumtxn", builder.EstimatedNumberTransaction > 0 ? builder.EstimatedNumberTransaction : null );
+                }
             }
 
             if (!(builder.PaymentMethod is AlternativePaymentMethod)) {

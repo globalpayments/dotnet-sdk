@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v8.0.5 (02/15/24)
+## Latest - v8.0.6 (02/27/24)
+
+## Enhancement
+
+- [GP-ECOM]: Added Estimated Number of Transactions for multicapture.
+
+## v8.0.5 (02/15/24)
 
 ## Enhancement
 
@@ -34,7 +40,7 @@
 - [GP-API]: Add missing properties to authentication->three_ds (message_version, eci,server_trans_reference, ds_trans_reference,value).
 - [GP-API]: File Processing.
 
-## Lv8.0.0 (11/30/23)
+## v8.0.0 (11/30/23)
 
 #### Enhancements
 
@@ -127,13 +133,13 @@
 
 - Enhance logs based on environment (GP-API & GP-ECOM)
 
-## v6.0.1 (31/08/23)
+## v6.0.1 (08/31/23)
 
 #### Bug fixes:
 
 - GP-ECOM: Added custnum from Customer on payer_new request
 
-## v6.0.0 (22/08/23)
+## v6.0.0 (08/22/23)
 
 #### Enhancements
 
@@ -144,13 +150,13 @@
 
 - NWS: Fixed multiple null reference exceptions when attempting transactions without passing in TagData
 
-## v5.2.4 (10/08/23)
+## v5.2.4 (08/10/23)
 
 #### Bug fixes:
 
 - GP-API: Included in the verify request the authentication field with tokenizable card or without it.
 
-## v5.2.3 (01/08/23)
+## v5.2.3 (08/01/23)
 
 #### Enhancements
 
@@ -162,13 +168,13 @@
 
 - Pax: Support partial authorizations
 
-## v5.2.2 (13/07/23)
+## v5.2.2 (07/13/23)
 
 #### Enhancements
 
 - GP-ECOM: Add refund for transaction with open banking
 
-## v5.2.1 (06/07/23)
+## v5.2.1 (07/06/23)
 
 #### Enhancements
 
@@ -178,13 +184,13 @@
 
 - GP-ECOM: Send the correct "message_version" in the initiate step on 3DS2
 
-## v5.2.0 (27/06/23)
+## v5.2.0 (06/27/23)
 
 #### Enhancements
 
 - GP-API: UPA MiTC via GP-API.
 
-## v5.1.9 (15/06/23)
+## v5.1.9 (06/15/23)
 
 #### Enhancements
 
@@ -197,7 +203,7 @@
 
 - Heartland Profac: Device ordering
 
-## v5.1.8 (11/05/23)
+## v5.1.8 (05/11/23)
 
 #### Enhancements
 
@@ -205,7 +211,7 @@
     - https://developer.globalpay.com/api/transfers
     - https://developer.globalpay.com/api/transactions#/Split%20a%20Transaction%20Amount/splitTransaction
 
-## v5.1.7 (09/05/23)
+## v5.1.7 (05/09/23)
 
 #### Enhancements
 
@@ -217,7 +223,7 @@
 - GP-ECOM: Fixed remittance_reference when it is null.
 - GP-API: Update token with usage_mode only.
 
-## v5.1.6 (02/05/23)
+## v5.1.6 (05/02/23)
 
 #### Enhancements
 
@@ -229,7 +235,7 @@
 
 - General: MasterCard regex correction
 
-## v5.1.5 (30/03/23)
+## v5.1.5 (03/30/23)
 
 #### Enhancements
 
@@ -237,25 +243,25 @@
 - GP-API: Added payer information on Transaction object.
 - Portico Gateway: Updated Portico TransactionDetail report mapping to include Invoice Number.
 
-## v5.1.4 (16/03/23)
+## v5.1.4 (03/16/23)
 
 #### Enhancements
 
 - GP-ECOM: Added Payment Schedule that allows you to easily set up and manage recurring billing payments.
 
-## v5.1.3 (02/03/23)
+## v5.1.3 (03/02/23)
 
 #### Enhancements
 
 - GP-API: Added as default the account_id instead of account_name for all GP-API requests.
 
-## v5.1.2 (23/02/23)
+## v5.1.2 (02/23/23)
 
 #### Enhancements
 
 - GP-API: Added validation method for X-GP-SIGNATURE that is received from GP-API on the notification URL.
 
-## v5.1.1 (21/02/23)
+## v5.1.1 (02/21/23)
 
 #### Enhancements
 

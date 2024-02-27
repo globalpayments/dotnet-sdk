@@ -72,7 +72,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         public void CreditAuthorizationForMultiCapture() {
             var authorization = card.Authorize(14m)
                 .WithCurrency("USD")
-                .WithMultiCapture(true)
+                .WithMultiCapture(true, 3)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(authorization);
