@@ -860,7 +860,7 @@ namespace GlobalPayments.Api.Builders {
         }
 
         public AuthorizationBuilder WithBlockedCardType(BlockedCardType cardTypesBlocking) {
-            var hasNulls = cardTypesBlocking.GetType().GetProperties().All(p => p.GetValue(cardTypesBlocking) == null);
+            var hasNulls = cardTypesBlocking.GetType().GetTypeInfo().DeclaredFields.All(p => p.GetValue(cardTypesBlocking) == null);            
             if (hasNulls) {            
                 throw new BuilderException("No properties set on the object");
             }

@@ -246,8 +246,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         private byte[] BmpToPng(byte[] signatureData) {
             using (var ms = new MemoryStream(signatureData))
             using (var pngStream = new MemoryStream()) {
-                var bmp = new Bitmap(ms);
-                bmp.Save(pngStream, ImageFormat.Png);
+                //var bmp = new Bitmap(ms);
+                //bmp.Save(pngStream, ImageFormat.Png);
                 return pngStream.ToArray();
             }
         }

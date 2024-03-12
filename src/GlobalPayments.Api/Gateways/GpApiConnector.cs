@@ -73,7 +73,7 @@ namespace GlobalPayments.Api.Gateways {
         
         
         public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class {
-            throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessPayFac")} not supported");
+            throw new UnsupportedTransactionException("Method ProcessPayFac not supported");
         }       
 
         public string ProcessPassThrough(JsonDoc rawRequest) {

@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v8.0.6 (02/27/24)
+## Latest - v8.0.7 (03/12/24)
+
+## Bug Fixes
+
+- Removed library CoreCompat.System.Drawing.
+
+## v8.0.6 (02/27/24)
 
 ## Enhancement
 

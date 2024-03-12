@@ -1,9 +1,9 @@
-﻿using GlobalPayments.Api.Entities;
-using System;
-using System.Linq.Expressions;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 
-namespace GlobalPayments.Api.Builders {
+namespace GlobalPayments.Api.Builders
+{
     internal class ValidationClause {
         internal Validations parent;
         internal ValidationTarget target;
@@ -32,8 +32,8 @@ namespace GlobalPayments.Api.Builders {
                         subProperty = null;
                         return false;
                     }
-
-                    var value = parentValue.GetType().GetProperty(subProperty).GetValue(parentValue);
+                    
+                    var value = parentValue.GetType().GetRuntimeProperty(subProperty).GetValue(parentValue);                    
                     return value != null;
                     
                 }
