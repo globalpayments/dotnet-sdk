@@ -8,5 +8,6 @@
         public const string Busy = "BUSY";
         public const string TimeOut = "TO";
         public const string Msg = "MSG";
+        public const string Error = "ERROR";
     }
 }

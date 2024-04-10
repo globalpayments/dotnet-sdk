@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using GlobalPayments.Api.Terminals.PAX;
 using log4net;
 
 namespace GlobalPayments.Api.Terminals.UPA
@@ -40,6 +41,8 @@ namespace GlobalPayments.Api.Terminals.UPA
         public byte[] Send(IDeviceMessage deviceMessage)
         {
             var token = _tokenSource.Token;
+
+            var requestId = deviceMessage.GetRequestBuilder().GetValue<JsonDoc>("data")?.GetValue<string>("requestId");
 
             var tcs = new TaskCompletionSource<bool>();
 
@@ -99,6 +102,12 @@ namespace GlobalPayments.Api.Terminals.UPA
                                 break;
                             case UpaMessageType.Msg:
                                 responseMessage = TrimResponse(rvalue);
+                                OnMessageSent?.Invoke($"Sending {UpaMessageType.Ack}...");
+                                await SendAckMessageToDevice(c);
+                                break;
+                            case UpaMessageType.Error:
+                                var errorJson = $@"{{""id"": ""{requestId}"",""status"": ""Error"",""action"": {{""result_code"": ""Unexpected error from terminal.""}}}}";
+                                responseMessage = Encoding.UTF8.GetBytes(errorJson);
                                 OnMessageSent?.Invoke($"Sending {UpaMessageType.Ack}...");
                                 await SendAckMessageToDevice(c);
                                 break;
@@ -164,7 +173,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             catch (Exception ex)
             {
                 _logger.Error($"{ex.Message} : Response - {jsonObject}");
-                throw;
+                return UpaMessageType.Error;
             }
         }
 

@@ -86,11 +86,9 @@ namespace GlobalPayments.Api.Terminals.UPA
             HydrateHeaderData(responseData);
         }
             else {
-                RequestId = root.GetValue<string>("id");
-                TransactionId = RequestId;
-                DeviceResponseText = root.GetValue<string>("status");
-                ResponseText = root.Get("action").GetValue<string>("result_code");
-                DeviceResponseCode = ResponseText;
+                TransactionId = RequestId = root.GetValue<string>("id");
+                Status = ResponseCode = DeviceResponseCode = root.GetValue<string>("status");
+                DeviceResponseText = ResponseText = root.Get("action").GetValue<string>("result_code");
             }
         }
 
