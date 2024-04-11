@@ -81,6 +81,8 @@ namespace GlobalPayments.Api.Gateways {
 
                 if (builder.CustomerData != null) {
                     et.SubElement(holder, isCheck ? "EmailAddress" : "CardHolderEmail", builder.CustomerData.Email);
+                    et.SubElement(holder, "CardHolderFirstName", builder.CustomerData.FirstName); 
+                    et.SubElement(holder, "CardHolderLastName", builder.CustomerData.LastName);
                 }
 
                 if (isCheck) {
@@ -910,6 +912,11 @@ namespace GlobalPayments.Api.Gateways {
                     };
 
                     // card holder data
+                    if (root.Has("CardHolderData"))
+                    {
+                        summary.CustomerFirstName = root.GetValue<string>("CardHolderFirstName");
+                        summary.CustomerLastName = root.GetValue<string>("CardHolderLastName");
+                    }
 
                     // lodging data
                     if (root.Has("LodgingData")) {

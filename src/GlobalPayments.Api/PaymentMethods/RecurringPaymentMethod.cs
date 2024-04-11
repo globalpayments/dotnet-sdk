@@ -73,6 +73,8 @@ namespace GlobalPayments.Api.PaymentMethods
 
         public StoredCredential StoredCredential { get; set; }
 
+        public string AccountNumberLast4 { get; set; }
+
         public RecurringPaymentMethod() : this(null, null) { }
         internal RecurringPaymentMethod(IPaymentMethod paymentMethod) {
             PaymentMethod = paymentMethod;

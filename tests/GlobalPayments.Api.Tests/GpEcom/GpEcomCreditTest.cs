@@ -72,7 +72,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         public void CreditAuthorizationForMultiCapture() {
             var authorization = card.Authorize(14m)
                 .WithCurrency("USD")
-                .WithMultiCapture(true)
+                .WithMultiCapture(true, 3)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(authorization);
@@ -186,6 +186,22 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
+        public void CardBlockingPaymentRequest()
+        {
+            var cardTypesBlocked = new BlockedCardType();
+            cardTypesBlocked.Commercialdebit = true;
+            cardTypesBlocked.Consumerdebit = true;
+
+            var authorization = card.Authorize(14)
+                .WithCurrency("USD")
+                .WithBlockedCardType(cardTypesBlocked)
+                .Execute();
+
+            Assert.IsNotNull(authorization);
+            Assert.AreEqual("00", authorization.ResponseCode);
+        }
+
+        [TestMethod]
         public void CreditFraudResponse() {
             var billingAddress = new Address {
                 StreetAddress1 = "Flat 123",
@@ -290,7 +306,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void StoredCredential_ReceiptIn() {
-            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("03e28f0e-492e-80bd-20ec318e9334", "3c4af936-483e-a393-f558bec2fb2a");
+            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("20190729-GlobalApi", "20190729-GlobalApi-Credit");
 
             StoredCredential storedCredential = new StoredCredential {
                 Type = StoredCredentialType.Recurring,
@@ -310,7 +326,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void StoredCredential_ReceiptIn_OTB() {
-            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("03e28f0e-492e-80bd-20ec318e9334", "3c4af936-483e-a393-f558bec2fb2a");
+            RecurringPaymentMethod storedCard = new RecurringPaymentMethod("20190729-GlobalApi", "20190729-GlobalApi-Credit");
 
             StoredCredential storedCredential = new StoredCredential {
                 Type = StoredCredentialType.Recurring,

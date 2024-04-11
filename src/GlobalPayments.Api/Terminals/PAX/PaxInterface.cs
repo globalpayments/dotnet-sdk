@@ -149,6 +149,57 @@ namespace GlobalPayments.Api.Terminals.PAX {
             var response = _controller.Send(message);
             return Encoding.UTF8.GetString(response);
         }
+        public override IDeviceResponse DeleteResource(string fileName)
+        {
+            byte[] response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A22_DELETE_IMAGE, fileName));
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A23_RSP_DELETE_IMAGE);
+        }
+        public override IDeviceResponse UpdateResource(
+                            UpdateResourceFileType fileType, 
+                            byte[] fileData, 
+                            bool isHttpDeviceConnectionMode
+                        )
+        {
+            int chunkSize = isHttpDeviceConnectionMode ? 3000 : 4000;
+            byte[] response = null;
+            int offset = 0;
+
+            while (offset < fileData.Length)
+            {
+                int length = Math.Min(chunkSize, fileData.Length - offset);
+                byte[] dataPacket = new byte[length];
+                Array.Copy(fileData, offset, dataPacket, 0, length);
+                bool isLastDataPacket = (offset + length) == fileData.Length;
+                string base64String = Convert.ToBase64String(dataPacket);
+
+                response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A18_UPDATE_RESOURCE_FILE,
+                                    offset,
+                                    ControlCodes.FS,
+                                    base64String,
+                                    ControlCodes.FS,
+                                    isLastDataPacket ? "0" : "1",
+                                    ControlCodes.FS,
+                                    (int)fileType,
+                                    ControlCodes.FS,
+                                    "0",
+                                    ControlCodes.FS
+                                ));
+                var resp = new PaxTerminalResponse(response, PAX_MSG_ID.A19_RSP_UPDATE_RESOURCE_FILE);
+
+                if (resp.DeviceResponseCode != "000000")
+                {
+                    return new PaxTerminalResponse(response, PAX_MSG_ID.A19_RSP_UPDATE_RESOURCE_FILE);
+                }
+                if (isLastDataPacket)
+                {
+                    return new PaxTerminalResponse(response, PAX_MSG_ID.A19_RSP_UPDATE_RESOURCE_FILE);
+                }
+                offset += length;
+
+            }
+
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A19_RSP_UPDATE_RESOURCE_FILE);
+        }
         #endregion
 
         #region Reporting Messages

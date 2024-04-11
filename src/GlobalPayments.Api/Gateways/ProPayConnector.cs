@@ -755,7 +755,7 @@ namespace GlobalPayments.Api.Gateways {
 
         public T ProcessBoardingUser<T>(PayFacBuilder<T> builder) where T : class
         {
-            throw new UnsupportedTransactionException($"Method {this.GetType().GetMethod("ProcessBoardingUser")} not supported");
+            throw new UnsupportedTransactionException($"Method ProcessBoardingUser not supported");
         }
         #endregion
     }

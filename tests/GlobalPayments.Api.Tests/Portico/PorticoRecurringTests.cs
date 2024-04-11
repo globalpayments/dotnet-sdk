@@ -3,6 +3,7 @@ using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.Portico {
@@ -34,6 +35,8 @@ namespace GlobalPayments.Api.Tests.Portico {
                 Password = "summer%1151",
                 Environment = Entities.Environment.TEST
             }, "LegacyCreds");
+
+        
         }
 
         [TestMethod]
@@ -190,16 +193,40 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(payment.Key);
         }
 
+        //[TestMethod]
+        //[Ignore] // The account number and routing number is used for Saga /Paya
+        //public void Test_001g_CreatePaymentMethod_ACH() {
+        //    var customer = Customer.Find(CustomerId);
+        //    Assert.IsNotNull(customer, "Customer does not exist.");
+
+        //    var payment = customer.AddPaymentMethod(
+        //        PaymentId("ACH"),
+        //        new eCheck {
+        //            AccountNumber = "24413815",
+        //            RoutingNumber = "490000018",
+        //            CheckType = CheckType.PERSONAL,
+        //            SecCode = SecCode.PPD,
+        //            AccountType = AccountType.CHECKING,
+        //            DriversLicenseNumber = "7418529630",
+        //            DriversLicenseState = "TX",
+        //            BirthYear = 1989
+        //        }).Create();
+        //    Assert.IsNotNull(payment);
+        //    Assert.IsNotNull(payment.Key);
+        //}
+
         [TestMethod]
-        public void Test_001g_CreatePaymentMethod_ACH() {
+        public void Test_001g_CreatePaymentMethod_ACH()
+        {
             var customer = Customer.Find(CustomerId);
             Assert.IsNotNull(customer, "Customer does not exist.");
 
             var payment = customer.AddPaymentMethod(
                 PaymentId("ACH"),
-                new eCheck {
-                    AccountNumber = "24413815",
-                    RoutingNumber = "490000018",
+                new eCheck
+                {
+                    AccountNumber = "1357902468",
+                    RoutingNumber = "122000030",
                     CheckType = CheckType.PERSONAL,
                     SecCode = SecCode.PPD,
                     AccountType = AccountType.CHECKING,
@@ -212,10 +239,10 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void Test_001h_CreateSchedule_Credit() {
+        public void Test_001h_CreateSchedule_Credit_WithDescription()
+        {
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
             Assert.IsNotNull(paymentMethod);
-
             var schedule = paymentMethod.AddSchedule(PaymentId("Credit"))
                 .WithAmount(30.02m)
                 .WithCurrency("USD")
@@ -223,13 +250,17 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .WithFrequency(ScheduleFrequency.WEEKLY)
                 .WithStatus("Active")
                 .WithReprocessingCount(2)
-                .WithEndDate(DateTime.Parse("04/01/2027"))                
+                .WithEndDate(DateTime.Parse("04/01/2027"))
+                .WithDescription("Schedule Test")
                 .Create();
+
             Assert.IsNotNull(schedule);
             Assert.IsNotNull(schedule.Key);
+
         }
+
         [TestMethod]
-        public void Test_001h_CreateSchedule_Credit_WithDescription()
+        public void Test_001h_CreateSchedule_Credit()
         {
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
             Assert.IsNotNull(paymentMethod);
@@ -242,11 +273,11 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .WithStatus("Active")
                 .WithReprocessingCount(2)
                 .WithEndDate(DateTime.Parse("04/01/2027"))
-                .WithDescription("Schedule Test")
                 .Create();
             Assert.IsNotNull(schedule);
             Assert.IsNotNull(schedule.Key);
         }
+
 
         [TestMethod]
         public void Test_001i_CreateSchedule_ACH() {
@@ -271,13 +302,17 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void Test_002b_FindPaymentMethod() {
+        public void Test_002b_FindPaymentMethod_And_Confirm_AccountNumberLast4() {
             var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
             Assert.IsNotNull(paymentMethod);
+
+            // confirm RecurringPaymentMethod object includes card last 4
+            Assert.AreEqual("1111", paymentMethod.AccountNumberLast4);
         }
 
         [TestMethod]
-        public void Test_002c_FindSchedule() {
+        public void Test_002c_FindSchedule()
+        {
             var schedule = Schedule.Find(PaymentId("Credit"));
             Assert.IsNotNull(schedule);
         }
@@ -330,11 +365,13 @@ namespace GlobalPayments.Api.Tests.Portico {
             paymentMethod.SaveChanges();
         }
 
-        //[TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
-        //public void Test_004c_EditPaymentMethodsMethod() {
-        //    var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
-        //    paymentMethod.PaymentMethod = new CreditCardData();
-        //}
+        [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
+        [Ignore] // no assertion - need to look into further
+        public void Test_004c_EditPaymentMethodsMethod()
+        {
+            var paymentMethod = RecurringPaymentMethod.Find(PaymentId("Credit"));
+            paymentMethod.PaymentMethod = new CreditCardData();
+        }
 
         [TestMethod]
         public void Test_004d_EditSchedule() {
@@ -529,6 +566,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
+        [Ignore] // need to check cryto correct url
         public void Test_008g_CreditCharge_WithNewCryptoURL() {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"

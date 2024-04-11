@@ -1,7 +1,6 @@
 ﻿using System;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi.Certification {
@@ -14,12 +13,8 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger()
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         private static CreditCardData InitCreditCardData(string cardNumber, string cvn, string cardHolderName) {

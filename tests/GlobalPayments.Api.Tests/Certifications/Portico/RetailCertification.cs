@@ -6,9 +6,11 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Certifications {
+namespace GlobalPayments.Api.Tests.Certifications.Portico
+{
     [TestClass]
-    public class RetailCertification {
+    public class RetailCertification
+    {
         bool useTokens = false;
 
         string visa_token;
@@ -16,21 +18,26 @@ namespace GlobalPayments.Api.Tests.Certifications {
         string discover_token;
         string amex_token;
 
-        public RetailCertification() {
-            ServicesContainer.ConfigureService(new PorticoConfig {
+        public RetailCertification()
+        {
+            ServicesContainer.ConfigureService(new PorticoConfig
+            {
                 SecretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw"
             });
         }
 
         [TestMethod]
-        public void retail_000_CloseBatch() {
-            try {
+        public void retail_000_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }
@@ -43,7 +50,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
          */
 
         [TestMethod]
-        public void retail_001_CardVerifyVisa() {
+        public void retail_001_CardVerifyVisa()
+        {
             var visa_enc = TestCards.VisaSwipeEncrypted();
 
             var response = visa_enc.Verify()
@@ -52,10 +60,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.IsNotNull(response, "response is null");
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
 
-            if (useTokens) {
+            if (useTokens)
+            {
                 Assert.IsNotNull(response.Token, "token is null");
 
-                var token = new CreditCardData {
+                var token = new CreditCardData
+                {
                     Token = response.Token
                 };
 
@@ -68,7 +78,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_002_CardVerifyMastercardSwipe() {
+        public void retail_002_CardVerifyMastercardSwipe()
+        {
             var card_enc = TestCards.MasterCardSwipeEncrypted();
 
             var response = card_enc.Verify()
@@ -77,10 +88,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
-            if (useTokens) {
+            if (useTokens)
+            {
                 Assert.IsNotNull(response.Token);
 
-                var token = new CreditCardData {
+                var token = new CreditCardData
+                {
                     Token = response.Token
                 };
 
@@ -93,7 +106,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_003_CardVerifyDiscover() {
+        public void retail_003_CardVerifyDiscover()
+        {
             var discover_enc = TestCards.DiscoverSwipeEncrypted();
             var response = discover_enc.Verify()
                     .WithRequestMultiUseToken(useTokens)
@@ -101,10 +115,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
-            if (useTokens) {
+            if (useTokens)
+            {
                 Assert.IsNotNull(response.Token);
 
-                var token = new CreditCardData {
+                var token = new CreditCardData
+                {
                     Token = response.Token
                 };
 
@@ -119,8 +135,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Address Verification
 
         [TestMethod]
-        public void retail_004_CardVerifyAmex() {
-            var address = new Address {
+        public void retail_004_CardVerifyAmex()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -133,10 +151,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
-            if (useTokens) {
+            if (useTokens)
+            {
                 Assert.IsNotNull(response.Token);
 
-                var token = new CreditCardData {
+                var token = new CreditCardData
+                {
                     Token = response.Token
                 };
 
@@ -151,7 +171,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Balance Inquiry (for Prepaid)
 
         [TestMethod]
-        public void retail_005_BalanceInquiryVisa() {
+        public void retail_005_BalanceInquiryVisa()
+        {
             var visa_enc = TestCards.VisaSwipeEncrypted();
 
             var response = visa_enc.BalanceInquiry().Execute();
@@ -162,7 +183,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // CREDIT SALE (For multi-use token only)
 
         [TestMethod]
-        public void retail_006_ChargeVisaSwipeToken() {
+        public void retail_006_ChargeVisaSwipeToken()
+        {
             var card = TestCards.VisaSwipe();
             var response = card.Charge(15.01m)
                     .WithCurrency("USD")
@@ -176,7 +198,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_007_ChargeMastercardSwipeToken() {
+        public void retail_007_ChargeMastercardSwipeToken()
+        {
             var card = TestCards.MasterCardSwipe();
             var response = card.Charge(15.02m)
                     .WithCurrency("USD")
@@ -190,7 +213,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_008_ChargeDiscoverSwipeToken() {
+        public void retail_008_ChargeDiscoverSwipeToken()
+        {
             var card = TestCards.DiscoverSwipe();
             var response = card.Charge(15.03m)
                     .WithCurrency("USD")
@@ -204,7 +228,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_009_ChargeAmexSwipeToken() {
+        public void retail_009_ChargeAmexSwipeToken()
+        {
             var card = TestCards.AmexSwipe();
             var response = card.Charge(15.04m)
                     .WithCurrency("USD")
@@ -223,7 +248,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
          */
 
         [TestMethod]
-        public void retail_010_ChargeVisaSwipe() {
+        public void retail_010_ChargeVisaSwipe()
+        {
             var card = TestCards.VisaSwipe();
             var response = card.Charge(15.01m)
                     .WithCurrency("USD")
@@ -239,7 +265,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_011_ChargeMastercardSwipe() {
+        public void retail_011_ChargeMastercardSwipe()
+        {
             var card = TestCards.MasterCardSwipe();
             var response = card.Charge(15.02m)
                     .WithCurrency("USD")
@@ -250,7 +277,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_012_ChargeDiscoverSwipe() {
+        public void retail_012_ChargeDiscoverSwipe()
+        {
             var card = TestCards.DiscoverSwipe();
             var response = card.Charge(15.03m)
                     .WithCurrency("USD")
@@ -261,7 +289,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_013_ChargeAmexSwipe() {
+        public void retail_013_ChargeAmexSwipe()
+        {
             var card = TestCards.AmexSwipe();
             var response = card.Charge(15.04m)
                     .WithCurrency("USD")
@@ -272,7 +301,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_014_ChargeJbcSwipe() {
+        public void retail_014_ChargeJbcSwipe()
+        {
             var card = TestCards.JcbSwipe();
             var response = card.Charge(15.05m)
                     .WithCurrency("USD")
@@ -290,7 +320,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
 
         #region Retail card
         [TestMethod]
-        public void retail_014a_ChargeRetailMastercard24() {
+        public void retail_014a_ChargeRetailMastercard24()
+        {
             var card = TestCards.MasterCard24Swipe();
             var response = card.Charge(15.34m)
                     .WithCurrency("USD")
@@ -301,7 +332,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_014b_ChargeRetailMastercard25() {
+        public void retail_014b_ChargeRetailMastercard25()
+        {
             var card = TestCards.MasterCard25Swipe();
             var response = card.Charge(15.34m)
                     .WithCurrency("USD")
@@ -313,7 +345,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         #endregion
 
         [TestMethod]
-        public void retail_015_ChargeVisaSwipe() {
+        public void retail_015_ChargeVisaSwipe()
+        {
             var card = TestCards.VisaSwipe();
             var response = card.Charge(15.06m)
                     .WithCurrency("USD")
@@ -331,8 +364,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Manually Entered - Card Present
 
         [TestMethod]
-        public void retail_016_ChargeVisaManualCardPresent() {
-            var address = new Address {
+        public void retail_016_ChargeVisaManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -347,8 +382,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_017_ChargeMasterCardManualCardPresent() {
-            var address = new Address {
+        public void retail_017_ChargeMasterCardManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -368,8 +405,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_018_ChargeDiscoverManualCardPresent() {
-            var address = new Address {
+        public void retail_018_ChargeDiscoverManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234"
             };
 
@@ -383,8 +422,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_019_ChargeAmexManualCardPresent() {
-            var address = new Address {
+        public void retail_019_ChargeAmexManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860"
             };
@@ -399,8 +440,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_020_ChargeJcbManualCardPresent() {
-            var address = new Address {
+        public void retail_020_ChargeJcbManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -414,8 +457,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_021_ChargeDiscoverManualCardPresent() {
-            var address = new Address {
+        public void retail_021_ChargeDiscoverManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -439,8 +484,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Manually Entered - Card Not Present
 
         [TestMethod]
-        public void retail_022_ChargeVisaManualCardNotPresent() {
-            var address = new Address {
+        public void retail_022_ChargeVisaManualCardNotPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -456,8 +503,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_023_ChargeMasterCardManualCardNotPresent() {
-            var address = new Address {
+        public void retail_023_ChargeMasterCardManualCardNotPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -478,8 +527,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_024_ChargeDiscoverManualCardNotPresent() {
-            var address = new Address {
+        public void retail_024_ChargeDiscoverManualCardNotPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234"
             };
 
@@ -492,8 +543,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_025_ChargeAmexManualCardNotPresent() {
-            var address = new Address {
+        public void retail_025_ChargeAmexManualCardNotPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860"
             };
@@ -507,8 +560,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_026_ChargeJcbManualCardNotPresent() {
-            var address = new Address {
+        public void retail_026_ChargeJcbManualCardNotPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -524,7 +579,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Contactless
 
         [TestMethod]
-        public void retail_027_ChargeVisaContactless() {
+        public void retail_027_ChargeVisaContactless()
+        {
             var card = TestCards.VisaSwipe(EntryMethod.Proximity);
             var response = card.Charge(18.01m)
                     .WithCurrency("USD")
@@ -534,7 +590,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_028_ChargeMastercardContactless() {
+        public void retail_028_ChargeMastercardContactless()
+        {
             var card = TestCards.MasterCardSwipe(EntryMethod.Proximity);
 
             var response = card.Charge(18.02m)
@@ -545,7 +602,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_029_ChargeDiscoverContactless() {
+        public void retail_029_ChargeDiscoverContactless()
+        {
             var card = TestCards.DiscoverSwipe(EntryMethod.Proximity);
 
             var response = card.Charge(18.03m)
@@ -556,7 +614,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_030_ChargeAmexContactless() {
+        public void retail_030_ChargeAmexContactless()
+        {
             var card = TestCards.AmexSwipe(EntryMethod.Proximity);
 
             var response = card.Charge(18.04m)
@@ -569,7 +628,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // AUTHORIZATION
 
         [TestMethod]
-        public void retail_031_AuthorizeVisaSwipe() {
+        public void retail_031_AuthorizeVisaSwipe()
+        {
             var card = TestCards.VisaSwipe();
 
             // 031a authorize
@@ -586,7 +646,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_032_AuthorizeVisaSwipeAdditionalAuth() {
+        public void retail_032_AuthorizeVisaSwipeAdditionalAuth()
+        {
             var card = TestCards.VisaSwipe();
 
             // 032a authorize
@@ -605,7 +666,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_033_AuthorizeMasterCardSwipe() {
+        public void retail_033_AuthorizeMasterCardSwipe()
+        {
             var card = TestCards.MasterCardSwipe();
 
             // 033a authorize
@@ -622,7 +684,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_033a_AuthorizeDiscoverSwipe() {
+        public void retail_033a_AuthorizeDiscoverSwipe()
+        {
             var card = TestCards.DiscoverSwipe();
 
             var response = card.Authorize(15.10m)
@@ -636,8 +699,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // AUTHORIZATION - Manually Entered, Card Present
 
         [TestMethod]
-        public void retail_034_AuthorizeVisaManualCardPresent() {
-            var address = new Address {
+        public void retail_034_AuthorizeVisaManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -659,8 +724,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_035_AuthorizeVisaManualCardPresentAdditionalAuth() {
-            var address = new Address {
+        public void retail_035_AuthorizeVisaManualCardPresentAdditionalAuth()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -684,8 +751,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_036_AuthorizeMasterCardManualCardPresent() {
-            var address = new Address {
+        public void retail_036_AuthorizeMasterCardManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -707,8 +776,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_036a_AuthorizeDiscoverManualCardPresent() {
-            var address = new Address {
+        public void retail_036a_AuthorizeDiscoverManualCardPresent()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234"
             };
 
@@ -724,8 +795,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // AUTHORIZATION - Manually Entered, Card Not Present
 
         [TestMethod]
-        public void retail_037_AuthorizeVisaManual() {
-            var address = new Address {
+        public void retail_037_AuthorizeVisaManual()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234",
                 StreetAddress1 = "6860 Dallas Pkwy"
             };
@@ -747,8 +820,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_038_AuthorizeMasterCardManual() {
-            var address = new Address {
+        public void retail_038_AuthorizeMasterCardManual()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024",
                 StreetAddress1 = "6860"
             };
@@ -770,8 +845,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_038a_AuthorizeDiscoverManual() {
-            var address = new Address {
+        public void retail_038a_AuthorizeDiscoverManual()
+        {
+            var address = new Address
+            {
                 PostalCode = "750241234"
             };
 
@@ -788,7 +865,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // PARTIALLY APPROVED SALE (Required)
 
         [TestMethod]
-        public void retail_039_ChargeDiscoverSwipePartialApproval() {
+        public void retail_039_ChargeDiscoverSwipePartialApproval()
+        {
             var card = TestCards.DiscoverSwipe();
 
             var response = card.Charge(40.00m)
@@ -801,7 +879,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_040_ChargeVisaSwipePartialApproval() {
+        public void retail_040_ChargeVisaSwipePartialApproval()
+        {
             var card = TestCards.VisaSwipe();
             var response = card.Charge(130.00m)
                     .WithCurrency("USD")
@@ -813,8 +892,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_041_ChargeDiscoverManualPartialApproval() {
-            var address = new Address {
+        public void retail_041_ChargeDiscoverManualPartialApproval()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
             var card = TestCards.DiscoverManual(true, true);
@@ -830,7 +911,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void retail_042_ChargeMasterCardSwipePartialApproval() {
+        public void retail_042_ChargeMasterCardSwipePartialApproval()
+        {
             var card = TestCards.MasterCardSwipe();
             var response = card.Charge(155.00m)
                     .WithCurrency("USD")
@@ -852,7 +934,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
          */
 
         [TestMethod]
-        public void retail_043_ChargeVisaSwipeEditGratuity() {
+        public void retail_043_ChargeVisaSwipeEditGratuity()
+        {
             var card = TestCards.VisaSwipe();
             var response = card.Charge(15.12m)
                     .WithCurrency("USD")
@@ -869,8 +952,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_044_ChargeMasterCardManualEditGratuity() {
-            var address = new Address {
+        public void retail_044_ChargeMasterCardManualEditGratuity()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -893,8 +978,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Tip on Purchase
 
         [TestMethod]
-        public void retail_045_ChargeVisaManualGratuity() {
-            var address = new Address {
+        public void retail_045_ChargeVisaManualGratuity()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -910,7 +997,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_046_ChargeMasterCardSwipeGratuity() {
+        public void retail_046_ChargeMasterCardSwipeGratuity()
+        {
             var card = TestCards.MasterCardSwipe();
 
             var response = card.Charge(18.62m)
@@ -931,7 +1019,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // LEVEL II CORPORATE PURCHASE CARD
 
         [TestMethod]
-        public void retail_047_LevelIIVisaSwipeResponseB() {
+        public void retail_047_LevelIIVisaSwipeResponseB()
+        {
             var card = TestCards.VisaSwipe();
 
             var response = card.Charge(112.34m)
@@ -942,7 +1031,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("B", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -954,7 +1044,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void retail_047a_LevelIIVisaSwipeResonseB() {
+        public void retail_047a_LevelIIVisaSwipeResonseB()
+        {
             var card = TestCards.VisaSwipe();
 
             var response = card.Charge(112.35m)
@@ -973,7 +1064,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_048_LevelIIVisaSwipeResponseR() {
+        public void retail_048_LevelIIVisaSwipeResponseR()
+        {
             var card = TestCards.VisaSwipe();
 
             var response = card.Charge(123.45m)
@@ -992,8 +1084,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_049_LevelIIVisaManualResponseS() {
-            var address = new Address {
+        public void retail_049_LevelIIVisaManualResponseS()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -1008,7 +1102,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 PoNumber = "9876543210",
                 TaxAmount = 1m
             };
@@ -1021,7 +1116,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_050_LevelIIMasterCardSwipeResponseS() {
+        public void retail_050_LevelIIMasterCardSwipeResponseS()
+        {
             var card = TestCards.MasterCardSwipe();
 
             var response = card.Charge(111.06m)
@@ -1032,7 +1128,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1044,8 +1141,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_051_LevelIIMasterCardManualResponseS() {
-            var address = new Address {
+        public void retail_051_LevelIIMasterCardManualResponseS()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -1060,7 +1159,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 PoNumber = "9876543210",
                 TaxAmount = 1m
             };
@@ -1073,8 +1173,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_051a_LevelIIMasterCardManualResponseS() {
-            var address = new Address {
+        public void retail_051a_LevelIIMasterCardManualResponseS()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -1088,7 +1190,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 PoNumber = "9876543210",
                 TaxAmount = 1m
             };
@@ -1101,8 +1204,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_052_LevelIIMasterCardManualResponseS() {
-            var address = new Address {
+        public void retail_052_LevelIIMasterCardManualResponseS()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -1116,7 +1221,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("S", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1128,7 +1234,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_053_LevelIIAmexSwipeNoResponse() {
+        public void retail_053_LevelIIAmexSwipeNoResponse()
+        {
             var card = TestCards.AmexSwipe();
             var response = card.Charge(111.10m)
                     .WithCurrency("USD")
@@ -1138,7 +1245,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -1150,8 +1258,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_054_LevelIIAmexManualNoResponse() {
-            var address = new Address {
+        public void retail_054_LevelIIAmexManualNoResponse()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -1166,7 +1276,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1178,8 +1289,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_055_LevelIIAmexManualNoResponse() {
-            var address = new Address {
+        public void retail_055_LevelIIAmexManualNoResponse()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -1193,7 +1306,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1205,8 +1319,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_055a_LevelIIAmexManualNoResponse() {
-            var address = new Address {
+        public void retail_055a_LevelIIAmexManualNoResponse()
+        {
+            var address = new Address
+            {
                 PostalCode = "75024"
             };
 
@@ -1220,7 +1336,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("0", response.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -1234,7 +1351,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // OFFLINE SALE / AUTHORIZATION
 
         [TestMethod]
-        public void retail_056_OfflineChargeVisaManual() {
+        public void retail_056_OfflineChargeVisaManual()
+        {
             var card = TestCards.VisaManual(false, true);
 
             var response = card.Charge(15.12m)
@@ -1246,7 +1364,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_056_OfflineAuthVisaManual() {
+        public void retail_056_OfflineAuthVisaManual()
+        {
             var card = TestCards.VisaManual(false, true);
 
             var response = card.Authorize(15.11m)
@@ -1260,7 +1379,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // RETURN
 
         [TestMethod]
-        public void retail_057_ReturnMasterCard() {
+        public void retail_057_ReturnMasterCard()
+        {
             var card = TestCards.MasterCardManual(false, true);
 
             var response = card.Refund(15.11m)
@@ -1271,7 +1391,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_057a_ReturnMasterCardSwipe() {
+        public void retail_057a_ReturnMasterCardSwipe()
+        {
             var card = TestCards.MasterCardSwipe();
             var response = card.Refund(15.15m)
                     .WithCurrency("USD")
@@ -1285,7 +1406,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // PIN DEBIT CARD FUNCTIONS
 
         [TestMethod]
-        public void retail_065_DebitSaleVisaSwipe() {
+        public void retail_065_DebitSaleVisaSwipe()
+        {
             var card = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(14.01m)
@@ -1296,7 +1418,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_066_DebitSaleMasterCardSwipe() {
+        public void retail_066_DebitSaleMasterCardSwipe()
+        {
             var card = TestCards.MasterCardSwipe().AsDebit("F505AD81659AA42A3D123412324000AB");
 
             var response = card.Charge(14.02m)
@@ -1312,7 +1435,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_067_DebitSaleVisaSwipeCashBack() {
+        public void retail_067_DebitSaleVisaSwipeCashBack()
+        {
             var card = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(14.03m)
@@ -1324,7 +1448,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_067a_DebitSaleMasterCard() {
+        public void retail_067a_DebitSaleMasterCard()
+        {
             var card = TestCards.MasterCardSwipe().AsDebit("F505AD81659AA42A3D123412324000AB");
 
             var response = card.Charge(14.04m)
@@ -1337,7 +1462,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // PARTIALLY APPROVED PURCHASE
 
         [TestMethod]
-        public void retail_068_DebitSaleMasterCardPartialApproval() {
+        public void retail_068_DebitSaleMasterCardPartialApproval()
+        {
             var card = TestCards.MasterCardSwipe().AsDebit("F505AD81659AA42A3D123412324000AB");
 
             var response = card.Charge(33.00m)
@@ -1350,7 +1476,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_069_DebitSaleVisaPartialApproval() {
+        public void retail_069_DebitSaleVisaPartialApproval()
+        {
             var card = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(44.00m)
@@ -1370,7 +1497,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // RETURN
 
         [TestMethod]
-        public void retail_070_DebitReturnVisaSwipe() {
+        public void retail_070_DebitReturnVisaSwipe()
+        {
             var card = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             var response = card.Refund(14.07m)
@@ -1381,7 +1509,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_070a_DebitReturnVisaSwipe() {
+        public void retail_070a_DebitReturnVisaSwipe()
+        {
             var card = TestCards.VisaSwipe().AsDebit("32539F50C245A6A93D123412324000AA");
 
             var response = card.Refund(14.08m)
@@ -1403,7 +1532,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
          */
 
         [TestMethod]
-        public void retail_080_EbtfsPurchaseVisaSwipe() {
+        public void retail_080_EbtfsPurchaseVisaSwipe()
+        {
             var card = TestCards.VisaSwipe().AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(101.01m)
@@ -1414,9 +1544,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_081_EbtfsPurchaseVisaManual() {
+        public void retail_081_EbtfsPurchaseVisaManual()
+        {
             var card = TestCards.VisaManual(false, true).AsEBT("32539F50C245A6A93D123412324000AA");
-            
+
             var response = card.Charge(102.01m)
                 .WithCurrency("USD")
                 .Execute();
@@ -1427,7 +1558,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Food Stamp Electronic Voucher (Manual Entry Only)
 
         [TestMethod]
-        public void retail_082_EbtVoucherPurchaseVisa() {
+        public void retail_082_EbtVoucherPurchaseVisa()
+        {
             var card = TestCards.VisaManual(false, true).AsEBT("32539F50C245A6A93D123412324000AA");
             card.SerialNumber = "123456789012345";
             card.ApprovalCode = "123456";
@@ -1442,7 +1574,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Food Stamp Balance Inquiry
 
         [TestMethod]
-        public void retail_083_EbtfsReturnVisaSwipe() {
+        public void retail_083_EbtfsReturnVisaSwipe()
+        {
             var card = TestCards.VisaSwipeEncrypted().AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Refund(104.01m)
@@ -1453,7 +1586,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_084_EbtfsReturnVisaManual() {
+        public void retail_084_EbtfsReturnVisaManual()
+        {
             var card = TestCards.VisaManual(false, true).AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Refund(105.01m)
@@ -1466,7 +1600,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Food Stamp Balance Inquiry
 
         [TestMethod]
-        public void retail_085_EbtBalanceInquiryVisaSwipe() {
+        public void retail_085_EbtBalanceInquiryVisaSwipe()
+        {
             var card = TestCards.VisaSwipeEncrypted().AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.BalanceInquiry().Execute();
@@ -1475,7 +1610,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_086_EbtBalanceInquiryVisaManual() {
+        public void retail_086_EbtBalanceInquiryVisaManual()
+        {
             var card = TestCards.VisaManual(true, true).AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.BalanceInquiry().Execute();
@@ -1490,7 +1626,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
          */
 
         [TestMethod]
-        public void retail_087_EbtCashBackPurchaseVisaSwipe() {
+        public void retail_087_EbtCashBackPurchaseVisaSwipe()
+        {
             var card = TestCards.VisaSwipeEncrypted().AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(106.01m)
@@ -1502,7 +1639,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_088_EbtCashBackPurchaseVisaManual() {
+        public void retail_088_EbtCashBackPurchaseVisaManual()
+        {
             var card = TestCards.VisaManual(false, true).AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(107.01m)
@@ -1516,7 +1654,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // No Cash Back Purchase
 
         [TestMethod]
-        public void retail_089_EbtCashBackPurchaseVisaSwipeNoCashBack() {
+        public void retail_089_EbtCashBackPurchaseVisaSwipeNoCashBack()
+        {
             var card = TestCards.VisaSwipeEncrypted().AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(108.01m)
@@ -1528,7 +1667,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_090_EbtCashBackPurchaseVisaManualNoCashBack() {
+        public void retail_090_EbtCashBackPurchaseVisaManualNoCashBack()
+        {
             var card = TestCards.VisaManual(false, true).AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(109.01m)
@@ -1542,7 +1682,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Cash Back Balance Inquiry
 
         [TestMethod]
-        public void retail_091_EbtBalanceInquiryVisaSwipeCash() {
+        public void retail_091_EbtBalanceInquiryVisaSwipeCash()
+        {
             var card = TestCards.VisaSwipeEncrypted().AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.BalanceInquiry(InquiryType.CASH).Execute();
@@ -1551,7 +1692,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_092_EbtBalanceInquiryVisaManualCash() {
+        public void retail_092_EbtBalanceInquiryVisaManualCash()
+        {
             var card = TestCards.VisaManual(true, true).AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.BalanceInquiry(InquiryType.CASH).Execute();
@@ -1562,7 +1704,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Bash Benefits Withdrawal
 
         [TestMethod]
-        public void retail_093_EbtBenefitWithDrawalVisaSwipe() {
+        public void retail_093_EbtBenefitWithDrawalVisaSwipe()
+        {
             var card = TestCards.VisaSwipeEncrypted().AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(110.01m)
@@ -1573,7 +1716,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_094_EbtBenefitWithDrawalVisaManual() {
+        public void retail_094_EbtBenefitWithDrawalVisaManual()
+        {
             var card = TestCards.VisaManual(false, true).AsEBT("32539F50C245A6A93D123412324000AA");
 
             var response = card.Charge(111.01m)
@@ -1591,7 +1735,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
          */
 
         [TestMethod]
-        public void retail_095_ActivateGift1Swipe() {
+        public void retail_095_ActivateGift1Swipe()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.Activate(6.00m).Execute();
@@ -1600,7 +1745,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_096_ActivateGift2Manual() {
+        public void retail_096_ActivateGift2Manual()
+        {
             var card = TestCards.GiftCard2Manual();
 
             var response = card.Activate(7.00m).Execute();
@@ -1611,7 +1757,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // ADD VALUE
 
         [TestMethod]
-        public void retail_097_AddValueGift1Swipe() {
+        public void retail_097_AddValueGift1Swipe()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.AddValue(8.00m)
@@ -1622,7 +1769,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_098_AddValueGift2Manual() {
+        public void retail_098_AddValueGift2Manual()
+        {
             var card = TestCards.GiftCard2Manual();
 
             var response = card.Activate(9.00m).Execute();
@@ -1633,7 +1781,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // BALANCE INQUIRY
 
         [TestMethod]
-        public void retail_099_BalanceInquiryGift1Swipe() {
+        public void retail_099_BalanceInquiryGift1Swipe()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.BalanceInquiry().Execute();
@@ -1643,7 +1792,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_100_BalanceInquiryGift2Manual() {
+        public void retail_100_BalanceInquiryGift2Manual()
+        {
             var card = TestCards.GiftCard2Manual();
 
             var response = card.BalanceInquiry().Execute();
@@ -1655,7 +1805,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // REPLACE / TRANSFER
 
         [TestMethod]
-        public void retail_101_ReplaceGift1Swipe() {
+        public void retail_101_ReplaceGift1Swipe()
+        {
             var oldCard = TestCards.GiftCard1Swipe();
             var newCard = TestCards.GiftCard2Manual();
 
@@ -1665,7 +1816,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_102_ReplaceGift2Manual() {
+        public void retail_102_ReplaceGift2Manual()
+        {
             var newCard = TestCards.GiftCard1Swipe();
             var oldCard = TestCards.GiftCard2Manual();
 
@@ -1677,7 +1829,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // SALE / REDEEM
 
         [TestMethod]
-        public void retail_103_SaleGift1Swipe() {
+        public void retail_103_SaleGift1Swipe()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.Charge(1.00m)
@@ -1688,7 +1841,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_104_SaleGift2Manual() {
+        public void retail_104_SaleGift2Manual()
+        {
             var card = TestCards.GiftCard2Manual();
 
             var response = card.Charge(2.00m)
@@ -1699,7 +1853,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_105_SaleGift1VoidSwipe() {
+        public void retail_105_SaleGift1VoidSwipe()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.Charge(3.00m)
@@ -1715,7 +1870,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_106_SaleGift2ReversalManual() {
+        public void retail_106_SaleGift2ReversalManual()
+        {
             var card = TestCards.GiftCard2Manual();
 
             var response = card.Charge(4.00m)
@@ -1737,7 +1893,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // DEACTIVATE
 
         [TestMethod]
-        public void retail_109_DeactivateGift1() {
+        public void retail_109_DeactivateGift1()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.Deactivate().Execute();
@@ -1748,7 +1905,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // RECEIPTS MESSAGING
 
         [TestMethod]
-        public void retail_110_ReceiptsMessaging() {
+        public void retail_110_ReceiptsMessaging()
+        {
             // PRINT AND SCAN RECEIPT FOR TEST 107
         }
 
@@ -1758,7 +1916,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
          */
 
         [TestMethod]
-        public void retail_111_BalanceInquiryRewards1() {
+        public void retail_111_BalanceInquiryRewards1()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.BalanceInquiry().Execute();
@@ -1768,7 +1927,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_112_BalanceInquiryRewards2() {
+        public void retail_112_BalanceInquiryRewards2()
+        {
             var card = TestCards.GiftCard2Manual();
 
             var response = card.BalanceInquiry().Execute();
@@ -1780,19 +1940,22 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // ALIAS
 
         [TestMethod]
-        public void retail_113_CreateAliasGift1() {
+        public void retail_113_CreateAliasGift1()
+        {
             var card = GiftCard.Create("9725550100");
             Assert.IsNotNull(card);
         }
 
         [TestMethod]
-        public void retail_114_CreateAliasGift2() {
+        public void retail_114_CreateAliasGift2()
+        {
             var card = GiftCard.Create("9725550100");
             Assert.IsNotNull(card);
         }
 
         [TestMethod]
-        public void retail_115_AddAliasGift1() {
+        public void retail_115_AddAliasGift1()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.AddAlias("2145550199").Execute();
@@ -1801,7 +1964,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_116_AddAliasGift2() {
+        public void retail_116_AddAliasGift2()
+        {
             var card = TestCards.GiftCard2Manual();
 
             var response = card.AddAlias("2145550199").Execute();
@@ -1810,7 +1974,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_117_DeleteAliasGift1() {
+        public void retail_117_DeleteAliasGift1()
+        {
             var card = TestCards.GiftCard1Swipe();
 
             var response = card.RemoveAlias("2145550199").Execute();
@@ -1819,14 +1984,17 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void retail_999_CloseBatch() {
-            try {
+        public void retail_999_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }

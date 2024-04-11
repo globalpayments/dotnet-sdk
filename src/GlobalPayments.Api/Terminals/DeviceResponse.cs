@@ -38,11 +38,8 @@ namespace GlobalPayments.Api.Terminals {
         /// ECR reference number for the transaction
         /// </summary>
         public string ReferenceNumber { get; set; }
-
         public string SequenceNumber { get; set; }
-
         public string TotalCount { get; set; }
-
         public string TotalAmount { get; set; }
     }
 }

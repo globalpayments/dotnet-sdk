@@ -4,7 +4,6 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
@@ -21,17 +20,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Country = "GB",
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                // RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\requestlog.txt")
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         public GpApi3DSecure2Test() {

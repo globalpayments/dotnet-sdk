@@ -367,6 +367,7 @@ namespace GlobalPayments.Api.Gateways {
                 CommercialIndicator = response.GetValue<string>("cpcInd"),
                 TaxType = response.GetValue<string>("cpcTaxType"),
                 ExpirationDate = response.GetValue<string>("expirationDate"),
+                AccountNumberLast4 = response.GetValue<string>("accountNumberLast4"),
                 Address = new Address {
                     StreetAddress1 = response.GetValue<string>("addressLine1"),
                     StreetAddress2 = response.GetValue<string>("addressLine2"),

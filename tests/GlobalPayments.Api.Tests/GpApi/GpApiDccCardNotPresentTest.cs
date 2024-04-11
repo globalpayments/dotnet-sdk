@@ -14,14 +14,9 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestInitialize]
         public void TestInitialize() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-                AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "dcc" }
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            gpApiConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "dcc" };
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             card = new CreditCardData {
                 Number = "4006097467207025",

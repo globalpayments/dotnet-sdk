@@ -5,34 +5,19 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static GlobalPayments.Api.Tests.GpApi.GpApiAvsCheckTestCards;
-using Environment = GlobalPayments.Api.Entities.Environment;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiCreditCardNotPresentTest : BaseGpApiTests {
         private CreditCardData card;
         private const decimal AMOUNT = 7.8m;
-        private const string CURRENCY = "USD";
+        private const string CURRENCY = "GBP";
 
         [TestInitialize]
         public void TestInitialize() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                // RequestLogger = new RequestFileLogger(@"C:\temp\transit\finger.txt"),
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-                // DO NO DELETE - usage example for some settings
-                // DynamicHeaders = new Dictionary<string, string>
-                // {
-                //     ["x-gp-platform"] = "prestashop;version=1.7.2",
-                //     ["x-gp-extension"] = "coccinet;version=2.4.1"
-                // }
-            });
+            ServicesContainer.RemoveConfig();
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             card = new CreditCardData {
                 Number = "4263970000005262",
@@ -395,6 +380,25 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditVerificationWithStoredCredentials()
+        {
+           var storeCredentials = new StoredCredential();
+            storeCredentials.Initiator = StoredCredentialInitiator.Merchant;
+            storeCredentials.Type = StoredCredentialType.Installment;
+            storeCredentials.Sequence = StoredCredentialSequence.Subsequent;
+            storeCredentials.Reason = StoredCredentialReason.Incremental;
+
+            var response = card.Verify()
+                .WithCurrency(CURRENCY)
+                .WithStoredCredential(storeCredentials)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
+        }
+
+        [TestMethod]
         public void CreditRefundTransaction_WithIdempotencyKey() {
             var transaction = card.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
@@ -690,7 +694,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CardTokenizationThenPayingWithToken_SingleToMultiUse() {
-            var token = card.Tokenize(paymentMethodUsageMode: PaymentMethodUsageMode.Single);
+            var permissions = new[] { "PMT_POST_Create_Single" };
+            var gpApiConfig = new GpApiConfig {
+                AppId = AppId,
+                AppKey = AppKey,
+                RequestLogger = new RequestConsoleLogger(),
+                Permissions = permissions
+            };
+
+            ServicesContainer.ConfigureService(gpApiConfig, "singleUseToken");
+            
+            var token = card.Tokenize(paymentMethodUsageMode: PaymentMethodUsageMode.Single, configName:"singleUseToken");
             Assert.IsNotNull(token);
 
             var tokenizedCard = new CreditCardData {
@@ -829,19 +843,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CreditSaleWithManualEntryMethod()
         {
-            foreach (Channel channel in Enum.GetValues(typeof(Channel))) 
-            {
+            foreach (Channel channel in Enum.GetValues(typeof(Channel))) {
                 foreach (ManualEntryMethod entryMethod in Enum.GetValues(typeof(ManualEntryMethod)))
                 {
-                    ServicesContainer.ConfigureService(new GpApiConfig
-                    {
-                        Environment = Environment.TEST,
-                        AppId = AppId,
-                        AppKey = AppKey,
-                        SecondsToExpire = 60,
-                        Channel = channel,
-                        RequestLogger = new RequestConsoleLogger()
-                    });
+                    var gpApiConfig = GpApiConfigSetup(AppId, AppKey, channel);
+                    ServicesContainer.ConfigureService(gpApiConfig);
+                    
                     card.Cvn = "123";
                     card.EntryMethod = entryMethod;
 
@@ -856,16 +863,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditSaleWithEntryMethod() {
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
+            
             foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod))) {
-                ServicesContainer.ConfigureService(new GpApiConfig {
-                    Environment = Environment.TEST,
-                    AppId = AppId,
-                    AppKey = AppKey,
-                    SecondsToExpire = 60,
-                    Channel = Channel.CardPresent,
-                    RequestLogger = new RequestConsoleLogger()
-                });
-
                 var creditTrackData = new CreditTrackData {
                     TrackData =
                         "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",

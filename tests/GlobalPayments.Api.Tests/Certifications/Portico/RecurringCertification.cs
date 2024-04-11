@@ -1,13 +1,14 @@
 ﻿using System;
-using GlobalPayments.Api;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Certifications {
+namespace GlobalPayments.Api.Tests.Certifications.Portico
+{
     [TestClass]
-    public class RecurringCertification {
+    public class RecurringCertification
+    {
         private static Customer _customerPerson;
         private static Customer _customerBusiness;
         private static RecurringPaymentMethod _paymentMethodVisa;
@@ -22,62 +23,78 @@ namespace GlobalPayments.Api.Tests.Certifications {
         private static readonly string TodayDate = DateTime.Today.ToString("yyyyMMdd");
         private static readonly string IdentifierBase = "{0}-{1}" + Guid.NewGuid().ToString().Substring(0, 10);
 
-        private static string GetIdentifier(string identifier) {
+        private static string GetIdentifier(string identifier)
+        {
             return string.Format(IdentifierBase, TodayDate, identifier);
         }
 
-        public RecurringCertification() {
-            ServicesContainer.ConfigureService(new PorticoConfig {
+        public RecurringCertification()
+        {
+            ServicesContainer.ConfigureService(new PorticoConfig
+            {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
         }
 
         [TestMethod, Ignore]
-        public void recurring_000_CloseBatch() {
-            try {
+        public void recurring_000_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 //Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 //Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }
         }
 
         [TestMethod]
-        public void recurring_000_CleanUp() {
+        public void recurring_000_CleanUp()
+        {
             // Remove Schedules
-            try {
+            try
+            {
                 var schResults = Schedule.FindAll();
-                foreach (var schedule in schResults) {
+                foreach (var schedule in schResults)
+                {
                     schedule.Delete(true);
                 }
             }
-            catch (ApiException exc) {
+            catch (ApiException exc)
+            {
                 Assert.IsNotNull(exc);
             }
 
             // Remove Payment Methods
-            try {
+            try
+            {
                 var pmResults = RecurringPaymentMethod.FindAll();
-                foreach (var pm in pmResults) {
+                foreach (var pm in pmResults)
+                {
                     pm.Delete(true);
                 }
             }
-            catch (ApiException exc) {
+            catch (ApiException exc)
+            {
                 Assert.IsNotNull(exc);
             }
 
             // Remove Customers
-            try {
+            try
+            {
                 var custResults = Customer.FindAll();
-                foreach (var c in custResults) {
+                foreach (var c in custResults)
+                {
                     c.Delete(true);
                 }
             }
-            catch (ApiException exc) {
+            catch (ApiException exc)
+            {
                 Assert.IsNotNull(exc);
             }
         }
@@ -85,14 +102,17 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // CUSTOMER SETUP
 
         [TestMethod]
-        public void recurring_001_AddCustomerPerson() {
-            var customer = new Customer {
+        public void recurring_001_AddCustomerPerson()
+        {
+            var customer = new Customer
+            {
                 Id = GetIdentifier("Person"),
                 FirstName = "John",
                 LastName = "Doe",
                 Status = "Active",
                 Email = "john.doe@email.com",
-                Address = new Address {
+                Address = new Address
+                {
                     StreetAddress1 = "123 Main St",
                     City = "Dallas",
                     State = "TX",
@@ -107,13 +127,16 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_002_AddCustomerBusiness() {
-            var customer = new Customer {
+        public void recurring_002_AddCustomerBusiness()
+        {
+            var customer = new Customer
+            {
                 Id = GetIdentifier("Business"),
                 Company = "AcmeCo",
                 Status = "Active",
                 Email = "acme@email.com",
-                Address = new Address {
+                Address = new Address
+                {
                     StreetAddress1 = "987 Elm St",
                     City = "Princeton",
                     State = "NJ",
@@ -130,11 +153,13 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // PAYMENT METHOD SETUP
 
         [TestMethod]
-        public void recurring_003_AddPaymentCreditVisa() {
+        public void recurring_003_AddPaymentCreditVisa()
+        {
             if (_customerPerson == null)
                 Assert.Inconclusive();
 
-            var paymentMethod = _customerPerson.AddPaymentMethod(GetIdentifier("CreditV"), new CreditCardData {
+            var paymentMethod = _customerPerson.AddPaymentMethod(GetIdentifier("CreditV"), new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025
@@ -145,13 +170,15 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_004_AddPaymentCreditMasterCard() {
+        public void recurring_004_AddPaymentCreditMasterCard()
+        {
             if (_customerPerson == null)
                 Assert.Inconclusive();
 
             var paymentMethod = _customerPerson.AddPaymentMethod(
                 GetIdentifier("CreditMC"),
-                new CreditCardData {
+                new CreditCardData
+                {
                     Number = "5473500000000014",
                     ExpMonth = 12,
                     ExpYear = 2025
@@ -162,13 +189,15 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_005_AddPaymentCheckPPD() {
+        public void recurring_005_AddPaymentCheckPPD()
+        {
             if (_customerPerson == null)
                 Assert.Inconclusive();
 
             var paymentMethod = _customerPerson.AddPaymentMethod(
                 GetIdentifier("CheckPPD"),
-                new eCheck {
+                new eCheck
+                {
                     AccountType = AccountType.CHECKING,
                     CheckType = CheckType.PERSONAL,
                     SecCode = SecCode.PPD,
@@ -184,13 +213,15 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_006_AddPaymentCheckCCD() {
+        public void recurring_006_AddPaymentCheckCCD()
+        {
             if (_customerBusiness == null)
                 Assert.Inconclusive();
 
             var paymentMethod = _customerBusiness.AddPaymentMethod(
                     GetIdentifier("CheckCCD"),
-                    new eCheck {
+                    new eCheck
+                    {
                         AccountType = AccountType.CHECKING,
                         CheckType = CheckType.BUSINESS,
                         SecCode = SecCode.CCD,
@@ -209,13 +240,15 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // PAYMENT SETUP - DECLINED
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void recurring_007_AddPaymentCheckPPD() {
+        public void recurring_007_AddPaymentCheckPPD()
+        {
             if (_customerPerson == null)
                 Assert.Inconclusive();
 
             var paymentMethod = _customerPerson.AddPaymentMethod(
                     GetIdentifier("CheckPPD"),
-                    new eCheck {
+                    new eCheck
+                    {
                         AccountType = AccountType.CHECKING,
                         CheckType = CheckType.PERSONAL,
                         SecCode = SecCode.PPD,
@@ -231,7 +264,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Recurring Billing using PayPlan - Managed Schedule
 
         [TestMethod]
-        public void recurring_008_AddScheduleCreditVisa() {
+        public void recurring_008_AddScheduleCreditVisa()
+        {
             if (_paymentMethodVisa == null)
                 Assert.Inconclusive();
 
@@ -248,7 +282,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_009_AddScheduleCreditMasterCard() {
+        public void recurring_009_AddScheduleCreditMasterCard()
+        {
             if (_paymentMethodMasterCard == null)
                 Assert.Inconclusive();
 
@@ -266,7 +301,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_010_AddScheduleCheckPPD() {
+        public void recurring_010_AddScheduleCheckPPD()
+        {
             if (_paymentMethodCheckPpd == null)
                 Assert.Inconclusive();
 
@@ -284,7 +320,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_011_AddScheduleCheckCCD() {
+        public void recurring_011_AddScheduleCheckCCD()
+        {
             if (_paymentMethodCheckCcd == null)
                 Assert.Inconclusive();
 
@@ -301,7 +338,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void recurring_012_AddScheduleCreditVisa() {
+        public void recurring_012_AddScheduleCreditVisa()
+        {
             if (_paymentMethodVisa == null)
                 Assert.Inconclusive();
 
@@ -315,7 +353,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void recurring_013_AddScheduleCCheckPPD() {
+        public void recurring_013_AddScheduleCCheckPPD()
+        {
             if (_paymentMethodCheckPpd == null)
                 Assert.Inconclusive();
 
@@ -332,7 +371,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Recurring Billing using PayPlan - Managed Schedule
 
         [TestMethod]
-        public void recurring_014_RecurringBillingVisa() {
+        public void recurring_014_RecurringBillingVisa()
+        {
             if (_paymentMethodVisa == null || _scheduleVisa == null)
                 Assert.Inconclusive();
 
@@ -346,7 +386,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void recurring_015_RecurringBillingMasterCard() {
+        public void recurring_015_RecurringBillingMasterCard()
+        {
             if (_paymentMethodMasterCard == null || _scheduleMasterCard == null)
                 Assert.Inconclusive();
 
@@ -360,7 +401,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_016_RecurringBillingCheckPPD() {
+        public void recurring_016_RecurringBillingCheckPPD()
+        {
             if (_paymentMethodCheckPpd == null || _scheduleCheckPpd == null)
                 Assert.Inconclusive();
 
@@ -374,7 +416,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_017_RecurringBillingCheckCCD() {
+        public void recurring_017_RecurringBillingCheckCCD()
+        {
             if (_paymentMethodCheckCcd == null || _scheduleCheckCcd == null)
                 Assert.Inconclusive();
 
@@ -390,7 +433,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // One time bill payment
 
         [TestMethod]
-        public void recurring_018_RecurringBillingVisa() {
+        public void recurring_018_RecurringBillingVisa()
+        {
             if (_paymentMethodVisa == null)
                 Assert.Inconclusive();
 
@@ -402,7 +446,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_019_RecurringBillingMasterCard() {
+        public void recurring_019_RecurringBillingMasterCard()
+        {
             if (_paymentMethodMasterCard == null)
                 Assert.Inconclusive();
 
@@ -414,7 +459,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_020_RecurringBillingCheckPPD() {
+        public void recurring_020_RecurringBillingCheckPPD()
+        {
             if (_paymentMethodCheckPpd == null)
                 Assert.Inconclusive();
 
@@ -426,7 +472,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_021_RecurringBillingCheckCCD() {
+        public void recurring_021_RecurringBillingCheckCCD()
+        {
             if (_paymentMethodCheckCcd == null)
                 Assert.Inconclusive();
 
@@ -440,7 +487,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Onetime bill payment - declined
 
         [TestMethod]
-        public void recurring_022_RecurringBillingVisa_Decline() {
+        public void recurring_022_RecurringBillingVisa_Decline()
+        {
             if (_paymentMethodVisa == null)
                 Assert.Inconclusive();
 
@@ -452,7 +500,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void recurring_023_RecurringBillingCheckPPD_Decline() {
+        public void recurring_023_RecurringBillingCheckPPD_Decline()
+        {
             if (_paymentMethodCheckPpd == null)
                 Assert.Inconclusive();
 
@@ -464,14 +513,17 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void recurring_999_CloseBatch() {
-            try {
+        public void recurring_999_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 //Console.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 //Console.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }

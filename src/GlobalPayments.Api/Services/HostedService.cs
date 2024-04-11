@@ -40,8 +40,8 @@ namespace GlobalPayments.Api.Services {
             var transactionId = response.GetValue<string>("PASREF");
             var authCode = response.GetValue<string>("AUTHCODE") ?? null;
             var paymentMethod = response.GetValue<string>("PAYMENTMETHOD") ?? null;
-            var sha1Hash = response.GetValue<string>("SHA1HASH");
-            var hash = GenerationUtils.GenerateHash(_config.SharedSecret, timestamp, merchantId, orderId, result, message, transactionId, response.Has("MERCHANT_RESPONSE_URL") ? paymentMethod != null ? paymentMethod : authCode : authCode);
+            var sha1Hash = response.GetValue<string>($"{_config.ShaHashType}HASH");
+            var hash = GenerationUtils.GenerateHash(_config.SharedSecret, _config.ShaHashType, timestamp, merchantId, orderId, result, message, transactionId, response.Has("MERCHANT_RESPONSE_URL") ? paymentMethod != null ? paymentMethod : authCode : authCode);
             if (!hash.Equals(sha1Hash))
                 throw new ApiException("Incorrect hash. Please check your code and the Developers Documentation.");
 
@@ -102,8 +102,8 @@ namespace GlobalPayments.Api.Services {
             .Set("PAYMENTMETHOD", response.GetValue<string>("paymentmethod"))
             .Set("PAYMENT_PURPOSE", response.GetValue<string>("paymentpurpose"))
             .Set("RESULT", response.GetValue<string>("result"))
-            .Set("SHA1HASH", response.GetValue<string>("sha1hash"));
-            
+            .Set($"{_config.ShaHashType}HASH", response.GetValue<string>($"{_config.ShaHashType.ToString().ToLower()}hash"));
+           
         }
     }
 }

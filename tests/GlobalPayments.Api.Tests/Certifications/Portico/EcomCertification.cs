@@ -5,9 +5,11 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Certifications {
+namespace GlobalPayments.Api.Tests.Certifications.Portico
+{
     [TestClass]
-    public class EcomCertification {
+    public class EcomCertification
+    {
         bool useTokens = false;
 
         string visa_token;
@@ -15,33 +17,41 @@ namespace GlobalPayments.Api.Tests.Certifications {
         string discover_token;
         string amex_token;
 
-        EcommerceInfo ecom = new EcommerceInfo {
+        EcommerceInfo ecom = new EcommerceInfo
+        {
             Channel = EcommerceChannel.ECOM
         };
 
-        public EcomCertification() {
-            ServicesContainer.ConfigureService(new PorticoConfig {
+        public EcomCertification()
+        {
+            ServicesContainer.ConfigureService(new PorticoConfig
+            {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
         }
 
         [TestMethod]
-        public void ecomm_000_CloseBatch() {
-            try {
+        public void ecomm_000_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }
         }
 
         [TestMethod]
-        public void ecomm_001_verify_visa() {
-            var card = new CreditCardData {
+        public void ecomm_001_verify_visa()
+        {
+            var card = new CreditCardData
+            {
                 Number = "4484958240202792",
                 ExpMonth = 12,
                 ExpYear = 2025
@@ -56,8 +66,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_002_verify_master_card() {
-            var card = new CreditCardData {
+        public void ecomm_002_verify_master_card()
+        {
+            var card = new CreditCardData
+            {
                 Number = "5356083898949891",
                 ExpMonth = 12,
                 ExpYear = 2025
@@ -72,8 +84,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_003_verify_discover() {
-            var card = new CreditCardData {
+        public void ecomm_003_verify_discover()
+        {
+            var card = new CreditCardData
+            {
                 Number = "6223971100014620",
                 ExpMonth = 12,
                 ExpYear = 2025
@@ -91,8 +105,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // StreetAddress Verification
 
         [TestMethod]
-        public void ecomm_004_verify_amex() {
-            var card = new CreditCardData {
+        public void ecomm_004_verify_amex()
+        {
+            var card = new CreditCardData
+            {
                 Number = "345039962663847",
                 ExpMonth = 12,
                 ExpYear = 2025
@@ -110,8 +126,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // Balance Inquiry (for Prepaid Card)
 
         [TestMethod]
-        public void ecomm_005_balance_inquiry_visa() {
-            var card = new CreditCardData {
+        public void ecomm_005_balance_inquiry_visa()
+        {
+            var card = new CreditCardData
+            {
                 Number = "4664383951958601",
                 ExpMonth = 12,
                 ExpYear = 2025
@@ -125,13 +143,16 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // CREDIT SALE (For Multi-Use Token Only)
 
         [TestMethod, Ignore]
-        public void ecomm_006_charge_visa_token() {
-            var address = new Address {
+        public void ecomm_006_charge_visa_token()
+        {
+            var address = new Address
+            {
                 StreetAddress1 = "6860 Dallas Pkwy",
                 PostalCode = "75024"
             };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025
@@ -151,10 +172,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void ecomm_007_charge_master_card_token() {
+        public void ecomm_007_charge_master_card_token()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -175,10 +198,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void ecomm_008_charge_discover_token() {
+        public void ecomm_008_charge_discover_token()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "6011000990156527",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -199,10 +224,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod, Ignore]
-        public void ecomm_009_charge_amex_token() {
+        public void ecomm_009_charge_amex_token()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "372700699251018",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -225,7 +252,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // CREDIT SALE
 
         [TestMethod]
-        public void ecomm_010_charge_visa() {
+        public void ecomm_010_charge_visa()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "75024" };
             var card = useTokens ? new CreditCardData { Token = visa_token } : TestCards.VisaManual();
 
@@ -247,7 +275,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_011_charge_master_card() {
+        public void ecomm_011_charge_master_card()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
             var card = useTokens ? new CreditCardData { Token = mastercard_token } : TestCards.MasterCardManual();
 
@@ -264,7 +293,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_012_charge_discover() {
+        public void ecomm_012_charge_discover()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "750241234" };
             var card = useTokens ? new CreditCardData { Token = discover_token } : TestCards.DiscoverManual();
 
@@ -281,7 +311,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_013_charge_amex() {
+        public void ecomm_013_charge_amex()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "75024" };
             var card = useTokens ? new CreditCardData { Token = amex_token } : TestCards.AmexManual();
 
@@ -298,10 +329,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_014_charge_jcb() {
+        public void ecomm_014_charge_jcb()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "3566007770007321",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -321,7 +354,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_011b_charge_master_card() {
+        public void ecomm_011b_charge_master_card()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
             var card = TestCards.MasterCardSeries2Manual();
 
@@ -340,10 +374,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // AUTHORIZATION
 
         [TestMethod]
-        public void ecomm_015_authorization_visa() {
+        public void ecomm_015_authorization_visa()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -368,10 +404,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_016_authorization_master_card() {
+        public void ecomm_016_authorization_master_card()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -395,10 +433,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_017_authorization_discover() {
+        public void ecomm_017_authorization_discover()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "6011000990156527",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -416,10 +456,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_016b_authorization_master_card() {
+        public void ecomm_016b_authorization_master_card()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "2223000010005780",
                 ExpMonth = 12,
                 ExpYear = 2019,
@@ -445,10 +487,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // PARTIALLY - APPROVED SALE
 
         [TestMethod]
-        public void ecomm_018_partial_approval_visa() {
+        public void ecomm_018_partial_approval_visa()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -469,10 +513,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_019_partial_approval_discover() {
+        public void ecomm_019_partial_approval_discover()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "6011000990156527",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -493,10 +539,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_020_partial_approval_master_card() {
+        public void ecomm_020_partial_approval_master_card()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -524,10 +572,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // LEVEL II CORPORATE PURCHASE CARD
 
         [TestMethod]
-        public void ecomm_021_level_ii_response_b() {
+        public void ecomm_021_level_ii_response_b()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -545,7 +595,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("B", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -558,10 +609,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_022_level_ii_response_b() {
+        public void ecomm_022_level_ii_response_b()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -579,7 +632,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("B", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -591,10 +645,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_023_level_ii_response_r() {
+        public void ecomm_023_level_ii_response_r()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -622,10 +678,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_024_level_ii_response_s() {
+        public void ecomm_024_level_ii_response_s()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -643,8 +701,9 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
-                PoNumber = "9876543210",                
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
+                PoNumber = "9876543210",
                 TaxAmount = 1m
             };
 
@@ -654,13 +713,15 @@ namespace GlobalPayments.Api.Tests.Certifications {
 
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
-        }      
+        }
 
         [TestMethod]
-        public void ecomm_025_level_ii_response_s() {
+        public void ecomm_025_level_ii_response_s()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -677,7 +738,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -689,10 +751,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_026_level_ii_response_s() {
+        public void ecomm_026_level_ii_response_s()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -709,7 +773,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -722,10 +787,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_027_level_ii_response_s() {
+        public void ecomm_027_level_ii_response_s()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -743,7 +810,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m,
                 PoNumber = "9876543210"
             };
@@ -757,10 +825,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_028_level_ii_response_s() {
+        public void ecomm_028_level_ii_response_s()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -778,7 +848,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("S", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -790,10 +861,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_029_level_ii_no_response() {
+        public void ecomm_029_level_ii_no_response()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "372700699251018",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -811,7 +884,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.NOTUSED) {
+            var commercialData = new CommercialData(TaxType.NOTUSED)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -823,10 +897,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_030_level_ii_no_response() {
+        public void ecomm_030_level_ii_no_response()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "372700699251018",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -843,7 +919,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 TaxAmount = 1m
             };
 
@@ -856,10 +933,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_031_level_ii_no_response() {
+        public void ecomm_031_level_ii_no_response()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "750241234" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "372700699251018",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -877,7 +956,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.SALESTAX) {
+            var commercialData = new CommercialData(TaxType.SALESTAX)
+            {
                 PoNumber = "9876543210",
                 TaxAmount = 1m
             };
@@ -891,10 +971,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_032_level_ii_no_response() {
+        public void ecomm_032_level_ii_no_response()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "372700699251018",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -912,7 +994,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual("0", chargeResponse.CommercialIndicator);
 
-            var commercialData = new CommercialData(TaxType.TAXEXEMPT) {
+            var commercialData = new CommercialData(TaxType.TAXEXEMPT)
+            {
                 PoNumber = "9876543210"
             };
 
@@ -927,8 +1010,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // PRIOR / VOICE AUTHORIZATION
 
         [TestMethod]
-        public void ecomm_033_offline_sale() {
-            var card = new CreditCardData {
+        public void ecomm_033_offline_sale()
+        {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -947,8 +1032,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_033_offline_authorization() {
-            var card = new CreditCardData {
+        public void ecomm_033_offline_authorization()
+        {
+            var card = new CreditCardData
+            {
                 Number = "4012002000060016",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -969,8 +1056,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // RETURN
 
         [TestMethod]
-        public void ecomm_034_offline_credit_return() {
-            var card = new CreditCardData {
+        public void ecomm_034_offline_credit_return()
+        {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -988,8 +1077,10 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_034b_offline_credit_return() {
-            var card = new CreditCardData {
+        public void ecomm_034b_offline_credit_return()
+        {
+            var card = new CreditCardData
+            {
                 Number = "5473500000000014",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -1009,19 +1100,22 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // ONLINE VOID / REVERSAL
 
         [TestMethod]
-        public void ecomm_035_void_ecomm_10() {
+        public void ecomm_035_void_ecomm_10()
+        {
             // see test case 10
         }
 
         [TestMethod]
-        public void ecomm_036_void_ecomm_20() {
+        public void ecomm_036_void_ecomm_20()
+        {
             // see test case 20
         }
 
         // Time Out Reversal
 
         [TestMethod, ExpectedException(typeof(GatewayException))]
-        public void ecomm_036b_timeout_reversal() {
+        public void ecomm_036b_timeout_reversal()
+        {
             var sale = TestCards.VisaManual().Charge(911m)
                 .WithCurrency("USD")
                 .WithEcommerceInfo(ecom)
@@ -1039,7 +1133,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // One time bill payment
 
         [TestMethod]
-        public void ecomm_010_charge_visa_onetime() {
+        public void ecomm_010_charge_visa_onetime()
+        {
             var address = new Address { StreetAddress1 = "6860 Dallas Pkwy", PostalCode = "75024" };
             var card = useTokens ? new CreditCardData { Token = visa_token } : TestCards.VisaManual();
 
@@ -1061,7 +1156,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_011_charge_mastercard_onetime() {
+        public void ecomm_011_charge_mastercard_onetime()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "750241234" };
             var card = useTokens ? new CreditCardData { Token = mastercard_token } : TestCards.MasterCardManual();
 
@@ -1078,7 +1174,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_012_charge_discover_onetime() {
+        public void ecomm_012_charge_discover_onetime()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
             var card = useTokens ? new CreditCardData { Token = discover_token } : TestCards.DiscoverManual();
 
@@ -1095,7 +1192,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_013_charge_amex_onetime() {
+        public void ecomm_013_charge_amex_onetime()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
             var card = useTokens ? new CreditCardData { Token = amex_token } : TestCards.AmexManual();
 
@@ -1112,10 +1210,12 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_014_charge_jcb_onetime() {
+        public void ecomm_014_charge_jcb_onetime()
+        {
             var address = new Address { StreetAddress1 = "6860", PostalCode = "75024" };
 
-            var card = new CreditCardData {
+            var card = new CreditCardData
+            {
                 Number = "3566007770007321",
                 ExpMonth = 12,
                 ExpYear = 2025,
@@ -1139,7 +1239,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // ACTIVATE
 
         [TestMethod]
-        public void ecomm_042_activate_gift_1() {
+        public void ecomm_042_activate_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var response = giftCard1.Activate(6.00m).Execute();
             Assert.IsNotNull(response);
@@ -1147,7 +1248,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_043_activate_gift_2() {
+        public void ecomm_043_activate_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
             var response = giftCard2.Activate(7.00m).Execute();
             Assert.IsNotNull(response);
@@ -1157,7 +1259,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // LOAD / ADD VALUE
 
         [TestMethod]
-        public void ecomm_044_add_value_gift_1() {
+        public void ecomm_044_add_value_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var response = giftCard1.Activate(8.00m).Execute();
 
@@ -1166,7 +1269,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_045_add_value_gift_2() {
+        public void ecomm_045_add_value_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
             var response = giftCard2.Activate(8.00m).Execute();
 
@@ -1177,7 +1281,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // BALANCE INQUIRY
 
         [TestMethod]
-        public void ecomm_046_balance_inquiry_gift_1() {
+        public void ecomm_046_balance_inquiry_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var response = giftCard1.BalanceInquiry().Execute();
 
@@ -1187,7 +1292,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_047_balance_inquiry_gift_2() {
+        public void ecomm_047_balance_inquiry_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
             var response = giftCard2.BalanceInquiry().Execute();
 
@@ -1199,7 +1305,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // REPLACE / TRANSFER
 
         [TestMethod]
-        public void ecomm_048_replace_gift_1() {
+        public void ecomm_048_replace_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
             var response = giftCard1.ReplaceWith(giftCard2).Execute();
@@ -1210,7 +1317,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_049_replace_gift_2() {
+        public void ecomm_049_replace_gift_2()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
             var response = giftCard2.ReplaceWith(giftCard1).Execute();
@@ -1223,7 +1331,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // SALE / REDEEM
 
         [TestMethod]
-        public void ecomm_050_sale_gift_1() {
+        public void ecomm_050_sale_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var response = giftCard1.Charge(1.0m)
                 .WithCurrency("USD")
@@ -1234,7 +1343,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_051_sale_gift_2() {
+        public void ecomm_051_sale_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
             var response = giftCard2.Charge(2.0m)
                 .WithCurrency("USD")
@@ -1245,7 +1355,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_052_sale_gift_1_void() {
+        public void ecomm_052_sale_gift_1_void()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
 
             var saleResponse = giftCard1.Charge(3.0m)
@@ -1261,7 +1372,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_053_sale_gift_2_reversal() {
+        public void ecomm_053_sale_gift_2_reversal()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
             var saleResponse = giftCard2.Charge(4.0m)
@@ -1279,19 +1391,22 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // VOID
 
         [TestMethod]
-        public void ecomm_054_void_gift() {
+        public void ecomm_054_void_gift()
+        {
             // see test case 52
         }
 
         // REVERSAL
 
         [TestMethod]
-        public void ecomm_055_reversal_gift() {
+        public void ecomm_055_reversal_gift()
+        {
             // see test case 53
         }
 
         [TestMethod]
-        public void ecomm_056_reversal_gift_2() {
+        public void ecomm_056_reversal_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
             var response = giftCard2.Reverse(2.0m).Execute();
@@ -1302,7 +1417,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // DEACTIVATE
 
         [TestMethod]
-        public void ecomm_057_deactivate_gift_1() {
+        public void ecomm_057_deactivate_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
 
             var response = giftCard1.Deactivate().Execute();
@@ -1317,7 +1433,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // BALANCE INQUIRY
 
         [TestMethod]
-        public void ecomm_059_balance_inquiry_rewards_1() {
+        public void ecomm_059_balance_inquiry_rewards_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var response = giftCard1.BalanceInquiry().Execute();
 
@@ -1327,7 +1444,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_060_balance_inquiry_rewards_2() {
+        public void ecomm_060_balance_inquiry_rewards_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
             var response = giftCard2.BalanceInquiry().Execute();
 
@@ -1339,19 +1457,22 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // ALIAS
 
         [TestMethod]
-        public void ecomm_061_create_alias_gift_1() {
+        public void ecomm_061_create_alias_gift_1()
+        {
             var card = GiftCard.Create("9725550100");
             Assert.IsNotNull(card);
         }
 
         [TestMethod]
-        public void ecomm_062_create_alias_gift_2() {
+        public void ecomm_062_create_alias_gift_2()
+        {
             var card = GiftCard.Create("9725550100");
             Assert.IsNotNull(card);
         }
 
         [TestMethod]
-        public void ecomm_063_add_alias_gift_1() {
+        public void ecomm_063_add_alias_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var response = giftCard1.AddAlias("2145550199").Execute();
 
@@ -1360,7 +1481,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_064_add_alias_gift_2() {
+        public void ecomm_064_add_alias_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
             var response = giftCard2.AddAlias("2145550199").Execute();
@@ -1369,7 +1491,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_065_delete_alias_gift_1() {
+        public void ecomm_065_delete_alias_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
 
             var response = giftCard1.RemoveAlias("2145550199").Execute();
@@ -1380,7 +1503,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // SALE / REDEEM
 
         [TestMethod]
-        public void ecomm_066_redeem_points_gift_1() {
+        public void ecomm_066_redeem_points_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
 
             var response = giftCard1.Charge(100m)
@@ -1392,7 +1516,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_067_redeem_points_gift_2() {
+        public void ecomm_067_redeem_points_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
             var response = giftCard2.Charge(200m)
@@ -1403,7 +1528,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_068_redeem_points_gift_2() {
+        public void ecomm_068_redeem_points_gift_2()
+        {
             var giftCard = new GiftCard { Alias = "9725550100" };
 
             var response = giftCard.Charge(300.00m)
@@ -1417,7 +1543,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // REWARDS
 
         [TestMethod]
-        public void ecomm_069_rewards_gift_1() {
+        public void ecomm_069_rewards_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
 
             var response = giftCard1.Rewards(10.00m).Execute();
@@ -1426,7 +1553,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_070_rewards_gift_2() {
+        public void ecomm_070_rewards_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
             var response = giftCard2.Rewards(11.00m).Execute();
@@ -1437,7 +1565,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // REPLACE / TRANSFER
 
         [TestMethod]
-        public void ecomm_071_replace_gift_1() {
+        public void ecomm_071_replace_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
@@ -1447,7 +1576,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_072_replace_gift_2() {
+        public void ecomm_072_replace_gift_2()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
@@ -1459,7 +1589,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // DEACTIVATE
 
         [TestMethod]
-        public void ecomm_073_deactivate_gift_1() {
+        public void ecomm_073_deactivate_gift_1()
+        {
             var giftCard1 = new GiftCard { Number = "5022440000000000098" };
 
             var response = giftCard1.Deactivate().Execute();
@@ -1468,7 +1599,8 @@ namespace GlobalPayments.Api.Tests.Certifications {
         }
 
         [TestMethod]
-        public void ecomm_074_deactivate_gift_2() {
+        public void ecomm_074_deactivate_gift_2()
+        {
             var giftCard2 = new GiftCard { Number = "5022440000000000007" };
 
             var response = giftCard2.Deactivate().Execute();
@@ -1483,14 +1615,17 @@ namespace GlobalPayments.Api.Tests.Certifications {
         // CLOSE BATCH
 
         [TestMethod]
-        public void ecomm_999_CloseBatch() {
-            try {
+        public void ecomm_999_CloseBatch()
+        {
+            try
+            {
                 var response = BatchService.CloseBatch();
                 Assert.IsNotNull(response);
                 Debug.WriteLine(string.Format("Batch ID: {0}", response.Id));
                 Debug.WriteLine(string.Format("Sequence Number: {0}", response.SequenceNumber));
             }
-            catch (GatewayException exc) {
+            catch (GatewayException exc)
+            {
                 if (exc.ResponseMessage != "Transaction was rejected because it requires a batch to be open.")
                     Assert.Fail(exc.Message);
             }
@@ -1535,6 +1670,6 @@ namespace GlobalPayments.Api.Tests.Certifications {
             Assert.IsNotNull(cpcResponse);
             Assert.AreEqual("00", cpcResponse.ResponseCode);
         }
-        
+
     }
 }

@@ -78,6 +78,7 @@ namespace GlobalPayments.Api.Terminals.UPA
             if (responseData == null) {
                 return;
             }
+
             HydrateHostData(responseData);
             HydratePaymentData(responseData);
             HydrateTransactionData(responseData);

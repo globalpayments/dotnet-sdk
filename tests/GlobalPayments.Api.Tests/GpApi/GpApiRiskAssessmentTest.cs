@@ -23,17 +23,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
-            ServicesContainer.ConfigureService(new GpApiConfig
-            {
-                AppId = AppId,
-                AppKey = AppKey,
-                Country = "GB",
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         public GpApiRiskAssessmentTest()

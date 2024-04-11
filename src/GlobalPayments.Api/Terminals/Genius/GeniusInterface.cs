@@ -86,6 +86,12 @@ namespace GlobalPayments.Api.Terminals.Genius {
         IDeviceResponse IDeviceInterface.SendFile(SendFileType fileType, string filePath) {
             throw new NotImplementedException();
         }
+        IDeviceResponse IDeviceInterface.DeleteResource(string fileName) {
+            throw new NotImplementedException();
+        }
+        IDeviceResponse IDeviceInterface.UpdateResource(UpdateResourceFileType fileType, byte[] fileData, bool isHttpDeviceConnectionMode) {
+            throw new NotImplementedException();
+        }
         ISAFResponse IDeviceInterface.SendStoreAndForward() {
             throw new NotImplementedException();
         }

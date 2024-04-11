@@ -1,7 +1,9 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace GlobalPayments.Api.Tests.Portico {
     [TestClass]
@@ -89,7 +91,28 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
+        [TestMethod]
+        public void EcomRefundWithTxnIDWithSecureEcommerceWithoutMobileType()
+        {
+            card.ThreeDSecure = new ThreeDSecure
+            {
+                PaymentDataSource = PaymentDataSourceType.APPLEPAY,
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "7",
+            };
+            Transaction response = card.Charge(10m)
+                .WithCurrency("USD")
+                .WithInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
 
+            var refundResponse = Transaction.FromId(response.TransactionId).Refund(10m).WithCurrency("USD").Execute();
+
+            Assert.IsNotNull(refundResponse);
+            Assert.AreEqual("00", refundResponse.ResponseCode);
+        }
 
         [TestMethod]
         public void EcomWithSecureEcommerceWithoutMobileType() {
@@ -106,7 +129,22 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
         }
-
+        [TestMethod]
+        public void EcomRefundWithSecureEcommerceWithoutMobileType()
+        {
+            card.ThreeDSecure = new ThreeDSecure
+            {
+                PaymentDataSource = PaymentDataSourceType.APPLEPAY,
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "7",
+            };
+            Transaction response = card.Refund(10m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
         [TestMethod]
         public void EcomSaleWithSecureEcommerceWalletDataWithMobileType() {
            
@@ -160,6 +198,55 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .Execute();
             Assert.IsNotNull(refundResponse);
             Assert.AreEqual("00", refundResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void TestCardHolderEmail()
+        {
+            string custEmail = "John.Doe@Test.com";
+            Customer customer = new Customer();
+            customer.Email = custEmail;
+
+            var response = card.Charge(10.00m)
+                  .WithCurrency("USD")
+                  .WithCustomerData(customer)
+                  .Execute();
+
+            var transactionDetails = ReportingService.TransactionDetail(response.TransactionId).Execute();
+      
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            Assert.IsNotNull(transactionDetails);
+            Assert.AreEqual(custEmail, transactionDetails.Email);
+        }
+
+
+        [TestMethod]
+        public void ValidateCustomerFirstAndLastNameInResposeWhenCustDataIsPassed()
+        {
+            Customer customer = new Customer();
+            customer.FirstName = "First name Test";
+            customer.LastName = "Last  name Test";
+
+            Transaction response = card.Charge(10m)
+                .WithCurrency("USD")
+                .WithCustomerData(customer)
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var resp = ReportingService.FindTransactions()
+                .WithTimeZoneConversion(TimeZoneConversion.Merchant)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-2))
+                .And(SearchCriteria.EndDate, DateTime.UtcNow)
+                .Execute();
+
+            Assert.IsNotNull(resp);
+            Assert.AreEqual(customer.FirstName, resp[0].CustomerFirstName);
+            Assert.AreEqual(customer.LastName, resp[0].CustomerLastName);
         }
     }
 }

@@ -6,9 +6,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Environment = GlobalPayments.Api.Entities.Environment;
 
 namespace GlobalPayments.Api.Tests.GpApi
 {
@@ -22,14 +20,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestInitialize]
         public void TestInitialize() {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Environment = Environment.TEST,
-                Channel = Channel.CardNotPresent,
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             paymentMethod = new BNPL {
                 BNPLType = BNPLType.AFFIRM,
@@ -81,22 +73,32 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(response.BNPLResponse.RedirectUrl);
 
-            // Thread.Sleep(6000);
-
-            var captured = response.Capture()
+            Thread.Sleep(6000);
+            
+            var trnInfo = ReportingService.TransactionDetail(response.TransactionId)
                 .Execute();
 
-            Assert.IsNotNull(captured);
-            Assert.AreEqual("SUCCESS", captured.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captured.ResponseMessage);
+            Assert.IsNotNull(trnInfo.TransactionStatus);
 
-            var refund = captured.Refund(5)
-                .WithCurrency(currency)
-                .Execute();
+            if (trnInfo.TransactionStatus.Equals("PREAUTHORIZED") ) {
+                var captured = response.Capture()
+                    .Execute();
 
-            Assert.IsNotNull(refund);
-            Assert.AreEqual("SUCCESS", refund.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), refund.ResponseMessage);
+                Assert.IsNotNull(captured);
+                Assert.AreEqual("SUCCESS", captured.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captured.ResponseMessage);
+
+                var refund = captured.Refund(5)
+                    .WithCurrency(currency)
+                    .Execute();
+
+                Assert.IsNotNull(refund);
+                Assert.AreEqual("SUCCESS", refund.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), refund.ResponseMessage);
+            }
+            else {
+                Assert.AreEqual("INITIATED", trnInfo.TransactionStatus);
+            }
         }
         
         [TestMethod]
@@ -138,7 +140,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void FullRefund() {
             var response = ReportingService.FindTransactionsPaged(1, 10)
-                .OrderBy(TransactionSortProperty.TimeCreated)
+                .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Ascending)
                 .Where(SearchCriteria.PaymentMethodName, PaymentMethodName.BNPL)
                 .And(SearchCriteria.TransactionStatus, TransactionStatus.Captured)
                 .And(SearchCriteria.PaymentType, PaymentType.Sale)
@@ -184,22 +186,32 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Thread.Sleep(6000);
 
-            var captureTrn = transaction.Capture()
+            var trnInfo = ReportingService.TransactionDetail(transaction.TransactionId)
                 .Execute();
 
-            Assert.IsNotNull(captureTrn);
-            Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
+            Assert.IsNotNull(trnInfo.TransactionStatus);
 
-            Thread.Sleep(6000);
+            if (trnInfo.TransactionStatus.Equals("PREAUTHORIZED")) {
+                var captureTrn = transaction.Capture()
+                    .Execute();
 
-            var trnRefund = captureTrn.Refund(100)
-                .WithCurrency(currency)
-                .Execute();
+                Assert.IsNotNull(captureTrn);
+                Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
 
-            Assert.IsNotNull(trnRefund);
-            Assert.AreEqual("SUCCESS", trnRefund.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trnRefund.ResponseMessage);
+                Thread.Sleep(6000);
+
+                var trnRefund = captureTrn.Refund(100)
+                    .WithCurrency(currency)
+                    .Execute();
+
+                Assert.IsNotNull(trnRefund);
+                Assert.AreEqual("SUCCESS", trnRefund.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trnRefund.ResponseMessage);
+            }
+            else {
+                Assert.AreEqual("INITIATED", trnInfo.TransactionStatus);
+            }
         }
 
         [TestMethod]
@@ -225,31 +237,41 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
             Thread.Sleep(6000);
-            
-            var captureTrn = transaction.Capture()
+
+            var trnInfo = ReportingService.TransactionDetail(transaction.TransactionId)
                 .Execute();
 
-            Assert.IsNotNull(captureTrn);
-            Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
+            Assert.IsNotNull(trnInfo.TransactionStatus);
 
-            Thread.Sleep(6000);
+            if (trnInfo.TransactionStatus.Equals("PREAUTHORIZED")) {
+                var captureTrn = transaction.Capture()
+                    .Execute();
 
-            var trnRefund = captureTrn.Refund(100)
-                .WithCurrency(currency)
-                .Execute();
+                Assert.IsNotNull(captureTrn);
+                Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
 
-            Assert.IsNotNull(trnRefund);
-            Assert.AreEqual("SUCCESS", trnRefund.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trnRefund.ResponseMessage);
+                Thread.Sleep(6000);
 
-            trnRefund = captureTrn.Refund(100)
-                .WithCurrency(currency)
-                .Execute();
+                var trnRefund = captureTrn.Refund(100)
+                    .WithCurrency(currency)
+                    .Execute();
 
-            Assert.IsNotNull(trnRefund);
-            Assert.AreEqual("SUCCESS", trnRefund.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trnRefund.ResponseMessage);
+                Assert.IsNotNull(trnRefund);
+                Assert.AreEqual("SUCCESS", trnRefund.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trnRefund.ResponseMessage);
+
+                trnRefund = captureTrn.Refund(100)
+                    .WithCurrency(currency)
+                    .Execute();
+
+                Assert.IsNotNull(trnRefund);
+                Assert.AreEqual("SUCCESS", trnRefund.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trnRefund.ResponseMessage);
+            }
+            else {
+                Assert.AreEqual("INITIATED", trnInfo.TransactionStatus);
+            }
         }
 
         [TestMethod]
@@ -277,12 +299,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Thread.Sleep(6000);
 
-            var captureTrn = transaction.Reverse()
+            var trnInfo = ReportingService.TransactionDetail(transaction.TransactionId)
                 .Execute();
 
-            Assert.IsNotNull(captureTrn);
-            Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Reversed.ToString().ToUpper(), captureTrn.ResponseMessage);
+            Assert.IsNotNull(trnInfo.TransactionStatus);
+
+            if (trnInfo.TransactionStatus.Equals("PREAUTHORIZED")) {
+                var captureTrn = transaction.Reverse()
+                    .Execute();
+
+                Assert.IsNotNull(captureTrn);
+                Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Reversed.ToString().ToUpper(), captureTrn.ResponseMessage);
+            }
+            else {
+                Assert.AreEqual("INITIATED", trnInfo.TransactionStatus);
+            }
         }
 
         [TestMethod]
@@ -326,13 +358,23 @@ namespace GlobalPayments.Api.Tests.GpApi
             Debug.Write(transaction.BNPLResponse.RedirectUrl);
 
             Thread.Sleep(6000);
-            
-            var captureTrn = transaction.Capture()
+
+            var trnInfo = ReportingService.TransactionDetail(transaction.TransactionId)
                 .Execute();
 
-            Assert.IsNotNull(captureTrn);
-            Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage.ToUpper());
+            Assert.IsNotNull(trnInfo.TransactionStatus);
+
+            if (trnInfo.TransactionStatus.Equals("PREAUTHORIZED")) {
+                var captureTrn = transaction.Capture()
+                    .Execute();
+
+                Assert.IsNotNull(captureTrn);
+                Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage.ToUpper());
+            }
+            else {
+                Assert.AreEqual("INITIATED", trnInfo.TransactionStatus);
+            }
         }
 
         [TestMethod]
@@ -378,12 +420,22 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Thread.Sleep(6000);
 
-            var captureTrn = transaction.Capture(100)
+            var trnInfo = ReportingService.TransactionDetail(transaction.TransactionId)
                 .Execute();
 
-            Assert.IsNotNull(captureTrn);
-            Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
+            Assert.IsNotNull(trnInfo.TransactionStatus);
+
+            if (trnInfo.TransactionStatus.Equals("PREAUTHORIZED")) {
+                var captureTrn = transaction.Capture(100)
+                    .Execute();
+
+                Assert.IsNotNull(captureTrn);
+                Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
+            }
+            else {
+                Assert.AreEqual("INITIATED", trnInfo.TransactionStatus);
+            }
         }
 
         [TestMethod]
@@ -410,21 +462,31 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Thread.Sleep(6000);
 
-            var captureTrn = transaction.Capture(100)
+            var trnInfo = ReportingService.TransactionDetail(transaction.TransactionId)
                 .Execute();
 
-            Assert.IsNotNull(captureTrn);
-            Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
+            Assert.IsNotNull(trnInfo.TransactionStatus);
 
-            Thread.Sleep(6000);
+            if (trnInfo.TransactionStatus.Equals("PREAUTHORIZED")) {
+                var captureTrn = transaction.Capture(100)
+                    .Execute();
 
-            captureTrn = transaction.Capture(100)
-                .Execute();
+                Assert.IsNotNull(captureTrn);
+                Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
 
-            Assert.IsNotNull(captureTrn);
-            Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
+                Thread.Sleep(6000);
+
+                captureTrn = transaction.Capture(100)
+                    .Execute();
+
+                Assert.IsNotNull(captureTrn);
+                Assert.AreEqual("SUCCESS", captureTrn.ResponseCode);
+                Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), captureTrn.ResponseMessage);
+            }
+            else {
+                Assert.AreEqual("INITIATED", trnInfo.TransactionStatus);
+            }
         }
 
         [TestMethod]

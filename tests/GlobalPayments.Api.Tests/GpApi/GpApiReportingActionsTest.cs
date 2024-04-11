@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi
@@ -14,11 +13,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                RequestLogger = new RequestConsoleLogger(),
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             SampleAction = ReportingService.FindActionsPaged(1, 1)
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-5))

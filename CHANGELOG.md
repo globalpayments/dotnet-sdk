@@ -1,18 +1,151 @@
 # Changelog
 
-## Latest
+## Latest - v8.0.7 (03/12/24)
+
+## Bug Fixes
+
+- Removed library CoreCompat.System.Drawing.
+
+## v8.0.6 (02/27/24)
+
+## Enhancement
+
+- [GP-ECOM]: Added Estimated Number of Transactions for multicapture.
+
+## v8.0.5 (02/15/24)
+
+## Enhancement
+
+- [GP-ECOM]: Supported Sha256 for HPP.
+- [Portico]: Map customer name in ReportingService response.
+
+## v8.0.4 (01/30/24)
+
+### Enhancement
+
+- [Portico]: Added accountNumberLast4 property for RecurringPaymentMethod response.
+- [PAX]: Added Update Resource[A18][A19] and Delete Image [A22][A23] request and response.
+
+### Bug Fixes
+
+- [MEET-IN-THE-CLOUD][UPA]: Fix endOfDay.
+
+## v8.0.3 (01/11/24)
+
+#### Bug fixes 
+
+- [ProPay]: ProPay mapping response for achOut and flashFunds separately.
+- [Transit]: Amount in refund transaction bigger than 999.
+
+## v8.0.1 (12/06/23)
+
+#### Enhancements 
+
+- [Portico]: Fix SAFData element was being included with all transactions.
+- [Portico]: Map response date & transaction date in TransactionSummary for ReportingService.
+- [GP-API]: Add missing properties to authentication->three_ds (message_version, eci,server_trans_reference, ds_trans_reference,value).
+- [GP-API]: File Processing.
+
+## v8.0.0 (11/30/23)
+
+#### Enhancements
+
+- DiamondCloud: Add support for Diamond Cloud provider payment terminals.
+
+## v7.0.3 (11/07/23)
+
+#### Enhancements
+- [UPA] Mapped the tokenRspCode and tokenRspMsg to response
+
+## v7.0.2 (10/30/23)
+
+#### Enhancements
+- [PAX] TipAdjust -Adding tip after the Sale.
+- [PAX] Tiprequest flag
+
+## v7.0.1 (10/24/23)
+
+#### Enhancements
+- [Portico] Mapped CardType property in transaction to card brand
+- [Portico] Fix Line Item Details to only add UnitOfMeasure and DiscountAmt only if ItemTotalAmt is null
+
+## v7.0.0 (10/19/23)
+
+#### Enhancements
+
+- UPA: SignatureData
+- UPA: Line Item 
+- UPA: GetSAF report
+- UPA: Incremental Auth
+- UPA: Start Card
+- UPA: DeleteSAF
+- UPA: Register POS command
+- UPA: Added Ref/Saf reference number 
+- UPA: Modified builder for AdjustTip
+- GP-ECOM: Limit what card types to accept for payment or storage (HPP & API)
+    * https://developer.globalpay.com/hpp/card-blocking
+    * https://developer.globalpay.com/api/card-blocking
+
+#### Bug fixes:
+
+- Portico: Fix logic to check if CreditCardData.Token value null instead of CreditCardData.MobileType value null.
+- Transit: Fixed transactions with amount bigger than 1000.
+
+## v6.0.6 (10/12/23)
+
+#### Enhancements
+
+- Added OnMessageReceived event handler to device interface
+- [HPA] Support for GetSafReport
+- [Pax] Support for Batch Clear
+- [Portico] mapping fields in Portico's transaction detail report raw response to SDK's transaction detail report
+- [Portico] Added Commercial Data Tax Amount and PO number to level 2 sale transaction. 
+- [Portico] Add cardholder email
+
+#### Bug fixes:
+
+- GP-ECOM: HPP using card and apm together
+
+## v6.0.5 (10/10/23)
+
+#### Enhancements
+
+- GP-API: Add a new alternative payment method, ALIPAY
+- GP-API: Upload Merchant Documentation - https://developer.globalpay.com/api/merchants
+- GP-API: Credit Or Debit a Funds Management Account (FMA) - https://developer.globalpay.com/api/funds
+
+#### Bug fixes:
+
+- GP-ECOM: HostedService supports SHA256.
+- GP-ECOM: 24 Hours clock format (HH) Timestamp from DCC
+
+## v6.0.4 (09/21/23)
+
+#### Enhancements
+ 
+- Verifone P400: Added initial Meet-In-The-Cloud connectivity support for this device
+
+## v6.0.3 (09/14/23)
+
+#### Enhancements
+ 
+- GP-ECOM Support parseResponse for status_url on HostedService (HPP APMs)
+- Portico Gateway: Added ShippingDay and ShippingMonth to Transaction Summary for Transaction Detail report output
+- Pax: Added OrigECRRefNum to request trace
+
+## v6.0.2 (09/07/23)
 
 #### Enhancements
 
 - Enhance logs based on environment (GP-API & GP-ECOM)
 
-## v6.0.1 (31/08/23)
+## v6.0.1 (08/31/23)
 
 #### Bug fixes:
 
 - GP-ECOM: Added custnum from Customer on payer_new request
 
-## v6.0.0 (22/08/23)
+## v6.0.0 (08/22/23)
 
 #### Enhancements
 
@@ -23,13 +156,13 @@
 
 - NWS: Fixed multiple null reference exceptions when attempting transactions without passing in TagData
 
-## v5.2.4 (10/08/23)
+## v5.2.4 (08/10/23)
 
 #### Bug fixes:
 
 - GP-API: Included in the verify request the authentication field with tokenizable card or without it.
 
-## v5.2.3 (01/08/23)
+## v5.2.3 (08/01/23)
 
 #### Enhancements
 
@@ -41,13 +174,13 @@
 
 - Pax: Support partial authorizations
 
-## v5.2.2 (13/07/23)
+## v5.2.2 (07/13/23)
 
 #### Enhancements
 
 - GP-ECOM: Add refund for transaction with open banking
 
-## v5.2.1 (06/07/23)
+## v5.2.1 (07/06/23)
 
 #### Enhancements
 
@@ -57,13 +190,13 @@
 
 - GP-ECOM: Send the correct "message_version" in the initiate step on 3DS2
 
-## v5.2.0 (27/06/23)
+## v5.2.0 (06/27/23)
 
 #### Enhancements
 
 - GP-API: UPA MiTC via GP-API.
 
-## v5.1.9 (15/06/23)
+## v5.1.9 (06/15/23)
 
 #### Enhancements
 
@@ -76,7 +209,7 @@
 
 - Heartland Profac: Device ordering
 
-## v5.1.8 (11/05/23)
+## v5.1.8 (05/11/23)
 
 #### Enhancements
 
@@ -84,7 +217,7 @@
     - https://developer.globalpay.com/api/transfers
     - https://developer.globalpay.com/api/transactions#/Split%20a%20Transaction%20Amount/splitTransaction
 
-## v5.1.7 (09/05/23)
+## v5.1.7 (05/09/23)
 
 #### Enhancements
 
@@ -96,7 +229,7 @@
 - GP-ECOM: Fixed remittance_reference when it is null.
 - GP-API: Update token with usage_mode only.
 
-## v5.1.6 (02/05/23)
+## v5.1.6 (05/02/23)
 
 #### Enhancements
 
@@ -108,7 +241,7 @@
 
 - General: MasterCard regex correction
 
-## v5.1.5 (30/03/23)
+## v5.1.5 (03/30/23)
 
 #### Enhancements
 
@@ -116,25 +249,25 @@
 - GP-API: Added payer information on Transaction object.
 - Portico Gateway: Updated Portico TransactionDetail report mapping to include Invoice Number.
 
-## v5.1.4 (16/03/23)
+## v5.1.4 (03/16/23)
 
 #### Enhancements
 
 - GP-ECOM: Added Payment Schedule that allows you to easily set up and manage recurring billing payments.
 
-## v5.1.3 (02/03/23)
+## v5.1.3 (03/02/23)
 
 #### Enhancements
 
 - GP-API: Added as default the account_id instead of account_name for all GP-API requests.
 
-## v5.1.2 (23/02/23)
+## v5.1.2 (02/23/23)
 
 #### Enhancements
 
 - GP-API: Added validation method for X-GP-SIGNATURE that is received from GP-API on the notification URL.
 
-## v5.1.1 (21/02/23)
+## v5.1.1 (02/21/23)
 
 #### Enhancements
 
@@ -201,20 +334,20 @@
 - Added phone country and retrieve the same by NumericCountryCode/ISO2/ISO3
 - Removed 3DS1 for GP-API and GP-ECOM
 
-## v4.2.4 (10/13/2022)
+## v4.2.4 (10/13/22)
 
 - GP-API: The Fraud Management solution passed the values sent in the risk_assessment object
 - GP-API: Updated PayLink properties on the request
 - Added isnotnull validation for subproperties in builders
 - Updated OpenBaking service endpoints
 
-## v4.2.3 (10/04/2022)
+## v4.2.3 (10/04/22)
 
 #### Enhancements
 
 - Heartland/Portico Gateway: added method for voiding eCheck using ClientTxnId to CheckService
 
-## v4.2.2 (9/27/2022)
+## v4.2.2 (9/27/22)
 
 #### Enhancements
 
@@ -224,13 +357,13 @@
 
 - Heartland/Portico Gateway: fix CreditReversal message structure
 
-## v4.2.1 (9/22/2022)
+## v4.2.1 (9/22/22)
 
 #### Bug Fixes:
 
 - UPA Devices: increased read buffer size to allow for larger message size from devices
 
-## v4.2.0 (9/15/2022)
+## v4.2.0 (9/15/22)
 
 #### Enhancements
 
@@ -241,7 +374,7 @@
 - PAX Devices: - fixed 'verify' transactions not working
 - GP-API: Fix issue with the ServiceUrl when switching to PRODUCTION env
 
-## v4.1.6 (9/8/2022)
+## v4.1.6 (9/8/22)
 
 #### Enhancements
 
@@ -251,7 +384,7 @@
 
 - UPA Devices: Corrected invoice number logic
 
-## v4.1.5 (8/23/2022)
+## v4.1.5 (8/23/22)
 
 #### Enhancements
 
@@ -266,20 +399,20 @@
 - UPA Devices: Added invoice number to Refund and Tip Adjust transactions
 - GP-ECOM: Billing/Shipping country value should be ISO2 country code
 
-## v4.1.4 (8/4/2022)
+## v4.1.4 (8/4/22)
 
 #### Bug Fixes:
 
 - Added DE 25 Message Reason Code enum value for Failure to Dispense to replace incorrect, outdated values (NWS)
 - Corrected an issue where EmvFallbackCondition was not being respected when set (NWS)
 
-## v4.1.3 (8/2/2022)
+## v4.1.3 (8/2/22)
 
 #### Enhancements
 
 - GP-API: Added PayLink API that allows you to generate single or multi-use unique payment links.
 
-## v4.1.2 (7/26/2022)
+## v4.1.2 (7/26/22)
 
 #### Enhancements:
 
@@ -291,7 +424,7 @@
 - UPA Devices: corrected End-Of-Day response exception handling
 - Wallet and 3DSecure: fix request 
 
-## v4.1.1 (7/12/2022)
+## v4.1.1 (7/12/22)
 
 #### Enhancements:
 
@@ -302,7 +435,7 @@
 
 - GP-ECOM ApplePay: Fixed amount less than $1
 
-## v4.1.0 (6/28/2022)
+## v4.1.0 (6/28/22)
 
 #### Enhancements:
 
@@ -310,7 +443,7 @@
 - GP-ECOM: Added flag EnableExemptionOptimization to identify customer exemptions and avoid unnecessary authentications
 - GP-ECOM: Added Open Banking as new payment method
 
-## v4.0.2 (5/26/2022)
+## v4.0.2 (5/26/22)
 
 #### Enhancements:
 
@@ -323,7 +456,7 @@
 - PAX devices: Fix refund validation logic
 - TransIt Gateway: Fix pin debit message handling
 
-## v4.0.0 (5/17/2022)
+## v4.0.0 (5/17/22)
 
 #### Enhancements:
 
@@ -334,13 +467,13 @@
 
 - PAX Devices: Fixed issue with EBT processing using recent application versions
 
-## v3.0.5 (4/28/2022)
+## v3.0.5 (4/28/22)
 
 #### Bug Fixes:
 
 - Fixed connection failover to secondary endpoints (NWS)
 
-## v3.0.4 (4/21/2022)
+## v3.0.4 (4/21/22)
 
 #### Enhancements:
 
@@ -348,7 +481,7 @@
 - CountryUtils class expanded to convert from any ISO 3166 value to any other ISO 3166 value
 - GP-ECOM: add 3DS tests to the suite
 
-## v3.0.3 (4/7/2022)
+## v3.0.3 (4/7/22)
 
 #### Enhancements:
 
@@ -360,7 +493,7 @@
 - Fixed HPP verify with 3DSecure
 - Fixed an issue when setting DeviceType to HPA_LANE3000 during configuration
 
-## v3.0.2 (3/31/2022)
+## v3.0.2 (3/31/22)
 
 #### Enhancements:
 
@@ -375,7 +508,7 @@
 - Corrected a boolean conversion error on request building (UPA)
 - Corrected an incorrect internal TransactionType setting (UPA)
 
-## v3.0.1 (3/29/2022)
+## v3.0.1 (3/29/22)
 
 #### Enhancements:
 
@@ -386,7 +519,7 @@
 - Fixed Multicapture information on the response of Authorize transaction (GpApi)
 - Fixed for card information not to be sent into request when using tokenized card (GpApi)
 
-## v3.0.0 (3/24/2022)
+## v3.0.0 (3/24/22)
 
 #### Enhancements:
 
@@ -400,14 +533,14 @@
 
 - Fixed mapping issue with Payment Method details (GPEcom)
 
-## v2.0.6 (3/22/2022)
+## v2.0.6 (3/22/22)
 
 #### Enhancements:
 
 - Added direct Base64 string support for Document/Document Chargeback Upload image parameters (ProPay)
 - Added ProPay error code to GatewayException object (ProPay)
 
-## v2.0.5 (03/15/2022)
+## v2.0.5 (03/15/22)
 
 #### Enhancements:
 
@@ -419,13 +552,13 @@
 - Added more tests for fingerprint
 - Added test for expiry card
 
-## v2.0.4 (03/02/2022)
+## v2.0.4 (03/02/22)
 
 #### Bug Fixes:
 
 - fix for set attributes exp month and exp year when updating a token
 
-## v2.0.3 (2/22/2022)
+## v2.0.3 (2/22/22)
 
 #### Enhancements:
 
@@ -434,7 +567,7 @@
 - Pass X509 Certificate by Base64 string (ProPay)
 - Added ProPay transaction type 19, Get Enhanced Account Details (ProPay)
 
-## v2.0.2 (02/17/2022)
+## v2.0.2 (02/17/22)
 
 #### Enhancements:
 
@@ -445,7 +578,7 @@
 
 - Fix issue for Diners card type (GP-ECOM)
 
-## v2.0.1 (01/20/2022)
+## v2.0.1 (01/20/22)
 
 - move RequestLogger to new structure
 
@@ -455,7 +588,7 @@
 
 ---
 
-## v2.0.0 (12/16/2021)
+## v2.0.0 (12/16/21)
 
 #### Enhancements:
 
@@ -463,7 +596,7 @@
 
 ---
 
-## v1.10.0 (12/07/2021)
+## v1.10.0 (12/07/21)
 
 #### Bug Fixes:
 
@@ -472,7 +605,7 @@
 
 ---
 
-## v1.10.0 (11/18/2021)
+## v1.10.0 (11/18/21)
 
 #### Enhancements:
 
@@ -480,7 +613,7 @@
 
 ---
 
-## v1.9.0 (11/10/2021)
+## v1.9.0 (11/10/21)
 
 #### Enhancements:
 
@@ -491,7 +624,7 @@
 
 ---
 
-## v1.7.45 (10/28/2021)
+## v1.7.45 (10/28/21)
 
 #### Enhancements:
 
@@ -505,7 +638,7 @@
 
 ---
 
-## v1.7.44 (09/28/2021)
+## v1.7.44 (09/28/21)
 
 #### Enhancements:
 
@@ -513,7 +646,7 @@
 
 ---
 
-## v1.7.43 (09/23/2021)
+## v1.7.43 (09/23/21)
 
 #### Enhancements:
 
@@ -521,7 +654,7 @@
 
 ---
 
-## v1.7.42 (09/09/2021)
+## v1.7.42 (09/09/21)
 
 #### Enhancements:
 
@@ -532,7 +665,7 @@
 
 ---
 
-## v1.7.41 (08/26/2021)
+## v1.7.41 (08/26/21)
 
 #### Enhancements:
 
@@ -541,7 +674,7 @@
 
 ---
 
-## v1.7.40 (08/19/2021)
+## v1.7.40 (08/19/21)
 
 #### Enhancements:
 
@@ -549,14 +682,14 @@
 
 ---
 
-## v1.7.39.1 (08/12/2021)
+## v1.7.39.1 (08/12/21)
 
 - Add recurring payment with stored credentials functionallity to GpApi
 - Add MerchantContactUrl to GpApiConfig
 
 ---
 
-## v1.7.38 (08/10/2021)
+## v1.7.38 (08/10/21)
 
 #### Enhancements:
 
@@ -571,7 +704,7 @@
 
 ---
 
-## v1.7.37 (08/05/2021)
+## v1.7.37 (08/05/21)
 
 #### Enhancements:
 
@@ -585,7 +718,7 @@
 
 ---
 
-## v1.7.36 (08/03/2021)
+## v1.7.36 (08/03/21)
 
 #### Enhancements:
 
@@ -598,7 +731,7 @@
 
 ---
 
-## v1.7.35 (07/15/2021)
+## v1.7.35 (07/15/21)
 
 #### Enhancements:
 
@@ -606,7 +739,7 @@
 
 ---
 
-## v1.7.33 (07/01/2021)
+## v1.7.33 (07/01/21)
 
 #### Enhancements:
 
@@ -618,7 +751,7 @@
 
 ---
 
-## v1.7.31 (06/24/2021)
+## v1.7.31 (06/24/21)
 
 #### Enhancements:
 
@@ -626,7 +759,7 @@
 
 ---
 
-## v1.7.30 (06/17/2021)
+## v1.7.30 (06/17/21)
 
 #### Enhancements:
 
@@ -635,7 +768,7 @@
 
 ---
 
-## v1.7.29 (06/15/2021)
+## v1.7.29 (06/15/21)
 
 #### Enhancements:
 
@@ -643,7 +776,7 @@
 
 ---
 
-## v1.7.28 (05/27/2021)
+## v1.7.28 (05/27/21)
 
 #### Enhancements:
 
@@ -651,7 +784,7 @@
 
 ---
 
-## v1.7.27 (05/13/2021)
+## v1.7.27 (05/13/21)
 
 #### Enhancements:
 
@@ -659,7 +792,7 @@
 
 ---
 
-## v1.7.26 (05/11/2021)
+## v1.7.26 (05/11/21)
 
 #### Enhancements:
 
@@ -667,7 +800,7 @@
 
 ---
 
-## v1.7.24 (05/11/2021)
+## v1.7.24 (05/11/21)
 
 #### Enhancements:
 
@@ -688,7 +821,7 @@
 
 ---
 
-## v1.7.23 (04/29/2021)
+## v1.7.23 (04/29/21)
 
 #### Enhancements:
 
@@ -696,7 +829,7 @@
 
 ---
 
-## v1.7.22 (04/13/2021)
+## v1.7.22 (04/13/21)
 
 #### Enhancements:
 

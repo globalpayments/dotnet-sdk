@@ -8,6 +8,7 @@ using GlobalPayments.Api.Tests.ProPay.TestData;
 using GlobalPayments.Api.Entities.PayFac;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
+using GlobalPayments.Api.Entities.Enums;
 
 namespace GlobalPayments.Api.Tests.ProPay {
     [TestClass]
@@ -363,7 +364,7 @@ namespace GlobalPayments.Api.Tests.ProPay {
             var docUploadData = new DocumentUploadData()
             {
                 DocumentName = "TestDoc_12345",
-                DocCategory = "Verification",
+                DocCategory = DocumentCategory.VERIFICATION,
                 DocumentPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"ProPay\TestData\TestDoc.docx")
             };
 
@@ -384,7 +385,7 @@ namespace GlobalPayments.Api.Tests.ProPay {
                 DocumentName = "TestDocCB_12345",
                 TransactionReference = "2",
                 Document = TestAccountData.GetDocumentBase64String(@"ProPay\TestData\TestDocChargeback.docx"),
-                DocType = "docx"
+                DocType = FileType.DOCX
             };
 
             var response = _service.UploadDocumentChargeback()
@@ -401,9 +402,9 @@ namespace GlobalPayments.Api.Tests.ProPay {
             var docUploadData = new DocumentUploadData()
             {
                 DocumentName = "TestDoc_12345",
-                DocCategory = "Verification",
+                DocCategory = DocumentCategory.VERIFICATION,
                 Document = TestAccountData.GetDocumentBase64String(@"ProPay\TestData\TestDoc.docx"),
-                DocType = "docx"
+                DocType = FileType.DOCX
             };
 
             var response = _service.UploadDocument()

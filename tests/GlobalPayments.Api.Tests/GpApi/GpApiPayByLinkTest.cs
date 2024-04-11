@@ -6,9 +6,7 @@ using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Environment = GlobalPayments.Api.Entities.Environment;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     
@@ -28,18 +26,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void TestInitialize() {
             ServicesContainer.RemoveConfig();
             
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = "v2yRaFOLwFaQc0fSZTCyAdQCBNByGpVK",
-                AppKey = "oKZpWitk6tORoCVT",
-                Channel = Channel.CardNotPresent,
-                Environment = Environment.TEST,
-                Country = "GB",
-                AccessTokenInfo = new AccessTokenInfo {
-                    TransactionProcessingAccountName = "LinkManagement"
-                },
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            });
+            var gpApiConfig = GpApiConfigSetup("v2yRaFOLwFaQc0fSZTCyAdQCBNByGpVK", "oKZpWitk6tORoCVT", Channel.CardNotPresent);
+            gpApiConfig.Country = "GB";
+            gpApiConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "LinkManagement" };
+            ServicesContainer.ConfigureService(gpApiConfig);
 
             payByLink = new PayByLinkData {
                 Type = PayByLinkType.PAYMENT,
@@ -912,18 +902,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         private static GpApiConfig SetupTransactionConfig() {
-            var config = new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardNotPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true
-            };
-
-            return config;
+            return GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
         }
     }
 }

@@ -23,19 +23,14 @@ namespace GlobalPayments.Api.Tests.BillPay {
 
         [TestInitialize]
         public void Init() {
-            ServicesContainer.ConfigureService(new BillPayConfig {
-                MerchantName = "IntegrationTesting",
-                Username = "IntegrationTestCashier",
-                Password = "G?vaXhg6<@V'Y)-m",
+
+            ServicesContainer.ConfigureService(new BillPayConfig
+            {
+                MerchantName = "Dev_Exp_Team_Merchant",
+                Username = "DevExpTeam",
+                Password = "devexpteam_R0cks!",
                 ServiceUrl = ServiceEndpoints.BILLPAY_CERTIFICATION
             });
-
-            ServicesContainer.ConfigureService(new BillPayConfig {
-                MerchantName = "IntegrationTestingBillUpload",
-                Username = "IntegrationTestCashier",
-                Password = "G?vaXhg6<@V'Y)-m",
-                ServiceUrl = ServiceEndpoints.BILLPAY_CERTIFICATION
-            }, "billload");
 
             ach = new eCheck() {
                 AccountNumber = "12345",
@@ -156,12 +151,114 @@ namespace GlobalPayments.Api.Tests.BillPay {
                 .WithRequestMultiUseToken(true)
                 .Execute();
 
-            clearTextCredit.Token = tokenResponse.Token;
-            var tokenInfoResponse = clearTextCredit.GetTokenInformation();
+           clearTextCredit.Token = tokenResponse.Token;
+           var tokenInfoResponse = clearTextCredit.GetTokenInformation();
 
-            Assert.IsNotNull(tokenInfoResponse);
-            Assert.IsNotNull(tokenInfoResponse.TokenData);
+           Assert.IsNotNull(tokenInfoResponse);
+           Assert.IsNotNull(tokenInfoResponse.TokenData);
         }
+
+        [TestMethod]
+        public void Tokenize_UsingCreditCard_ReturnsCardType()
+        {
+            string cardTypeVisa = "VISA";
+            string cardTypeDiscover = "DISC";
+            string cardTypeMasterCard = "MC";
+            string cardTypeAmericanExpress = "AMEX";
+
+            var clearTextCreditVisa = new CreditCardData()
+            {
+                Number = "4444444444444448",
+                ExpMonth = DateTime.Now.Month,
+                ExpYear = DateTime.Now.Year,
+                Cvn = "123",
+                CardHolderName = "Test Tester",
+            };
+
+            var clearTextCreditDiscover = new CreditCardData()
+            {
+                Number = "6011000000000087",
+                ExpMonth = DateTime.Now.Month,
+                ExpYear = DateTime.Now.Year,
+                Cvn = "123",
+                CardHolderName = "Test Tester",
+            };
+
+            var clearTextCreditMasterCard = new CreditCardData()
+            {
+                Number = "5425230000004415",
+                ExpMonth = DateTime.Now.Month,
+                ExpYear = DateTime.Now.Year,
+                Cvn = "123",
+                CardHolderName = "Test Tester",
+            };
+
+            var clearTextCreditAmericanExpress = new CreditCardData()
+            {
+                Number = "374101000000608",
+                ExpMonth = DateTime.Now.Month,
+                ExpYear = DateTime.Now.Year,
+                Cvn = "123",
+                CardHolderName = "Test Tester",
+            };
+
+            // VISA
+            var tokenResponseVisa = clearTextCreditVisa.Verify()
+                .WithAddress(address)
+                .WithCustomerData(customer)
+                .WithRequestMultiUseToken(true)
+                .Execute();
+
+            clearTextCreditVisa.Token = tokenResponseVisa.Token;
+            var tokenInfoResponseVisa = clearTextCreditVisa.GetTokenInformation();
+
+            Assert.IsNotNull(tokenInfoResponseVisa);
+            Assert.IsNotNull(tokenInfoResponseVisa.TokenData);
+            Assert.AreEqual(cardTypeVisa, tokenInfoResponseVisa.CardType);
+
+            //Discover
+            var tokenResponseDiscover = clearTextCreditDiscover.Verify()
+                .WithAddress(address)
+                .WithCustomerData(customer)
+                .WithRequestMultiUseToken(true)
+                .Execute();
+
+            clearTextCreditDiscover.Token = tokenResponseDiscover.Token;
+            var tokenInfoResponseDiscover = clearTextCreditDiscover.GetTokenInformation();
+
+            Assert.IsNotNull(tokenInfoResponseDiscover);
+            Assert.IsNotNull(tokenInfoResponseDiscover.TokenData);
+            Assert.AreEqual(cardTypeDiscover, tokenInfoResponseDiscover.CardType);
+
+            //Master Card
+            var tokenResponseMasterCard = clearTextCreditMasterCard.Verify()
+                .WithAddress(address)
+                .WithCustomerData(customer)
+                .WithRequestMultiUseToken(true)
+                .Execute();
+
+            clearTextCreditMasterCard.Token = tokenResponseMasterCard.Token;
+            var tokenInfoResponseMasterCard = clearTextCreditMasterCard.GetTokenInformation();
+
+            Assert.IsNotNull(tokenInfoResponseMasterCard);
+            Assert.IsNotNull(tokenInfoResponseMasterCard.TokenData);
+            Assert.AreEqual(cardTypeMasterCard, tokenInfoResponseMasterCard.CardType);
+
+            //America Express
+            var tokenResponseAmericanExpress = clearTextCreditAmericanExpress.Verify()
+                .WithAddress(address)
+                .WithCustomerData(customer)
+                .WithRequestMultiUseToken(true)
+                .Execute();
+
+            clearTextCreditAmericanExpress.Token = tokenResponseAmericanExpress.Token;
+            var tokenInfoResponseAmericanExpress = clearTextCreditAmericanExpress.GetTokenInformation();
+
+            Assert.IsNotNull(tokenInfoResponseAmericanExpress);
+            Assert.IsNotNull(tokenInfoResponseAmericanExpress.TokenData);
+            Assert.AreEqual(cardTypeAmericanExpress, tokenInfoResponseAmericanExpress.CardType);
+        }
+
 
         [TestMethod]
         public void Tokenize_UsingCreditCard_ReturnsToken() {
@@ -570,7 +667,7 @@ namespace GlobalPayments.Api.Tests.BillPay {
             try {
                 var service = new BillPayService();
 
-                service.LoadBills(new List<Bill>() { billLoad }, "billload");
+                service.LoadBills(new List<Bill>() { billLoad });
             } catch (Exception ex) {
                 Assert.Fail(ex.Message);
             }
@@ -589,7 +686,7 @@ namespace GlobalPayments.Api.Tests.BillPay {
                     DueDate = billLoad.DueDate,
                     Identifier1 = x.ToString(),
                     Identifier2 = x.ToString()
-                }), "billload");
+                }));
             } catch (Exception ex) {
                 Assert.Fail(ex.Message);
             }
@@ -608,7 +705,7 @@ namespace GlobalPayments.Api.Tests.BillPay {
                     DueDate = billLoad.DueDate,
                     Identifier1 = x.ToString(),
                     Identifier2 = x.ToString()
-                }), "billload");
+                }));
             } catch (Exception ex) {
                 Assert.Fail(ex.Message);
             }
@@ -623,7 +720,7 @@ namespace GlobalPayments.Api.Tests.BillPay {
                     billLoad
                 };
 
-                service.LoadBills(bills, "billload");
+                service.LoadBills(bills);
             });
         }
 
@@ -643,7 +740,7 @@ namespace GlobalPayments.Api.Tests.BillPay {
                     }
                 };
 
-                service.LoadBills(bills, "billload");
+                service.LoadBills(bills);
             });
         }
 

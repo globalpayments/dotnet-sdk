@@ -19,6 +19,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         private readonly CancellationTokenSource _tokenSource;
 
         public event MessageSentEventHandler OnMessageSent;
+        public event MessageReceivedEventHandler OnMessageReceived;
 
         public event MessageReceivedEventHandler OnMessageReceived;
 

@@ -20,6 +20,8 @@ namespace GlobalPayments.Api.Tests.GpEcom
 
         [TestInitialize]
         public void TestInitialize() {
+            ServicesContainer.RemoveConfig();
+            
             var config = new GpEcomConfig {
                 MerchantId = "openbankingsandbox",
                 SharedSecret = "sharedsecret",
@@ -28,7 +30,6 @@ namespace GlobalPayments.Api.Tests.GpEcom
                 ShaHashType = ShaHashType.SHA512,
                 RequestLogger = new RequestConsoleLogger()
             };
-
             ServicesContainer.ConfigureService(config);
         }
 

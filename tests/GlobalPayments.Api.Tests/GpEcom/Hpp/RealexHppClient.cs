@@ -46,6 +46,32 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
             var billingCode = json.GetValue<string>("BILLING_CODE");
             var billingCountry = json.GetValue<string>("BILLING_CO");
             var fraudFilterMode = json.GetValue<string>("HPP_FRAUDFILTER_MODE");
+            BlockedCardType cardTypesBlocking = null;
+
+            if (!string.IsNullOrEmpty(json.GetValue<string>("BLOCK_CARD_TYPE"))) {
+                var cardTypes = json.GetValue<string>("BLOCK_CARD_TYPE");
+                cardTypesBlocking = new BlockedCardType();
+                foreach (var cardType in cardTypes.Split("|")) {
+                    var cardTypeEnum = EnumConverter.FromDescription<BlockCardType>(cardType);
+                    switch (cardTypeEnum)
+                    {
+                        case BlockCardType.COMMERCIAL_CREDIT:
+                            cardTypesBlocking.Commercialcredit = true;
+                            break;
+                        case BlockCardType.COMMERCIAL_DEBIT:
+                            cardTypesBlocking.Commercialdebit = true;
+                            break;
+                        case BlockCardType.CONSUMER_CREDIT:
+                            cardTypesBlocking.Consumercredit = true;
+                            break;
+                        case BlockCardType.CONSUMER_DEBIT:
+                            cardTypesBlocking.Consumerdebit = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }                
+            }
 
 
             List<string> hashParam = new List<string>
@@ -125,7 +151,7 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
             }
 
             // check hash
-            var newhash = GenerationUtils.GenerateHash(_sharedSecret, hashParam.ToArray());
+            var newhash = GenerationUtils.GenerateHash(_sharedSecret, _shaHashType, hashParam.ToArray());
             if (!newhash.Equals(requestHash)) {
                 return BadRequest("Incorrect hash. Please check your code and the Developers Documentation.");
             }
@@ -135,6 +161,7 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
                 MerchantId = merchantId,
                 AccountId = account,
                 SharedSecret = _sharedSecret,
+                ShaHashType = _shaHashType,
                 RequestLogger = new RequestConsoleLogger()
             }, "realexResponder");                       
 
@@ -186,6 +213,10 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
                 if(fraudFilterMode != null)
                 {
                     gatewayRequest.WithFraudFilter((FraudFilterMode)Enum.Parse(typeof(FraudFilterMode), fraudFilterMode), getFraudFilterRules(json));
+                }
+                if (cardTypesBlocking != null)
+                {
+                    gatewayRequest.WithBlockedCardType(cardTypesBlocking); 
                 }
 
                 var gatewayResponse = gatewayRequest.Execute("realexResponder");
@@ -297,10 +328,11 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
                 response.Set("CARD_PAYMENT_BUTTON", request.GetValue<string>("CARD_PAYMENT_BUTTON"));
                 response.Set("MESSAGE", trans.ResponseMessage);
                 response.Set("AMOUNT", trans.AuthorizedAmount);
-                response.Set("SHA1HASH", GenerationUtils.GenerateHash(_sharedSecret, trans.Timestamp, merchantId, trans.OrderId, trans.ResponseCode, trans.ResponseMessage, trans.TransactionId, trans.AuthorizationCode));
+                response.Set($"{_shaHashType}HASH", GenerationUtils.GenerateHash(_sharedSecret, _shaHashType, trans.Timestamp, merchantId, trans.OrderId, trans.ResponseCode, trans.ResponseMessage, trans.TransactionId, trans.AuthorizationCode));
                 response.Set("DCC_INFO_REQUST", request.GetValue<string>("DCC_INFO"));
                 response.Set("HPP_FRAUDFILTER_MODE", request.GetValue<string>("HPP_FRAUDFILTER_MODE"));
-                if (trans?.FraudResponse?.Rules != null)
+                response.Set("BLOCK_CARD_TYPE", request.GetValue<string>("BLOCK_CARD_TYPE"));
+            if (trans?.FraudResponse?.Rules != null)
                 {
                     response.Set("HPP_FRAUDFILTER_RESULT", trans.FraudResponse?.Result);
 

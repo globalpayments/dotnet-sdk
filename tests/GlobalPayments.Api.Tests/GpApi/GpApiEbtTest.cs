@@ -14,12 +14,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ServicesContainer.ConfigureService(new GpApiConfig {
-                AppId = AppId,
-                AppKey = AppKey,
-                Channel = Channel.CardPresent,
-                RequestLogger = new RequestConsoleLogger()
-            });
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardPresent);
+            ServicesContainer.ConfigureService(gpApiConfig);
         }
 
         [TestInitialize]

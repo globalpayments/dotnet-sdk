@@ -4,6 +4,7 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Threading;
 
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
@@ -16,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.0.116",
+                IpAddress = "192.168.1.120",
                 Port = "10009",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -30,7 +31,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Assert.IsNotNull(message);
             };
 
-            var response = _device.Sale(10m)
+            var response = _device.Sale(20m)
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);
@@ -136,20 +137,24 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-
+            
             var response = _device.Authorize(12m)
-                .WithAllowDuplicates(true)
+                .WithAllowDuplicates(true) 
                 .Execute();
+
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
+            var origrefnum = response.ReferenceNumber;
+
             var captureResponse = _device.Capture(12m)
                 .WithTransactionId(response.TransactionId)
+                .WithOrigECRRefNumber(origrefnum)
                 .Execute();
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode);
         }
-
+ 
         [TestMethod]
         public void CreditAuth_CaptureManual() {
             _device.OnMessageSent += (message) => {
@@ -241,7 +246,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 Cvn = "123"
             };
 
-            var returnResponse = _device.Refund(14m)
+            var returnResponse = _device.Refund(14m)                
                 .WithPaymentMethod(card)
                 .Execute();
             Assert.IsNotNull(returnResponse);
@@ -414,6 +419,51 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             Assert.IsNotNull(duplicate);
             Assert.AreEqual("00", duplicate.ResponseCode);
             Assert.AreEqual(response.AuthorizationCode, duplicate.AuthorizationCode);
+        }
+
+        [TestMethod]
+        public void CreditSaleWithGratuity() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var saleResponse = _device.Sale(15.12m)
+                .WithEcrId(13)
+                .WithAllowDuplicates(true)
+                .WithClerkId(123)
+                .WithGratuity(3.00m)
+                .Execute();
+
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+            Assert.AreEqual(18.12m, saleResponse.TransactionAmount);
+
+        }
+
+        [TestMethod]
+        public void CreditTipAdjust() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var saleResponse = _device.Sale(15.12m)
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .WithAllowDuplicates(true)
+                .WithGratuity(0.00m)
+                .Execute();
+
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+
+            Thread.Sleep(2500);
+
+            var tipAdjustResponse = _device.TipAdjust(3.00m)
+                .WithTerminalRefNumber(saleResponse.TerminalRefNumber)
+                .WithEcrId(13)
+                .Execute();
+            Assert.IsNotNull(tipAdjustResponse);
+            Assert.AreEqual("00", tipAdjustResponse.ResponseCode);
         }
     }
 }

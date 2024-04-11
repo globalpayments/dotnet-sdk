@@ -17,8 +17,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 if (cmdResult == null) {
                     throw new MessageException(INVALID_RESPONSE_FORMAT);
                 }
-				EcrId = firstDataNode.GetValue<string>("EcrId");
-            	RequestId = firstDataNode.GetValue<int>("requestId");
+
+				        EcrId = firstDataNode.GetValue<string>("EcrId");
+            	  RequestId = firstDataNode.GetValue<int>("requestId");
+
                 Status = cmdResult.GetValue<string>("result");
 
                 // Log error info if it's there
@@ -44,6 +46,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
             else {
                 RequestId = root.GetValue<int>("id");                
+
                 DeviceResponseText = root.GetValue<string>("status");
                 DeviceResponseCode = root.Get("action").GetValue<string>("result_code"); ;
             }
@@ -54,6 +57,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
         }
 
         public int RequestId { get; set; }
+
         public string Multiplemessage { get; set; }
 
         public IDeviceResponse AttachmentResponse { get; set; }

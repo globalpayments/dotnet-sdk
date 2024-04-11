@@ -41,6 +41,8 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
         IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData);
         ISignatureResponse PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption);
+        IDeviceResponse UpdateResource(UpdateResourceFileType fileType, byte[] fileData, bool isHttpDeviceConnectionMode);
+        IDeviceResponse DeleteResource(string fileName);
         #endregion
 
         #region reporting

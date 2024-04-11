@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;

@@ -6,7 +6,6 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
@@ -24,17 +23,8 @@ namespace GlobalPayments.Api.Tests.GpApi
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
             ServicesContainer.RemoveConfig();
-            config = new GpApiConfig {
-                AppId = AppIdForMerchant,
-                AppKey = AppKeyForMerchant,
-                Channel = Channel.CardNotPresent,
-                ChallengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MethodNotificationUrl = "https://ensi808o85za.x.pipedream.net/",
-                MerchantContactUrl = "https://enp4qhvjseljg.x.pipedream.net/",
-                // RequestLogger = new RequestFileLogger(@"C:\temp\transit\finger.txt"),
-                RequestLogger = new RequestConsoleLogger(),
-                EnableLogging = true,
-            };
+            
+            config = GpApiConfigSetup(AppIdForMerchant, AppKeyForMerchant, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(config);
         }
 
@@ -265,15 +255,15 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
 
-            var transfer = funds.Transfer(10m)
+            var transfer = funds.Transfer(1m)
                 .WithClientTransactionId("")
                 .WithDescription(description)
                 .Execute();
 
             Assert.IsNotNull(transfer.TransactionId);
-            Assert.AreEqual(10m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(1m, transfer.BalanceAmount);
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
 
         [TestMethod]
@@ -301,8 +291,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(transfer.TransactionId);
             Assert.AreEqual(0.01m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
 
         [TestMethod]
@@ -330,8 +320,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(transfer.TransactionId);
             Assert.AreEqual(0.01m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
 
         [TestMethod]
@@ -359,8 +349,8 @@ namespace GlobalPayments.Api.Tests.GpApi
 
             Assert.IsNotNull(transfer.TransactionId);
             Assert.AreEqual(0.01m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
         
         [TestMethod]
@@ -377,13 +367,14 @@ namespace GlobalPayments.Api.Tests.GpApi
             funds.AccountId = accountSender.Id;
             funds.RecipientAccountId = accountRecipient.Id;
             funds.MerchantId = merchantSender.Id;
+            funds.UsableBalanceMode = UsableBalanceMode.AVAILABLE_AND_PENDING_BALANCE;
 
-            var transfer = funds.Transfer(10m)
+            var transfer = funds.Transfer(0.11m)
                 .Execute();
 
             Assert.IsNotNull(transfer.TransactionId);
-            Assert.AreEqual(10m, transfer.BalanceAmount);
-            Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(0.11m, transfer.BalanceAmount);
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
             Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
         }
         
@@ -407,20 +398,20 @@ namespace GlobalPayments.Api.Tests.GpApi
             var description = Path.GetRandomFileName().Replace(".", "").Substring(0, 11);
 
             var idempotencyKey = Guid.NewGuid().ToString();
-            var transfer = funds.Transfer(10m)
+            var transfer = funds.Transfer(1m)
                 .WithClientTransactionId("")
                 .WithDescription(description)
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
 
             Assert.IsNotNull(transfer.TransactionId);
-            Assert.AreEqual(10m, transfer.BalanceAmount);
-            Assert.AreEqual("CAPTURED", transfer.ResponseMessage.ToUpper());
-            Assert.AreEqual("SUCCESS", transfer.ResponseCode.ToUpper());
+            Assert.AreEqual(1m, transfer.BalanceAmount);
+            Assert.AreEqual(Success, transfer.ResponseMessage.ToUpper());
+            Assert.AreEqual(Success, transfer.ResponseCode.ToUpper());
             
             var exceptionCaught = false;
             try {
-                funds.Transfer(10m)
+                funds.Transfer(1m)
                     .WithClientTransactionId("")
                     .WithDescription(description)
                     .WithIdempotencyKey(idempotencyKey)
@@ -429,7 +420,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 exceptionCaught = true;
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40039", ex.ResponseMessage);
-                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={transfer.TransactionId}, status=CAPTURED",
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={transfer.TransactionId}, status=SUCCESS",
                     ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
@@ -647,7 +638,171 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.IsTrue(exceptionCaught);
             }
         }
-       
+
+        [TestMethod]
+        public void AddFunds()
+        {
+            var amount = "10";
+            var currency = "USD";
+            var accountId = "FMA_a78b841dfbd14803b3a31e4e0c514c72";
+            var merchantId = "MER_5096d6b88b0b49019c870392bd98ddac";
+            var merchant = User.FromId(merchantId, UserType.MERCHANT);
+        
+            var response = merchant.AddFunds()
+                .WithAmount(amount)
+                .WithAccountNumber(accountId)
+                .WithPaymentMethodName(PaymentMethodName.BankTransfer)
+                .WithPaymentMethodType(PaymentMethodType.Credit)
+                .WithCurrency(currency)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.IsNotNull(response.FundsAccountDetails);
+            Assert.AreEqual(FundsStatus.CAPTURED.ToString(), response.FundsAccountDetails.Status);
+            Assert.AreEqual(amount, response.FundsAccountDetails.Amount.ToString());
+            Assert.AreEqual(currency, response.FundsAccountDetails.Currency);
+            Assert.AreEqual("CREDIT", response.FundsAccountDetails.PaymentMethodType);
+            Assert.AreEqual("BANK_TRANSFER", response.FundsAccountDetails.PaymentMethodName);
+            Assert.IsNotNull(response.FundsAccountDetails.Account);
+            Assert.AreEqual(accountId, response.FundsAccountDetails.Account.Id);
+        }
+
+        [TestMethod]
+        public void AddFunds_OnlyMandatory()
+        {
+            var amount = "10";
+            var accountId = "FMA_a78b841dfbd14803b3a31e4e0c514c72";
+            var merchantId = "MER_5096d6b88b0b49019c870392bd98ddac";
+            var merchant = User.FromId(merchantId, UserType.MERCHANT);
+
+            var response = merchant.AddFunds()
+                .WithAmount(amount)
+                .WithAccountNumber(accountId)                
+                .WithPaymentMethodType(PaymentMethodType.Credit)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.IsNotNull(response.FundsAccountDetails);
+            Assert.AreEqual(FundsStatus.CAPTURED.ToString(), response.FundsAccountDetails.Status);
+            Assert.AreEqual(amount, response.FundsAccountDetails.Amount.ToString());
+            Assert.AreEqual("CREDIT", response.FundsAccountDetails.PaymentMethodType);
+            Assert.AreEqual("BANK_TRANSFER", response.FundsAccountDetails.PaymentMethodName);
+            Assert.IsNotNull(response.FundsAccountDetails.Account);
+            Assert.AreEqual(accountId, response.FundsAccountDetails.Account.Id);
+        }
+
+        [TestMethod]
+        public void AddFunds_InsufficientFunds()
+        {
+            var amount = "10";
+            var accountId = "FMA_a78b841dfbd14803b3a31e4e0c514c72";
+            var merchantId = "MER_5096d6b88b0b49019c870392bd98ddac";
+            var merchant = User.FromId(merchantId, UserType.MERCHANT);
+
+            var response = merchant.AddFunds()
+                .WithAmount(amount)
+                .WithAccountNumber(accountId)                
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("DECLINED", response.ResponseCode);
+            Assert.IsNotNull(response.FundsAccountDetails);
+            Assert.AreEqual(FundsStatus.DECLINE.ToString(), response.FundsAccountDetails.Status);
+            Assert.AreEqual(amount, response.FundsAccountDetails.Amount.ToString());
+            Assert.AreEqual("DEBIT", response.FundsAccountDetails.PaymentMethodType);
+            Assert.AreEqual("BANK_TRANSFER", response.FundsAccountDetails.PaymentMethodName);
+            Assert.IsNotNull(response.FundsAccountDetails.Account);
+            Assert.AreEqual(accountId, response.FundsAccountDetails.Account.Id);
+        }
+
+        [TestMethod]
+        public void AddFunds_WithoutAmount()
+        {
+            var currency = "USD";
+            var accountId = "FMA_a78b841dfbd14803b3a31e4e0c514c72";
+            var merchantId = "MER_5096d6b88b0b49019c870392bd98ddac";
+            var merchant = User.FromId(merchantId, UserType.MERCHANT);
+
+            var errorFound = false;
+            try
+            {
+                var response = merchant.AddFunds()
+                 .WithAccountNumber(accountId)                 
+                 .WithPaymentMethodName(PaymentMethodName.BankTransfer)
+                 .WithPaymentMethodType(PaymentMethodType.Credit)
+                 .WithCurrency(currency)
+                 .Execute();
+            }
+            catch (BuilderException ex)
+            {
+                errorFound = true;
+                Assert.AreEqual("Amount cannot be null for this transaction type.", ex.Message);
+            }
+            finally {
+                Assert.IsTrue(errorFound);
+            }
+        }
+
+        [TestMethod]
+        public void AddFunds_WithoutAccountNumber()
+        {
+            var amount = "10";
+            var currency = "USD";            
+            var merchantId = "MER_5096d6b88b0b49019c870392bd98ddac";
+            var merchant = User.FromId(merchantId, UserType.MERCHANT);
+
+            var errorFound = false;
+            try
+            {
+                var response = merchant.AddFunds()
+                 .WithAmount(amount)                 
+                 .WithPaymentMethodName(PaymentMethodName.BankTransfer)
+                 .WithPaymentMethodType(PaymentMethodType.Credit)
+                 .WithCurrency(currency)
+                 .Execute();
+            }
+            catch (BuilderException ex)
+            {
+                errorFound = true;
+                Assert.AreEqual("AccountNumber cannot be null for this transaction type.", ex.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(errorFound);
+            }
+        }
+
+        [TestMethod]
+        public void AddFunds_WithoutUserRef()
+        {
+            var amount = "10";
+            var currency = "USD";
+            var accountId = "FMA_a78b841dfbd14803b3a31e4e0c514c72";                     
+
+            var errorFound = false;
+            try
+            {
+                var response = new User().AddFunds()
+                 .WithAmount(amount)
+                 .WithAccountNumber(accountId)
+                 .WithPaymentMethodName(PaymentMethodName.BankTransfer)
+                 .WithPaymentMethodType(PaymentMethodType.Credit)
+                 .WithCurrency(currency)
+                 .Execute();
+            }
+            catch (GatewayException ex)
+            {
+                errorFound = true;
+                Assert.AreEqual("property UserId or config MerchantId cannot be null for this transactionType", ex.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(errorFound);
+            }
+        }
+
         #endregion
 
 

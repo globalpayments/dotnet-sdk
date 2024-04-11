@@ -110,6 +110,7 @@ namespace GlobalPayments.Api.Builders {
         internal DateTime LastRegisteredDate { get; set; }
         internal DateTime ShippingDate { get; set; }
         internal TransactionData TransactionData { get; set; }
+        internal int? EstimatedNumberTransaction { get; set; }
 
         public AuthorizationBuilder WithTransactionData(TransactionData value) {
             TransactionData = value;
@@ -223,10 +224,12 @@ namespace GlobalPayments.Api.Builders {
 
         /// <summary>
         /// Sets the Multicapture value as true/false.
+        /// Sets the possible number of transactions
         /// </summary>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithMultiCapture(bool value = true) {
+        public AuthorizationBuilder WithMultiCapture(bool value = true, int? estimatedNumTrans = null) {
             MultiCapture = value;
+            EstimatedNumberTransaction = estimatedNumTrans;
             return this;
         }
 
