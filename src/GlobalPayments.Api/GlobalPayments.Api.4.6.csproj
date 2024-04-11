@@ -226,6 +226,7 @@
     <Compile Include="Entities\Enums\UCAFIndicator.cs" />
     <Compile Include="Entities\Enums\UcafType.cs" />
     <Compile Include="Entities\Enums\UnitOfMeasure.cs" />
+    <Compile Include="Entities\Enums\UpdateResourceFileType.cs" />
     <Compile Include="Entities\Enums\UsableBalanceMode.cs" />
     <Compile Include="Entities\Enums\UserLevelRelationship.cs" />
     <Compile Include="Entities\Enums\UserStatus.cs" />

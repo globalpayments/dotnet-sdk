@@ -6,7 +6,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GlobalPayments.Api.Terminals.PAX;
 using log4net;
 
 namespace GlobalPayments.Api.Terminals.UPA
@@ -19,8 +18,6 @@ namespace GlobalPayments.Api.Terminals.UPA
         private readonly CancellationTokenSource _tokenSource;
 
         public event MessageSentEventHandler OnMessageSent;
-        public event MessageReceivedEventHandler OnMessageReceived;
-
         public event MessageReceivedEventHandler OnMessageReceived;
 
         public UpaTcpInterface(ITerminalConfiguration settings)
