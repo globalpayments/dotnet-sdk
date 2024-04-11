@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Terminals.HPA;
 using GlobalPayments.Api.Terminals.UPA;
 using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.Entities.UPA;
 using System;
 using System.Collections.Generic;
 using System.Text;

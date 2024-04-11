@@ -240,5 +240,103 @@ namespace GlobalPayments.Api.Utils {
         public static string ExtractDigits(this string str) {
             return string.IsNullOrEmpty(str) ? str : new string(str.Where(char.IsDigit).ToArray());
         }
+
+
+
+        public static byte[] GetTerminalResponse(this byte[] buffer)
+        {
+            
+            var bytesReceived = buffer.Length;
+
+            if (bytesReceived <= 0) 
+                return null;
+
+            var readBuffer = new byte[bytesReceived];
+            Array.Copy(buffer, readBuffer, bytesReceived);
+
+            var code = (ControlCodes)readBuffer[0];
+            switch (code)
+            {
+                case ControlCodes.NAK:
+                    return null;
+                case ControlCodes.EOT:
+                    throw new MessageException("Terminal returned EOT for the current message.");
+                case ControlCodes.ACK:
+                    return buffer.GetTerminalResponse();
+                case ControlCodes.STX:
+                {
+                    var queue = new Queue<byte>(readBuffer);
+
+                    // break off only one message
+                    var rec_buffer = new List<byte>();
+                    do
+                    {
+                        rec_buffer.Add(queue.Dequeue());
+                        if (rec_buffer[rec_buffer.Count - 1] == (byte)ControlCodes.ETX)
+                            break;
+                    }
+                    while (queue.Count > 0);
+
+                    // Should be the LRC
+                    if (queue.Count > 0)
+                    {
+                        rec_buffer.Add(queue.Dequeue());
+                    }
+                    return rec_buffer.ToArray();
+                }
+                default:
+                    throw new MessageException($"Unknown message received: {code}");
+            }
+        }
+
+        public static byte[] GetTerminalResponseAsync(this byte[] buffer)
+        {
+            
+            var bytesReceived = buffer.Length;
+
+            if (bytesReceived <= 0) 
+                return null;
+
+            var readBuffer = new byte[bytesReceived];
+            Array.Copy(buffer, readBuffer, bytesReceived);
+
+            var code = (ControlCodes)readBuffer[0];
+
+            switch (code)
+            {
+                case ControlCodes.NAK:
+                    return null;
+                case ControlCodes.EOT:
+                    throw new MessageException("Terminal returned EOT for the current message.");
+                case ControlCodes.ACK:
+                    return readBuffer.GetTerminalResponse();
+                case ControlCodes.STX:
+                {
+                    var queue = new Queue<byte>(readBuffer);
+
+                    // break off only one message
+                    var rec_buffer = new List<byte>();
+                    do
+                    {
+                        rec_buffer.Add(queue.Dequeue());
+                        if (rec_buffer[rec_buffer.Count - 1] == (byte)ControlCodes.ETX)
+                            break;
+                    }
+                    while (queue.Count > 0);
+
+                    // Should be the LRC
+                    if (queue.Count > 0)
+                    {
+                        rec_buffer.Add(queue.Dequeue());
+                    }
+                    return rec_buffer.ToArray();
+                }
+                default:
+                    throw new MessageException($"Unknown message received: {code}");
+            }
+            
+        }
+
+
     }
 }

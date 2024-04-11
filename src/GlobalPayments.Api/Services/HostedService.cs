@@ -103,7 +103,7 @@ namespace GlobalPayments.Api.Services {
             .Set("PAYMENT_PURPOSE", response.GetValue<string>("paymentpurpose"))
             .Set("RESULT", response.GetValue<string>("result"))
             .Set($"{_config.ShaHashType}HASH", response.GetValue<string>($"{_config.ShaHashType.ToString().ToLower()}hash"));
-            
+           
         }
     }
 }

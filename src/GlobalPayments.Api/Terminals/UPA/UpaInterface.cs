@@ -6,6 +6,7 @@ using GlobalPayments.Api.Terminals.UPA.Responses;
 using GlobalPayments.Api.Utils;
 using Newtonsoft.Json;
 using System.Text;
+using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 
 namespace GlobalPayments.Api.Terminals.UPA
@@ -38,7 +39,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.EodProcessing));
-            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonObject = Encoding.UTF8.GetString(response);
             var jsonParse = JsonDoc.Parse(jsonObject);
             return new UpaEODResponse(jsonParse);
         }
@@ -47,16 +48,26 @@ namespace GlobalPayments.Api.Terminals.UPA
         {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.Reboot));
-            string jsonObject = Encoding.UTF8.GetString(response);
-            var jsonParse = JsonDoc.Parse(jsonObject);
-            return new TransactionResponse(jsonParse);
+            var json = Encoding.UTF8.GetString(response);
+
+            var j = JsonConvert.DeserializeObject<BasicResponse>(json);
+
+            return new DeviceResponse
+            {
+                Command = j.Data.Response,
+                DeviceId = "",
+                DeviceResponseCode = "",
+                DeviceResponseText = "",
+                Status = j.Data.CmdResult.Result,
+                ReferenceNumber = j.Data.RequestId
+            };
         }
 
         public override IDeviceResponse LineItem(string leftText, string rightText = null, string runningLeftText = null, string runningRightText = null)
         {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.LineItemDisplay, leftText, rightText));
-            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonObject = Encoding.UTF8.GetString(response);
             var jsonParse = JsonDoc.Parse(jsonObject);
             return new TransactionResponse(jsonParse);
         }
@@ -64,15 +75,16 @@ namespace GlobalPayments.Api.Terminals.UPA
         public override void Cancel()
         {
             var requestId = _controller.GetRequestId();
-            var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.CancelTransaction));
+            _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.CancelTransaction));
         }
 
         public override ISAFResponse SendStoreAndForward()
         {
             var requestId = _controller.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.SendSAF));
-            string jsonObject = Encoding.UTF8.GetString(response);
-            JsonDoc doc = JsonDoc.Parse(jsonObject);
+            var jsonObject = Encoding.UTF8.GetString(response);
+
+            var doc = JsonDoc.Parse(jsonObject);
             return new UpaSAFResponse(doc);
         }
         public override ISAFResponse DeleteSaf(string safReferenceNumber, string tranNo=null)
@@ -224,6 +236,7 @@ namespace GlobalPayments.Api.Terminals.UPA
         {
             return new TerminalReportBuilder(TerminalReportType.GetOpenTabDetails);
         }
+
         #endregion
     }
 }

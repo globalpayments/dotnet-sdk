@@ -5,7 +5,8 @@ using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.UPA
 {
-    public class BatchReportResponse : ITerminalReport {
+    public class BatchReportResponse : ITerminalReport
+    {
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
 
         public BatchReportResponse(JsonDoc root) {
@@ -18,6 +19,9 @@ namespace GlobalPayments.Api.Terminals.UPA
             if (cmdResult == null) {
                 throw new MessageException(INVALID_RESPONSE_FORMAT);
             }
+
+            EcrId = firstDataNode.GetValue<string>("EcrId");
+            RequestId = firstDataNode.GetValue<int>("requestId");
 
             Status = cmdResult.GetValue<string>("result");
             if (string.IsNullOrEmpty(Status)) {
@@ -49,7 +53,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                             OpenTnxId = batchRecord.GetValue<string>("openTnxId"),
                             TotalAmount = batchRecord.GetValue<decimal>("totalAmount"),
                             TotalCnt = batchRecord.GetValue<int>("totalCnt"),
-                            CreditCnt = batchRecord.GetValue<int>("credictCnt"),
+                            CreditCnt = batchRecord.GetValue<int>("creditCnt"),
                             CreditAmt = batchRecord.GetValue<decimal>("creditAmt"),
                             DebitCnt = batchRecord.GetValue<int>("debitCnt"),
                             DebitAmt = batchRecord.GetValue<decimal>("debitAmt"),
@@ -96,7 +100,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
         public string Message { get; set; }
         public string Response { get; set; }
-        public int EcrId { get; set; }
+        public string EcrId { get; set; }
         public int RequestId { get; set; }
         public string Result { get; set; }
         public string ErrorCode { get; set; }

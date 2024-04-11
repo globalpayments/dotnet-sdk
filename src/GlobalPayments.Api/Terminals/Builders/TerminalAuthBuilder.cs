@@ -81,6 +81,12 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
+        public TerminalAuthBuilder WithEcrId(string ecrId)
+        {
+            EcrId = int.Parse(ecrId);
+            return this;
+        }
+
         public TerminalAuthBuilder WithAllowDuplicates(bool allowDuplicates) {
             AllowDuplicates = allowDuplicates;
             return this;

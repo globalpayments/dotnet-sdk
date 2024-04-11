@@ -18,6 +18,9 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     throw new MessageException(INVALID_RESPONSE_FORMAT);
                 }
 
+				        EcrId = firstDataNode.GetValue<string>("EcrId");
+            	  RequestId = firstDataNode.GetValue<int>("requestId");
+
                 Status = cmdResult.GetValue<string>("result");
 
                 // Log error info if it's there
@@ -42,7 +45,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 }
             }
             else {
-                RequestId = root.GetValue<string>("id");                
+                RequestId = root.GetValue<int>("id");                
+
                 DeviceResponseText = root.GetValue<string>("status");
                 DeviceResponseCode = root.Get("action").GetValue<string>("result_code"); ;
             }
@@ -52,7 +56,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
             return !root.Has("data");
         }
 
-        public string RequestId { get; set; }
+        public int RequestId { get; set; }
+
         public string Multiplemessage { get; set; }
 
         public IDeviceResponse AttachmentResponse { get; set; }
@@ -74,6 +79,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
         public IBatchReportResponse BatchReportResponse { get; set; }
         public string RespDateTime { get; set; }
         public int BatchId { get; set; }
+        public string EcrId { get; set; }
+        
         public int GatewayResponseCode { get; set; }
         public string GatewayResponseMessage { get; set; }
 

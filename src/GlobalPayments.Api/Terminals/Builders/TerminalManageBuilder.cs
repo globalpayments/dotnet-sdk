@@ -41,6 +41,13 @@ namespace GlobalPayments.Api.Terminals.Builders {
             EcrId = ecrId;
             return this;
         }
+
+        public TerminalManageBuilder WithEcrId(string ecrId)
+        {
+            EcrId = int.Parse(ecrId);
+            return this;
+        }
+
         public TerminalManageBuilder WithOrigECRRefNumber(string origECRRefNumber)
         {
             OrigECRRefNumber = origECRRefNumber;

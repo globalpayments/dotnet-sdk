@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace GlobalPayments.Api.Terminals.UPA {
     public class UpaController : DeviceController {
+
         internal override IDeviceInterface ConfigureInterface() {
             if (_interface == null) {
                 _interface = new UpaInterface(this);
@@ -47,6 +48,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var response = Send(BuildReportTransaction(builder));
 
             string jsonObject = Encoding.UTF8.GetString(response);
+
             var jsonParse = JsonDoc.Parse(jsonObject);
 
             switch (builder.ReportType) {
@@ -255,7 +257,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 return null;
             }
 
-            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonObject = Encoding.UTF8.GetString(response);
+
             var jsonParse = JsonDoc.Parse(jsonObject);
 
             return new TransactionResponse(jsonParse);

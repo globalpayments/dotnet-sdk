@@ -4,7 +4,7 @@ using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Terminals.UPA
 {
-    internal class TransactionResponse: ITerminalResponse {
+    public class TransactionResponse: ITerminalResponse {
         #region Properties
         public decimal? AvailableBalance { get; set; }
         public string TransactionId { get; set; }
@@ -55,6 +55,10 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string ReferenceNumber { get; set; }
         public string CardHolderName { get; set; }
         public string RequestId { get; set; }
+        public string EcrId { get; set; }
+        public string GatewayResponseCode { get; set; }
+        public string GatewayResponseText { get; set; }
+        public bool PartialApproval { get; set; }
         #endregion
 
 
@@ -66,11 +70,15 @@ namespace GlobalPayments.Api.Terminals.UPA
             }
 
             RequestId = response.GetValue<string>("requestId");
+            EcrId = response.GetValue<string>("EcrId");
+            TransactionType = response.GetValue<string>("response");
+
             HydrateCmdResult(response);
             var responseData = response.Get("data");
             if (responseData == null) {
                 return;
             }
+
             HydrateHostData(responseData);
             HydratePaymentData(responseData);
             HydrateTransactionData(responseData);
@@ -79,11 +87,9 @@ namespace GlobalPayments.Api.Terminals.UPA
             HydrateHeaderData(responseData);
         }
             else {
-                RequestId = root.GetValue<string>("id");
-                TransactionId = RequestId;
-                DeviceResponseText = root.GetValue<string>("status");
-                ResponseText = root.Get("action").GetValue<string>("result_code");
-                DeviceResponseCode = ResponseText;
+                TransactionId = RequestId = root.GetValue<string>("id");
+                Status = ResponseCode = DeviceResponseCode = root.GetValue<string>("status");
+                DeviceResponseText = ResponseText = root.Get("action").GetValue<string>("result_code");
             }
         }
 
@@ -109,8 +115,8 @@ namespace GlobalPayments.Api.Terminals.UPA
             TransactionId = host.GetValue<string>("responseId");
             TerminalRefNumber = host.GetValue<string>("tranNo");
             // TransactionDate = host.GetValue<DateTime>("respDateTime");
-            // GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
-            // GatewayResponsemessage = host.GetValue<string>("gatewayResponsemessage");
+            GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
+            GatewayResponseText = host.GetValue<string>("gatewayResponseMessage");
             ResponseCode = NormalizeResponseCode(host.GetValue<string>("responseCode"), host.GetValue<string>("partialApproval"));
             ResponseText = host.GetValue<string>("responseText");
             ApprovalCode = host.GetValue<string>("approvalCode");
@@ -136,9 +142,13 @@ namespace GlobalPayments.Api.Terminals.UPA
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
             // CavvResultCode = host.GetValue<string>("cavvResultCode");
             // TokenPANLast = host.GetValue<string>("tokenPANLast");
-            // PartialApproval = host.GetValue<string>("partialApproval");
+
+            var partialAmount = host.GetValue<string>("partialApproval");
+
+            PartialApproval = !string.IsNullOrEmpty(partialAmount) && !"0".Equals(partialAmount);
+
             // TraceNumber = host.GetValue<string>("traceNumber");
-            // BalanceDue = host.GetValue<decimal>("balanceDue");
+            AmountDue = BalanceAmount = host.GetValue<decimal>("balanceDue");
             // BaseDue = host.GetValue<decimal>("baseDue");
             // TaxDue = host.GetValue<decimal>("taxDue");
             // TipDue = host.GetValue<decimal>("tipDue");
