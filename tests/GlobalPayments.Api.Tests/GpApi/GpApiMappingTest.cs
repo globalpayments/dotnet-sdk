@@ -490,7 +490,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSummary?.BatchReference);
             Assert.AreEqual(doc.Get("action").GetValue<string>("result_code"), transaction.ResponseCode);
             Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("id"), transaction.Token);
-            Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.AuthorizationCode);
+            Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.CardIssuerResponse.Result);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("authcode"), transaction.AuthorizationCode);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), transaction.CardType);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4"), transaction.CardLast4);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result"), transaction.CvnResponseMessage);
@@ -516,7 +517,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSummary?.BatchReference);
             Assert.AreEqual(doc.Get("action").GetValue<string>("result_code"), transaction.ResponseCode);
             Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("id"), transaction.Token);
-            Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.AuthorizationCode);
+            Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.CardIssuerResponse.Result);
+            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("authcode"), transaction.AuthorizationCode);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), transaction.CardType);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4"), transaction.CardLast4);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result"), transaction.CvnResponseMessage);

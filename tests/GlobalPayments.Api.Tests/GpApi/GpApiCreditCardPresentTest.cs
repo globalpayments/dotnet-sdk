@@ -81,7 +81,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
-            Assert.AreEqual("55", response.AuthorizationCode);
+            Assert.AreEqual("55", response.CardIssuerResponse.Result);
         }
         
         [TestMethod]
@@ -125,7 +125,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
-            Assert.AreEqual("14", response.AuthorizationCode);
+            Assert.AreEqual("14", response.CardIssuerResponse.Result);
         }
         
         [TestMethod]
@@ -144,7 +144,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
-            Assert.AreEqual("54", response.AuthorizationCode);
+            Assert.AreEqual("54", response.CardIssuerResponse.Result);
         }
         
         [TestMethod]
@@ -391,7 +391,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(Declined, response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
-            Assert.AreEqual("55", response.AuthorizationCode);
+            Assert.AreEqual("55", response.CardIssuerResponse.Result);
         }
         
         [TestMethod]
@@ -579,7 +579,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var reauthTransaction = reverseTransaction.Reauthorize()
                 .Execute();
             AssertTransactionResponse(reauthTransaction, TransactionStatus.Captured);
-            Assert.AreEqual("00", reauthTransaction.AuthorizationCode);
+            Assert.AreEqual("00", reauthTransaction.CardIssuerResponse.Result);
         }
 
         [TestMethod]
@@ -596,7 +596,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var reauthTransaction = reverseTransaction.Reauthorize()
                 .Execute();
             AssertTransactionResponse(reauthTransaction, TransactionStatus.Preauthorized);
-            Assert.AreEqual("00", reauthTransaction.AuthorizationCode);
+            Assert.AreEqual("00", reauthTransaction.CardIssuerResponse.Result);
         }
 
         [TestMethod]
@@ -627,7 +627,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var reauthTransaction = transaction.Reauthorize()
                 .Execute();
             AssertTransactionResponse(reauthTransaction, TransactionStatus.Captured);
-            Assert.AreEqual("00", reauthTransaction.AuthorizationCode);
+            Assert.AreEqual("00", reauthTransaction.CardIssuerResponse.Result);
         }
 
         [TestMethod]
@@ -646,7 +646,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
             AssertTransactionResponse(reauthTransaction, TransactionStatus.Captured);
-            Assert.AreEqual("00", reauthTransaction.AuthorizationCode);
+            Assert.AreEqual("00", reauthTransaction.CardIssuerResponse.Result);
 
             var exceptionCaught = false;
             try {

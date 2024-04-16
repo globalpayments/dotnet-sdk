@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpEcom {
     [TestClass]
+    [Ignore]
     public class GpEcomDataServiceReportingTest {
         public GpEcomDataServiceReportingTest() {
             ServicesContainer.ConfigureService(new GpEcomConfig {

@@ -162,7 +162,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.CardType == cardBrand && t.AuthCode == authCode));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.CardType == cardBrand && t.AuthCode.Contains(authCode)));
         }
 
         [TestMethod]

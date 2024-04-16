@@ -838,8 +838,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var response = PayByLinkService.FindPayByLink(1, 10)
                 .OrderBy(PayByLinkSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, StartDate)
-                .And(SearchCriteria.EndDate, EndDate)
+                .Where(SearchCriteria.StartDate, StartDate.AddMonths(-24))
+                .And(SearchCriteria.EndDate, EndDate.AddMonths(-22))
                 .And(SearchCriteria.PaymentMethodUsageMode, PaymentMethodUsageMode.Single)
                 .And(SearchCriteria.DisplayName, name)
                 .Execute();

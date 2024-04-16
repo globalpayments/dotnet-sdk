@@ -106,7 +106,7 @@ namespace GlobalPayments.Api.Mapping {
                     BatchReference = json.GetValue<string>("batch_id")
                 };
                 transaction.Token = json.Get("payment_method")?.GetValue<string>("id");                
-                transaction.AuthorizationCode = json.Get("payment_method")?.GetValue<string>("result");
+                transaction.AuthorizationCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("authcode");               
 
                 var cardDetails = new Card();
                 cardDetails.MaskedNumberLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4") ?? null;
@@ -119,9 +119,12 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.CardBrandTransactionId = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand_reference");
                 transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
                 transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
-                transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");                
+                transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
                 if (json.Get("payment_method")?.Get("card")?.Has("provider") ?? false) {
                     transaction.CardIssuerResponse = MapCardIssuerResponse(json.Get("payment_method")?.Get("card")?.Get("provider"));
+                }
+                else {
+                    transaction.CardIssuerResponse = new CardIssuerResponse() { Result = json.Get("payment_method")?.GetValue<string>("result") };
                 }
                 if ((json.Get("payment_method")?.Has("apm")) ?? false &&
                     (json.Get("payment_method")?.Get("apm").GetValue<string>("provider").ToUpper() == PaymentProvider.OPEN_BANKING.ToString()))

@@ -34,11 +34,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
             AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
+            Assert.AreEqual("123456", transaction.AuthorizationCode);
 
             var capture = transaction.Capture(AMOUNT + 1m)
                 .WithGratuity(1m)
                 .Execute();
             AssertTransactionResponse(capture, TransactionStatus.Captured);
+            Assert.AreEqual("000000", capture.AuthorizationCode);
         }
 
         [TestMethod]
@@ -65,7 +67,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);
             Assert.IsNotNull(response.FingerPrintIndicator);           
-            Assert.AreEqual("EXISTS",response.FingerPrintIndicator);           
+            Assert.AreEqual("EXISTS",response.FingerPrintIndicator);   
+            Assert.AreEqual("123456", response.AuthorizationCode);
         }
 
         [TestMethod]
@@ -86,6 +89,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual("VERIFIED", response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);           
+            Assert.AreEqual("123456", response.AuthorizationCode);
         }
 
         [TestMethod]

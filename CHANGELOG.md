@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v8.0.7 (03/12/24)
+## Latest - v8.0.8 (04/16/24)
+
+## Bug Fixes
+
+- [GPAPI]: Mapping the right AuthotizationCode.
+
+## v8.0.7 (03/12/24)
 
 ## Bug Fixes
 
