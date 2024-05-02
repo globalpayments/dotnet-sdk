@@ -1206,9 +1206,6 @@ namespace GlobalPayments.Api.Gateways {
                         if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit)
                             return "CreditReversal"; // CreditReversal : Reversal (Credit)
                         else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {
-                            if (builder.PaymentMethod is TransactionReference) {
-                                throw new UnsupportedTransactionException();
-                            }
                             return "DebitReversal"; // DebitReversal : Reversal (Debit)
                         }
                         else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift)

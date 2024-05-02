@@ -70,10 +70,18 @@ namespace GlobalPayments.Api.Tests
             Transaction.FromId("1234567890", PaymentMethodType.Debit).Refund().Execute();
         }
 
-        [TestMethod, ExpectedException(typeof(UnsupportedTransactionException))]
-        public void DebitReverseFromTransactionId() {
-            Transaction.FromId("1234567890", PaymentMethodType.Debit).Reverse().Execute();
+        [TestMethod]
+        public void DebitReverseFromTransactionId()
+        {
+            var response = track.Charge(17.01m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+
+            var reversalResponse = Transaction.FromId(response.TransactionId, PaymentMethodType.Debit).Reverse(17.01m).Execute();
+            Assert.AreEqual("00", reversalResponse.ResponseCode, reversalResponse.ResponseMessage);
         }
+
         [TestMethod]
         public void debitSaleWithNewCryptoURL() {
             ServicesContainer.ConfigureService(new PorticoConfig {

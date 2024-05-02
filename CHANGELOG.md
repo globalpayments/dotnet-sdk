@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v8.0.8 (04/16/24)
+## Latest - v8.0.9 (05/01/24)
+
+## Enhancement
+
+- [Portico]: Allow 'DebitReversal' transaction type
+
+## v8.0.8 (04/16/24)
 
 ## Bug Fixes
 
