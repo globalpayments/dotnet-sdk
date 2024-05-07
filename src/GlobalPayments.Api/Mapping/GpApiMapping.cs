@@ -106,7 +106,11 @@ namespace GlobalPayments.Api.Mapping {
                     BatchReference = json.GetValue<string>("batch_id")
                 };
                 transaction.Token = json.Get("payment_method")?.GetValue<string>("id");                
-                transaction.AuthorizationCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("authcode");               
+                transaction.AuthorizationCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("authcode");
+                if(string.IsNullOrEmpty(transaction.AuthorizationCode) && json.Has("payment_method") && 
+                    (json.Get("payment_method")?.Has("digital_wallet") ?? false)) {
+                    transaction.AuthorizationCode = json.Get("payment_method")?.Get("digital_wallet")?.GetValue<string>("authcode");
+                }
 
                 var cardDetails = new Card();
                 cardDetails.MaskedNumberLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4") ?? null;

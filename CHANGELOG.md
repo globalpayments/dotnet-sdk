@@ -1,6 +1,16 @@
 # Changelog
 
-## Latest - v8.0.9 (05/01/24)
+## Latest - v8.0.10 (05/07/24)
+
+## Enhancement
+
+- [UPA]: Added support to allow logging of request / response messages.
+
+- ### Bug Fixes:
+
+- [GPAPI]: Mapping the right AuthotizationCode for Digital Wallet.
+
+## v8.0.9 (05/01/24)
 
 ## Enhancement
 

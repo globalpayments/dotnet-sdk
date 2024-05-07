@@ -4,6 +4,7 @@ using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Net.Sockets;
+using System.Text;
 
 namespace GlobalPayments.Api.Terminals.UPA {
     internal class UpaTcpInterface : IDeviceCommInterface {
@@ -64,6 +65,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     var rvalue = _stream.GetTerminalResponseAsync();
                     if (rvalue != null) {
                         var msgValue = GetResponseMessageType(rvalue);
+                        OnMessageReceived?.Invoke(msgValue);
 
                         switch (msgValue)
                         {
@@ -104,6 +106,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
             finally {
                 OnMessageSent?.Invoke(message.ToString());
+                OnMessageReceived?.Invoke(Encoding.UTF8.GetString(responseMessage));
                 Disconnect();
             }
         }

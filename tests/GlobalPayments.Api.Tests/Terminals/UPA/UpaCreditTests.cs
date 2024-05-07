@@ -334,6 +334,36 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.AreEqual("00", voidResponse.ResponseCode);
         }
 
+        [TestMethod]
+        public  void CreditSaleWithReqResLog()
+        {
+            string messageSent = "";
+            string messageReceived = "";
+
+            _device.OnMessageSent += (message) =>
+            {
+                messageSent = message;
+                // Use a logger of your choice to capture and log the message
+                System.Diagnostics.Debug.WriteLine(messageSent);
+            };
+
+            _device.OnMessageReceived += (message) =>
+            {
+                messageReceived = message;
+                // Use a logger of your choice to capture and log the message
+                System.Diagnostics.Debug.WriteLine(messageReceived);
+            };
+
+            var response = _device.Sale(10m)
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .WithGratuity(0m)
+                .Execute();   
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
         [TestMethod, ExpectedException(typeof(BuilderException))]
         public void CreditVoidNoTransactionId()
         {
