@@ -1,6 +1,9 @@
 # Changelog
 
-## Latest - v8.0.10 (05/07/24)
+## Latest - v8.0.11 (05/16/24)
+ - Fix Deploy version
+
+## v8.0.10 (05/07/24)
 
 ## Enhancement
 
