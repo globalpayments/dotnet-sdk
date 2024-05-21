@@ -50,7 +50,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 Assert.Fail(exc.Message + exc.StackTrace);
             }
         }
-
+        
         [TestMethod]
         public void CreditSale_EcrNotSet() {
             try {
@@ -113,6 +113,64 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 Assert.Fail(exc.Message + exc.StackTrace);
             }
         }
+        
+        [TestMethod]
+        public void CreditAuthAndCaptureWithClientTransactionId() {
+            try {
+                ITerminalResponse response = _device.Authorize(10m)
+                    .WithClientTransactionId("asdcdf999")
+                    .Execute();
+                Assert.IsNotNull(response);
+                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+
+                ITerminalResponse capture = _device.Capture(10m)
+                    .WithClientTransactionId("asdcdf999")
+                    .WithTransactionId(response.TransactionId)
+                    .Execute();
+                Assert.IsNotNull(capture);
+                Assert.AreEqual("SUCCESS", capture.ResponseText);
+                Assert.AreEqual("INITIATED", capture.DeviceResponseText);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
+        
+        [TestMethod]
+        public void CreditAuthAndThenDelete() {
+            try {
+                ITerminalResponse response = _device.Authorize(10m)
+                    .Execute();
+                Assert.IsNotNull(response);
+                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+
+                ITerminalResponse capture = _device.DeletePreAuth()
+                    .WithTransactionId(response.TransactionId)
+                    .Execute();
+                Assert.IsNotNull(capture);
+                Assert.AreEqual("SUCCESS", capture.ResponseText);
+                Assert.AreEqual("INITIATED", capture.DeviceResponseText);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
+        
+        [TestMethod]
+        public void GetOpenTabDetails() {
+            try {
+                ITerminalReport response = _device.GetOpenTabDetails()
+                    .Execute();
+                Assert.IsNotNull(response);
+                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
 
         [TestMethod]
         public void CreditCapture_RandomId() {
@@ -166,6 +224,44 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                     .Execute();
                 Assert.IsNotNull(response);
                 Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }               
+        
+        [TestMethod]
+        public void SendSaf() {
+            try {
+                _device.SendStoreAndForward();
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
+        
+        [TestMethod]
+        public void GetSafReport() {
+            try {
+                ITerminalReport response = _device.GetSAFReport()
+                    .Execute();
+                Assert.IsNotNull(response);
+                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
+        
+        [TestMethod]
+        public void GetBatchReport() {
+            try {
+                ITerminalReport response = _device.GetBatchReport()
+                    .Execute();
+                Assert.IsNotNull(response);
+                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
                 Assert.AreEqual("INITIATED", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -236,20 +332,63 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 Assert.IsTrue(exceptionCaught);
             }
         }
+        
+        [TestMethod]
+        public void CancelSale() {
+            try {
+                _device.Cancel();
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
 
         [TestMethod]
-        public void EndOfDay()
-        {
-            try
-            {
+        public void Reboot() {
+            try {
+                _device.Reboot();
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
+        
+        [TestMethod]
+        public void RegisterPos() {
+            try {
+                IDeviceResponse response = _device.RegisterPOS("app");
+                Assert.IsNotNull(response);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
+        
+        [TestMethod]
+        public void GetSignatureFile() {
+            try {
+                ISignatureResponse response = _device.PromptAndGetSignatureFile("asd", "asdas", 1);
+                Assert.IsNotNull(response);
+                Assert.AreEqual("INITIATED", response.DeviceResponseText);
+                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+            }
+            catch (ApiException exc) {
+                Assert.Fail(exc.Message + exc.StackTrace);
+            }
+        }
+        
+        [TestMethod]
+        public void EndOfDay() {
+            try {
                 _device.EcrId = "13";
                 var response = _device.EndOfDay();
                 Assert.IsNotNull(response);
                 Assert.AreEqual("INITIATED", response.DeviceResponseText);
                 Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
             }
-            catch (ApiException exc)
-            {
+            catch (ApiException exc) {
                 Assert.Fail(exc.Message + exc.StackTrace);
             }
         }

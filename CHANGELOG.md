@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v8.0.11 (05/16/24)
+## Latest - v8.0.12 (05/21/24)
+
+### Bug Fixes:
+
+- [GPAPI]: MerchantId supported in endpoint for MITC.
+
+## v8.0.11 (05/16/24)
+
  - Fix Deploy version
 
 ## v8.0.10 (05/07/24)
@@ -9,7 +16,7 @@
 
 - [UPA]: Added support to allow logging of request / response messages.
 
-- ### Bug Fixes:
+### Bug Fixes:
 
 - [GPAPI]: Mapping the right AuthotizationCode for Digital Wallet.
 

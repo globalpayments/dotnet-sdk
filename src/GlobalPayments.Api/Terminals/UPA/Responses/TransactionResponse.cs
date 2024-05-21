@@ -59,7 +59,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
 
         public TransactionResponse(JsonDoc root) {
-            if (!isGpApiResponse(root)) {
+            if (!TerminalUtilities.IsGpApiResponse(root)) {
             var response = root.Get("data");
             if (response == null) {
                 return;
@@ -86,11 +86,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                 DeviceResponseCode = ResponseText;
             }
         }
-
-        private bool isGpApiResponse(JsonDoc root) {
-            return !root.Has("data");
-        }
-
+        
         protected void HydrateCmdResult(JsonDoc response) {
             var cmdResult = response.Get("cmdResult");
             if (cmdResult == null) {

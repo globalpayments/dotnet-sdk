@@ -162,6 +162,11 @@ namespace GlobalPayments.Api.Terminals
             for (int i = 1; i < length; i++)
                 lrc = (byte)(lrc ^ buffer[i]);
             return lrc;
-        }        
+        }
+
+        public static bool IsGpApiResponse(JsonDoc root)
+        {
+            return !root.Has("data");
+        }
     }
 }

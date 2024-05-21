@@ -7,7 +7,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
 
         public UpaEODResponse(JsonDoc root) {
-            if (!isGpApiResponse(root)) {
+            if (!TerminalUtilities.IsGpApiResponse(root)) {
                 var firstDataNode = root.Get("data");
                 if (firstDataNode == null) {
                     throw new MessageException(INVALID_RESPONSE_FORMAT);
@@ -47,11 +47,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 DeviceResponseCode = root.Get("action").GetValue<string>("result_code"); ;
             }
         }
-
-        private bool isGpApiResponse(JsonDoc root) {
-            return !root.Has("data");
-        }
-
+        
         public string RequestId { get; set; }
         public string Multiplemessage { get; set; }
 
