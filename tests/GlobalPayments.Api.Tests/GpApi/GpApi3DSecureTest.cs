@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.GpApi.Client;
@@ -178,6 +179,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithOrderCreateDate(DateTime.Now)
                 .WithAddress(shippingAddress, AddressType.Shipping)
                 .WithBrowserData(browserData)
+                .WithCustomerEmail("jason@globalpay.com")
                 .Execute();
 
             Assert.IsNotNull(initAuth);
@@ -685,6 +687,69 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual("SUCCESS", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+        }
+
+        [TestMethod]
+        public void FullCycle_WithPayerInformation()
+        {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+
+            var tokenizedCard = new CreditCardData
+            {
+                Token = card.Tokenize()
+            };
+            tokenizedCard.CardHolderName = "James Mason";
+
+            var secureEcom = Secure3dService.CheckEnrollment(tokenizedCard)
+                .WithCurrency(Currency)
+                .WithAmount(Amount)
+                .Execute();
+
+            Assert.IsNotNull(secureEcom);
+            Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
+            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(AVAILABLE, secureEcom.Status);
+
+            var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .WithMethodUrlCompletion(MethodUrlCompletion.YES)
+                .WithOrderCreateDate(DateTime.Now)
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithBrowserData(browserData)
+                // Payer information
+                .WithCustomerAccountId("6dcb24f5-74a0-4da3-98da-4f0aa0e88db3")
+                .WithAccountAgeIndicator(AgeIndicator.LESS_THAN_THIRTY_DAYS)
+                .WithAccountCreateDate(DateTime.Now.AddYears(-2))
+                .WithAccountChangeDate(DateTime.Now.AddYears(-2))
+                .WithAccountChangeIndicator(AgeIndicator.THIS_TRANSACTION)
+                .WithPasswordChangeDate(DateTime.Now)
+                .WithPasswordChangeIndicator(AgeIndicator.LESS_THAN_THIRTY_DAYS)
+                .WithHomeNumber("44", "123456798")
+                .WithWorkNumber("44", "1801555888")
+                .WithMobileNumber("44", "7975556677")
+                .WithPaymentAccountCreateDate(DateTime.Now)
+                .WithPaymentAccountAgeIndicator(AgeIndicator.LESS_THAN_THIRTY_DAYS)
+                .WithSuspiciousAccountActivity(SuspiciousAccountActivity.SUSPICIOUS_ACTIVITY)
+                .WithNumberOfPurchasesInLastSixMonths(3)
+                .WithNumberOfTransactionsInLast24Hours(1)
+                .WithNumberOfTransactionsInLastYear(5)
+                .WithNumberOfAddCardAttemptsInLast24Hours(1)
+                .WithShippingAddressCreateDate(DateTime.Now.AddYears(-2))
+                .WithShippingAddressUsageIndicator(AgeIndicator.THIS_TRANSACTION)
+                .WithCustomerEmail("james@globalpay.com")
+                .Execute();
+
+            Assert.IsNotNull(initAuth);
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom.Status);
+            Assert.AreEqual("YES", secureEcom.LiabilityShift);
+
+            var secureEcom2 = Secure3dService.GetAuthenticationData()
+                .WithServerTransactionId(secureEcom.ServerTransactionId)
+                .Execute();
+            Assert.AreEqual(SUCCESS_AUTHENTICATED, secureEcom2.Status);
+            Assert.AreEqual("YES", secureEcom2.LiabilityShift);
         }
 
         [TestMethod]

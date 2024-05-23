@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace GlobalPayments.Api.Builders
         internal PreOrderIndicator? PreOrderIndicator { get; set; }
         internal ReorderIndicator? ReorderIndicator { get; set; }
         internal string CustomerAccountId { get; set; }
+        internal string CustomerEmail { get; set; } = null;
         internal AgeIndicator? AccountAgeIndicator { get; set; }
         internal DateTime? AccountChangeDate { get; set; }
         internal DateTime? AccountCreateDate { get; set; }
@@ -45,6 +47,7 @@ namespace GlobalPayments.Api.Builders
         internal DateTime? PaymentAccountCreateDate { get; set; }
         internal AgeIndicator? PaymentAgeIndicator { get; set; }
         internal bool? PreviousSuspiciousActivity { get; set; }
+        internal SuspiciousAccountActivity SuspiciousAccountActivity { get; set; }
         internal int? NumberOfPurchasesInLastSixMonths { get; set; }
         internal int? NumberOfTransactionsInLast24Hours { get; set; }
         internal int? NumberOfAddCardAttemptsInLast24Hours { get; set; }

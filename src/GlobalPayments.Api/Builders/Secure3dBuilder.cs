@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
@@ -11,7 +12,7 @@ namespace GlobalPayments.Api.Builders {
         internal AuthenticationRequestType AuthenticationRequestType { get; set; }        
         internal MobileData MobileData { get; set; }
         internal ChallengeRequestIndicator? ChallengeRequestIndicator { get; set; }        
-        internal string CustomerEmail { get; set; }
+        //internal string CustomerEmail { get; set; }
         internal bool? DecoupledFlowRequest { get; set; }
         internal int? DecoupledFlowTimeout { get; set; }
         internal string DecoupledNotificationUrl { get; set; }        
@@ -350,6 +351,11 @@ namespace GlobalPayments.Api.Builders {
         public Secure3dBuilder WithPreviousSuspiciousActivity(bool? previousSuspiciousActivity)
         {
             PreviousSuspiciousActivity = previousSuspiciousActivity;
+            return this;
+        }
+        public Secure3dBuilder WithSuspiciousAccountActivity(SuspiciousAccountActivity value)
+        {
+            SuspiciousAccountActivity = value;
             return this;
         }
         public Secure3dBuilder WithPriorAuthenticationData(string priorAuthenticationData)

@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v8.0.12 (05/21/24)
+## Latest - v8.0.13 (05/23/24)
+
+### Enhancement
+
+- [GP-API] Add "payer->email" property on 3DS "/initiate" request.
+
+### v8.0.12 (05/21/24)
 
 ### Bug Fixes:
 

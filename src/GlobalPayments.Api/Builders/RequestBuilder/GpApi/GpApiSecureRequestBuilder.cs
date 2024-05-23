@@ -143,6 +143,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 #endregion               
 
                 #region Payer
+                string format = builder.TransactionType == TransactionType.RiskAssess ? "yyyy-MM-ddThh:mm:ss" : "yyyy-MM-dd";
+
                 var homePhone = new JsonDoc()
                     .Set("country_code", builder.HomeCountryCode)
                     .Set("subscriber_number", builder.HomeNumber);
@@ -163,13 +165,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     .Set("work_phone", workPhone.HasKeys() ? workPhone : null)
                     .Set("payment_account_creation_date", builder.PaymentAccountCreateDate?.ToString("yyyy-MM-dd"))
                     .Set("payment_account_age_indicator", builder.PaymentAgeIndicator?.ToString())
-                    .Set("suspicious_account_activity", builder.PreviousSuspiciousActivity)
+                    .Set("suspicious_account_activity", builder.SuspiciousAccountActivity.ToString())
                     .Set("purchases_last_6months_count", builder.NumberOfPurchasesInLastSixMonths)
                     .Set("transactions_last_24hours_count", builder.NumberOfTransactionsInLast24Hours)
                     .Set("transaction_last_year_count", builder.NumberOfTransactionsInLastYear)
                     .Set("provision_attempt_last_24hours_count", builder.NumberOfAddCardAttemptsInLast24Hours)
-                    .Set("shipping_address_time_created_reference", builder.ShippingAddressCreateDate?.ToString("yyyy-MM-dd"))
-                    .Set("shipping_address_creation_indicator", builder.ShippingAddressUsageIndicator?.ToString());
+                    .Set("shipping_address_time_created_reference", builder.ShippingAddressCreateDate?.ToString(format))
+                    .Set("shipping_address_creation_indicator", builder.ShippingAddressUsageIndicator?.ToString())
+                    .Set("email", builder.CustomerEmail);
                 #endregion
 
                 #region Payer prior 3DS authentication data
@@ -420,7 +423,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         }
 
         private static JsonDoc SetPayerParam(SecureBuilder<T> builder) {
-            
+            string format = builder.TransactionType == TransactionType.RiskAssess ? "yyyy-MM-ddThh:mm:ss" : "yyyy-MM-dd";
+
             var homePhone = new JsonDoc()
                 .Set("country_code", builder.HomeCountryCode)
                 .Set("subscriber_number", builder.HomeNumber);
@@ -446,13 +450,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 .Set("mobile_phone", mobilePhone.HasKeys() ? mobilePhone : null)
                 .Set("payment_account_creation_date", builder.PaymentAccountCreateDate?.ToString("yyyy-MM-dd"))
                 .Set("payment_account_age_indicator", builder.PaymentAgeIndicator?.ToString())
-                .Set("suspicious_account_activity", builder.PreviousSuspiciousActivity)
+                .Set("suspicious_account_activity", builder.SuspiciousAccountActivity.ToString())
                 .Set("purchases_last_6months_count", builder.NumberOfPurchasesInLastSixMonths)
                 .Set("transactions_last_24hours_count", builder.NumberOfTransactionsInLast24Hours)
                 .Set("transaction_last_year_count", builder.NumberOfTransactionsInLastYear)
                 .Set("provision_attempt_last_24hours_count", builder.NumberOfAddCardAttemptsInLast24Hours)
-                .Set("shipping_address_time_created_reference", builder.ShippingAddressCreateDate?.ToString("yyyy-MM-ddThh:mm:ss"))
-                .Set("shipping_address_creation_indicator", builder.ShippingAddressUsageIndicator?.ToString());
+                .Set("shipping_address_time_created_reference", builder.ShippingAddressCreateDate?.ToString(format))
+                .Set("shipping_address_creation_indicator", builder.ShippingAddressUsageIndicator?.ToString())
+                .Set("email", builder.CustomerEmail);
 
             if(builder.BillingAddress != null) {
                 var billingAddress = new JsonDoc()
