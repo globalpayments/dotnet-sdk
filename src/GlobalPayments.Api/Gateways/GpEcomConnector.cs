@@ -93,6 +93,13 @@ namespace GlobalPayments.Api.Gateways {
             }
             et.SubElement(request, "orderid", orderId);
 
+            var surcharge = string.Empty;
+            if (builder.SurchargeAmount.HasValue) {
+                surcharge = builder.SurchargeAmount.ToNumericCurrencyString();                
+                et.SubElement(request, "surchargeamount", surcharge)
+                    .Set("type", builder.CreditDebitIndicator?.ToString().ToLower());
+            }
+
             // Hydrate the payment data fields
             if (builder.PaymentMethod is CreditCardData) {
                 var card = builder.PaymentMethod as CreditCardData;
@@ -419,7 +426,14 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(request, "channel", Channel);
             }
             et.SubElement(request, "orderid", orderId);
-            et.SubElement(request, "pasref", builder.TransactionId);           
+            et.SubElement(request, "pasref", builder.TransactionId);
+
+            var surcharge = string.Empty;
+            if (builder.SurchargeAmount.HasValue) {
+                surcharge = builder.SurchargeAmount.ToNumericCurrencyString();
+                et.SubElement(request, "surchargeamount", surcharge)
+                    .Set("type", builder.CreditDebitIndicator?.ToString().ToLower());
+            }
 
             // DCC
             if (builder.DccRateData != null) {

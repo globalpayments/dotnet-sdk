@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Gateways;
+using GlobalPayments.Api.Gateways.Interfaces;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
@@ -64,6 +65,8 @@ namespace GlobalPayments.Api {
 
         public string StatusUrl { get; set; }
 
+        public IAccessTokenProvider AccessTokenProvider { get; set; }
+
         public Dictionary<string, string> DynamicHeaders { get; set; }
 
         public GpApiConfig() : base(GatewayProvider.GP_API) { }
@@ -76,6 +79,10 @@ namespace GlobalPayments.Api {
                     ServiceUrl = ServiceEndpoints.GP_API_TEST;
                 else
                     ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION;
+            }
+
+            if (AccessTokenProvider == null) {
+                AccessTokenProvider = new GpApiSessionInfo();
             }
 
             var gpApiConfig = new GpApiConfig
@@ -99,7 +106,8 @@ namespace GlobalPayments.Api {
                 MerchantId = MerchantId,
                 AccessTokenInfo = AccessTokenInfo,
                 Environment = Environment,
-                StatusUrl = StatusUrl
+                StatusUrl = StatusUrl,
+                AccessTokenProvider = AccessTokenProvider
             };
 
             var gateway = new GpApiConnector(gpApiConfig);

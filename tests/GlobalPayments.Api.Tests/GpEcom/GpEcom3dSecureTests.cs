@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using GlobalPayments.Api.Entities;
-using GlobalPayments.Api.PaymentMethods;
-using GlobalPayments.Api.Utils;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpEcom {
    

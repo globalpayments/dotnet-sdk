@@ -2,9 +2,6 @@
 {
     public static class GpApi3DSTestCards
     {
-        public const string CARDHOLDER_NOT_ENROLLED_V1 = "4917000000000087";
-        public const string CARDHOLDER_ENROLLED_V1 = "4012001037141112";
-
         public const string CARD_AUTH_SUCCESSFUL_V2_1 = "4263970000005262";
         public const string CARD_AUTH_SUCCESSFUL_NO_METHOD_URL_V2_1 = "4222000006724235";
         public const string CARD_AUTH_ATTEMPTED_BUT_NOT_SUCCESSFUL_V2_1 = "4012001037167778";

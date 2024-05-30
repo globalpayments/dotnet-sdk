@@ -144,6 +144,7 @@ namespace GlobalPayments.Api.Gateways {
                     Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
                     et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
                     et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
+                    et.SubElement(cardOnFileData, "CategoryInd", builder.CategoryIndicator);
                 }
 
                 var manualEntry = et.SubElement(cardData, hasToken ? "TokenData" : "ManualEntry");

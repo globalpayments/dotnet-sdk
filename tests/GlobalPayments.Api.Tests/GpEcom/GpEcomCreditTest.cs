@@ -120,9 +120,10 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void CreditRefund() {
-            var response = card.Refund(16m)
+            var response = card.Refund(100m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
+                .WithSurchargeAmount(4, CreditDebitIndicator.Credit)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
@@ -186,8 +187,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
-        public void CardBlockingPaymentRequest()
-        {
+        public void CardBlockingPaymentRequest() {
             var cardTypesBlocked = new BlockedCardType();
             cardTypesBlocked.Commercialdebit = true;
             cardTypesBlocked.Consumerdebit = true;
@@ -486,6 +486,56 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                     .Execute("dcc");
             Assert.IsNotNull(authResponse);
             Assert.AreEqual("00", authResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void CreditChargeWithSurchargeAmount() {
+        var authorize = card.Charge(10)
+            .WithCurrency("USD")
+            .WithAllowDuplicates(true)
+            .WithSurchargeAmount(0.4m, CreditDebitIndicator.Debit)
+            .Execute();
+
+            Assert.IsNotNull(authorize);
+            Assert.AreEqual("00", authorize.ResponseCode);
+        }
+
+        [TestMethod]
+        public void CreditCaptureWithSurchargeAmount() {
+        var authorize = card.Authorize(10)
+            .WithCurrency("USD")
+            .WithAllowDuplicates(true)
+            .Execute();
+
+            Assert.IsNotNull(authorize);
+            Assert.AreEqual("00", authorize.ResponseCode);
+
+        var capture = authorize.Capture(5)
+            .WithSurchargeAmount(0.1m, CreditDebitIndicator.Debit)
+            .Execute();
+
+            Assert.IsNotNull(capture);
+            Assert.AreEqual("00", capture.ResponseCode);
+        }
+        
+        [TestMethod]
+        public void CreditChargeWithExceededSurchargeAmount() {
+            var exceptionCaught = false;
+            try {
+                card.Charge(10)
+                    .WithCurrency("USD")
+                    .WithAllowDuplicates(true)
+                    .WithSurchargeAmount(50m, CreditDebitIndicator.Debit)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Unexpected Gateway Response: 508 - The surcharge amount is greater than 5% of the transaction amount", ex.Message);
+                Assert.AreEqual("508", ex.ResponseCode);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            };
         }
     }
 }

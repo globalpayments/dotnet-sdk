@@ -103,6 +103,7 @@ namespace GlobalPayments.Api.Builders {
         internal PaymentMethodUsageMode? PaymentMethodUsageMode { get; set; }
         internal string Reference { get; set; }
         internal FundsData FundsData { get; set; }
+        internal CreditDebitIndicator? CreditDebitIndicator { get; set; }
 
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
@@ -391,8 +392,9 @@ namespace GlobalPayments.Api.Builders {
         /// <summary>
         /// Sets the surcharge amount for the transaction.
         /// </summary>
-        public ManagementBuilder WithSurchargeAmount(decimal value) {
+        public ManagementBuilder WithSurchargeAmount(decimal value, CreditDebitIndicator? creditDebitIndicator = null) {
             SurchargeAmount = value;
+            CreditDebitIndicator = creditDebitIndicator;
             return this;
         }
 

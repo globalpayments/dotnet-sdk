@@ -4,9 +4,10 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Net.Http;
 using GlobalPayments.Api.Entities.GpApi;
+using GlobalPayments.Api.Gateways;
 
 namespace GlobalPayments.Api.Entities {
-    internal class GpApiSessionInfo {
+    internal class GpApiSessionInfo : IAccessTokenProvider {
 
         /// <summary>
         /// A unique string created using the nonce and app-key.
@@ -30,7 +31,7 @@ namespace GlobalPayments.Api.Entities {
             }
         }
 
-        internal static Request SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null, string[] permissions = null) {
+        public Request SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null, string[] permissions = null) {
             string nonce = DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
             
             var request = new JsonDoc()
@@ -49,7 +50,7 @@ namespace GlobalPayments.Api.Entities {
             };
         }
 
-        internal static Request SignOut() {
+        public Request SignOut() {
             throw new Exception("SignOut not implemented");
 
             //return new PayrollRequest

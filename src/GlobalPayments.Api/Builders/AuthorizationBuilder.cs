@@ -97,10 +97,12 @@ namespace GlobalPayments.Api.Builders {
         internal string CheckCustomerId { get; set; }
         internal string RawMICRData { get; set; }
         internal StoredCredentialInitiator? TransactionInitiator { get; set; }
+        internal string CategoryIndicator {  get; set; }
         internal BNPLShippingMethod BNPLShippingMethod {get;set;}
         internal bool MaskedDataResponse { get; set; }
         internal BlockedCardType CardTypesBlocking { get; set; }
         internal MerchantCategory? MerchantCategory { get; set; }
+        internal CreditDebitIndicator? CreditDebitIndicator { get; set; }
         internal bool HasEmvFallbackData {
             get {
                 return (EmvFallbackCondition != null || EmvLastChipRead != null || !string.IsNullOrEmpty(PaymentApplicationVersion));
@@ -258,9 +260,15 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithCardBrandStorage(StoredCredentialInitiator transactionInitiator, string value = null) {
+        // Used to send Card-On-File data
+        public AuthorizationBuilder WithCardBrandStorage(
+            StoredCredentialInitiator transactionInitiator,
+            string cardBrandTransactionId = null,
+            string categoryIndicator = null
+        ) {
             TransactionInitiator = transactionInitiator;
-            CardBrandTransactionId = value;
+            CardBrandTransactionId = cardBrandTransactionId;
+            CategoryIndicator = categoryIndicator;
             return this;
         }
 
@@ -849,8 +857,9 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <param name="value">The surcharge amount</param>
         /// <returns>AuthorizationBuilder</returns>
-        public AuthorizationBuilder WithSurchargeAmount(decimal? value) {
+        public AuthorizationBuilder WithSurchargeAmount(decimal? value, CreditDebitIndicator? creditDebitIndicator = null) {
             SurchargeAmount = value;
+            CreditDebitIndicator = creditDebitIndicator;
             return this;
         }
 

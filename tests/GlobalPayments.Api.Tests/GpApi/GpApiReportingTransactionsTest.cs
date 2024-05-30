@@ -154,7 +154,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void ReportFindTransactionsPaged_By_CardBrand_And_AuthCode() {
             const string cardBrand = "VISA";
-            const string authCode = "12345";
+            const string authCode = "123456";
             var result = ReportingService.FindTransactionsPaged(FirstPage,PageSize)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.CardBrand, cardBrand)

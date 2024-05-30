@@ -1,6 +1,16 @@
 # Changelog
 
-## Latest - v8.0.13 (05/23/24)
+## Latest - v8.0.14 (05/30/24)
+
+### Enhancement
+
+- [GP-API] Improvements on access token request.
+- [GP-ECOM] Added additional fee to a card transaction (surchargeamount).
+- [GP-ECOM] Refactored RealexHppClient.
+- [GP-API] Unit tests enhancements.
+- [Portico]: Added support for 'CategoryInd' element.
+
+### v8.0.13 (05/23/24)
 
 ### Enhancement
 

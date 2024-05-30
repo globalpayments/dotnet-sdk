@@ -155,7 +155,7 @@ namespace GlobalPayments.Api.Tests {
             Transaction cofResponse = card.Authorize(14m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
-                .WithCardBrandStorage(StoredCredentialInitiator.CardHolder, response.CardBrandTransactionId)
+                .WithCardBrandStorage(StoredCredentialInitiator.CardHolder, response.CardBrandTransactionId, "07")
                 .Execute();
             Assert.IsNotNull(cofResponse);
             Assert.AreEqual("00", cofResponse.ResponseCode);

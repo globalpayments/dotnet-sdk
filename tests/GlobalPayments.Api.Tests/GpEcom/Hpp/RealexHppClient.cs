@@ -18,17 +18,19 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
         private string _sharedSecret;
         private IPaymentMethod paymentMethod;
         private ShaHashType _shaHashType;
+        private Base64Encoder _encoder;
 
-        public RealexResponseHandler(string sharedSecret, ShaHashType shaHashType = ShaHashType.SHA1) {
+        public RealexResponseHandler(string sharedSecret, ShaHashType shaHashType = ShaHashType.SHA1, bool encoded = false) {
             _sharedSecret = sharedSecret;
             _shaHashType = shaHashType;
+            _encoder = encoded ? JsonEncoders.Base64Encoder : null;
         }
 
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
             string response = await request.Content.ReadAsStringAsync();
 
             // gather information
-            var json = JsonDoc.Parse(response, JsonEncoders.Base64Encoder);
+            var json = JsonDoc.Parse(response, _encoder);
             var timestamp = json.GetValue<string>("TIMESTAMP");
             var merchantId = json.GetValue<string>("MERCHANT_ID");
             var account = json.GetValue<string>("ACCOUNT");
@@ -367,8 +369,8 @@ namespace GlobalPayments.Api.Tests.GpEcom.Hpp {
             _shaHashType = shaHashType;
         }
 
-        public string SendRequest(string json) {
-            HttpClient httpClient = new HttpClient(new RealexResponseHandler(_sharedSecret, _shaHashType), true) {
+        public string SendRequest(string json, bool encoded = false) {
+            HttpClient httpClient = new HttpClient(new RealexResponseHandler(_sharedSecret, _shaHashType, encoded), true) {
                 Timeout = TimeSpan.FromMilliseconds(60000)
             };
 

@@ -350,6 +350,38 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(AMOUNT, response.BalanceAmount);
             Assert.IsNull(response.PayerDetails);
         }
+        
+        [TestMethod]
+        public void CreditSale_WithSurcharge() {
+            var response = card.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithSurchargeAmount(0.1m)
+                .Execute();
+            
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+            Assert.AreEqual(AMOUNT, response.BalanceAmount);
+            Assert.IsNull(response.PayerDetails);
+        }
+        
+        [TestMethod]
+        public void CreditSale_WithExceededSurcharge() {
+            var exceptionCaught = false;
+            try {
+                card.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
+                    .WithSurchargeAmount(1)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("Status Code: BadRequest - The surcharge amount is greater than 5% of the transaction amount", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("50020", ex.ResponseMessage);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
 
         [TestMethod]
         public void CreditSale_WithRequestMultiUseToken() {

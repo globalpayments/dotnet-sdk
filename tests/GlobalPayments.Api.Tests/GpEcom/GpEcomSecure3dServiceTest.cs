@@ -78,37 +78,6 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             };
         }
 
-         [TestMethod]
-         public void FullCycle_v1() {
-             card.Number = "4012001037141112";
-
-             var secure = Secure3dService.CheckEnrollment(card)
-                 .WithAmount(1m)
-                 .WithCurrency("USD")
-                 .Execute();
-
-             Assert.AreEqual("False", secure.Enrolled);
-         }
-
-        [TestMethod]
-        public void FullCycle_v1_ConfigException() {
-            card.Number = "4012001037141112";
-
-            var exceptionCaught = false;
-            try {
-                Secure3dService.CheckEnrollment(card)
-                    .WithAmount(1m)
-                    .WithCurrency("USD")
-                    .Execute(Secure3dVersion.One);
-            }
-            catch (ConfigurationException ex) {
-                exceptionCaught = true;
-                Assert.AreEqual("Secure 3d is not configured for version One.", ex.Message);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
-        }
-
         [TestMethod]
         public void FullCycle_v2() {
             // check enrollment

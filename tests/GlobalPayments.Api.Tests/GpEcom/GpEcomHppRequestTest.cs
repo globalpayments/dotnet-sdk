@@ -46,7 +46,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 }).Serialize();
             Assert.IsNotNull(json);
 
-            var response = _client.SendRequest(json);
+            var response = _client.SendRequest(json, true);
             var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
@@ -63,7 +63,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 }).Serialize();
             Assert.IsNotNull(json);
 
-            var response = _client.SendRequest(json);
+            var response = _client.SendRequest(json, true);
             var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
@@ -80,7 +80,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 }).Serialize();
             Assert.IsNotNull(json);
 
-            var response = _client.SendRequest(json);
+            var response = _client.SendRequest(json, true);
             var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
@@ -140,7 +140,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .Serialize();
             Assert.IsNotNull(json);
 
-            var response = _client.SendRequest(json);
+            var response = _client.SendRequest(json, true);
             var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
@@ -792,7 +792,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithCurrency("EUR")
                 .Serialize();
 
-            var response = _client.SendRequest(hppJson);
+            var response = _client.SendRequest(hppJson, true);
             var parsedResponse = _service.ParseResponse(response, true);
             Assert.IsNotNull(response);
             Assert.AreEqual("00", parsedResponse.ResponseCode);
@@ -1412,7 +1412,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
                 .Serialize();
             Assert.IsNotNull(json);
-            var response = client.SendRequest(json);
+            var response = client.SendRequest(json, true);
             Assert.IsNotNull(response);
 
             var parsedResponse = service.ParseResponse(response, true);
@@ -1498,7 +1498,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 .WithHostedPaymentData(hostedPaymentData)
                 .Serialize();           
         
-            var response = client.SendRequest(json);
+            var response = client.SendRequest(json, true);
             var parsedResponse = service.ParseResponse(response, true);
             Assert.AreEqual(blockCardTypesToValidate, parsedResponse.ResponseValues["BLOCK_CARD_TYPE"]);
 
@@ -1542,7 +1542,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             var exceptionCaught = false;
             try
             {
-                var response = client.SendRequest(json);
+                var response = client.SendRequest(json, true);
             }
             catch (Exception e) {
                 exceptionCaught = true;

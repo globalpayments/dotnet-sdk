@@ -7,6 +7,9 @@ using System.Text;
 namespace GlobalPayments.Api.Services {
     public class GpApiService {
         public static AccessTokenInfo GenerateTransactionKey(GpApiConfig gpApiConfig) {
+            if (gpApiConfig.AccessTokenProvider == null) {
+                gpApiConfig.AccessTokenProvider = new GpApiSessionInfo();
+            }
             GpApiConnector connector = new GpApiConnector(gpApiConfig);
 
             if (string.IsNullOrEmpty(connector.ServiceUrl))

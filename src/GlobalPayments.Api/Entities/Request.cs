@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text;
 
 namespace GlobalPayments.Api.Entities {
-    internal class Request {
+    public class Request {
         public HttpMethod Verb { get; set; } = HttpMethod.Get;
         public string Endpoint { get; set; }
         public string RequestBody { get; set; }
