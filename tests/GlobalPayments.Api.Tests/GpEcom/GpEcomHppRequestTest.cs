@@ -713,7 +713,8 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
             var testHostedPaymentData = new HostedPaymentData {
                 CaptureAddress = captureAddress,
-                ReturnAddress = returnAddress,                
+                ReturnAddress = returnAddress,
+                RemoveShipping = true
             };
 
             var billingAddress = new Address {
@@ -737,6 +738,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             
             Assert.IsTrue(hppJson.Contains("\"HPP_CAPTURE_ADDRESS\":\"TRUE\""));
             Assert.IsTrue(hppJson.Contains("\"HPP_DO_NOT_RETURN_ADDRESS\":\"FALSE\""));
+            Assert.IsTrue(hppJson.Contains("\"HPP_REMOVE_SHIPPING\":\"TRUE\""));
         }
 
         [TestMethod]

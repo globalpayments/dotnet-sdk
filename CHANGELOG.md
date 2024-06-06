@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v8.0.14 (05/30/24)
+## Latest - v8.0.15 (06/06/24)
+
+### Enhancement
+
+- [GP-ECOM] Add HPP additional field "HPP_REMOVE_SHIPPING"
+- [GP-API] Add "Payers" feature
+
+### v8.0.14 (05/30/24)
 
 ### Enhancement
 

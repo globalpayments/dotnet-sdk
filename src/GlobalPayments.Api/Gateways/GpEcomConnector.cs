@@ -661,6 +661,11 @@ namespace GlobalPayments.Api.Gateways {
                     request.Set("HPP_DO_NOT_RETURN_ADDRESS",
                         builder.HostedPaymentData.ReturnAddress.Value ? "TRUE" : "FALSE");
                 }
+
+                if (builder.HostedPaymentData.RemoveShipping != null) {
+                    request.Set("HPP_REMOVE_SHIPPING",
+                        builder.HostedPaymentData.RemoveShipping.Value ? "TRUE" : "FALSE");
+                }
                 //TO DO
                 //request.Set("HPP_ADDRESS_READONLY", builder.HostedPaymentData.AddressReadOnly ? "1" : "0");
             }

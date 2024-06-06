@@ -150,5 +150,7 @@ namespace GlobalPayments.Api.Entities {
         //public bool AddressReadOnly { get; set; } = true;
 
         public HostedPaymentMethods[] HostedPaymentMethods { get; set; }
+
+        public bool? RemoveShipping { get; set; }
     }
 }

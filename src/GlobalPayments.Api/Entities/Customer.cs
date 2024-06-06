@@ -121,12 +121,19 @@ namespace GlobalPayments.Api.Entities {
             if (string.IsNullOrWhiteSpace(nameOnAccount))
                 nameOnAccount = Company;
 
+            if(PaymentMethods == null) {
+                PaymentMethods = new List<RecurringPaymentMethod>();
+            }
+            PaymentMethods.Add(new RecurringPaymentMethod() { 
+                Id = paymentId,
+                PaymentMethod = paymentMethod});
+
             return new RecurringPaymentMethod(paymentMethod) {
                 Address = Address,
                 CustomerKey = Key,
                 Id = paymentId,
                 NameOnAccount = nameOnAccount,
-                StoredCredential = storedCredential
+                StoredCredential = storedCredential,               
             };
         }
     }

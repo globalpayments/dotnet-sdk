@@ -346,7 +346,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                         .WithCurrency(currency)
                         .WithDescription("New APM Uplift")
                         .WithAddress(shippingAddress, AddressType.Shipping)
-                        .WithCustomerId("REF123456789")
+                        .WithCustomerId("PYR_b2d3b367fcf141dcbd03cd9ccfa60519")
                         .WithMiscProductData(products)
                         .WithPhoneNumber("44", "124 445 556", PhoneNumberType.Work)
                         .WithPhoneNumber("44", "124 444 333", PhoneNumberType.Home)

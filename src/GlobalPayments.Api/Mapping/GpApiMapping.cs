@@ -1157,6 +1157,30 @@ namespace GlobalPayments.Api.Mapping {
             return fp;
         }
 
+        public static T MapRecurringEntity<T>(string rawResponse, IRecurringEntity recurringEntity) where T : class {
+            T result = Activator.CreateInstance<T>();
+            if (!string.IsNullOrEmpty(rawResponse)) {
+                JsonDoc json = JsonDoc.Parse(rawResponse);
+
+                if (recurringEntity is Customer) {
+                    var payer = recurringEntity as Customer;
+                    payer.Id = json.GetValue<string>("id");
+                    if (json.Has("payment_methods")) {
+                        payer.PaymentMethods = new List<RecurringPaymentMethod>();
+                        foreach (var payment in json.GetArray<JsonDoc>("payment_methods") ?? Enumerable.Empty<JsonDoc>()) {
+                            payer.PaymentMethods.Add(new RecurringPaymentMethod() {
+                                Id = payment.GetValue<string>("id"),
+                                Key = payment.GetValue<string>("default")
+                            });
+                        }
+                    }
+                    return payer as T;
+                }                    
+            }
+            return result;
+        }
+
+
         private static void MapGeneralFileProcessingResponse(JsonDoc json, FileProcessor fp)
         {
             fp.ResourceId = json.GetValue<string>("id");

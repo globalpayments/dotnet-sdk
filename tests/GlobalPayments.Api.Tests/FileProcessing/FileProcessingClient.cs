@@ -31,8 +31,9 @@ namespace GlobalPayments.Api.Tests.FileProcessing {
             HttpClient httpClient = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage(verb, UploadUrl);           
             HttpResponseMessage response = null;
+            Stream sr = File.OpenRead(filePath);
             try {
-                using (var fileStreamContent = new StreamContent(File.OpenRead(filePath))) {
+                using (var fileStreamContent = new StreamContent(sr)) {
                     //Load the file and set the file's Content-Type header                    
                     fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
                     //Add the file                    
@@ -50,7 +51,9 @@ namespace GlobalPayments.Api.Tests.FileProcessing {
             catch (Exception ex) {
                 throw ex;
             }
-            finally { }
+            finally {
+                sr.Close();
+            }
         }
     }
 }

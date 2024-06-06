@@ -924,7 +924,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         private Customer GenerateCustomerData() {
             return new Customer() {
-                Id = "12345678", // GenerationUtils.GenerateOrderId();
+                Key = "12345678", // GenerationUtils.GenerateOrderId();
                 FirstName = "James",
                 LastName = "Mason",
                 Email = "james.mason@example.com",

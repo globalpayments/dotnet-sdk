@@ -98,9 +98,9 @@ namespace GlobalPayments.Api.Entities {
         /// Any modified properties will be persisted with the gateway.
         /// </remarks>
         /// <exception cref="ApiException">Thrown when the record cannot be updated.</exception>
-        public void SaveChanges(string configName = "default") {
+        public TResult SaveChanges(string configName = "default") {
             try {
-                RecurringService.Edit(this as TResult, configName);
+               return RecurringService.Edit(this as TResult, configName);
             }
             catch (ApiException exc) {
                 throw new ApiException("Update failed, see inner exception for more details", exc);

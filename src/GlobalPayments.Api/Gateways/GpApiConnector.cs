@@ -13,7 +13,7 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService, IDeviceCloudService, IFileProcessingService {
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService, IDeviceCloudService, IFileProcessingService, IRecurringService {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
 
         private string _AccessToken;
@@ -47,6 +47,9 @@ namespace GlobalPayments.Api.Gateways {
         public bool SupportsHostedPayments { get { return true; } }
         public bool SupportsOpenBanking => true;
 
+        public bool SupportsRetrieval => throw new NotImplementedException();
+
+        public bool SupportsUpdatePaymentDetails => throw new NotImplementedException();
 
         public GpApiConnector(GpApiConfig gpApiConfig) {
             GpApiConfig = gpApiConfig;
@@ -100,6 +103,19 @@ namespace GlobalPayments.Api.Gateways {
                 return GpApiMapping.MapFileProcessingResponse(response);
             }
             return null;            
+        }
+
+        public T ProcessRecurring<T>(RecurringBuilder<T> builder) where T : class {
+            T result = Activator.CreateInstance<T>();
+            if (string.IsNullOrEmpty(AccessToken)) {
+                SignIn();
+            }
+            var request = new GpApiRecurringRequestBuilder<T>().BuildRequest(builder, this);
+            if (request != null) {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                return GpApiMapping.MapRecurringEntity<T>(response, builder.Entity);
+            }
+            return result;
         }
 
 

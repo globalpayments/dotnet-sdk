@@ -160,6 +160,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             var tokenizationData = new JsonDoc()
                                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountName)
                                 .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TokenizationAccountID)
+                                .Set("name", builder.Description ?? "")
                                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                                 .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                                 .Set("fingerprint_mode", builder.CustomerData?.DeviceFingerPrint ?? null)
@@ -720,8 +721,9 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         private static JsonDoc SetPayerInformation(AuthorizationBuilder builder)
         {
             JsonDoc payer = new JsonDoc();
-            payer.Set("reference", builder.CustomerId ?? builder.CustomerData?.Id);
-            if(builder.PaymentMethod is eCheck)
+            payer.Set("id", builder.CustomerId ?? builder.CustomerData?.Id);
+            payer.Set("reference", builder.CustomerData != null ? builder.CustomerData?.Key : null);
+            if (builder.PaymentMethod is eCheck)
             {
                 JsonDoc billingAddress = GetBasicAddressInformation(builder.BillingAddress); 
                     
