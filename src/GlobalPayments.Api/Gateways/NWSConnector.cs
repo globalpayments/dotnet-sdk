@@ -170,7 +170,7 @@ namespace GlobalPayments.Api.Gateways {
             // DE 12: Date and Time, Transaction - n12 (YYMMDDhhmmss)
             string timestamp = builder.Timestamp;
             if (string.IsNullOrEmpty(timestamp)) {
-                timestamp = DateTime.Now.ToString("yyMMddhhmmss");
+                timestamp = DateTime.Now.ToString("yyMMddHHmmss");
             }
             request.Set(DataElementId.DE_012, timestamp);
 
@@ -569,7 +569,7 @@ namespace GlobalPayments.Api.Gateways {
             // DE 12: Date and Time, Transaction - n12 (YYMMDDhhmmss)
             string timestamp = builder.Timestamp;
             if (string.IsNullOrEmpty(timestamp)) {
-                timestamp = DateTime.Now.ToString("yyMMddhhmmss");
+                timestamp = DateTime.Now.ToString("yyMMddHHmmss");
             }
             request.Set(DataElementId.DE_012, timestamp);
 
@@ -926,7 +926,7 @@ namespace GlobalPayments.Api.Gateways {
             // DE 12: Date and Time, Transaction - n12 (YYMMDDhhmmss)
             string timestamp = builder.Timestamp;
             if (string.IsNullOrEmpty(timestamp)) {
-                timestamp = DateTime.Now.ToString("yyMMddhhmmss");
+                timestamp = DateTime.Now.ToString("yyMMddHHmmss");
             }
             request.Set(DataElementId.DE_012, timestamp);
 

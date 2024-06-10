@@ -1,5 +1,11 @@
 # Changelog
 
+## Latest - v8.0.16 (06/07/24)
+
+### Enhancement
+
+- Fixed NWS date time format issue
+
 ## Latest - v8.0.15 (06/06/24)
 
 ### Enhancement
