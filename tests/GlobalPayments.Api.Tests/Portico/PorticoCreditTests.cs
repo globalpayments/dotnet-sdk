@@ -567,5 +567,53 @@ namespace GlobalPayments.Api.Tests {
             var token = card.Tokenize("tokenize");
             Assert.IsNotNull(token);
         }
+
+        // Purpose of this test is to verify and demonstrate handling of 
+        // EMVChipCondition Element with Credit transactions
+        [TestMethod]
+        public void EmvChipConditionTesting()
+        {
+            track.EntryMethod = EntryMethod.Swipe;
+
+            // send emvChipConditionType = CHIP_FAILED_PREV_SUCCESS
+            var response = track.Charge(14m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithEmvFallbackData(
+                    EmvFallbackCondition.ChipReadFailure,
+                    EmvLastChipRead.Successful
+                )
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            var responseReport = ReportingService.FindTransactions()
+                .WithTransactionId(response.TransactionId)
+                .Execute()[0];
+
+            // No idea why, but at least in the cert gateway a "1" property
+            // value here means "CHIP_FAILED_PREV_SUCCESS" for this report type
+            Assert.AreEqual("1", responseReport.EmvChipCondition);
+
+            // send emvChipConditionType = CHIP_FAILED_PREV_FAILED
+            var responseDos = track.Charge(14m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithEmvFallbackData(
+                    EmvFallbackCondition.ChipReadFailure,
+                    EmvLastChipRead.Failed
+                )
+                .Execute();
+
+            Assert.IsNotNull(responseDos);
+            Assert.AreEqual("00", responseDos.ResponseCode);
+
+            var responseDosReport = ReportingService.FindTransactions().WithTransactionId(responseDos.TransactionId).Execute()[0];
+
+            // Same as above, at least in the cert gateway a "2" property
+            // value here means "CHIP_FAILED_PREV_FAILED" for this report type
+            Assert.AreEqual("2", responseDosReport.EmvChipCondition);
+        }
     }
 }

@@ -214,9 +214,14 @@ namespace GlobalPayments.Api.Gateways {
                     trackData.Set("method", track.EntryMethod == EntryMethod.Swipe ? "swipe" : "proximity");
                     if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
                         // Tag data
-                        if (!string.IsNullOrEmpty(builder.TagData)) {
+                        if (!string.IsNullOrEmpty(builder.TagData) || builder.HasEmvFallbackData) {
                             var tagData = et.SubElement(block1, "EMVData");
-                            et.SubElement(tagData, "EMVTagData", builder.TagData);
+
+                            if (!string.IsNullOrEmpty(builder.TagData))
+                                et.SubElement(tagData, "EMVTagData", builder.TagData);
+
+                            if (builder.HasEmvFallbackData && (builder.EmvLastChipRead != null))
+                                et.SubElement(tagData, "EMVChipCondition", EnumConverter.GetMapping(Target.Portico, builder.EmvLastChipRead));
                         }
                     }
                     if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {

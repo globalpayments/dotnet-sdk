@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v8.0.16 (06/07/24)
+## Latest - v8.0.17 (07/01/24)
+
+### Enhancement
+
+- [Portico]: Enhanced Support for EMVChipCondition Element
+
+## v8.0.16 (06/07/24)
 
 ### Enhancement
 
