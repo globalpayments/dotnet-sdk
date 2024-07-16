@@ -656,6 +656,7 @@ namespace GlobalPayments.Api.Mapping {
                 CaseIdTime = doc.GetValue<DateTime?>("time_created", DateConverter),
                 CaseStatus = doc.GetValue<string>("status"),
                 CaseStage = doc.GetValue<string>("stage"),
+                CaseStageTime = doc.GetValue<DateTime?>("stage_time_created", DateConverter),
                 CaseAmount = doc.GetValue<string>("amount").ToAmount(),
                 CaseCurrency = doc.GetValue<string>("currency"),
                 ReasonCode = doc.GetValue<string>("reason_code"),
@@ -673,6 +674,20 @@ namespace GlobalPayments.Api.Mapping {
                 TransactionARN = doc.Get("payment_method")?.Get("card")?.GetValue<string>("arn"),
                 TransactionCardType = doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"),
             };
+
+            if (doc.Has("transaction")) {
+                JsonDoc transaction = doc.Get("transaction");
+                if (transaction.Has("payment_method")) {
+                    JsonDoc paymentMethod = transaction.Get("payment_method");
+
+                    if (paymentMethod.Has("card")) {
+                        summary.TransactionMaskedCardNumber = paymentMethod.Get("card")?.GetValue<string>("number");
+                        summary.TransactionARN = paymentMethod.Get("card")?.GetValue<string>("arn");
+                        summary.TransactionCardType = paymentMethod.Get("card")?.GetValue<string>("brand");
+                        summary.TransactionBrandReference = paymentMethod.Get("card")?.GetValue<string>("brand_reference");
+                    }
+                }
+            }
 
             if (!string.IsNullOrEmpty(doc.GetValue<string>("time_to_respond_by"))) {
                 summary.RespondByDate = doc.GetValue<DateTime?>("time_to_respond_by", DateConverter);

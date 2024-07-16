@@ -93,10 +93,65 @@ namespace GlobalPayments.Api.Tests.GpEcom
                 Assert.IsNull(detail.Results[0].BankPaymentResponse.Iban);
             }
         }
+        
+        [TestMethod]
+        public void OpenBanking_FasterPaymentsCharge_WithoutDestination() {
+            var bankPayment = FasterPaymentsConfig();
+            bankPayment.AccountNumber = null;
+            bankPayment.AccountName = null;
+            bankPayment.SortCode = null;
+
+            var transaction = bankPayment.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithRemittanceReference(RemittanceReferenceType.TEXT, RemittanceReferenceValue)
+                .Execute();
+
+            AssertTransactionResponse(transaction);
+
+            Debug.Write(transaction.BankPaymentResponse.RedirectUrl);
+
+            Thread.Sleep(2000);
+
+            var detail = ReportingService.BankPaymentDetail(transaction.BankPaymentResponse.Id, 1, 10)
+                .Execute();
+
+            Assert.IsNotNull(detail);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.SortCode);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.AccountNumber);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.AccountName);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.Iban);
+        }
 
         [TestMethod]
         public void OpenBanking_SEPACharge() {
             var bankPayment = SepaConfig();
+
+            var transaction = bankPayment.Charge(AMOUNT)
+                .WithCurrency("EUR")
+                .WithRemittanceReference(RemittanceReferenceType.TEXT, "Nike Bounce Shoes")
+                .Execute();
+
+            AssertTransactionResponse(transaction);
+
+            Debug.Write(transaction.BankPaymentResponse.RedirectUrl);
+
+            Thread.Sleep(2000);
+
+            var detail = ReportingService.BankPaymentDetail(transaction.BankPaymentResponse.Id, 1, 10)
+                .Execute();
+
+            Assert.IsNotNull(detail);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.SortCode);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.AccountNumber);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.AccountName);
+            Assert.IsNull(detail.Results[0].BankPaymentResponse.Iban);
+        }
+        
+        [TestMethod]
+        public void OpenBanking_SEPACharge_WithoutDestination() {
+            var bankPayment = SepaConfig();
+            bankPayment.Iban = null;
+            bankPayment.AccountName = null;
 
             var transaction = bankPayment.Charge(AMOUNT)
                 .WithCurrency("EUR")
@@ -340,7 +395,7 @@ namespace GlobalPayments.Api.Tests.GpEcom
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - Invalid Payment Scheme required fields", ex.Message);
+                Assert.AreEqual("Status Code: BadRequest - Invalid Payment Scheme required fields-check payment.scheme and payment.destination has valid values", ex.Message);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -361,7 +416,7 @@ namespace GlobalPayments.Api.Tests.GpEcom
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - Invalid Payment Scheme required fields", ex.Message);
+                Assert.AreEqual("Status Code: BadRequest - Invalid Payment Scheme required fields-check payment.scheme and payment.destination has valid values", ex.Message);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);

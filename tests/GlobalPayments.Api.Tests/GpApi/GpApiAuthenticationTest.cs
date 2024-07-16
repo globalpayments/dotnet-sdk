@@ -3,6 +3,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
 
 namespace GlobalPayments.Api.Tests.GpApi {
 
@@ -125,6 +126,35 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(Success, response?.ResponseCode);
             Assert.AreEqual(Verified, response?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void ShouldReSignInAfterTokenExpiration() {       
+            gpApiConfig.SecondsToExpire = 60;
+            AccessTokenInfo accessTokenInfo = GpApiService.GenerateTransactionKey(gpApiConfig);
+
+             AssertAccessTokenResponse(accessTokenInfo);
+
+            ServicesContainer.ConfigureService(gpApiConfig, "resign");
+
+            Transaction response = card
+                        .Verify()
+                        .WithCurrency("USD")
+                        .Execute("resign");
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
+
+            Thread.Sleep(6001);
+
+            response =  card.Verify()
+                        .WithCurrency("USD")
+                        .Execute("resign");
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
         }
 
         [TestMethod]

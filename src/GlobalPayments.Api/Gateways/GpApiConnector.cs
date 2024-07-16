@@ -207,7 +207,8 @@ namespace GlobalPayments.Api.Gateways {
             }
             catch (GatewayException ex)
             {
-                if (ex.ResponseCode == "NOT_AUTHENTICATED" && !string.IsNullOrEmpty(GpApiConfig.AppId) && !string.IsNullOrEmpty(GpApiConfig.AppKey))
+                if ((ex.ResponseCode == "NOT_AUTHENTICATED" || ex.ResponseCode == "401") 
+                    && !string.IsNullOrEmpty(GpApiConfig.AppId) && !string.IsNullOrEmpty(GpApiConfig.AppKey))
                 {
                     SignIn();
                     return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);

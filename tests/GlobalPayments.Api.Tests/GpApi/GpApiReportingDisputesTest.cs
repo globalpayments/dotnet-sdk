@@ -606,6 +606,36 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<DisputeSummary>);
         }
+
+        [TestMethod]
+        public void ReportDisputeDetail_StageTime() {
+            String disputeId = "DIS_SAND_abcd1234";
+            String expectedStageDate = DateTime.Now.AddDays(-7).ToShortDateString();
+
+            DisputeSummary response =
+                    ReportingService
+                            .DisputeDetail(disputeId)
+                            .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(disputeId, response.CaseId);
+            Assert.AreEqual(expectedStageDate, response.CaseStageTime.Value.ToShortDateString());
+        }
+
+        [TestMethod]
+        public void ReportDisputeDetail_brandReference() {
+            String disputeId = "DIS_SAND_abcd1234";
+
+            DisputeSummary response =
+                    ReportingService
+                            .DisputeDetail(disputeId)
+                            .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(disputeId, response.CaseId);
+            Assert.AreEqual("23423421342323A", response.TransactionBrandReference);
+        }
+
         #endregion
     }
 }

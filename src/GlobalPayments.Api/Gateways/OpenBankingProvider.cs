@@ -74,8 +74,11 @@ namespace GlobalPayments.Api.Gateways
                     remittance_reference.Set("type", builder.RemittanceReferenceType != null ? builder.RemittanceReferenceType.ToString() : null)
                           .Set("value", builder.RemittanceReferenceValue);
 
-                    payment.Set("scheme", bankPaymentType.ToString())
-                           .Set("destination", destination);
+                    payment.Set("scheme", bankPaymentType.ToString());
+
+                    if (destination.HasKeys()) {
+                        payment.Set("destination", destination);
+                    }
 
                     if(remittance_reference.HasKeys())
                         payment.Set("remittance_reference", remittance_reference);

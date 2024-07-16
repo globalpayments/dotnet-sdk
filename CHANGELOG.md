@@ -1,6 +1,16 @@
 # Changelog
 
-## Latest - v8.0.17 (07/01/24)
+## Latest - v8.0.18 (07/16/24)
+
+### Enhancement
+
+- [GP-API]: Added suggested improvements into some requests and mappings
+
+### Bug Fixes:
+
+- [GP-API]: Added "destination" field as optional for Open banking.
+
+## v8.0.17 (07/01/24)
 
 ### Enhancement
 

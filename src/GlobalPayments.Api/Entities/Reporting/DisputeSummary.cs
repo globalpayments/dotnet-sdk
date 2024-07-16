@@ -16,6 +16,7 @@ namespace GlobalPayments.Api.Entities {
         public decimal? CaseAmount { get; set; }
         public string CaseCurrency { get; set; }
         public string CaseStage { get; set; }
+        public DateTime? CaseStageTime { get; set; }
         public string CaseStatus { get; set; }
         public string CaseDescription { get; set; }
         public string TransactionOrderId { get; set; }
@@ -36,6 +37,7 @@ namespace GlobalPayments.Api.Entities {
         public string TransactionAuthCode { get; set; }
         public string TransactionCardType { get; set; }
         public string TransactionMaskedCardNumber { get; set; }
+        public string TransactionBrandReference { get; set; }
         public string Reason { get; set; }
         public string ReasonCode { get; set; }
         public string Result { get; set; }

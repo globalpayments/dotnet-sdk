@@ -299,9 +299,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_amount").ToAmount(), dispute.LastAdjustmentAmount);
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_currency"), dispute.LastAdjustmentCurrency);
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_funding"), dispute.LastAdjustmentFunding);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("number"), dispute.TransactionMaskedCardNumber);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("arn"), dispute.TransactionARN);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("number"), dispute.TransactionMaskedCardNumber);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("arn"), dispute.TransactionARN);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
         }
 
         [TestMethod]
@@ -334,9 +334,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_amount").ToAmount(), dispute.LastAdjustmentAmount);
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_currency"), dispute.LastAdjustmentCurrency);
             Assert.AreEqual(doc.GetValue<string>("last_adjustment_funding"), dispute.LastAdjustmentFunding);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("number"), dispute.TransactionMaskedCardNumber);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("arn"), dispute.TransactionARN);
-            Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("number"), dispute.TransactionMaskedCardNumber);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("arn"), dispute.TransactionARN);
+            Assert.AreEqual(doc.Get("transaction")?.Get("payment_method")?.Get("card")?.GetValue<string>("brand"), dispute.TransactionCardType);
         }
 
         [TestMethod]
