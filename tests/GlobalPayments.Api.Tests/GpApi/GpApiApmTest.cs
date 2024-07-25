@@ -6,6 +6,7 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi
@@ -342,16 +343,16 @@ namespace GlobalPayments.Api.Tests.GpApi
                 }
             };
 
-            var response = paymentMethod.Charge(29m)
+            var response = paymentMethod.Charge(35m)
                         .WithCurrency(currency)
                         .WithDescription("New APM Uplift")
                         .WithAddress(shippingAddress, AddressType.Shipping)
-                        .WithCustomerId("PYR_b2d3b367fcf141dcbd03cd9ccfa60519")
+                        .WithCustomerId("PYR_6278c861f6e34e1fb2949f272ced0aa9")
                         .WithMiscProductData(products)
                         .WithPhoneNumber("44", "124 445 556", PhoneNumberType.Work)
                         .WithPhoneNumber("44", "124 444 333", PhoneNumberType.Home)
                         .WithPhoneNumber("1", "258 3697 144", PhoneNumberType.Shipping)
-                        .WithOrderId("124214-214221")
+                        .WithOrderId(GenerationUtils.GenerateOrderId())
                         .WithShippingAmt(3)
                         //.WithShippingDiscount(1)
                         .WithOrderDetails(order)

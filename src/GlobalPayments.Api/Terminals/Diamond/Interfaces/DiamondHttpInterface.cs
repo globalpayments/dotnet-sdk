@@ -77,11 +77,13 @@ namespace GlobalPayments.Api.Terminals.Diamond.Interfaces {
                     request.Content = content;
                 }
 
-                var response = httpClient.SendAsync(request); 
-                if(response.Result.StatusCode != HttpStatusCode.OK) {
+                var response = httpClient.SendAsync(request);
+                _settings.LogManagementProvider?.RequestSent(GenerateRequestLog(request));
+                if (response.Result.StatusCode != HttpStatusCode.OK) {                                      
                     throw new ApiException($"ERROR: status code {response.Result.StatusCode.ToString()}");
                 }
                 var body = response.Result.Content.ReadAsStringAsync().Result;
+                _settings.LogManagementProvider?.ResponseReceived(body);
                 if (JsonDoc.IsJson(body)) {
                     var parsed = JsonDoc.Parse(body);
                     if (parsed.Has("status") && parsed.GetValue<string>("status") == "error") {
@@ -93,8 +95,10 @@ namespace GlobalPayments.Api.Terminals.Diamond.Interfaces {
                     return Encoding.UTF8.GetBytes(body);
                 }                
             }
-            catch (Exception e) {   
-                throw new GatewayException($"Device {_settings.DeviceType} error: {e.Message}");
+            catch (Exception e) {
+                var errorMessage = $"Device {_settings.DeviceType} error: {e.Message}";
+                _settings.LogManagementProvider?.ResponseReceived(errorMessage);
+                throw new GatewayException(errorMessage);
             }
         }
 
@@ -113,6 +117,21 @@ namespace GlobalPayments.Api.Terminals.Diamond.Interfaces {
         private Dictionary<string, string> PrepareHeaders(Dictionary<string, string> mandatoryHeaders) {
             Headers = Headers.Concat(mandatoryHeaders).ToDictionary(x => x.Key, x => x.Value);
             return Headers;
+        }
+
+        private string GenerateRequestLog(HttpRequestMessage request) {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{request.Method.ToString()} {request.RequestUri}");
+            foreach (var header in request.Headers) {
+                sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            }
+            if (request.Content != null) {
+                foreach (var header in request.Content.Headers) {
+                    sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                }
+                sb.AppendLine(request.Content.ReadAsStringAsync().Result);
+            }
+            return sb.ToString();
         }
     }
 }

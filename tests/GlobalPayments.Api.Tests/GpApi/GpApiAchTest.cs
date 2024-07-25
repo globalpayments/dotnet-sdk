@@ -58,7 +58,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
 
             customer = new Customer {
-                Id = "e193c21a-ce64-4820-b5b6-8f46715de931",
+                Key = "e193c21a-ce64-4820-b5b6-8f46715de931",
                 FirstName = "James",
                 LastName = "Mason",
                 DateOfBirth = "1980-01-01",
@@ -72,7 +72,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var response = eCheck.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .WithAddress(address)
-                .WithCustomer(customer)
+                .WithCustomerData(customer)
                 .Execute();
 
             AssertResponse(response, TransactionStatus.Captured);
@@ -99,7 +99,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = eCheck.Charge(AMOUNT)
                .WithCurrency(CURRENCY)
                .WithAddress(address)
-               .WithCustomer(customer)
+               .WithCustomerData(customer)
                .Execute(merchantConfigName);
 
             var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
@@ -146,7 +146,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = eCheck.Charge(AMOUNT)
                .WithCurrency(CURRENCY)
                .WithAddress(address)
-               .WithCustomer(customer)
+               .WithCustomerData(customer)
                .Execute(merchantConfigName);
             
             var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
@@ -213,7 +213,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = eCheck.Charge(AMOUNT)
                .WithCurrency(CURRENCY)
                .WithAddress(address)
-               .WithCustomer(customer)
+               .WithCustomerData(customer)
                .Execute(merchantConfigName);
 
             var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
@@ -310,7 +310,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = eCheck.Charge(AMOUNT)
                .WithCurrency(CURRENCY)
                .WithAddress(address)
-               .WithCustomer(customer)
+               .WithCustomerData(customer)
                .Execute(merchantConfigName);
 
             var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);
@@ -364,7 +364,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = eCheck.Charge(AMOUNT)
                .WithCurrency(CURRENCY)
                .WithAddress(address)
-               .WithCustomer(customer)
+               .WithCustomerData(customer)
                .Execute(merchantConfigName);
 
             var merchantSplitting = merchants.FirstOrDefault(x => x.Id != merchantId);

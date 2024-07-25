@@ -6,6 +6,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Diamond.Entities.Enums;
 using GlobalPayments.Api.Terminals.Diamond.Responses;
 using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
@@ -24,6 +25,7 @@ namespace GlobalPayments.Api.Tests.Terminals.DiamondCloud {
                 DeviceType = DeviceType.PAX_A920,
                 ConnectionMode = ConnectionModes.DIAMOND_CLOUD,
                 RequestIdProvider = _requestidProvider,
+                LogManagementProvider = new RequestConsoleLogger(),
                 Timeout = 15,
                 IsvID = "154F070E3E474AB98B00D73ED81AAA93",
                 SecretKey = "8003672638",
@@ -446,6 +448,7 @@ namespace GlobalPayments.Api.Tests.Terminals.DiamondCloud {
                 DeviceType = DeviceType.PAX_A920,
                 ConnectionMode = ConnectionModes.DIAMOND_CLOUD,
                 RequestIdProvider = _requestidProvider,
+                LogManagementProvider = new RequestConsoleLogger(),
                 Timeout = 15,
                 IsvID = "154F070E3E474AB98B00D73ED81AAA93",
                 SecretKey = "8003672638",

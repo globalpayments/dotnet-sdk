@@ -6,6 +6,7 @@ using GlobalPayments.Api.Terminals.Genius;
 using GlobalPayments.Api.Terminals.UPA;
 using GlobalPayments.Api.Terminals.Genius.ServiceConfigs;
 using GlobalPayments.Api.Terminals.Diamond;
+using GlobalPayments.Api.Logging;
 
 namespace GlobalPayments.Api.Terminals {
     public enum ConnectionModes {
@@ -43,6 +44,7 @@ namespace GlobalPayments.Api.Terminals {
         ConnectionModes ConnectionMode { get; set; }
         DeviceType DeviceType { get; set; }
         IRequestIdProvider RequestIdProvider { get; set; }
+        IRequestLogger LogManagementProvider { get; set; }
 
         // Ethernet
         string IpAddress { get; set; }
@@ -73,6 +75,7 @@ namespace GlobalPayments.Api.Terminals {
         public IRequestIdProvider RequestIdProvider { get; set; }
         public GatewayConfig GatewayConfig { get; set; }
         public MitcConfig GeniusMitcConfig { get; set; }
+        public IRequestLogger LogManagementProvider { get; set; }
 
         public ConnectionConfig() {
             Timeout = -1;

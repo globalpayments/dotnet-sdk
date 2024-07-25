@@ -1,6 +1,16 @@
 # Changelog
 
-## Latest - v8.0.18 (07/16/24)
+## Latest - v8.0.19 (07/25/24)
+
+### Enhancement
+
+- [DiamondCloud]: Added logger for DiamondCloud terminal.
+
+### Bug Fixes:
+
+- [GP-API]: Fixed items amount in PayPal charge with more than one quantity per product.
+
+## v8.0.18 (07/16/24)
 
 ### Enhancement
 

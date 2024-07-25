@@ -20,15 +20,15 @@ namespace GlobalPayments.Api.Tests.GpEcom {
 
         [TestMethod]
         public void GetTransactionDetail() {
-            const string orderId = "Y-McGGBlhESVARbFu525sg";
+            const string orderId = "Dafl9Qi-mUaK7AGZrNlCkw";
             
             var response = ReportingService.TransactionDetail(orderId)
                 .Execute();
             
             Assert.IsNotNull(response);
             Assert.AreEqual(orderId, response.OrderId);
-            Assert.AreEqual("H2zb4OYh1j5pNh4q", response.SchemeReferenceData);
-            Assert.AreEqual("17019444760659420", response.TransactionId);
+            Assert.AreEqual("gkJ8WR1YG2L31LSt", response.SchemeReferenceData);
+            Assert.AreEqual("17212082503361660", response.TransactionId);
             Assert.AreEqual("U", response.AvsResponseCode);
             Assert.AreEqual("M", response.CvnResponseCode);
             Assert.AreEqual("00", response.GatewayResponseCode);

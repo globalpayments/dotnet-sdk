@@ -2,6 +2,7 @@
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Utils;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -442,7 +443,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CloseBatch_WithInvalidBatchReference() {
-            var batchReference = Guid.NewGuid().ToString().Replace("-", "");
+            var batchReference = GenerationUtils.GenerateOrderId();
 
             var exceptionCaught = false;
             try {
@@ -450,10 +451,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
-                Assert.AreEqual("40118", ex.ResponseMessage);
-                Assert.AreEqual($"Status Code: NotFound - Batch {batchReference} not found at this location.",
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40213", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: BadRequest - batch_id contains unexpected data",
                     ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40213", ex.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }

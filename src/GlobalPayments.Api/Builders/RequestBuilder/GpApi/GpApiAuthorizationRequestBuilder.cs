@@ -525,11 +525,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 .Set("cashback_amount", builder.CashBackAmount.ToNumericCurrencyString())
                 .Set("surcharge_amount", builder.SurchargeAmount.ToNumericCurrencyString())
                 .Set("convenience_amount", builder.ConvenienceAmount.ToNumericCurrencyString())
-                .Set("country", gateway.GpApiConfig.Country)
+                .Set("country", (builder.PaymentMethod is AlternativePaymentMethod) ? 
+                    !string.IsNullOrEmpty(((AlternativePaymentMethod)builder.PaymentMethod).Country) ? 
+                    ((AlternativePaymentMethod)builder.PaymentMethod).Country : gateway.GpApiConfig.Country : gateway.GpApiConfig.Country)
                 //.Set("language", EnumConverter.GetMapping(Target.GP_API, Language))
                 .Set("ip_address", builder.CustomerIpAddress);
                 //.Set("site_reference", "") //            
-                data.Set("merchant_category", builder.MerchantCategory.ToString() ?? null);
+                data.Set("merchant_category", builder.MerchantCategory?.ToString() ?? null);
             
             data.Set("currency_conversion", !string.IsNullOrEmpty(builder.DccRateData?.DccId) ? new JsonDoc().Set("id", builder.DccRateData.DccId) : null)
                 .Set("payment_method", paymentMethod)
@@ -842,14 +844,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     item.Add("reference", product.ProductId);
                     item.Add("label", product.ProductName);
                     item.Add("description", product.Description);
-                    item.Add("quantity", qta);
+                    item.Add("quantity", qta.ToString());
                     item.Add("unit_amount", unitAmount.ToNumericCurrencyString());
                     item.Add("unit_currency", product.UnitCurrency);
                     item.Add("tax_amount", taxAmount.ToNumericCurrencyString());
                     item.Add("amount", (qta * unitAmount).ToNumericCurrencyString());
                     items.Add(item);
                     taxTotalAmount += taxAmount;
-                    itemsAmount += unitAmount;
+                    itemsAmount += (qta * unitAmount);
                 }
 
                 order.Set("tax_amount", taxTotalAmount.ToNumericCurrencyString());
