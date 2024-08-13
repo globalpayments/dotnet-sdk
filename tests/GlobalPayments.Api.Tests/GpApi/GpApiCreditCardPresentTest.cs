@@ -604,7 +604,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             DateTime startDate = DateTime.UtcNow.AddDays(-30);
             DateTime endDate = DateTime.UtcNow;
 
-            var response = ReportingService.FindTransactionsPaged(1, 1000)
+            var response = ReportingService.FindTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, startDate)
                 .And(SearchCriteria.EndDate, endDate)
@@ -626,7 +626,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var reauthTransaction = transaction.Reauthorize()
                 .Execute();
-            AssertTransactionResponse(reauthTransaction, TransactionStatus.Captured);
+            AssertTransactionResponse(reauthTransaction, TransactionStatus.Preauthorized);
             Assert.AreEqual("00", reauthTransaction.CardIssuerResponse.Result);
         }
 

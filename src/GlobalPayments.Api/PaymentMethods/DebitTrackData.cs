@@ -15,6 +15,8 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string Pan { get; set; }
         public string PurchaseDeviceSequenceNumber { get; set; }
         public TrackNumber TrackNumber { get; set; }
+        public string TokenizationData { get; set; }
+
         public string TrackData {
             get { return _trackData; }
             set {

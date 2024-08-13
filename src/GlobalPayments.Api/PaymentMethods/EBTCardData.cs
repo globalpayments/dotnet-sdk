@@ -17,6 +17,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string SerialNumber { get; set; }
         public ManualEntryMethod? EntryMethod { get; set; }
         public EntryMethod? OriginalEntryMethod { get; set; }
+        public string TokenizationData { get; set; }
         public string ShortExpiry {
             get {
                 var month = (ExpMonth.HasValue) ? ExpMonth.ToString().PadLeft(2, '0') : string.Empty;

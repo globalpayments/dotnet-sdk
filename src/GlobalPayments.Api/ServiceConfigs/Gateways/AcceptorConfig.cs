@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.Utils;
 
@@ -31,7 +32,12 @@ namespace GlobalPayments.Api {
         public bool? PerformDateCheck { get; set; }
         public bool? EchoSettlementData { get; set; }
         public bool? IncludeLoyaltyData { get; set; }
-
+        public ServiceType ServiceType { get; set; }
+        public OperationType OperationType { get; set; }
+        public TokenizationOperationType TokenizationOperationType { get; set; }
+        public TokenizationType TokenizationType { get; set; }
+        public string MerchantId { get; set; }
+        
         public AcceptorConfig() {
             CardDataInputCapability = CardDataInputCapability.MagStripe_KeyEntry;
             CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.None;

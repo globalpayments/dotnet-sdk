@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace GlobalPayments.Api.Utils {
     public class StringUtils {
-        //public static bool IsNullOrEmpty(string value) {
-        //    return value == null || value.Trim().Equals("");
-        //}
+        public static bool IsNullOrEmpty(string value) {
+            return value == null || value.Trim().Equals("");
+        }
         public static string PadLeft(Object input, int totalLength, char paddingCharacter) {
             if(input == null) {
                 input = "";

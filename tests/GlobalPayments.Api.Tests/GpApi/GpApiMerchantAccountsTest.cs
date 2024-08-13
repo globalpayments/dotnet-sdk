@@ -696,7 +696,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void AddFunds_InsufficientFunds()
         {
-            var amount = "10";
+            var amount = "1000000";
             var accountId = "FMA_a78b841dfbd14803b3a31e4e0c514c72";
             var merchantId = "MER_5096d6b88b0b49019c870392bd98ddac";
             var merchant = User.FromId(merchantId, UserType.MERCHANT);

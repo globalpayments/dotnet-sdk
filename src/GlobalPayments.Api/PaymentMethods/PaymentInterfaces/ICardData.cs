@@ -14,5 +14,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         string ShortExpiry { get; }
         ManualEntryMethod? EntryMethod { get; set; }
         EntryMethod? OriginalEntryMethod { get; set; }
+        string TokenizationData { get; set; }
+
     }
 }

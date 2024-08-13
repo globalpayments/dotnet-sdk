@@ -214,8 +214,7 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public static T ParseTrackData<T>(T paymentMethod) where T : ITrackData {
-            string trackData = Regex.Replace(paymentMethod.Value, @"(?<=\d)\p{Zs}(?=\d)", "");
-            //string trackData = paymentMethod.Value;
+            string trackData = paymentMethod.Value;
             Match matcher = TrackTwoPattern.Match(trackData);
             if (matcher.Success) {
                 string pan = matcher.Groups[1].Value;

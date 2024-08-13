@@ -415,6 +415,12 @@ namespace GlobalPayments.Api.Tests.TestData {
             return rvalue;
         }
 
+        public static GiftCard HmsGiftCard() {
+            GiftCard rvalue = new GiftCard();
+            rvalue.SetValue("7083559900008168903=391200005765");// ("7083559900008168895=391200069505");
+            return rvalue;
+        }
+
         public static CreditCardData VisaCorporateManual(bool cardPresent = false, bool readerPresent = false) {
             CreditCardData rvalue = new CreditCardData();
             rvalue.Number = "4013872718148777";
@@ -576,6 +582,35 @@ namespace GlobalPayments.Api.Tests.TestData {
                 Value = ";4110651122223331=21121010000012345678?",
                 EntryMethod = entryMethod
             };
+            return rvalue;
+        }
+
+        public static CreditCardData UnionPayManual() {
+            return UnionPayManual(false, false);
+        }
+
+        public static CreditCardData UnionPayManual(Boolean cardPresent, Boolean readerPresent) {
+            CreditCardData rvalue = new CreditCardData();
+            rvalue.Number = "6221260012345674";
+            rvalue.ExpMonth = 12;
+            rvalue.ExpYear = 2025;
+            rvalue.Cvn = "123";
+            rvalue.CardPresent = cardPresent;
+            rvalue.ReaderPresent = readerPresent;
+            return rvalue;
+        }
+
+        public static CreditCardData Paypal() {
+            return Paypal(false, false);
+        }
+        public static CreditCardData Paypal(Boolean cardPresent, Boolean readerPresent) {
+            CreditCardData rvalue = new CreditCardData();
+            rvalue.Number = "6506001000010029";
+            rvalue.ExpMonth = 12;
+            rvalue.ExpYear = 2025;
+            rvalue.Cvn = "123";
+            rvalue.CardPresent = cardPresent;
+            rvalue.ReaderPresent = readerPresent;
             return rvalue;
         }
     }

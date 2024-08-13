@@ -512,7 +512,6 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.Capture)
                 .Check(() => PaymentMethod).IsNotNull()
-                .Check(() => TransactionId).IsNotNull()
                 .Check(() => VoidReason).IsNull();
 
             Validations.For(TransactionType.Edit)

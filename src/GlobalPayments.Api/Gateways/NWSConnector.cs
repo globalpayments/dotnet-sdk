@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.Payroll;
 using GlobalPayments.Api.Network;
 using GlobalPayments.Api.Network.Elements;
@@ -44,13 +45,17 @@ namespace GlobalPayments.Api.Gateways {
             DE22_PosDataCode dataCode = new DE22_PosDataCode();
             // handle the payment methods
             if (paymentMethod is ICardData card) {
-                // DE 2: Primary Account Number (PAN) - LLVAR // 1100, 1200, 1220, 1300, 1310, 1320, 1420
-                request.Set(DataElementId.DE_002, card.Number);
+                var token = card.TokenizationData;
+                if(string.IsNullOrEmpty(token)){
+                    // DE 2: Primary Account Number (PAN) - LLVAR // 1100, 1200, 1220, 1300, 1310, 1320, 1420
+                    request.Set(DataElementId.DE_002, card.Number);
 
-                // DE 14: Date, Expiration - n4 (YYMM) // 1100, 1200, 1220, 1420
-                var month = (card.ExpMonth.HasValue) ? card.ExpMonth.ToString().PadLeft(2, '0') : string.Empty;
-                var year = (card.ExpYear.HasValue) ? card.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty;
-                request.Set(DataElementId.DE_014, year + month);
+                    // DE 14: Date, Expiration - n4 (YYMM) // 1100, 1200, 1220, 1420
+                    var month = (card.ExpMonth.HasValue) ? card.ExpMonth.ToString().PadLeft(2, '0') : string.Empty;
+                    var year = (card.ExpYear.HasValue) ? card.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty;
+                    if (month != "" || year != "")
+                        request.Set(DataElementId.DE_014, year + month);
+                }
 
                 // set data codes
                 dataCode.CardDataInputMode = card.ReaderPresent ? DE22_CardDataInputMode.KeyEntry : DE22_CardDataInputMode.Manual;
@@ -58,6 +63,18 @@ namespace GlobalPayments.Api.Gateways {
                 dataCode.CardPresence = card.CardPresent ? DE22_CardPresence.CardPresent : DE22_CardPresence.CardNotPresent;
             }
             else if (paymentMethod is ITrackData track) {
+                var token = track.TokenizationData;
+                if (string.IsNullOrEmpty(token)) {
+                    if (transactionType.Equals(TransactionType.Refund) && (!paymentMethodType.Equals(PaymentMethodType.Debit) && !paymentMethodType.Equals(PaymentMethodType.EBT)))
+                    {
+                        if (paymentMethod is IEncryptable && ((IEncryptable)paymentMethod).EncryptionData != null) {
+                            if (!(paymentMethod is IEncryptable) && transactionType.Equals(TransactionType.Refund))
+                                request.Set(DataElementId.DE_002, ((IEncryptable)track).EncryptionData.TrackNumber);
+                            else
+                                request.Set(DataElementId.DE_002, track.Value);
+                        } 
+                    }
+                }
                 // put the track data
                 if (track.TrackNumber.Equals(TrackNumber.TrackTwo)) {
                     // DE 35: Track 2 Data - LLVAR ns.. 37
@@ -66,6 +83,9 @@ namespace GlobalPayments.Api.Gateways {
                 else if (track.TrackNumber.Equals(TrackNumber.TrackOne)) {
                     // DE 45: Track 1 Data - LLVAR ans.. 76
                     request.Set(DataElementId.DE_045, track.TrackData);
+                }
+                else if (track.TrackNumber.Equals(TrackNumber.PAN)) {
+                    request.Set(DataElementId.DE_002, track.TrackData);
                 }
                 else {
                     if (track is IEncryptable && ((IEncryptable)track).EncryptionData != null) {
@@ -77,6 +97,9 @@ namespace GlobalPayments.Api.Gateways {
                         else if (encryptionData.TrackNumber.Equals("2")) {
                             // DE 35: Track 2 Data - LLVAR ns.. 37
                             request.Set(DataElementId.DE_035, track.Value);
+                        }
+                        else if (encryptionData.TrackNumber.Equals("3")) {
+                            request.Set(DataElementId.DE_002, track.Value);
                         }
                     }
                 }
@@ -108,20 +131,25 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
             else if (paymentMethod is GiftCard giftCard) {
-                // put the track data
-                if (giftCard.ValueType.Equals("TrackData")) {
-                    if (giftCard.TrackNumber.Equals(TrackNumber.TrackTwo)) {
-                        // DE 35: Track 2 Data - LLVAR ns.. 37
-                        request.Set(DataElementId.DE_035, giftCard.TrackData);
+                string giftToken = giftCard.TokenizationData;
+                if (string.IsNullOrEmpty(giftToken)) {
+                    // put the track data
+                    if (giftCard.ValueType.Equals("TrackData")) {
+                        if (giftCard.TrackNumber.Equals(TrackNumber.TrackTwo)) {
+                            // DE 35: Track 2 Data - LLVAR ns.. 37
+                            request.Set(DataElementId.DE_035, giftCard.TrackData);
+                        }
+                        else if (giftCard.TrackNumber.Equals(TrackNumber.TrackOne)) {
+                            // DE 45: Track 1 Data - LLVAR ans.. 76
+                            request.Set(DataElementId.DE_045, giftCard.TrackData);
+                        }
+                        else if (giftCard.TrackNumber.Equals(TrackNumber.PAN)) {
+                            request.Set(DataElementId.DE_002, giftCard.TrackData);
+                        }
                     }
-                    else if (giftCard.TrackNumber.Equals(TrackNumber.TrackOne)) {
-                        // DE 45: Track 1 Data - LLVAR ans.. 76
-                        request.Set(DataElementId.DE_045, giftCard.TrackData);
+                    else {
+                        request.Set(DataElementId.DE_002, giftCard.Number);
                     }
-                }
-                else {
-                    request.Set(DataElementId.DE_002, giftCard.Number);
-                    //request.set(DataElementId.DE_014, giftCard.getExpiry());
                 }
 
                 // set data codes
@@ -148,8 +176,10 @@ namespace GlobalPayments.Api.Gateways {
 
             // DE 1: Secondary Bitmap - b8 // M (AUTO GENERATED IN NetworkMessage)
             // DE 3: Processing Code - n6 (n2: TRANSACTION TYPE, n2: ACCOUNT TYPE 1, n2: ACCOUNT TYPE 2) // M 1100, 1200, 1220, 1420
-            DE3_ProcessingCode processingCode = MapProcessingCode(builder);
-            request.Set(DataElementId.DE_003, processingCode);
+            if ( !transactionType.Equals(TransactionType.FileAction)) {
+                DE3_ProcessingCode processingCode = MapProcessingCode(builder);
+                request.Set(DataElementId.DE_003, processingCode);
+            }
 
             // DE 4: Amount, Transaction - n12 // C 1100, 1200, 1220, 1420
             if (transactionType == TransactionType.AddValue) {
@@ -401,25 +431,193 @@ namespace GlobalPayments.Api.Gateways {
             // DE 126: Extended Response Data 2 - LLLVAR ans..999
 
             // DE 127: Forwarding Data - LLLVAR ans..999
+            DE127_ForwardingData forwardingData = new DE127_ForwardingData();
+            DE127_ForwardingData forwardingData1 = new DE127_ForwardingData();
+            var isEncrypted = false;
+            var isCombined = false;
             if (paymentMethod is IEncryptable encryptable) {
                 EncryptionData encryptionData = encryptable.EncryptionData;
                 if (encryptionData != null) {
-                    DE127_ForwardingData forwardingData = new DE127_ForwardingData();
-                    forwardingData.AddEncryptionData(AcceptorConfig.SupportedEncryptionType, encryptionData.KTB);
-
-                    // check for encrypted cid
-                    if (paymentMethod is ICardData cardData) {
-                        string encryptedCvn = cardData.Cvn;
-                        if (!string.IsNullOrEmpty(encryptedCvn)) {
-                            forwardingData.AddEncryptionData(AcceptorConfig.SupportedEncryptionType, encryptionData.KTB, encryptedCvn);
-                        }
-                    }
-
-                    request.Set(DataElementId.DE_127, forwardingData);
+                    isEncrypted = true;
+                    forwardingData = Set3DSEncryptedData(encryptionData, forwardingData, paymentMethod);
                 }
             }
 
+            if (paymentMethod is ICardData cardData) {
+                if (cardData != null) {
+                    String tokenizationData = cardData.TokenizationData;
+                    if (tokenizationData != null) {
+                        isCombined = isEncrypted ? true : false;
+                        SetTokenizationData(forwardingData1, cardData, null, null, tokenizationData, paymentMethod, isCombined);
+                        forwardingData.entries.AddLast(forwardingData1.entries.First.Value);
+                    }
+                }
+            }
+
+            if (paymentMethod is ITrackData trackData) {
+                if (trackData != null) {
+                    String tokenizationData = trackData.TokenizationData;
+                    if (tokenizationData != null) {
+                        isCombined = isEncrypted ? true : false;
+                        SetTokenizationData(forwardingData1, null, trackData, null, tokenizationData, paymentMethod, isCombined);
+                        forwardingData.entries.AddLast(forwardingData1.entries.First.Value);
+                    }
+                }
+            }
+
+            if (paymentMethod is GiftCard giftCardToken) {
+                if (giftCardToken != null) {
+                    String tokenizationData = giftCardToken.TokenizationData;
+                    if (tokenizationData != null) {
+                        isCombined = isEncrypted ? true : false;
+                        SetTokenizationData(forwardingData1, null, null, giftCardToken, tokenizationData, paymentMethod, isCombined);
+                        forwardingData.entries.AddLast(forwardingData1.entries.First.Value);
+                    }
+                }
+            }
+
+            request.Set(DataElementId.DE_127, forwardingData);
+
             return SendRequest(request, builder, orgCorr1, orgCorr2);
+        }
+
+        private void SetTokenizationData(DE127_ForwardingData forwardingData, ICardData cardData, ITrackData trackData, GiftCard giftCard, String tokenizationData, IPaymentMethod paymentMethod, bool isCombine) {
+
+            //Token data AccountNumber/Token
+            if (isCombine) {
+                forwardingData.TokenOrAcctNum = "";
+                if (paymentMethod is IEncryptable encryptable) {
+                    EncryptionData encryptionData = encryptable.EncryptionData;
+                    EncryptionType encryptionType = AcceptorConfig.SupportedEncryptionType;
+                    EncryptedFieldMatrix encryptedField = GetEncryptionField(paymentMethod, encryptionType);
+                    forwardingData.EncryptedField = encryptedField;
+
+                    if (EnumConverter.GetMapping(Target.NWS, encryptedField) == EnumConverter.GetMapping(Target.NWS, EncryptedFieldMatrix.Track1) || EnumConverter.GetMapping(Target.NWS, encryptedField) == EnumConverter.GetMapping(Target.NWS, EncryptedFieldMatrix.Track2))
+                        forwardingData.ExpiryDate = "";
+                    else {
+                        forwardingData.ExpiryDate = FormatExpiry(cardData.ShortExpiry);
+                    }
+                }
+            }
+            else {
+                    forwardingData.TokenOrAcctNum = tokenizationData;
+                    // Card Expiry
+                    if (cardData != null) {
+                        forwardingData.ExpiryDate = FormatExpiry(cardData.ShortExpiry);
+                    }
+                    if (trackData != null) {
+                        forwardingData.ExpiryDate = trackData.Expiry;
+                    }
+                    if (giftCard != null) {
+                        forwardingData.ExpiryDate = giftCard.Expiry;
+                    }
+                }
+
+            //Merchant Id
+            String merchantId = AcceptorConfig.MerchantId;
+            if (merchantId != null) {
+                forwardingData.MerchantId = merchantId;
+            }
+
+            //Service Type #G GP API
+            ServiceType serviceType = AcceptorConfig.ServiceType;
+            if (serviceType != null) {
+                forwardingData.ServiceType = serviceType;
+            }
+
+            //tokenization type  #Global tokenization-1   #Merchant tokenization-2
+            TokenizationType tokenizationType = AcceptorConfig.TokenizationType;
+            if (tokenizationType != null) {
+                forwardingData.TokenizationType = tokenizationType;
+            }
+
+            //Tokenization Operation type
+            TokenizationOperationType tokenOperationType = AcceptorConfig.TokenizationOperationType;
+            setTokenizationOperationType(forwardingData, tokenOperationType);
+            forwardingData.AddTokenizationData(tokenizationType);
+
+        }
+
+        private void setTokenizationOperationType(DE127_ForwardingData forwardingData, TokenizationOperationType tokenOperationType) {
+            if (tokenOperationType != null) {
+                forwardingData.TokenizationOperationType = tokenOperationType;
+                switch (tokenOperationType) {
+                    case TokenizationOperationType.Tokenize:
+                    case TokenizationOperationType.UpdateToken:
+                       forwardingData.TokenizedFieldMatrix = TokenizationFieldMatrix.AccountNumber;
+                        break;
+                    case TokenizationOperationType.DeTokenize:
+                       forwardingData.TokenizedFieldMatrix = TokenizationFieldMatrix.TokenizedData;
+                       break;
+                    default:
+                        forwardingData.TokenizedFieldMatrix = TokenizationFieldMatrix.TokenizedData;
+                        break;
+                }
+            }
+        }
+
+        private DE127_ForwardingData Set3DSEncryptedData(EncryptionData encryptionData, DE127_ForwardingData forwardingData, IPaymentMethod paymentMethod){
+
+            EncryptionType encryptionType = AcceptorConfig.SupportedEncryptionType;
+            if (encryptionType == EncryptionType.TDES) {
+                forwardingData.ServiceType = AcceptorConfig.ServiceType;
+                forwardingData.OperationType = AcceptorConfig.OperationType;
+            }
+            EncryptedFieldMatrix encryptedField = GetEncryptionField(paymentMethod, encryptionType);
+            if (encryptedField != null)
+            {
+                forwardingData.EncryptedField = encryptedField;
+            }
+            forwardingData.AddEncryptionData(encryptionType, encryptionData.KTB, encryptionData.KSN);
+
+            return forwardingData;
+        }
+
+        private EncryptedFieldMatrix GetEncryptionField(IPaymentMethod paymentMethod, EncryptionType encryptionType) {
+            if (encryptionType == EncryptionType.TDES) {
+                if (paymentMethod is ICardData cardData){
+                    var cardDetails = cardData as CreditCardData;
+                    if(cardDetails.EncryptionData.TrackNumber == TrackNumber.TrackOne.ToString())
+                        return EncryptedFieldMatrix.Track1;
+                    else if (cardDetails.EncryptionData.TrackNumber == TrackNumber.TrackTwo.ToString())
+                        return EncryptedFieldMatrix.Track2;
+                    return EncryptedFieldMatrix.Pan;
+                }
+                else if (paymentMethod is ITrackData trackData) {
+                    TrackNumber trackType = ((ITrackData)trackData).TrackNumber;
+                    if (trackType == TrackNumber.TrackOne)
+                        return EncryptedFieldMatrix.Track1;
+                    else if (trackType == TrackNumber.TrackTwo)
+                        return EncryptedFieldMatrix.Track2;
+                    else if (trackType == TrackNumber.PAN)
+                        return EncryptedFieldMatrix.Pan;
+                }
+                if (paymentMethod is TransactionReference transactionReference) {
+                    IPaymentMethod originalPaymentMethod = transactionReference.OriginalPaymentMethod;
+                    if (originalPaymentMethod is ITrackData trackData)
+                    {
+                        TrackNumber trackType = ((ITrackData)trackData).TrackNumber;
+                        if (trackType == TrackNumber.TrackOne)
+                            return EncryptedFieldMatrix.Track1;
+                        else if (trackType == TrackNumber.TrackTwo)
+                            return EncryptedFieldMatrix.Track2;
+                        else if (trackType == TrackNumber.PAN)
+                            return EncryptedFieldMatrix.Pan;
+                    }
+                }
+
+                    return EncryptedFieldMatrix.Track2;
+            }
+            else if (encryptionType == EncryptionType.TEP1 || encryptionType  == EncryptionType.TEP2) {
+                if (paymentMethod is ICardData cardData) {
+                    String encryptedCvn = ((ICardData)cardData).Cvn;
+                    if (!StringUtils.IsNullOrEmpty(encryptedCvn))
+                        return EncryptedFieldMatrix.CustomerDataCSV;
+                    else
+                        return EncryptedFieldMatrix.CustomerData;
+                }
+            }
+            return EncryptedFieldMatrix.CustomerData;
         }
 
         public override Transaction ManageTransaction(ManagementBuilder builder) {
@@ -460,12 +658,13 @@ namespace GlobalPayments.Api.Gateways {
                     PaymentMethodType paymentMethodType = originalPaymentMethod.PaymentMethodType;
 
                     if (originalPaymentMethod is ICardData cardData) {
-                        // DE 2: PAN & DE 14 Expiry
-                        request.Set(DataElementId.DE_002, cardData.Number);
-                        var month = (cardData.ExpMonth.HasValue) ? cardData.ExpMonth.ToString().PadLeft(2, '0') : string.Empty;
-                        var year = (cardData.ExpYear.HasValue) ? cardData.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty;
-                        request.Set(DataElementId.DE_014, year + month);
-
+                        if (string.IsNullOrEmpty(cardData.TokenizationData)) { 
+                            // DE 2: PAN & DE 14 Expiry
+                            request.Set(DataElementId.DE_002, cardData.Number);
+                            var month = (cardData.ExpMonth.HasValue) ? cardData.ExpMonth.ToString().PadLeft(2, '0') : string.Empty;
+                            var year = (cardData.ExpYear.HasValue) ? cardData.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty;
+                            request.Set(DataElementId.DE_014, year + month);
+                        }
                         // Data codes
                         dataCode.CardDataInputMode = cardData.ReaderPresent ? DE22_CardDataInputMode.KeyEntry : DE22_CardDataInputMode.Manual;
                         dataCode.CardHolderPresence = cardData.CardPresent ? DE22_CardHolderPresence.CardHolder_Present : DE22_CardHolderPresence.CardHolder_NotPresent;
@@ -487,6 +686,9 @@ namespace GlobalPayments.Api.Gateways {
                             }
                             else if (encryptionData.TrackNumber.Equals("2")) {
                                 request.Set(DataElementId.DE_035, track.Value);
+                            }
+                            else if (encryptionData.TrackNumber.Equals("3")) {
+                                request.Set(DataElementId.DE_002, track.Value);
                             }
                         }
                         else {
@@ -879,23 +1081,39 @@ namespace GlobalPayments.Api.Gateways {
             // DE 126: Extended Response Data 2 - LLLVAR ans..999
 
             // DE 127: Forwarding Data - LLLVAR ans..999
+            DE127_ForwardingData forwardingData = new DE127_ForwardingData();
             if (paymentMethod is TransactionReference transactionReference1) {
-                if (transactionReference1.OriginalPaymentMethod != null && transactionReference1.OriginalPaymentMethod is IEncryptable) {
-                    EncryptionData encryptionData = ((IEncryptable)transactionReference1.OriginalPaymentMethod).EncryptionData;
-
-                    if (encryptionData != null) {
-                        DE127_ForwardingData forwardingData = new DE127_ForwardingData();
-                        forwardingData.AddEncryptionData(AcceptorConfig.SupportedEncryptionType, encryptionData.KTB);
-
-                        // check for encrypted cid -- THIS MAY NOT BE VALID FOR FOLLOW ON TRANSACTIONS WHERE THE CVN SHOULD NOT BE STORED
-                        //                    if (reference.getOriginalPaymentMethod() instanceof ICardData) {
-                        //                        string encryptedCvn = ((ICardData) paymentMethod).getCvn();
-                        //                        if (!string.IsNullOrEmpty(encryptedCvn)) {
-                        //                            forwardingData.addEncryptionData(encryptionData.getKtb(), encryptedCvn);
-                        //                        }
-                        //                    }
-
+                if(transactionReference1.OriginalPaymentMethod is IEncryptable encryptable) { 
+                    EncryptionData encryptionData = encryptable.EncryptionData; if (encryptionData != null) {
+                        forwardingData = Set3DSEncryptedData(encryptionData, forwardingData, paymentMethod);
                         request.Set(DataElementId.DE_127, forwardingData);
+                    }
+                }
+                if(transactionReference1.OriginalPaymentMethod is ICardData cardData) { 
+                    if (cardData != null) {
+                        String tokenizationData = cardData.TokenizationData;
+                        if (tokenizationData != null) {
+                            SetTokenizationData(forwardingData, cardData, null, null, tokenizationData, paymentMethod, false);
+                            request.Set(DataElementId.DE_127, forwardingData);
+                        }
+                    }
+                }
+                if (transactionReference1.OriginalPaymentMethod is ITrackData trackData) {
+                    if (trackData != null) {
+                        String tokenizationData = trackData.TokenizationData;
+                        if (tokenizationData != null) {
+                            SetTokenizationData(forwardingData, null, trackData, null, tokenizationData, paymentMethod, false);
+                            request.Set(DataElementId.DE_127, forwardingData);
+                        }
+                    }
+                }
+                if (transactionReference1.OriginalPaymentMethod is GiftCard giftCard) {
+                    if (giftCard != null) {
+                        String tokenizationData = giftCard.TokenizationData;
+                        if (tokenizationData != null) {
+                            SetTokenizationData(forwardingData, null, null, giftCard, tokenizationData, paymentMethod, false);
+                            request.Set(DataElementId.DE_127, forwardingData);
+                        }
                     }
                 }
             }
@@ -999,8 +1217,9 @@ namespace GlobalPayments.Api.Gateways {
 
         private Transaction SendRequest<T>(NetworkMessage request, T builder, byte[] orgCorr1, byte[] orgCorr2) where T : TransactionBuilder<Transaction> {
             byte[] sendBuffer = request.BuildMessage();
+            System.Diagnostics.Debug.WriteLine("Request Breakdown:\r\n" + request.ToString());
             //if (EnableLogging) {
-                //System.Diagnostics.Debug.WriteLine("Request Breakdown:\r\n" + request.ToString());
+            //System.Diagnostics.Debug.WriteLine("Request Breakdown:\r\n" + request.ToString());
             //}
             IDeviceMessage message = BuildMessage(sendBuffer, orgCorr1, orgCorr2);
             TransactionType? transactionType = null;
@@ -1491,6 +1710,9 @@ namespace GlobalPayments.Api.Gateways {
                 case TransactionType.BatchClose:
                     mtiValue += "5";
                     break;
+                case TransactionType.FileAction:
+                        mtiValue += "3";
+                    break;
                 case TransactionType.TimeRequest:
                 case TransactionType.SiteConfig:
                     mtiValue += "6";
@@ -1883,6 +2105,9 @@ namespace GlobalPayments.Api.Gateways {
                         else {
                             return "441";
                         }
+                    }
+                case TransactionType.FileAction:  {
+                        return "388";
                     }
                 case TransactionType.TimeRequest: {
                         return "641";
@@ -2570,16 +2795,20 @@ namespace GlobalPayments.Api.Gateways {
                             requestIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, "NSI", "0");
                         }
                         else if (request.Has(DataElementId.DE_035)) {
-                            CreditTrackData track = new CreditTrackData {
-                                Value = request.GetString(DataElementId.DE_035)
+                            var trackData = request.GetString(DataElementId.DE_035);
+                            CreditTrackData track = new CreditTrackData();
+                            if (trackData != null) {
+                                track.Value = trackData;
                             };
                             impliedCapture.Set(DataElementId.DE_002, track.Pan);
                             impliedCapture.Set(DataElementId.DE_014, track.Expiry);
                             requestIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, "NSI", "2");
                         }
                         else {
-                            CreditTrackData track = new CreditTrackData {
-                                Value = request.GetString(DataElementId.DE_045)
+                            var trackData = request.GetString(DataElementId.DE_045);
+                            CreditTrackData track = new CreditTrackData();
+                            if(trackData != null) {
+                                track.Value = trackData;
                             };
                             impliedCapture.Set(DataElementId.DE_002, track.Pan);
                             impliedCapture.Set(DataElementId.DE_014, track.Expiry);
@@ -2850,6 +3079,13 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 }
             }
+        }
+
+        private string FormatExpiry(string shortExpiry) {
+            if (shortExpiry != null) {
+                return shortExpiry.Substring(2, 2) + (shortExpiry.Substring(0, 2));
+            }
+            return shortExpiry;
         }
     }
 }

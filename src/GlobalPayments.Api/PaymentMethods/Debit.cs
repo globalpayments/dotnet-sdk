@@ -48,5 +48,19 @@ namespace GlobalPayments.Api.PaymentMethods {
                     .WithAmount(amount)
                     .WithAmountEstimated(true);
         }
+
+        public AuthorizationBuilder FileAction() {
+            return new AuthorizationBuilder(TransactionType.FileAction, this);
+        }
+
+        public AuthorizationBuilder BalanceInquiry() {
+            return BalanceInquiry(InquiryType.CASH);
+        }
+
+        public AuthorizationBuilder BalanceInquiry(InquiryType inquiry)
+        {
+            return new AuthorizationBuilder(TransactionType.Balance, this).WithBalanceInquiryType(inquiry);
+        }
+
     }
 }

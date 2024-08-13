@@ -157,8 +157,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void FindPayByLink_ByDate_NoResults() {
             var response = PayByLinkService.FindPayByLink(1, 10)
                 .OrderBy(PayByLinkSortProperty.TimeCreated, SortDirection.Ascending)
-                .Where(SearchCriteria.StartDate, StartDate.AddMonths(-24))
-                .And(SearchCriteria.EndDate, EndDate.AddMonths(-22))
+                .Where(SearchCriteria.StartDate, StartDate.AddMonths(2))
+                .And(SearchCriteria.EndDate, EndDate.AddMonths(2))
                 .Execute();
 
             Assert.IsNotNull(response);

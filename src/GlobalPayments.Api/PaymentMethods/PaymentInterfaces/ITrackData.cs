@@ -9,5 +9,7 @@ namespace GlobalPayments.Api.PaymentMethods {
         string DiscretionaryData { get; set; }
         string Value { get; set; }
         EntryMethod EntryMethod { get; set; }
+        string TokenizationData { get; set; }
+
     }
 }

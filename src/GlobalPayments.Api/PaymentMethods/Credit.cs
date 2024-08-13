@@ -140,6 +140,10 @@ namespace GlobalPayments.Api.PaymentMethods {
             return new AuthorizationBuilder(TransactionType.Verify, this);
         }
 
+        public AuthorizationBuilder FileAction() {
+            return new AuthorizationBuilder(TransactionType.FileAction, this);
+        }
+
         /// <summary>
         /// Gets token information for the specified token
         /// </summary>

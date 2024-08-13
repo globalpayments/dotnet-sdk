@@ -21,5 +21,6 @@ namespace GlobalPayments.Api.PaymentMethods
         public string ShortExpiry => throw new NotImplementedException();
 
         public string CardHolderName { get; set; }
+        public string TokenizationData { get; set; }
     }
 }

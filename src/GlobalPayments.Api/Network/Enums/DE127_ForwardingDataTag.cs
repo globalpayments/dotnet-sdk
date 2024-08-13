@@ -10,6 +10,10 @@ namespace GlobalPayments.Api.Network.Entities {
         [Map(Target.NWS, "REQ")]
         ForwardedRequest,
         [Map(Target.NWS, "RSP")]
-        ForwardedResponse
+        ForwardedResponse,
+        [Map(Target.NWS, "3DE")]
+        Encryption_3DES,
+        [Map(Target.NWS, "TOK")]
+        Tokenization_TOK
     }
 }

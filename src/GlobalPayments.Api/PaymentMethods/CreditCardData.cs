@@ -110,6 +110,8 @@ namespace GlobalPayments.Api.PaymentMethods {
         public bool ReaderPresent { get; set; }
         public string Cardutils { get; private set; }
 
+        public string TokenizationData { get; set; }
+
         public CreditCardData(string token = null) : base() {
             Token = token;
             CardPresent = false;

@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v8.0.19 (07/25/24)
+## Latest - v8.0.20 (08/13/24)
+
+### Enhancement
+
+- NWS 3Des, Tokenization and combined functionality implemented.
+- [GP-API] Unit tests enhancements.
+
+## v8.0.19 (07/25/24)
 
 ### Enhancement
 

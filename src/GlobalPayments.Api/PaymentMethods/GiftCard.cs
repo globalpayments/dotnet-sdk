@@ -6,7 +6,7 @@ namespace GlobalPayments.Api.PaymentMethods {
     /// <summary>
     /// Use gift/loyaly/stored value account as a payment method.
     /// </summary>
-    public class GiftCard : IPaymentMethod, IPrePaid, IBalanceable, IReversable, IChargable, IAuthable, IRefundable {
+    public class GiftCard : IPaymentMethod, IPrePaid, IBalanceable, IReversable, IChargable, IAuthable, IRefundable,IEncryptable {
         private string _token;
         private string _trackData;
         private string _number;
@@ -90,6 +90,8 @@ namespace GlobalPayments.Api.PaymentMethods {
         internal string Pan { get; set; }
         internal string Expiry { get; set; }
         internal string CardType { get; set; }
+        public EncryptionData EncryptionData { get; set; }
+        public string TokenizationData { get; set; }
 
         /// <summary>
         /// Activates an existing gift card.
@@ -221,6 +223,10 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder Rewards(decimal? amount = null) {
             return new AuthorizationBuilder(TransactionType.Reward, this).WithAmount(amount);
+        }
+
+        public AuthorizationBuilder FileAction() {
+            return new AuthorizationBuilder(TransactionType.FileAction, this);
         }
 
         public void SetValue(string value) {

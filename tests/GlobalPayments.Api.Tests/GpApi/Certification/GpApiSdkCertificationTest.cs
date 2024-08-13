@@ -513,7 +513,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
                     .Execute();
             } catch (GatewayException ex) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - 205,Timeout error—Action failed unexpectedly. An automatic reversal will happen if charged. Please retry the transaction..", ex.Message);
+                Assert.AreEqual("Status Code: BadGateway - 200,eCom error—Developers are notified", ex.Message);
                 Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
                 Assert.AreEqual("50013", ex.ResponseMessage);
             } finally {
@@ -557,7 +557,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
                     .Execute();
             } catch (GatewayException ex) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadGateway - 205,Timeout error—Action failed unexpectedly. An automatic reversal will happen if charged. Please retry the transaction..", ex.Message);
+                Assert.AreEqual("Status Code: BadGateway - 200,eCom error—Developers are notified", ex.Message);
                 Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
                 Assert.AreEqual("50013", ex.ResponseMessage);
             } finally {

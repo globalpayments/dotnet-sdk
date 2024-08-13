@@ -3,6 +3,7 @@
         Unknown,
         TrackOne,
         TrackTwo,
-        BothOneAndTwo
+        BothOneAndTwo,
+        PAN
     }
 }
