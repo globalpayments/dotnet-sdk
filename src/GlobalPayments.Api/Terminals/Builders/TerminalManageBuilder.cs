@@ -19,7 +19,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
         public string SignatureLine { get; set; }
         public string SoftDescriptor { get; set; }
 
-
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -27,6 +26,13 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
+        internal decimal? CashBackAmount { get; set; }
+        public string TaxType { get; set; }
+
+        /** @var string Purchase Order to be sent to the host */
+        public string OrderId { get; set; }
+        public int? ClerkId { get; set; }
+        public Lodging LodgingData { get; set; }
         internal decimal? TaxAmount { get; set; }
         internal string TaxExempt { get; set; }
         internal string TaxExemptId { get; set; }
@@ -37,7 +43,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             TerminalRefNumber = terminalRefNumber;
             return this;
         }
-        public TerminalManageBuilder WithEcrId(int ecrId) {
+        public TerminalManageBuilder WithEcrId(string ecrId) {
             EcrId = ecrId;
             return this;
         }
@@ -63,13 +69,24 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
-        public TerminalManageBuilder WithTaxAmount(decimal taxAmount) {
+        public TerminalManageBuilder WithTaxAmount(decimal? taxAmount) {
             TaxAmount = taxAmount;
             return this;
         }
         public TerminalManageBuilder WithTaxType(TaxType taxType, string taxExemptId = null) {
-            TaxExempt = taxType == TaxType.TAXEXEMPT ? "1" : "0";
+            TaxExempt = taxType == Entities.TaxType.TAXEXEMPT ? "1" : "0";
+            TaxType = taxType.ToString();
             TaxExemptId = taxExemptId;
+            return this;
+        }
+
+        public TerminalManageBuilder WithOrderId(string orderId) {
+            OrderId = orderId;
+            return this;
+        }
+
+        public TerminalManageBuilder WithLodgingData(Lodging lodgingData) {
+            LodgingData = lodgingData;
             return this;
         }
 

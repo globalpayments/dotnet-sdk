@@ -16,6 +16,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         protected const string AppIdForMerchant = "A1feRdMmEB6m0Y1aQ65H0bDi9ZeAEB2t";
         protected const string AppKeyForMerchant = "5jPt1OpB6LLitgi7";
+        
+        protected const string MitcUpaAppId = "aCgePu6PqA8sDdkjLYgmrHs89JAXvbvO";
+        protected const string MitcUpaAppKey = "DY0ZeWiUCHACK7dz";
 
         protected static readonly int ExpMonth = DateTime.Now.Month;
         protected static readonly int ExpYear = DateTime.Now.Year + 1;

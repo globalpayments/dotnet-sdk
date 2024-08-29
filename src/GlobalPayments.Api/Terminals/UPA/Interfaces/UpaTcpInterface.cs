@@ -49,12 +49,12 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         public byte[] Send(IDeviceMessage message) {
             byte[] buffer = message.GetSendBuffer();
-
+           
             var readyReceived = false;
-            byte[] responseMessage = null;
-
-            Connect();
+            byte[] responseMessage = null;            
+           
             try {
+                Connect();
                 var task = _stream.WriteAsync(buffer, 0, buffer.Length);
 
                 if (!task.Wait(_settings.Timeout)) {
@@ -98,15 +98,18 @@ namespace GlobalPayments.Api.Terminals.UPA {
                         Connect();
                     }
                 } while (!readyReceived);
-
+                
                 return responseMessage;
             }
             catch (Exception exc) {
+                _settings.LogManagementProvider?.ResponseReceived(exc.Message);
                 throw new MessageException(exc.Message, exc);
             }
             finally {
+                _settings.LogManagementProvider?.RequestSent(GenerateRequestLog(_settings.IpAddress, _settings.Port, _settings.Timeout.ToString(), Encoding.UTF8.GetString(buffer)));
                 OnMessageSent?.Invoke(message.ToString());
                 OnMessageReceived?.Invoke(Encoding.UTF8.GetString(responseMessage));
+                _settings.LogManagementProvider?.ResponseReceived(Encoding.UTF8.GetString(responseMessage));
                 Disconnect();
             }
         }
@@ -147,6 +150,17 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     data.GetValue<string>("response") == UpaTransType.Reboot ||
                     (cmdResult != null && cmdResult.GetValue<string>("result") == "Failed")
                 );
+        }
+
+        private string GenerateRequestLog(string ipAddress, string port, string timeout, string request)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Ip: {ipAddress}");
+            sb.AppendLine($"port: {port}");
+            sb.AppendLine($"timeout: {timeout}");
+            sb.AppendLine(request);
+            
+            return sb.ToString();
         }
     }
 }

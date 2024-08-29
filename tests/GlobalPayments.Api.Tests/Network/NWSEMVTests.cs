@@ -11,6 +11,8 @@ namespace GlobalPayments.Api.Tests.Network
     [TestClass]
     public class NWSEMVTests
     {
+        AcceptorConfig acceptorConfig;
+        NetworkGatewayConfig config;
         public NWSEMVTests()
         {
             Address address = new Address
@@ -23,7 +25,7 @@ namespace GlobalPayments.Api.Tests.Network
                 Country = "USA"
             };
 
-            AcceptorConfig acceptorConfig = new AcceptorConfig
+           acceptorConfig = new AcceptorConfig
             {
                 Address = address,
 
@@ -54,14 +56,14 @@ namespace GlobalPayments.Api.Tests.Network
 
             // gateway config
 
-            NetworkGatewayConfig config = new NetworkGatewayConfig(NetworkGatewayType.NWS)
+            config = new NetworkGatewayConfig(NetworkGatewayType.NWS)
             {
                 ServiceUrl = "test.txns-c.secureexchange.net",
                 PrimaryPort = 15031,
                 SecondaryEndpoint = "test.txns-e.secureexchange.net",
                 SecondaryPort = 15031,
                 CompanyId = "SPSA",
-                TerminalId = "NWSDOTNET21",
+                TerminalId = "NWSDOTNET01",
                 UniqueDeviceId = "0001",
                 AcceptorConfig = acceptorConfig,
                 EnableLogging = true,
@@ -79,11 +81,12 @@ namespace GlobalPayments.Api.Tests.Network
         // Indoor tests
         // Make sure AcceptorConfig.CardDataInputCapability is set to ContactlessEmv_ContactEmv_MagStripe_KeyEntry (Inside)
         [TestMethod]
-        public void Test_Indoor_MC_MTip40_Test01_Scenario01() {
+        public void Test_Indoor_MC_MTip40_Test01_Scenario01()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";5567630000088409=49126010793608000024?",
-                PinBlock = "62968D2481D231E1A504010024A00014"
+                // PinBlock = "62968D2481D231E1A504010024A00014"
             };
 
             FleetData fleetData = new FleetData
@@ -107,7 +110,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Indoor_Visa_ADVT_5A_1() {
+        public void Test_Indoor_Visa_ADVT_5A_1()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";4761739001010143=241220111478183?",
@@ -147,7 +151,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Indoor_Amex_AXP_EMV_002() {
+        public void Test_Indoor_Amex_AXP_EMV_002()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";374245002741006=241222117101234500000?",
@@ -165,7 +170,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Indoor_Discover_E2E_19() {
+        public void Test_Indoor_Discover_E2E_19()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";6510000000000182=23122011000079900000?",
@@ -183,7 +189,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Indoor_Discover_E2E_50() {
+        public void Test_Indoor_Discover_E2E_50()
+        {
             DebitTrackData track = new DebitTrackData
             {
                 Value = ";6510000000000018=23122011000010600000?",
@@ -203,7 +210,8 @@ namespace GlobalPayments.Api.Tests.Network
         // Outdoor tests
         // Make sure AcceptorConfig.CardDataInputCapability is set to ContactlessEmv_ContactEmv_MagStripe (Outside)
         [TestMethod]
-        public void Test_Outdoor_MC_MTip15_Test01_Scenario02() {
+        public void Test_Outdoor_MC_MTip15_Test01_Scenario02()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";5413330089020094=2512201029570106?"
@@ -220,7 +228,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Outdoor_MC_MTip13_USM_Test01_Scenario01() {
+        public void Test_Outdoor_MC_MTip13_USM_Test01_Scenario01()
+        {
             DebitTrackData track = new DebitTrackData
             {
                 Value = ";5413330089099056=2512?",
@@ -276,7 +285,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Outdoor_Amex_AXP_AFD_013() {
+        public void Test_Outdoor_Amex_AXP_AFD_013()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";374245003741005=241220115041234500000?"
@@ -293,7 +303,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Outdoor_Discover_E2E_04() {
+        public void Test_Outdoor_Discover_E2E_04()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";6510000000000133=23122011000036200000?"
@@ -310,7 +321,8 @@ namespace GlobalPayments.Api.Tests.Network
         }
 
         [TestMethod]
-        public void Test_Outdoor_Discover_E2E_09() {
+        public void Test_Outdoor_Discover_E2E_09()
+        {
             CreditTrackData track = new CreditTrackData
             {
                 Value = ";6510000000000091=23122011000052400000?"
@@ -325,5 +337,228 @@ namespace GlobalPayments.Api.Tests.Network
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
             Assert.AreEqual("000", response.ResponseCode);
         }
+
+        #region EMV Contactless
+
+
+        [TestMethod]
+        public void Test_EMV_Contactless_Visa_Debit_Outdoor()
+        {
+            config.MerchantType = "5542";
+            ServicesContainer.ConfigureService(config, "ICR");
+            ServicesContainer.ConfigureService(config);
+            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe;
+            acceptorConfig.OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended;
+            DebitTrackData track = new DebitTrackData
+            {
+                Value = ";4761739001010135=241220119559045?",
+                PinBlock = "73C41D219768F591",
+                EntryMethod =EntryMethod.Proximity
+               
+            };
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200029F1101014F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401119F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction responseCapture = response.Capture(response.AuthorizedAmount)
+                    .WithCurrency("USD")
+                   // .WithCashBack(10m)
+                    .WithTagData("5F280208409F080200024F07A0000001523010500A4D617374657243617264820238008407A00000000310108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                    .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(responseCapture.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(responseCapture.SystemTraceAuditNumber);
+            Assert.AreEqual("000", responseCapture.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_EMV_Contactless_Credit_Outdoor()
+        {
+            config.MerchantType = "5542";
+            ServicesContainer.ConfigureService(config, "ICR");
+            ServicesContainer.ConfigureService(config);
+            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe;
+            acceptorConfig.OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended;
+            CreditTrackData track = new CreditTrackData
+            {
+                Value = ";4761739001010440=22122011966186589?",
+                EntryMethod = EntryMethod.Proximity
+                
+            };
+
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200029F1101014F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401119F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction captureResponse = response.Capture(response.AuthorizedAmount)
+                .WithCurrency("USD")               
+                .WithTagData("5F280208409F080200029F1101014F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401119F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(captureResponse.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(captureResponse.SystemTraceAuditNumber);
+            Assert.AreEqual("000", captureResponse.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_EMV_Contactless_Credit_Outdoor_Amex_AXP_AFD()
+        {
+            config.MerchantType = "5542";
+            ServicesContainer.ConfigureService(config, "ICR");          
+            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe;
+            acceptorConfig.OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended;
+            CreditTrackData track = new CreditTrackData
+            {
+                Value = ";374245003741005=241220115041234500000?",
+               // PinBlock = "73C41D219768F591",
+                EntryMethod = EntryMethod.Proximity
+            };
+
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200024F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction responseCapture = response.Capture(response.AuthorizedAmount)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200024F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(responseCapture.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(responseCapture.SystemTraceAuditNumber);
+            Assert.AreEqual("000", responseCapture.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_EMV_Contactless_MC_Debit_Outdoor()
+        {
+            config.MerchantType = "5542";
+            ServicesContainer.ConfigureService(config, "ICR");
+            acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe;
+            acceptorConfig.OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended;
+            DebitTrackData track = new DebitTrackData
+            {
+                Value = "720002123456789=2512120000000000001?",              
+                PinBlock = "73C41D219768F591",
+                EntryMethod = EntryMethod.Proximity
+            };
+
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200029F1101014F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401119F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction responseCapture = response.Capture(response.AuthorizedAmount)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200029F1101014F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401119F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(responseCapture.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(responseCapture.SystemTraceAuditNumber);
+            Assert.AreEqual("000", responseCapture.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_EMV_Contactless_Visa_Debit_Indoor()
+        {
+            config.MerchantType = "5541";   //indoor     
+            ServicesContainer.ConfigureService(config);
+            DebitTrackData track = new DebitTrackData
+            {
+                Value = ";4761739001010135=241220119559045?",
+                PinBlock = "73C41D219768F591",
+                EntryMethod = EntryMethod.Proximity
+
+            };
+
+            Transaction response = track.Charge(20m)
+                    .WithCurrency("USD")
+                    .WithCashBack(10m)
+                    .WithTagData("5F280208409F080200024F07A0000001523010500A4D617374657243617264820238008407A00000000310108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                    .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_EMV_Contactless_Credit_Indoor()
+        {
+            config.MerchantType = "5541";   //indoor    
+            ServicesContainer.ConfigureService(config);
+            CreditTrackData track = new CreditTrackData
+            {
+                Value = ";4761739001010440=22122011966186589?",
+                EntryMethod = EntryMethod.Proximity
+
+            };
+
+            Transaction response = track.Charge(20m)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200029F1101014F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401119F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_EMV_Contactless_Credit_Indoor_Amex_AXP_AFD()
+        {
+            config.MerchantType = "5541";   //indoor
+            ServicesContainer.ConfigureService(config);
+            CreditTrackData track = new CreditTrackData
+            {
+                Value = ";374245003741005=241220115041234500000?",
+                PinBlock = "73C41D219768F591",
+                EntryMethod = EntryMethod.Proximity
+            };
+
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200024F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000006009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34033F00019F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_EMV_Contactless_MC_Debit_Indoor()
+        {
+            config.MerchantType = "5541";   //indoor    
+            ServicesContainer.ConfigureService(config);
+            DebitTrackData track = new DebitTrackData
+            {
+                Value = ";720002123456789=2512120000000000001?",
+                PinBlock = "78FBB9DAEEB14E5A",
+                //PinBlock = "73C41D219768F591",
+                EntryMethod = EntryMethod.Proximity
+            };
+
+            Transaction response = track.Charge(10m)
+                .WithCurrency("USD")
+                .WithTagData("5F280208409F080200025A0854133300890990564F07A0000001523010500A4D617374657243617264820238008407A00000015230108E0A00000000000000001F00950500008080009A031901099B02E8009C01405F24032212315F25030401015F2A0208405F300202015F3401009F01060000000000019F02060000000000009F03060000000000009F0607A00000015230109F0702FF009F090200029F0D05B8508000009F0E0500000000009F0F05B8708098009F10080105A000030000009F120A4D6173746572436172649F160F3132333435363738393031323334359F1A0208409F1C0831313232333334349F1E0831323334353637389F21030710109F26080631450565A30B759F2701809F330360F0C89F34034203009F3501219F360200049F3704C6B1A04F9F3901059F4005F000A0B0019F4104000000869F4C0865C862608A23945A9F4E0D54657374204D65726368616E74")
+                .Execute();
+            Assert.IsNotNull(response);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+        #endregion EMV Contactless
     }
 }

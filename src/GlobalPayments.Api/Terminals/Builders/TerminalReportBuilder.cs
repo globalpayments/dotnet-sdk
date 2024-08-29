@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Enums;
 using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Diamond.Entities.Enums;
 using GlobalPayments.Api.Terminals.PAX;

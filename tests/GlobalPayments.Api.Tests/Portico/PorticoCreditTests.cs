@@ -2,6 +2,7 @@
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.Terminals;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -39,11 +40,14 @@ namespace GlobalPayments.Api.Tests {
                 CardHolderName = " UnitTest "
             };
 
-            track = new CreditTrackData {
+            track = new CreditTrackData
+            {
                 Value = "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;",
-                EncryptionData = new EncryptionData {
+                EncryptionData = new EncryptionData
+                {
                     Version = "01"
-                }
+                },
+                EntryMethod = EntryMethod.Proximity
             };
 
             Address = new Address {
@@ -198,6 +202,53 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(trans);
             Assert.AreEqual("00", trans.ResponseCode);
         }
+        [TestMethod]
+        public void CreditSale_WithFallbackData()
+        {
+            track.PinBlock = "abcjhvcjbvhjxbvjxh";
+            var response = track.Charge(15m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure,EmvLastChipRead.Successful)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+        [TestMethod]
+        public void CreditSale_WithTagData()
+        {
+            track.PinBlock = "abcjhvcjbvhjxbvjxh";
+            var tagData = "9F1A0208409C0150950500000088009F0702FF009F03060000000000009F2701809F3901059F0D05B850AC88009F350121500B56697361204372656469745F3401019F0802008C9F120B56697361204372656469749F0E0500000000009F360200759F40057E0000A0019F0902008C9F0F05B870BC98009F370425D254AC5F280208409F33036028C882023C004F07A00000000310109F4104000000899F0607A00000000310105F2A0208409A031911229F02060000000001009F2608D4EC434B9C1CBB358407A00000000310109F100706010A03A088069B02E8009F34031E0300";
+            var response = track.Charge(15m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .WithTagData(tagData)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+        [TestMethod]
+        public void CreditTrackData_SaleSwipe_Chip()
+        {
+            CreditTrackData creditTrackData = new CreditTrackData()
+            {
+                Value = "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;",
+                PinBlock = track.PinBlock = "abcjhvcjbvhjxbvjxh",
+                EntryMethod = EntryMethod.Swipe
+            };
+
+            //string tagData = "Any Emv Tags";
+
+            decimal amount = 25m;
+
+            var response = creditTrackData.Charge()
+                .WithCurrency("USD")
+                .WithAmount(amount)
+                .WithAllowDuplicates(true)
+                //.WithTagData(tagData)
+                .Execute();
+        }
+
 
         [TestMethod]
         public void CreditSaleWithCOF() {

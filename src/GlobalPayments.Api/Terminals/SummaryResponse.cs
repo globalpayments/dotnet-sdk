@@ -1,26 +1,8 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Terminals.Enums;
 using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals {
-    public enum SummaryType {
-        Approved,
-        PartiallyApproved,
-        VoidApproved,
-        Pending,
-        VoidPending,
-        Declined,
-        VoidDeclined,
-        OfflineApproved,
-        Provsional,
-        Discarded,
-        VoidProvisional,
-        VoidDiscarded,
-        Reversal,
-        EmvDeclined,
-        Attachment,
-        Unknown
-    }
-
     public class SummaryResponse {
         public decimal? Amount { get; set; }
         public decimal? AmountDue { get; set; }

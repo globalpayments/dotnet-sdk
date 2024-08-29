@@ -488,9 +488,18 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         /// <returns>Transaction</returns>
         public override Transaction Execute(string configName = "default") {
+            var client = ServicesContainer.Instance.GetClient(configName);
+
+            if (client.GetType() == typeof(Gateways.NWSConnector)) {
+                base.Validations.rules.Remove(TransactionType.Capture);
+
+                base.Validations.For(TransactionType.Capture)
+                .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => VoidReason).IsNull();
+            }
             base.Execute(configName);
 
-            var client = ServicesContainer.Instance.GetClient(configName);
+            
             if (client.SupportsOpenBanking &&
                 PaymentMethod is TransactionReference &&
             PaymentMethod.PaymentMethodType == PaymentMethodType.BankPayment) {
@@ -504,7 +513,7 @@ namespace GlobalPayments.Api.Builders {
 
         protected override void SetupValidations() {
 
-            
+
             #region ENUM VALIDATION WITH FLAG ATTRIBUTE     
             /// TO ADD
             #endregion
@@ -512,6 +521,7 @@ namespace GlobalPayments.Api.Builders {
 
             Validations.For(TransactionType.Capture)
                 .Check(() => PaymentMethod).IsNotNull()
+                .Check(() => TransactionId).IsNotNull()
                 .Check(() => VoidReason).IsNull();
 
             Validations.For(TransactionType.Edit)

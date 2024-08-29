@@ -1,9 +1,12 @@
 ﻿using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.Builders {
     public class TerminalAuthBuilder : TerminalBuilder<TerminalAuthBuilder> {
@@ -17,6 +20,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
+        internal int EcrId { get; set; }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal Lodging Lodging { get; set; }
         internal decimal? CashBackAmount { get; set; }
@@ -41,12 +45,22 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal decimal? ClinicAmount { get; set; }
         internal decimal? DentalAmount { get; set; }
         internal decimal? VisionOpticalAmount { get; set; }
-        internal int? ProcessCPC { get; set; }
+        internal bool? ProcessCPC { get; set; }
+        internal bool? ConfirmAmount { get; set; }
         public string Token { get; set; }
         public DateTime ShippingDate { get; set; }
         public decimal? PreAuthAmount { get; set; }
         public AcquisitionType? CardAcquisition { get; set; }
         internal bool AllowPartialAuth { get; set; }
+        internal bool? IsQuickChip { get; set; }
+        internal bool? HasCheckLuhn { get; set; } = null;
+        internal bool? HasSecurityCode { get; set; } = null;
+        internal int Timeout { get; set; }
+        internal DateTime? TransactionDate { get; set; }
+        internal List<AcquisitionType> AcquisitionTypes { get; set; }
+        internal MerchantDecision? MerchantDecision { get; set;}
+        internal string Language { get; set;}
+        internal HostData HostData { get; set; }
 
         internal string TransactionId {
             get {
@@ -226,8 +240,63 @@ namespace GlobalPayments.Api.Terminals.Builders {
             return this;
         }
 
-        public TerminalAuthBuilder WithProcessCPC(int value) {
+        public TerminalAuthBuilder WithConfirmationAmount(bool value) {
+            ConfirmAmount = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithQuickChip(bool value) {
+            IsQuickChip = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithCheckLuhn(bool value) {
+            HasCheckLuhn = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithSecurityCode(bool value) {
+            HasSecurityCode = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithAcquisitionTypes(List<AcquisitionType> value) {
+            AcquisitionTypes = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithTransactionDate(DateTime value) {
+            TransactionDate = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithTimeout(int value) {
+            Timeout = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithMerchantDecision(MerchantDecision merchantDecision) {
+            MerchantDecision = merchantDecision;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithLanguage(string language) {
+            Language = language;
+            return this;
+        }
+        
+        public TerminalAuthBuilder WithHostData(HostData hostData) {
+            HostData = hostData;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithProcessCPC(bool? value) {
             ProcessCPC = value;
+            return this;
+        }
+
+        public TerminalAuthBuilder WithTransactionModifier(TransactionModifier modifier) {
+            TransactionModifier = modifier;
             return this;
         }
 

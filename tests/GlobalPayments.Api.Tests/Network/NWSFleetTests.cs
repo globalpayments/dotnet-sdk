@@ -17,6 +17,7 @@ namespace GlobalPayments.Api.Tests.Network {
         private CreditTrackData track;
         private ProductData productData;
         private FleetData fleetData;
+        NetworkGatewayConfig config;
 
         public NWSFleetTests() {
             AcceptorConfig acceptorConfig = new AcceptorConfig {
@@ -40,7 +41,7 @@ namespace GlobalPayments.Api.Tests.Network {
             };
 
             // gateway config
-            NetworkGatewayConfig config = new NetworkGatewayConfig(NetworkGatewayType.NWS) {
+            config = new NetworkGatewayConfig(NetworkGatewayType.NWS) {
                 ServiceUrl = "test.txns-c.secureexchange.net",
                 PrimaryPort = 15031,
                 SecondaryEndpoint = "test.txns-e.secureexchange.net",
@@ -53,12 +54,13 @@ namespace GlobalPayments.Api.Tests.Network {
                 StanProvider = StanGenerator.GetInstance(),
                 BatchProvider = BatchProvider.GetInstance()
             };
+            
 
             ServicesContainer.ConfigureService(config);
 
+
             config.MerchantType = "5542";
             ServicesContainer.ConfigureService(config, "ICR");
-
             // MASTERCARD FLEET
             //card = TestCards.MasterCardFleetManual(true, true);
             //track = TestCards.MasterCardFleetSwipe();
@@ -793,5 +795,275 @@ namespace GlobalPayments.Api.Tests.Network {
             // check response
             Assert.AreEqual("000", response.ResponseCode);
         }
+        #region Voyager EMV
+        [TestMethod]
+        public void Voyager_EMV_Contact_Refund()
+        {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
+            productData.Add("01", UnitOfMeasure.Gallons,  5m, 5m, 10m);
+            fleetData = new FleetData
+            {
+                //only 3 and 4 for voyager
+                DriverId = "11411",
+                OdometerReading = "1256"
+            };
+            config.MerchantType = "5541";
+            ServicesContainer.ConfigureService(config);
+            Transaction response = track.Refund(10m)
+                        .WithCurrency("USD")
+                        .WithFleetData(fleetData)
+                        .WithProductData(productData)
+                        .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+                        .Execute();
+            Assert.IsNotNull(response);
+           // DE_063: 02102F00101\G05\05\1000\
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("200009", pmi.ProcessingCode);
+            Assert.AreEqual("200", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+        //[TestMethod]
+        //public void Voyager_EMV_Contactless_Refund()
+        //{
+        //    ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+        //    productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
+        //   // track.EntryMethod = EntryMethod.Proximity;
+        //    track.Value = ";7088850950270000131=32010000010100600?";
+        //   // track.PinBlock = "73C41D219768F591";
+        //    Transaction response = track.Refund(10m)
+        //                .WithCurrency("USD")
+        //                .WithFleetData(fleetData)
+        //                .WithProductData(productData)
+        //                .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+        //                .Execute();
+        //    Assert.IsNotNull(response);
+
+        //    // check message data
+        //    PriorMessageInformation pmi = response.MessageInformation;
+        //    Assert.IsNotNull(pmi);
+        //    Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
+        //    Assert.AreEqual("200009", pmi.ProcessingCode);
+        //    Assert.AreEqual("200", pmi.FunctionCode);
+        //    System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+        //    System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+        //    // check response
+        //    Assert.AreEqual("000", response.ResponseCode);
+        //}
+        [TestMethod]
+        public void Voyager_EMV_Authorization_9F6E()
+        {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 5m, 5m, 10m);
+            fleetData = new FleetData
+            {
+                //only 3 and 4 for voyager
+                DriverId = "11411",              
+                OdometerReading = "1256"
+            };
+            config.MerchantType = "5541";
+            ServicesContainer.ConfigureService(config);
+
+            track.Value = ";7088850950270000131=32010000010100600?";
+            
+            Transaction response = track.Authorize(10m)
+                   .WithCurrency("USD")                  
+                   .WithFleetData(fleetData)
+                   .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+                   .Execute();
+            Assert.IsNotNull(response);
+
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1100", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            //Assert.AreEqual("101", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+
+             //partial approval cancellation
+        //    Transaction reversal = response.Cancel()
+        //            .WithReferenceNumber(response.ReferenceNumber)
+        //            .Execute();
+        //Assert.IsNotNull(reversal);
+
+        //    pmi = reversal.MessageInformation;
+        //    Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
+        //    Assert.AreEqual("000900", pmi.ProcessingCode);
+        //    Assert.AreEqual("441", pmi.FunctionCode);
+        //    Assert.AreEqual("4352", pmi.MessageReasonCode);
+
+        //    Assert.AreEqual("400", reversal.ResponseCode);
+        //    System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
+        //    System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
+            // Test_009
+
+
+            //Transaction captureResponse = response.Capture(10m)
+            //        .WithCurrency("USD")
+            //        .WithProductData(productData)
+            //        .WithFleetData(fleetData)
+            //        //.Execute();
+            //        .Execute("ICR");
+            //Assert.IsNotNull(captureResponse);
+
+            //// check message data
+            //pmi = captureResponse.MessageInformation;
+            //Assert.IsNotNull(pmi);
+            //Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
+            //Assert.AreEqual("000900", pmi.ProcessingCode);
+            ////Assert.AreEqual("201", pmi.FunctionCode);
+            //System.Diagnostics.Debug.WriteLine(captureResponse.HostResponseDate);
+            //System.Diagnostics.Debug.WriteLine(captureResponse.SystemTraceAuditNumber);
+            //// check response
+            //Assert.AreEqual("000", captureResponse.ResponseCode);
+        }
+        [TestMethod]
+        public void Voyager_EMV_Sale()
+        {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 25.000m, 1.000m, 25.00m);
+            fleetData = new FleetData
+            {
+                //only 3 and 4 for voyager
+                DriverId = "11411",
+                OdometerReading = "1256"
+            };
+            config.MerchantType = "5541";
+            ServicesContainer.ConfigureService(config);
+            track.Value = ";7088850950270000131=32010000010100600?";
+            Transaction sale = track.Charge(10m)
+                   .WithCurrency("USD")
+                   .WithProductData(productData)
+                   .WithFleetData(fleetData)
+                   .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+                   .Execute();
+            Assert.IsNotNull(sale);
+            Assert.AreEqual("000", sale.ResponseCode);
+
+
+        }
+        [TestMethod]
+        public void Voyager_EMV_Authorization_Capture()
+        {
+            //Auth capture will be outdoor,Auth does not require productdata
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.IssuerSpecific);
+            productData.Add("01", UnitOfMeasure.Gallons, 10.720m, 3.4664m, 37.15m);
+            fleetData = new FleetData
+            {
+                //only 3 and 4 for voyager
+                DriverId = "11411",
+                OdometerReading = "1256"
+            };
+            config.MerchantType = "5542";
+            ServicesContainer.ConfigureService(config, "ICR");
+            Transaction response = track.Authorize(10m)
+                        .WithCurrency("USD")                        
+                        .WithFleetData(fleetData)
+                        .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+                        .Execute();
+            //.Execute("ICR");
+            Assert.IsNotNull(response);
+
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1100", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            //Assert.AreEqual("101", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check response
+            Assert.AreEqual("000", response.ResponseCode);
+
+            // partial approval cancellation
+            //Transaction reversal = response.Cancel()
+            //        .WithReferenceNumber(response.ReferenceNumber)
+            //        .Execute();
+            //Assert.IsNotNull(reversal);
+
+            //pmi = reversal.MessageInformation;
+            //Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
+            //Assert.AreEqual("000900", pmi.ProcessingCode);
+            //Assert.AreEqual("441", pmi.FunctionCode);
+            //Assert.AreEqual("4352", pmi.MessageReasonCode);
+
+            //Assert.AreEqual("400", reversal.ResponseCode);
+            //System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
+            //System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
+            // Test_009
+
+
+            Transaction captureResponse = response.Capture(10m)
+                    .WithCurrency("USD")
+                    .WithProductData(productData)
+                    .WithFleetData(fleetData)
+                    .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+                    .Execute();
+            //.Execute("ICR");
+            Assert.IsNotNull(captureResponse);
+
+            // check message data
+            pmi = captureResponse.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1220", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            //Assert.AreEqual("201", pmi.FunctionCode);
+            System.Diagnostics.Debug.WriteLine(captureResponse.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(captureResponse.SystemTraceAuditNumber);
+            // check response
+            Assert.AreEqual("000", captureResponse.ResponseCode);
+        }
+        [TestMethod]
+        public void Voyager_EMV_Sale_Void()
+        {
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            productData.Add("01", UnitOfMeasure.Gallons, 5m, 5m, 10m);
+            fleetData = new FleetData
+            {
+                //only 3 and 4 for voyager
+                DriverId = "11411",
+                OdometerReading = "1256"
+            };
+            config.MerchantType = "5541";
+            ServicesContainer.ConfigureService(config);
+            Transaction sale = track.Charge(10m)
+                    .WithCurrency("USD")
+                    .WithProductData(productData)
+                    .WithFleetData(fleetData)
+                    .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+                    .Execute();
+            Assert.IsNotNull(sale);
+            Assert.AreEqual("000", sale.ResponseCode);
+
+            Transaction response = sale.Void(amount: sale.AuthorizedAmount)
+                    .WithReferenceNumber("12345")
+                    .WithTagData("4F0AA0000000049999C0001682023900840AA0000000049999C000168A025A33950500800080009A032021039B02E8009C01005F24032212315F280208405F2A0208405F3401029F02060000000001009F03060000000000009F0607A00000076810109F07023D009F080201539F090200019F0D05BC308088009F1A0208409F0E0500400000009F0F05BCB08098009F10200FA502A830B9000000000000000000000F0102000000000000000000000000009F2103E800259F2608DD53340458AD69B59F2701809F34031E03009F3501169F3303E0F8C89F360200019F37045876B0989F3901009F4005F000F0A0019F4104000000009F6E1308400003030001012059876123400987612340")
+                    //.WithAuthenticatioNMethod(CardHolderAuthenticationMethod.ManualSignatureVerification)
+                    .Execute();
+            Assert.IsNotNull(response);
+
+            // check message data
+            PriorMessageInformation pmi = response.MessageInformation;
+            Assert.IsNotNull(pmi);
+            Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
+            Assert.AreEqual("000900", pmi.ProcessingCode);
+            Assert.AreEqual("441", pmi.FunctionCode);
+            Assert.AreEqual("4351", pmi.MessageReasonCode);
+            System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
+            System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
+            // check response
+            Assert.AreEqual("400", response.ResponseCode);
+        }
+        #endregion
     }
 }

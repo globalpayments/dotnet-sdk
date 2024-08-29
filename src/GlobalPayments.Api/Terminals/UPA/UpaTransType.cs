@@ -13,6 +13,8 @@
         public const string SendSAF = "SendSAF";
         public const string GetSAFReport = "GetSAFReport";
         public const string GetBatchReport = "GetBatchReport";
+        public const string GetBatchDetails = "GetBatchDetails";
+        public const string Reversal = "Reversal";
         public const string Tokenize = "Tokenize";
         public const string PreAuth = "PreAuth";
         public const string AuthCompletion = "AuthCompletion";
@@ -22,6 +24,43 @@
         public const string DeleteSAF = "DeleteSAF";
         public const string RegisterPOS = "RegisterPOS";
         public const string GetSignature = "GetSignature";
-
+        public const string Ping = "Ping";
+        public const string Restart = "Restart";
+        public const string GetAppInfo = "GetAppInfo";
+        public const string ClearDataLake = "ClearDataLake";
+        public const string SetTimeZone = "SetTimeZone";
+        public const string GetParam = "GetParam";    
+        public const string SetDebugLevel = "SetDebugLevel";
+        public const string GetDebugLevel = "GetDebugLevel";
+        public const string GetDebugInfo = "GetDebugInfo";
+        public const string BroadcastConfiguration = "BroadcastConfiguration";
+        public const string ReturnToIdle = "ReturnToIdle";
+        public const string LoadUDDataFile = "LoadUDDataFile";
+        public const string RemoveUDDataFile = "RemoveUDDataFile";
+        public const string Scan = "Scan";
+        public const string PrintData = "PrintData";
+        public const string AvailableBatches = "AvailableBatches";
+        public const string ExecuteUDDataFile = "ExecuteUDDataFile";
+        public const string InjectUDDataFile = "InjectUDDataFile";
+        public const string GetConfigContents = "GetConfigContents";
+        public const string MailOrder = "MailOrder";
+        public const string UpdateTaxInfo = "UpdateTaxInfo";
+        public const string CommunicationCheck = "CommunicationCheck";
+        public const string Logon = "Logon";
+        public const string UpdateLodgingDetails = "UpdateLodgingDetails";
+        public const string GetLastEOD = "GetLastEOD";
+        public const string ForceSale = "ForceSale";
+        public const string RemoveCard = "RemoveCard";
+        public const string EnterPIN = "EnterPIN";
+        public const string PromptMenu = "PromptMenu";
+        public const string PromptwithOptions = "PromptWithOptions";
+        public const string GeneralEntry = "GeneralEntry";
+        public const string DisplayMessage = "DisplayMessage";
+        public const string ReturnDefaultScreen = "ReturnDefaultScreen";
+        public const string GetEncryptionType = "GetEncryptionType";
+        public const string ContinueEmvTransaction = "ContinueEMVTransaction";
+        public const string CompleteEMVTransaction = "CompleteEMVTransaction";
+        public const string ProcessCardTransaction = "ProcessCardTransaction";
+        public const string ContinueCardTransaction = "ContinueCardTransaction";
     }
 }

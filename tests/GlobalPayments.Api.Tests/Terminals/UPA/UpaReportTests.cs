@@ -1,9 +1,12 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
+using GlobalPayments.Api.Terminals.Enums;
 using GlobalPayments.Api.Terminals.UPA;
+using GlobalPayments.Api.Terminals.UPA.Responses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
+using GlobalPayments.Api.Utils.Logging;
 
 namespace GlobalPayments.Api.Tests.Terminals.UPA
 {
@@ -17,10 +20,11 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.130",
+                IpAddress = "192.168.8.181",
                 Port = "8081",
                 Timeout = 30000,
-                RequestIdProvider = new RandomIdProvider()
+                RequestIdProvider = new RandomIdProvider(),
+                LogManagementProvider = new RequestConsoleLogger()
             });
             Assert.IsNotNull(_device);
         }
@@ -37,12 +41,24 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         [TestMethod]
         public void GetBatchReport() {
             // The BatchID needs to be supplied from a valid Batch in order for this test to pass
-            var batchId = 1234;
+            var batchId = 1006209;
             var report = _device.GetBatchReport()
                     .Where(UpaSearchCriteria.Batch, batchId).And(UpaSearchCriteria.EcrId, 13)
                     .Execute() as BatchReportResponse;
             Assert.IsNotNull(report);
             Assert.AreEqual("Success", report.Status);
+        }
+
+        [TestMethod]
+        public void GetBatchDetails() {
+            _device.EcrId = "1";
+            var response = _device.GetBatchDetails("1006209", true) as BatchReportResponse;
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.IsNotNull(response.BatchRecord);
+            Assert.IsNotNull(response.BatchRecord.TransactionDetails);
+            Assert.AreEqual("1006209", response.BatchRecord.BatchId.ToString());
         }
 
         [TestMethod]
@@ -74,6 +90,19 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
                 Thread.Sleep(1000);
             }            
+        }
+
+        [TestMethod]
+        public void FindAvailableBatches()
+        {
+            _device.EcrId = "12";
+            var response = _device.FindBatches()
+                .Where(UpaSearchCriteria.EcrId, 13)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response, typeof(BatchList));            
+            Assert.IsTrue(((BatchList)response).Batches.Count > 0);                       
+            Assert.AreEqual("Success", response.Status);
         }
     }
 }

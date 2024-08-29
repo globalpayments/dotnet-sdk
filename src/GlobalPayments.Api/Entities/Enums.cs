@@ -356,7 +356,19 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         BuyNowPayLater = 1 << 19,
 
-        Account = 1 << 20
+        Account = 1 << 20,
+
+        UpdateTaxDetail = 1 << 21,
+
+        UpdateLodgingDetails = 1 << 22,
+
+        ContinueEMVTransaction = 1 << 23,
+
+        CompleteTransaction = 1 << 24,
+
+        ProcessTransaction = 1 << 25,
+
+        ContinueCardTransaction = 1 << 26
     }
 
     /// <summary>
@@ -1156,12 +1168,7 @@ public enum ReasonCode {
         Forced,	
         EndOfShift,	
         //EndOfDay	
-    }
-
-    public enum ReportOutput {
-        Print,
-        ReturnData
-    }
+    }    
 
     public enum LanguageEnum {
         [Description("en-US")]

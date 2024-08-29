@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GlobalPayments.Api.Entities;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.UPA
 {
@@ -22,5 +23,6 @@ namespace GlobalPayments.Api.Terminals.UPA
         public decimal ReturnAmt { get; set; }
         public decimal TotalGratuityAmt { get; set; }
         public List<BatchTransactionResponse> BatchTransactions { get; set; }
+        public List<TransactionSummary> TransactionDetails { get; set; }
     }
 }

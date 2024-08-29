@@ -1,10 +1,13 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
 
 namespace GlobalPayments.Api.Tests.Terminals.UPA
 {
@@ -14,17 +17,27 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         IDeviceInterface _device;
 
         private int validYear = DateTime.Now.Year + 1;
+        private CreditCardData card;
 
         public UpaCreditTests() {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.130",
+                IpAddress = "192.168.8.181",
                 Port = "8081",
                 Timeout = 30000,
-                RequestIdProvider = new RandomIdProvider()
+                RequestIdProvider = new RandomIdProvider(),
+                LogManagementProvider = new RequestConsoleLogger()
             });
             Assert.IsNotNull(_device);
+
+            card = new CreditCardData();
+            card.Number = "4111111111111111";
+            card.ExpMonth = 12;
+            card.ExpYear = validYear;
+            card.Cvn = "123";
+            card.CardHolderName = "Joe Smith";
+            card.EntryMethod = ManualEntryMethod.Mail;
         }
 
         [TestCleanup]
@@ -60,6 +73,58 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
+        public void CreditSale_OnlyMandatory()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            }; 
+            
+            var response = _device.Sale(10m)
+                .WithEcrId(13)
+                .Execute();
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+        }
+        
+        [TestMethod]
+        public void CreditSale_ZeroTip()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            }; 
+            
+            var response = _device.Sale(10m)
+                .WithEcrId(13)
+                .WithGratuity(0m)
+                .Execute();
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+        }
+        
+        [TestMethod]
+        public void CreditSale_WithTip()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            }; 
+            
+            var response = _device.Sale(10m)
+                .WithEcrId(13)
+                .WithGratuity(1m)
+                .Execute();
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual(1.00m, response.TipAmount);
+            Assert.AreEqual(11.00m, response.TransactionAmount);
+        }
+        
+        [TestMethod]
         public void PreAuth() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
@@ -75,17 +140,15 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             var response = _device.Authorize()
                 .WithEcrId(13)
                 .WithClerkId(123)
-                // .WithRequestMultiUseToken(true)
-                // .WithToken("2323")
-                // .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
                 .WithCardBrandTransId("transId")
                 .WithAmount(10m)
                 .WithTerminalRefNumber("1234")
                 .WithAutoSubstantiation(autoSub)
-                .WithInvoiceNumber("12345")
                 .Execute();
+            
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("Success", response.DeviceResponseText);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -111,16 +174,15 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 CheckOutDate = DateTime.Now.AddDays(3),
                 DailyRate = 11m,
                 PreferredCustomer = 1,
-                ExtraChargeTotal = 10m,
-                ExtraChargeTypes = new ExtraChargeTypes()
-                { 
-                    HasRestaurantCharge = true,
-                    HasGiftShopCharge = true,
-                    HasMiniBarCharge = true,
-                    HasTelephoneCharge = true,
-                    HasLaundryCharge = true,
-                    HasOtherCharge = true,
-                }
+                //ExtraChargeTotal = 10m,
+                ExtraChargeTypes = new List<ExtraChargeType>() {
+                    {ExtraChargeType.Restaurant},
+                    {ExtraChargeType.GiftShop},
+                    {ExtraChargeType.MiniBar},
+                    {ExtraChargeType.Telephone },
+                    {ExtraChargeType.Laundry},
+                    {ExtraChargeType.Other},
+                },            
             };
 
             var incrementalPreAuthResponse = _device.Authorize()
@@ -136,7 +198,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.AreEqual("00", incrementalPreAuthResponse.ResponseCode);     
 
             var completionResponse = _device.Capture(145m)
-                .WithEcrId(13)                
+                .WithEcrId("13")                
                 .WithTransactionId(preAuthResponse.TransactionId)
                 .WithTerminalRefNumber(preAuthResponse.ReferenceNumber)
                 .Execute();
@@ -153,19 +215,19 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             };
 
             var response = _device.Capture()
-                .WithEcrId(13)
+                .WithEcrId("1")
                 .WithAmount(12m)
-                .WithTerminalRefNumber("1234567")
-                .WithTransactionId("12")// response.TransactionId)
+                .WithTransactionId("0141")// response.TransactionId)
                 .WithTaxAmount(5m)
                 .WithGratuity(1m)
                 .WithTaxType(TaxType.TAXEXEMPT)
                 .WithInvoiceNumber("12")
                 .WithProcessCPC(1)
                 .Execute();
+            
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
-
+            Assert.AreEqual("Success", response.DeviceResponseText);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -221,11 +283,44 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             };
 
             var response = _device.DeletePreAuth()
-                .WithEcrId(13)
-                .WithTerminalRefNumber("1234567")
+                .WithEcrId("13")
+                .WithTransactionId("0141")
                 .Execute();
+            
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("Success", response.DeviceResponseText);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+
+        }
+
+        [TestMethod]
+        public void MailOrder()
+        {
+            card.EntryMethod = ManualEntryMethod.Mail;
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var transAmount = 10;
+            var response = _device.Sale(transAmount)
+                .WithEcrId(12)
+                .WithTaxAmount(2.18m)
+                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithProcessCPC(true)
+                .WithRequestMultiUseToken(true)
+                .WithInvoiceNumber("123A10")
+                .WithPaymentMethod(card)
+                .WithAllowDuplicates(true)
+                .WithClerkId(1234)
+                .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
+                .WithCardBrandTransId("transId")
+                .WithShippingDate(DateTime.Now)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.IsNotNull(response.TransactionId);
+            Assert.AreEqual(transAmount, response.TransactionAmount);
 
         }
 
@@ -326,12 +421,106 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
+            Thread.Sleep(5000);
+            
             var voidResponse = _device.Void()
-                .WithTerminalRefNumber(response.TerminalRefNumber)
                 .WithTransactionId(response.TransactionId)
+                .WithEcrId("1")
                 .Execute();
+            
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void UpdateTaxInfo()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            
+            var responseSale = _device.Sale(10m)
+                .WithGratuity(0m)
+                .WithEcrId(13)
+                .Execute();
+            
+            Assert.IsNotNull(responseSale);
+            Assert.AreEqual("Success", responseSale.Status);
+            Assert.AreEqual("00", responseSale.DeviceResponseCode);
+            
+            Thread.Sleep(5000);
+            
+            var response = _device.UpdateTaxInfo(responseSale.TransactionAmount)
+                .WithTerminalRefNumber(responseSale.TerminalRefNumber)
+                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithEcrId("1")
+                .Execute();
+            
+            Assert.IsNotNull(response);            
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void UpdateLodgingDetails()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            
+            var responseSale = _device.Sale(10m)
+                .WithGratuity(0m)
+                .WithEcrId(13)
+                .Execute();
+            
+            Assert.IsNotNull(responseSale);
+            Assert.AreEqual("Success", responseSale.Status);
+            Assert.AreEqual("00", responseSale.DeviceResponseCode);
+            
+            Thread.Sleep(5000);
+            
+            var lodging = new Lodging();
+            lodging.FolioNumber = 1;
+            lodging.ExtraChargeTypes = new List<ExtraChargeType>() {
+                    {ExtraChargeType.Telephone},
+                    {ExtraChargeType.Other},
+                };
+
+            var response = _device.UpdateLodginDetail(responseSale.TransactionAmount)                
+                .WithTransactionId(responseSale.TransactionId)
+                .WithLodgingData(lodging)
+                .WithEcrId("1")
+                .Execute();
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);           
+        }
+
+        [TestMethod]
+        public void ForceSale()
+        {
+            var trnAmount = 10;
+            card.EntryMethod = ManualEntryMethod.Phone;
+
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var response = _device.Sale(trnAmount)
+                .WithEcrId(12)
+                .WithPaymentMethod(card)
+                .WithClerkId(123)
+                .WithTaxAmount(2.18m)
+                .WithTaxType(TaxType.TAXEXEMPT)
+                .WithGratuity(12.56m)
+                .WithInvoiceNumber("123456789012345")
+                .WithAllowDuplicates(true)
+                .WithConfirmationAmount(true)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("FORCESALE", response.TransactionType);
         }
 
         [TestMethod]
@@ -344,14 +533,14 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             {
                 messageSent = message;
                 // Use a logger of your choice to capture and log the message
-                System.Diagnostics.Debug.WriteLine(messageSent);
+                Debug.WriteLine(messageSent);
             };
 
             _device.OnMessageReceived += (message) =>
             {
                 messageReceived = message;
                 // Use a logger of your choice to capture and log the message
-                System.Diagnostics.Debug.WriteLine(messageReceived);
+                Debug.WriteLine(messageReceived);
             };
 
             var response = _device.Sale(10m)
@@ -368,7 +557,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         public void CreditVoidNoTransactionId()
         {
             _device.Void()
-                .WithEcrId(13)
+                .WithEcrId("13")
                 .WithTerminalRefNumber("12")
                 .Execute();
         }
@@ -432,7 +621,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
             var tipAdjustResponse = _device.TipAdjust(3.00m)
                 .WithTerminalRefNumber(saleResponse.TerminalRefNumber)
-                .WithEcrId(13)                
+                .WithEcrId("13")                
                 .Execute();
             Assert.IsNotNull(tipAdjustResponse);
             Assert.AreEqual(18.12m, tipAdjustResponse.TransactionAmount);
@@ -466,6 +655,31 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void SaleReversal()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            var response = _device.Sale(10)
+                .WithGratuity(0m)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.IsNotNull(response.TerminalRefNumber);
+        
+            Thread.Sleep(5000);
+            
+            var reverseResponse = _device.Reverse()
+                .WithTerminalRefNumber(response.TerminalRefNumber)
+                .WithEcrId("1")
+                .Execute();
+
+            Assert.IsNotNull(reverseResponse);
+            Assert.AreEqual("00", reverseResponse.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -545,7 +759,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             IDeviceInterface timeoutDevice = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.NUCLEUS_SATURN_1000,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.0.105",
+                IpAddress = "192.168.213.79",
                 Port = "8081",
                 Timeout = 1, // overly-short timeout value to trigger exception in UpaTcpInterface
                 RequestIdProvider = new RandomIdProvider()

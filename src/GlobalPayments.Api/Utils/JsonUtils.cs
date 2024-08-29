@@ -223,5 +223,16 @@ namespace GlobalPayments.Api.Utils {
             }
             return responses;
         }
+
+        public void SetArrange(string key, JsonDoc dataParams) {
+            if (dataParams.HasKeys()) {
+                if (_dict.ContainsKey(key)) {
+                    _dict[key] = dataParams;
+                }
+                else {
+                    _dict.Add(key, dataParams);
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Enums;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,21 @@ namespace GlobalPayments.Api.Terminals.UPA
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
 
         public SafReportResponse(JsonDoc root) {
-            if (!TerminalUtilities.IsGpApiResponse(root)) {
+            ParseResponse(root);
+        }
+
+        private void ParseResponse(JsonDoc root) {
+            if (!TerminalUtilities.IsGpApiResponse(root))
+            {
                 var firstDataNode = root.Get("data");
                 if (firstDataNode == null) {
                     throw new MessageException(INVALID_RESPONSE_FORMAT);
                 }
 
-                var cmdResult = firstDataNode.Get("cmdResult");
-                if (cmdResult == null) {
-                    throw new MessageException(INVALID_RESPONSE_FORMAT);
-                }
+                    var cmdResult = firstDataNode.Get("cmdResult");
+                    if (cmdResult == null) {
+                        throw new MessageException(INVALID_RESPONSE_FORMAT);
+                    }
 
                 Status = cmdResult.GetValue<string>("result");
                 if (string.IsNullOrEmpty(Status)) {
@@ -36,7 +42,8 @@ namespace GlobalPayments.Api.Terminals.UPA
                 else {
                     // If the Status is not "Success", there is either nothing to process, or something else went wrong.
                     // Skip the processing of the rest of the message, as we'll likely hit null reference exceptions
-                    if (Status == "Success") {
+                    if (Status == "Success")
+                    {
                         ReportResult = new SafReport();
                         var secondDataNode = firstDataNode.Get("data");
                         if (secondDataNode == null) {
@@ -45,17 +52,16 @@ namespace GlobalPayments.Api.Terminals.UPA
                         Multiplemessage = secondDataNode.GetValue<string>("multipleMessage");
                         var safDetailsList = secondDataNode.GetEnumerator("SafDetails");
 
-                        foreach (var detail in safDetailsList) {
-                            var safRecords = detail.GetEnumerator("SafRecords");
+                            foreach (var detail in safDetailsList) {
+                                var safRecords = detail.GetEnumerator("SafRecords");
 
-                            if (ReportResult.TotalAmount == null)
-                                ReportResult.TotalAmount = 0.00m;
+                                if (ReportResult.TotalAmount == null)
+                                    ReportResult.TotalAmount = 0.00m;
 
-                            ReportResult.TotalAmount += detail.GetValue<decimal>("SafTotal");
-                            ReportResult.TotalCount += detail.GetValue<int>("SafCount");
+                                ReportResult.TotalAmount += detail.GetValue<decimal>("SafTotal");
+                                ReportResult.TotalCount += detail.GetValue<int>("SafCount");
 
-                            SummaryResponse summaryResponse = new SummaryResponse()
-                            {
+                            SummaryResponse summaryResponse = new SummaryResponse() {
                                 TotalAmount = detail.GetValue<decimal>("SafTotal"),
                                 Count = detail.GetValue<int>("SafCount"),
                                 SummaryType = MapSummaryType(detail.GetValue<string>("SafType")),
@@ -64,8 +70,7 @@ namespace GlobalPayments.Api.Terminals.UPA
 
                             if (detail.Has("SafRecords")) {
                                 foreach (var record in detail.GetEnumerator("SafRecords")) {
-                                    TransactionSummary transactionSummary = new TransactionSummary()
-                                    {
+                                    TransactionSummary transactionSummary = new TransactionSummary() {
                                         TransactionType = record.GetValue<string>("transactionType"),
                                         TerminalRefNumber = record.GetValue<string>("transId"), // The sample XML says tranNo?
                                         ReferenceNumber = record.GetValue<string>("referenceNumber"),
@@ -102,27 +107,30 @@ namespace GlobalPayments.Api.Terminals.UPA
                                 ReportResult.Pending.Add(summaryResponse.SummaryType, summaryResponse);
                             }
                             else if (summaryResponse.SummaryType == SummaryType.Declined) {
-                                if (ReportResult.Declined == null) {
+                                if (ReportResult.Declined == null)
+                                {
                                     ReportResult.Declined = new Dictionary<SummaryType, SummaryResponse>();
                                 }
                                 ReportResult.Declined.Add(summaryResponse.SummaryType, summaryResponse);
                             }
                         }
                     }
-                    else { // the only other option is "Failed"
+                    else { 
+                        // the only other option is "Failed"
                         var errorCode = cmdResult.GetValue<string>("errorCode");
                         var errorMsg = cmdResult.GetValue<string>("errorMessage");
                         DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
                     }
                 }
             }
-            else {
+            else
+            {
+                RequestId = int.Parse(root.Get("response").GetValue<string>("requestId"));
                 DeviceResponseText = root.GetValue<string>("status");
-                var responseText = root.Get("action").GetValue<string>("result_code");
-                DeviceResponseCode = responseText;
+                DeviceResponseCode = root.Get("action").GetValue<string>("result_code"); ;
             }
         }
-        
+
         private SummaryType MapSummaryType(string safType) {
             switch (safType)
             {

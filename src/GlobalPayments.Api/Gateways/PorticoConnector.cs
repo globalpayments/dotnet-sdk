@@ -207,21 +207,33 @@ namespace GlobalPayments.Api.Gateways {
             #region ITrackData
             else if (builder.PaymentMethod is ITrackData) {
                 var track = builder.PaymentMethod as ITrackData;
-
                 var trackData = et.SubElement(cardData, hasToken ? "TokenData" : "TrackData");
                 if (!hasToken) {
                     trackData.Text(track.Value);
-                    trackData.Set("method", track.EntryMethod == EntryMethod.Swipe ? "swipe" : "proximity");
+                    trackData.Set("method", track.EntryMethod.ToString().ToLower());
                     if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
                         // Tag data
-                        if (!string.IsNullOrEmpty(builder.TagData) || builder.HasEmvFallbackData) {
-                            var tagData = et.SubElement(block1, "EMVData");
-
-                            if (!string.IsNullOrEmpty(builder.TagData))
-                                et.SubElement(tagData, "EMVTagData", builder.TagData);
-
-                            if (builder.HasEmvFallbackData && (builder.EmvLastChipRead != null))
-                                et.SubElement(tagData, "EMVChipCondition", EnumConverter.GetMapping(Target.Portico, builder.EmvLastChipRead));
+                        if (!string.IsNullOrEmpty(builder.TagData)) {
+                            var tagData = et.SubElement(block1, "TagData");
+                            var tagValues = et.SubElement(tagData, "TagValues", builder.TagData);
+                            tagValues.Set("source", "chip");
+                        }
+                        if (builder.HasEmvFallbackData)
+                        {
+                            Element emvData = et.SubElement(block1, "EMVData");
+                            if (builder.EmvLastChipRead != null)
+                            {
+                                String chipCondition = builder.EmvLastChipRead == EmvLastChipRead.Successful ? "CHIP_FAILED_PREV_SUCCESS" : "CHIP_FAILED_PREV_FAILED";
+                                et.SubElement(emvData, "EMVChipCondition", chipCondition);
+                            }
+                            if (builder.PaymentMethod is IPinProtected @PinProtected && @PinProtected.PinBlock != null)
+                            {
+                                et.SubElement(emvData, "PINBlock", @PinProtected.PinBlock);
+                            }
+                            if (!block1.Has("EMVChipCondition") && !block1.Has("PINBlock"))
+                            {
+                                block1.Remove("EMVData");
+                            }
                         }
                     }
                     if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {

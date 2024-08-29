@@ -50,6 +50,12 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
                 DeviceResponseText = root.GetValue<string>("status");
                 var responseText = root.Get("action").GetValue<string>("result_code");
                 DeviceResponseCode = responseText;
+                var secondDataNode = root.Get("response").Get("data");
+                if (secondDataNode == null){
+                    throw new MessageException(INVALID_RESPONSE_FORMAT);
+                }
+                var signatureData = secondDataNode.GetValue<string>("signatureData");
+                SignatureData = Convert.FromBase64String(signatureData);
             }
 
         }

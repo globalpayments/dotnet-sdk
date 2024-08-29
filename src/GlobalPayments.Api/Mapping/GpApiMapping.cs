@@ -314,16 +314,14 @@ namespace GlobalPayments.Api.Mapping {
             transaction.BNPLResponse = bnplResponse;           
         }
 
-        private static bool? GetIsShippable(JsonDoc doc) 
-        {
+        private static bool? GetIsShippable(JsonDoc doc) {
             if (doc.Has("shippable")) {
                 return doc.GetValue<string>("shippable").ToUpper() == "YES" ? true : false;
             }
             return null;
         }
 
-        public static TransactionSummary MapTransactionSummary(JsonDoc doc) 
-        {
+        public static TransactionSummary MapTransactionSummary(JsonDoc doc) {
             var summary = new TransactionSummary {
                 TransactionId = doc.GetValue<string>("id"),
                 TransactionDate = doc.GetValue<DateTime?>("time_created", DateConverter),
@@ -348,8 +346,12 @@ namespace GlobalPayments.Api.Mapping {
                 MerchantDbaName = doc.Get("system")?.GetValue<string>("dba"),
             };
 
-            if (doc.Has("payment_method"))
-            {
+            if (doc.Has("order")) {
+                JsonDoc order = doc.Get("order");
+                summary.OrderId = order?.GetValue<string>("reference");
+            }
+
+            if (doc.Has("payment_method")) {
                 JsonDoc paymentMethod = doc.Get("payment_method");
                 summary.GatewayResponseMessage = paymentMethod?.GetValue<string>("message");
                 summary.EntryMode = paymentMethod?.GetValue<string>("entry_mode");
@@ -400,8 +402,7 @@ namespace GlobalPayments.Api.Mapping {
                         summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.APM);
                     }
                 }
-                else if (paymentMethod.Has("bnpl"))
-                {
+                else if (paymentMethod.Has("bnpl")) {
                     JsonDoc bnpl = paymentMethod?.Get("bnpl");
                     var bnplResponse = new BNPLResponse();                    
                     bnplResponse.ProviderName = bnpl?.GetValue<string>("provider");                    

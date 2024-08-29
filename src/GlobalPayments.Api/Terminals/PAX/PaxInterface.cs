@@ -5,9 +5,10 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using System.Text;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Terminals.PAX.Responses;
+using GlobalPayments.Api.Terminals.Enums;
 
 namespace GlobalPayments.Api.Terminals.PAX {
-    public class PaxInterface : DeviceInterface<PaxController>, IDeviceInterface {
+    public class PaxInterface : DeviceInterface<PaxController> {
         internal PaxInterface(PaxController controller) : base(controller) {
         }
         #region Administration Messages
@@ -218,86 +219,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
             var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.B04_BATCH_CLEAR, "01")); //Sending specific Credit EDC type.
             return new BatchClearResponse(response);
         }
-        #endregion
-
-        #region Credit Methods
-        //public TerminalAuthBuilder CreditAuth(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Auth, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        //public TerminalManageBuilder CreditCapture(decimal? amount = null) {
-        //    return new TerminalManageBuilder(TransactionType.Capture, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        ////public TerminalManageBuilder CreditEdit(decimal? amount = null) {
-        ////    return new TerminalManageBuilder(TransactionType.Edit).WithAmount(amount);
-        ////}
-
-        //public TerminalAuthBuilder CreditRefund(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder CreditSale(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder CreditVerify() {
-        //    return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit);
-        //}
-
-        //public TerminalManageBuilder CreditVoid() {
-        //    return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.Credit);
-        //}
-        #endregion
-
-        #region Debit Methods
-        //public TerminalAuthBuilder DebitRefund(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.Debit).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder DebitSale(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Debit).WithAmount(amount);
-        //}
-        #endregion
-
-        #region EBT Methods
-        //public TerminalAuthBuilder EbtBalance() {
-        //    return new TerminalAuthBuilder(TransactionType.Balance, PaymentMethodType.EBT);
-        //}
-
-        //public TerminalAuthBuilder EbtPurchase(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.EBT).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder EbtRefund(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.EBT).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder EbtWithdrawl(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.BenefitWithdrawal, PaymentMethodType.EBT).WithAmount(amount);
-        //}
-        #endregion
-
-        #region Gift Methods
-        //public TerminalAuthBuilder GiftSale(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Gift)
-        //        .WithAmount(amount)
-        //        .WithCurrency(CurrencyType.CURRENCY);
-        //}
-
-        //public TerminalAuthBuilder GiftAddValue(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.AddValue, PaymentMethodType.Gift)                
-        //        .WithCurrency(CurrencyType.CURRENCY)
-        //        .WithAmount(amount);
-        //}
-
-        //public TerminalManageBuilder GiftVoid() {
-        //    return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.Gift).WithCurrency(CurrencyType.CURRENCY);
-        //}
-
-        //public TerminalAuthBuilder GiftBalance() {
-        //    return new TerminalAuthBuilder(TransactionType.Balance, PaymentMethodType.Gift).WithCurrency(CurrencyType.CURRENCY);
-        //}
-        #endregion
+        #endregion 
     }
 }

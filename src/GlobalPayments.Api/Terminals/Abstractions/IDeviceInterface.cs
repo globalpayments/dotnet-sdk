@@ -6,11 +6,13 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
+using GlobalPayments.Api.Terminals.UPA;
 
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
         event MessageSentEventHandler OnMessageSent;
         event MessageReceivedEventHandler OnMessageReceived;
+        ValidationRequest Validations { get; set; }
         string EcrId { get; set; }
         #region Admin Calls
         void Cancel();
@@ -23,12 +25,52 @@ namespace GlobalPayments.Api.Terminals {
         ISignatureResponse PromptForSignature(string transactionId = null);
         IDeviceResponse Reboot();
         IDeviceResponse Reset();
+        IDeviceResponse GetAppInfo();
+        IDeviceResponse ClearDataLake();
+        IDeviceResponse ReturnToIdle();
+        IDeviceScreen LoadUDData(UDData udData);
+        IDeviceScreen RemoveUDData(UDData udData);        
+        IDeviceResponse Scan(ScanData scanData = null);        
+        IDeviceResponse Print(PrintData printData);
+        IDeviceResponse SetTimeZone(string timezone);
+        IDeviceResponse GetParams(string[] parameters);
+        /// <summary>
+        /// <paramref name="debugLevel"/> is of type DebugLevel Enum
+        /// <paramref name="logToConsole"/> is of type LogToConsole Enum
+        /// </summary>
+        /// <param name="debugLevel"></param>
+        /// <param name="logToConsole"></param>
+        /// <returns></returns>
+        IDeviceResponse SetDebugLevel(Enum[] debugLevel, Enum logToConsole = null);
+        IDeviceResponse GetDebugLevel();
+        /// <summary>
+        /// <paramref name="logFile"/> is of type LogFile Enum
+        /// </summary>
+        /// <param name="logFile"></param>
+        /// <returns></returns>
+        IDeviceResponse GetDebugInfo(Enum logFile = null);
+        IDeviceResponse BroadcastConfiguration(bool enable);
+        IDeviceResponse ExecuteUDDataFile(UDData udData);
+        IDeviceResponse InjectUDDataFile(UDData udData);
+        IDeviceResponse GetConfigContents(TerminalConfigType configType);
+        TerminalManageBuilder UpdateTaxInfo(decimal? amount = null);
+        TerminalManageBuilder UpdateLodginDetail(decimal? amount = null);
+        IDeviceResponse CommunicationCheck();
+        IDeviceResponse Logon();
+        IBatchCloseResponse GetLastEOD();
         string SendCustomMessage(DeviceMessage message);
         IDeviceResponse SendFile(SendFileType fileType, string filePath);
+        IDeviceResponse RemoveCard(string language = null);
+        IDeviceResponse EnterPin(PromptMessages promptMessages, bool canBypass, string accountNumber);
+        IDeviceResponse Prompt(PromptType promptType, PromptData promptData);
+        IDeviceResponse GetGenericEntry(GenericData data);
+        IDeviceResponse DisplayMessage(MessageLines messageLines);
+        IDeviceResponse ReturnDefaultScreen(DisplayOption option);
+        IDeviceResponse GetEncryptionType();
         ISAFResponse SendStoreAndForward();
         ISafDeleteFileResponse DeleteStoreAndForwardFile(SafIndicator safIndicator);
         ISAFResponse DeleteSaf(string safreferenceNumer, string tranNo=null);
-        IDeviceResponse RegisterPOS(string appName, int launchOrder = 0, bool remove = false, int silent = 0);
+        IDeviceResponse RegisterPOS(POSData posData);
         IDeviceResponse SetStoreAndForwardMode(bool enabled);
         IDeviceResponse SetStoreAndForwardMode(SafMode safMode);
         IDeviceResponse SetStoreAndForwardMode(SafMode safMode, string startDateTime = null
@@ -41,8 +83,12 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse StartCard(PaymentMethodType paymentMethodType);
         IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData);
         ISignatureResponse PromptAndGetSignatureFile(string prompt1, string prompt2, int? displayOption);
+        IDeviceResponse Ping();
         IDeviceResponse UpdateResource(UpdateResourceFileType fileType, byte[] fileData, bool isHttpDeviceConnectionMode);
         IDeviceResponse DeleteResource(string fileName);
+        TerminalAuthBuilder ContinueTransaction(decimal amount, bool isEmv = false);
+        TerminalAuthBuilder CompleteTransaction();
+        TerminalAuthBuilder ProcessTransaction(decimal amount, TransactionType transactionType = TransactionType.Sale);
         #endregion
 
         #region reporting
@@ -50,6 +96,8 @@ namespace GlobalPayments.Api.Terminals {
         TerminalReportBuilder GetSAFReport();
         TerminalReportBuilder GetBatchReport();
         TerminalReportBuilder GetOpenTabDetails();
+        ITerminalReport GetBatchDetails(string batchId, bool printReport = false);
+        TerminalReportBuilder FindBatches();
         #endregion
 
         #region Batch Calls
@@ -107,6 +155,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalAuthBuilder AuthCompletion();
         TerminalManageBuilder DeletePreAuth();
         TerminalManageBuilder IncreasePreAuth(decimal amount);
+        TerminalManageBuilder Reverse();
         #endregion
 
         #region Report Calls        

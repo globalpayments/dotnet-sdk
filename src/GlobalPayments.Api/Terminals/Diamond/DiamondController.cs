@@ -7,6 +7,7 @@ using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Diamond.Entities;
 using GlobalPayments.Api.Terminals.Diamond.Interfaces;
 using GlobalPayments.Api.Terminals.Diamond.Responses;
+using GlobalPayments.Api.Terminals.Enums;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,20 @@
 # Changelog
 
-## Latest - v8.0.20 (08/13/24)
+## Latest - v9.0.0 (08/29/24)
+
+### Enhancement
+
+- [UPA] Add new UPA commands.
+- [Portico] Using TagData for EMV tags. Removed deprecated field EMVTagData.
+- [NWS] Add EMV Contactless support for NWS.
+- [NWS] Add Voyager EMV Support for NWS.
+
+
+### Bug Fixes:
+- [GP-API] Correct mapping for the order id for settlement reporting.
+- [NWS]:Remove TransactionId mandatory field for Capture transaction type for NWS
+
+## v8.0.20 (08/13/24)
 
 ### Enhancement
 

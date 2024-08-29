@@ -716,17 +716,44 @@ namespace GlobalPayments.Api.Gateways {
                         if (paymentMethodType.Equals(PaymentMethodType.Credit) || paymentMethodType.Equals(PaymentMethodType.Debit)) {
                             dataCode.CardHolderPresence = DE22_CardHolderPresence.CardHolder_Present;
                             dataCode.CardPresence = DE22_CardPresence.CardPresent;
-
-                            if (track.EntryMethod.Equals(EntryMethod.Swipe)) {
-                                dataCode.CardDataInputMode = DE22_CardDataInputMode.MagStripe;
+                            // set data codes
+                            if (builder.TagData != null)
+                            {
+                                if (track.EntryMethod.Equals(EntryMethod.Proximity))
+                                {
+                                    dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactlessEmv;
+                                }
+                                else dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactEmv;
                             }
-                            else if (track.EntryMethod.Equals(EntryMethod.Proximity)) {
-                                dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactlessMsd;
-                            }
-                            else {
-                                dataCode.CardDataInputMode = DE22_CardDataInputMode.UnalteredTrackData;
+                            else
+                            {
+                                if (track.EntryMethod.Equals(EntryMethod.Swipe))
+                                {
+                                    dataCode.CardDataInputMode = DE22_CardDataInputMode.MagStripe;
+                                }
+                                else if (track.EntryMethod.Equals(EntryMethod.Proximity))
+                                {
+                                    dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactlessMsd;
+                                }
+                                else
+                                {
+                                    dataCode.CardDataInputMode = DE22_CardDataInputMode.UnalteredTrackData;
+                                }
                             }
                         }
+                        if (originalPaymentMethod is IPinProtected pin)
+                        {
+                            string pinBlock = pin.PinBlock;
+                            if (!string.IsNullOrEmpty(pinBlock))
+                            {
+                                // DE 52: Personal Identification Number (PIN) Data - b8
+                                request.Set(DataElementId.DE_052, StringUtils.BytesFromHex(pinBlock.Substring(0, 16)));
+
+                                // DE 53: Security Related Control Information - LLVAR an..48
+                                request.Set(DataElementId.DE_053, pinBlock.Substring(16));
+                            }
+                        }
+
                     }
                     else if (originalPaymentMethod is GiftCard gift) {
                         // DE 35 / DE 45
@@ -1355,7 +1382,6 @@ namespace GlobalPayments.Api.Gateways {
                     string messageTransactionIndicator = mr.ReadString(4);
                     NetworkMessage message = NetworkMessage.Parse(mr.ReadBytes(buffer.Length), Iso8583MessageType.CompleteMessage);
                     message.MessageTypeIndicator = messageTransactionIndicator;
-
                     // log out the breakdown
                     //if (EnableLogging) {
                     //    System.Diagnostics.Debug.WriteLine("\r\nResponse Breakdown:\r\n" + message.ToString());
@@ -2333,12 +2359,18 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             // DE48-14
-            if (builder.PaymentMethod is IPinProtected) {
-                DE48_14_PinEncryptionMethodology pinEncryptionMethodology = new DE48_14_PinEncryptionMethodology {
-                    KeyManagementDataCode = DE48_KeyManagementDataCode.DerivedUniqueKeyPerTransaction_DUKPT,
-                    EncryptionAlgorithmDataCode = DE48_EncryptionAlgorithmDataCode.TripleDES_3Keys
-                };
-                messageControl.PinEncryptionMethodology = pinEncryptionMethodology;
+            if (builder.PaymentMethod is IPinProtected pin) {
+                string pinBlock = pin.PinBlock;
+                if (!string.IsNullOrEmpty(pinBlock))
+                {
+                    DE48_14_PinEncryptionMethodology pinEncryptionMethodology = new DE48_14_PinEncryptionMethodology
+                    {
+                        KeyManagementDataCode = DE48_KeyManagementDataCode.DerivedUniqueKeyPerTransaction_DUKPT,
+                        EncryptionAlgorithmDataCode = DE48_EncryptionAlgorithmDataCode.TripleDES_3Keys
+                    };
+                    messageControl.PinEncryptionMethodology = pinEncryptionMethodology;
+                }
+                
             }
 
             // DE48-33
@@ -2498,24 +2530,24 @@ namespace GlobalPayments.Api.Gateways {
                 if (mb.TransactionType.Equals(TransactionType.BatchClose) && mb.BatchCloseType.Equals(BatchCloseType.Forced)) {
                     cardIssuerData.Add(DE62_CardIssuerEntryTag.TerminalError, "Y");
                 }
+                //This is specific to NTS/Vaps.Identified during Voyager EMV certification DEVEXP-935
+                //if (mb.PaymentMethod is TransactionReference reference) {
+                //    // NTS Specific Data
+                //    //if (reference.NtsData != null) {
+                //    //    cardIssuerData.Add(DE62_CardIssuerEntryTag.NTS_System, reference.NtsData.ToString());
+                //    //}
 
-                if (mb.PaymentMethod is TransactionReference reference) {
-                    // NTS Specific Data
-                    //if (reference.NtsData != null) {
-                    //    cardIssuerData.Add(DE62_CardIssuerEntryTag.NTS_System, reference.NtsData.ToString());
-                    //}
-
-                    // original payment method
-                    if (reference.OriginalPaymentMethod != null) {
-                        if (reference.OriginalPaymentMethod is CreditCardData) {
-                            cardIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, "NSI", "0");
-                        }
-                        else if (reference.OriginalPaymentMethod is ITrackData track) {
-                            string nsiValue = track.TrackNumber.Equals(TrackNumber.TrackTwo) ? "2" : "1";
-                            cardIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, nsiValue);
-                        }
-                    }
-                }
+                //    // original payment method
+                //    if (reference.OriginalPaymentMethod != null) {
+                //        if (reference.OriginalPaymentMethod is CreditCardData) {
+                //            cardIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, "NSI", "0");
+                //        }
+                //        else if (reference.OriginalPaymentMethod is ITrackData track) {
+                //            string nsiValue = track.TrackNumber.Equals(TrackNumber.TrackTwo) ? "2" : "1";
+                //            cardIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, nsiValue);
+                //        }
+                //    }
+                //}
             }
             else {
                 AuthorizationBuilder authBuilder = (AuthorizationBuilder)(object)builder;

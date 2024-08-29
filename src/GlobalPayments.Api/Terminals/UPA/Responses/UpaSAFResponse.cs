@@ -1,5 +1,6 @@
 ﻿using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
+using GlobalPayments.Api.Terminals.Enums;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;

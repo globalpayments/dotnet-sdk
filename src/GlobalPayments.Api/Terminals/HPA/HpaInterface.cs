@@ -3,10 +3,10 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.HPA.Responses;
-using GlobalPayments.Api.Terminals.Messaging;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using GlobalPayments.Api.Terminals.Enums;
 
 namespace GlobalPayments.Api.Terminals.HPA {
     public class HpaInterface : DeviceInterface<HpaController> {
@@ -114,10 +114,7 @@ namespace GlobalPayments.Api.Terminals.HPA {
         #endregion
 
         #region Reporting
-        public override TerminalReportBuilder LocalDetailReport() {
-            throw new NotImplementedException();
-        }
-
+       
         public override TerminalReportBuilder GetSAFReport()
         {
             return new TerminalReportBuilder(TerminalReportType.GetSAFReport);
@@ -150,80 +147,6 @@ namespace GlobalPayments.Api.Terminals.HPA {
         public override TerminalAuthBuilder Withdrawal(decimal? amount = null) {
             throw new UnsupportedTransactionException("This transaction is not currently supported for this payment type.");
         }
-        #endregion
-
-        #region Credit
-        //public TerminalAuthBuilder CreditAuth(decimal? amount = default(decimal?)) {
-        //    return new TerminalAuthBuilder(TransactionType.Auth, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        //public TerminalManageBuilder CreditCapture(decimal? amount = default(decimal?)) {
-        //    return new TerminalManageBuilder(TransactionType.Capture, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder CreditRefund(decimal? amount = default(decimal?)) {
-        //    return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder CreditSale(decimal? amount = default(decimal?)) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Credit).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder CreditVerify() {
-        //    return new TerminalAuthBuilder(TransactionType.Verify, PaymentMethodType.Credit);
-        //}
-
-        //public TerminalManageBuilder CreditVoid() {
-        //    return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.Credit);
-        //}
-        #endregion
-
-        #region Debit
-        //public TerminalAuthBuilder DebitSale(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Debit).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder DebitRefund(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.Debit).WithAmount(amount);
-        //}
-        #endregion
-
-        #region Gift & Loyalty
-        //public TerminalAuthBuilder GiftSale(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.Gift).WithAmount(amount).WithCurrency(CurrencyType.CURRENCY);
-        //}
-
-        //public TerminalAuthBuilder GiftAddValue(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.AddValue, PaymentMethodType.Gift)
-        //        .WithCurrency(CurrencyType.CURRENCY)
-        //        .WithAmount(amount);
-        //}
-
-        //public TerminalManageBuilder GiftVoid() {
-        //    return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.Gift).WithCurrency(CurrencyType.CURRENCY);
-        //}
-
-        //public TerminalAuthBuilder GiftBalance() {
-        //    return new TerminalAuthBuilder(TransactionType.Balance, PaymentMethodType.Gift).WithCurrency(CurrencyType.CURRENCY);
-        //}
-        #endregion
-
-        #region EBT Methods
-        //public TerminalAuthBuilder EbtBalance() {
-        //    return new TerminalAuthBuilder(TransactionType.Balance, PaymentMethodType.EBT);
-        //}
-
-        //public TerminalAuthBuilder EbtPurchase(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Sale, PaymentMethodType.EBT).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder EbtRefund(decimal? amount = null) {
-        //    return new TerminalAuthBuilder(TransactionType.Refund, PaymentMethodType.EBT).WithAmount(amount);
-        //}
-
-        //public TerminalAuthBuilder EbtWithdrawl(decimal? amount = null) {
-        //    throw new UnsupportedTransactionException("This transaction is not currently supported for this payment type.");
-        //}
         #endregion
     }
 }

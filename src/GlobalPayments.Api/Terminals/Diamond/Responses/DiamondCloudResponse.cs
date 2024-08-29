@@ -180,7 +180,8 @@ namespace GlobalPayments.Api.Terminals.Diamond.Responses {
         public string ApplicationCryptogram { get; set; }
         public string CardHolderVerificationMethod { get; set; }
         public string TerminalVerificationResults { get; set; }
-        public decimal? MerchantFee { get; set; }        
+        public decimal? MerchantFee { get; set; }
+        public string DeviceSerialNum { get; set; }
 
         public DiamondCloudResponse(string rawResponse) {
             if (JsonDoc.IsJson(rawResponse)) {

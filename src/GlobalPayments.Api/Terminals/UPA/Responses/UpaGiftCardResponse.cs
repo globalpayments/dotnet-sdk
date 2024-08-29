@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Utils;
 using System;
@@ -14,7 +15,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses
         public string AcquisitionType { get; set; }
         public string LuhnCheckPassed { get; set; }
         public string DataEncryptionType { get; set; }
-        public Pan Pan { get; set; }        
+        public PANDetails Pan { get; set; }        
         public TrackData TrackData { get; set; }       
         public string EmvTags { get; set; }
         public string ExpDate { get; set; }
@@ -77,34 +78,5 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses
             }
 
         }
-    }
-
-    public class PinDUKPT
-    {
-        public string Pinblock { get; set; }
-        public string Ksn { get; set; }
-    }
-
-    public class ThreeDesDukpt
-    {
-        public string EncryptedBlob { get; set; }
-        public string Ksn { get; set; }
-    }
-
-    public class Pan
-    {
-        public string ClearPAN { get; set; }
-        public string MaskedPAN { get; set; }
-        public string EncryptedPAN { get; set; }
-    }
-
-    public class TrackData
-    {
-        public string ClearTrack2 { get; set; }
-        public string MaskedTrack2 { get; set; }
-        public string ClearTrack1 { get; set; }
-        public string MaskedTrack1 { get; set; }
-        public string ClearTrack3 { get; set; }
-        public string MaskedTrack3 { get; set; }
     }
 }

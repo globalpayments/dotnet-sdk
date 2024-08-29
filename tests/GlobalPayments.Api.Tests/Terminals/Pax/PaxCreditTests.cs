@@ -460,7 +460,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
 
             var tipAdjustResponse = _device.TipAdjust(3.00m)
                 .WithTerminalRefNumber(saleResponse.TerminalRefNumber)
-                .WithEcrId(13)
+                .WithEcrId("13")
                 .Execute();
             Assert.IsNotNull(tipAdjustResponse);
             Assert.AreEqual("00", tipAdjustResponse.ResponseCode);

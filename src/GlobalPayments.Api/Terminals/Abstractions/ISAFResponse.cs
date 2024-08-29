@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GlobalPayments.Api.Terminals.Enums;
+using System.Collections.Generic;
 namespace GlobalPayments.Api.Terminals.Abstractions {
     public interface ISAFResponse : IDeviceResponse {
         int TotalCount { get; }
