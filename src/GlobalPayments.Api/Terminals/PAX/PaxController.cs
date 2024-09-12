@@ -147,6 +147,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
             if (builder.SignatureCapture)
                 extData[EXT_DATA.SIGNATURE_CAPTURE] = "1";
 
+            if (builder.Gratuity == null)
+                extData[EXT_DATA.TIP_REQUEST] = "1";
+
             if (builder.AutoSubstantiation != null) {
                 extData[EXT_DATA.PASS_THROUGH_DATA] = BuildAutoSubPassThruData(builder.AutoSubstantiation);
             }

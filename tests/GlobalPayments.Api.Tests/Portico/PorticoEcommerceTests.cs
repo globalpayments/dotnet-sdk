@@ -206,14 +206,19 @@ namespace GlobalPayments.Api.Tests.Portico {
             string custEmail = "John.Doe@Test.com";
             Customer customer = new Customer();
             customer.Email = custEmail;
+            customer.FirstName = "Megatron";
+            customer.LastName = "Prime";
 
             var response = card.Charge(10.00m)
                   .WithCurrency("USD")
                   .WithCustomerData(customer)
+                  .WithAllowDuplicates(true)
                   .Execute();
 
             var transactionDetails = ReportingService.TransactionDetail(response.TransactionId).Execute();
-      
+
+            var allTxn = ReportingService.FindTransactions().WithStartDate(DateTime.UtcNow.AddDays(-2)).WithEndDate(DateTime.UtcNow).Execute();
+
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 

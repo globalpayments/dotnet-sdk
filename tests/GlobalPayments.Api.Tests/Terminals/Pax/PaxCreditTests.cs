@@ -17,7 +17,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.120",
+                IpAddress = "192.168.0.5",
                 Port = "10009",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider()
@@ -464,6 +464,53 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 .Execute();
             Assert.IsNotNull(tipAdjustResponse);
             Assert.AreEqual("00", tipAdjustResponse.ResponseCode);
+        }
+
+        /**
+         * This test should demonstrates that the device IS prompting for a tip
+         * when a gratuity amount isn't provided to the builder. This assumes that
+         * the device has been configured for gratuity, which is something that is
+         * set at the terminal file level.
+         * 
+         *   **Requires end-user confirmation**
+         *   
+         */
+        [TestMethod]
+        public void TestTipPrompt()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var saleResponse = _device.Sale(15.12m)
+                .Execute();
+
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
+        }
+
+        /**
+         * This test should demonstrate that a the device is NOT prompting for a
+         * tip when a gratuity amount IS provided to the builder. This assumes that
+         * the device is configured for gratuity which is something that is set at
+         * the terminal file level.
+         * 
+         *   **Requires end-user confirmation**
+         * 
+         */
+        [TestMethod]
+        public void TestTipNoPrompt()
+        {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            var saleResponse = _device.Sale(15.12m)
+                .WithGratuity(3.00m)
+                .Execute();
+
+            Assert.IsNotNull(saleResponse);
+            Assert.AreEqual("00", saleResponse.ResponseCode);
         }
     }
 }

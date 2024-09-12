@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v9.0.0 (08/29/24)
+## Unreleased Stuff
+
+## Latest - v9.0.1 (09/12/24)
+
+### Bug Fixes:
+- [PAX] Correction to tip/gratuity handling in the request to device
+- [Portico] Map amount property for Recurring Payment FindAll-schedule.
+
 
 ### Enhancement
 

@@ -345,6 +345,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         public void Test_003c_FindAllSchedules() {
             var schedule = Schedule.FindAll();
             Assert.IsNotNull(schedule);
+            Assert.IsNotNull(schedule[0].Amount);
         }
 
         [TestMethod]

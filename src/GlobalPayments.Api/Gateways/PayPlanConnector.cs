@@ -387,10 +387,15 @@ namespace GlobalPayments.Api.Gateways {
             schedule.Name = response.GetValue<string>("scheduleName");
             schedule.Status = response.GetValue<string>("scheduleStatus");
             schedule.PaymentKey = response.GetValue<string>("paymentMethodKey");
-            if (response.Has("subtotalAmount")) {
+            if (response.Has("subtotalAmount")) { 
                 var subtotal = response.Get("subtotalAmount");
                 schedule.Amount = subtotal.GetValue("value", AmountConverter);
                 schedule.Currency = subtotal.GetValue<string>("currency");
+            }
+            if (response.Has("totalAmount")) { 
+                var totalAmount = response.Get("totalAmount");
+                schedule.Amount = totalAmount.GetValue("value", AmountConverter);
+                schedule.Currency = totalAmount.GetValue<string>("currency");
             }
             if (response.Has("taxAmount")) {
                 var taxAmount = response.Get("taxAmount");
