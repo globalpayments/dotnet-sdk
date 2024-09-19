@@ -1,38 +1,43 @@
 ﻿using GlobalPayments.Api.Entities;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Logging
 {
     public static class ProtectSensitiveData
     {
         private static MaskedValueCollection HideValueCollection;
-        public static Dictionary<string, string> HideValue(string key, string value, int unmaskedLastChars = 0, int unmaskedFirstChars = 0)
-        {
+
+        public static Dictionary<string, string> HideValue(MaskedValueEntry entry) {
             if (HideValueCollection == null) {
                 HideValueCollection = new MaskedValueCollection();
             }
-            return HideValueCollection.HideValue(key, value, unmaskedLastChars, unmaskedFirstChars);
+            HideValueCollection.AddValue(entry);
+
+            return HideValueCollection.ToDictionary();
         }
 
-        public static Dictionary<string, string> HideValues(Dictionary<string, string> list, int unmaskedLastChars = 0, int unmaskedFirstChars = 0)
-        {
-            if (HideValueCollection == null) {
-                HideValueCollection = new MaskedValueCollection();
+        public static Dictionary<string, string> HideValues(params MaskedValueEntry[] entries) {
+            foreach (MaskedValueEntry entry in entries) {
+                HideValue(entry);
             }
-            var maskedList = new Dictionary<string, string>();
+            return HideValueCollection.ToDictionary();
+        }
+
+        public static Dictionary<string, string> HideValue(string key, string value, int unmaskedLastChars = 0, int unmaskedFirstChars = 0) {
+            HideValue(new MaskedValueEntry(key, value, unmaskedFirstChars, unmaskedLastChars));
+            return HideValueCollection.ToDictionary();
+        }
+
+        public static Dictionary<string, string> HideValues(Dictionary<string, string> list, int unmaskedLastChars = 0, int unmaskedFirstChars = 0) {
             foreach (var item in list) {
-                maskedList = HideValueCollection.HideValue(item.Key, item.Value, unmaskedLastChars, unmaskedFirstChars);
+                HideValue(new MaskedValueEntry(item.Key, item.Value, unmaskedFirstChars, unmaskedLastChars));
             }
 
-            return maskedList ?? null;
+            return HideValueCollection.ToDictionary();
         }
 
-        public static void DisposeCollection()
-        {
-            if (HideValueCollection != null)
-            {
+        public static void DisposeCollection() {
+            if (HideValueCollection != null) {
                 HideValueCollection.DisposeMaskValues();
             }
         }

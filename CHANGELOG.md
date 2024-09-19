@@ -1,13 +1,18 @@
 # Changelog
 
-## Unreleased Stuff
+## Latest - v9.0.2 (09/19/24)
 
-## Latest - v9.0.1 (09/12/24)
+### Enhancement
+
+- [GP-API] Send "cvv" in create transaction request with a tokenized card
+
+## v9.0.1 (09/12/24)
 
 ### Bug Fixes:
 - [PAX] Correction to tip/gratuity handling in the request to device
 - [Portico] Map amount property for Recurring Payment FindAll-schedule.
 
+## v9.0.0 (08/29/24)
 
 ### Enhancement
 
@@ -60,7 +65,7 @@
 
 - Fixed NWS date time format issue
 
-## Latest - v8.0.15 (06/06/24)
+## v8.0.15 (06/06/24)
 
 ### Enhancement
 

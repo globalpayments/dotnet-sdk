@@ -745,6 +745,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var tokenizedCard = new CreditCardData {
                 Token = token,
+                Cvn = "123",
                 CardHolderName = "James Mason"
             };
 

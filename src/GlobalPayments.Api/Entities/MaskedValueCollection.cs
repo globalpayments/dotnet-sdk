@@ -1,53 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace GlobalPayments.Api.Entities
-{
-    public class MaskedValueCollection
-    {
-        protected Dictionary<string, string> MaskValues;
+namespace GlobalPayments.Api.Entities {
+    public class MaskedValueEntry {
+        public string Key { get; private set; }
+        public string Value { get; private set; }
+        public int NumLeadingChars { get; private set; }
+        public int NumTrailingChars { get; private set; }
 
-        private Dictionary<string, string> GetValues()
-        {
-            return MaskValues;
+        public MaskedValueEntry(string key, string value, int numLeadingChars = 0, int numTrailingChars = 0) {
+            Key = key;
+            Value = value;
+            NumLeadingChars = numLeadingChars;
+            NumTrailingChars = numTrailingChars;
+        }
+    }
+
+    public class MaskedValueCollection {
+        private Dictionary<string, string> _maskedValues;
+
+        public Dictionary<string, string> ToDictionary() {
+            return _maskedValues;
         }
 
-        public Dictionary<string, string> HideValue(string key, string value, int unmaskedLastChars = 0, int unmaskedFirstChars = 0)
-        {
-            AddValue(key, value, unmaskedLastChars, unmaskedFirstChars);
-            return GetValues();
-        }
-
-        public void DisposeMaskValues()
-        {
-            if (MaskValues != null) {
-                MaskValues = null;
+        public void DisposeMaskValues() {
+            if (_maskedValues != null) {
+                _maskedValues = null;
             }
         }
 
-        protected bool AddValue(string key, string value, int unmaskedLastChars = 0, int unmaskedFirstChars = 4)
-        {
-            if (MaskValues == null) {
-                MaskValues = new Dictionary<string, string>();
+        public bool AddValue(MaskedValueEntry entry) {
+            if (_maskedValues == null) {
+                _maskedValues = new Dictionary<string, string>();
             }
-            if (!ValidateValue(value) || MaskValues.ContainsKey(key)) {
+            if (!ValidateValue(entry.Value) || _maskedValues.ContainsKey(entry.Key)) {
                 return false;
-            }           
-            MaskValues[key] = Disguise(value, unmaskedLastChars, unmaskedFirstChars);
+            }
+            _maskedValues[entry.Key] = Disguise(entry.Value, entry.NumTrailingChars, entry.NumLeadingChars);
             return true;
         }
 
-        protected bool ValidateValue(string value)
-        {
+        private bool ValidateValue(string value) {
             if (string.IsNullOrEmpty(value)) {
                 return false;
             }
             return true;
         }
 
-        private string Disguise(string value, int unmaskedLastChars = 0, int unmaskedFirstChars = 0, char maskSymbol = 'X')
-        {
+        private string Disguise(string value, int unmaskedLastChars = 0, int unmaskedFirstChars = 0, char maskSymbol = 'X') {
             // not enough chars to unmask ?
             //
             if (unmaskedLastChars >= value.Length) {
