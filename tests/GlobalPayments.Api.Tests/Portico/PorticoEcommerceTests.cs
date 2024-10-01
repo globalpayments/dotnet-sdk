@@ -76,11 +76,12 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
 
         [TestMethod]
-        public void EcomWithSecureEcommerceThreeDSecure() {
+        public void EcomWithSecureEcommerceThreeDSecureVersionOne() {
+            var version = Secure3dVersion.One;
             card.ThreeDSecure = new ThreeDSecure {
                 Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
                 Eci = "5",
-                Version = Secure3dVersion.One,
+                Version = version,
                 Xid = "0l35fwh1sys3ojzyxelu4ddhmnu5zfke5vst"
             };
             Transaction response = card.Charge(10m)
@@ -90,6 +91,39 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
+
+            TransactionSummary resp = ReportingService.TransactionDetail(response.TransactionId).Execute();
+            Assert.IsNotNull(resp);
+            Assert.IsTrue(resp is TransactionSummary);
+            Assert.AreEqual("0l35fwh1sys3ojzyxelu4ddhmnu5zfke5vst", resp.ThreeDSecure.DirectoryServerTransactionId);
+            Assert.AreEqual(version, resp.ThreeDSecure.Version);
+            
+        }
+        [TestMethod]
+        public void EcomWithSecureEcommerceThreeDSecureVersionTwo()
+        {
+            var version = Secure3dVersion.Two;
+            card.ThreeDSecure = new ThreeDSecure
+            {
+                Cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=",
+                Eci = "5",
+                Version = version,
+                Xid = "0l35fwh1sys3ojzyxelu4ddhmnu5zfke5vst"
+            };
+            Transaction response = card.Charge(10m)
+                .WithCurrency("USD")
+                .WithInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+
+            TransactionSummary resp = ReportingService.TransactionDetail(response.TransactionId).Execute();
+            Assert.IsNotNull(resp);
+            Assert.IsTrue(resp is TransactionSummary);
+            Assert.AreEqual("0l35fwh1sys3ojzyxelu4ddhmnu5zfke5vst", resp.ThreeDSecure.DirectoryServerTransactionId);
+            Assert.AreEqual(version, resp.ThreeDSecure.Version);
+
         }
         [TestMethod]
         public void EcomRefundWithTxnIDWithSecureEcommerceWithoutMobileType()

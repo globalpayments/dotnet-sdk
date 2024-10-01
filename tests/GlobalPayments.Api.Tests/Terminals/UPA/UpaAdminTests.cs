@@ -85,7 +85,11 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("Success", response.Status);
-            //Assert.IsNotNull(((ITerminalResponse)response).DeviceSerialNum);
+            Assert.IsNotNull(((UPAResponseHandler)response).DeviceSerialNum);
+            Assert.IsNotNull(((UPAResponseHandler)response).AppVersion);
+            Assert.IsNotNull(((UPAResponseHandler)response).OsVersion);
+            Assert.IsNotNull(((UPAResponseHandler)response).EmvSdkVersion);
+            Assert.IsNotNull(((UPAResponseHandler)response).CTLSSdkVersion);
         }
         
         [TestMethod]
@@ -101,6 +105,9 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("Success", response.Status);
+            Assert.IsNotNull(((UPAResponseHandler)response).ConfigContent.FileContent);
+            Assert.IsNotNull(((UPAResponseHandler)response).ConfigContent.ConfigType);
+            Assert.AreEqual(((UPAResponseHandler)response).ConfigContent.Length, ((UPAResponseHandler)response).ConfigContent.FileContent.Length);
         }
         
         [TestMethod]

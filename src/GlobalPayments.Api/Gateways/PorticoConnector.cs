@@ -1048,7 +1048,23 @@ namespace GlobalPayments.Api.Gateways {
                     Currency = response.GetValue<string>("MerchCurrencyText"),
                     TaxType = response.GetValue<string>("CPCTaxType"),
                     PoNumber = response.GetValue<string>("CPCCardHolderPONbr"),
+
                 };
+                if (response.Has("Secure3D"))
+                {
+                    ThreeDSecure secure3D = new ThreeDSecure();
+
+                    var authenticationValue = response.Has("AuthenticationValue") ? response.GetValue<string>("AuthenticationValue") : null;
+                    var directoryServerTransactionId = response.Has("DirectoryServerTxnId") ? response.GetValue<string>("DirectoryServerTxnId") : null;
+                    var eci =response.GetValue<string>("ECI");
+                    Secure3dVersion secure3dVersion = response.Has("Version") ? (Secure3dVersion)int.Parse(response.GetValue<string>("Version")) : Secure3dVersion.One;
+                    secure3D.Version = secure3dVersion;
+                    secure3D.AuthenticationValue = authenticationValue; 
+                    secure3D.DirectoryServerTransactionId = directoryServerTransactionId;
+                    secure3D.Eci = eci;
+                    summary.ThreeDSecure = secure3D;
+
+                }
                 if (response.Has("CorporateData") && response.Has("CPCTaxType"))
                 {
                     

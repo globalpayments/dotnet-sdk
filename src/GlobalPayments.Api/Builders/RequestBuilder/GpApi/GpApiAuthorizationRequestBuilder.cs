@@ -309,8 +309,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         .Set("exempt_status", secureEcom.ExemptStatus?.ToString())
                         .Set("message_version", secureEcom.MessageVersion)
                         .Set("eci", secureEcom.Eci)
-                        .Set("server_trans_reference", secureEcom.ServerTransactionId)
-                        .Set("ds_trans_reference", secureEcom.DirectoryServerTransactionId)
+                        .Set("server_trans_ref", secureEcom.ServerTransactionId)
+                        .Set("ds_trans_ref", secureEcom.DirectoryServerTransactionId)
                         .Set("value", secureEcom.AuthenticationValue);
                     authentication.Set("three_ds", three_ds);
 

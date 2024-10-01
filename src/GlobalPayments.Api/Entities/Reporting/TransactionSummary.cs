@@ -234,6 +234,7 @@ namespace GlobalPayments.Api.Entities {
 
         public string SchemeReferenceData { get; set; }
 
+        public ThreeDSecure ThreeDSecure { get; set; }
         /// <summary>
         /// The transaction type.
         /// </summary>

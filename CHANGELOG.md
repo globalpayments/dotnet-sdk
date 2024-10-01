@@ -1,9 +1,12 @@
 # Changelog
 
-## Latest - v9.0.2 (09/19/24)
-
+## Latest - v9.0.3 (10/01/24)
 ### Enhancement
+- [GP-API] Update 3DS Object fields in transaction endpoint ("server_trans_ref" and "ds_trans_ref")
+- [Portico] Update 3DSecure mapping transaction details reporting response.
 
+## v9.0.2 (09/19/24)
+### Enhancement
 - [GP-API] Send "cvv" in create transaction request with a tokenized card
 
 ## v9.0.1 (09/12/24)
