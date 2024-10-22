@@ -182,7 +182,7 @@ namespace GlobalPayments.Api.Terminals.Diamond.Responses {
         public string TerminalVerificationResults { get; set; }
         public decimal? MerchantFee { get; set; }
         public string DeviceSerialNum { get; set; }
-
+        public bool SafTransaction {  get; set; }
         public DiamondCloudResponse(string rawResponse) {
             if (JsonDoc.IsJson(rawResponse)) {
                 var jsonParse = JsonDoc.Parse(rawResponse);

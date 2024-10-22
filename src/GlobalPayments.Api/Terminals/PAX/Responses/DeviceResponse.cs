@@ -244,7 +244,7 @@ namespace GlobalPayments.Api.Terminals.PAX {
         /// The results of the terminals attempt to verify the cards authenticity.
         /// </summary>
         public string TerminalVerificationResults { get; set; }
-
+        public bool SafTransaction {  get; set; }
         public decimal? MerchantFee { get; set; }
         public int TranNo { get; set; }
 

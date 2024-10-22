@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v9.0.3 (10/01/24)
+## Latest - v9.0.4 (10/22/24)
+### Enhancement
+- [Portico] - Added ClientTxnId to ReportBatchDetail and ReportOpenAuths reports
+- [UPA] Add SAF indicator (bool) to Host response
+
+## v9.0.3 (10/01/24)
 ### Enhancement
 - [GP-API] Update 3DS Object fields in transaction endpoint ("server_trans_ref" and "ds_trans_ref")
 - [Portico] Update 3DSecure mapping transaction details reporting response.

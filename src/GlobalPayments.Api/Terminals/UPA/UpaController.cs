@@ -369,7 +369,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             transaction.Set("cashBackAmount", ToCurrencyString(builder.CashBackAmount));
             transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
             transaction.Set("invoiceNbr", builder.InvoiceNumber ?? null);
-            transaction.Set("tranNo", builder.TerminalRefNumber ?? null);
+            transaction.Set("tranNo", StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0'));//builder.TerminalRefNumber ?? null);
             transaction.Set("referenceNumber", !string.IsNullOrEmpty(builder.TransactionId) ? builder.TransactionId :
                 !string.IsNullOrEmpty(builder.TerminalRefNumber) ? StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0') : null);
             transaction.Set("taxIndicator", builder.TaxExempt ?? null);

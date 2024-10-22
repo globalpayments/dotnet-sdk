@@ -22,6 +22,16 @@ namespace GlobalPayments.Api.Services {
             return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.Activity);
         }
 
+        public static TransactionReportBuilder<List<TransactionSummary>> BatchDetail()
+        {
+            return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.BatchDetail);
+        }
+
+        public static TransactionReportBuilder<List<TransactionSummary>> OpenAuths()
+        {
+            return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.OpenAuths);
+        }
+
         public static ReportBuilder<TransactionSummary> TransactionDetail(string transactionId) {
             return new TransactionReportBuilder<TransactionSummary>(ReportType.TransactionDetail)
                 .WithTransactionId(transactionId);

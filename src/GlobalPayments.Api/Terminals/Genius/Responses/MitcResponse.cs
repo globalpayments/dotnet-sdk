@@ -74,7 +74,7 @@ namespace GlobalPayments.Api.Terminals.Genius.Responses
         public string Command { get; set; }
         public string Version { get; set; }
         public string ReferenceNumber { get; set; }
-
+        public bool SafTransaction {  get; set; }
         public MitcResponse(int responseCode, string responseMessage, string responseData)
         {
             try

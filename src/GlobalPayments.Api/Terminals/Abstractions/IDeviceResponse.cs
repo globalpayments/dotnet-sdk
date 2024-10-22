@@ -49,6 +49,7 @@ namespace GlobalPayments.Api.Terminals.Abstractions {
         string CardHolderVerificationMethod { get; set; }
         string TerminalVerificationResults { get; set; }
         decimal? MerchantFee { get; set; }       
+        bool SafTransaction {  get; set; }
     }
 
     public interface ITerminalReport : IDeviceResponse { }

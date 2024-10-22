@@ -635,14 +635,16 @@ namespace GlobalPayments.Api.Gateways {
 
         public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
             var et = new ElementTree();
+            ReportType reportType = builder.ReportType;
 
             var transaction = et.Element(MapReportType(builder.ReportType));
-            et.SubElement(transaction, "TzConversion", builder.TimeZoneConversion);
             if (builder is TransactionReportBuilder<T>) {
                 var trb = builder as TransactionReportBuilder<T>;
-                if (trb.TransactionId != null)
-                    et.SubElement(transaction, "TxnId", trb.TransactionId);
-                else {
+
+                if(reportType == ReportType.FindTransactions || reportType == ReportType.TransactionDetail){                   
+                   et.SubElement(transaction, "TxnId", trb.TransactionId);                    
+                }
+                if (reportType == ReportType.FindTransactions || reportType == ReportType.Activity){
                     var criteria = et.SubElement(transaction, "Criteria");
                     et.SubElement(criteria, "StartUtcDT", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
                     et.SubElement(criteria, "EndUtcDT", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
@@ -685,6 +687,25 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(criteria, "FullyCapturedInd", trb.SearchBuilder.FullyCaptured);
                     et.SubElement(criteria, "SAFIndicator", trb.SearchBuilder.SAFIndicator);
                 }
+
+                if (
+                    reportType == ReportType.Activity ||
+                    reportType==ReportType.OpenAuths ||
+                    reportType==ReportType.BatchDetail ||
+                    reportType== ReportType.FindTransactions
+                ){
+                    et.SubElement(transaction, "TzConversion", trb.TimeZoneConversion); 
+                }
+
+                if (reportType == ReportType.OpenAuths || reportType == ReportType.BatchDetail)
+                {
+                    et.SubElement(transaction, "DeviceId", trb.DeviceId);                    
+                }
+
+                if (reportType == ReportType.BatchDetail){                   
+                   et.SubElement(transaction, "BatchId", trb.BatchId);                    
+                }
+                
             }
 
             var response = DoTransaction(BuildEnvelope(et, transaction));
@@ -859,7 +880,12 @@ namespace GlobalPayments.Api.Gateways {
             var doc = new ElementTree(rawResponse).Get(MapReportType(reportType));
 
             T rvalue = Activator.CreateInstance<T>();
-            if (reportType.HasFlag(ReportType.FindTransactions) | reportType.HasFlag(ReportType.Activity)) {           
+            if (
+                reportType.HasFlag(ReportType.FindTransactions) |
+                reportType.HasFlag(ReportType.Activity) |
+                reportType.HasFlag(ReportType.BatchDetail) |
+                reportType.HasFlag(ReportType.OpenAuths)
+            ) {  
                 Func<Element, TransactionSummary> hydrateTransactionSummary = (root) =>
                 {
                     var headerElement = response.Get("Header");
@@ -985,9 +1011,23 @@ namespace GlobalPayments.Api.Gateways {
                 // FindTransaction
                 if (rvalue is IEnumerable<TransactionSummary>) {
                     var list = rvalue as List<TransactionSummary>;
-                    foreach (var transaction in doc.GetAll("Transactions")) {
-                        list.Add(hydrateTransactionSummary(transaction));
+
+                    if (reportType.HasFlag(ReportType.FindTransactions) || reportType.HasFlag(ReportType.Activity))
+                    {
+                        foreach (var transaction in doc.GetAll("Transactions"))
+                        {
+                            list.Add(hydrateTransactionSummary(transaction));
+                        }
                     }
+
+                    if (reportType.HasFlag(ReportType.BatchDetail) || reportType.HasFlag(ReportType.OpenAuths))
+                    {
+                        foreach (var transaction in doc.GetAll("Details"))
+                        {
+                            list.Add(hydrateTransactionSummary(transaction));
+                        }
+                    }
+
                 }
                 else {
                     var trans = doc.GetAll("Transactions").FirstOrDefault();
@@ -1333,6 +1373,10 @@ namespace GlobalPayments.Api.Gateways {
                     return "FindTransactions";
                 case ReportType.TransactionDetail:
                     return "ReportTxnDetail";
+                case ReportType.BatchDetail:
+                    return "ReportBatchDetail";
+                case ReportType.OpenAuths:
+                    return "ReportOpenAuths";
                 default:
                     throw new UnsupportedTransactionException();
             }

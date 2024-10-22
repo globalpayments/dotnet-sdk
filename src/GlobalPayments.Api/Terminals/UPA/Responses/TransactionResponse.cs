@@ -166,6 +166,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             BatchSeqNbr = host.GetValue<string>("batchSeqNbr") ?? null;
             CpcInd = host.GetValue<string>("CpcInd") ?? null;
             Descriptor = host.GetValue<string>("txnDescriptor");
+            SafTransaction = host.Has("storeAndForward") ? host.GetValue<int>("storeAndForward") == 1 : false;
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
             CavvResultCode = host.GetValue<int?>("CavvResultCode") ?? null;
             TokenPANLast = host.GetValue<int?>("tokenPANLast") ?? null;

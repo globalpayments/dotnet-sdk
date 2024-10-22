@@ -23,7 +23,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.8.181",
+                IpAddress = "192.168.1.142",
                 Port = "8081",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider(),
@@ -620,7 +620,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Thread.Sleep(2500);
 
             var tipAdjustResponse = _device.TipAdjust(3.00m)
-                .WithTerminalRefNumber(saleResponse.TerminalRefNumber)
+                .WithTerminalRefNumber(saleResponse.TransactionId)
                 .WithEcrId("13")                
                 .Execute();
             Assert.IsNotNull(tipAdjustResponse);

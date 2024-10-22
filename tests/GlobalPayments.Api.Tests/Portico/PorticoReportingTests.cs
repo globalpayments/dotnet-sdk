@@ -68,7 +68,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         public void ReportActivity()
         {
             List<TransactionSummary> summary = ReportingService.Activity()
-                .WithTimeZoneConversion(TimeZoneConversion.Merchant)
+                .WithTimeZoneConversion(TimeZoneConversion.UTC)
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-2))
                 .And(SearchCriteria.EndDate, DateTime.UtcNow)
                 .Execute();
@@ -78,19 +78,39 @@ namespace GlobalPayments.Api.Tests.Portico {
         [TestMethod]
         public void ReportTransactionDetailGetShippingDate()
         {
-            TransactionSummary response = ReportingService.TransactionDetail("1884390665").Execute();
+            EcommerceInfo ecommerceInfo = new EcommerceInfo();
+            ecommerceInfo.ShipDay = 5;
+            ecommerceInfo.ShipMonth = 6;
+            //Do auth
+            var authResponse = VisaManual.Charge(10m)
+                .WithCurrency("USD")
+                .WithClientTransactionId(ClientTransactionId)
+                .WithEcommerceInfo(ecommerceInfo)
+                .Execute();
+            Assert.IsNotNull(authResponse);
+            Assert.AreEqual("00", authResponse.ResponseCode);
+
+            TransactionSummary response = ReportingService.TransactionDetail(authResponse.TransactionId).Execute();
             Assert.IsNotNull(response);
             Assert.IsTrue(response is TransactionSummary);
             Assert.IsTrue(response.ShippingDay > 0);
             Assert.IsTrue(response.ShippingMonth > 0);
         }
         [TestMethod]
-        public void ReportTransactionDetail() {
-            TransactionSummary response = ReportingService.TransactionDetail("1873988120").Execute();
+        public void ReportTransactionDetail() 
+        {
+            //Do auth
+            var authResponse = VisaManual.Charge(10m)
+                .WithCurrency("USD")
+                .WithClientTransactionId(ClientTransactionId)
+                .Execute();
+            Assert.IsNotNull(authResponse);
+            Assert.AreEqual("00", authResponse.ResponseCode);
+
+            TransactionSummary response = ReportingService.TransactionDetail(authResponse.TransactionId).Execute();
             Assert.IsNotNull(response);
             Assert.IsTrue(response is TransactionSummary);
         }
-
         [TestMethod]
         public void ReportFindTransactionWithCriteria()
         {
@@ -99,11 +119,11 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-30))
                 .And(SearchCriteria.EndDate, DateTime.UtcNow)
                 .And(SearchCriteria.SAFIndicator, "Y")
+                .And(SearchCriteria.BatchId, "992515")
                 .Execute();
 
             Assert.IsNotNull(summary);
         }
-
         [TestMethod]
         public void ReportFindTransactionWithTransactionId() {
             List<TransactionSummary> summary = ReportingService.FindTransactions("1873988120").Execute();
@@ -132,6 +152,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
+          
             List<TransactionSummary> summary = ReportingService.Activity()
                 .WithTimeZoneConversion(TimeZoneConversion.Merchant)
                 .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-2))
@@ -619,17 +640,19 @@ namespace GlobalPayments.Api.Tests.Portico {
 
         [TestMethod]
         public void ValidateResponseDateAndTransactionDateIsMappedInTransactionSummary()
-        {
-            var responseMasterCard = MasterCardManual.Charge(13)
+        {            
+            var responseMasterCard = MasterCardManual.Charge(17)
                .WithCurrency("USD")
                .WithAddress(Address)
+               .WithAllowDuplicates(true)
                .Execute();
                 Assert.IsNotNull(responseMasterCard);
                 Assert.AreEqual("00", responseMasterCard.ResponseCode);
 
-            var responseVisa = VisaManual.Charge(17)
+            var responseVisa = VisaManual.Charge(23)
                .WithCurrency("USD")
                .WithAddress(Address)
+               .WithAllowDuplicates(true)
                .Execute();
                 Assert.IsNotNull(responseVisa);
                 Assert.AreEqual("00", responseVisa.ResponseCode);
@@ -647,6 +670,56 @@ namespace GlobalPayments.Api.Tests.Portico {
 
             Assert.IsNotNull (item.ResponseDate);
             Assert.IsNotNull(item.TransactionDate);
+        }
+
+        [TestMethod]
+        public void ReportBatchDetail_WithClientTxnId_and_BatchID()
+        {
+            var clientTxnId = ClientTransactionId;
+            //Do auth
+            var authResponse = VisaManual.Authorize(10m)
+                .WithCurrency("USD")                
+                .WithClientTransactionId(clientTxnId)               
+                .Execute();
+            Assert.IsNotNull(authResponse);
+            Assert.AreEqual("00", authResponse.ResponseCode);
+
+            //Do a capture to add to batch
+            Transaction captureResponse = authResponse.Capture(10m)
+                                                       .WithGratuity(2m)
+                                                       .Execute();
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("00", captureResponse.ResponseCode);
+
+            List<TransactionSummary> details = ReportingService.BatchDetail()
+                                                                .WithBatchId(992515)
+                                                                .Execute();
+
+            //Get reportItem that matches the clienttxnid passed initally
+            TransactionSummary reportItem = details.Find(x => x.ClientTransactionId == clientTxnId);
+            Assert.IsNotNull(reportItem);            
+            Assert.AreEqual(reportItem.ClientTransactionId, clientTxnId);            
+        }
+
+        [TestMethod]
+        public void ReportOpenAuths_WithClientTxnId()
+        {
+            var clientTxnId = ClientTransactionId;
+            //Do auth
+            var authResponse = VisaManual.Authorize(10m)
+                .WithCurrency("USD")
+                .WithClientTransactionId(clientTxnId)
+                .Execute();
+            Assert.IsNotNull(authResponse);
+            Assert.AreEqual("00", authResponse.ResponseCode);           
+
+            List<TransactionSummary> details = ReportingService.OpenAuths()                                                                
+                                                                .Execute();
+
+            //Get reportItem that matches the clienttxnid passed initally
+            TransactionSummary reportItem = details.Find(x => x.ClientTransactionId == clientTxnId);
+            Assert.IsNotNull(reportItem);
+            Assert.AreEqual(reportItem.ClientTransactionId, clientTxnId);
         }
     }
 }

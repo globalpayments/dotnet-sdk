@@ -16,6 +16,7 @@ namespace GlobalPayments.Api.Builders {
         internal ActionSortProperty? ActionOrderBy { get; set; }
         internal PayByLinkSortProperty? PayByLinkOrderBy { get; set; }
         internal string TransactionId { get; set; }
+        internal int BatchId { get; set; }
 
         internal DateTime? StartDate { get; set; }
         internal DateTime? EndDate { get; set; }
@@ -149,6 +150,13 @@ namespace GlobalPayments.Api.Builders {
             TransactionId = value;
             return this;
         }
+
+        public ReportBuilder<TResult> WithBatchId(int value)
+        {
+            BatchId = value;
+            return this;
+        }
+
         public ReportBuilder<TResult> WithTimeZoneConversion(TimeZoneConversion value) {
             TimeZoneConversion = value;
             return this;
@@ -164,7 +172,8 @@ namespace GlobalPayments.Api.Builders {
         {
             EndDate = value;
             return this;
-        }
+        }        
+
         /// <summary>
         /// Sets the gateway deposit reference as criteria for the report.
         /// </summary>
