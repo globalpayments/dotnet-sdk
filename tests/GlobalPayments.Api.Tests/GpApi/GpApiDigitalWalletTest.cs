@@ -8,7 +8,13 @@ namespace GlobalPayments.Api.Tests.GpApi
     [TestClass]
     public class GpApiDigitalWalletTest : BaseGpApiTests {
         private CreditCardData card;
-        private const string ClickToPayToken = "8144735251653223601";
+        private const string CLICK_TO_PAY_TOKEN = "8144735251653223601";
+
+        private const string GOOGLE_PAY_TOKEN =
+            "{\n\"signature\": \"MEUCICd0LX9L1tHEf0I037gVTPS/DSFfKSHmChCkzGH629atAiEA2FbMt8aOuI+8p7QDEJIz2CetUWqHn+wpudVkEmc436A=\"," +
+            "\n\"protocolVersion\": \"ECv1\"," +
+            "\n\"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"keMtGQ03Kz+ydkxvv3Wy8XtUoHIGDvaKdLmIT3Czi7gY4wNe7o6UQ4gkjxH2qyYvRyoFqSfUyXAN+++AEEAlaJUsJysFJkM6G3GOcAvt7mxrNRJQhj60JbvX3iJ/NBDTlInPZVO5jbDh314igbV/tKhehztLIjFF4+Rn0bwh+ZE8DvFqt+hH/piw4vvDSVPXLdMiCddfmFKYEgHAxeiovHjnlb6PcA6UXRIWanu0etLmX0Wj4Kkz15MD6rIjPaKTP8VJr5El13/4SaRpbWZ8pAEULZuJYNUQbhwEas+5YjsskGDPJQKn8L2zMAOF9YOCA9+C/wBMRvDPvJ4X4hobkk7E/QsHViUtKFlEYHN73ojTsymrJxq9kDQY2rZQtgalzDq0gRWJYxDyvCX3979X8FGNitbV7rzL2rPyt0TA\\\",\\\"ephemeralPublicKey\\\":\\\"BMEZDnSw5a1OgsZlMJU9mrml/FWfKzRRNgtV/2P7uzpb0j5/MuqXH4gFgan6u1qlVC8E6nPCsago7yu2tMNJBAA\\\\u003d\\\",\\\"tag\\\":\\\"YGvjeXWGRW1jfLkHzm6vDJKu3p+ccCeUF/xARa5NQuk\\\\u003d\\\"}" +
+            "\"\n}";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
@@ -25,7 +31,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ClickToPayEncrypted() {
-            card.Token = ClickToPayToken;
+            card.Token = CLICK_TO_PAY_TOKEN;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -35,8 +41,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual("123456", response.AuthorizationCode);
             Assert.IsFalse(string.IsNullOrEmpty(response.TransactionId));
             AssertClickToPayPayerDetails(response);
@@ -45,7 +51,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void ClickToPayEncryptedChargeThenSplitAmount()
         {
-            card.Token = ClickToPayToken;
+            card.Token = CLICK_TO_PAY_TOKEN;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -55,8 +61,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
+            Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual("123456", response.AuthorizationCode);
             Assert.IsFalse(string.IsNullOrEmpty(response.TransactionId));
             AssertClickToPayPayerDetails(response);
@@ -64,12 +70,14 @@ namespace GlobalPayments.Api.Tests.GpApi
             var split = response.Split(5m)
                 .WithDescription("Split CTP")
                 .Execute();
+            
+            Assert.IsNotNull(split);
         }
 
         [TestMethod]
         public void ClickToPayEncryptedChargeThenRefund()
         {
-            card.Token = ClickToPayToken;
+            card.Token = CLICK_TO_PAY_TOKEN;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -79,7 +87,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
             Assert.AreEqual("123456", response.AuthorizationCode);
             AssertClickToPayPayerDetails(response);
 
@@ -89,14 +97,14 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(refund);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), refund?.ResponseMessage);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), refund.ResponseMessage);
             AssertClickToPayPayerDetails(response);
         }
 
         [TestMethod]
         public void ClickToPayEncryptedChargeThenReverse()
         {
-            card.Token = ClickToPayToken;
+            card.Token = CLICK_TO_PAY_TOKEN;
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var response = card.Charge(10m)
@@ -106,7 +114,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
             Assert.AreEqual("123456", response.AuthorizationCode);
             AssertClickToPayPayerDetails(response);
 
@@ -116,14 +124,14 @@ namespace GlobalPayments.Api.Tests.GpApi
                    .Execute();
 
             Assert.IsNotNull(reverse);
-            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverse?.ResponseMessage);
+            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverse.ResponseMessage);
             Assert.AreEqual("000000", reverse.AuthorizationCode);
             AssertClickToPayPayerDetails(response);
         }
         
         [TestMethod]
         public void ClickToPayEncryptedAuthorize() {            
-            card.Token = ClickToPayToken;              
+            card.Token = CLICK_TO_PAY_TOKEN;              
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var errorFound = false;
@@ -145,7 +153,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         
         [TestMethod]
         public void ClickToPayEncryptedRefundStandalone() {            
-            card.Token = ClickToPayToken;              
+            card.Token = CLICK_TO_PAY_TOKEN;              
             card.MobileType = EncyptedMobileType.CLICK_TO_PAY;
 
             var errorFound = false;
@@ -177,8 +185,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
-            Assert.AreEqual(Success, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
+            Assert.AreEqual(Success, transaction.ResponseCode);
             Assert.AreEqual("123456", transaction.AuthorizationCode);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
         }
@@ -196,16 +204,16 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
-            Assert.AreEqual(Success, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
+            Assert.AreEqual(Success, transaction.ResponseCode);
             Assert.AreEqual("123456", transaction.AuthorizationCode);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
 
             var refund = transaction.Refund().WithCurrency("USD").Execute();
 
             Assert.IsNotNull(refund);
-            Assert.AreEqual(Success, refund?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), refund?.ResponseMessage);
+            Assert.AreEqual(Success, refund.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), refund.ResponseMessage);
         }
 
         [TestMethod, Ignore]
@@ -221,16 +229,16 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
-            Assert.AreEqual(Success, transaction?.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
+            Assert.AreEqual(Success, transaction.ResponseCode);
             Assert.AreEqual("123456", transaction.AuthorizationCode);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
 
             var reverse = transaction.Reverse().WithCurrency("USD").Execute();
 
             Assert.IsNotNull(reverse);
-            Assert.AreEqual(Success, reverse?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverse?.ResponseMessage);
+            Assert.AreEqual(Success, reverse.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverse.ResponseMessage);
         }
 
         [TestMethod]
@@ -252,8 +260,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(transaction);
-                Assert.AreEqual(Success, transaction?.ResponseCode);
-                Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
+                Assert.AreEqual(Success, transaction.ResponseCode);
+                Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
                 Assert.AreEqual("123456", transaction.AuthorizationCode);
                 Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
                 Assert.IsFalse(string.IsNullOrEmpty(transaction.AuthorizationCode));
@@ -262,11 +270,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void PayWithGooglePayEncrypted() {
-            card.Token =
-                "{\n\"signature\": \"MEUCIQDD9Juur/iUEZhz+r3sbRfg7jmmdYDOh/mD7a7EkpIMlQIgNwmtPojqPWVMbqzprkC43/wMiDaDfuJCkU1UZbpqjg0=\"," +
-                "\n\"protocolVersion\": \"ECv1\"," +
-                "\n\"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"Un+uqt+s/fDxDpMUhqwjTdWteOV9ezi/VKJ2VWV129ZHlc1uHsRa0wFbfNtFSUyQiAVLmiPK5NJb8I6xGbrc/Nj1m5UhzDYJPEpBthYmw0/aLlGHDILCclN43BoloRShnMRvLO2aRPRzJL3gDZ4sjmzS50RyLWscyvDmqq+xtLf0ak3/lSX9CsiJ8+RG9z6DcPRpITUrb/ttTXiUMlCKrPfgbYRvpKCq+HG6UO4RNX3MzMpTh3XAKbCXQnYMEwsRgUPqMbWbi0KlRm1Z9kzI+WotJIxGacIKww3dv0M6w71XKrw3PMALbJjjWxIV/n8u642b0hGrz50XvzeRiSGgpLQchAhc/G8laB70ADhoKXWVfMCZR5ZDTLZV6+yeKEiZxwbLrXgxlIZ12qvfxRSGk28C+0L2+Xi10tzFM6Xh\\\",\\\"ephemeralPublicKey\\\":\\\"BLcSQ8qLl0zVqTVPvGaX/adURvciO73owCbA9STuhHgoLoC8WZ90c3UWXarX27+6lWMNtYCFs/F5PNdeSEQs8Tc\\\\u003d\\\",\\\"tag\\\":\\\"aTcYTR5l1zQZysG4f5HcDA3ABNPUkPHg8Z4mFIOZoHQ\\\\u003d\\\"}" +
-                "\"\n}";
+            card.Token = GOOGLE_PAY_TOKEN;
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)
@@ -275,19 +279,17 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
+            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
             Assert.AreEqual("123456", transaction.AuthorizationCode);
+            Assert.AreEqual("VISA", transaction.CardDetails.Brand);
+            Assert.IsNotNull(transaction.CardBrandTransactionId);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
         }
 
         [TestMethod]
         public void GooglePayEncrypted_LinkedRefund() {
-            card.Token = 
-                "{\n\"signature\": \"MEUCIQDD9Juur/iUEZhz+r3sbRfg7jmmdYDOh/mD7a7EkpIMlQIgNwmtPojqPWVMbqzprkC43/wMiDaDfuJCkU1UZbpqjg0=\"," +
-                "\n\"protocolVersion\": \"ECv1\"," +
-                "\n\"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"Un+uqt+s/fDxDpMUhqwjTdWteOV9ezi/VKJ2VWV129ZHlc1uHsRa0wFbfNtFSUyQiAVLmiPK5NJb8I6xGbrc/Nj1m5UhzDYJPEpBthYmw0/aLlGHDILCclN43BoloRShnMRvLO2aRPRzJL3gDZ4sjmzS50RyLWscyvDmqq+xtLf0ak3/lSX9CsiJ8+RG9z6DcPRpITUrb/ttTXiUMlCKrPfgbYRvpKCq+HG6UO4RNX3MzMpTh3XAKbCXQnYMEwsRgUPqMbWbi0KlRm1Z9kzI+WotJIxGacIKww3dv0M6w71XKrw3PMALbJjjWxIV/n8u642b0hGrz50XvzeRiSGgpLQchAhc/G8laB70ADhoKXWVfMCZR5ZDTLZV6+yeKEiZxwbLrXgxlIZ12qvfxRSGk28C+0L2+Xi10tzFM6Xh\\\",\\\"ephemeralPublicKey\\\":\\\"BLcSQ8qLl0zVqTVPvGaX/adURvciO73owCbA9STuhHgoLoC8WZ90c3UWXarX27+6lWMNtYCFs/F5PNdeSEQs8Tc\\\\u003d\\\",\\\"tag\\\":\\\"aTcYTR5l1zQZysG4f5HcDA3ABNPUkPHg8Z4mFIOZoHQ\\\\u003d\\\"}" +
-                "\"\n}";
+            card.Token = GOOGLE_PAY_TOKEN;
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)
@@ -296,25 +298,21 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
+            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
             Assert.AreEqual("123456", transaction.AuthorizationCode);
             Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
 
             var refund = transaction.Refund().WithCurrency("EUR").Execute();
 
             Assert.IsNotNull(refund);
-            Assert.AreEqual(Success, refund?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), refund?.ResponseMessage);
+            Assert.AreEqual(Success, refund.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), refund.ResponseMessage);
         }
 
         [TestMethod]
         public void GooglePayEncrypted_Reverse() {
-            card.Token =
-                "{\n\"signature\": \"MEUCIQDD9Juur/iUEZhz+r3sbRfg7jmmdYDOh/mD7a7EkpIMlQIgNwmtPojqPWVMbqzprkC43/wMiDaDfuJCkU1UZbpqjg0=\"," +
-                "\n\"protocolVersion\": \"ECv1\"," +
-                "\n\"signedMessage\": \"{\\\"encryptedMessage\\\":\\\"Un+uqt+s/fDxDpMUhqwjTdWteOV9ezi/VKJ2VWV129ZHlc1uHsRa0wFbfNtFSUyQiAVLmiPK5NJb8I6xGbrc/Nj1m5UhzDYJPEpBthYmw0/aLlGHDILCclN43BoloRShnMRvLO2aRPRzJL3gDZ4sjmzS50RyLWscyvDmqq+xtLf0ak3/lSX9CsiJ8+RG9z6DcPRpITUrb/ttTXiUMlCKrPfgbYRvpKCq+HG6UO4RNX3MzMpTh3XAKbCXQnYMEwsRgUPqMbWbi0KlRm1Z9kzI+WotJIxGacIKww3dv0M6w71XKrw3PMALbJjjWxIV/n8u642b0hGrz50XvzeRiSGgpLQchAhc/G8laB70ADhoKXWVfMCZR5ZDTLZV6+yeKEiZxwbLrXgxlIZ12qvfxRSGk28C+0L2+Xi10tzFM6Xh\\\",\\\"ephemeralPublicKey\\\":\\\"BLcSQ8qLl0zVqTVPvGaX/adURvciO73owCbA9STuhHgoLoC8WZ90c3UWXarX27+6lWMNtYCFs/F5PNdeSEQs8Tc\\\\u003d\\\",\\\"tag\\\":\\\"aTcYTR5l1zQZysG4f5HcDA3ABNPUkPHg8Z4mFIOZoHQ\\\\u003d\\\"}" +
-                "\"\n}";
+            card.Token = GOOGLE_PAY_TOKEN;
             card.MobileType = EncyptedMobileType.GOOGLE_PAY;
 
             var transaction = card.Charge(10m)
@@ -323,16 +321,16 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(transaction);
-                Assert.AreEqual(Success, transaction?.ResponseCode);
-                Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction?.ResponseMessage);
+                Assert.AreEqual(Success, transaction.ResponseCode);
+                Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
                 Assert.AreEqual("123456", transaction.AuthorizationCode);
                 Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));
 
                 var reverse = transaction.Reverse().WithCurrency("EUR").Execute();
 
                 Assert.IsNotNull(reverse);
-                Assert.AreEqual(Success, reverse?.ResponseCode);
-                Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverse?.ResponseMessage);
+                Assert.AreEqual(Success, reverse.ResponseCode);
+                Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverse.ResponseMessage);
         }
 
         private void AssertClickToPayPayerDetails(Transaction response) {

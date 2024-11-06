@@ -18,7 +18,6 @@ namespace GlobalPayments.Api.Mapping {
         private const string LINK_CREATE = "LINK_CREATE";
         private const string LINK_EDIT = "LINK_EDIT";
         private const string MERCHANT_CREATE = "MERCHANT_CREATE";
-        private const string MERCHANT_LIST = "MERCHANT_LIST";
         private const string MERCHANT_SINGLE = "MERCHANT_SINGLE";
         private const string MERCHANT_EDIT = "MERCHANT_EDIT";
         private const string MERCHANT_EDIT_INITIATED = "MERCHANT_EDIT_INITIATED";
@@ -77,7 +76,7 @@ namespace GlobalPayments.Api.Mapping {
                         transaction.PaymentMethodType = PaymentMethodType.Account_Funds;
                         break;
                     case SPLIT:
-                    if (json.Has("transfers")) {                            
+                        if (json.Has("transfers")) {                            
                             transaction.TransfersFundsAccounts = MapTransferFundsAccountDetails(json);
                         }
                         break;
@@ -105,42 +104,42 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.BatchSummary = new BatchSummary {
                     BatchReference = json.GetValue<string>("batch_id")
                 };
-                transaction.Token = json.Get("payment_method")?.GetValue<string>("id");                
-                transaction.AuthorizationCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("authcode");
-                if(string.IsNullOrEmpty(transaction.AuthorizationCode) && json.Has("payment_method") && 
-                    (json.Get("payment_method")?.Has("digital_wallet") ?? false)) {
-                    transaction.AuthorizationCode = json.Get("payment_method")?.Get("digital_wallet")?.GetValue<string>("authcode");
+                transaction.Token = json.Get("payment_method")?.GetValue<string>("id");
+                var paymentMethod = json.Get("payment_method")?.Get("card");
+                if (json.Has("payment_method") && json.Get("payment_method").Has("digital_wallet")) {
+                    paymentMethod = json.Get("payment_method").Get("digital_wallet");
                 }
-
-                var cardDetails = new Card();
-                cardDetails.MaskedNumberLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4") ?? null;
-                cardDetails.Brand = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand") ?? null;
+                var cardDetails = new Card {
+                    MaskedNumberLast4 = paymentMethod?.GetValue<string>("masked_number_last4"),
+                    Brand = paymentMethod?.GetValue<string>("brand")
+                };
                 transaction.CardDetails = cardDetails;
-
-                transaction.CardType = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand");
-                transaction.CardLast4 = json.Get("payment_method")?.Get("card")?.GetValue<string>("masked_number_last4");
-                transaction.CvnResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("cvv_result");
-                transaction.CardBrandTransactionId = json.Get("payment_method")?.Get("card")?.GetValue<string>("brand_reference");
-                transaction.AvsResponseCode = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_postal_code_result");
-                transaction.AvsAddressResponse = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_address_result");
-                transaction.AvsResponseMessage = json.Get("payment_method")?.Get("card")?.GetValue<string>("avs_action");
+                transaction.CardType = paymentMethod?.GetValue<string>("brand");
+                transaction.CardLast4 = paymentMethod?.GetValue<string>("masked_number_last4");
+                transaction.CvnResponseMessage = paymentMethod?.GetValue<string>("cvv_result");
+                transaction.CardBrandTransactionId = paymentMethod?.GetValue<string>("brand_reference");
+                transaction.AvsResponseCode = paymentMethod?.GetValue<string>("avs_postal_code_result");
+                transaction.AvsAddressResponse = paymentMethod?.GetValue<string>("avs_address_result");
+                transaction.AvsResponseMessage = paymentMethod?.GetValue<string>("avs_action");
+                transaction.AuthorizationCode = paymentMethod?.GetValue<string>("authcode");
                 if (json.Get("payment_method")?.Get("card")?.Has("provider") ?? false) {
                     transaction.CardIssuerResponse = MapCardIssuerResponse(json.Get("payment_method")?.Get("card")?.Get("provider"));
                 }
                 else {
                     transaction.CardIssuerResponse = new CardIssuerResponse() { Result = json.Get("payment_method")?.GetValue<string>("result") };
                 }
-                if ((json.Get("payment_method")?.Has("apm")) ?? false &&
-                    (json.Get("payment_method")?.Get("apm").GetValue<string>("provider").ToUpper() == PaymentProvider.OPEN_BANKING.ToString()))
+                if (IsOpenBanking(json.Get("payment_method")))
                 {
                     transaction.PaymentMethodType = PaymentMethodType.BankPayment;
-                    var obResponse = new BankPaymentResponse();
-                    obResponse.RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url") ?? null;
-                    obResponse.PaymentStatus = json.Get("payment_method")?.GetValue<string>("message") ?? null;
-                    obResponse.AccountNumber = json.Get("payment_method")?.Get("bank_transfer")?.GetValue<string>("account_number") ?? null;
-                    obResponse.Iban = json.Get("payment_method")?.Get("bank_transfer")?.GetValue<string>("iban") ?? null;
-                    obResponse.SortCode = json.Get("payment_method")?.Get("bank_transfer")?.Get("bank")?.GetValue<string>("code") ?? null;
-                    obResponse.AccountName = json.Get("payment_method")?.Get("bank_transfer")?.Get("bank")?.GetValue<string>("name") ?? null;
+                    var obResponse = new BankPaymentResponse
+                    {
+                        RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url"),
+                        PaymentStatus = json.Get("payment_method")?.GetValue<string>("message"),
+                        AccountNumber = json.Get("payment_method")?.Get("bank_transfer")?.GetValue<string>("account_number"),
+                        Iban = json.Get("payment_method")?.Get("bank_transfer")?.GetValue<string>("iban"),
+                        SortCode = json.Get("payment_method")?.Get("bank_transfer")?.Get("bank")?.GetValue<string>("code") ?? null,
+                        AccountName = json.Get("payment_method")?.Get("bank_transfer")?.Get("bank")?.GetValue<string>("name") ?? null
+                    };
                     transaction.BankPaymentResponse = obResponse;
                 }
                 else if (json.Get("payment_method")?.Has("bank_transfer") ?? false) {
@@ -151,14 +150,17 @@ namespace GlobalPayments.Api.Mapping {
                 }
 
                 if ((json.Get("payment_method")?.Has("shipping_address") ?? false)
-                || (json.Get("payment_method")?.Has("payer") ?? false)) {
-                    var payerDetails = new PayerDetails();
-                    payerDetails.Email = json.Get("payment_method")?.Get("payer")?.GetValue<string>("email") ?? null;
+                || (json.Get("payment_method")?.Has("payer") ?? false))
+                {
+                    var payerDetails = new PayerDetails
+                    {
+                        Email = json.Get("payment_method")?.Get("payer")?.GetValue<string>("email")
+                    };
 
                     if (json.Get("payment_method")?.Get("payer").Has("billing_address") ?? false) {
-                        var billingAddress = json.Get("payment_method")?.Get("payer").Get("billing_address");
-                        payerDetails.FirstName = billingAddress.GetValue<string>("first_name") ?? null;
-                        payerDetails.LastName = billingAddress.GetValue<string>("last_name") ?? null;
+                        var billingAddress = json.Get("payment_method")?.Get("payer")?.Get("billing_address") ?? new JsonDoc();
+                        payerDetails.FirstName = billingAddress.GetValue<string>("first_name");
+                        payerDetails.LastName = billingAddress.GetValue<string>("last_name");
                         var billing = MapAddressObject(billingAddress);
                         billing.Type = AddressType.Billing;
                         payerDetails.BillingAddress = billing;
@@ -173,12 +175,15 @@ namespace GlobalPayments.Api.Mapping {
                 transaction.DccRateData = MapDccInfo(json);
                 transaction.FraudFilterResponse = json.Has("risk_assessment") ? MapFraudManagement(json) : null;
 
-                if (json.Has("card")) {
-                    var cardDetail = new Card();
-                    cardDetail.CardNumber = json.Get("card")?.GetValue<string>("number") ?? null;
-                    cardDetail.Brand = json.Get("card")?.GetValue<string>("brand") ?? null;
-                    cardDetail.CardExpMonth = json.Get("card")?.GetValue<string>("expiry_month") ?? null;
-                    cardDetail.CardExpYear = json.Get("card")?.GetValue<string>("expiry_year") ?? null;
+                if (json.Has("card"))
+                {
+                    var cardDetail = new Card
+                    {
+                        CardNumber = json.Get("card")?.GetValue<string>("number") ?? null,
+                        Brand = json.Get("card")?.GetValue<string>("brand") ?? null,
+                        CardExpMonth = json.Get("card")?.GetValue<string>("expiry_month") ?? null,
+                        CardExpYear = json.Get("card")?.GetValue<string>("expiry_year") ?? null
+                    };
                     transaction.CardDetails = cardDetail;
                 }
             }           
@@ -188,14 +193,17 @@ namespace GlobalPayments.Api.Mapping {
 
         private static List<FundsAccountDetails> MapTransferFundsAccountDetails(JsonDoc json) {
             var transferResponse = new List<FundsAccountDetails>();
-            foreach (var item in json.GetArray<JsonDoc>("transfers") ?? Enumerable.Empty<JsonDoc>()) {
-                var transfer = new FundsAccountDetails();
-                transfer.Id = item.GetValue<string>("id");
-                transfer.Status = item.GetValue<string>("status");
-                transfer.TimeCreated = item.GetValue<string>("time_created");
-                transfer.Amount = item.GetValue<string>("amount").ToAmount();
-                transfer.Reference = item.GetValue<string>("reference");
-                transfer.Description = item.GetValue<string>("description");
+            foreach (var item in json.GetArray<JsonDoc>("transfers") ?? Enumerable.Empty<JsonDoc>())
+            {
+                var transfer = new FundsAccountDetails
+                {
+                    Id = item.GetValue<string>("id"),
+                    Status = item.GetValue<string>("status"),
+                    TimeCreated = item.GetValue<string>("time_created"),
+                    Amount = item.GetValue<string>("amount").ToAmount(),
+                    Reference = item.GetValue<string>("reference"),
+                    Description = item.GetValue<string>("description"),
+                };
                 transferResponse.Add(transfer);
             }
 
@@ -232,7 +240,7 @@ namespace GlobalPayments.Api.Mapping {
         /// <summary>
         /// Map response for an APM transaction
         /// </summary>
-        /// <param name="response"></param>
+        /// <param name="rawResponse"></param>
         /// <returns>Transaction</returns>
         public static Transaction MapResponseAPM(string rawResponse)
         {
@@ -241,33 +249,33 @@ namespace GlobalPayments.Api.Mapping {
 
             JsonDoc json = JsonDoc.Parse(rawResponse);
 
-            var paymentMethodApm = json.Get("payment_method")?.Get("apm");
-            apm.RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url") ?? (paymentMethodApm.GetValue<string>("redirect_url") ?? null);
+            var paymentMethodApm = json.Get("payment_method")?.Get("apm") ?? new JsonDoc();
+            apm.RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url") ?? (paymentMethodApm.GetValue<string>("redirect_url"));
             if (paymentMethodApm.Has("provider")) {
-                apm.ProviderName = paymentMethodApm?.Get("provider")?.GetValue<string>("name") ?? paymentMethodApm?.GetValue<string>("provider") ?? null;
-                apm.ProviderReference = paymentMethodApm?.Get("provider")?.GetValue<string>("merchant_identifier") ?? null;
-                apm.TimeCreatedReference = paymentMethodApm?.Get("provider")?.GetValue<DateTime?>("time_created_reference") ?? null;
+                apm.ProviderName = paymentMethodApm?.Get("provider")?.GetValue<string>("name") ?? paymentMethodApm?.GetValue<string>("provider");
+                apm.ProviderReference = paymentMethodApm.Get("provider")?.GetValue<string>("merchant_identifier");
+                apm.TimeCreatedReference = paymentMethodApm.Get("provider")?.GetValue<DateTime?>("time_created_reference");
             }
             else {
-                apm.ProviderName = paymentMethodApm?.GetValue<string>("provider");
+                apm.ProviderName = paymentMethodApm.GetValue<string>("provider");
             }
-            apm.Ack = paymentMethodApm?.GetValue<string>("ack");
-            apm.SessionToken = paymentMethodApm?.GetValue<string>("session_token");
-            apm.CorrelationReference = paymentMethodApm?.GetValue<string>("correlation_reference");
-            apm.VersionReference = paymentMethodApm?.GetValue<string>("version_reference");
-            apm.BuildReference = paymentMethodApm?.GetValue<string>("build_reference");
-            apm.TimeCreatedReference = paymentMethodApm?.GetValue<DateTime?>("time_created_reference", DateConverter);
-            apm.TransactionReference = paymentMethodApm?.GetValue<string>("transaction_reference");
-            apm.SecureAccountReference = paymentMethodApm?.GetValue<string>("secure_account_reference");
-            apm.ReasonCode = paymentMethodApm?.GetValue<string>("reason_code");
-            apm.PendingReason = paymentMethodApm?.GetValue<string>("pending_reason");
-            apm.GrossAmount = paymentMethodApm?.GetValue<string>("gross_amount")?.ToAmount();
-            apm.PaymentTimeReference = paymentMethodApm?.GetValue<DateTime?>("payment_time_reference", DateConverter);
-            apm.PaymentType = paymentMethodApm?.GetValue<string>("payment_type");
-            apm.PaymentStatus = paymentMethodApm?.GetValue<string>("payment_status");
-            apm.Type = paymentMethodApm?.GetValue<string>("type");
-            apm.ProtectionEligibility = paymentMethodApm?.GetValue<string>("protection_eligibilty");
-            apm.FeeAmount = paymentMethodApm?.GetValue<string>("fee_amount")?.ToAmount();
+            apm.Ack = paymentMethodApm.GetValue<string>("ack");
+            apm.SessionToken = paymentMethodApm.GetValue<string>("session_token");
+            apm.CorrelationReference = paymentMethodApm.GetValue<string>("correlation_reference");
+            apm.VersionReference = paymentMethodApm.GetValue<string>("version_reference");
+            apm.BuildReference = paymentMethodApm.GetValue<string>("build_reference");
+            apm.TimeCreatedReference = paymentMethodApm.GetValue("time_created_reference", DateConverter);
+            apm.TransactionReference = paymentMethodApm.GetValue<string>("transaction_reference");
+            apm.SecureAccountReference = paymentMethodApm.GetValue<string>("secure_account_reference");
+            apm.ReasonCode = paymentMethodApm.GetValue<string>("reason_code");
+            apm.PendingReason = paymentMethodApm.GetValue<string>("pending_reason");
+            apm.GrossAmount = paymentMethodApm.GetValue<string>("gross_amount")?.ToAmount();
+            apm.PaymentTimeReference = paymentMethodApm.GetValue("payment_time_reference", DateConverter);
+            apm.PaymentType = paymentMethodApm.GetValue<string>("payment_type");
+            apm.PaymentStatus = paymentMethodApm.GetValue<string>("payment_status");
+            apm.Type = paymentMethodApm.GetValue<string>("type");
+            apm.ProtectionEligibility = paymentMethodApm.GetValue<string>("protection_eligibilty");
+            apm.FeeAmount = paymentMethodApm.GetValue<string>("fee_amount")?.ToAmount();
 
             var authorization = json.Get("payment_method")?.Get("authorization");
             apm.AuthStatus = authorization?.GetValue<string>("status");
@@ -286,37 +294,39 @@ namespace GlobalPayments.Api.Mapping {
             return transaction;
         }
 
-        public static PayByLinkResponse MapPayByLinkResponse(JsonDoc doc) 
+        private static PayByLinkResponse MapPayByLinkResponse(JsonDoc doc)
         {
-            var payByLinkResponse = new PayByLinkResponse();
-            payByLinkResponse.Id = doc.GetValue<string>("id");
-            payByLinkResponse.AccountName = doc.GetValue<string>("account_name");
-            payByLinkResponse.Url = doc.GetValue<string>("url");
-            payByLinkResponse.Status = GetPayByLinkStatus(doc);
-            payByLinkResponse.Type = GetPayByLinkType(doc);
-            payByLinkResponse.UsageMode = GetPaymentMethodUsageMode(doc);
-            payByLinkResponse.UsageLimit = doc.GetValue<int>("usage_limit");
-            payByLinkResponse.Reference = doc.GetValue<string>("reference");
-            payByLinkResponse.Name = doc.GetValue<string>("name");
-            payByLinkResponse.Description = doc.GetValue<string>("description");
-            payByLinkResponse.ViewedCount = doc.GetValue<string>("viewed_count");
-            payByLinkResponse.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
-            payByLinkResponse.IsShippable = GetIsShippable(doc);
-
-            return payByLinkResponse;
+            return new PayByLinkResponse
+            {
+                Id = doc.GetValue<string>("id"),
+                AccountName = doc.GetValue<string>("account_name"),
+                Url = doc.GetValue<string>("url"),
+                Status = GetPayByLinkStatus(doc),
+                Type = GetPayByLinkType(doc),
+                UsageMode = GetPaymentMethodUsageMode(doc),
+                UsageLimit = doc.GetValue<int>("usage_limit"),
+                Reference = doc.GetValue<string>("reference"),
+                Name = doc.GetValue<string>("name"),
+                Description = doc.GetValue<string>("description"),
+                ViewedCount = doc.GetValue<string>("viewed_count"),
+                ExpirationDate = doc.GetValue("expiration_date", DateConverter),
+                IsShippable = GetIsShippable(doc)
+            };
         }
 
         private static void MapBNPLResponse(JsonDoc response, ref Transaction transaction) {
-            transaction.PaymentMethodType = PaymentMethodType.BNPL;            
-            var bnplResponse = new BNPLResponse();
-            bnplResponse.RedirectUrl = response.Get("payment_method").GetValue<string>("redirect_url");
-            bnplResponse.ProviderName = response.Get("payment_method").Get("bnpl").GetValue<string>("provider");
+            transaction.PaymentMethodType = PaymentMethodType.BNPL;
+            var bnplResponse = new BNPLResponse
+            {
+                RedirectUrl = response.Get("payment_method").GetValue<string>("redirect_url"),
+                ProviderName = response.Get("payment_method").Get("bnpl").GetValue<string>("provider")
+            };
             transaction.BNPLResponse = bnplResponse;           
         }
 
         private static bool? GetIsShippable(JsonDoc doc) {
             if (doc.Has("shippable")) {
-                return doc.GetValue<string>("shippable").ToUpper() == "YES" ? true : false;
+                return doc.GetValue<string>("shippable").ToUpper() == "YES";
             }
             return null;
         }
@@ -324,7 +334,7 @@ namespace GlobalPayments.Api.Mapping {
         public static TransactionSummary MapTransactionSummary(JsonDoc doc) {
             var summary = new TransactionSummary {
                 TransactionId = doc.GetValue<string>("id"),
-                TransactionDate = doc.GetValue<DateTime?>("time_created", DateConverter),
+                TransactionDate = doc.GetValue("time_created", DateConverter),
                 TransactionStatus = doc.GetValue<string>("status"),
                 TransactionType = doc.GetValue<string>("type"),
                 Channel = doc.GetValue<string>("channel"),
@@ -332,13 +342,13 @@ namespace GlobalPayments.Api.Mapping {
                 Currency = doc.GetValue<string>("currency"),
                 ReferenceNumber = doc.GetValue<string>("reference"),
                 ClientTransactionId = doc.GetValue<string>("reference"),
-                TransactionLocalDate = doc.GetValue<DateTime?>("time_created_reference", DateConverter),
+                TransactionLocalDate = doc.GetValue("time_created_reference", DateConverter),
                 BatchSequenceNumber = doc.GetValue<string>("batch_id"),
                 Country = doc.GetValue<string>("country"),
                 OriginalTransactionId = doc.GetValue<string>("parent_resource_id"),
                 DepositReference = doc.GetValue<string>("deposit_id"),
-                BatchCloseDate = doc.GetValue<DateTime?>("batch_time_created", DateConverter),
-                DepositDate = doc.GetValue<DateTime?>("deposit_time_created", DateConverter),
+                BatchCloseDate = doc.GetValue("batch_time_created", DateConverter),
+                DepositDate = doc.GetValue("deposit_time_created", DateConverter),
                 OrderId = doc.GetValue<string>("order_reference"),
                 MerchantId = doc.Get("system")?.GetValue<string>("mid"),
                 MerchantHierarchy = doc.Get("system")?.GetValue<string>("hierarchy"),
@@ -352,13 +362,13 @@ namespace GlobalPayments.Api.Mapping {
             }
 
             if (doc.Has("payment_method")) {
-                JsonDoc paymentMethod = doc.Get("payment_method");
-                summary.GatewayResponseMessage = paymentMethod?.GetValue<string>("message");
-                summary.EntryMode = paymentMethod?.GetValue<string>("entry_mode");
-                summary.CardHolderName = paymentMethod?.GetValue<string>("name");
+                JsonDoc paymentMethod = doc.Get("payment_method") ?? new JsonDoc();
+                summary.GatewayResponseMessage = paymentMethod.GetValue<string>("message");
+                summary.EntryMode = paymentMethod.GetValue<string>("entry_mode");
+                summary.CardHolderName = paymentMethod.GetValue<string>("name");
 
                 if (paymentMethod.Has("card")) {
-                    JsonDoc card = paymentMethod?.Get("card");
+                    JsonDoc card = paymentMethod.Get("card");
                     summary.CardType = card?.GetValue<string>("brand");
                     summary.AuthCode = card?.GetValue<string>("authcode");
                     summary.BrandReference = card?.GetValue<string>("brand_reference");
@@ -367,19 +377,19 @@ namespace GlobalPayments.Api.Mapping {
                     summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.Card);
                 }
                 else if(paymentMethod.Has("digital_wallet")) {
-                    JsonDoc digitalWallet = paymentMethod?.Get("digital_wallet");
+                    JsonDoc digitalWallet = paymentMethod.Get("digital_wallet");
                     summary.MaskedCardNumber = digitalWallet?.GetValue<string>("masked_token_first6last4");
                     summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.DigitalWallet);
                 }
-                else if(paymentMethod.Has("bank_transfer") && paymentMethod.Has("apm") && paymentMethod.Get("apm").GetValue<string>("provider").ToUpper() != PaymentProvider.OPEN_BANKING.ToString().ToUpper()) 
+                else if(paymentMethod.Has("bank_transfer") && !IsOpenBanking(paymentMethod))
                 {                    
-                    JsonDoc bankTransfer = paymentMethod?.Get("bank_transfer");
+                    JsonDoc bankTransfer = paymentMethod.Get("bank_transfer");
                     summary.AccountNumberLast4 = bankTransfer?.GetValue<string>("masked_account_number_last4");
                     summary.AccountType = bankTransfer?.GetValue<string>("account_type");                    
                 }
                 else if(paymentMethod.Has("apm")) {
                     if (paymentMethod.Get("apm").GetValue<string>("provider").ToUpper() == PaymentProvider.OPEN_BANKING.ToString().ToUpper()) {
-                        JsonDoc bankTransfer = paymentMethod?.Get("bank_transfer");
+                        JsonDoc bankTransfer = paymentMethod.Get("bank_transfer");
                         summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.BankPayment);
                         var bankPaymentResponse = new BankPaymentResponse();
                         bankPaymentResponse.Iban = bankTransfer?.GetValue<string>("iban");
@@ -415,7 +425,7 @@ namespace GlobalPayments.Api.Mapping {
             return summary;
         }
 
-        public static PayByLinkSummary MapPayByLinkSummary(JsonDoc doc)
+        private static PayByLinkSummary MapPayByLinkSummary(JsonDoc doc)
         {
             var summary = new PayByLinkSummary();            
             
@@ -433,7 +443,7 @@ namespace GlobalPayments.Api.Mapping {
             summary.Name = doc.GetValue<string>("name");
             summary.Description = doc.GetValue<string>("description");            
             summary.ViewedCount = doc.GetValue<string>("viewed_count");
-            summary.ExpirationDate = doc.GetValue<DateTime?>("expiration_date", DateConverter);
+            summary.ExpirationDate = doc.GetValue("expiration_date", DateConverter);
 
             summary.Shippable = doc.GetValue<string>("shippable");
             summary.UsageCount = doc.GetValue<string>("usage_count");
@@ -457,35 +467,35 @@ namespace GlobalPayments.Api.Mapping {
        
         private static TransactionSummary CreateTransactionSummary(JsonDoc doc)
         {
-            var transaction = new TransactionSummary();
-            transaction.TransactionId = doc.GetValue<string>("id");
-            transaction.TransactionDate = doc.GetValue<DateTime?>("time_created", DateConverter);
-            transaction.TransactionStatus = doc.GetValue<string>("status");
-            transaction.TransactionType = doc.GetValue<string>("type");
-            transaction.Channel = doc.GetValue<string>("channel");
-            transaction.Amount = doc.GetValue<string>("amount").ToAmount();
-            transaction.Currency = doc.GetValue<string>("currency");
-            transaction.ReferenceNumber = doc.GetValue<string>("reference");
-            transaction.ClientTransactionId = doc.GetValue<string>("reference");
-            transaction.Description = doc.GetValue<string>("description");
-            transaction.Fingerprint = doc.Get("payment_method")?.GetValue<string>("fingerprint");
-            transaction.FingerprintIndicator = doc.Get("payment_method")?.GetValue<string>("fingerprint_presence_indicator");
-
-            return transaction;
+            return new TransactionSummary
+            {
+                TransactionId = doc.GetValue<string>("id"),
+                TransactionDate = doc.GetValue("time_created", DateConverter),
+                TransactionStatus = doc.GetValue<string>("status"),
+                TransactionType = doc.GetValue<string>("type"),
+                Channel = doc.GetValue<string>("channel"),
+                Amount = doc.GetValue<string>("amount").ToAmount(),
+                Currency = doc.GetValue<string>("currency"),
+                ReferenceNumber = doc.GetValue<string>("reference"),
+                ClientTransactionId = doc.GetValue<string>("reference"),
+                Description = doc.GetValue<string>("description"),
+                Fingerprint = doc.Get("payment_method")?.GetValue<string>("fingerprint"),
+                FingerprintIndicator = doc.Get("payment_method")?.GetValue<string>("fingerprint_presence_indicator")
+            };
         }
 
         private static List<PaymentMethodName> GetAllowedPaymentMethods(JsonDoc doc) 
         {
-            List<PaymentMethodName> List = null;
+            List<PaymentMethodName> list = null;
 
             if (doc.Has("allowed_payment_methods")) {
-                List = new List<PaymentMethodName>();
+                list = new List<PaymentMethodName>();
                 foreach (var item in doc.GetArray<string>("allowed_payment_methods")) {
                     PaymentMethodName methodName = EnumConverter.FromMapping<PaymentMethodName>(Target.GP_API, item);
-                    List.Add(methodName);
+                    list.Add(methodName);
                 }
             }
-            return List;
+            return list;
         }
 
         private static PayByLinkType? GetPayByLinkType(JsonDoc doc) 
@@ -614,7 +624,7 @@ namespace GlobalPayments.Api.Mapping {
         public static DepositSummary MapDepositSummary(JsonDoc doc) {
             var summary = new DepositSummary {
                 DepositId = doc.GetValue<string>("id"),
-                DepositDate = doc.GetValue<DateTime?>("time_created", DateConverter),
+                DepositDate = doc.GetValue("time_created", DateConverter),
                 Status = doc.GetValue<string>("status"),
                 Type = doc.GetValue<string>("funding_type"),
                 Amount = doc.GetValue<string>("amount").ToAmount(),
@@ -643,7 +653,7 @@ namespace GlobalPayments.Api.Mapping {
             return summary;
         }
 
-        public static DisputeDocument MapDisputeDocument(JsonDoc doc)
+        private static DisputeDocument MapDisputeDocument(JsonDoc doc)
         {
             return new DisputeDocument {
                 Id = doc.GetValue<string>("id"),
@@ -654,10 +664,10 @@ namespace GlobalPayments.Api.Mapping {
         public static DisputeSummary MapDisputeSummary(JsonDoc doc) {
             var summary = new DisputeSummary {
                 CaseId = doc.GetValue<string>("id"),
-                CaseIdTime = doc.GetValue<DateTime?>("time_created", DateConverter),
+                CaseIdTime = doc.GetValue("time_created", DateConverter),
                 CaseStatus = doc.GetValue<string>("status"),
                 CaseStage = doc.GetValue<string>("stage"),
-                CaseStageTime = doc.GetValue<DateTime?>("stage_time_created", DateConverter),
+                CaseStageTime = doc.GetValue("stage_time_created", DateConverter),
                 CaseAmount = doc.GetValue<string>("amount").ToAmount(),
                 CaseCurrency = doc.GetValue<string>("currency"),
                 ReasonCode = doc.GetValue<string>("reason_code"),
@@ -691,7 +701,7 @@ namespace GlobalPayments.Api.Mapping {
             }
 
             if (!string.IsNullOrEmpty(doc.GetValue<string>("time_to_respond_by"))) {
-                summary.RespondByDate = doc.GetValue<DateTime?>("time_to_respond_by", DateConverter);
+                summary.RespondByDate = doc.GetValue("time_to_respond_by", DateConverter);
             }
 
             var counter = 0;
@@ -712,10 +722,10 @@ namespace GlobalPayments.Api.Mapping {
         public static DisputeSummary MapSettlementDisputeSummary(JsonDoc doc) {
             var summary = MapDisputeSummary(doc);
 
-            summary.CaseIdTime = doc.GetValue<DateTime?>("stage_time_created", DateConverter);
-            summary.DepositDate = doc.GetValue<DateTime?>("deposit_time_created",DateConverter);
+            summary.CaseIdTime = doc.GetValue("stage_time_created", DateConverter);
+            summary.DepositDate = doc.GetValue("deposit_time_created",DateConverter);
             summary.DepositReference = doc.GetValue<string>("deposit_id");
-            summary.TransactionTime = doc.Get("transaction")?.GetValue<DateTime?>("time_created", DateConverter);
+            summary.TransactionTime = doc.Get("transaction")?.GetValue("time_created", DateConverter);
             summary.TransactionType = doc.Get("transaction")?.GetValue<string>("type");
             summary.TransactionAmount = doc.Get("transaction")?.GetValue<string>("amount").ToAmount();
             summary.TransactionCurrency = doc.Get("transaction")?.GetValue<string>("currency");
@@ -763,33 +773,36 @@ namespace GlobalPayments.Api.Mapping {
 
         public static T MapRiskAssessmentResponse<T>(string rawResponse) where T : class
         {
-            T result = Activator.CreateInstance<T>();
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc response = JsonDoc.Parse(rawResponse);
-                var riskAssessment = new RiskAssessment();
-                riskAssessment.Id = response.GetValue<string>("id");
-                riskAssessment.TimeCreated = response.GetValue<DateTime?>("time_created", DateConverter);
-                riskAssessment.Status = (RiskAssessmentStatus)Enum.Parse(typeof(RiskAssessmentStatus), response.GetValue<string>("status").ToUpper());
-                riskAssessment.Amount = response.GetValue<string>("amount").ToAmount() ?? null;
-                riskAssessment.Currency = response.GetValue<string>("currency") ?? null;
-                riskAssessment.MerchantId = response.GetValue<string>("merchant_id") ?? null;
-                riskAssessment.MerchantName = response.GetValue<string>("merchant_name") ?? null;
-                riskAssessment.AccountId = response.GetValue<string>("account_id") ?? null;
-                riskAssessment.AccountName = response.GetValue<string>("account_name") ?? null;
-                riskAssessment.Reference = response.GetValue<string>("reference") ?? null;
-                riskAssessment.ResponseCode = response.Get("action").GetValue<string>("result_code") ?? null;
-                riskAssessment.ResponseMessage = response.GetValue<string>("result") ?? null;
-                if ((bool)response.Get("payment_method")?.Has("card")) {
+                var riskAssessment = new RiskAssessment
+                {
+                    Id = response.GetValue<string>("id"),
+                    TimeCreated = response.GetValue("time_created", DateConverter),
+                    Status = (RiskAssessmentStatus)Enum.Parse(typeof(RiskAssessmentStatus),
+                    response.GetValue<string>("status").ToUpper()),
+                    Amount = response.GetValue<string>("amount").ToAmount(),
+                    Currency = response.GetValue<string>("currency"),
+                    MerchantId = response.GetValue<string>("merchant_id"),
+                    MerchantName = response.GetValue<string>("merchant_name"),
+                    AccountId = response.GetValue<string>("account_id"),
+                    AccountName = response.GetValue<string>("account_name"),
+                    Reference = response.GetValue<string>("reference"),
+                    ResponseCode = response.Get("action").GetValue<string>("result_code"),
+                    ResponseMessage = response.GetValue<string>("result")
+                };
+                if (response.Get("payment_method").Has("card")) {
                     var paymentMethod = response.Get("payment_method").Get("card");
-                    var card = new Card();
-                    card.MaskedNumberLast4 = paymentMethod.GetValue<string>("masked_number_last4") ?? null;
-                    card.Brand = paymentMethod.GetValue<string>("brand") ?? null;
-                    card.BrandReference = paymentMethod.GetValue<string>("brand_reference") ?? null;
-                    card.Bin = paymentMethod.GetValue<string>("bin") ?? null;
-                    card.BinCountry = paymentMethod.GetValue<string>("bin_country") ?? null;
-                    card.AccountType = paymentMethod.GetValue<string>("account_type") ?? null;
-                    card.Issuer = paymentMethod.GetValue<string>("issuer") ?? null;
-
+                    var card = new Card
+                    {
+                        MaskedNumberLast4 = paymentMethod.GetValue<string>("masked_number_last4"),
+                        Brand = paymentMethod.GetValue<string>("brand"),
+                        BrandReference = paymentMethod.GetValue<string>("brand_reference"),
+                        Bin = paymentMethod.GetValue<string>("bin"),
+                        BinCountry = paymentMethod.GetValue<string>("bin_country"),
+                        AccountType = paymentMethod.GetValue<string>("account_type"),
+                        Issuer = paymentMethod.GetValue<string>("issuer"),
+                    };
                     riskAssessment.CardDetails = card;
                 }
                 if (response.Has("raw_response")) {
@@ -800,7 +813,7 @@ namespace GlobalPayments.Api.Mapping {
                     riskAssessment.ThirdPartyResponse = thirdPartyResponse;
                 }
 
-                riskAssessment.ActionId = response.Get("action").GetValue<string>("id") ?? null;
+                riskAssessment.ActionId = response.Get("action").GetValue<string>("id");
                 return riskAssessment as T;
             }
             return new RiskAssessment() as T;
@@ -823,17 +836,23 @@ namespace GlobalPayments.Api.Mapping {
         {
             var fraudFilterResponse = new FraudManagementResponse();
             var fraudResponse = response;
-            fraudFilterResponse.FraudResponseMode = fraudResponse.GetValue<string>("mode") ?? null;
-            fraudFilterResponse.FraudResponseResult = fraudResponse.Has("result") ? EnumConverter.FromMapping<FraudFilterResult>(Target.GP_API, fraudResponse.GetValue("result")).ToString() : string.Empty;
-            fraudFilterResponse.FraudResponseMessage = fraudResponse.GetValue<string>("message") ?? null;
+            fraudFilterResponse.FraudResponseMode = fraudResponse.GetValue<string>("mode");
+            fraudFilterResponse.FraudResponseResult = fraudResponse.Has("result") ? 
+                EnumConverter.FromMapping<FraudFilterResult>(Target.GP_API, fraudResponse.GetValue("result")).ToString() : string.Empty;
+            fraudFilterResponse.FraudResponseMessage = fraudResponse.GetValue<string>("message");
             if (fraudResponse.Has("rules")) {
                 fraudFilterResponse.FraudResponseRules = new List<FraudRule>();
-                foreach (var rule in fraudResponse.GetArray<JsonDoc>("rules") ?? Enumerable.Empty<JsonDoc>()) {
-                    var fraudRule = new FraudRule();
-                    fraudRule.Key = rule.GetValue<string>("reference") ?? null;
-                    fraudRule.Mode = (FraudFilterMode)(Enum.Parse(typeof(FraudFilterMode), rule.GetValue<string>("mode")));
-                    fraudRule.Description = rule.GetValue<string>("description") ?? null;
-                    fraudRule.result = rule.Has("result") ? EnumConverter.FromMapping<FraudFilterResult>(Target.GP_API, rule.GetValue("result")).ToString() : null;
+                foreach (var rule in fraudResponse.GetArray<JsonDoc>("rules") ?? Enumerable.Empty<JsonDoc>())
+                {
+                    var fraudRule = new FraudRule
+                    {
+                        Key = rule.GetValue<string>("reference"),
+                        Mode = (FraudFilterMode)(Enum.Parse(typeof(FraudFilterMode),
+                        rule.GetValue<string>("mode"))),
+                        Description = rule.GetValue<string>("description"),
+                        result = rule.Has("result") ? 
+                            EnumConverter.FromMapping<FraudFilterResult>(Target.GP_API, rule.GetValue("result")).ToString() : null
+                    };
                     fraudFilterResponse.FraudResponseRules.Add(fraudRule);
                 }
             }
@@ -852,16 +871,16 @@ namespace GlobalPayments.Api.Mapping {
             }
             
             return new DccRateData { 
-                CardHolderCurrency = currencyConversion.GetValue<string>("payer_currency") ?? null,
-                CardHolderAmount = currencyConversion.GetValue<string>("payer_amount").ToAmount() ?? null,
-                CardHolderRate = currencyConversion.GetValue<string>("exchange_rate").ToDecimal() ?? null,
-                MerchantCurrency = currencyConversion.GetValue<string>("currency") ?? null,
-                MerchantAmount = currencyConversion.GetValue<string>("amount").ToAmount() ?? null,
-                MarginRatePercentage = currencyConversion.GetValue<string>("margin_rate_percentage") ??  null,
-                ExchangeRateSourceName = currencyConversion.GetValue<string>("exchange_rate_source") ?? null,
-                CommissionPercentage = currencyConversion.GetValue<string>("commission_percentage") ?? null,
-                ExchangeRateSourceTimestamp = currencyConversion.GetValue<DateTime?>("exchange_rate_time_created", DateConverter),
-                DccId = currencyConversion.GetValue<string>("id") ?? null
+                CardHolderCurrency = currencyConversion.GetValue<string>("payer_currency"),
+                CardHolderAmount = currencyConversion.GetValue<string>("payer_amount").ToAmount(),
+                CardHolderRate = currencyConversion.GetValue<string>("exchange_rate").ToDecimal(),
+                MerchantCurrency = currencyConversion.GetValue<string>("currency"),
+                MerchantAmount = currencyConversion.GetValue<string>("amount").ToAmount(),
+                MarginRatePercentage = currencyConversion.GetValue<string>("margin_rate_percentage"),
+                ExchangeRateSourceName = currencyConversion.GetValue<string>("exchange_rate_source"),
+                CommissionPercentage = currencyConversion.GetValue<string>("commission_percentage"),
+                ExchangeRateSourceTimestamp = currencyConversion.GetValue("exchange_rate_time_created", DateConverter),
+                DccId = currencyConversion.GetValue<string>("id")
             };
         }
 
@@ -923,14 +942,14 @@ namespace GlobalPayments.Api.Mapping {
                 // Mobile data
                 if (!string.IsNullOrEmpty(json.GetValue<string>("source")) && json.GetValue<string>("source").Equals("MOBILE_SDK")) {
                     if (json.Get("three_ds")?.Get("mobile_data") != null) {
-                        JsonDoc mobile_data = json.Get("three_ds").Get("mobile_data");
+                        JsonDoc mobileData = json.Get("three_ds").Get("mobile_data");
 
-                        transaction.ThreeDSecure.PayerAuthenticationRequest = mobile_data.GetValue<string>("acs_signed_content");
+                        transaction.ThreeDSecure.PayerAuthenticationRequest = mobileData.GetValue<string>("acs_signed_content");
 
-                        if (mobile_data.Get("acs_rendering_type").HasKeys()) {
-                            JsonDoc acs_rendering_type = mobile_data.Get("acs_rendering_type");
-                            transaction.ThreeDSecure.AcsInterface = acs_rendering_type.GetValue<string>("acs_interface");
-                            transaction.ThreeDSecure.AcsUiTemplate = acs_rendering_type.GetValue<string>("acs_ui_template");
+                        if (mobileData.Get("acs_rendering_type").HasKeys()) {
+                            JsonDoc acsRenderingType = mobileData.Get("acs_rendering_type");
+                            transaction.ThreeDSecure.AcsInterface = acsRenderingType.GetValue<string>("acs_interface");
+                            transaction.ThreeDSecure.AcsUiTemplate = acsRenderingType.GetValue<string>("acs_ui_template");
                         }
                     }
                 }
@@ -957,11 +976,11 @@ namespace GlobalPayments.Api.Mapping {
         public static CardIssuerResponse MapCardIssuerResponse(JsonDoc response)
         {
             return new CardIssuerResponse { 
-                Result = response.GetValue<string>("result") ?? null,
-                AvsResult = response.GetValue<string>("avs_result") ?? null,
-                CvvResult = response.GetValue<string>("cvv_result") ?? null,
-                AvsAddressResult = response.GetValue<string>("avs_address_result") ?? null,
-                AvsPostalCodeResult = response.GetValue<string>("avs_postal_code_result") ?? null,
+                Result = response.GetValue<string>("result"),
+                AvsResult = response.GetValue<string>("avs_result"),
+                CvvResult = response.GetValue<string>("cvv_result"),
+                AvsAddressResult = response.GetValue<string>("avs_address_result"),
+                AvsPostalCodeResult = response.GetValue<string>("avs_postal_code_result"),
             };
         }
 
@@ -969,19 +988,18 @@ namespace GlobalPayments.Api.Mapping {
         {
             var merchantAccountSummary = new MerchantAccountSummary();
             merchantAccountSummary.Id = account.GetValue<string>("id");
-            if(account.Has("type"))
-            merchantAccountSummary.Type = (MerchantAccountType)Enum.Parse(typeof(MerchantAccountType), account.GetValue<string>("type"));
-            merchantAccountSummary.Name = account.GetValue<string>("name") ?? null;
-            if(account.Has("status"))
-            merchantAccountSummary.Status = (MerchantAccountStatus)Enum.Parse(typeof(MerchantAccountStatus), account.GetValue<string>("status"));           
-            merchantAccountSummary.Permissions = account.GetArray<string>("permissions")?.ToList() ?? null;
-            merchantAccountSummary.Countries = account.GetArray<string>("countries")?.ToList() ?? null;
+            merchantAccountSummary.Name = account.GetValue<string>("name");
+            merchantAccountSummary.Permissions = account.GetArray<string>("permissions")?.ToList();
+            merchantAccountSummary.Countries = account.GetArray<string>("countries")?.ToList();
             merchantAccountSummary.Channels = account.GetArray<string>("channels")?.ToList()
-                                                    .Select(x => EnumConverter.FromMapping<Channel>(Target.GP_API, x)).ToList();
-            merchantAccountSummary.Currencies = account.GetArray<string>("currencies")?.ToList() ?? null;
+                .Select(x => EnumConverter.FromMapping<Channel>(Target.GP_API, x)).ToList();
+            merchantAccountSummary.Currencies = account.GetArray<string>("currencies")?.ToList();
             merchantAccountSummary.PaymentMethods = GetPaymentMethodsName(account);
-            merchantAccountSummary.Configurations = account.GetArray<string>("configurations")?.ToList() ?? null;
-           
+            merchantAccountSummary.Configurations = account.GetArray<string>("configurations")?.ToList();
+            if(account.Has("type"))
+                merchantAccountSummary.Type = (MerchantAccountType)Enum.Parse(typeof(MerchantAccountType), account.GetValue<string>("type"));
+            if(account.Has("status"))
+                merchantAccountSummary.Status = (MerchantAccountStatus)Enum.Parse(typeof(MerchantAccountStatus), account.GetValue<string>("status"));           
             if (account.Has("addresses")) {
                 var addresses = new List<Address>();
                 var actionType = account.Get("action")?.GetValue<string>("type");
@@ -1049,45 +1067,56 @@ namespace GlobalPayments.Api.Mapping {
                 string actionType = json.Get("action")?.GetValue<string>("type");
                 switch (actionType) {
                     case DOCUMENT_UPLOAD:
-                        var userDoc = new User();
-                        userDoc.UserReference = new UserReference();
-                        userDoc.UserReference.UserId = json.GetValue<string>("merchant_id") ?? null;
-                        userDoc.UserReference.UserType = UserType.MERCHANT;
-                        userDoc.Name = json.GetValue<string>("merchant_name") ?? null;
-                        var doc = new Document();
-                        doc.Name = json.GetValue<string>("name");
-                        doc.Id = json.GetValue<string>("id");
-                        doc.Status = json.GetValue<string>("status");
-                        doc.TimeCreated = json.GetValue<string>("time_created");
-                        doc.Format = (FileType)Enum.Parse(typeof(FileType),json.GetValue<string>("format"));
-                        doc.Category = (DocumentCategory)Enum.Parse(typeof(DocumentCategory), json.GetValue<string>("function"));
+                        var userDoc = new User()
+                        {
+                            UserReference = new UserReference 
+                            {
+                                UserId = json.GetValue<string>("merchant_id"),
+                                UserType = UserType.MERCHANT
+                            },
+                            Name = json.GetValue<string>("merchant_name")
+                        };
+                        var doc = new Document
+                        {
+                            Name = json.GetValue<string>("name"),
+                            Id = json.GetValue<string>("id"),
+                            Status = json.GetValue<string>("status"),
+                            TimeCreated = json.GetValue<string>("time_created"),
+                            Format = (FileType)Enum.Parse(typeof(FileType), json.GetValue<string>("format")),
+                            Category = (DocumentCategory)Enum.Parse(typeof(DocumentCategory), json.GetValue<string>("function"))
+                        };
                         userDoc.Document = doc;
                         if (json.Has("action")) {
-                            userDoc.ResponseCode = json.Get("action").GetValue<string>("result_code") ?? null;
+                            userDoc.ResponseCode = json.Get("action").GetValue<string>("result_code");
                         }                
                         return userDoc as T;
                     case MERCHANT_CREATE:
                     case MERCHANT_EDIT:
                     case MERCHANT_EDIT_INITIATED:
                     case MERCHANT_SINGLE:
-                        var user = new User();
-                        user.UserReference = new UserReference();
-                        user.UserReference.UserId = json.GetValue<string>("id");                        
-                
-                        user.Name = json.GetValue<string>("name");
-                        user.UserReference.UserStatus = (UserStatus)Enum.Parse(typeof(UserStatus), json.GetValue<string>("status"));
-                        user.UserReference.UserType = (UserType)Enum.Parse(typeof(UserType), json.GetValue<string>("type"));
-                        user.TimeCreated = json.GetValue<DateTime?>("time_created", DateConverter);
-                        user.TimeLastUpdated = json.GetValue<DateTime?>("time_last_updated", DateConverter);
-                        user.ResponseCode = json.Get("action")?.GetValue<string>("result_code") ?? null;
-                        user.StatusDescription = json.GetValue<string>("status_description") ?? null;
-                        user.Email = json.GetValue<string>("email") ?? null;
+                        var user = new User
+                        {
+                            Name = json.GetValue<string>("name"),
+                            TimeCreated = json.GetValue("time_created", DateConverter),
+                            TimeLastUpdated = json.GetValue("time_last_updated", DateConverter),
+                            ResponseCode = json.Get("action")?.GetValue<string>("result_code"),
+                            StatusDescription = json.GetValue<string>("status_description"),
+                            Email = json.GetValue<string>("email"),
+                            UserReference = new UserReference
+                            {
+                                UserId = json.GetValue<string>("id"),
+                                UserStatus = (UserStatus)Enum.Parse(typeof(UserStatus), json.GetValue<string>("status")),
+                                UserType = (UserType)Enum.Parse(typeof(UserType), json.GetValue<string>("type"))
+                            }
+                        };
                         if (json.Has("addresses")) {
                             user.Addresses = new List<Address>();
                             foreach (var address in json.GetArray<JsonDoc>("addresses") ?? Enumerable.Empty<JsonDoc>()) {                              
                                 var userAddress = MapAddressObject(address);                                
                                 if (address.Has("functions")) {
-                                    userAddress.Type = EnumConverter.FromDescription<AddressType>((address.GetValue("functions") as List<string>).FirstOrDefault().ToString());
+                                    userAddress.Type = EnumConverter.FromDescription<AddressType>(
+                                            (address.GetValue("functions") as List<string>).FirstOrDefault()
+                                        );
                                 }
                                 user.Addresses.Add(userAddress);
                             }
@@ -1111,20 +1140,24 @@ namespace GlobalPayments.Api.Mapping {
 
                         return user as T;
                     case FUNDS:
-                        var userFunds = new User();
-                        userFunds.UserReference = new UserReference();
-                        userFunds.UserReference.UserId = json.GetValue<string>("merchant_id");
-                        userFunds.Name = json.GetValue<string>("merchant_name");
-                        var funds = new FundsAccountDetails();
-                        funds.Id = json.GetValue<string>("id");
-                        funds.TimeCreated = json.GetValue<string>("time_created");
-                        funds.TimeLastUpdated = json.GetValue<string>("time_last_updated") ?? null;
-                        funds.PaymentMethodType = json.GetValue<string>("type") ?? null;
-                        funds.PaymentMethodName = json.GetValue<string>("payment_method") ?? null;
-                        funds.Status = json.GetValue<string>("status");
-                        funds.Amount = json.GetValue<decimal>("amount");
-                        funds.Currency = json.GetValue<string>("currency") ?? null;
-                        funds.Account = new UserAccount(json.GetValue<string>("account_id"), json.GetValue<string>("account_name"));
+                        var userFunds = new User {
+                            UserReference = new UserReference {
+                                UserId = json.GetValue<string>("merchant_id")
+                            },
+                            Name = json.GetValue<string>("merchant_name")
+                        };
+                        var funds = new FundsAccountDetails {
+                            Id = json.GetValue<string>("id"),
+                            TimeCreated = json.GetValue<string>("time_created"),
+                            TimeLastUpdated = json.GetValue<string>("time_last_updated"),
+                            PaymentMethodType = json.GetValue<string>("type"),
+                            PaymentMethodName = json.GetValue<string>("payment_method"),
+                            Status = json.GetValue<string>("status"),
+                            Amount = json.GetValue<decimal>("amount"),
+                            Currency = json.GetValue<string>("currency"),
+                            Account = new UserAccount(json.GetValue<string>("account_id"),
+                            json.GetValue<string>("account_name"))
+                        };
                         userFunds.FundsAccountDetails = funds;
                         userFunds.ResponseCode = json.Get("action").GetValue<string>("result_code");
 
@@ -1154,13 +1187,16 @@ namespace GlobalPayments.Api.Mapping {
                         MapGeneralFileProcessingResponse(json, fp);                        
                         if (json.Has("response_files")) {
                             fp.FilesUploaded = new List<FileUploaded>();
-                            foreach (var responseFile in json.GetArray<JsonDoc>("response_files") ?? Enumerable.Empty<JsonDoc>()) {
-                                var file = new FileUploaded();
-                                file.Url = responseFile.GetValue<string>("url");
-                                file.TimeCreated = responseFile.GetValue<string>("time_created");
-                                file.ExpirationDate = responseFile.GetValue<string>("expiration_date");
-                                file.FileName = responseFile.GetValue<string>("name");
-                                file.FileId = responseFile.GetValue<string>("response_file_id");
+                            foreach (var responseFile in json.GetArray<JsonDoc>("response_files") ?? Enumerable.Empty<JsonDoc>())
+                            {
+                                var file = new FileUploaded
+                                {
+                                    Url = responseFile.GetValue<string>("url"),
+                                    TimeCreated = responseFile.GetValue<string>("time_created"),
+                                    ExpirationDate = responseFile.GetValue<string>("expiration_date"),
+                                    FileName = responseFile.GetValue<string>("name"),
+                                    FileId = responseFile.GetValue<string>("response_file_id")
+                                };
                                 fp.FilesUploaded.Add(file);
                             }                           
                         }
@@ -1210,7 +1246,7 @@ namespace GlobalPayments.Api.Mapping {
             List<PaymentMethodList> merchantPaymentList = new List<PaymentMethodList>();
             foreach (var payment in json.GetArray<JsonDoc>("payment_methods") ?? Enumerable.Empty<JsonDoc>()) {
                 var merchantPayment = new PaymentMethodList();
-                merchantPayment.Function = EnumConverter.FromDescription<PaymentMethodFunction>((payment.GetValue("functions") as List<string>).FirstOrDefault().ToString());
+                merchantPayment.Function = EnumConverter.FromDescription<PaymentMethodFunction>((payment.GetValue("functions") as List<string>).FirstOrDefault());
                 
                 if (payment.Has("bank_transfer")) {
                     var bankTransfer = payment.Get("bank_transfer");
@@ -1223,20 +1259,21 @@ namespace GlobalPayments.Api.Mapping {
                     }
                     if (bankTransfer.Has("bank")) {
                         var jsonBank = bankTransfer.Get("bank");
-                        pm.RoutingNumber = jsonBank.GetValue<string>("code") ?? null;
-                        pm.BankName = jsonBank.GetValue<string>("name") ?? null;                       
+                        pm.RoutingNumber = jsonBank.GetValue<string>("code");
+                        pm.BankName = jsonBank.GetValue<string>("name");                       
                     }
-                    pm.CheckHolderName = payment.GetValue<string>("name") ?? null;
+                    pm.CheckHolderName = payment.GetValue<string>("name");
 
                     merchantPayment.PaymentMethod = pm;
                 }
                 if (payment.Has("card")) {
                     var card = payment.Get("card");
-                    var pm = new CreditCardData();
-                    pm.CardHolderName = card.GetValue<string>("name") ?? null;
-                    pm.Number = card.GetValue<string>("number") ?? null;
-                    pm.ExpYear = card.GetValue<int?>("expiry_year") ?? null;
-
+                    var pm = new CreditCardData 
+                    {
+                        CardHolderName = card.GetValue<string>("name"),
+                        Number = card.GetValue<string>("number"),
+                        ExpYear = card.GetValue<int?>("expiry_year")
+                    };
                     merchantPayment.PaymentMethod = pm;
                 }
                 merchantPaymentList.Add(merchantPayment);
@@ -1247,25 +1284,25 @@ namespace GlobalPayments.Api.Mapping {
         private static Address MapAddressObject(JsonDoc address, string actionType = null)
         {
             var addressReturn = new Address();
-            addressReturn.StreetAddress1 = address.GetValue<string>("line_1") ?? null;
+            addressReturn.StreetAddress1 = address.GetValue<string>("line_1");
 
             switch (actionType) {
                 case ADDRESS_LIST:
                     if (address.Get("line_2").HasKeys())
-                        addressReturn.StreetAddress2 = address.GetValue<string>("line_2") ?? null;
+                        addressReturn.StreetAddress2 = address.GetValue<string>("line_2");
                     if (address.Get("line_3").HasKeys())
-                        addressReturn.StreetAddress3 = address.GetValue<string>("line_3") ?? null;
+                        addressReturn.StreetAddress3 = address.GetValue<string>("line_3");
                     break;
                 default:
-                    addressReturn.StreetAddress2 = address.GetValue<string>("line_2") ?? null;
-                    addressReturn.StreetAddress3 = address.GetValue<string>("line_3") ?? null;
+                    addressReturn.StreetAddress2 = address.GetValue<string>("line_2");
+                    addressReturn.StreetAddress3 = address.GetValue<string>("line_3");
                     break;
             }
 
            
-            addressReturn.City = address.GetValue<string>("city") ?? null;
-            addressReturn.State = address.GetValue<string>("state") ?? null;
-            addressReturn.PostalCode = address.GetValue<string>("postal_code") ?? null;
+            addressReturn.City = address.GetValue<string>("city");
+            addressReturn.State = address.GetValue<string>("state");
+            addressReturn.PostalCode = address.GetValue<string>("postal_code");
             addressReturn.CountryCode = address.GetValue<string>("country");
 
             return addressReturn;
@@ -1276,8 +1313,8 @@ namespace GlobalPayments.Api.Mapping {
             List<Person> personList = new List<Person>();
             foreach (var person in json.GetArray<JsonDoc>("persons") ?? Enumerable.Empty<JsonDoc>()) {
                 var newPerson = new Person();
-                var functions = person.GetValue("functions") as List<string>;
-                newPerson.Functions = (PersonFunctions)Enum.Parse(typeof(PersonFunctions), functions.First<string>());                             
+                var functions = person.GetValue("functions") as List<string> ?? new List<string>();
+                newPerson.Functions = (PersonFunctions)Enum.Parse(typeof(PersonFunctions), functions.First());                             
                 newPerson.FirstName = person.GetValue<string>("first_name");
                 newPerson.MiddleName = person.GetValue<string>("middle_name");
                 newPerson.LastName = person.GetValue<string>("last_name");
@@ -1296,6 +1333,12 @@ namespace GlobalPayments.Api.Mapping {
             }
 
             return personList;
+        }
+
+        private static bool IsOpenBanking(JsonDoc paymentMethod)
+        {
+            return paymentMethod != null && paymentMethod.Has("apm") &&
+                   paymentMethod.Get("apm").GetValue<string>("provider").ToUpper() == PaymentProvider.OPEN_BANKING.ToString().ToUpper();
         }
     }
 }

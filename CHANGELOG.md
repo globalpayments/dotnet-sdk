@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v9.0.4 (10/22/24)
+## Latest - v9.0.5 (11/07/24)
+### Enhancement
+- [GP-API] - Add missing mapping on digital wallet transaction response: brand, masked_number_last4, authcode, brand_reference
+
+## v9.0.4 (10/22/24)
 ### Enhancement
 - [Portico] - Added ClientTxnId to ReportBatchDetail and ReportOpenAuths reports
 - [UPA] Add SAF indicator (bool) to Host response
