@@ -87,8 +87,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var merchants = GetMerchants();
 
             var merchantProcessing = merchants.FirstOrDefault();
+            Assert.IsNotNull(merchantProcessing);
             var merchantId = merchantProcessing.Id;
-            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING, PaymentMethodName.BankTransfer);
 
             config.MerchantId = merchantId;
             config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
@@ -134,8 +135,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var merchants = GetMerchants();
 
             var merchantProcessing = merchants.FirstOrDefault();
+            Assert.IsNotNull(merchantProcessing);
             var merchantId = merchantProcessing.Id;
-            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING, PaymentMethodName.BankTransfer);
 
             gpApiConfig.MerchantId = merchantId;
             gpApiConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };           
@@ -176,7 +178,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var transferFund = splitResponse.TransfersFundsAccounts.FirstOrDefault();
 
-            Assert.AreEqual("00", transferFund.Status);
+            Assert.AreEqual("SUCCESS", transferFund.Status);
             Assert.AreEqual(transferAmount, transferFund.Amount);
             Assert.AreEqual(transferReference, transferFund.Reference);
             Assert.AreEqual(transferDescription, transferFund.Description);
@@ -201,8 +203,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var merchants = GetMerchants();
 
             var merchantProcessing = merchants.FirstOrDefault();
+            Assert.IsNotNull(merchantProcessing);
             var merchantId = merchantProcessing.Id;
-            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING, PaymentMethodName.BankTransfer);
 
             config.MerchantId = merchantId;
             config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
@@ -243,7 +246,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var transferFund = splitResponse.TransfersFundsAccounts.FirstOrDefault();
 
-            Assert.AreEqual("00", transferFund.Status);
+            Assert.AreEqual("SUCCESS", transferFund.Status);
             Assert.AreEqual(transferAmount, transferFund.Amount);
             Assert.AreEqual(transferReference, transferFund.Reference);
             Assert.AreEqual(transferDescription, transferFund.Description);
@@ -298,8 +301,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var merchants = GetMerchants();
 
             var merchantProcessing = merchants.FirstOrDefault();
+            Assert.IsNotNull(merchantProcessing);
             var merchantId = merchantProcessing.Id;
-            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING, PaymentMethodName.BankTransfer);
 
             config.MerchantId = merchantId;
             config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
@@ -352,8 +356,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var merchants = GetMerchants();
 
             var merchantProcessing = merchants.FirstOrDefault();
+            Assert.IsNotNull(merchantProcessing);
             var merchantId = merchantProcessing.Id;
-            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING);
+            var accountProcessing = GetAccountByType(merchantId, MerchantAccountType.TRANSACTION_PROCESSING, PaymentMethodName.BankTransfer);
 
             config.MerchantId = merchantId;
             config.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountID = accountProcessing.Id };
@@ -453,7 +458,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 RoutingNumber = "123456780",
             };
 
-            var amount = 1.29m;
+            var amount = AMOUNT;
 
             var response = ReportingService.FindTransactionsPaged(1, 10)
                 .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
@@ -491,23 +496,37 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private List<MerchantSummary> GetMerchants()
         {
             var merchants = new ReportingService().FindMerchants(1, 10)
-              .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Descending)
+              .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
               .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)
+              .And(SearchCriteria.StartDate,  DateTime.UtcNow.AddYears(-3))
               .Execute();
 
             return merchants.Results;
         }
 
-        private MerchantAccountSummary GetAccountByType(string merchantSenderId, MerchantAccountType merchantAccountType)
+        private MerchantAccountSummary GetAccountByType(string merchantSenderId,
+            MerchantAccountType merchantAccountType, PaymentMethodName? paymentMethodName = null)
         {
             var response = ReportingService.FindAccounts(1, 10)
-                   .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Descending)
-                   .Where(SearchCriteria.StartDate, StartDate)
-                   .And(SearchCriteria.EndDate, EndDate)
-                    .And(DataServiceCriteria.MerchantId, merchantSenderId)
-                   .And(SearchCriteria.AccountStatus, MerchantAccountStatus.ACTIVE)
-                   .Execute();
+                .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-3))
+                .And(DataServiceCriteria.MerchantId, merchantSenderId)
+                .And(SearchCriteria.AccountStatus, MerchantAccountStatus.ACTIVE)
+                .Execute();
 
+            if (paymentMethodName != null)
+            {
+                foreach (var account in response.Results)
+                {
+                    if (account.Type == merchantAccountType &&
+                        account.PaymentMethods.Contains(paymentMethodName.Value))
+                    {
+                        return account;
+                    }
+                }
+                
+            }
+            
             return response.Results.FirstOrDefault(x => x.Type == merchantAccountType);
         }
     }

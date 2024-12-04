@@ -5,6 +5,8 @@ using System.Text;
 namespace GlobalPayments.Api.Entities.Enums
 {
     public enum PayByLinkType {
-        PAYMENT
+        PAYMENT,
+        HOSTED_PAYMENT_PAGE,
+        THIRD_PARTY_PAGE
     }
 }

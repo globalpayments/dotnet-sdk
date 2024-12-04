@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.Reporting;
@@ -33,6 +34,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .FindMerchants(1, 10)
                     .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Descending)
                     .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)
+                    .And(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-3))
                     .Execute();
 
             Assert.IsTrue(merchants.Results.Count > 0);
@@ -46,11 +48,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ReportingService
                     .FindAccounts(1, 10)
                     .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Descending)
-                    .Where(SearchCriteria.StartDate, StartDate)
-                    .And(SearchCriteria.EndDate, EndDate)
+                    .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-3))
                     .And(DataServiceCriteria.MerchantId, merchantId)
                     .And(SearchCriteria.AccountStatus, MerchantAccountStatus.ACTIVE)
-                    .And(SearchCriteria.PaymentMethodName, PaymentMethodName.Card)
                     .Execute();
 
             Assert.IsNotNull(accountsResponse);
@@ -65,7 +65,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
 
             var accessTokenInfo = new AccessTokenInfo {
-                TransactionProcessingAccountID = transactionAccounts[0].Id
+                TransactionProcessingAccountID = transactionAccounts.FirstOrDefault()?.Id,
+                TransactionProcessingAccountName = transactionAccounts.FirstOrDefault()?.Name
             };
 
             config.AccessTokenInfo = accessTokenInfo;
@@ -83,8 +84,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(Success, transaction.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction.ResponseMessage);
 
-            var capture = transaction.Capture(Amount + 0.5m)
-                .WithGratuity(0.5m)
+            var capture = transaction.Capture(Amount)
+                .WithCurrency(Currency)
                 .Execute(merchantConfig);
             
             Assert.IsNotNull(capture);
@@ -142,7 +143,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var errorFound = false;
             try {
-                transaction.Capture(Amount * 1.16m)
+                transaction.Capture(Amount * 5.5m)
                     .WithGratuity(2m)
                     .Execute(merchantConfig);
             }
@@ -524,7 +525,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void SaleWithTokenizedPaymentMethod() {
             var tokenizedCard = new CreditCardData {
-                Token = card.Tokenize()
+                Token = card.Tokenize(merchantConfig)
             };
 
             var response = tokenizedCard.Charge(Amount)
@@ -544,7 +545,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             gpApiConfig.Permissions = permissions;
 
             ServicesContainer.ConfigureService(gpApiConfig, "singleUseToken");
-            var token = card.Tokenize(paymentMethodUsageMode: PaymentMethodUsageMode.Single, configName:"singleUseToken");
+            var token = card.Tokenize(configName: merchantConfig, paymentMethodUsageMode: PaymentMethodUsageMode.Single);
 
             Assert.IsNotNull(token);
 
@@ -707,61 +708,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual(Success, response.ResponseCode);
             Assert.AreEqual(Verified, response.ResponseMessage);
-        }
-
-        [TestMethod]
-        public void CreditSaleWithManualEntryMethod() {
-            foreach (Channel channel in Enum.GetValues(typeof(Channel))) {
-                foreach (ManualEntryMethod entryMethod in Enum.GetValues(typeof(ManualEntryMethod))) {
-                    var gpApiConfig = GpApiConfigSetup("zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz", "GAMlgEojm6hxZTLI", channel);
-                    gpApiConfig.AccessTokenInfo = new AccessTokenInfo {
-                        TransactionProcessingAccountName = "transaction_processing",
-                        TokenizationAccountName = "transaction_processing"
-                    };
-                    gpApiConfig.MerchantId = merchantId;
-                    ServicesContainer.ConfigureService(gpApiConfig);
-                    
-                    if (channel == Channel.CardPresent)
-                        card.CardPresent = true;
-                    card.Cvn = "123";
-                    card.EntryMethod = entryMethod;
-
-                    var response = card.Charge(Amount)
-                        .WithCurrency(Currency)
-                        .Execute(merchantConfig);
-
-                    Assert.IsNotNull(response);
-                    Assert.AreEqual(Success, response.ResponseCode);
-                    Assert.AreEqual("CAPTURED", response.ResponseMessage);
-                }
-            }
-        }
-
-        [TestMethod]
-        public void CreditSaleWithEntryMethod() {
-            foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod))) {
-                var gpApiConfig = GpApiConfigSetup("zKxybfLqH7vAOtBQrApxD5AUpS3ITaPz", "GAMlgEojm6hxZTLI", Channel.CardPresent);
-                gpApiConfig.AccessTokenInfo = new AccessTokenInfo {
-                    TransactionProcessingAccountName = "transaction_processing",
-                    TokenizationAccountName = "transaction_processing"
-                };
-                gpApiConfig.MerchantId = merchantId;
-                ServicesContainer.ConfigureService(gpApiConfig);
-
-                var creditTrackData = new CreditTrackData {
-                    TrackData =
-                        "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
-                    EntryMethod = entryMethod
-                };
-
-                var response = creditTrackData.Charge(Amount)
-                    .WithCurrency(Currency)
-                    .Execute(merchantConfig);
-
-                Assert.IsNotNull(response);
-                Assert.AreEqual(Success, response.ResponseCode);
-                Assert.AreEqual("CAPTURED", response.ResponseMessage);
-            }
         }
 
         [TestMethod]

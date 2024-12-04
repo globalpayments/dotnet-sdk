@@ -141,45 +141,59 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public string TacDefault { get; set; }
         public string TacDenial { get; set; }
         public string TacOnline { get; set; }        
+        public string EcrId { get; set; }
 
         #endregion
 
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
-        public void ParseResponse(JsonDoc root) {
+        public void ParseResponse(JsonDoc root)
+        {
+            JsonDoc firstNode = IsGpApiResponse(root) ? root.Get("response") : root.Get("data");
+            if (firstNode.Get("cmdResult") == null)
+            {
+                throw new MessageException(INVALID_RESPONSE_FORMAT);
+            }
+            CheckResponse(firstNode.Get("cmdResult"));
+            JsonDoc response;
             if (!IsGpApiResponse(root)) {
-                var response = root.Get("data");
+                response = root.Get("data");
                 if (response == null) {
-                    return;
+                    throw new MessageException(INVALID_RESPONSE_FORMAT);
                 }
-                HydrateCmdResult(response);
+                Status = firstNode.Get("cmdResult").GetValue<string>("result");
             }
-            else {
-                decimal defaultDecimal;
-                RequestId = root.GetValue<string>("id");
-                TransactionId = RequestId;
-                DeviceResponseText = root.GetValue<string>("status");
-                ResponseText = root.Get("action").GetValue<string>("result_code");
-                DeviceResponseCode = ResponseText;
-                ApprovalCode = root.Get("response")?.Get("data")?.Get("host")?.GetValue<string>("approvalCode");
-                TipAmount = decimal.TryParse(root.Get("response")?.Get("data")?.Get("host")?.GetValue<string>("tipAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-                TransactionAmount = decimal.TryParse(root.Get("response")?.Get("data")?.Get("host")?.GetValue<string>("totalAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
+            else
+            {
+                Status = root.GetValue<string>("status");
             }
+
+            DeviceResponseText = Status;
+            HydrateCmdResult(firstNode);
         }
 
-        private bool IsGpApiResponse(JsonDoc root) {
+        protected bool IsGpApiResponse(JsonDoc root) {
             return !root.Has("data");
         }
 
-        protected void HydrateCmdResult(JsonDoc response) {
-            var cmdResult = response.Get("cmdResult");
-            if (cmdResult == null) {
-                throw new Exception(INVALID_RESPONSE_FORMAT);
-            }
+        private void HydrateCmdResult(JsonDoc response) {
+            DeviceResponseCode = (Status == "Success" || Status == "COMPLETE") ? "00" : null;
+            Command = response.GetValue<string>("response");
             RequestId = response.GetValue<string>("requestId");
-            Command = response.GetValue<string>("response") ?? null;
-            Status = cmdResult.GetValue<string>("result") ?? null;
-            DeviceResponseCode = Status == "Success" ? "00" : cmdResult.GetValue<string>("errorCode");
-            DeviceResponseText = cmdResult.GetValue<string>("errorMessage");
+            EcrId = response.GetValue<string>("EcrId");
         }
-    }
+
+        private void CheckResponse(JsonDoc cmdResult)
+        {
+            if (cmdResult.GetValue<string>("result") == "Failed")
+            {
+                var errorCode = cmdResult.GetValue<string>("errorCode");
+                var errorMessage = cmdResult.GetValue<string>("errorMessage");
+                throw new GatewayException(
+                    $"Unexpected Gateway Response: {errorCode} - {errorMessage}",
+                    errorCode,
+                    errorMessage
+                    );
+            }   
+        }
+    }   
 }

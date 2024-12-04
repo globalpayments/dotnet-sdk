@@ -508,7 +508,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             }
             catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadRequest - Cant release transaction that is not held", e.Message);
+                Assert.AreEqual("Status Code: BadRequest - Can't release transaction that is not held", e.Message);
                 Assert.AreEqual("50020", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
@@ -538,7 +538,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             }
             catch (GatewayException e) {
                 errorFound = true;
-                Assert.AreEqual("Status Code: BadRequest - Cant release transaction that is not held", e.Message);
+                Assert.AreEqual("Status Code: BadRequest - Can't release transaction that is not held", e.Message);
                 Assert.AreEqual("50020", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);

@@ -46,5 +46,10 @@ namespace GlobalPayments.Api.Entities
         /// The label of the issuing bank or financial institution of the bin.
         /// </summary>
         public string Issuer { get; set; }
+        
+        /// <summary>
+        /// Indicates how the card is funded
+        /// </summary>
+        public string Funding { get; set; }
     }
 }

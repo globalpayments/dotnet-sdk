@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithInvoiceNumber(new Random().Next(1000000, 9999999).ToString())
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -120,8 +120,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(response);
             Assert.AreEqual("Success", response.Status);
             Assert.AreEqual("00", response.DeviceResponseCode);
-            Assert.AreEqual(1.00m, response.TipAmount);
             Assert.AreEqual(11.00m, response.TransactionAmount);
+            Assert.AreEqual(1.00m, response.TipAmount);
         }
         
         [TestMethod]
@@ -164,7 +164,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                .WithAmount(100m)               
                .Execute();
             Assert.IsNotNull(preAuthResponse);
-            Assert.AreEqual("00", preAuthResponse.ResponseCode);
+            Assert.AreEqual("00", preAuthResponse.DeviceResponseCode);
 
             var lodging = new Lodging
             {
@@ -195,7 +195,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithLodging(lodging)
                 .Execute();
             Assert.IsNotNull(incrementalPreAuthResponse);
-            Assert.AreEqual("00", incrementalPreAuthResponse.ResponseCode);     
+            Assert.AreEqual("00", incrementalPreAuthResponse.DeviceResponseCode);     
 
             var completionResponse = _device.Capture(145m)
                 .WithEcrId("13")                
@@ -204,7 +204,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
            
             Assert.IsNotNull(completionResponse);
-            Assert.AreEqual("00", completionResponse.ResponseCode);
+            Assert.AreEqual("00", completionResponse.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -242,7 +242,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(authResponse);
-            Assert.AreEqual("00", authResponse.ResponseCode);
+            Assert.AreEqual("00", authResponse.DeviceResponseCode);
 
             Thread.Sleep(1500);
 
@@ -250,7 +250,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithTransactionId(authResponse.TransactionId)
                 .Execute();
             Assert.IsNotNull(authResponse);
-            Assert.AreEqual("00", authResponse.ResponseCode);
+            Assert.AreEqual("00", authResponse.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -272,7 +272,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithClerkId(123)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -339,7 +339,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
             Assert.IsNotNull(response);
             Assert.IsNotNull(response.Token);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod, Ignore]
@@ -368,7 +368,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithGratuity(0m)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod, Ignore]
@@ -403,7 +403,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithGratuity(0m)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -419,7 +419,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithGratuity(0m)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
 
             Thread.Sleep(5000);
             
@@ -429,7 +429,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
             
             Assert.IsNotNull(voidResponse);
-            Assert.AreEqual("00", voidResponse.ResponseCode);
+            Assert.AreEqual("00", voidResponse.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -493,7 +493,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);           
+            Assert.AreEqual("00", response.DeviceResponseCode);           
         }
 
         [TestMethod]
@@ -519,7 +519,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("FORCESALE", response.TransactionType);
         }
 
@@ -550,7 +550,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();   
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod, ExpectedException(typeof(BuilderException))]
@@ -574,7 +574,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithEcrId(13)
                 .Execute();
             Assert.IsNotNull(returnResponse);
-            Assert.AreEqual("00", returnResponse.ResponseCode);
+            Assert.AreEqual("00", returnResponse.DeviceResponseCode);
         }
 
         [TestMethod, Ignore]
@@ -600,7 +600,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithRequestMultiUseToken(true)
                 .Execute();
             Assert.IsNotNull(returnResponse);
-            Assert.AreEqual("00", returnResponse.ResponseCode);
+            Assert.AreEqual("00", returnResponse.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -625,7 +625,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
             Assert.IsNotNull(tipAdjustResponse);
             Assert.AreEqual(18.12m, tipAdjustResponse.TransactionAmount);
-            Assert.AreEqual("00", tipAdjustResponse.ResponseCode);
+            Assert.AreEqual("00", tipAdjustResponse.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -654,7 +654,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithCardBrandTransId("transId")
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -695,7 +695,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
             Assert.IsNotNull(response);
             Assert.IsNotNull(response.Token);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod, Ignore]
@@ -720,7 +720,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithClerkId(1234)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]
@@ -748,7 +748,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
         [TestMethod]

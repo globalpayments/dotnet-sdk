@@ -126,8 +126,21 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
-            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
+            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
+
+            Thread.Sleep(2000);
+            
+            TransactionSummary trn = ReportingService.TransactionDetail(response.TransactionId)
+                .Execute();
+            
+            Assert.IsNotNull(trn);
+            Assert.AreEqual(secureEcom.ServerTransactionId, trn.ThreeDSecure.ServerTransactionId);
+            Assert.AreEqual(secureEcom.Eci, trn.ThreeDSecure.Eci);
+            Assert.AreEqual(secureEcom.AuthenticationValue, trn.ThreeDSecure.AuthenticationValue);
+            Assert.AreEqual(secureEcom.DirectoryServerTransactionId, trn.ThreeDSecure.DirectoryServerTransactionId);
+            Assert.AreEqual(secureEcom.ExemptStatus, trn.ThreeDSecure.ExemptStatus);
+            Assert.AreEqual(secureEcom.Enrolled, trn.ThreeDSecure.Enrolled);
         }
 
         [TestMethod]

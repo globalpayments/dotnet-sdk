@@ -197,6 +197,11 @@ namespace GlobalPayments.Api.Terminals.UPA
             string jsonObject = Encoding.UTF8.GetString(response);
             return new UpaGiftCardResponse(JsonDoc.Parse(jsonObject));
         }
+        
+        public virtual TerminalManageBuilder Void() {
+            return new TerminalManageBuilder(TransactionType.Void, PaymentMethodType.Credit).
+                WithTransactionModifier(TransactionModifier.NoValidationRequired);
+        }
 
         #region Reporting
         public override TerminalReportBuilder GetSAFReport()

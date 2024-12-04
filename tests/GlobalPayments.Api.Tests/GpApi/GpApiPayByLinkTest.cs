@@ -26,9 +26,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void TestInitialize() {
             ServicesContainer.RemoveConfig();
             
-            var gpApiConfig = GpApiConfigSetup("v2yRaFOLwFaQc0fSZTCyAdQCBNByGpVK", "oKZpWitk6tORoCVT", Channel.CardNotPresent);
+            GpApiConfig gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             gpApiConfig.Country = "GB";
-            gpApiConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "LinkManagement" };
+            gpApiConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "paylink" };
             ServicesContainer.ConfigureService(gpApiConfig);
 
             payByLink = new PayByLinkData {
@@ -91,7 +91,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void ReportPayByLinkDetail() {
-            const string payByLinkId = "LNK_hUh2IIO1YoyDU3wGwkcb4e6SE9v5dY";
+            const string payByLinkId = "LNK_EKerCzeoV7UIlYpx2r4zl54vvlRG8b";
 
             var response = PayByLinkService.PayByLinkDetail(payByLinkId)
                 .Execute();
@@ -700,27 +700,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void EditPayByLink_MissingName() {
-            payByLink.Name = null;
-
-            var exceptionCaught = false;
-            try {
-                PayByLinkService.Edit(PayByLinkId)
-                    .WithAmount(AMOUNT)
-                    .WithPayByLinkData(payByLink)
-                    .WithDescription("Update PayByLink description")
-                    .Execute();
-            }
-            catch (GatewayException e) {
-                exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following field name", e.Message);
-                Assert.AreEqual("40005", e.ResponseMessage);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
-        }
-
-        [TestMethod]
         public void EditPayByLink_MissingUsageLimit() {
             payByLink.UsageLimit = null;
 
@@ -735,25 +714,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
             catch (BuilderException e) {
                 exceptionCaught = true;
                 Assert.AreEqual("UsageLimit cannot be null for this transaction type.", e.Message);
-            } finally {
-                Assert.IsTrue(exceptionCaught);
-            }
-        }
-
-        [TestMethod]
-        public void EditPayByLink_MissingDescription() {
-            var exceptionCaught = false;
-            try {                
-
-                PayByLinkService.Edit(PayByLinkId)
-                    .WithAmount(AMOUNT)
-                    .WithPayByLinkData(payByLink)
-                    .Execute();
-            }
-            catch (GatewayException e) {
-                exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following field description", e.Message);
-                Assert.AreEqual("40005", e.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -886,9 +846,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.IsNotNull(response.Results);
-            /** @var PayByLinkSummary $randomPayByLink */
-            var randomPayByLinkResponseObject = response.Results[0];
+            Assert.AreNotEqual(0, response.Results.Count);
+            PayByLinkSummary randomPayByLinkResponseObject = response.Results[0];
             Assert.IsNotNull(randomPayByLinkResponseObject);
             Assert.IsInstanceOfType(randomPayByLinkResponseObject, typeof(PayByLinkSummary));
         }

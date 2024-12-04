@@ -184,7 +184,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Validations.For(TransactionType.Capture).Check(() => TransactionId).IsNotNull()
                 .Check(() => Amount).IsNotNull();
             Validations.For(TransactionType.Auth).With(TransactionModifier.Incremental).Check(() => TransactionId).IsNotNull();
-            Validations.For(TransactionType.Void).When(() => ClientTransactionId).IsNull().Check(() => TransactionId).IsNotNull();
+            Validations.For(TransactionType.Void).With(TransactionModifier.None).When(() => ClientTransactionId).IsNull().Check(() => TransactionId).IsNotNull();
             Validations.For(TransactionType.Refund).Check(() => TransactionId).IsNotNull();
             
         }

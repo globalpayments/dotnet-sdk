@@ -266,10 +266,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         }
                     }
 
-                    if (builder.TransactionType == TransactionType.Sale) {
-                        card.Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT"); // [DEBIT, CREDIT]
-                    }
-
                     paymentMethod.Set("card", card);
                 }
 
@@ -537,14 +533,16 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 .Set("risk_assessment", builder.FraudFilterMode != null ? MapFraudManagement(builder) : null)
                 .Set("link", !string.IsNullOrEmpty(builder.PaymentLinkId) ? new JsonDoc()
                 .Set("id", builder.PaymentLinkId) : null);
-
-            if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
-                var payer = SetPayerInformation(builder);
-                if (payer.HasKeys()) {
-                    data.Set("payer", payer);
-                }
+            var payer = new JsonDoc();
+            if (!string.IsNullOrEmpty(builder.CustomerId)) {
+                payer.Set("id", builder.CustomerId);
             }
-
+            if (builder.PaymentMethod is eCheck || builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
+                payer = SetPayerInformation(builder);
+            }
+            if (payer.HasKeys()) {
+                data.Set("payer", payer);
+            }
             // set order reference
             if (!string.IsNullOrEmpty(builder.OrderId)) {
                 var order = new JsonDoc()

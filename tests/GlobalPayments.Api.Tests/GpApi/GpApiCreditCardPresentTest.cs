@@ -624,7 +624,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             AssertTransactionResponse(reverseTransaction, TransactionStatus.Reversed);
 
-            var reauthTransaction = transaction.Reauthorize()
+            var reauthTransaction = reverseTransaction.Reauthorize()
                 .Execute();
             AssertTransactionResponse(reauthTransaction, TransactionStatus.Preauthorized);
             Assert.AreEqual("00", reauthTransaction.CardIssuerResponse.Result);
@@ -748,14 +748,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
 
             var lodgingInfo = new LodgingData();
-                lodgingInfo.bookingReference = "s9RpaDwXq1sPRkbP";
-                lodgingInfo.StayDuration = 10;
-                lodgingInfo.CheckInDate = DateTime.Now;
-                lodgingInfo.CheckOutDate = DateTime.Now.AddDays(7);
-                lodgingInfo.Rate = (decimal)13.49;
+            lodgingInfo.bookingReference = "s9RpaDwXq1sPRkbP";
+            lodgingInfo.StayDuration = 10;
+            lodgingInfo.CheckInDate = DateTime.Now;
+            lodgingInfo.CheckOutDate = DateTime.Now.AddDays(7);
+            lodgingInfo.Rate = (decimal)13.49;
             var item1 = new LodgingItems();
             item1.Types = LodgingItemType.NO_SHOW.ToString();
-            item1.Reference = "item_1";
+            item1.Reference = "item1";
             item1.TotalAmount = "13.49";
             item1.paymentMethodProgramCodes = new string[1] { PaymentMethodProgram.ASSURED_RESERVATION.ToString() };
             lodgingInfo.Items = new List<LodgingItems>() { item1 };
@@ -766,10 +766,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            //echo '---'. $transaction->authorizationCode. '--->'. $transaction->cardBrandTransactionId;
             Assert.AreEqual("SUCCESS", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
-            Assert.AreEqual((decimal)12.12, transaction.AuthorizedAmount);
+            Assert.AreEqual((decimal)22.02, transaction.AuthorizedAmount);
 
             var capture = transaction.Capture()
                 .Execute();
@@ -797,7 +796,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(transaction);
             Assert.AreEqual("SUCCESS", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
-            Assert.AreEqual((decimal)12.12, transaction.AuthorizedAmount);
+            Assert.AreEqual((decimal)22.02, transaction.AuthorizedAmount);
 
             var capture = transaction.Capture()
                 .Execute();
@@ -842,7 +841,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(transaction);
             Assert.AreEqual("SUCCESS", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
-            Assert.AreEqual((decimal)12.12, transaction.AuthorizedAmount);
+            Assert.AreEqual((decimal)22.02, transaction.AuthorizedAmount);
 
             var capture = transaction.Reverse()
                 .Execute();

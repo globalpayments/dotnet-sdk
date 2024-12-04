@@ -198,7 +198,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             else if (builder.TransactionType == TransactionType.Auth)
             {
                 var payload = new JsonDoc();
-                payload.Set("amount", builder.Amount);
+                payload.Set("amount", builder.Amount.ToNumericCurrencyString());
 
                 if (builder.LodgingData != null) {
                     var lodging = builder.LodgingData;
@@ -210,7 +210,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                             lodginItems.Add(new LodgingItems { 
                                 Types = item.Types,
                                 Reference = item.Reference,
-                                TotalAmount = item.TotalAmount,
+                                TotalAmount = item.TotalAmount.ToDecimal().ToNumericCurrencyString(),
                                 paymentMethodProgramCodes = item.paymentMethodProgramCodes
                             });
                         }

@@ -195,38 +195,38 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     && builder.TransactionModifier != TransactionModifier.CompleteTransaction) {
                     var transaction = txnData.SubElement("transaction");
                     if (transType == TransactionType.Auth) {
-                        transaction.Set("amount", ToCurrencyString(builder.Amount));
-                        transaction.Set("preAuthAmount", ToCurrencyString(builder.PreAuthAmount));
+                        transaction.Set("amount", builder.Amount.ToCurrencyString());
+                        transaction.Set("preAuthAmount", builder.PreAuthAmount.ToCurrencyString());
                     }
                     else if(transType == TransactionType.Sale) {
                         if (builder.TransactionModifier == TransactionModifier.ProcessTransaction) {
-                            transaction.Set("totalAmount", ToCurrencyString(builder.Amount));
+                            transaction.Set("totalAmount", builder.Amount.ToCurrencyString());
                         }
-                        transaction.Set("baseAmount", ToCurrencyString(builder.Amount));
-                        transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
+                        transaction.Set("baseAmount", builder.Amount.ToCurrencyString());
+                        transaction.Set("tipAmount", builder.Gratuity.ToCurrencyString());
                     }
                     else if (transType == TransactionType.Confirm) { 
                         if(builder.TransactionModifier == TransactionModifier.ContinueCardTransaction || 
                             builder.TransactionModifier == TransactionModifier.ContinueEMVTransaction) {
-                            transaction.Set("totalAmount", ToCurrencyString(builder.Amount));
+                            transaction.Set("totalAmount", builder.Amount.ToCurrencyString());
                         }
                     }
                     else
                     {
-                        transaction.Set("baseAmount", ToCurrencyString(builder.Amount));                        
-                        transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
+                        transaction.Set("baseAmount", builder.Amount.ToCurrencyString());                        
+                        transaction.Set("tipAmount", builder.Gratuity.ToCurrencyString());
                         transaction.Set("taxIndicator", builder.TaxExempt);
                         transaction.Set("invoiceNbr", builder.InvoiceNumber);
                         transaction.Set("processCPC", builder.ProcessCPC.HasValue ? builder.ProcessCPC.Value ? "1" : "0" : null);
-                        transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
+                        transaction.Set("taxAmount", builder.TaxAmount.ToCurrencyString());
                     }
 
-                    transaction.Set("cashBackAmount", ToCurrencyString(builder.CashBackAmount));
+                    transaction.Set("cashBackAmount", builder.CashBackAmount.ToCurrencyString());
                     transaction.Set("referenceNumber", builder.TerminalRefNumber);
-                    transaction.Set("prescriptionAmount", ToCurrencyString(builder.PrescriptionAmount));
-                    transaction.Set("clinicAmount", ToCurrencyString(builder.ClinicAmount));
-                    transaction.Set("dentalAmount", ToCurrencyString(builder.DentalAmount));
-                    transaction.Set("visionOpticalAmount", ToCurrencyString(builder.VisionOpticalAmount));
+                    transaction.Set("prescriptionAmount", builder.PrescriptionAmount.ToCurrencyString());
+                    transaction.Set("clinicAmount", builder.ClinicAmount.ToCurrencyString());
+                    transaction.Set("dentalAmount", builder.DentalAmount.ToCurrencyString());
+                    transaction.Set("visionOpticalAmount", builder.VisionOpticalAmount.ToCurrencyString());
                     transaction.Set("cardAcquisition", EnumConverter.GetMapping(Target.UPA, builder.CardAcquisition));
 
                     if (builder.TransactionModifier == TransactionModifier.ProcessTransaction) {
@@ -240,7 +240,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
                 if (transType == TransactionType.Refund) {
                     var transaction = txnData.SubElement("transaction");
-                    transaction.Set("totalAmount", ToCurrencyString(builder.Amount));
+                    transaction.Set("totalAmount", builder.Amount.ToCurrencyString());
                     transaction.Set("invoiceNbr", builder.InvoiceNumber);
                     transaction.Set("referenceNumber", builder.TerminalRefNumber);
                 }
@@ -332,7 +332,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
             lodging.Set("folioNumber", builder.LodgingData.FolioNumber?.ToString() ?? null)
                 .Set("extraChargeTypes", chargeTypes)
-                .Set("extraChargeTotal", ToCurrencyString(builder.LodgingData.ExtraChargeTotal));
+                .Set("extraChargeTotal", builder.LodgingData.ExtraChargeTotal.ToCurrencyString());
         }
 
         private void SetTransactionParams(TerminalManageBuilder builder, ref JsonDoc transaction)
@@ -341,37 +341,36 @@ namespace GlobalPayments.Api.Terminals.UPA {
             {
                 switch (builder.TransactionType) {
                     case TransactionType.Refund:
-                            transaction.Set("totalAmount", ToCurrencyString(builder.Amount));
+                            transaction.Set("totalAmount", builder.Amount.ToCurrencyString());
                         break;
                     case TransactionType.Auth:
                     case TransactionType.Capture:
-                            transaction.Set("amount", ToCurrencyString(builder.Amount));
+                            transaction.Set("amount", builder.Amount.ToCurrencyString());
                         break;
                     case TransactionType.Delete:
                         if (builder.TransactionModifier == TransactionModifier.DeletePreAuth) {
-                                transaction.Set("preAuthAmount", ToCurrencyString(builder.Amount));
+                                transaction.Set("preAuthAmount", builder.Amount.ToCurrencyString());
                         }
                         break;
                     case TransactionType.Reversal:
-                            transaction.Set("authorizedAmount", ToCurrencyString(builder.Amount));
+                            transaction.Set("authorizedAmount", builder.Amount.ToCurrencyString());
                         break;
                     case TransactionType.Edit:
                         if (builder.TransactionModifier == TransactionModifier.UpdateLodgingDetails) {
-                                transaction.Set("amount", ToCurrencyString(builder.Amount));
+                                transaction.Set("amount", builder.Amount.ToCurrencyString());
                         }
                         break;
                         default:
-                            transaction.Set("baseAmount", ToCurrencyString(builder.Amount));
+                            transaction.Set("baseAmount", builder.Amount.ToCurrencyString());
                         break;
                 }
             }
-            transaction.Set("tipAmount", ToCurrencyString(builder.Gratuity));
-            transaction.Set("cashBackAmount", ToCurrencyString(builder.CashBackAmount));
-            transaction.Set("taxAmount", ToCurrencyString(builder.TaxAmount));
+            transaction.Set("tipAmount", builder.Gratuity.ToCurrencyString());
+            transaction.Set("cashBackAmount", builder.CashBackAmount.ToCurrencyString());
+            transaction.Set("taxAmount", builder.TaxAmount.ToCurrencyString());
             transaction.Set("invoiceNbr", builder.InvoiceNumber ?? null);
-            transaction.Set("tranNo", StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0'));//builder.TerminalRefNumber ?? null);
-            transaction.Set("referenceNumber", !string.IsNullOrEmpty(builder.TransactionId) ? builder.TransactionId :
-                !string.IsNullOrEmpty(builder.TerminalRefNumber) ? StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0') : null);
+            transaction.Set("referenceNumber",  !string.IsNullOrEmpty(builder.TerminalRefNumber) ? StringUtils.PadLeft(builder.TerminalRefNumber, 4, '0') : null);
+            transaction.Set("tranNo", !string.IsNullOrEmpty(builder.TransactionId) ? builder.TransactionId : null);
             transaction.Set("taxIndicator", builder.TaxExempt ?? null);
             transaction.Set("processCPC", builder.ProcessCPC ?? null);
             transaction.Set("purchaseOrder", builder.OrderId ?? null);
@@ -518,13 +517,6 @@ namespace GlobalPayments.Api.Terminals.UPA {
             return (transType == TransactionType.Edit &&
                 (gratuity != null || gratuity > 0m));
         }       
-
-        protected string ToCurrencyString(decimal? dec) {
-            if (!dec.HasValue) {
-                return null;
-            }
-            return Regex.Replace(string.Format("{0:c}", dec), "[^0-9.]", "");
-        }
         #endregion
     }
 }

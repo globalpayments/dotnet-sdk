@@ -9,8 +9,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         public TransactionResponse(JsonDoc root) {
             ParseResponse(root);
-
-            var response = root.Get("data");
+            JsonDoc response = IsGpApiResponse(root) ? root.Get("response")  : root.Get("data");
             if(response == null) {
                 return;
             }
@@ -138,8 +137,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
             decimal defaultDecimal;
             int defaultInt;
             ResponseId = host.GetValue<string>("responseId") ?? null;
-            TransactionId = host.GetValue<string>("responseId") ?? null;
-            TerminalRefNumber = host.GetValue<string>("tranNo") ?? null;
+            TransactionId = host.GetValue<string>("tranNo") ?? null;
+            TerminalRefNumber = host.GetValue<string>("responseId") ?? null;
             ResponseDateTime = host.GetValue<string>("respDateTime") ?? null;
             GatewayResponseCode = host.GetValue<string>("gatewayResponseCode") ?? null;
             GatewayResponsemessage = host.GetValue<string>("gatewayResponseMessage") ?? null;
@@ -198,7 +197,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             SignatureLine = payment.GetValue<string>("signatureLine");
             QpsQualified = payment.GetValue<string>("QpsQualified");
             StoreAndForward = int.TryParse(payment.GetValue<string>("storeAndForward"), out defaultInt) ? defaultInt: default(int?);
-            ClerkId = payment.GetValue<int?>("clerkId");
+            ClerkId = payment.GetValue<int>("clerkId");
             InvoiceNumber = payment.GetValue<string>("invoiceNbr");
             ExpirationDate = payment.GetValue<string>("expiryDate");
             TransactionType = payment.GetValue<string>("transactionType");            

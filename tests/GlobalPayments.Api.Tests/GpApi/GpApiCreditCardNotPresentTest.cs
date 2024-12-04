@@ -871,7 +871,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 exceptionCaught = true;
                 Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
                 Assert.AreEqual("50018", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadGateway - The line number 12 which contains '         [number] XXX [/number] ' does not conform to the schema", ex.Message);
+                Assert.AreEqual("Status Code: BadGateway - The line number 14 which contains '         [number] XXX [/number] ' does not conform to the schema", ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }

@@ -368,7 +368,9 @@ namespace GlobalPayments.Api.Entities {
 
         ProcessTransaction = 1 << 25,
 
-        ContinueCardTransaction = 1 << 26
+        ContinueCardTransaction = 1 << 26,
+        
+        NoValidationRequired = 1 << 27,
     }
 
     /// <summary>

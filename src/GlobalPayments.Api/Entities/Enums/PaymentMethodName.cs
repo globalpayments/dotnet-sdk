@@ -12,7 +12,7 @@ namespace GlobalPayments.Api.Entities {
         [Map(Target.GP_API, "CARD")]
         Card,
 
-        [Map(Target.GP_API, "BANK TRANSFER")]        
+        [Map(Target.GP_API, "BANK_TRANSFER")]        
         BankTransfer,
 
         [Map(Target.GP_ECOM, "BANK PAYMENT")]

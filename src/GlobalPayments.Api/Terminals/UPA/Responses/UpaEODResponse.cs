@@ -2,52 +2,64 @@
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Utils;
 
-namespace GlobalPayments.Api.Terminals.UPA {
-    public class UpaEODResponse : IEODResponse {
+namespace GlobalPayments.Api.Terminals.UPA
+{
+    public class UpaEODResponse : IEODResponse
+    {
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
 
-        public UpaEODResponse(JsonDoc root) {
-            if (!TerminalUtilities.IsGpApiResponse(root)) {
-                var firstDataNode = root.Get("data");
-                if (firstDataNode == null) {
-                    throw new MessageException(INVALID_RESPONSE_FORMAT);
-                }
+        public UpaEODResponse(JsonDoc root)
+        {
+            JsonDoc firstDataNode = !TerminalUtilities.IsGpApiResponse(root) ? root.Get("data") : root.Get("response");
+            if (TerminalUtilities.IsGpApiResponse(root))
+            {
+                DeviceResponseText = root.GetValue<string>("status");
+                DeviceResponseCode = root.Get("action").GetValue<string>("result_code");
+            }
 
-                var cmdResult = firstDataNode.Get("cmdResult");
-                if (cmdResult == null) {
-                    throw new MessageException(INVALID_RESPONSE_FORMAT);
-                }
+            if (firstDataNode == null)
+            {
+                throw new MessageException(INVALID_RESPONSE_FORMAT);
+            }
 
-                Status = cmdResult.GetValue<string>("result");
+            var cmdResult = firstDataNode.Get("cmdResult");
+            if (cmdResult == null)
+            {
+                throw new MessageException(INVALID_RESPONSE_FORMAT);
+            }
 
-                // Log error info if it's there
+            Status = cmdResult.GetValue<string>("result");
+            Command = firstDataNode.GetValue<string>("response");
+            EcrId = firstDataNode.GetValue<string>("EcrId");
+            if (string.IsNullOrEmpty(Status)) 
+            {
                 var errorCode = cmdResult.GetValue<string>("errorCode");
                 var errorMsg = cmdResult.GetValue<string>("errorMessage");
                 DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
-
+            }
+            else
+            {
                 // Unlike in other response types, this data should always be here, even if the Status is "Failed"
                 var secondDataNode = firstDataNode.Get("data");
-                if (secondDataNode == null) {
+                if (secondDataNode == null)
+                {
                     throw new MessageException(INVALID_RESPONSE_FORMAT);
                 }
+
                 Multiplemessage = secondDataNode.GetValue<string>("multipleMessage");
 
                 var host = secondDataNode.Get("host");
 
-                if (host != null) {
+                if (host != null)
+                {
                     RespDateTime = host.GetValue<string>("respDateTime");
                     BatchId = host.GetValue<int>("batchId");
                     GatewayResponseCode = host.GetValue<int>("gatewayResponseCode");
                     GatewayResponseMessage = host.GetValue<string>("gatewayResponseMessage");
                 }
             }
-            else {
-                RequestId = root.GetValue<string>("id");                
-                DeviceResponseText = root.GetValue<string>("status");
-                DeviceResponseCode = root.Get("action").GetValue<string>("result_code"); ;
-            }
         }
-        
+
         public string RequestId { get; set; }
         public string Multiplemessage { get; set; }
 
@@ -97,5 +109,6 @@ namespace GlobalPayments.Api.Terminals.UPA {
         public string DeviceResponseCode { get; set; }
         public string DeviceResponseText { get; set; }
         public string ReferenceNumber { get; set; }
+        public string EcrId { get; set; }
     }
 }

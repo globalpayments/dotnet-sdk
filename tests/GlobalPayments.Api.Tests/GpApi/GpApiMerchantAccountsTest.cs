@@ -239,13 +239,16 @@ namespace GlobalPayments.Api.Tests.GpApi
         [TestMethod]
         public void TransferFunds() {
             var merchants = GetMerchants();
-
+            Assert.IsNotNull(merchants);
             var merchantSender = merchants.FirstOrDefault();
+            Assert.IsNotNull(merchantSender);
             var merchantRecipient = merchants.FirstOrDefault(x => x.Id != merchantSender.Id);
-
+            Assert.IsNotNull(merchantRecipient);
             var accountSender = GetAccountByType(merchantSender.Id, MerchantAccountType.FUND_MANAGEMENT);
+            Assert.IsNotNull(accountSender);
             var accountRecipient = GetAccountByType(merchantRecipient.Id, MerchantAccountType.FUND_MANAGEMENT);
-
+            Assert.IsNotNull(accountRecipient);
+            
             var funds = new AccountFunds();
             funds.AccountId = accountSender.Id;
             funds.AccountName = accountSender.Name;
@@ -1041,6 +1044,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             var merchants = new ReportingService().FindMerchants(1, 10)
               .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
               .Where(SearchCriteria.MerchantStatus, MerchantAccountStatus.ACTIVE)
+              .And(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-3))
               .Execute();
 
             return merchants.Results;
@@ -1050,7 +1054,7 @@ namespace GlobalPayments.Api.Tests.GpApi
         {
             var response = ReportingService.FindAccounts(1, 10)
                    .OrderBy(MerchantAccountsSortProperty.TIME_CREATED, SortDirection.Ascending)
-                   .Where(SearchCriteria.StartDate, StartDate)
+                   .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-3))
                    .And(SearchCriteria.EndDate, EndDate)
                    .And(DataServiceCriteria.MerchantId, merchantSenderId)
                    .And(SearchCriteria.AccountStatus, MerchantAccountStatus.ACTIVE)

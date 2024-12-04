@@ -1,6 +1,16 @@
 # Changelog
 
-## Latest - v9.0.5 (11/07/24)
+## Latest - v9.0.6 (12/03/24)
+### Enhancement
+- [GP-API] - Add new mapping fields on get transaction list: "funding", "authentication"
+- [GP-API] - Add new enum values for PayByLinkType: HOSTED_PAYMENT_PAGE, THIRD_PARTY_PAGE
+- [GP-API] - Unit tests enhancements
+- [UPA] - Refacto on UPA amount format
+
+### Bug Fixes:
+- [MITC UPA] - Fix void command
+
+## v9.0.5 (11/07/24)
 ### Enhancement
 - [GP-API] - Add missing mapping on digital wallet transaction response: brand, masked_number_last4, authcode, brand_reference
 

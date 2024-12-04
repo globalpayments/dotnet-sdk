@@ -299,6 +299,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, userTrb.Order));
                         request.AddQueryStringParam("order_by", EnumConverter.GetMapping(Target.GP_API, userTrb.AccountOrderBy));
                         request.AddQueryStringParam("status", userTrb.SearchBuilder.MerchantStatus?.ToString());
+                        request.AddQueryStringParam("from_time_created", userTrb.SearchBuilder.StartDate?.ToString("yyyy-MM-dd"));
 
                         return request;
 

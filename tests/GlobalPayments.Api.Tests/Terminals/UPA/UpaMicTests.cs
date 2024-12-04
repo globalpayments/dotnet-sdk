@@ -57,7 +57,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                     .WithEcrId(13)
                     .Execute();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -73,7 +73,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                     .WithEcrId(13)
                     .Execute();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -91,7 +91,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 Assert.IsNotNull(response);
                 Assert.AreEqual("1.00", response.TipAmount.ToString());
                 Assert.AreEqual("11.00", response.TransactionAmount.ToString());
-                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -105,7 +105,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 ITerminalResponse response = _device.Sale(10m)
                     .Execute();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -121,7 +121,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 IDeviceResponse response = _device.LineItem("Line Item #1", "10.00");
 
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -170,7 +170,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                     .WithClientTransactionId("asdcdf999")
                     .Execute();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("INITIATED", response.DeviceResponseText);
 
                 ITerminalResponse capture = _device.Capture(10m)
@@ -178,7 +178,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                     .WithTransactionId(response.TransactionId)
                     .Execute();
                 Assert.IsNotNull(capture);
-                Assert.AreEqual("SUCCESS", capture.ResponseText);
+                Assert.AreEqual("00", capture.DeviceResponseCode);
                 Assert.AreEqual("INITIATED", capture.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -209,7 +209,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 ITerminalReport response = _device.GetOpenTabDetails()
                     .Execute();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -240,7 +240,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 ITerminalResponse response = _device.Refund(10m)
                     .Execute();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -256,7 +256,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseText);
+            Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("COMPLETE", response.DeviceResponseText);
 
             Thread.Sleep(10000);
@@ -266,7 +266,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithAuthCode(response.ApprovalCode)
                 .Execute();
             Assert.IsNotNull(refundResponse);
-            Assert.AreEqual("SUCCESS", refundResponse.ResponseText);
+            Assert.AreEqual("00", refundResponse.DeviceResponseCode);
             Assert.AreEqual("COMPLETE", refundResponse.DeviceResponseText);
         }
 
@@ -276,7 +276,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 ITerminalResponse response = _device.Verify()
                     .Execute();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.ResponseText);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {
@@ -285,14 +285,14 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void CreditVoid() {
+        public void CreditVoidWithTranNo() {
             ITerminalResponse response = _device.Sale(10m)
                 .WithGratuity(0m)
                 .WithEcrId(13)
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseText);
+            Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("COMPLETE", response.DeviceResponseText);
 
             Thread.Sleep(5000);
@@ -303,9 +303,32 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .Execute();
 
             Assert.IsNotNull(voidResponse);
-            Assert.AreEqual("SUCCESS", voidResponse.ResponseText);
+            Assert.AreEqual("00", voidResponse.DeviceResponseCode);
             Assert.AreEqual("COMPLETE", voidResponse.DeviceResponseText);
-        }               
+        }
+        
+        [TestMethod]
+        public void CreditVoidWithReferenceNumber() {
+            ITerminalResponse response = _device.Sale(10m)
+                .WithGratuity(0m)
+                .WithEcrId(13)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("COMPLETE", response.DeviceResponseText);
+
+            Thread.Sleep(5000);
+
+            ITerminalResponse voidResponse = _device.Void()
+                .WithTerminalRefNumber(response.TerminalRefNumber)
+                .WithEcrId("13")
+                .Execute();
+
+            Assert.IsNotNull(voidResponse);
+            Assert.AreEqual("00", voidResponse.DeviceResponseCode);
+            Assert.AreEqual("COMPLETE", voidResponse.DeviceResponseText);
+        }
         
         [TestMethod]
         public void SendSaf() {
@@ -447,7 +470,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 _device.EcrId = "1";
                 IDeviceResponse response = _device.Reboot();
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.DeviceResponseCode);
+                Assert.AreEqual("00", response.DeviceResponseCode);
                 Assert.AreEqual("COMPLETE", response.DeviceResponseText);
             }
             catch (ApiException exc) {

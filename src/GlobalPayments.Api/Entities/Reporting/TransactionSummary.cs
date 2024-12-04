@@ -207,6 +207,7 @@ namespace GlobalPayments.Api.Entities {
         public string PaymentMethodKey { get; set; }
 
         public string PaymentType { get; set; }
+        public Card CardDetails { get; set; }
         public Customer PayorData { get; set; }
 
         public string PoNumber { get; set; }

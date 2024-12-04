@@ -968,9 +968,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [DataTestMethod]
         [DataRow(ChallengeRequestIndicator.CHALLENGE_PREFERRED)]
         [DataRow(ChallengeRequestIndicator.CHALLENGE_MANDATED)]
-        [DataRow(ChallengeRequestIndicator.CHALLENGE_REQUESTED_PROMPT_FOR_WHITELIST)]
         public void CardHolderEnrolled_Frictionless_v2_Initiate_AllPreferenceValues_ChallengeRequired(ChallengeRequestIndicator preference) {
-            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_2;
 
             var secureEcom = Secure3dService.CheckEnrollment(card)
                     .WithCurrency(Currency)

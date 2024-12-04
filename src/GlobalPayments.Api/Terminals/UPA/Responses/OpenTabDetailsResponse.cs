@@ -17,56 +17,59 @@ namespace GlobalPayments.Api.Terminals.UPA
         public string Multiplemessage { get; set; }
         public string MerchantName { get; set; }
         public List<OpenTab> OpenTabs = new List<OpenTab>();
+        public string EcrId { get; set; }
 
-        public OpenTabDetailsResponse(JsonDoc root) {
-            if (!TerminalUtilities.IsGpApiResponse(root)) {
-                var firstDataNode = root.Get("data");
-                if (firstDataNode == null) {
-                    throw new MessageException(invalidFormatMessage);
+        public OpenTabDetailsResponse(JsonDoc root)
+        {
+            JsonDoc firstDataNode = !TerminalUtilities.IsGpApiResponse(root) ? root.Get("data") : root.Get("response");
+            if (TerminalUtilities.IsGpApiResponse(root))
+            {
+                DeviceResponseText = root.GetValue<string>("status");
+                DeviceResponseCode = root.Get("action").GetValue<string>("result_code");
+            }
+
+            if (firstDataNode == null) 
+            {
+                throw new MessageException(invalidFormatMessage);
+            }
+            var cmdResult = firstDataNode.Get("cmdResult");
+            if (cmdResult == null) {
+                throw new MessageException(invalidFormatMessage);
+            }
+
+            Status = cmdResult.GetValue<string>("result");
+            Command = firstDataNode.GetValue<string>("response");
+            EcrId = firstDataNode.GetValue<string>("EcrId");
+            if (string.IsNullOrEmpty(Status)) {
+                var errorCode = cmdResult.GetValue<string>("errorCode");
+                var errorMsg = cmdResult.GetValue<string>("errorMessage");
+                DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
+            }
+            else {
+                if (Status == "Success") {
+                    var secondDataNode = firstDataNode.Get("data");
+                    if (secondDataNode == null) {
+                        throw new MessageException(invalidFormatMessage);
+                    }
+
+                    MerchantName = secondDataNode.GetValue<string>("merchantName");
+                    Multiplemessage = secondDataNode.GetValue<string>("multipleMessage");
+                    var openTabList = secondDataNode.GetArray<JsonDoc>("OpenTabDetails");
+
+                    foreach (JsonDoc openTab in openTabList) {
+                        OpenTab tab = new OpenTab();
+                        tab.AuthorizedAmount = openTab.GetValue<decimal>("authorizedAmount");
+                        tab.CardType = openTab.GetValue<string>("cardType");
+                        tab.MaskedPan = openTab.GetValue<string>("maskedPan");
+                        tab.TransactionId = openTab.GetValue<string>("referenceNumber");
+                        OpenTabs.Add(tab);
+                    }
                 }
-
-                var cmdResult = firstDataNode.Get("cmdResult");
-                if (cmdResult == null) {
-                    throw new MessageException(invalidFormatMessage);
-                }
-
-                Status = cmdResult.GetValue<string>("result");
-                if (string.IsNullOrEmpty(Status)) {
+                else {
                     var errorCode = cmdResult.GetValue<string>("errorCode");
                     var errorMsg = cmdResult.GetValue<string>("errorMessage");
                     DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
                 }
-                else {
-                    if (Status == "Success") {
-                        var secondDataNode = firstDataNode.Get("data");
-                        if (secondDataNode == null) {
-                            throw new MessageException(invalidFormatMessage);
-                        }
-
-                        MerchantName = secondDataNode.GetValue<string>("merchantName");
-                        Multiplemessage = secondDataNode.GetValue<string>("multipleMessage");
-                        var openTabList = secondDataNode.GetArray<JsonDoc>("OpenTabDetails");
-
-                        foreach (JsonDoc openTab in openTabList) {
-                            OpenTab tab = new OpenTab();
-                            tab.AuthorizedAmount = openTab.GetValue<decimal>("authorizedAmount");
-                            tab.CardType = openTab.GetValue<string>("cardType");
-                            tab.MaskedPan = openTab.GetValue<string>("maskedPan");
-                            tab.TransactionId = openTab.GetValue<string>("referenceNumber");
-                            OpenTabs.Add(tab);
-                        }
-                    }
-                    else {
-                        var errorCode = cmdResult.GetValue<string>("errorCode");
-                        var errorMsg = cmdResult.GetValue<string>("errorMessage");
-                        DeviceResponseText = $"Error: {errorCode} - {errorMsg}";
-                    }
-                }
-            }
-            else {                
-                DeviceResponseText = root.GetValue<string>("status");
-                var responseText = root.Get("action").GetValue<string>("result_code");
-                DeviceResponseCode = responseText;
             }
         }      
     }
