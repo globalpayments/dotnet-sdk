@@ -23,12 +23,24 @@ namespace GlobalPayments.Api.Terminals.PAX {
             _settings = settings;
         }
 
-        public void Connect() { 
-            if (_client == null) {
-                _client = new TcpClient();
-                _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
-                _stream = _client.GetStream();
-                _stream.ReadTimeout = _settings.Timeout;
+        public void Connect()
+        {
+            if (_client == null)
+            {
+                try
+                {
+                    _client = new TcpClient();
+                    _client.ConnectAsync(_settings.IpAddress, int.Parse(_settings.Port)).Wait(_settings.Timeout);
+                    _stream = _client.GetStream();
+                    _stream.ReadTimeout = _settings.Timeout;
+                }
+                catch (Exception)
+                {
+                    // don't leave _client set without a _stream
+                    _client?.Dispose();
+                    _client = null;
+                    throw;
+                }
             }
             _connectionCount++;
         }
