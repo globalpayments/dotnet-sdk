@@ -3,6 +3,7 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.UPA.Responses;
 using GlobalPayments.Api.Utils;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.UPA {
     internal class TransactionResponse: UPAResponseHandler, IBatchCloseResponse {
@@ -90,6 +91,9 @@ namespace GlobalPayments.Api.Terminals.UPA {
                             HydratePinDUKPTData(responseData);
                         }
                         break;
+                    case UpaTransType.GetParam:
+                    HydrateParams(responseData);
+                        break; 
                     default:
                         break;
                 }
@@ -166,6 +170,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             CpcInd = host.GetValue<string>("CpcInd") ?? null;
             Descriptor = host.GetValue<string>("txnDescriptor");
             SafTransaction = host.Has("storeAndForward") ? host.GetValue<int>("storeAndForward") == 1 : false;
+            InvoiceNumber = host.GetValue<string>("invoiceNbr") ?? null;
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
             CavvResultCode = host.GetValue<int?>("CavvResultCode") ?? null;
             TokenPANLast = host.GetValue<int?>("tokenPANLast") ?? null;
@@ -369,6 +374,13 @@ namespace GlobalPayments.Api.Terminals.UPA {
             MarkUp = dcc.GetValue<decimal>("markUp");
             TransactionCurrency = dcc.GetValue<string>("transactionCurrency");
             DccTransactionAmount = dcc.GetValue<string>("transactionAmount");
+        }
+
+        protected void HydrateParams(JsonDoc data) {
+            Parameters = new Dictionary<string, string>();
+            foreach (var key in data.Keys) {
+                Parameters.Add(key, data.GetValue<string>(key));
+            }
         }
 
         protected string NormalizeResponseCode(string responseCode, string partialApproval) {

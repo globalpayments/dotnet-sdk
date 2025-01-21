@@ -7,6 +7,7 @@ using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
 using GlobalPayments.Api.Terminals.UPA;
 using System;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals
 {
@@ -263,6 +264,12 @@ namespace GlobalPayments.Api.Terminals
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
         }
         public virtual IDeviceResponse SetTimeZone(string timezone) {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse SetTipPercentageOptions() {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse SetParam(KeyValuePair<string,string> parameter, string password = null, bool promptIfRestartRequired = false) {
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
         }
         public virtual IDeviceResponse GetParams(string[] parameters) {

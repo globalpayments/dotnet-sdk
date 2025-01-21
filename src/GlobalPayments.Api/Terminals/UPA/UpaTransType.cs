@@ -29,6 +29,7 @@
         public const string GetAppInfo = "GetAppInfo";
         public const string ClearDataLake = "ClearDataLake";
         public const string SetTimeZone = "SetTimeZone";
+        public const string SetParam = "SetParam";
         public const string GetParam = "GetParam";    
         public const string SetDebugLevel = "SetDebugLevel";
         public const string GetDebugLevel = "GetDebugLevel";

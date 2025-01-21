@@ -3,6 +3,7 @@ using GlobalPayments.Api.Entities.UPA;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Utils;
 using System;
+using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.UPA.Responses {
     public class UPAResponseHandler : ITerminalResponse {
@@ -65,7 +66,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public string CTLSSdkVersion { get; set; }
         public string RequestId { get; set; }
         public string ScanData { get; set; }
-        public PinDUKPTResponse PinDUKPT { get; set; }       
+        public PinDUKPTResponse PinDUKPT { get; set; }
         public int? ButtonPressed { get; set; }
         public string ValueEntered { get; set; }
         public int? PromptMenuSelected { get; set; }
@@ -75,7 +76,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public string ResponseDateTime { get; set; }
         public string GatewayResponseCode { get; set; }
         public string GatewayResponsemessage { get; set; }
-        public decimal? AdditionalTipAmount { get; set; } 
+        public decimal? AdditionalTipAmount { get; set; }
         public decimal? TaxAmount { get; set; }
         public decimal? AuthorizedAmount { get; set; }
         public string CpcInd { get; set; }
@@ -96,7 +97,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public int? StoreAndForward { get; set; }
         public int? ClerkId { get; set; }
         public string InvoiceNumber { get; set; }
-        
+
         public string Multiplemessage { get; set; }
         public int BatchId { get; set; }
         public string CardType { get; set; }
@@ -140,17 +141,15 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public string TransactionSequenceCounter { get; set; }
         public string TacDefault { get; set; }
         public string TacDenial { get; set; }
-        public string TacOnline { get; set; }        
+        public string TacOnline { get; set; }
+        public Dictionary<string, string> Parameters { get; set; }
         public string EcrId { get; set; }
-
         #endregion
 
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
-        public void ParseResponse(JsonDoc root)
-        {
+        public void ParseResponse(JsonDoc root) {
             JsonDoc firstNode = IsGpApiResponse(root) ? root.Get("response") : root.Get("data");
-            if (firstNode.Get("cmdResult") == null)
-            {
+            if (firstNode.Get("cmdResult") == null) {
                 throw new MessageException(INVALID_RESPONSE_FORMAT);
             }
             CheckResponse(firstNode.Get("cmdResult"));
@@ -162,8 +161,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
                 }
                 Status = firstNode.Get("cmdResult").GetValue<string>("result");
             }
-            else
-            {
+            else {
                 Status = root.GetValue<string>("status");
             }
 
@@ -182,10 +180,8 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
             EcrId = response.GetValue<string>("EcrId");
         }
 
-        private void CheckResponse(JsonDoc cmdResult)
-        {
-            if (cmdResult.GetValue<string>("result") == "Failed")
-            {
+        private void CheckResponse(JsonDoc cmdResult) {
+            if (cmdResult.GetValue<string>("result") == "Failed") {
                 var errorCode = cmdResult.GetValue<string>("errorCode");
                 var errorMessage = cmdResult.GetValue<string>("errorMessage");
                 throw new GatewayException(
@@ -193,7 +189,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
                     errorCode,
                     errorMessage
                     );
-            }   
+            }
         }
-    }   
+    }
 }

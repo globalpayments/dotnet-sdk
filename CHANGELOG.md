@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v9.0.6 (12/03/24)
+## Latest - v9.0.7 (01/21/25)
+### Enhancement
+- [UPA] - Added SetParams functionality and added invoice number to credit sale.
+
+## v9.0.6 (12/03/24)
 ### Enhancement
 - [GP-API] - Add new mapping fields on get transaction list: "funding", "authentication"
 - [GP-API] - Add new enum values for PayByLinkType: HOSTED_PAYMENT_PAGE, THIRD_PARTY_PAGE

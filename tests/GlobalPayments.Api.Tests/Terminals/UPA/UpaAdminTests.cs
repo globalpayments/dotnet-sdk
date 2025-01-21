@@ -9,21 +9,20 @@ using GlobalPayments.Api.Terminals.UPA.Responses;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
-namespace GlobalPayments.Api.Tests.Terminals.UPA
-{
+namespace GlobalPayments.Api.Tests.Terminals.UPA {
     [TestClass]
-    public class UpaAdminTests
-    {
+    public class UpaAdminTests {
         IDeviceInterface _device;
 
         public UpaAdminTests() {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.8.181",
+                IpAddress = "192.168.1.142",
                 Port = "8081",
                 Timeout = 15000,
                 RequestIdProvider = new RandomIdProvider(),
@@ -33,8 +32,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void LineItem()
-        {
+        public void LineItem() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -48,8 +46,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void Ping()
-        {
+        public void Ping() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -62,8 +59,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void Restart()
-        {
+        public void Restart() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -77,8 +73,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void GetAppInfo()
-        {
+        public void GetAppInfo() {
             _device.EcrId = "13";
             var response = _device.GetAppInfo();
             Assert.IsNotNull(response);
@@ -91,16 +86,15 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(((UPAResponseHandler)response).EmvSdkVersion);
             Assert.IsNotNull(((UPAResponseHandler)response).CTLSSdkVersion);
         }
-        
+
         [TestMethod]
-        public void GetConfigContents()
-        {
+        public void GetConfigContents() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
             _device.EcrId = "13";
             var response = _device.GetConfigContents(TerminalConfigType.ContactlessTerminalConfiguration);
-            
+
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
@@ -109,16 +103,15 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(((UPAResponseHandler)response).ConfigContent.ConfigType);
             Assert.AreEqual(((UPAResponseHandler)response).ConfigContent.Length, ((UPAResponseHandler)response).ConfigContent.FileContent.Length);
         }
-        
+
         [TestMethod]
-        public void GetSignatureFile()
-        {
+        public void GetSignatureFile() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
             _device.EcrId = "13";
             var response = _device.GetSignatureFile();
-            
+
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
@@ -126,8 +119,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void ClearDataLake()
-        {
+        public void ClearDataLake() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -140,15 +132,14 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void SetTimeZone()
-        {
+        public void SetTimeZone() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
 
-            _device.EcrId = "13";            
-            var response = _device.SetTimeZone("America/Barbados");
-            
+            _device.EcrId = "13";
+            var response = _device.SetTimeZone("America/Los_Angeles");
+
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
@@ -156,13 +147,15 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void GetParams()
-        {
+        public void SetParams() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
+
             _device.EcrId = "13";
-            var response = _device.GetParams(new string[] {"TerminalLanguage", "PinBypassIsSupported"});
+            var param = new KeyValuePair<string, string>("timeZone", "America/Los_Angeles");
+            var response = _device.SetParam(param, "993883", false);
+
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
@@ -170,16 +163,44 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void SetDebugLevel()
-        {
+        public void SetParamsMissingPasswordField() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+
+            _device.EcrId = "13";
+            var param = new KeyValuePair<string, string>("TerminalNumber", "7708");
+            var response = _device.SetParam(param);
+
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
+            Assert.AreEqual("ERR013", response.DeviceResponseCode);
+            Assert.AreEqual("[password]", response.DeviceResponseText.Substring(0, 10));
+        }
+
+        [TestMethod]
+        public void GetParams() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
             _device.EcrId = "13";
-            var response = _device.SetDebugLevel(new Enum[] { DebugLevel.PACKETS , DebugLevel.DATA }, DebugLogsOutput.FILE);
-            
+            var response = _device.GetParams(new string[] { "ApplicationMode", "InvoicePromptSupported", "EODProcessingPWD", "VoidPassword", "TrainingModePWD", "InvoicePromptSupported", "BeepVolume", "HostPassword", "AdminPassword", "UserPassword", "ManagerPassword", "DeviceCapabilities", "DeviceAttributes", "DeveloperID", "ConnectionRetryAttempts", "ApplicationMode", "ApplicationId", "ApiKeySupported", "TerminalLanguage", "PinBypassIsSupported" });
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void SetDebugLevel() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+            var response = _device.SetDebugLevel(new Enum[] { DebugLevel.PACKETS, DebugLevel.DATA }, DebugLogsOutput.FILE);
+
             Thread.Sleep(25000);
-            
+
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
@@ -187,8 +208,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void GetDebugLevel()
-        {
+        public void GetDebugLevel() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -201,8 +221,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void GetDebugInfo()
-        {
+        public void GetDebugInfo() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -215,8 +234,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void BroadcastConfiguration()
-        {
+        public void BroadcastConfiguration() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -229,8 +247,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void ReturnToIdle()
-        {
+        public void ReturnToIdle() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -243,8 +260,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void LoadUDDataFile()
-        {
+        public void LoadUDDataFile() {
             UDData udData = new UDData();
             udData.FileType = UDFileType.HTML5;
             udData.SlotNum = 2;
@@ -262,8 +278,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void RemoveUDDataFile()
-        {
+        public void RemoveUDDataFile() {
             UDData udData = new UDData();
             udData.FileType = UDFileType.HTML5;
             udData.SlotNum = 1;
@@ -278,10 +293,9 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("Success", response.Status);
         }
-        
+
         [TestMethod]
-        public void ExecuteUdDataFile()
-        {
+        public void ExecuteUdDataFile() {
             UDData udData = new UDData();
             udData.FileType = UDFileType.HTML5;
             udData.SlotNum = 2;
@@ -297,22 +311,21 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("Success", response.Status);
         }
-        
+
         [TestMethod]
-        public void InjectUdDataFile()
-        {
+        public void InjectUdDataFile() {
             UDData udData = new UDData();
             udData.FileType = UDFileType.HTML5;
             udData.FileName = "example.html";
             udData.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\UDDataFile.html";
-            
+
 
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
             _device.EcrId = "13";
             var response = _device.InjectUDDataFile(udData);
-            
+
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
@@ -320,8 +333,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void Scan()
-        {
+        public void Scan() {
             ScanData scanData = new ScanData();
             scanData.Header = "scan";
             scanData.Prompt1 = "scan qr code";
@@ -340,8 +352,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void ScanWithoutParams()
-        {
+        public void ScanWithoutParams() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -354,8 +365,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void PrintData()
-        {
+        public void PrintData() {
             PrintData printData = new PrintData();
             printData.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\example.jpg";
             printData.Line1 = "Printing...";
@@ -371,11 +381,10 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("Success", response.Status);
-        }        
+        }
 
         [TestMethod]
-        public void CommunicationCheck()
-        {
+        public void CommunicationCheck() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -388,8 +397,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void Logon()
-        {
+        public void Logon() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -402,8 +410,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void GetLastEOD()
-        {
+        public void GetLastEOD() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -416,8 +423,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void RemoveCard()
-        {
+        public void RemoveCard() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -430,8 +436,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void EnterPin()
-        {
+        public void EnterPin() {
             var prompt = new PromptMessages();
             prompt.Prompt1 = "Enter PIN";
             prompt.Prompt2 = "EnterPin2";
@@ -448,8 +453,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void PromptWithOptions()
-        {
+        public void PromptWithOptions() {
             var promptData = new PromptData();
             promptData.Prompts = new PromptMessages();
             promptData.Prompts.Prompt1 = "Prompt 1";
@@ -476,8 +480,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void PromptMenu()
-        {
+        public void PromptMenu() {
             var promptData = new PromptData();
             promptData.Prompts = new PromptMessages();
             promptData.Prompts.Prompt1 = "Select Application";
@@ -504,8 +507,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void GeneralEntry()
-        {
+        public void GeneralEntry() {
             var data = new GenericData();
             data.Prompts = new PromptMessages();
             data.Prompts.Prompt1 = "Enter Driver’s License";
@@ -516,7 +518,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             data.EntryMinLen = 10;
             data.EntryMaxLen = 20;
             data.Alignment = InputAlignment.RIGHT_TO_LEFT;
-            
+
             _device.EcrId = "1";
             var response = _device.GetGenericEntry(data);
 
@@ -524,14 +526,13 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.AreEqual("Success", response.Status);
         }
-        
+
         [TestMethod]
-        public void DisplayMessage()
-        {
+        public void DisplayMessage() {
             var messageLines = new MessageLines();
             messageLines.Line1 = "Please wait...";
             messageLines.Timeout = 0;
-            
+
             _device.EcrId = "1";
             var response = _device.DisplayMessage(messageLines);
 
@@ -561,8 +562,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void ContinueEMVTransaction()
-        {
+        public void ContinueEMVTransaction() {
             var response = _device.ContinueTransaction(10.01m, true)
                 .WithCashBack(0.1m)
                 .WithQuickChip(false)
@@ -570,19 +570,18 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithLanguage("EN")
                 .Execute();
 
-                Assert.AreEqual("00", response.DeviceResponseCode);
-                Assert.AreEqual("Success", response.Status);
-                Assert.IsNotNull(((UPAResponseHandler)response).EmvTags);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("Success", response.Status);
+            Assert.IsNotNull(((UPAResponseHandler)response).EmvTags);
         }
 
         [TestMethod]
-        public void CompleteEMVTransaction()
-        {
+        public void CompleteEMVTransaction() {
             HostData hostData = new HostData();
             hostData.HostDecision = HostDecision.APPROVED;
             hostData.IssuerAuthData = "xxx";
             hostData.IssuerScripts = "aaa";
-            var response = _device.CompleteTransaction()                
+            var response = _device.CompleteTransaction()
                 .WithQuickChip(false)
                 .WithLanguage("EN")
                 .WithHostData(hostData)
@@ -594,8 +593,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void ProcessCardTransactionSale()
-        {        
+        public void ProcessCardTransactionSale() {
             var response = _device.ProcessTransaction(10.01m)
                 .WithAcquisitionTypes(new System.Collections.Generic.List<AcquisitionType> { AcquisitionType.Contactless, AcquisitionType.Contact })
                 .WithTimeout(3)
@@ -611,8 +609,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void ContinueCardTransaction()
-        {        
+        public void ContinueCardTransaction() {
             var response = _device.ContinueTransaction(10.01m)
                 .WithCashBack(0.1m)
                 .WithMerchantDecision(MerchantDecision.APPROVED)
@@ -625,8 +622,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void LineItemWithRight()
-        {
+        public void LineItemWithRight() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -640,8 +636,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void Reboot()
-        {
+        public void Reboot() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -652,8 +647,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void SendStoreAndForward()
-        {
+        public void SendStoreAndForward() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -668,8 +662,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
-            _device.EcrId = "13";            
-            var response = _device.PromptAndGetSignatureFile("please Sign","", null);
+            _device.EcrId = "13";
+            var response = _device.PromptAndGetSignatureFile("please Sign", "", null);
             Assert.IsNotNull(response);
             Assert.IsNotNull(response.SignatureData);
 
@@ -682,8 +676,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void Cancel()
-        {
+        public void Cancel() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -724,10 +717,9 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(response);
             Assert.AreEqual("Success", response.Status);
         }
-        
+
         [TestMethod]
-        public void DeleteSafWithSafReferenceNumber()
-        {
+        public void DeleteSafWithSafReferenceNumber() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -736,10 +728,9 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(response);
             Assert.AreEqual("Success", response.Status);
         }
-        
+
         [TestMethod]
-        public void DeleteSafWithSafReferenceNumberAndTranNo()
-        {
+        public void DeleteSafWithSafReferenceNumberAndTranNo() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
             };
@@ -750,8 +741,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
         }
 
         [TestMethod]
-        public void RegisterPOS()
-        {
+        public void RegisterPOS() {
             POSData posData = new POSData();
             posData.AppName = "com.global.testapp";
             posData.LaunchOrder = 1;
@@ -769,8 +759,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
         #region helper methods
         private void SaveSignatureFile(byte[] signatureData, string filename) {
-            using (var sw = new BinaryWriter(File.OpenWrite(filename)))
-            {
+            using (var sw = new BinaryWriter(File.OpenWrite(filename))) {
                 sw.Write(signatureData);
                 sw.Flush();
             }

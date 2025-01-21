@@ -8,7 +8,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         
         public byte[] SignatureData { get; set; }
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";
-
+        public string SigData { get; set; }
         public UpaSignatureResponse(JsonDoc root) {
             if (!TerminalUtilities.IsGpApiResponse(root)) {
                 var firstDataNode = root.Get("data");

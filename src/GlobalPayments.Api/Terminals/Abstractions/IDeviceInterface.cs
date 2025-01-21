@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Entities.UPA;
@@ -33,6 +34,7 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse Scan(ScanData scanData = null);        
         IDeviceResponse Print(PrintData printData);
         IDeviceResponse SetTimeZone(string timezone);
+        IDeviceResponse SetParam(KeyValuePair<string, string> parameter, string password = null, bool promptIfRestartRequired = false);
         IDeviceResponse GetParams(string[] parameters);
         /// <summary>
         /// <paramref name="debugLevel"/> is of type DebugLevel Enum

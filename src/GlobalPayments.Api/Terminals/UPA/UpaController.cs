@@ -154,8 +154,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 }
                 txnParams.Set("lineItemLeft", builder.LineItemLeft);
                 txnParams.Set("lineItemRight", builder.LineItemRight);
-                if (transType == TransactionType.Auth)
-                    txnParams.Set("invoiceNbr", builder.InvoiceNumber);
+
                 if (builder.ShippingDate != DateTime.MinValue && builder.InvoiceNumber != null) {
                     txnParams.Set("directMktInvoiceNbr", builder.InvoiceNumber);
                     txnParams.Set("directMktShipMonth", builder.ShippingDate.Month.ToString("00"));
@@ -202,6 +201,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                         if (builder.TransactionModifier == TransactionModifier.ProcessTransaction) {
                             transaction.Set("totalAmount", builder.Amount.ToCurrencyString());
                         }
+                        transaction.Set("invoiceNbr", builder.InvoiceNumber);
                         transaction.Set("baseAmount", builder.Amount.ToCurrencyString());
                         transaction.Set("tipAmount", builder.Gratuity.ToCurrencyString());
                     }

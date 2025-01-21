@@ -62,8 +62,6 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithEcrId(13)
                 .WithClerkId(123)
                 .WithGratuity(0m)
-                .WithRequestMultiUseToken(true)
-                .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
                 .WithCardBrandTransId("transId")
                 .WithAutoSubstantiation(autoSub)
                 .WithInvoiceNumber(new Random().Next(1000000, 9999999).ToString())
@@ -144,6 +142,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 .WithAmount(10m)
                 .WithTerminalRefNumber("1234")
                 .WithAutoSubstantiation(autoSub)
+                .WithInvoiceNumber("1234")
                 .Execute();
             
             Assert.IsNotNull(response);
@@ -284,7 +283,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
             var response = _device.DeletePreAuth()
                 .WithEcrId("13")
-                .WithTransactionId("0141")
+                .WithTransactionId("200071138640")
                 .Execute();
             
             Assert.IsNotNull(response);
@@ -421,11 +420,11 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.DeviceResponseCode);
 
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
             
             var voidResponse = _device.Void()
-                .WithTransactionId(response.TransactionId)
-                .WithEcrId("1")
+                .WithTransactionId("200071134962")
+                .WithEcrId("13")
                 .Execute();
             
             Assert.IsNotNull(voidResponse);

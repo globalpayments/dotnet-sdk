@@ -147,6 +147,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
             var cmdResult = data.Get("cmdResult");
             return (
+                (data.GetValue<string>("response") == UpaTransType.SetParam && cmdResult.GetValue<string>("result") == "Success") ||
                     data.GetValue<string>("response") == UpaTransType.Reboot ||
                     (cmdResult != null && cmdResult.GetValue<string>("result") == "Failed")
                 );

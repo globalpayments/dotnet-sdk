@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <VersionPrefix>9.0.6</VersionPrefix>
+    <VersionPrefix>9.0.7</VersionPrefix>
     <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>GlobalPayments.Api</AssemblyName>
     <PackageId>GlobalPayments.Api</PackageId>
@@ -14,6 +14,8 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <AssemblyVersion>9.0.7</AssemblyVersion>
+    <FileVersion>9.0.7</FileVersion>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
   <ItemGroup>
