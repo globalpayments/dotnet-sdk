@@ -43,6 +43,10 @@ namespace GlobalPayments.Api.Gateways {
                     if (builder.TransactionModifier.Equals(TransactionModifier.None) && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.EBT && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring)
                         et.SubElement(block1, "AllowPartialAuth", builder.AllowPartialAuth ? "Y" : "N");
                 }
+
+                if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit && builder.TransactionModifier == TransactionModifier.None) {
+                    et.SubElement(block1, "AmountIndicator", builder.AmountEstimated ? "E" : "F");
+                }
             }
             et.SubElement(block1, "Amt", builder.Amount);
             et.SubElement(block1, "GratuityAmtInfo", builder.Gratuity);

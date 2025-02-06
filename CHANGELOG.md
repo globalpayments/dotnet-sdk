@@ -1,6 +1,15 @@
 # Changelog
 
-## Latest - v9.0.7 (01/21/25)
+## Latest - v9.0.10 (02/06/25)
+### Enhancement
+- [UPA] - Added Error handling around Connect() call in the UpaTcpInterface.
+- [Portico] - Added amount indiciator to credit sale/auth
+  
+## v9.0.9 skipped release issue
+
+## v9.0.8 skipped release issue
+
+## v9.0.7 (01/21/25)
 ### Enhancement
 - [UPA] - Added SetParams functionality and added invoice number to credit sale.
 

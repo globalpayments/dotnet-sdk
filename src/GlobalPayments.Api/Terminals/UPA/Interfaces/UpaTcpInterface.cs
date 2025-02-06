@@ -49,12 +49,21 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         public byte[] Send(IDeviceMessage message) {
             byte[] buffer = message.GetSendBuffer();
-           
+            bool isConnected = true;
             var readyReceived = false;
             byte[] responseMessage = null;            
            
             try {
-                Connect();
+                try
+                {
+                    Connect();
+                }
+                catch (Exception ex)
+                {
+                    isConnected = false;
+                    throw new MessageException(ex.Message, ex);
+                }
+                //Connect();
                 var task = _stream.WriteAsync(buffer, 0, buffer.Length);
 
                 if (!task.Wait(_settings.Timeout)) {
@@ -108,9 +117,16 @@ namespace GlobalPayments.Api.Terminals.UPA {
             finally {
                 _settings.LogManagementProvider?.RequestSent(GenerateRequestLog(_settings.IpAddress, _settings.Port, _settings.Timeout.ToString(), Encoding.UTF8.GetString(buffer)));
                 OnMessageSent?.Invoke(message.ToString());
-                OnMessageReceived?.Invoke(Encoding.UTF8.GetString(responseMessage));
-                _settings.LogManagementProvider?.ResponseReceived(Encoding.UTF8.GetString(responseMessage));
-                Disconnect();
+                if (responseMessage != null)
+                {
+                    OnMessageReceived?.Invoke(Encoding.UTF8.GetString(responseMessage));
+                    _settings.LogManagementProvider?.ResponseReceived(Encoding.UTF8.GetString(responseMessage));
+                }
+                if (isConnected)
+                {
+                    Disconnect();
+                }
+
             }
         }
 
