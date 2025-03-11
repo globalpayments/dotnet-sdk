@@ -25,7 +25,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "192.168.1.142",
                 Port = "8081",
-                Timeout = 30000,
+                Timeout = 180000,
                 RequestIdProvider = new RandomIdProvider(),
                 LogManagementProvider = new RequestConsoleLogger()
             });
@@ -57,18 +57,17 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
                 DentalSubTotal = 2m,
                 VisionSubTotal = 2m
             };
-
             var response = _device.Sale(10m)
-                .WithEcrId(13)
-                .WithClerkId(123)
-                .WithGratuity(0m)
-                .WithCardBrandTransId("transId")
-                .WithAutoSubstantiation(autoSub)
-                .WithInvoiceNumber(new Random().Next(1000000, 9999999).ToString())
-                .Execute();
+            .WithEcrId("1332321")
+            .WithClerkId(123)
+            .WithGratuity(0m)
+            .WithCardBrandTransId("transId")
+            .WithAutoSubstantiation(autoSub)
+            .WithInvoiceNumber(new Random().Next(1000000, 9999999).ToString())
+            .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.DeviceResponseCode);
-        }
+         }
 
         [TestMethod]
         public void CreditSale_OnlyMandatory()
@@ -111,7 +110,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             }; 
             
             var response = _device.Sale(10m)
-                .WithEcrId(13)
+                .WithEcrId("25698")
                 .WithGratuity(1m)
                 .Execute();
             

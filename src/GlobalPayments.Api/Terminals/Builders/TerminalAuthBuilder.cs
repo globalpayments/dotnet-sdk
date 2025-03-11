@@ -20,7 +20,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
-        internal int EcrId { get; set; }
+        //internal int EcrId { get; set; }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal Lodging Lodging { get; set; }
         internal decimal? CashBackAmount { get; set; }
@@ -91,10 +91,14 @@ namespace GlobalPayments.Api.Terminals.Builders {
         }
 
         public TerminalAuthBuilder WithEcrId(int ecrId) {
+            EcrId = ecrId.ToString();
+            return this;
+        }
+        public TerminalAuthBuilder WithEcrId(string ecrId)
+        {
             EcrId = ecrId;
             return this;
         }
-
         public TerminalAuthBuilder WithAllowDuplicates(bool allowDuplicates) {
             AllowDuplicates = allowDuplicates;
             return this;

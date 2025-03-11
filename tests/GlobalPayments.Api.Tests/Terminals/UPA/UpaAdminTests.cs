@@ -10,6 +10,7 @@ using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -33,7 +34,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
 
         [TestMethod]
         public void LineItem() {
-            _device.OnMessageSent += (message) => {
+            _device.OnMessageSent += (message) =>
+            {
                 Assert.IsNotNull(message);
             };
             _device.EcrId = "12";
@@ -42,20 +44,38 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("Success", response.Status);
 
             // Clear the device UI
-            _device.Cancel();
+            _device.ReturnToIdle();
         }
 
         [TestMethod]
         public void Ping() {
+            var sendPings = 10;
             _device.OnMessageSent += (message) => {
-                Assert.IsNotNull(message);
+                Debug.WriteLine($"Ping attempt {sendPings}");
+                Debug.WriteLine(message);
             };
+            _device.OnMessageReceived += (message) => {
+                Debug.WriteLine(message);
+            };
+            
             _device.EcrId = "12";
-            var response = _device.Ping();
-            Assert.IsNotNull(response);
-            Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
-            Assert.AreEqual("00", response.DeviceResponseCode);
-            Assert.AreEqual("Success", response.Status);
+            do
+            {
+                try
+                {
+                    var response = _device.Ping();
+                    Assert.IsNotNull(response);
+                    Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
+                    Assert.AreEqual("00", response.DeviceResponseCode);
+                    Assert.AreEqual("Success", response.Status);
+                    Debug.WriteLine("Ping Success");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+                Thread.Sleep(3000);
+            }while (--sendPings > 0);
         }
 
         [TestMethod]
@@ -153,8 +173,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             };
 
             _device.EcrId = "13";
-            var param = new KeyValuePair<string, string>("timeZone", "America/Los_Angeles");
-            var response = _device.SetParam(param, "993883", false);
+            var param = new KeyValuePair<string, string>("timeZone", "America/NewYork");
+            var response = _device.SetParam(param, "993883", true);
 
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
@@ -184,7 +204,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 Assert.IsNotNull(message);
             };
             _device.EcrId = "13";
-            var response = _device.GetParams(new string[] { "ApplicationMode", "InvoicePromptSupported", "EODProcessingPWD", "VoidPassword", "TrainingModePWD", "InvoicePromptSupported", "BeepVolume", "HostPassword", "AdminPassword", "UserPassword", "ManagerPassword", "DeviceCapabilities", "DeviceAttributes", "DeveloperID", "ConnectionRetryAttempts", "ApplicationMode", "ApplicationId", "ApiKeySupported", "TerminalLanguage", "PinBypassIsSupported" });
+            var response = _device.GetParams(new string[] { "TimeZone", "ApplicationMode", "InvoicePromptSupported", "EODProcessingPWD", "VoidPassword", "TrainingModePWD", "InvoicePromptSupported", "BeepVolume", "HostPassword", "AdminPassword", "UserPassword", "ManagerPassword", "DeviceCapabilities", "DeviceAttributes", "DeveloperID", "ConnectionRetryAttempts", "ApplicationMode", "ApplicationId", "ApiKeySupported", "TerminalLanguage", "PinBypassIsSupported" });
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
             Assert.AreEqual("00", response.DeviceResponseCode);

@@ -152,7 +152,6 @@ namespace GlobalPayments.Api.Utils {
             }
             return null;
         }
-
         public static int? ToInt32(this string str) {
             if (string.IsNullOrEmpty(str))
                 return null;

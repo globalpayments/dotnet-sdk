@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v9.0.10 (02/06/25)
+## Latest - v9.0.11 (03/11/25)
+### Enhancement
+- [UPA] - Added handling for multiple messages in the stream, and a timeout to the ReadAsync stream in the UpaTcpInterface.
+- [UPA] - Added overload string type to EcrId property
+ 
+## v9.0.10 (02/06/25)
 ### Enhancement
 - [UPA] - Added Error handling around Connect() call in the UpaTcpInterface.
 - [Portico] - Added amount indiciator to credit sale/auth
