@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Gateways.Events;
+using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -33,22 +34,48 @@ namespace GlobalPayments.Api.Entities {
     /// </summary>
     public class GatewayException : ApiException {
         /// <summary>
-        /// The gateway response code.
+        /// The gateway response code
         /// </summary>
         public string ResponseCode { get; private set; }
 
         /// <summary>
-        /// The gateway response message.
+        /// The gateway response message
         /// </summary>
         public string ResponseMessage { get; private set; }
+
+        /// <summary>
+        /// The device response code
+        /// </summary>
+        public string DeviceResponseCode { get; private set; }
+
+        /// <summary>
+        /// The device response message
+        /// </summary>
+        public string DeviceResponseMessage { get; private set; }
+
+        /// <summary>
+        /// The issuer response code
+        /// </summary>
+        public string IssuerResponseCode { get; private set; }
+
+        /// <summary>
+        /// The issuer response message
+        /// </summary>
+        public string IssuerResponseMessage { get; private set; }
+
         public List<IGatewayEvent> GatewayEvents { get; set; }
 
-        internal GatewayException(string message, string responseCode = null, string responseMessage = null) : base(message) {
+        internal GatewayException(string message, Exception innerException = null) : base(message, innerException) { }
+        internal GatewayException(string message, string responseCode, string responseMessage, Exception innerException = null) : this(message, responseCode, responseMessage, null, null, null, null, innerException) { }
+        internal GatewayException(string message, string responseCode, string responseMessage, string issuerResponseCode, string issuerResponseMessage, Exception innerException = null) : this(message, responseCode, responseMessage, issuerResponseCode, issuerResponseMessage, null, null, innerException) { }
+        internal GatewayException(string message, string responseCode, string responseMessage, string issuerResponseMessage, string issuerResponseCode, string deviceResponseMessage, string deviceResponseCode, Exception innerException = null) : base(message, innerException) {
             ResponseCode = responseCode;
             ResponseMessage = responseMessage;
+            DeviceResponseCode = deviceResponseCode;
+            DeviceResponseMessage = deviceResponseMessage;
+            IssuerResponseCode = issuerResponseCode;
+            IssuerResponseMessage = issuerResponseMessage;
         }
-
-        internal GatewayException(string message, Exception innerException) : base(message, innerException) { }
     }
 
     /// <summary>

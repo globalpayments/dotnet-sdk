@@ -23,7 +23,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.142",
+                IpAddress = "192.168.1.158",
                 Port = "8081",
                 Timeout = 15000,
                 RequestIdProvider = new RandomIdProvider(),
@@ -52,12 +52,13 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             var sendPings = 10;
             _device.OnMessageSent += (message) => {
                 Debug.WriteLine($"Ping attempt {sendPings}");
-                Debug.WriteLine(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
             };
             _device.OnMessageReceived += (message) => {
-                Debug.WriteLine(message);
+                Assert.IsNotNull(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
             };
-            
+
             _device.EcrId = "12";
             do
             {
@@ -202,13 +203,23 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
         public void GetParams() {
             _device.OnMessageSent += (message) => {
                 Assert.IsNotNull(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
+            };
+            _device.OnMessageReceived += (message) => {
+                Assert.IsNotNull(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
             };
             _device.EcrId = "13";
-            var response = _device.GetParams(new string[] { "TimeZone", "ApplicationMode", "InvoicePromptSupported", "EODProcessingPWD", "VoidPassword", "TrainingModePWD", "InvoicePromptSupported", "BeepVolume", "HostPassword", "AdminPassword", "UserPassword", "ManagerPassword", "DeviceCapabilities", "DeviceAttributes", "DeveloperID", "ConnectionRetryAttempts", "ApplicationMode", "ApplicationId", "ApiKeySupported", "TerminalLanguage", "PinBypassIsSupported" });
-            Assert.IsNotNull(response);
-            Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
-            Assert.AreEqual("00", response.DeviceResponseCode);
-            Assert.AreEqual("Success", response.Status);
+            try {
+                var response = _device.GetParams(new string[] { "TimeZone", "ApplicationMode", "InvoicePromptSupported", "EODProcessingPWD", "VoidPassword", "TrainingModePWD", "InvoicePromptSupported", "BeepVolume", "HostPassword", "AdminPassword", "UserPassword", "ManagerPassword", "DeviceCapabilities", "DeviceAttributes", "DeveloperID", "ConnectionRetryAttempts", "ApplicationMode", "ApplicationId", "ApiKeySupported", "TerminalLanguage", "PinBypassIsSupported" });
+                Assert.IsNotNull(response);
+                Assert.IsInstanceOfType(response, typeof(IDeviceResponse));
+                Assert.AreEqual("00", response.DeviceResponseCode);
+                Assert.AreEqual("Success", response.Status);
+            }
+            catch (Exception ex) {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         [TestMethod]

@@ -371,6 +371,8 @@ namespace GlobalPayments.Api.Entities {
         ContinueCardTransaction = 1 << 26,
         
         NoValidationRequired = 1 << 27,
+
+        TipAdjust = 1 << 28,
     }
 
     /// <summary>

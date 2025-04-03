@@ -232,7 +232,7 @@ namespace GlobalPayments.Api.Gateways {
 
                     throw new GatewayException($"Status Code: {response.StatusCode} - {detailedErrorDescription}", errorCode, detailedErrorCode);
                 }
-                throw new GatewayException($"Status Code: {response.StatusCode}", responseMessage: response.RawResponse);
+                throw new GatewayException($"Status Code: {response.StatusCode}", responseCode: null, responseMessage: response.RawResponse);
             }
             return response.RawResponse;
         }

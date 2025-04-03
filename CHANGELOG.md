@@ -1,6 +1,14 @@
 # Changelog
 
-## Latest - v9.0.11 (03/11/25)
+## Latest - v9.0.13 (4/3/25) 
+### Enhancement
+- [UPA] - Updated case for card on file indicator inclusion to include when a token is passed and not just when one is requested.
+- [UPA] - Updated the GatewayExcpetion object to also include Issuer and Devlce response codes/messages when applicable.
+- [UPA] - Updated amount logic to remove commas from the amount when greater than $999.
+- [UPA] - Updated handling for Reference Number and Transaction Numbers in managed transactions.
+- [UPA] - Updated ECRId to allow strings or integers.
+
+## v9.0.11 (03/11/25)
 ### Enhancement
 - [UPA] - Added handling for multiple messages in the stream, and a timeout to the ReadAsync stream in the UpaTcpInterface.
 - [UPA] - Added overload string type to EcrId property

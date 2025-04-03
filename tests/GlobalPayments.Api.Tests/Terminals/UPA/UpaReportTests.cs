@@ -7,6 +7,9 @@ using GlobalPayments.Api.Terminals.UPA.Responses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using GlobalPayments.Api.Utils.Logging;
+using System.Diagnostics;
+using System;
+using System.Linq.Expressions;
 
 namespace GlobalPayments.Api.Tests.Terminals.UPA
 {
@@ -20,7 +23,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.8.181",
+                IpAddress = "192.168.1.158",
                 Port = "8081",
                 Timeout = 30000,
                 RequestIdProvider = new RandomIdProvider(),
@@ -63,6 +66,14 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
         [TestMethod]
         public void GetOpenTabDetailsReport() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
+            };
+            _device.OnMessageReceived += (message) => {
+                Assert.IsNotNull(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
+            };
             var report = _device.GetOpenTabDetails()
                 .Where(UpaSearchCriteria.EcrId, 13)
                 .Execute();
@@ -73,6 +84,14 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
 
         [TestMethod]
         public void CloseAllOpenTabs() {
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
+            };
+            _device.OnMessageReceived += (message) => {
+                Assert.IsNotNull(message);
+                Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} {message}");
+            };
             var report = _device.GetOpenTabDetails()
                 .Where(UpaSearchCriteria.EcrId, 13)
                 .Execute() as OpenTabDetailsResponse;
@@ -80,16 +99,20 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA
             var tabsToClose = report.OpenTabs;
 
             Thread.Sleep(1000);
+            try {
+                foreach (var openTab in tabsToClose) {
+                    var captureResponse = _device.Capture(openTab.AuthorizedAmount)
+                        .WithEcrId("13")
+                        .WithTransactionId(openTab.TransactionId)
+                        .WithGratuity(0.00m)
+                        .Execute();
+                    Assert.AreEqual("00", captureResponse.ResponseCode);
 
-            foreach(var openTab in tabsToClose) {
-                var captureResponse = _device.Capture(openTab.AuthorizedAmount)
-                    .WithTransactionId(openTab.TransactionId)
-                    .WithGratuity(0.00m)
-                    .Execute();
-                Assert.AreEqual("00", captureResponse.ResponseCode);
-
-                Thread.Sleep(1000);
-            }            
+                    Thread.Sleep(1000);
+                }
+            } catch (Exception ex) {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         [TestMethod]

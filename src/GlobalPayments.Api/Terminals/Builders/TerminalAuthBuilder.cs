@@ -20,7 +20,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
                 return null;
             }
         }
-        //internal int EcrId { get; set; }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
         internal Lodging Lodging { get; set; }
         internal decimal? CashBackAmount { get; set; }
@@ -61,7 +60,6 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal MerchantDecision? MerchantDecision { get; set;}
         internal string Language { get; set;}
         internal HostData HostData { get; set; }
-
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -79,8 +77,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             LineItemRight = lineItemRight;
             return this;
         }
-        public TerminalAuthBuilder WithAllowPartialAuth(bool value)
-        {
+        public TerminalAuthBuilder WithAllowPartialAuth(bool value) {
             AllowPartialAuth = value;
             return this;
         }
@@ -94,8 +91,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
             EcrId = ecrId.ToString();
             return this;
         }
-        public TerminalAuthBuilder WithEcrId(string ecrId)
-        {
+        public TerminalAuthBuilder WithEcrId(string ecrId) {
             EcrId = ecrId;
             return this;
         }

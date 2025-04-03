@@ -63,7 +63,6 @@ namespace GlobalPayments.Api.Terminals.UPA {
             byte[] buffer = message.GetSendBuffer();
             bool readyReceived = false;
             byte[] responseMessage = null;
-            int resCount = 0;
             try {
                 Connect();
 
@@ -77,15 +76,14 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 }
                 catch { }
                 do {
-                    List<byte[]> responses = GetTerminalResponses(_stream);
+                    List<byte[]> responses = GetTerminalResponses();
                     if (responses != null) {
-                        if (responses.Count > 1) {
-                            resCount = responses.Count;
-                        }
                         foreach (byte[] messageBytes in responses) {
-                            string msgValue = GetResponseMessageType(messageBytes);
+                            var jsonObject = Encoding.UTF8.GetString(TrimResponse(messageBytes));
+                            var jsonDoc = JsonDoc.Parse(jsonObject);
+                            string msgValue = jsonDoc.GetValue<string>("message");
                             try {
-                                OnMessageReceived?.Invoke(msgValue);
+                                OnMessageReceived?.Invoke(jsonDoc.ToString());
                             }
                             catch(Exception exc) {
                                 throw new MessageException(exc.Message, exc);
@@ -129,8 +127,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
         }
 
-        private int ReadWithTimeout(Stream stream, byte[] buffer) {
-            var readTask = stream.ReadAsync(buffer, 0, buffer.Length);
+        private int ReadWithTimeout(byte[] buffer) {
+            var readTask = _stream.ReadAsync(buffer, 0, buffer.Length);
             if (Task.WhenAny(readTask, Task.Delay(_settings.Timeout)).Result == readTask) {
                 return readTask.Result;
             }
@@ -139,10 +137,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
         }
 
-        private List<byte[]> GetTerminalResponses(NetworkStream stream) {
+        private List<byte[]> GetTerminalResponses() {
             byte[] buffer = new byte[32768];
             
-            int bytesReceived = ReadWithTimeout(stream, buffer);
+            int bytesReceived = ReadWithTimeout(buffer);
 
             List<byte[]> responses = new List<byte[]>();
             List<byte> tempBuffer = new List<byte>();
@@ -184,12 +182,6 @@ namespace GlobalPayments.Api.Terminals.UPA {
                     .TrimEnd((char)ControlCodes.LF, (char)ControlCodes.ETX));
         }
 
-        private string GetResponseMessageType(byte[] response) {
-            var jsonObject = System.Text.Encoding.UTF8.GetString(TrimResponse(response));
-            var jsonDoc = JsonDoc.Parse(jsonObject);
-            return jsonDoc.GetValue<string>("message");
-        }
-
         private void SendAckMessageToDevice() {
             var doc = new JsonDoc();
             doc.Set("message", UpaMessageType.Ack);
@@ -198,8 +190,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var ackBuffer = message.GetSendBuffer();
 
             _stream.Write(ackBuffer, 0, ackBuffer.Length);
-            try
-            {
+            try {
                 OnMessageSent?.Invoke(message.ToString());
             }
             catch { }
@@ -216,7 +207,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             return (
                 (data.GetValue<string>("response") == UpaTransType.SetParam && cmdResult.GetValue<string>("result") == "Success") ||
                     data.GetValue<string>("response") == UpaTransType.Reboot ||
-                   data.GetValue<string>("response") == UpaTransType.Restart || (cmdResult != null && cmdResult.GetValue<string>("result") == "Failed"));
+                   data.GetValue<string>("response") == UpaTransType.Restart); //|| (cmdResult != null && cmdResult.GetValue<string>("result") == "Failed"));
         }
 
         private string GenerateRequestLog(string ipAddress, string port, string timeout, string request) {

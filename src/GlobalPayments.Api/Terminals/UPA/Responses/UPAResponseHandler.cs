@@ -152,7 +152,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
             if (firstNode.Get("cmdResult") == null) {
                 throw new MessageException(INVALID_RESPONSE_FORMAT);
             }
-            CheckResponse(firstNode.Get("cmdResult"));
+            CheckResponse(firstNode);
             JsonDoc response;
             if (!IsGpApiResponse(root)) {
                 response = root.Get("data");
@@ -180,15 +180,30 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
             EcrId = response.GetValue<string>("EcrId");
         }
 
-        private void CheckResponse(JsonDoc cmdResult) {
+        private void CheckResponse(JsonDoc root) {
+            JsonDoc cmdResult = root.Get("cmdResult");
+            
             if (cmdResult.GetValue<string>("result") == "Failed") {
-                var errorCode = cmdResult.GetValue<string>("errorCode");
-                var errorMessage = cmdResult.GetValue<string>("errorMessage");
-                throw new GatewayException(
-                    $"Unexpected Gateway Response: {errorCode} - {errorMessage}",
-                    errorCode,
-                    errorMessage
-                    );
+                string errorCode = cmdResult.GetValue<string>("errorCode");
+                string errorMessage = cmdResult.GetValue<string>("errorMessage");
+
+                if (root.Has("data")) {
+                    JsonDoc data = root.Get("data");
+                    if (data.Has("host")) {
+                        JsonDoc host = data.Get("host");
+                        throw new GatewayException(
+                            message: $"Unexpected Gateway Response : {errorCode} - {errorMessage}",
+                            responseCode: host.GetValue<string>("gatewayResponseCode"),
+                            responseMessage: host.GetValue<string>("gatewayResponseMessage"),
+                            issuerResponseCode: host.GetValue<string>("responseCode"),
+                            issuerResponseMessage: host.GetValue<string>("responseText"),
+                            deviceResponseCode: errorCode,
+                            deviceResponseMessage: errorMessage
+                        );
+                    }
+                }
+
+                throw new GatewayException($"Unexpected Device Response : {errorCode} - {errorMessage}", errorCode, errorMessage);
             }
         }
     }

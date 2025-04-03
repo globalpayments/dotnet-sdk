@@ -17,6 +17,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
         internal UpaInterface(UpaController controller) : base(controller) { }
         public override TerminalManageBuilder TipAdjust(decimal? amount) {
             return new TerminalManageBuilder(TransactionType.Edit, PaymentMethodType.Credit)
+                .WithTransactionModifier(TransactionModifier.TipAdjust)
                 .WithGratuity(amount);
         }
         public override TerminalManageBuilder Reverse() {
@@ -429,7 +430,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             return new TerminalManageBuilder(TransactionType.Edit, PaymentMethodType.Credit)
                 .WithTransactionModifier(TransactionModifier.UpdateTaxDetail)
                 .WithTaxAmount(amount);
-        }
+        }       
         public override TerminalManageBuilder UpdateLodginDetail(decimal? amount = null) {
             return new TerminalManageBuilder(TransactionType.Edit, PaymentMethodType.Credit)
                 .WithTransactionModifier(TransactionModifier.UpdateLodgingDetails)
