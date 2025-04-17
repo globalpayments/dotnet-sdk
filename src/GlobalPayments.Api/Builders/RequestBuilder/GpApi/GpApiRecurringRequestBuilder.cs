@@ -12,6 +12,9 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         public Request BuildRequest(RecurringBuilder<T> builder, GpApiConnector gateway) {
             _builder = builder;
             JsonDoc data = null;
+
+            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            
             switch (builder.TransactionType) {
                 case TransactionType.Create:
                     if (builder.Entity is Customer) {
@@ -19,7 +22,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     }
                     return new Request {
                         Verb = HttpMethod.Post,
-                        Endpoint = $"{GpApiRequest.PAYERS_ENDPOINT}",
+                        Endpoint = $"{merchantUrl}{GpApiRequest.PAYERS_ENDPOINT}",
                         RequestBody = data.ToString(),
                     };
 
@@ -29,7 +32,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     }
                     return new Request {
                         Verb = new HttpMethod("PATCH"),
-                        Endpoint = $"{GpApiRequest.PAYERS_ENDPOINT}/{builder.Entity.Id}",
+                        Endpoint = $"{merchantUrl}{GpApiRequest.PAYERS_ENDPOINT}/{builder.Entity.Id}",
                         RequestBody = data.ToString(),
                     };
 

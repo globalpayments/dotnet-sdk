@@ -26,6 +26,9 @@ namespace GlobalPayments.Api.Tests.GpApi
             var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(gpApiConfig);
 
+            // for partner test credentials removed
+            // TODO: Get out own partner test credentials. 
+
             newCustomer = new Customer();
             newCustomer.Key = GenerationUtils.GenerateOrderId();
             newCustomer.FirstName = "James";
@@ -81,6 +84,38 @@ namespace GlobalPayments.Api.Tests.GpApi
             newCustomer.AddPaymentMethod(card2.Token, card2);
 
             var payer = newCustomer.Create();
+
+            Assert.IsNotNull(payer.Id);
+            Assert.AreEqual(newCustomer.FirstName, payer.FirstName);
+            Assert.AreEqual(newCustomer.LastName, payer.LastName);
+            Assert.IsNotNull(payer.PaymentMethods);
+            foreach (var paymentMethod in payer.PaymentMethods) {
+                Assert.IsTrue((new string[] { card2.Token, card.Token }).ToList().Contains(paymentMethod.Id));
+            }
+        }
+
+        [TestMethod]
+        public void CreatePayer_Partner() {
+            var tokenizeResponse = card.Tokenize("partner");
+            card.Token = tokenizeResponse;
+
+            newCustomer.AddPaymentMethod(tokenizeResponse, card);
+
+            var card2 = new CreditCardData();
+            card2.Number = "4012001038488884";
+            card2.ExpMonth = ExpMonth;
+            card2.ExpYear = ExpYear;
+            card2.Cvn = "131";
+            card2.CardHolderName = "James Mason";
+
+            var tokenize2 = card2.Tokenize("partner");
+            card2.Token = tokenize2;
+
+            Assert.IsNotNull(tokenize2);
+
+            newCustomer.AddPaymentMethod(card2.Token, card2);
+
+            var payer = newCustomer.Create("partner");
 
             Assert.IsNotNull(payer.Id);
             Assert.AreEqual(newCustomer.FirstName, payer.FirstName);

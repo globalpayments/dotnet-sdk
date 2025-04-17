@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v9.0.13 (4/3/25) 
+## Latest - v9.0.14 (4/16/25) 
+### Enhancement
+- [GPAPI] - Added the merchant id to the URL when doing payer transactions as a partner.
+
+
+## v9.0.13 (4/3/25) 
 ### Enhancement
 - [UPA] - Updated case for card on file indicator inclusion to include when a token is passed and not just when one is requested.
 - [UPA] - Updated the GatewayExcpetion object to also include Issuer and Devlce response codes/messages when applicable.
