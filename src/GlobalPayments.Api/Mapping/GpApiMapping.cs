@@ -7,6 +7,7 @@ using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Action = GlobalPayments.Api.Entities.Action;
 
 namespace GlobalPayments.Api.Mapping {
     public class GpApiMapping {
@@ -111,7 +112,10 @@ namespace GlobalPayments.Api.Mapping {
                 }
                 var cardDetails = new Card {
                     MaskedNumberLast4 = paymentMethod?.GetValue<string>("masked_number_last4"),
-                    Brand = paymentMethod?.GetValue<string>("brand")
+                    Brand = paymentMethod?.GetValue<string>("brand"),
+                    Issuer = paymentMethod?.GetValue<string>("issuer"),
+                    Funding = paymentMethod?.GetValue<string>("funding"),
+                    BinCountry = paymentMethod?.GetValue<string>("country"),
                 };
                 transaction.CardDetails = cardDetails;
                 transaction.CardType = paymentMethod?.GetValue<string>("brand");
@@ -157,6 +161,20 @@ namespace GlobalPayments.Api.Mapping {
                 }
 
                 transaction.DccRateData = MapDccInfo(json);
+
+                if(json.Has("installment")) {
+
+                    JsonDoc installment = json.Get("installment");
+                    var installmentdata = new InstallmentData
+                    {
+                        Count = installment?.GetValue<string>("count"),
+                        Mode = installment?.GetValue<string>("mode"),
+                        GracePeriodCount = installment?.GetValue<string>("grace_period_count"),
+                        Program = installment?.GetValue<string>("program"),
+                    };
+                    transaction.InstallmentData = installmentdata;
+                }
+
                 transaction.FraudFilterResponse = json.Has("risk_assessment") ? MapFraudManagement(json) : null;
 
                 if (json.Has("card"))
@@ -358,6 +376,19 @@ namespace GlobalPayments.Api.Mapping {
             if (doc.Has("order")) {
                 JsonDoc order = doc.Get("order");
                 summary.OrderId = order?.GetValue<string>("reference");
+            }
+
+            if (doc.Has("installment")) {
+
+                JsonDoc installment = doc.Get("installment");
+                var installmentdata = new InstallmentData
+                {
+                    Count = installment?.GetValue<string>("count"),
+                    Mode = installment?.GetValue<string>("mode"),
+                    GracePeriodCount = installment?.GetValue<string>("grace_period_count"),
+                    Program = installment?.GetValue<string>("program"),
+                };
+                summary.InstallmentData = installmentdata;
             }
 
             if (doc.Has("payment_method")) {
@@ -1363,7 +1394,8 @@ namespace GlobalPayments.Api.Mapping {
                 ExemptStatus = !string.IsNullOrEmpty(threeDSNode?.GetValue<string>("exempt_status")) ? 
                     threeDSNode?.GetValue<ExemptStatus>("exempt_status") : null,
                 Cavv = threeDSNode?.GetValue<string>("cavv_result"),
-                Enrolled = threeDSNode?.GetValue<string>("status")
+                Enrolled = threeDSNode?.GetValue<string>("status"),
+                Status = threeDSNode?.GetValue<string>("status")
             };
         }
         
@@ -1376,8 +1408,88 @@ namespace GlobalPayments.Api.Mapping {
                 CardExpMonth = cardInfo?.GetValue<string>("expiry_month"),
                 CardExpYear = cardInfo?.GetValue<string>("expiry_year"),
                 Funding = cardInfo?.GetValue<string>("funding"),
-                MaskedCardNumber = cardInfo?.GetValue<string>("masked_number_first6last4")
+                MaskedCardNumber = cardInfo?.GetValue<string>("masked_number_first6last4"),
+                Issuer = cardInfo?.GetValue<string>("issuer"),
+                BinCountry = cardInfo?.GetValue<string>("country")
             };
+        }
+
+        public static Installment MapInstallmentResponse(string rawResponse) {
+
+            if (!string.IsNullOrEmpty(rawResponse))
+            {
+                JsonDoc json = JsonDoc.Parse(rawResponse);
+
+                Installment installmentData = new Installment
+                {
+                    Id = json?.GetValue<string>("id"),
+                    TimeCreated = json.GetValue<DateTime>("time_created"),
+                    Type = json?.GetValue<string>("type"),
+                    Status = json?.GetValue<string>("status"),
+                    Channel = json?.GetValue<string>("channel"),
+                    Amount = json.GetValue<string>("amount").ToAmount(),
+                    Currency = json?.GetValue<string>("currency"),
+                    Country = json?.GetValue<string>("country"),
+                    MerchantId = json?.GetValue<string>("merchant_id"),
+                    MerchantName = json?.GetValue<string>("merchant_name"),
+                    AccountId = json?.GetValue<string>("account_id"),
+                    AccountName = json?.GetValue<string>("account_name"),
+                    Reference = json?.GetValue<string>("reference"),
+                    Program = json?.GetValue<string>("program")
+                };
+
+                if (json.Has("payment_method"))
+                {
+                    JsonDoc paymentMethodJson = json.Get("payment_method");
+                    installmentData.Result = paymentMethodJson?.GetValue<string>("result");
+                    installmentData.EntryMode = paymentMethodJson?.GetValue<string>("entry_mode");
+                    installmentData.Message = paymentMethodJson?.GetValue<string>("message");
+
+                    if (paymentMethodJson.Has("card")) {
+
+                        JsonDoc cardJson = paymentMethodJson.Get("card");
+                        Card card = new Card
+                        {
+                            Brand = cardJson?.GetValue<string>("brand"),
+                            MaskedNumberLast4 = cardJson?.GetValue<string>("masked_number_last4"),
+                            BrandReference = cardJson?.GetValue<string>("brand_reference")
+                        };
+                        installmentData.Card = card;
+                        installmentData.AuthCode = cardJson?.GetValue<string>("authcode");
+                    }
+
+                    if (json.Has("action")) {
+                        JsonDoc actionJson = json.Get("action");
+                        Action action = new Action
+                        {
+                            Type = actionJson?.GetValue<string>("type"),
+                            Id = actionJson?.GetValue<string>("id"),
+                            TimeCreated = actionJson.GetValue<string>("time_created"),
+                            AppId = actionJson?.GetValue<string>("app_id"),
+                            AppName = actionJson?.GetValue<string>("app_name"),
+                            ResultCode = actionJson?.GetValue<string>("result_code")
+                        };
+
+                        installmentData.Action = action;
+                    }
+
+                    if (json.Has("terms")) {
+                        installmentData.Terms = new List<Terms>();
+                        foreach (var term in json.GetArray<JsonDoc>("terms") ?? Enumerable.Empty<JsonDoc>())
+                        {
+                            var installmentTerm = new Terms
+                            {
+                                Id = term.GetValue<string>("Id"),
+                                TimeUnit = term.GetValue<string>("time_unit"),
+                                TimeUnitNumbers = term.GetValue<List<int>>("time_unit_numbers"),
+                            };
+                            installmentData.Terms.Add(installmentTerm);
+                        }
+                    }
+                }
+                return installmentData;
+            }
+            return new Installment();
         }
     }
 }

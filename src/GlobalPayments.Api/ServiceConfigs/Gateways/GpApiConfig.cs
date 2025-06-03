@@ -120,7 +120,7 @@ namespace GlobalPayments.Api {
             services.FraudService = gateway;
             services.FileProcessingService = gateway;
             services.RecurringConnector = gateway;
-
+            services.InstallmentService = gateway;
 
             services.SetPayFacProvider(gateway);
             services.SetSecure3dProvider(Secure3dVersion.One, gateway);

@@ -19,6 +19,8 @@ namespace GlobalPayments.Api {
 
         internal IRecurringService RecurringConnector { get; set; }
 
+        internal IInstallmentService InstallmentService { get; set; }
+
         internal IReportingService ReportingService { get; set; }
 
         internal IDeviceInterface DeviceInterface { get; private set; }
@@ -256,6 +258,16 @@ namespace GlobalPayments.Api {
 
             throw new ApiException("The specified configuration has not been configured for file processing.");
         }
+
+        internal IInstallmentService GetInstallmentClient(string configName) {
+
+            if (_configurations.ContainsKey(configName)) {
+                return _configurations[configName].InstallmentService;
+            }
+
+            throw new ApiException("The specified configuration has not been configured for file processing.");
+        }
+
         internal void removeConfiguration(String configName) {
             if(_configurations.ContainsKey(configName)) {
                 ConfiguredServices config = new ConfiguredServices();

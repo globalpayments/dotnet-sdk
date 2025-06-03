@@ -13,7 +13,7 @@ using System.Net.Http;
 using System.Reflection;
 
 namespace GlobalPayments.Api.Gateways {
-    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService, IDeviceCloudService, IFileProcessingService, IRecurringService {
+    internal partial class GpApiConnector : RestGateway, IPaymentGateway, IReportingService, ISecure3dProvider, IPayFacProvider, IFraudCheckService, IDeviceCloudService, IFileProcessingService, IRecurringService, IInstallmentService {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
 
         private string _AccessToken;
@@ -335,5 +335,21 @@ namespace GlobalPayments.Api.Gateways {
             }
             return result;
         }      
+
+        public Installment ProcessInstallment(InstallmentBuilder builder) {
+
+            if (string.IsNullOrEmpty(AccessToken))
+            {
+                SignIn();
+            }
+            Request request = new GpApiInstallmentRequestBuilder().BuildRequest(builder, this);
+
+            if (request != null)
+            {
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                return GpApiMapping.MapInstallmentResponse(response);
+            }
+            return null;
+        }
     }
 }

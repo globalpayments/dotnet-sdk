@@ -231,7 +231,11 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates proximity/contactless entry.
         /// </summary>
-        Phone
+        Phone,
+        ///<summary>
+        /// Indicate Card on file transaction
+        ///</summary>
+        CardOnFile
     }
 
     /// <summary>

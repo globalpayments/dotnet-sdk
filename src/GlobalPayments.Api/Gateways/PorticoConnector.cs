@@ -44,8 +44,10 @@ namespace GlobalPayments.Api.Gateways {
                         et.SubElement(block1, "AllowPartialAuth", builder.AllowPartialAuth ? "Y" : "N");
                 }
 
-                if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit && builder.TransactionModifier == TransactionModifier.None) {
-                    et.SubElement(block1, "AmountIndicator", builder.AmountEstimated ? "E" : "F");
+                if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit 
+                    && builder.TransactionModifier == TransactionModifier.None
+                    && builder.AmountEstimated != null) {
+                    et.SubElement(block1, "AmountIndicator", builder.AmountEstimated == true ? "E" : "F");
                 }
             }
             et.SubElement(block1, "Amt", builder.Amount);

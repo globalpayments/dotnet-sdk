@@ -79,6 +79,17 @@ namespace GlobalPayments.Api.Tests.GpEcom {
         }
 
         [TestMethod]
+        public void CheckEnrollment() {
+            CreditCardData cardData = new CreditCardData {
+                Number = "4263970000005262"
+            };
+
+            ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(cardData)
+                    .Execute();
+            Assert.IsNotNull(secureEcom);
+        }
+
+        [TestMethod]
         public void FullCycle_v2() {
             // check enrollment
             ThreeDSecure secureEcom = Secure3dService.CheckEnrollment(card)

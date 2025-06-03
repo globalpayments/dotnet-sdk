@@ -58,9 +58,16 @@ namespace GlobalPayments.Api.Gateways {
                 }
 
                 // set data codes
-                dataCode.CardDataInputMode = card.ReaderPresent ? DE22_CardDataInputMode.KeyEntry : DE22_CardDataInputMode.Manual;
-                dataCode.CardHolderPresence = card.CardPresent ? DE22_CardHolderPresence.CardHolder_Present : DE22_CardHolderPresence.CardHolder_NotPresent;
-                dataCode.CardPresence = card.CardPresent ? DE22_CardPresence.CardPresent : DE22_CardPresence.CardNotPresent;
+                if (card.EntryMethod == ManualEntryMethod.CardOnFile) {
+                    dataCode.CardHolderPresence = builder.CardHolderPresence;
+                    dataCode.CardPresence = DE22_CardPresence.CardNotPresent;
+                    dataCode.CardDataInputMode = DE22_CardDataInputMode.Credential_On_File;
+                }
+                else {
+                    dataCode.CardDataInputMode = card.ReaderPresent ? DE22_CardDataInputMode.KeyEntry : DE22_CardDataInputMode.Manual;
+                    dataCode.CardHolderPresence = card.CardPresent ? DE22_CardHolderPresence.CardHolder_Present : DE22_CardHolderPresence.CardHolder_NotPresent;
+                    dataCode.CardPresence = card.CardPresent ? DE22_CardPresence.CardPresent : DE22_CardPresence.CardNotPresent;
+                }
             }
             else if (paymentMethod is ITrackData track) {
                 var token = track.TokenizationData;
@@ -477,7 +484,6 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             request.Set(DataElementId.DE_127, forwardingData);
-
             return SendRequest(request, builder, orgCorr1, orgCorr2);
         }
 
@@ -1384,7 +1390,7 @@ namespace GlobalPayments.Api.Gateways {
                     message.MessageTypeIndicator = messageTransactionIndicator;
                     // log out the breakdown
                     //if (EnableLogging) {
-                    //    System.Diagnostics.Debug.WriteLine("\r\nResponse Breakdown:\r\n" + message.ToString());
+                        //System.Diagnostics.Debug.WriteLine("\r\nResponse Breakdown:\r\n" + message.ToString());
                     //}
 
                     DE44_AdditionalResponseData additionalResponseData = message.GetDataElement<DE44_AdditionalResponseData>(DataElementId.DE_044);
@@ -1397,6 +1403,14 @@ namespace GlobalPayments.Api.Gateways {
                         result.TimeResponseFromHeartland = cardIssuerData.Get("HTR");
                         result.AvsResponseCode = cardIssuerData.Get("IAV");
                         result.CvnResponseCode = cardIssuerData.Get("ICV");
+
+                        //return all issuer data 
+                        int countCardIssuer = cardIssuerData.GetNumEntries();
+                        for (int i = 0; i < countCardIssuer; i++) {
+                            DE62_2_CardIssuerEntry entry = cardIssuerData.CardIssuerEntries[i];
+                            //write set function
+                            result.SetIssuerData(entry.IssuerTagValue, entry.IssuerEntry);
+                        }
                     }
 
                     if (additionalAmounts != null) {
@@ -1854,7 +1868,7 @@ namespace GlobalPayments.Api.Gateways {
 
                         // Address Verification: $0 amount, Billing Address required (zip code at bare minimum)
                         // Account Verification: $0 amount, supported by Visa only
-                        if (authBuilder.Amount.Equals(decimal.Zero) && !authBuilder.AmountEstimated) {
+                        if (authBuilder.Amount.Equals(decimal.Zero) && authBuilder.AmountEstimated == false) {
                             if (authBuilder.BillingAddress != null || isVisa == true) {
                                 processingCode.TransactionType = DE3_TransactionType.AddressOrAccountVerification;
                                 processingCode.ToAccount = DE3_AccountType.Unspecified;
@@ -2075,10 +2089,10 @@ namespace GlobalPayments.Api.Gateways {
 
                         if (builder is AuthorizationBuilder) {
                             AuthorizationBuilder authBuilder = (AuthorizationBuilder)(object)builder;
-                            if (authBuilder.AmountEstimated) {
+                            if (authBuilder.AmountEstimated == true) {
                                 return "101";
                             }
-                            else if (authBuilder.Amount.Equals(decimal.Zero) && !authBuilder.AmountEstimated) {
+                            else if (authBuilder.Amount.Equals(decimal.Zero) && authBuilder.AmountEstimated == false) {
                                 {
                                     if (authBuilder.BillingAddress != null || isVisa == true) {
                                         return "181";
@@ -2289,13 +2303,21 @@ namespace GlobalPayments.Api.Gateways {
                 if (builder.PaymentMethod is IEncryptable) {
                     encryption = (IEncryptable)builder.PaymentMethod;
                 }
-
-                if (!string.IsNullOrEmpty(card.Cvn)) {
+                
+                if (!string.IsNullOrEmpty(card.Cvn) && card.EntryMethod != ManualEntryMethod.CardOnFile) {
                     string cvn = card.Cvn;
                     if (encryption != null && encryption.EncryptionData != null) {
                         cvn = StringUtils.PadLeft("", card.Cvn.Length, ' ');
                     }
                     customerData.Set(DE48_CustomerDataType.CardPresentSecurityCode, cvn);
+                }
+                else if(card.EntryMethod == ManualEntryMethod.CardOnFile) {
+                    if (builder is AuthorizationBuilder) {
+                        AuthorizationBuilder authBuilder = (AuthorizationBuilder)(object)builder;
+                        if (!string.IsNullOrEmpty(authBuilder.Cvn)) {
+                            customerData.Set(DE48_CustomerDataType.CardPresentSecurityCode, authBuilder.Cvn);
+                        }
+                    }
                 }
             }
 
@@ -2427,7 +2449,7 @@ namespace GlobalPayments.Api.Gateways {
                         Address = authBuilder.BillingAddress,
                         AddressUsage = DE48_AddressUsage.Billing
                     };
-                    if (authBuilder.Amount.Equals(decimal.Zero) && !authBuilder.AmountEstimated) {
+                    if (authBuilder.Amount.Equals(decimal.Zero) && authBuilder.AmountEstimated == false) {
                         billing.AddressType = DE48_AddressType.AddressVerification;
                     }
                     else {

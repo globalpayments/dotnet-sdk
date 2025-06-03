@@ -325,5 +325,6 @@ namespace GlobalPayments.Api.Entities {
     
         public string FingerprintIndicator { get; set; }
         public string Email { get; set;}
+        public InstallmentData InstallmentData { get; set; }
     }
 }

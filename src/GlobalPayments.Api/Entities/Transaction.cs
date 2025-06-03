@@ -464,6 +464,21 @@ namespace GlobalPayments.Api.Entities {
         public CheckResponse CheckDetail { get; set; }
         public PaymentResponse PaymentDetail { get; set; }
         public TransactionResponseDetail TransDetail { get; set; }
+        public Dictionary<string, string> IssuerData { get; set; }
+
+        public void SetIssuerData(string tag, string Issuerentry) {
+            if (IssuerData == null) {
+                IssuerData = new Dictionary<string, string>();
+            }
+            this.IssuerData.Add(tag, Issuerentry);
+        }
+
+
+        /// <summary>
+        /// Get/Sets the installment data; where applicable.
+        /// </summary>
+        public InstallmentData InstallmentData { get; set; }
+
         /// <summary>
         /// Creates an additional authorization against the original transaction.
         /// </summary>

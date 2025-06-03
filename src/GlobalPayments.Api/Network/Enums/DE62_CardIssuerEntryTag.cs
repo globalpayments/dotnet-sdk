@@ -17,6 +17,10 @@ namespace GlobalPayments.Api.Network.Entities {
         SearsProprietaryDelayDate,
         [Map(Target.NWS, "Bxx")]
         Bank_CreditCards,
+        [Map(Target.NWS, "B01")]
+        VisaAdditionalResponseData,
+        [Map(Target.NWS, "B02")]
+        VisaCustomPaymentService,
         [Map(Target.NWS, "Cxx")]
         Checks,
         [Map(Target.NWS, "C00")]
@@ -39,10 +43,9 @@ namespace GlobalPayments.Api.Network.Entities {
         Wex_PurchaseDeviceSequenceNumber,
         [Map(Target.NWS, "Gxx")]
         PrepaidServiceSystem,
-            //Removed the tags as part of v19.1 compliance updates
-        //[Map(Target.NWS, "IAD")]
-        //CardIssuerAuthenticationData,
-
+        // It was further clarified in v20.1 we will want to keep the tag
+        [Map(Target.NWS, "IAD")]
+        CardIssuerAuthenticationData,
         [Map(Target.NWS, "IAM")]
         AmountSentToIssuerOnBehalfOfPos,
         [Map(Target.NWS, "IAN")]
@@ -53,9 +56,9 @@ namespace GlobalPayments.Api.Network.Entities {
         AccountTypeFromCardIssuer,
         [Map(Target.NWS, "IAV")]
         AvsResponseCode,
-            //Removed the tags as part of v19.1 compliance updates
-        //[Map(Target.NWS, "IAX")]
-        //CardIssuerAuthenticationIdentifier,
+        // It was further clarified in Ecom and Card on file,we will want to keep the tag 
+        [Map(Target.NWS, "IAX")]
+        CardIssuerAuthenticationIdentifier,
         [Map(Target.NWS, "ICC")]
         ChipConditionCode,
         [Map(Target.NWS, "ICP")]
@@ -113,7 +116,21 @@ namespace GlobalPayments.Api.Network.Entities {
         [Map(Target.NWS, "IME")]
         MastercardECommerceIndicators,
         [Map(Target.NWS, "IMW")]
-        MastercardWalletID
+        MastercardWalletID,
+        [Map(Target.NWS, "IAC")]
+        MerchantActionCode,
+        [Map(Target.NWS, "IRN")]
+        IssuerReferenceNumber,
+        [Map(Target.NWS, "IST")]
+        ActualStan,
+        [Map(Target.NWS, "ICA")]
+        DeclineCategoryCode,
+        [Map(Target.NWS, "IMD")]
+        MastercardDSRPCryptogram,
+        [Map(Target.NWS, "IMP")]
+        MastercardProgramProtocol,
+        [Map(Target.NWS, "IMC")]
+        MastercardCITMITIndicator
     }
 
     public class DE62_CardIssuerEntryTagClass {

@@ -16,13 +16,14 @@ namespace GlobalPayments.Api.Builders {
     /// payment method types.
     /// </summary>
     public class AuthorizationBuilder : TransactionBuilder<Transaction> {
+        internal InstallmentData InstallmentData { get; set; }
         internal AccountType? AccountType { get; set; }
         internal string Alias { get; set; }
         internal AliasAction? AliasAction { get; set; }
         internal bool AllowDuplicates { get; set; }
         internal bool AllowPartialAuth { get; set; }
         internal decimal? Amount { get; set; }
-        internal bool AmountEstimated { get; set; }
+        internal bool? AmountEstimated { get; set; }
         internal decimal? AmountTaxed { get; set; }
         internal decimal? AuthAmount { get; set; }
         internal AutoSubstantiation AutoSubstantiation { get; set; }
@@ -114,6 +115,7 @@ namespace GlobalPayments.Api.Builders {
         internal TransactionData TransactionData { get; set; }
         internal int? EstimatedNumberTransaction { get; set; }
 
+        internal DE22_CardHolderPresence CardHolderPresence { get; set; }
         public AuthorizationBuilder WithTransactionData(TransactionData value) {
             TransactionData = value;
             return this;
@@ -1128,7 +1130,13 @@ namespace GlobalPayments.Api.Builders {
             IssuerData = value;
             return this;
         }
-
+        public AuthorizationBuilder WithIssuerData(DE62_CardIssuerEntryTag tag, string value) {
+            if (IssuerData == null) {
+                IssuerData = new Dictionary<DE62_CardIssuerEntryTag, string>();
+            }
+            IssuerData.Add(tag, value);
+            return this;
+        }
         public AuthorizationBuilder WithSystemTraceAuditNumber(int value) {
             SystemTraceAuditNumber = value;
             return this;
@@ -1187,6 +1195,21 @@ namespace GlobalPayments.Api.Builders {
             }
 
             BNPLShippingMethod = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the inmstallment data; where applicable.
+        /// </summary>
+        /// <param name="installment"></param>
+        /// <returns></returns>
+        public AuthorizationBuilder WithInstallmentData(InstallmentData installmentData) {
+            InstallmentData = installmentData;
+            return this;
+        }
+
+        public AuthorizationBuilder WithCardHolderPresence(DE22_CardHolderPresence value) {
+            CardHolderPresence = value;
             return this;
         }
     }

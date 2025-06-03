@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v9.0.14 (4/16/25) 
+## Latest - v9.0.17 (06/02/25) 
+### Enhancement
+- [GPAPI] - Mexico GP API Create Installment.
+- [GPAPI] - Mexico GP API Sale and Reporting for Installment.
+- [NWS]   - SDK ECom and Card On File
+
+## v9.0.16 (4/16/25) 
 ### Enhancement
 - [GPAPI] - Added the merchant id to the URL when doing payer transactions as a partner.
 

@@ -97,7 +97,7 @@ namespace GlobalPayments.Api.Gateways {
                     .Set("cardholderPresentDetail", cardholderPresentDetail)
                     .Set("cardDataInputMode", cardDataInputMode)
                     .Set("cardholderAuthenticationMethod", "NOT_AUTHENTICATED")
-                    .Set("authorizationIndicator", builder.AmountEstimated ? "PREAUTH" : "FINAL");
+                    .Set("authorizationIndicator", builder.AmountEstimated == true ? "PREAUTH" : "FINAL");
             }
             else if (builder.PaymentMethod is ITrackData track) {
                 request.Set(track.TrackNumber.Equals(TrackNumber.TrackTwo) ? "track2Data" : "track1Data", track.TrackData);

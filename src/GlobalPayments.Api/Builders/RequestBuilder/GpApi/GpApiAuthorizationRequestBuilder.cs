@@ -563,8 +563,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             }
 
             // stored credential
-            if (builder.StoredCredential != null) {
-                SetRequestStoredCredentials(builder.StoredCredential, data);               
+            if (builder.StoredCredential != null) { 
+                SetRequestStoredCredentials(builder.StoredCredential, data);
+
+                //Set Installment data
+                if (builder.InstallmentData != null && builder.StoredCredential.Type == StoredCredentialType.Installment) {
+                    data.Set("installment", SetInstallmentData(builder.InstallmentData));
+                }
             }
 
             Request.MaskedValues = _maskedValues;
@@ -610,6 +615,17 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                   .Set("cancel_url", payment?.CancelUrl);
 
             return notifications;
+        }
+
+        private static JsonDoc SetInstallmentData(InstallmentData installmentData)
+        {
+            var installment = new JsonDoc();
+            installment.Set("program", installmentData.Program)
+                            .Set("mode", installmentData.Mode)
+                            .Set("count", installmentData.Count)
+                            .Set("grace_period_count", installmentData.GracePeriodCount);
+
+            return installment;
         }
 
         private static string[] GetAllowedPaymentMethod(PaymentMethodName[] allowedPaymentMethods) {
