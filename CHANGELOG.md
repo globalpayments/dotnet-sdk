@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v9.0.17 (06/02/25) 
+## Latest - v9.0.18 (06/04/25) 
+### Bug Fixes
+- [NWS] - Fallback to magstripe issue for Mastercard credit.
+
+## v9.0.17 (06/02/25) 
 ### Enhancement
 - [GPAPI] - Mexico GP API Create Installment.
 - [GPAPI] - Mexico GP API Sale and Reporting for Installment.

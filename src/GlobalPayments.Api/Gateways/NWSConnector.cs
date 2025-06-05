@@ -741,6 +741,10 @@ namespace GlobalPayments.Api.Gateways {
                                 {
                                     dataCode.CardDataInputMode = DE22_CardDataInputMode.ContactlessMsd;
                                 }
+                                else if (builder.EmvFallbackCondition != null)
+                                {
+                                    dataCode.CardDataInputMode = DE22_CardDataInputMode.MagStripe_Fallback;
+                                }
                                 else
                                 {
                                     dataCode.CardDataInputMode = DE22_CardDataInputMode.UnalteredTrackData;

@@ -6,12 +6,20 @@ using GlobalPayments.Api.Utils;
 using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Terminals.UPA {
-    internal class TransactionResponse: UPAResponseHandler, IBatchCloseResponse {
+    internal class TransactionResponse : UPAResponseHandler, IBatchCloseResponse {
+        public decimal? ExchangeRate { get; set; }
+        public decimal? MarkUp { get; set; }
+        public string TransactionCurrency { get; set; }
+        public string DccTransactionAmount { get; set; }
+        public string SequenceNumber { get; set; }
+        public string TotalCount { get; set; }
+        public string TotalAmount { get; set; }
+
 
         public TransactionResponse(JsonDoc root) {
             ParseResponse(root);
-            JsonDoc response = IsGpApiResponse(root) ? root.Get("response")  : root.Get("data");
-            if(response == null) {
+            JsonDoc response = IsGpApiResponse(root) ? root.Get("response") : root.Get("data");
+            if (response == null) {
                 return;
             }
             var responseData = response.Get("data");
@@ -22,89 +30,89 @@ namespace GlobalPayments.Api.Terminals.UPA {
             if (!string.IsNullOrEmpty(Command)) {
                 switch (Command) {
                     case UpaTransType.GetAppInfo:
-                        HydrateGetAppInfoData(responseData);
-                        break;
+                    HydrateGetAppInfoData(responseData);
+                    break;
                     case UpaTransType.EnterPIN:
-                        if (responseData.Has("PinDUKPT")) {
-                            var pinDUKPT = responseData.Get("PinDUKPT");
-                            PinDUKPT = new PinDUKPTResponse();
-                            PinDUKPT.PinBlock = pinDUKPT.GetValue<string>("PinBlock") ?? null;
-                            PinDUKPT.Ksn = pinDUKPT.GetValue<string>("Ksn") ?? null;
-                        }
-                        break;
+                    if (responseData.Has("PinDUKPT")) {
+                        var pinDUKPT = responseData.Get("PinDUKPT");
+                        PinDUKPT = new PinDUKPTResponse();
+                        PinDUKPT.PinBlock = pinDUKPT.GetValue<string>("PinBlock") ?? null;
+                        PinDUKPT.Ksn = pinDUKPT.GetValue<string>("Ksn") ?? null;
+                    }
+                    break;
                     case UpaTransType.Scan:
-                        ScanData = responseData.GetValue<string>("scanData") ?? null;
-                        break;
+                    ScanData = responseData.GetValue<string>("scanData") ?? null;
+                    break;
                     case UpaTransType.PromptwithOptions:
-                        ButtonPressed = responseData.GetValue<int?>("button") ?? null;
-                        break;
+                    ButtonPressed = responseData.GetValue<int?>("button") ?? null;
+                    break;
                     case UpaTransType.PromptMenu:
-                        ButtonPressed = responseData.GetValue<int?>("button") ?? null;
-                        PromptMenuSelected = responseData.GetValue<int?>("menuSelected") ?? null;
-                        break;
+                    ButtonPressed = responseData.GetValue<int?>("button") ?? null;
+                    PromptMenuSelected = responseData.GetValue<int?>("menuSelected") ?? null;
+                    break;
                     case UpaTransType.GeneralEntry:
-                        ButtonPressed = responseData.GetValue<int?>("button") ?? null;
-                        ValueEntered = responseData.GetValue<string>("valueEntered") ?? null;
-                        break;
+                    ButtonPressed = responseData.GetValue<int?>("button") ?? null;
+                    ValueEntered = responseData.GetValue<string>("valueEntered") ?? null;
+                    break;
                     case UpaTransType.GetEncryptionType:
-                        DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;                        
-                        break;
+                    DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;
+                    break;
                     case UpaTransType.ExecuteUDDataFile:
-                        DataString = responseData.GetValue<string>("dataString");
-                        break;
+                    DataString = responseData.GetValue<string>("dataString");
+                    break;
                     case UpaTransType.GetConfigContents:
-                        HydrateGetConfigData(responseData);
-                        break;
+                    HydrateGetConfigData(responseData);
+                    break;
                     case UpaTransType.CommunicationCheck:
                     case UpaTransType.GetLastEOD:
                     case UpaTransType.ForceSale:
-                        Multiplemessage = responseData.GetValue<string>("multipleMessage");
-                        break;
+                    Multiplemessage = responseData.GetValue<string>("multipleMessage");
+                    break;
                     case UpaTransType.ProcessCardTransaction:
-                        DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;
-                        AcquisitionType = responseData.GetValue<string>("acquisitionType") ?? null;                        
-                        LuhnCheckPassed = responseData.GetValue<string>("LuhnCheckPassed") ?? null;
-                        
-                        if (responseData.Has("PAN")) {
-                            HydratePANData(responseData);
-                        }
-                        if (responseData.Has("trackData")) {
-                            HydrateTrackData(responseData);
-                        }
-                        EmvTags = responseData.GetValue<string>("EmvTags") ?? null;
-                        Cvv = responseData.GetValue<int?>("Cvv") ?? null;
-                        ExpirationDate = responseData.GetValue<string>("expDate") ?? null;
-                        ScanData = responseData.GetValue<string>("scanData") ?? null;
-                        if (responseData.Has("PinDUKPT")) {
-                            HydratePinDUKPTData(responseData);
-                        }
-                        if (responseData.Has("3DesDukpt")) {
-                            Hydrate3DesDukptData(responseData);
-                        }
-                        EmvProcess = responseData.GetValue<string>("EmvProcess") ?? null;
-                        break;
+                    DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;
+                    AcquisitionType = responseData.GetValue<string>("acquisitionType") ?? null;
+                    LuhnCheckPassed = responseData.GetValue<string>("LuhnCheckPassed") ?? null;
+
+                    if (responseData.Has("PAN")) {
+                        HydratePANData(responseData);
+                    }
+                    if (responseData.Has("trackData")) {
+                        HydrateTrackData(responseData);
+                    }
+                    EmvTags = responseData.GetValue<string>("EmvTags") ?? null;
+                    Cvv = responseData.GetValue<int?>("Cvv") ?? null;
+                    ExpirationDate = responseData.GetValue<string>("expDate") ?? null;
+                    ScanData = responseData.GetValue<string>("scanData") ?? null;
+                    if (responseData.Has("PinDUKPT")) {
+                        HydratePinDUKPTData(responseData);
+                    }
+                    if (responseData.Has("3DesDukpt")) {
+                        Hydrate3DesDukptData(responseData);
+                    }
+                    EmvProcess = responseData.GetValue<string>("EmvProcess") ?? null;
+                    break;
                     case UpaTransType.ContinueEmvTransaction:
                     case UpaTransType.ContinueCardTransaction:
                     case UpaTransType.CompleteEMVTransaction:
-                        EmvTags = responseData.GetValue<string>("EmvTags");
-                        if (responseData.Has("PinDUKPT")) {
-                            HydratePinDUKPTData(responseData);
-                        }
-                        break;
+                    EmvTags = responseData.GetValue<string>("EmvTags");
+                    if (responseData.Has("PinDUKPT")) {
+                        HydratePinDUKPTData(responseData);
+                    }
+                    break;
                     case UpaTransType.GetParam:
                     HydrateParams(responseData);
-                        break; 
+                    break;
                     default:
-                        break;
+                    break;
                 }
             }
-                
+
             HydrateHostData(responseData);
             HydratePaymentData(responseData);
             HydrateTransactionData(responseData);
             HydrateEmvData(responseData);
             HydrateDccData(responseData);
-            HydrateHeaderData(responseData);           
+            HydrateHeaderData(responseData);
         }
 
         private void HydratePANData(JsonDoc responseData) {
@@ -138,52 +146,51 @@ namespace GlobalPayments.Api.Terminals.UPA {
             if (host == null) {
                 return;
             }
-            decimal defaultDecimal;
-            int defaultInt;
-            ResponseId = host.GetValue<string>("responseId") ?? null;
-            TransactionId = host.GetValue<string>("tranNo") ?? null;
-            TerminalRefNumber = host.GetValue<string>("responseId") ?? null;
-            ResponseDateTime = host.GetValue<string>("respDateTime") ?? null;
-            GatewayResponseCode = host.GetValue<string>("gatewayResponseCode") ?? null;
-            GatewayResponsemessage = host.GetValue<string>("gatewayResponseMessage") ?? null;
+
+            ResponseId = host.GetValue<string>("responseId");
+            TransactionId = host.GetValue<string>("tranNo");
+            TerminalRefNumber = host.GetValue<string>("responseId");
+            ResponseDateTime = host.GetValue<string>("respDateTime");
+            GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
+            GatewayResponsemessage = host.GetValue<string>("gatewayResponseMessage");
             ResponseCode = NormalizeResponseCode(host.GetValue<string>("responseCode"), host.GetValue<string>("partialApproval"));
-            ResponseText = host.GetValue<string>("responseText") ?? null;
-            ApprovalCode = host.GetValue<string>("approvalCode") ?? null;
-            ReferenceNumber = host.GetValue<string>("referenceNumber") ?? null;
-            AvsResponseCode = host.GetValue<string>("AvsResultCode") ?? null;
-            CvvResponseCode = host.GetValue<string>("CvvResultCode") ?? null;
-            AvsResponseText = host.GetValue<string>("AvsResultText") ?? null;
-            CvvResponseText = host.GetValue<string>("CvvResultText") ?? null;
-            AdditionalTipAmount = decimal.TryParse(host.GetValue<string>("additionalTipAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            BaseAmount = decimal.TryParse(host.GetValue<string>("baseAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            TipAmount = decimal.TryParse(host.GetValue<string>("tipAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            TaxAmount = decimal.TryParse(host.GetValue<string>("taxAmount"), out defaultDecimal) ? defaultDecimal: default(decimal?);
-            CashBackAmount = decimal.TryParse(host.GetValue<string>("cashBackAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            AuthorizedAmount = decimal.TryParse(host.GetValue<string>("authorizedAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            TransactionAmount = decimal.TryParse(host.GetValue<string>("totalAmount"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            MerchantFee = decimal.TryParse(host.GetValue<string>("surcharge"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            Token = host.GetValue<string>("tokenValue") ?? null;
-            TokenResponseCode = host.GetValue<string>("tokenRspCode") ?? null;
-            TokenResponseMessage = host.GetValue<string>("tokenRspMsg") ?? null;            
-            CardBrandTransId = host.GetValue<string>("cardBrandTransId") ?? null;
-            BatchSeqNbr = host.GetValue<string>("batchSeqNbr") ?? null;
-            CpcInd = host.GetValue<string>("CpcInd") ?? null;
+            ResponseText = host.GetValue<string>("responseText");
+            ApprovalCode = host.GetValue<string>("approvalCode");
+            ReferenceNumber = host.GetValue<string>("referenceNumber");
+            AvsResponseCode = host.GetValue<string>("AvsResultCode");
+            CvvResponseCode = host.GetValue<string>("CvvResultCode");
+            AvsResponseText = host.GetValue<string>("AvsResultText");
+            CvvResponseText = host.GetValue<string>("CvvResultText");
+            AdditionalTipAmount = host.GetNullableValue<decimal?>("additionalTipAmount");
+            BaseAmount = host.GetNullableValue<decimal?>("baseAmount");
+            TipAmount = host.GetNullableValue<decimal?>("tipAmount");
+            TaxAmount = host.GetNullableValue<decimal?>("taxAmount");
+            CashBackAmount = host.GetNullableValue<decimal?>("cashBackAmount");
+            AuthorizedAmount = host.GetNullableValue<decimal?>("authorizedAmount");
+            TransactionAmount = host.GetNullableValue<decimal?>("totalAmount");
+            MerchantFee = host.GetNullableValue<decimal?>("surcharge");
+            Token = host.GetValue<string>("tokenValue");
+            TokenResponseCode = host.GetValue<string>("tokenRspCode");
+            TokenResponseMessage = host.GetValue<string>("tokenRspMsg");
+            CardBrandTransId = host.GetValue<string>("cardBrandTransId");
+            BatchSeqNbr = host.GetValue<string>("batchSeqNbr");
+            CpcInd = host.GetValue<string>("CpcInd");
             Descriptor = host.GetValue<string>("txnDescriptor");
             SafTransaction = host.Has("storeAndForward") ? host.GetValue<int>("storeAndForward") == 1 : false;
-            InvoiceNumber = host.GetValue<string>("invoiceNbr") ?? null;
+            InvoiceNumber = host.GetValue<string>("invoiceNbr");
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
-            CavvResultCode = host.GetValue<int?>("CavvResultCode") ?? null;
-            TokenPANLast = host.GetValue<int?>("tokenPANLast") ?? null;
-            PartialApproval = host.GetValue<int?>("partialApproval") ?? null;
-            TraceNumber = host.GetValue<int?>("traceNumber") ?? null;
-            BalanceAmount = decimal.TryParse(host.GetValue<string>("balanceDue"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            RecurringDataCode = host.GetValue<int?>("recurringDataCode") ?? null;
+            CavvResultCode = host.GetValue<int?>("CavvResultCode");
+            TokenPANLast = host.GetNullableValue<int?>("tokenPANLast");
+            PartialApproval = host.GetNullableValue<int?>("partialApproval");
+            TraceNumber = host.GetNullableValue<int?>("traceNumber");
+            BalanceAmount = host.GetNullableValue<decimal?>("balanceDue");
+            RecurringDataCode = host.GetValue<int?>("recurringDataCode");
             // BalanceDue = host.GetValue<decimal>("balanceDue");
-            BaseDue = decimal.TryParse(host.GetValue<string>("baseDue"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            TaxDue = decimal.TryParse(host.GetValue<string>("taxDue"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            TipDue = decimal.TryParse(host.GetValue<string>("tipDue"), out defaultDecimal) ? defaultDecimal : default(decimal?);
-            CustomHash = host.GetValue<string>("customHash") ?? null;
-            AvailableBalance = decimal.TryParse(host.GetValue<string>("availableBalance"), out defaultDecimal) ? defaultDecimal : default(decimal?);
+            BaseDue = host.GetNullableValue<decimal?>("baseDue");
+            TaxDue = host.GetNullableValue<decimal?>("taxDue");
+            TipDue = host.GetNullableValue<decimal?>("tipDue");
+            CustomHash = host.GetValue<string>("customHash");
+            AvailableBalance = host.GetNullableValue<decimal?>("availableBalance");
             // EmvIssuerResp = host.GetValue<string>("emvIssuerResp");
         }
 
@@ -192,7 +199,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             if (payment == null) {
                 return;
             }
-            int defaultInt;
+
             CardHolderName = payment.GetValue<string>("cardHolderName");
             CardType = payment.GetValue<string>("cardType");
             PaymentType = payment.GetValue<string>("cardType");
@@ -201,13 +208,13 @@ namespace GlobalPayments.Api.Terminals.UPA {
             MaskedCardNumber = payment.GetValue<string>("maskedPan");
             SignatureLine = payment.GetValue<string>("signatureLine");
             QpsQualified = payment.GetValue<string>("QpsQualified");
-            StoreAndForward = int.TryParse(payment.GetValue<string>("storeAndForward"), out defaultInt) ? defaultInt: default(int?);
+            StoreAndForward = payment.GetNullableValue<int?>("storeAndForward");
             ClerkId = payment.GetValue<int>("clerkId");
             InvoiceNumber = payment.GetValue<string>("invoiceNbr");
             ExpirationDate = payment.GetValue<string>("expiryDate");
-            TransactionType = payment.GetValue<string>("transactionType");            
+            TransactionType = payment.GetValue<string>("transactionType");
             EntryMethod = payment.GetValue<string>("cardAcquisition");
-            
+
             PinVerified = payment.GetValue<string>("PinVerified");
             // TrackData = payment.GetValue<string>("trackData");
             // FallBack = payment.GetValue<string>("fallback");
@@ -251,8 +258,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 return;
             }
             PinDUKPT = new PinDUKPTResponse();
-            PinDUKPT.PinBlock = pinDUKPT.GetValue<string>("PinBlock") ?? null;
-            PinDUKPT.Ksn = pinDUKPT.GetValue<string>("Ksn") ?? null;
+            PinDUKPT.PinBlock = pinDUKPT.GetValue<string>("PinBlock");
+            PinDUKPT.Ksn = pinDUKPT.GetValue<string>("Ksn");
         }
 
         protected void Hydrate3DesDukptData(JsonDoc data) {
@@ -267,8 +274,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         protected void HydrateTransactionData(JsonDoc data) {
             var transaction = data.Get("transaction");
-            if (transaction == null)
-            {
+            if (transaction == null) {
                 return;
             }
             TipAmount = transaction.GetValue<decimal>("tipAmount");
@@ -325,7 +331,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             // TacOnline = emv.TacOnline;
 
             ApplicationIdentifier = emv.GetValue<string>("4F");
-            ApplicationLabel =  emv.GetValue<string>("50");
+            ApplicationLabel = emv.GetValue<string>("50");
             EmvCardholderName = emv.GetValue<string>("5F20");
             TransactionCurrencyCode = emv.GetValue<string>("5F2A");
             ApplicationPAN = emv.GetValue<string>("5F34");
@@ -366,10 +372,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
 
         protected void HydrateDccData(JsonDoc data) {
             var dcc = data.Get("dcc");
-            if (dcc == null) { 
-                return; 
+            if (dcc == null) {
+                return;
             }
-                
+
             ExchangeRate = dcc.GetValue<decimal>("exchangeRate");
             MarkUp = dcc.GetValue<decimal>("markUp");
             TransactionCurrency = dcc.GetValue<string>("transactionCurrency");
@@ -405,19 +411,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             return retValue;
         }
 
-        public static TransactionResponse ParseResponse(string rawResponse)
-        {
+        public static TransactionResponse ParseResponse(string rawResponse) {
             JsonDoc response = JsonDoc.Parse(rawResponse);
             // TODO: We might have to scope the document down depending on what response we actually get from the message endpoint
             return new TransactionResponse(response);
         }
-        public decimal? ExchangeRate { get; set; }
-        public decimal? MarkUp { get; set; }
-        public string TransactionCurrency { get; set; }
-        public string DccTransactionAmount { get; set; }
-        public string SequenceNumber { get; set; }
-        public string TotalCount { get; set; }
-        public string TotalAmount { get; set; }
     }
 }
-

@@ -560,5 +560,166 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("000", response.ResponseCode);
         }
         #endregion EMV Contactless
+
+        #region Fallback to Magstripe
+        [TestMethod]
+        public void Test_FallbackToMagstripe() {
+            config.MerchantType = "5541";   //indoor 
+            CreditTrackData track = new CreditTrackData {
+                Value = "; 374245003741005=241220115041234500000?",
+                EntryMethod = EntryMethod.Chip
+            };
+
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Unknown)
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction transaction = Transaction.FromNetwork(
+                10m,
+                "TYPE04",
+                null,
+                track);
+
+            Transaction captureResponse = transaction.Capture(10m)
+                    .WithCurrency("USD")
+                    .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure)
+                    .Execute("ICR");
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("000", captureResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_FallbackToMagstripe_NegativeFallbackForOriginal() {
+            config.MerchantType = "5541";   //indoor 
+            CreditTrackData track = new CreditTrackData {
+                Value = "; 374245003741005=241220115041234500000?",
+                EntryMethod = EntryMethod.Proximity
+            };
+
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Unknown)
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            track.EntryMethod = EntryMethod.Chip;
+            Transaction transaction = Transaction.FromNetwork(
+                10m,
+                "TYPE04",
+                null,
+                track);
+
+            Transaction captureResponse = transaction.Capture(10m)
+                    .WithCurrency("USD")
+                    .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure)
+                    .Execute("ICR");
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("000", captureResponse.ResponseCode);
+        }
+
+
+        [TestMethod]
+        public void Test_FallbackToMagstripe_NegativeFallBackforNonOriginal() {
+            config.MerchantType = "5541";   //indoor 
+            CreditTrackData track = new CreditTrackData {
+                Value = "; 374245003741005=241220115041234500000?",
+                EntryMethod = EntryMethod.Chip
+            };
+
+            Transaction response = track.Authorize(50m)
+                .WithCurrency("USD")
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Unknown)
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            track.EntryMethod = EntryMethod.Proximity;
+            Transaction transaction = Transaction.FromNetwork(
+                10m,
+                "TYPE04",
+                null,
+                track);
+
+            Transaction captureResponse = transaction.Capture(10m)
+                    .WithCurrency("USD")
+                    .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure)
+                    .Execute("ICR");
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("000", captureResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_FallbackToMagstripeSaleReverse() {
+            config.MerchantType = "5541";   //indoor 
+            CreditTrackData track = new CreditTrackData {
+                Value = "; 374245003741005=241220115041234500000?",
+                EntryMethod = EntryMethod.Chip
+            };
+
+            Transaction response = track.Charge(50m)
+                .WithCurrency("USD")
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Unknown)
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction captureResponse = response.Reverse()
+                    .WithCurrency("USD")
+                    .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure)
+                    .Execute("ICR");
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("400", captureResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_FallbackToMagstripeSaleVoid() {
+            config.MerchantType = "5541";   //indoor 
+            CreditTrackData track = new CreditTrackData {
+                Value = "; 374245003741005=241220115041234500000?",
+                EntryMethod = EntryMethod.Chip
+            };
+
+            Transaction response = track.Charge(50m)
+                .WithCurrency("USD")
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Unknown)
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction captureResponse = response.Void()
+                    .WithCurrency("USD")
+                    .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure)
+                    .Execute("ICR");
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("400", captureResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_FallbackToMagstripeSaleRefund() {
+            config.MerchantType = "5541";   //indoor 
+            CreditTrackData track = new CreditTrackData {
+                Value = "; 374245003741005=241220115041234500000?",
+                EntryMethod = EntryMethod.Chip
+            };
+
+            Transaction response = track.Charge(50m)
+                .WithCurrency("USD")
+                .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure, EmvLastChipRead.Unknown)
+                .Execute("ICR");
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+
+            Transaction captureResponse = response.Refund()
+                    .WithCurrency("USD")
+                    .WithEmvFallbackData(EmvFallbackCondition.ChipReadFailure)
+                    .Execute("ICR");
+            Assert.IsNotNull(captureResponse);
+            Assert.AreEqual("000", captureResponse.ResponseCode);
+        }
+        #endregion
     }
 }

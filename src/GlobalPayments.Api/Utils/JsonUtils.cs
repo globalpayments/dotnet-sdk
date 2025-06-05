@@ -147,6 +147,24 @@ namespace GlobalPayments.Api.Utils {
             return new List<JsonDoc>();
         }
 
+        public T GetNullableValue<T>(string name) {
+            Type nullableType = Nullable.GetUnderlyingType(typeof(T));
+            if (_dict.ContainsKey(name) && _dict[name] != null) {
+                try {
+                    var value = _dict[name];
+                    if (_encoder != null) {
+                        value = _encoder.Decode(value);
+                    }
+
+                    return value == null ? default(T) : (T)Convert.ChangeType(value, nullableType);
+                }
+                catch (InvalidCastException) {
+                    return (T)_dict[name];
+                }
+            }
+            return default(T);
+        }
+
         public IEnumerable<T> GetArray<T>(string name) {
             if (_dict.ContainsKey(name)) {
                 if (_dict[name] is IEnumerable<T>)

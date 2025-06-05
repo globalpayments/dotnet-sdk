@@ -104,7 +104,7 @@ namespace GlobalPayments.Api.Builders {
         internal string Reference { get; set; }
         internal FundsData FundsData { get; set; }
         internal CreditDebitIndicator? CreditDebitIndicator { get; set; }
-
+        internal EmvFallbackCondition? EmvFallbackCondition { get; set; }
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
 
@@ -646,6 +646,11 @@ namespace GlobalPayments.Api.Builders {
         }
         public ManagementBuilder WithSoftDescriptor(string value) {
             SoftDescriptor = value;
+            return this;
+        }
+
+        public ManagementBuilder WithEmvFallbackData(EmvFallbackCondition condition) {
+            EmvFallbackCondition = condition;
             return this;
         }
     }
