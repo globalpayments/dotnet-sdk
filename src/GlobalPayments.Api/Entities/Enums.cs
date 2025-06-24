@@ -1024,7 +1024,8 @@ public enum ReasonCode {
         ZIMPLER,
         UK_DIRECT_DEBIT,
         PAYBYBANKAPP,
-        ALIPAY
+        ALIPAY,
+        BLIK
     }
 
     public enum CardType {

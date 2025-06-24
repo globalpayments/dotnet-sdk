@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v9.0.18 (06/04/25) 
+## Latest - v9.0.19 (06/23/25) 
+### Enhancement
+- [GPAPI] - Added SDK support for Blik as a payment APM.
+
+## v9.0.18 (06/04/25) 
 ### Bug Fixes
 - [NWS] - Fallback to magstripe issue for Mastercard credit.
 

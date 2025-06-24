@@ -1,12 +1,13 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Logging;
+using GlobalPayments.Api.Mapping;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System.Collections.Generic;
 using System.Net.Http;
-
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
 {
     internal class GpApiManagementRequestBuilder : IRequestBuilder<ManagementBuilder> {
@@ -47,6 +48,23 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("currency_conversion", builder.DccRateData == null ? null : new JsonDoc()
                         .Set("id", builder.DccRateData?.DccId));
+
+                if (builder.PaymentMethod is TransactionReference transactionReference) {
+
+                    var apmResponse = transactionReference.AlternativePaymentResponse;
+                    bool isBlik = apmResponse?.ProviderName.Equals(GpApiMapping.BLIK, StringComparison.OrdinalIgnoreCase) ?? false;
+
+                    if (isBlik) {
+                        var apm = new JsonDoc()
+                            .Set("provider", apmResponse.ProviderName)
+                            .Set("redirect_url", apmResponse.RedirectUrl);
+
+                        var payment_method = new JsonDoc()
+                            .Set("apm", apm);
+
+                        data.Set("payment_method", payment_method);
+                    }
+                }
 
                 return new Request {
                     Verb = HttpMethod.Post,

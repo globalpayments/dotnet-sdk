@@ -2,14 +2,18 @@
 using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
+using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static System.Net.WebRequestMethods;
 
 namespace GlobalPayments.Api.Tests.GpEcom
 {
     [TestClass]
     public class GpEcomApmTest
     {
+        private const decimal AMOUNT = 10;
+
         [TestInitialize]
         public void Init()
         {
@@ -23,6 +27,25 @@ namespace GlobalPayments.Api.Tests.GpEcom
                 RefundPassword = "refund",
                 RequestLogger = new RequestConsoleLogger()
             });
+
+            string APP_ID = "p2GgW0PntEUiUh4qXhJHPoDqj3G5GFGI";
+            string APP_KEY = "lJk4Np5LoUEilFhH";
+            GpApiConfig gpApiConfig = new GpApiConfig
+            {
+                AppId = APP_ID,
+                AppKey = APP_KEY,
+                Channel = Channel.CardNotPresent,
+                ServiceUrl = "https://apis-sit.globalpay.com/ucp",
+                EnableLogging = true,
+                RequestLogger = new RequestConsoleLogger(),
+                Country = "PL",
+                AccessTokenInfo = new AccessTokenInfo
+                {
+                    TransactionProcessingAccountName = "GPECOM_BLIK_APM_Transaction_Processing",
+                    RiskAssessmentAccountName = "EOS_RiskAssessment"
+                }
+            };
+            ServicesContainer.ConfigureService(gpApiConfig,"blikConfig");
         }
 
         [TestMethod]
@@ -404,5 +427,148 @@ namespace GlobalPayments.Api.Tests.GpEcom
             }
             // send the refund request for payment-credit an APM, we must specify the amount,currency and alternative payment method
         }
+
+        #region GP API Blik APM Test Methods
+        // Validates a successful sale transaction using Blik APM with all required fields provided
+        [TestMethod]
+        public void BlikApmSale_WhenRequestIsValid_ShouldSucceed() {
+
+            var paymentMethodDetails = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "PL",
+                AccountHolderName = "James Mason"
+            };
+
+            Transaction response = paymentMethodDetails.Charge(AMOUNT)
+                            .WithCurrency("PLN")
+                            .WithDescription("New APM")
+                            .Execute("blikConfig");
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.IsNotNull(response.AlternativePaymentResponse);
+            Assert.IsNotNull(response.AlternativePaymentResponse.RedirectUrl);
+            Assert.AreEqual("BLIK", response.AlternativePaymentResponse.ProviderName.ToUpper());
+        }
+
+        // Verifies that a sale transaction using Blik APM throws an exception when the ReturnUrl is missing.
+        [TestMethod]
+        public void BlikApmSale_WhenReturnUrlMissing_ShouldThrowException() {
+
+            bool errorFound = false;
+            try {
+                var paymentMethodDetails = new AlternativePaymentMethod {
+                    AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                    StatusUpdateUrl = "https://www.example.com/statusUrl",
+                    Descriptor = "Test Transaction",
+                    Country = "PL",
+                    AccountHolderName = "James Mason"
+                };
+                paymentMethodDetails.Charge(AMOUNT)
+                                    .WithCurrency("PLN")
+                                    .WithDescription("New APM")
+                                    .Execute("blikConfig");
+            }
+            catch (BuilderException ex)
+            {
+                errorFound = true;
+                Assert.AreEqual("ReturnUrl cannot be null for this transaction type.", ex.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(errorFound);
+            }
+        }
+
+        // Verifies that a sale transaction using Blik APM throws an exception when the statusUpdateUrl is missing.
+        [TestMethod]
+        public void BlikApmSale_WhenStatusUpdateUrlMissing_ShouldThrowException() {
+
+            bool errorFound = false;
+            try {
+                var paymentMethodDetails = new AlternativePaymentMethod {
+                    AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                    ReturnUrl = "https://www.example.com/returnUrl",
+                    Descriptor = "Test Transaction",
+                    Country = "PL",
+                    AccountHolderName = "James Mason"
+                };
+                paymentMethodDetails.Charge(AMOUNT)
+                       .WithCurrency("PLN")
+                       .WithDescription("New APM")
+                       .Execute("blikConfig");
+            }
+            catch (BuilderException ex)
+            {
+                errorFound = true;
+                Assert.AreEqual("StatusUpdateUrl cannot be null for this transaction type.", ex.Message);
+            }
+            finally
+            {
+                Assert.IsTrue(errorFound);
+            }
+        }
+
+        // Validates that the first refund attempt on a Blik APM transaction is approved successfully.
+        [TestMethod]
+        public void BlikApmRefund_WhenFirstAttempt_ShouldSucceed() {
+
+            // For refund we have to run sale test and get Transaction ID from that response and paste here in transactionId.
+            // Also go to redirect_url from response of sale and approve by entering the code.
+            // After some time when status changed to "Captured" run the refund test.
+            string transactionId = "TRN_LfMXNiokxA9xzqZCokO5hTTHTdQCHe_02502c97b6aa";
+
+            // create the rebate transaction object
+            Transaction transaction = Transaction.FromId(transactionId);
+
+            TransactionSummary transactionDetails =
+                    ReportingService
+                            .TransactionDetail(transactionId)
+                            .Execute();
+            transaction.AlternativePaymentResponse = transactionDetails.AlternativePaymentResponse;
+
+            Transaction response =
+                    transaction
+                            .Refund(AMOUNT)
+                            .WithCurrency("PLN")
+                            .WithAlternativePaymentType(AlternativePaymentType.BLIK)
+                            .Execute("blikConfig");
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("blik", response.AlternativePaymentResponse.ProviderName);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+        }
+
+        // Ensures that a second refund attempt on the same Blik APM transaction returns a "Declined" response.
+        [TestMethod]
+        public void BlikApmRefund_WhenSecondAttempt_ShouldBeDeclined() {
+
+            // Run Refund with same transaction Id given in first time blik apm refund
+            string transactionId = "TRN_LfMXNiokxA9xzqZCokO5hTTHTdQCHe_02502c97b6aa";
+
+            // create the rebate transaction object
+            Transaction transaction = Transaction.FromId(transactionId);
+
+            TransactionSummary transactionDetails =
+                    ReportingService
+                            .TransactionDetail(transactionId)
+                            .Execute();
+            transaction.AlternativePaymentResponse = transactionDetails.AlternativePaymentResponse;
+
+            Transaction response =
+                transaction
+                        .Refund(AMOUNT)
+                        .WithCurrency("PLN")
+                        .WithAlternativePaymentType(AlternativePaymentType.BLIK)
+                        .Execute("blikConfig");
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("blik", response.AlternativePaymentResponse.ProviderName);
+            Assert.AreEqual("DECLINED", response.ResponseCode);
+        }
+        #endregion
     }
 }

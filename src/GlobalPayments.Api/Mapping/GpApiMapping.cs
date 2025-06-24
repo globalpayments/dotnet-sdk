@@ -29,6 +29,7 @@ namespace GlobalPayments.Api.Mapping {
         private const string FUNDS = "FUNDS";
         private const string FILE_CREATE = "FILE_CREATE";
         private const string FILE_SINGLE = "FILE_SINGLE";
+        public const string BLIK = "blik";
 
         public static Transaction MapResponse(string rawResponse) {
             Transaction transaction = new Transaction();
@@ -151,6 +152,12 @@ namespace GlobalPayments.Api.Mapping {
                 }
                 else if (json.Get("payment_method")?.Has("apm") ?? false) {
                     transaction.PaymentMethodType = PaymentMethodType.APM;
+
+                    // Check if APM provider is BLIK (case-insensitive), then map APM data
+                    JsonDoc paymentmethod = json.Get("payment_method");
+                    if (IsBlikProvider(paymentmethod)) {
+                        MapAlternativePaymentData(json, transaction);
+                    }
                 }
 
                 if (json.Has("payer") || (json.Get("payment_method")?.Has("payer") ?? false))
@@ -1490,6 +1497,21 @@ namespace GlobalPayments.Api.Mapping {
                 return installmentData;
             }
             return new Installment();
+        }
+
+        private static bool IsBlikProvider(JsonDoc paymentMethod) {
+            var provider = paymentMethod?.Get("apm")?.GetValue<string>("provider");
+            return string.Equals(provider, "BLIK", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void MapAlternativePaymentData(JsonDoc json, Transaction transaction) {
+            var paymentMethod = json.Get("payment_method");
+            var apm = paymentMethod?.Get("apm");
+
+            transaction.AlternativePaymentResponse = new AlternativePaymentResponse {
+                RedirectUrl = paymentMethod?.GetValue<string>("redirect_url"),
+                ProviderName = apm?.GetValue<string>("provider")
+            };
         }
     }
 }
