@@ -336,4 +336,28 @@ namespace GlobalPayments.Api.Terminals.PAX {
         MerchantId,
         MerchantName
     }
+    public enum PaxLineItemAction
+    {
+        Add,
+        Update,
+        Delete
+    }
+    public enum SignatureBoxDisplay
+    {
+        NoSignatureBox,
+        TerminalPreference,
+        Horizontally,
+        Vertically
+    }
+    public enum TextInputType
+    {
+        AlphaNumeric,
+        Numeric,
+        Date_MMDDYYYY,
+        Time_HHMMSS,
+        Currency,
+        Password,
+        PhoneNumber,
+        SSN
+    }
 }

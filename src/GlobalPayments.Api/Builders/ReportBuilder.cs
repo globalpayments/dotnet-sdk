@@ -15,11 +15,6 @@ namespace GlobalPayments.Api.Builders {
         internal StoredPaymentMethodSortProperty? StoredPaymentMethodOrderBy { get; set; }
         internal ActionSortProperty? ActionOrderBy { get; set; }
         internal PayByLinkSortProperty? PayByLinkOrderBy { get; set; }
-        internal string TransactionId { get; set; }
-        internal int BatchId { get; set; }
-
-        internal DateTime? StartDate { get; set; }
-        internal DateTime? EndDate { get; set; }
 
         private SearchCriteriaBuilder<TResult> _searchBuilder;
         internal SearchCriteriaBuilder<TResult> SearchBuilder {
@@ -29,6 +24,7 @@ namespace GlobalPayments.Api.Builders {
                 return _searchBuilder;
             }
         }
+
         internal int? Page { get; set; }
         internal int? PageSize { get; set; }
 
@@ -42,14 +38,15 @@ namespace GlobalPayments.Api.Builders {
         /// <returns>TResult</returns>
         public override TResult Execute(string configName = "default") {
             base.Execute(configName);
+
             object client;
             switch (ReportType) {
                 case ReportType.FindBankPayment:
-                    client = ServicesContainer.Instance.GetOpenBanking(configName);                    
-                    break;
+                client = ServicesContainer.Instance.GetOpenBanking(configName);
+                break;
                 default:
-                    client = ServicesContainer.Instance.GetReportingClient(configName);
-                    break;
+                client = ServicesContainer.Instance.GetReportingClient(configName);
+                break;
 
             }
             return ((IReportingService)client).ProcessReport(this);
@@ -147,13 +144,12 @@ namespace GlobalPayments.Api.Builders {
         /// <param name="value">The gateway transaction ID</param>
         /// <returns>TResult</returns>
         public ReportBuilder<TResult> WithTransactionId(string value) {
-            TransactionId = value;
+            SearchBuilder.TransactionId = value;
             return this;
         }
 
-        public ReportBuilder<TResult> WithBatchId(int value)
-        {
-            BatchId = value;
+        public ReportBuilder<TResult> WithBatchId(string value) {
+            SearchBuilder.BatchId = value;
             return this;
         }
 
@@ -162,17 +158,15 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public ReportBuilder<TResult> WithStartDate(DateTime? value)
-        {
-            StartDate = value;
+        public ReportBuilder<TResult> WithStartDate(DateTime? value) {
+            SearchBuilder.StartDate = value;
             return this;
         }
 
-        public ReportBuilder<TResult> WithEndDate(DateTime? value)
-        {
-            EndDate = value;
+        public ReportBuilder<TResult> WithEndDate(DateTime? value) {
+            SearchBuilder.EndDate = value;
             return this;
-        }        
+        }
 
         /// <summary>
         /// Sets the gateway deposit reference as criteria for the report.

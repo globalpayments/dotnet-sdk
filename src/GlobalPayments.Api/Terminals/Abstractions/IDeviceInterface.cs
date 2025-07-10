@@ -7,7 +7,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
-using GlobalPayments.Api.Terminals.UPA;
+using GlobalPayments.Api.Terminals.PAX;
 
 namespace GlobalPayments.Api.Terminals {
     public interface IDeviceInterface : IDisposable {
@@ -34,6 +34,15 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse Scan(ScanData scanData = null);        
         IDeviceResponse Print(PrintData printData);
         IDeviceResponse SetTimeZone(string timezone);
+        IDeviceResponse InputAccount(bool? allowMagStripeEntry, bool? allowManualEntry, bool? allowContactlessEntry, bool? allowScannerEntry, bool? expiryDatePrompt, int timeout, int? encryptionFlag, int? keySlot, int? minAccountLength, int? maxAccountLength, string edcType, string transactionType);
+        IDeviceResponse ShowMessage(string message1, string title,string message2, bool topDown, string taxLine, string totalLine, string imageName, string imageDesc, PaxLineItemAction lineItemAction, int itemIndex);
+        IShowTextBoxResponse ShowTextBox(string title, string text, string button1Name, string button1Color, string button2Name, string button2Color, string button3Name, string button3Color
+            , string timeout, string button1Key, string button2Key, string button3Key, bool enableHardKeyOnly, string hardKeyList, SignatureBoxDisplay signatureBoxDisplay, bool continuousScreen = false
+            , int? barcodeType = null, string barcodeData = null, string inputTextTitle = null, bool showInputText = false, TextInputType inputType = TextInputType.AlphaNumeric, int minLength = 0
+            , int maxLength = 32);
+        IDeviceResponse ClearMessage();
+        IDeviceResponse SetTipPercentageOptions(int tipPercent1, int tipPercent2, int tipPercent3, bool noTipSelection);
+        IDeviceResponse SetTipAmountOptions(int tipPercent1, int tipPercent2, int tipPercent3, bool noTipSelection);
         IDeviceResponse SetParam(KeyValuePair<string, string> parameter, string password = null, bool promptIfRestartRequired = false);
         IDeviceResponse GetParams(string[] parameters);
         /// <summary>

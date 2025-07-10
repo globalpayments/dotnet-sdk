@@ -13,7 +13,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device = DeviceService.Create(new ConnectionConfig {
                     DeviceType = DeviceType.PAX_DEVICE,
                     ConnectionMode = ConnectionModes.TCP_IP,
-                    IpAddress = "192.168.1.30",
+                    IpAddress = "192.168.1.70",
                     Port = "10009",
                     RequestIdProvider = new RandomIdProvider()
             });

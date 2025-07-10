@@ -95,6 +95,11 @@ namespace GlobalPayments.Api.Terminals.PAX {
             if (builder.PaymentMethodType != PaymentMethodType.EBT && builder.TransactionType != TransactionType.Refund) {
                 amounts.TaxAmount = "{0:c}".FormatWith(builder.TaxAmount).ToNumeric();
             }
+            // Surcharge/Merchant Fee
+            if (builder.PaymentMethodType != PaymentMethodType.EBT && builder.TransactionType != TransactionType.Refund)
+            {
+                amounts.MerchantFee = "{0:c}".FormatWith(builder.SurchargeAmount).ToNumeric();
+            }
 
             // account sub group
             if (builder.PaymentMethod != null) {

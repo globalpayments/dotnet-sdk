@@ -14,8 +14,8 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.PAX_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "10.12.220.172",
-                //IpAddress = "192.168.0.31",
+                //IpAddress = "10.12.220.172",
+                IpAddress = "192.168.1.70",
                 Port = "10009",
                 RequestIdProvider = new RandomIdProvider()
             });
@@ -30,12 +30,12 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
         [TestMethod]
         public void CancelSale() {
             Task.Factory.StartNew(() => {
-                var response = _device.Sale(10m).Execute();
+                var response = _device.Sale(10m).WithSignatureCapture(true).Execute();
                 Assert.AreEqual("100002", response.DeviceResponseCode);
                 Assert.AreEqual("ABORTED", response.DeviceResponseText);
             });
             Task.Factory.StartNew(() => {
-                Thread.Sleep(5000);
+                Thread.Sleep(10000);
                 try {
                     _device.Cancel();
                 }

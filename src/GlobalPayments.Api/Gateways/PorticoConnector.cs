@@ -87,7 +87,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 if (builder.CustomerData != null) {
                     et.SubElement(holder, isCheck ? "EmailAddress" : "CardHolderEmail", builder.CustomerData.Email);
-                    et.SubElement(holder, "CardHolderFirstName", builder.CustomerData.FirstName); 
+                    et.SubElement(holder, "CardHolderFirstName", builder.CustomerData.FirstName);
                     et.SubElement(holder, "CardHolderLastName", builder.CustomerData.LastName);
                 }
 
@@ -118,7 +118,7 @@ namespace GlobalPayments.Api.Gateways {
                     var card = builder.PaymentMethod as CreditCardData;
                     if (card != null && !string.IsNullOrEmpty(card.CardHolderName)) {
                         if (card.CardHolderName.Trim().Contains(' ')) {
-                            var names = card.CardHolderName.Split(new char[] {' '}, 2);
+                            var names = card.CardHolderName.Split(new char[] { ' ' }, 2);
                             et.SubElement(holder, "CardHolderFirstName", names[0]);
                             et.SubElement(holder, "CardHolderLastName", names[1]);
                         }
@@ -163,23 +163,19 @@ namespace GlobalPayments.Api.Gateways {
                 block1.Append(cardData);
 
                 // secure 3d
-                if (card is CreditCardData)
-                {
+                if (card is CreditCardData) {
                     var CreditCardData = (card as CreditCardData);
                     var secureEcom = CreditCardData.ThreeDSecure;
-                    if (secureEcom != null)
-                    {
+                    if (secureEcom != null) {
                         //Secure3D Element
-                        if (!string.IsNullOrEmpty(secureEcom.Eci) && (!IsAppleOrGooglePay(secureEcom.PaymentDataSource)))
-                        {
+                        if (!string.IsNullOrEmpty(secureEcom.Eci) && (!IsAppleOrGooglePay(secureEcom.PaymentDataSource))) {
                             var Secure3D = et.SubElement(block1, "Secure3D");
                             et.SubElement(Secure3D, "Version", (int)(secureEcom.Version ?? Secure3dVersion.One));
                             et.SubElement(Secure3D, "AuthenticationValue", secureEcom.Cavv);
                             et.SubElement(Secure3D, "ECI", secureEcom.Eci);
                             et.SubElement(Secure3D, "DirectoryServerTxnId", secureEcom.Xid);
                         }
-                        if (IsAppleOrGooglePay(secureEcom.PaymentDataSource) && builder.TransactionType != TransactionType.Refund)
-                        {
+                        if (IsAppleOrGooglePay(secureEcom.PaymentDataSource) && builder.TransactionType != TransactionType.Refund) {
                             var WalletData = et.SubElement(block1, "WalletData");
                             et.SubElement(WalletData, "PaymentSource", secureEcom.PaymentDataSource);
                             et.SubElement(WalletData, "Cryptogram", secureEcom.Cavv);
@@ -188,14 +184,12 @@ namespace GlobalPayments.Api.Gateways {
                     }
                     //WalletData Element
                     if ((CreditCardData.MobileType == MobilePaymentMethodType.APPLEPAY || CreditCardData.MobileType == MobilePaymentMethodType.GOOGLEPAY)
-                        && !string.IsNullOrEmpty(CreditCardData.PaymentSource) && IsAppleOrGooglePay(CreditCardData.PaymentSource) && builder.TransactionType != TransactionType.Refund)
-                    {
+                        && !string.IsNullOrEmpty(CreditCardData.PaymentSource) && IsAppleOrGooglePay(CreditCardData.PaymentSource) && builder.TransactionType != TransactionType.Refund) {
                         var WalletData = et.SubElement(block1, "WalletData");
                         et.SubElement(WalletData, "PaymentSource", CreditCardData.PaymentSource);
                         et.SubElement(WalletData, "Cryptogram", CreditCardData.Cryptogram);
                         et.SubElement(WalletData, "ECI", CreditCardData.Eci);
-                        if (CreditCardData.Token != null)
-                        {
+                        if (CreditCardData.Token != null) {
                             et.SubElement(WalletData, "DigitalPaymentToken", CreditCardData.Token);
                             block1.Remove("CardData");
                             block1.Remove("CardHolderData");
@@ -224,20 +218,16 @@ namespace GlobalPayments.Api.Gateways {
                             var tagValues = et.SubElement(tagData, "TagValues", builder.TagData);
                             tagValues.Set("source", "chip");
                         }
-                        if (builder.HasEmvFallbackData)
-                        {
+                        if (builder.HasEmvFallbackData) {
                             Element emvData = et.SubElement(block1, "EMVData");
-                            if (builder.EmvLastChipRead != null)
-                            {
+                            if (builder.EmvLastChipRead != null) {
                                 String chipCondition = builder.EmvLastChipRead == EmvLastChipRead.Successful ? "CHIP_FAILED_PREV_SUCCESS" : "CHIP_FAILED_PREV_FAILED";
                                 et.SubElement(emvData, "EMVChipCondition", chipCondition);
                             }
-                            if (builder.PaymentMethod is IPinProtected @PinProtected && @PinProtected.PinBlock != null)
-                            {
+                            if (builder.PaymentMethod is IPinProtected @PinProtected && @PinProtected.PinBlock != null) {
                                 et.SubElement(emvData, "PINBlock", @PinProtected.PinBlock);
                             }
-                            if (!block1.Has("EMVChipCondition") && !block1.Has("PINBlock"))
-                            {
+                            if (!block1.Has("EMVChipCondition") && !block1.Has("PINBlock")) {
                                 block1.Remove("EMVData");
                             }
                         }
@@ -354,7 +344,7 @@ namespace GlobalPayments.Api.Gateways {
 
             // pin block
             if (builder.PaymentMethod is IPinProtected) {
-                if(!builder.TransactionType.HasFlag(TransactionType.Reversal))
+                if (!builder.TransactionType.HasFlag(TransactionType.Reversal))
                     et.SubElement(block1, "PinBlock", ((IPinProtected)builder.PaymentMethod).PinBlock);
             }
 
@@ -405,8 +395,7 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
 
-            if (builder.CommercialData != null)
-            {
+            if (builder.CommercialData != null) {
                 var cd = builder.CommercialData;
                 var cpc = et.SubElement(block1, "CPCData");
                 et.SubElement(cpc, "CardHolderPONbr", cd.PoNumber);
@@ -547,7 +536,7 @@ namespace GlobalPayments.Api.Gateways {
                     }
 
                     if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod.PaymentMethodType is PaymentMethodType.Credit) {
-                       
+
                         var isVisa = (builder.CardType.ToLowerInvariant() == "visa");
                         var cpc = et.SubElement(root, "CorporateData");
                         var data = et.SubElement(cpc, isVisa ? "Visa" : "MC");
@@ -564,12 +553,12 @@ namespace GlobalPayments.Api.Gateways {
                             et.SubElement(data, "DestinationCountryCode", cd.DestinationCountryCode);
                             et.SubElement(data, "InvoiceRefNbr", cd.VAT_InvoiceNumber);
                             et.SubElement(data, "OrderDate", cd.OrderDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
-                            et.SubElement(data, "VATTaxAmtFreight", cd.VATTaxAmtFreight ?? cd.AdditionalTaxDetails?.TaxAmount ??  cd.TaxAmount);
-                            et.SubElement(data, "VATTaxRateFreight", cd.VATTaxRateFreight ?? cd.AdditionalTaxDetails?.TaxRate );
+                            et.SubElement(data, "VATTaxAmtFreight", cd.VATTaxAmtFreight ?? cd.AdditionalTaxDetails?.TaxAmount ?? cd.TaxAmount);
+                            et.SubElement(data, "VATTaxRateFreight", cd.VATTaxRateFreight ?? cd.AdditionalTaxDetails?.TaxRate);
                             // et.SubElement(data, "TaxTreatment", null);
                             // et.SubElement(data, "DiscountTreatment", null);
                         }
-                       
+
                     }
                 }
 
@@ -623,12 +612,9 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 }
             }
-            else
-            {
-                if (builder.TransactionType == TransactionType.BatchClose)
-                {                    
-                    if (builder.batchDeviceId != null)
-                    {
+            else {
+                if (builder.TransactionType == TransactionType.BatchClose) {
+                    if (builder.batchDeviceId != null) {
                         var batchDeviceId = builder.batchDeviceId.ToString();
                         transaction.Set("deviceId", batchDeviceId);
                     }
@@ -647,10 +633,10 @@ namespace GlobalPayments.Api.Gateways {
             if (builder is TransactionReportBuilder<T>) {
                 var trb = builder as TransactionReportBuilder<T>;
 
-                if(reportType == ReportType.FindTransactions || reportType == ReportType.TransactionDetail){                   
-                   et.SubElement(transaction, "TxnId", trb.TransactionId);                    
+                if (reportType == ReportType.FindTransactions || reportType == ReportType.TransactionDetail) {
+                    et.SubElement(transaction, "TxnId", trb.TransactionId);
                 }
-                if (reportType == ReportType.FindTransactions || reportType == ReportType.Activity){
+                if (reportType == ReportType.FindTransactions || reportType == ReportType.Activity) {
                     var criteria = et.SubElement(transaction, "Criteria");
                     et.SubElement(criteria, "StartUtcDT", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
                     et.SubElement(criteria, "EndUtcDT", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
@@ -696,22 +682,21 @@ namespace GlobalPayments.Api.Gateways {
 
                 if (
                     reportType == ReportType.Activity ||
-                    reportType==ReportType.OpenAuths ||
-                    reportType==ReportType.BatchDetail ||
-                    reportType== ReportType.FindTransactions
-                ){
-                    et.SubElement(transaction, "TzConversion", trb.TimeZoneConversion); 
+                    reportType == ReportType.OpenAuths ||
+                    reportType == ReportType.BatchDetail ||
+                    reportType == ReportType.FindTransactions
+                ) {
+                    et.SubElement(transaction, "TzConversion", trb.TimeZoneConversion);
                 }
 
-                if (reportType == ReportType.OpenAuths || reportType == ReportType.BatchDetail)
-                {
-                    et.SubElement(transaction, "DeviceId", trb.DeviceId);                    
+                if (reportType == ReportType.OpenAuths || reportType == ReportType.BatchDetail) {
+                    et.SubElement(transaction, "DeviceId", trb.DeviceId);
                 }
 
-                if (reportType == ReportType.BatchDetail){                   
-                   et.SubElement(transaction, "BatchId", trb.BatchId);                    
+                if (reportType == ReportType.BatchDetail) {
+                    et.SubElement(transaction, "BatchId", trb.SearchBuilder.BatchId);
                 }
-                
+
             }
 
             var response = DoTransaction(BuildEnvelope(et, transaction));
@@ -746,7 +731,7 @@ namespace GlobalPayments.Api.Gateways {
                 et.SubElement(safData, "SAFIndicator", (bool)IsSafDataSupported ? "Y" : "N");
                 et.SubElement(safData, "SAFOrigDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
             }
-            
+
             // Transaction
             var trans = et.SubElement(version1, "Transaction");
             trans.Append(transaction);
@@ -858,8 +843,7 @@ namespace GlobalPayments.Api.Gateways {
 
                 // PayFac elements
                 if (root.Has("PaymentFacilitatorTxnId") || root.Has("PaymentFacilitatorTxnNbr")) {
-                    result.PayFacData = new Entities.PayFac.PayFacResponseData()
-                    {
+                    result.PayFacData = new Entities.PayFac.PayFacResponseData() {
                         TransactionId = root.GetValue<string>("PaymentFacilitatorTxnId"),
                         TransactionNumber = root.GetValue<string>("PaymentFacilitatorTxnNbr")
                     };
@@ -891,11 +875,10 @@ namespace GlobalPayments.Api.Gateways {
                 reportType.HasFlag(ReportType.Activity) |
                 reportType.HasFlag(ReportType.BatchDetail) |
                 reportType.HasFlag(ReportType.OpenAuths)
-            ) {  
-                Func<Element, TransactionSummary> hydrateTransactionSummary = (root) =>
-                {
+            ) {
+                Func<Element, TransactionSummary> hydrateTransactionSummary = (root) => {
                     var headerElement = response.Get("Header");
-            
+
                     var summary = new TransactionSummary {
                         AccountDataSource = root.GetValue<string>("AcctDataSrc"),
                         Amount = root.GetValue<decimal>("Amt"),
@@ -962,8 +945,7 @@ namespace GlobalPayments.Api.Gateways {
                     };
 
                     // card holder data
-                    if (root.Has("CardHolderData"))
-                    {
+                    if (root.Has("CardHolderData")) {
                         summary.CustomerFirstName = root.GetValue<string>("CardHolderFirstName");
                         summary.CustomerLastName = root.GetValue<string>("CardHolderLastName");
                     }
@@ -1001,7 +983,7 @@ namespace GlobalPayments.Api.Gateways {
                         };
 
                         summary.AltPaymentData.ProcessorResponseInfo = new List<AltPaymentProcessorInfo>();
-                        foreach(var info in root.GetAll("ProcessorRspInfo")) {
+                        foreach (var info in root.GetAll("ProcessorRspInfo")) {
                             var pri = new AltPaymentProcessorInfo {
                                 Code = info.GetValue<string>("Code"),
                                 Message = info.GetValue<string>("Message"),
@@ -1018,18 +1000,14 @@ namespace GlobalPayments.Api.Gateways {
                 if (rvalue is IEnumerable<TransactionSummary>) {
                     var list = rvalue as List<TransactionSummary>;
 
-                    if (reportType.HasFlag(ReportType.FindTransactions) || reportType.HasFlag(ReportType.Activity))
-                    {
-                        foreach (var transaction in doc.GetAll("Transactions"))
-                        {
+                    if (reportType.HasFlag(ReportType.FindTransactions) || reportType.HasFlag(ReportType.Activity)) {
+                        foreach (var transaction in doc.GetAll("Transactions")) {
                             list.Add(hydrateTransactionSummary(transaction));
                         }
                     }
 
-                    if (reportType.HasFlag(ReportType.BatchDetail) || reportType.HasFlag(ReportType.OpenAuths))
-                    {
-                        foreach (var transaction in doc.GetAll("Details"))
-                        {
+                    if (reportType.HasFlag(ReportType.BatchDetail) || reportType.HasFlag(ReportType.OpenAuths)) {
+                        foreach (var transaction in doc.GetAll("Details")) {
                             list.Add(hydrateTransactionSummary(transaction));
                         }
                     }
@@ -1037,14 +1015,13 @@ namespace GlobalPayments.Api.Gateways {
                 }
                 else {
                     var trans = doc.GetAll("Transactions").FirstOrDefault();
-                    if(trans != null)
+                    if (trans != null)
                         rvalue = hydrateTransactionSummary(trans) as T;
                 }
             }
-            if (reportType.HasFlag(ReportType.TransactionDetail))
-            {
+            if (reportType.HasFlag(ReportType.TransactionDetail)) {
                 var reportDetailsElement = response.Get("ReportTxnDetail");
-             
+
                 var summary = new TransactionSummary {
                     ResponseDate = response.GetValue<DateTime>("RspDT"),
                     TransactionDate = reportDetailsElement.GetValue<DateTime>("RspDT"),
@@ -1064,7 +1041,7 @@ namespace GlobalPayments.Api.Gateways {
                     MerchantCity = response.GetValue<string>("MerchCity"),
                     MerchantState = response.GetValue<string>("MerchState"),
                     MerchantZip = response.GetValue<string>("MerchZip"),
-                    MerchantPhone = response.GetValue<string>("MerchPhone"),         
+                    MerchantPhone = response.GetValue<string>("MerchPhone"),
                     TransactionStatus = response.GetValue<string>("TxnStatus"),
                     CardType = response.GetValue<string>("CardType"),
                     MaskedCardNumber = response.GetValue<string>("MaskedCardNbr"),
@@ -1096,30 +1073,26 @@ namespace GlobalPayments.Api.Gateways {
                     PoNumber = response.GetValue<string>("CPCCardHolderPONbr"),
 
                 };
-                if (response.Has("Secure3D"))
-                {
+                if (response.Has("Secure3D")) {
                     ThreeDSecure secure3D = new ThreeDSecure();
 
                     var authenticationValue = response.Has("AuthenticationValue") ? response.GetValue<string>("AuthenticationValue") : null;
                     var directoryServerTransactionId = response.Has("DirectoryServerTxnId") ? response.GetValue<string>("DirectoryServerTxnId") : null;
-                    var eci =response.GetValue<string>("ECI");
+                    var eci = response.GetValue<string>("ECI");
                     Secure3dVersion secure3dVersion = response.Has("Version") ? (Secure3dVersion)int.Parse(response.GetValue<string>("Version")) : Secure3dVersion.One;
                     secure3D.Version = secure3dVersion;
-                    secure3D.AuthenticationValue = authenticationValue; 
+                    secure3D.AuthenticationValue = authenticationValue;
                     secure3D.DirectoryServerTransactionId = directoryServerTransactionId;
                     secure3D.Eci = eci;
                     summary.ThreeDSecure = secure3D;
 
                 }
-                if (response.Has("CorporateData") && response.Has("CPCTaxType"))
-                {
-                    
+                if (response.Has("CorporateData") && response.Has("CPCTaxType")) {
+
                     bool ignoreCase = true;
-                    string taxType = response.GetValue<string>("CPCTaxType").Substring(response.GetValue<string>("CPCTaxType").IndexOf('-') + 1, response.GetValue<string>("CPCTaxType").Length-(response.GetValue<string>("CPCTaxType").IndexOf('-') + 1));
-                    if(response.Has("Visa"))
-                    { 
-                        CommercialData commercialData = new CommercialData((TaxType)Enum.Parse(typeof(TaxType), taxType,ignoreCase))
-                        {
+                    string taxType = response.GetValue<string>("CPCTaxType").Substring(response.GetValue<string>("CPCTaxType").IndexOf('-') + 1, response.GetValue<string>("CPCTaxType").Length - (response.GetValue<string>("CPCTaxType").IndexOf('-') + 1));
+                    if (response.Has("Visa")) {
+                        CommercialData commercialData = new CommercialData((TaxType)Enum.Parse(typeof(TaxType), taxType, ignoreCase)) {
                             SummaryCommodityCode = response.GetValue<string>("SummaryCommodityCode"),
                             FreightAmount = response.GetValue<decimal>("FreightAmt"),
                             DutyAmount = response.GetValue<decimal>("DutyAmt"),
@@ -1131,28 +1104,24 @@ namespace GlobalPayments.Api.Gateways {
                             PoNumber = response.GetValue<string>("CPCCardHolderPONbr"),
                         };
                         summary.CommercialData = commercialData;
-                        
-                        foreach (var lineItemDetail in response.GetAll("LineItemDetail"))
-                        {
-                            var lid = new CommercialLineItem
-                            {
+
+                        foreach (var lineItemDetail in response.GetAll("LineItemDetail")) {
+                            var lid = new CommercialLineItem {
                                 Description = lineItemDetail.GetValue<string>("ItemDescription"),
                                 ProductCode = lineItemDetail.GetValue<string>("ProductCode"),
                                 Quantity = lineItemDetail.GetValue<decimal>("Quantity"),
                                 UnitOfMeasure = lineItemDetail.GetValue<string>("UnitOfMeasure"),
-                                DiscountDetails = new DiscountDetails
-                                {
+                                DiscountDetails = new DiscountDetails {
                                     DiscountAmount = lineItemDetail.GetValue<decimal>("DiscountAmt"),
                                 },
-                        };
+                            };
 
                             summary.CommercialData.AddLineItems(lid);
                         }
                     }
                     else  //Mastercard
                     {
-                        CommercialData commercialData = new CommercialData((TaxType)System.Enum.Parse(typeof(TaxType), taxType, ignoreCase))
-                        {
+                        CommercialData commercialData = new CommercialData((TaxType)System.Enum.Parse(typeof(TaxType), taxType, ignoreCase)) {
                             SummaryCommodityCode = response.GetValue<string>("SummaryCommodityCode"),
                             FreightAmount = response.GetValue<decimal>("FreightAmt"),
                             DutyAmount = response.GetValue<decimal>("DutyAmt"),
@@ -1162,14 +1131,12 @@ namespace GlobalPayments.Api.Gateways {
                             VAT_InvoiceNumber = response.GetValue<string>("InvoiceRefNbr"),
                             OrderDate = response.GetValue<DateTime>("OrderDate"),
                             PoNumber = response.GetValue<string>("CPCCardHolderPONbr"),
-                            
+
                         };
                         summary.CommercialData = commercialData;
 
-                        foreach (var lineItemDetail in response.GetAll("LineItemDetail"))
-                        {
-                            var lid = new CommercialLineItem
-                            {
+                        foreach (var lineItemDetail in response.GetAll("LineItemDetail")) {
+                            var lid = new CommercialLineItem {
                                 Description = lineItemDetail.GetValue<string>("ItemDescription"),
                                 ProductCode = lineItemDetail.GetValue<string>("ProductCode"),
                                 Quantity = lineItemDetail.GetValue<decimal>("Quantity"),
@@ -1198,9 +1165,9 @@ namespace GlobalPayments.Api.Gateways {
         private string MapTransactionType<T>(T builder) where T : TransactionBuilder<Transaction> {
             switch (builder.TransactionType) {
                 case TransactionType.Tokenize:
-                    return "Tokenize";
+                return "Tokenize";
                 case TransactionType.BatchClose:
-                    return "BatchClose";
+                return "BatchClose";
                 case TransactionType.Decline: {
                         if (builder.TransactionModifier == TransactionModifier.ChipDecline)
                             return "ChipCardDecline"; // ChipCardDecline : Decline (Chip)
@@ -1214,7 +1181,7 @@ namespace GlobalPayments.Api.Gateways {
                         return "CreditAccountVerify"; // CreditAccountVerify : Verify
                     }
                 case TransactionType.Capture:
-                    return "CreditAddToBatch"; // CreditAddToBatch : Capture
+                return "CreditAddToBatch"; // CreditAddToBatch : Capture
                 case TransactionType.Auth: {
                         if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
                             if (builder.TransactionModifier == TransactionModifier.Additional)
@@ -1225,8 +1192,8 @@ namespace GlobalPayments.Api.Gateways {
                                 return "CreditOfflineAuth"; // CreditOfflineAuth : Auth (Offline|Credit)
                             else if (builder.TransactionModifier == TransactionModifier.Recurring)
                                 return "RecurringBillingAuth"; // RecurringBillingAuth : Auth (Recurring)
-                           // else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
-                             //   throw new UnsupportedTransactionException();
+                                                               // else if (builder.TransactionModifier == TransactionModifier.EncryptedMobile)
+                                                               //   throw new UnsupportedTransactionException();
                             return "CreditAuth"; // CreditAuth : Auth (Credit)
                         }
                         else if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Recurring)
@@ -1237,7 +1204,7 @@ namespace GlobalPayments.Api.Gateways {
                         if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
                             if (builder.TransactionModifier == TransactionModifier.Offline)
                                 return "CreditOfflineSale"; // CreditOfflineSale : Sale (Offline|Credit)
-                         else if (builder.TransactionModifier == TransactionModifier.Recurring)
+                            else if (builder.TransactionModifier == TransactionModifier.Recurring)
                                 return "RecurringBilling";
                             else return "CreditSale"; // CreditSale : Sale (Credit)
                         }
@@ -1325,24 +1292,24 @@ namespace GlobalPayments.Api.Gateways {
                         throw new UnsupportedTransactionException();
                     }
                 case TransactionType.BenefitWithdrawal:
-                    return "EBTCashBenefitWithdrawal"; // EBTCashBenefitWithdrawl : BenefitWithdrawl
+                return "EBTCashBenefitWithdrawal"; // EBTCashBenefitWithdrawl : BenefitWithdrawl
                 case TransactionType.Activate:
-                    return "GiftCardActivate"; // GiftCardActivate : Activate
+                return "GiftCardActivate"; // GiftCardActivate : Activate
                 case TransactionType.Alias:
-                    return "GiftCardAlias"; // GiftCardAlias :  Alias
+                return "GiftCardAlias"; // GiftCardAlias :  Alias
                 case TransactionType.Deactivate:
-                    return "GiftCardDeactivate"; // GiftCardDeactivate : Deactivate
+                return "GiftCardDeactivate"; // GiftCardDeactivate : Deactivate
                 case TransactionType.Replace:
-                    return "GiftCardReplace"; // GiftCardReplace : Replace
+                return "GiftCardReplace"; // GiftCardReplace : Replace
                 case TransactionType.Reward:
-                    return "GiftCardReward"; // GiftCardReward : Reward
+                return "GiftCardReward"; // GiftCardReward : Reward
                 case TransactionType.Increment:
-                    return "CreditIncrementalAuth";
+                return "CreditIncrementalAuth";
                 case TransactionType.TokenDelete:
                 case TransactionType.TokenUpdate:
-                    return "ManageTokens";
+                return "ManageTokens";
                 default:
-                    throw new UnsupportedTransactionException();
+                throw new UnsupportedTransactionException();
             }
 
             // EBTCashBenefitWithdrawl
@@ -1370,21 +1337,19 @@ namespace GlobalPayments.Api.Gateways {
             throw new NotImplementedException();
         }
 
-        private string MapReportType(ReportType type)
-        {
-            switch (type)
-            {
+        private string MapReportType(ReportType type) {
+            switch (type) {
                 case ReportType.Activity:
                 case ReportType.FindTransactions:
-                    return "FindTransactions";
+                return "FindTransactions";
                 case ReportType.TransactionDetail:
-                    return "ReportTxnDetail";
+                return "ReportTxnDetail";
                 case ReportType.BatchDetail:
-                    return "ReportBatchDetail";
+                return "ReportBatchDetail";
                 case ReportType.OpenAuths:
-                    return "ReportOpenAuths";
+                return "ReportOpenAuths";
                 default:
-                    throw new UnsupportedTransactionException();
+                throw new UnsupportedTransactionException();
             }
         }
         private bool HasToken(IPaymentMethod paymentMethod, out string tokenValue) {
@@ -1401,8 +1366,7 @@ namespace GlobalPayments.Api.Gateways {
             }
             return false;
         }
-        private bool IsAppleOrGooglePay(string paymentDataSource)
-        {
+        private bool IsAppleOrGooglePay(string paymentDataSource) {
             return paymentDataSource == PaymentDataSourceType.APPLEPAY
                 || paymentDataSource == PaymentDataSourceType.APPLEPAYAPP
                 || paymentDataSource == PaymentDataSourceType.APPLEPAYWEB
@@ -1410,14 +1374,11 @@ namespace GlobalPayments.Api.Gateways {
                 || paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB;
         }
         //Get the SDK release version from Assembly info
-        private string getReleaseVersion()
-        {
-            try
-            {
+        private string getReleaseVersion() {
+            try {
                 return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 return string.Empty;
             }
         }
@@ -1430,20 +1391,17 @@ namespace GlobalPayments.Api.Gateways {
 
             var lineItems = et.SubElement(parent, "LineItems");
 
-            foreach (var item in items) 
-            {
+            foreach (var item in items) {
                 var lineItem = et.SubElement(lineItems, "LineItemDetail");
                 et.SubElement(lineItem, "ItemDescription", item.Description);
                 et.SubElement(lineItem, "ProductCode", item.ProductCode);
                 et.SubElement(lineItem, "Quantity", item.Quantity);
                 et.SubElement(lineItem, "ItemTotalAmt", item.TotalAmount);
 
-                if (isVisa )
-                {
+                if (isVisa) {
                     et.SubElement(lineItem, "ItemTaxTreatment", item.TaxTreatment);
 
-                    if (item.TotalAmount == null)
-                    {
+                    if (item.TotalAmount == null) {
                         et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
                         et.SubElement(lineItem, "DiscountAmt", item.DiscountDetails?.DiscountAmount);
                     }
@@ -1452,8 +1410,7 @@ namespace GlobalPayments.Api.Gateways {
                     // et.SubElement(lineItem, "UnitCost", item.UnitCost);
                     // et.SubElement(lineItem, "VATTaxAmt", item.TaxAmount);
                 }
-                else 
-                {
+                else {
                     et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
                 }
                 //et.SubElement(lineItem, "ExtendedItemAmount", item.ExtendedAmount);

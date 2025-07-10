@@ -326,6 +326,8 @@ namespace GlobalPayments.Api.Entities {
 
         internal string TokenLastFour { get; set; }
 
+        internal string TransactionId { get; set; }
+
         internal TransactionStatus? TransactionStatus { get; set; }
         internal BankPaymentStatus? BankPaymentStatus { get; set; }
 

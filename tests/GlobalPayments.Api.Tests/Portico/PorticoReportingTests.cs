@@ -5,7 +5,7 @@ using GlobalPayments.Api.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Tests.Terminals;
-
+using GlobalPayments.Api.Utils.Logging;
 
 namespace GlobalPayments.Api.Tests.Portico {
     [TestClass]
@@ -39,7 +39,8 @@ namespace GlobalPayments.Api.Tests.Portico {
             ServicesContainer.ConfigureService(new PorticoConfig
             {
                 SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
-                IsSafDataSupported = true
+                IsSafDataSupported = true,
+                RequestLogger = new RequestConsoleLogger()
             });
 
             Address = new Address
@@ -126,7 +127,7 @@ namespace GlobalPayments.Api.Tests.Portico {
         }
         [TestMethod]
         public void ReportFindTransactionWithTransactionId() {
-            List<TransactionSummary> summary = ReportingService.FindTransactions("1873988120").Execute();
+            List<TransactionSummary> summary = ReportingService.FindTransactions("2045823572").Execute();
             Assert.IsNotNull(summary);
         }
         [TestMethod]
@@ -692,7 +693,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.AreEqual("00", captureResponse.ResponseCode);
 
             List<TransactionSummary> details = ReportingService.BatchDetail()
-                                                                .WithBatchId(992515)
+                                                                .WithBatchId("992515")
                                                                 .Execute();
 
             //Get reportItem that matches the clienttxnid passed initally
@@ -720,6 +721,17 @@ namespace GlobalPayments.Api.Tests.Portico {
             TransactionSummary reportItem = details.Find(x => x.ClientTransactionId == clientTxnId);
             Assert.IsNotNull(reportItem);
             Assert.AreEqual(reportItem.ClientTransactionId, clientTxnId);
+        }
+
+        [TestMethod]
+        public void FindTransactions() {
+            var response = ReportingService.FindTransactions()
+                .WithStartDate(DateTime.Today.AddDays(-10))
+                .WithEndDate(DateTime.Today)
+                //.Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-2))
+                //.And(SearchCriteria.EndDate, DateTime.UtcNow)                
+                .Execute();
+            Assert.IsNotNull(response);
         }
     }
 }

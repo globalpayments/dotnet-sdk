@@ -5,7 +5,7 @@ using System;
 namespace GlobalPayments.Api.Terminals.HPA.Responses {
     public class SignatureResponse : SipTerminalResponse, ISignatureResponse {
         public SignatureResponse(byte[] response, params string[] messageIds) : base(response, messageIds) { }
-
+        public string SigData { get; set; }
         internal override void MapResponse(Element response) {
             base.MapResponse(response);
 

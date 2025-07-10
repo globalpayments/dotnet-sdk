@@ -567,7 +567,22 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.ResponseCode);
         }
+        [TestMethod]
+        public void CreditAuthReversalFromTransactionId()
+        {
+            var response = card.Authorize(10.00m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
 
+            var voidResponse = Transaction.FromId(response.TransactionId)
+                .Reverse(5m)
+                .Execute();
+            Assert.IsNotNull(voidResponse);
+            Assert.AreEqual("00", voidResponse.ResponseCode);
+        }
         [TestMethod]
         public void CreditTestWithNewCryptoURL() {
             ServicesContainer.ConfigureService(new PorticoConfig {

@@ -60,6 +60,7 @@ namespace GlobalPayments.Api.Terminals.Builders {
         internal MerchantDecision? MerchantDecision { get; set;}
         internal string Language { get; set;}
         internal HostData HostData { get; set; }
+        internal decimal? SurchargeAmount { get; set; }
         internal string TransactionId {
             get {
                 if (PaymentMethod is TransactionReference)
@@ -299,7 +300,11 @@ namespace GlobalPayments.Api.Terminals.Builders {
             TransactionModifier = modifier;
             return this;
         }
-
+        public TerminalAuthBuilder WithSurchargeAmount(decimal surchargeAmount)
+        {
+            SurchargeAmount = surchargeAmount;
+            return this;
+        }
         internal TerminalAuthBuilder(TransactionType type, PaymentMethodType paymentType) : base(type, paymentType) {
         }
 

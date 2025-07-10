@@ -6,6 +6,8 @@ using System.Text;
 using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.Terminals.PAX.Responses;
 using GlobalPayments.Api.Terminals.Enums;
+using System.Xml.Linq;
+using System.Threading;
 
 namespace GlobalPayments.Api.Terminals.PAX {
     public class PaxInterface : DeviceInterface<PaxController> {
@@ -122,6 +124,181 @@ namespace GlobalPayments.Api.Terminals.PAX {
             if (signatureResponse.DeviceResponseCode == "000000")
                 return GetSignatureFile();
             return signatureResponse;
+        }
+        public override IDeviceResponse ClearMessage()
+        { 
+            var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A12_CLEAR_MESSAGE));
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A13_RSP_CLEAR_MESSAGE);
+        }
+        public override IDeviceResponse InputAccount(bool? allowMagStripeEntry, bool? allowManualEntry, bool? allowContactlessEntry, bool? allowScannerEntry, bool? expiryDatePrompt, int timeout, int? encryptionFlag, int? keySlot, int? minAccountLength, int? maxAccountLength, string edcType, string transactionType)
+        {
+            int? MagStripeEntry = allowMagStripeEntry.HasValue ? (allowMagStripeEntry.Value ? 1 : 0) : (int?)null;
+            int? ManualEntry = allowManualEntry.HasValue ? (allowManualEntry.Value ? 1 : 0) : (int?)null;
+            int? ContactlessEntry = allowContactlessEntry.HasValue ? (allowContactlessEntry.Value ? 1 : 0) : (int?)null;
+            int? ScannerEntry = allowScannerEntry.HasValue ? (allowScannerEntry.Value ? 1 : 0) : (int?)null;
+            int? DatePrompt = expiryDatePrompt.HasValue ? (expiryDatePrompt.Value ? 1 : 0) : (int?)null;
+
+            var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A30_INPUT_ACCOUNT,
+                MagStripeEntry,
+                ControlCodes.FS,
+                ManualEntry,
+                ControlCodes.FS,
+                ContactlessEntry,
+                ControlCodes.FS,
+                ScannerEntry,
+                ControlCodes.FS,
+                DatePrompt,
+                ControlCodes.FS,
+                timeout,
+                ControlCodes.FS,
+                encryptionFlag,
+                ControlCodes.FS,
+                keySlot,
+                ControlCodes.FS,
+                minAccountLength,
+                ControlCodes.FS,
+                maxAccountLength,
+                ControlCodes.FS,
+                edcType,
+                ControlCodes.FS,
+                transactionType,
+                ControlCodes.FS
+            ));
+            return new AccountInputResponse(response);
+        }
+        public override IDeviceResponse ShowMessage(string message1, string title, string message2, bool topDown, string taxLine, string totalLine, string imageName, string imageDesc, PaxLineItemAction lineItemAction, int itemIndex)
+        {
+            var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A10_SHOW_MESSAGE,
+                message1,
+                ControlCodes.FS,
+                title,
+                ControlCodes.FS,
+                message2,
+                ControlCodes.FS,
+                topDown,
+                ControlCodes.FS,
+                taxLine,
+                ControlCodes.FS,
+                totalLine,
+                ControlCodes.FS,
+                imageName,
+                ControlCodes.FS,
+                imageDesc,
+                ControlCodes.FS,
+                ((int)lineItemAction).ToString(),
+                ControlCodes.FS,
+                itemIndex
+            ));
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A11_RSP_SHOW_MESSAGE);
+        }
+        public override IShowTextBoxResponse ShowTextBox(string title, string text, string button1Name
+            , string button1Color, string button2Name, string button2Color, string button3Name
+            , string button3Color
+            , string timeout , string button1Key, string button2Key, string button3Key
+            , bool enableHardKeyOnly, string hardKeyList, SignatureBoxDisplay signatureBoxDisplay
+            , bool continuousScreen = false
+            , int? barcodeType = null, string barcodeData = null, string inputTextTitle = null
+            , bool showInputText = false, TextInputType inputType = TextInputType.AlphaNumeric
+            , int minLength = 0
+            , int maxLength = 32)
+        {
+
+            var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A56_SHOW_TEXTBOX,
+                title,
+                ControlCodes.FS,
+                text,
+                ControlCodes.FS,
+                button1Name,
+                ControlCodes.FS,
+                button1Color,
+                ControlCodes.FS,
+                button2Name,
+                ControlCodes.FS,
+                button2Color,
+                ControlCodes.FS,
+                button3Name,
+                ControlCodes.FS,
+                button3Color,
+                ControlCodes.FS,
+                timeout,
+                ControlCodes.FS,
+                button1Key,
+                ControlCodes.FS,
+                button2Key,
+                ControlCodes.FS,
+                button3Key,
+                ControlCodes.FS,
+                enableHardKeyOnly ? 1 : 0,
+                ControlCodes.FS,
+                hardKeyList,
+                ControlCodes.FS,
+                (int?)signatureBoxDisplay == 0 ? null : (int?)signatureBoxDisplay,
+                ControlCodes.FS,
+                continuousScreen ? 1 : 0,
+                ControlCodes.FS,
+                barcodeType,
+                ControlCodes.FS,
+                barcodeData,
+                ControlCodes.FS,
+                inputTextTitle,
+                ControlCodes.FS,
+                showInputText ? 1 : 0,
+                ControlCodes.FS,
+                (int)inputType,
+                ControlCodes.FS,
+                minLength,
+                ControlCodes.FS,
+                maxLength
+            )); ;
+            return new ShowTextBoxResponse(response);
+        }
+        public override IDeviceResponse SetTipPercentageOptions(int tipPercent1,int tipPercent2, int tipPercent3,bool noTipSelection)
+        {
+            string noTipOption = noTipSelection ? "Y" : "N";
+            string tipPercentages = tipPercent1 + " " + tipPercent2 + " " + tipPercent3;
+            var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A04_SET_VARIABLE,
+                "01",
+                ControlCodes.FS,
+                "tipPercentageOptions",
+                ControlCodes.FS,
+                tipPercentages,
+                ControlCodes.FS,
+                "noTipSelection",
+                ControlCodes.FS,
+                noTipOption,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS
+            ));
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A05_RSP_SET_VARIABLE);
+        }
+        public override IDeviceResponse SetTipAmountOptions(int tipAmount1, int tipAmount2, int tipAmount3, bool noTipSelection)
+        {
+            string noTipOption = noTipSelection ? "Y" : "N";
+            string tipAmounts = tipAmount1 + " " + tipAmount2 + " " + tipAmount3;
+            var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A04_SET_VARIABLE,
+                "01",
+                ControlCodes.FS,
+                "tipAmountOptions",
+                ControlCodes.FS,
+                tipAmounts,
+                ControlCodes.FS,
+                "noTipSelection",
+                ControlCodes.FS,
+                noTipOption,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS,
+                ControlCodes.FS
+            ));
+            return new PaxTerminalResponse(response, PAX_MSG_ID.A05_RSP_SET_VARIABLE);
         }
         public override IDeviceResponse Reboot() {
             var response = _controller.Send(TerminalUtilities.BuildRequest(PAX_MSG_ID.A26_REBOOT));

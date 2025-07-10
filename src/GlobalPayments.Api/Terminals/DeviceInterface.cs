@@ -5,6 +5,7 @@ using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Builders;
 using GlobalPayments.Api.Terminals.Genius.Enums;
 using GlobalPayments.Api.Terminals.Messaging;
+using GlobalPayments.Api.Terminals.PAX;
 using GlobalPayments.Api.Terminals.UPA;
 using System;
 using System.Collections.Generic;
@@ -142,8 +143,34 @@ namespace GlobalPayments.Api.Terminals
         }
         public virtual IDeviceResponse StartCardTransaction(UpaParam param, ProcessingIndicator indicator, UpaTransactionData transData) {
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
-        } 
-        
+        }
+        public virtual IDeviceResponse ClearMessage()
+        {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse InputAccount(bool? allowMagStripeEntry, bool? allowManualEntry, bool? allowContactlessEntry, bool? allowScannerEntry, bool? expiryDatePrompt, int timeout, int? encryptionFlag, int? keySlot, int? minAccountLength, int? maxAccountLength, string edcType, string transactionType)
+        {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse ShowMessage(string message1, string title, string message2, bool topDown, string taxLine, string totalLine, string imageName, string imageDesc, PaxLineItemAction lineItemAction, int itemIndex)
+        {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IShowTextBoxResponse ShowTextBox(string title, string text, string button1Name, string button1Color, string button2Name, string button2Color, string button3Name, string button3Color
+            , string timeout, string button1Key, string button2Key, string button3Key, bool enableHardKeyOnly, string hardKeyList, SignatureBoxDisplay signatureBoxDisplay, bool continuousScreen = false
+            , int? barcodeType = null, string barcodeData = null, string inputTextTitle = null, bool showInputText = false, TextInputType inputType = TextInputType.AlphaNumeric, int minLength = 0
+            , int maxLength = 32)
+        {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse SetTipPercentageOptions(int tipPercent1,int tipPercent2, int tipPercent3, bool noTipSelection)
+        {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse SetTipAmountOptions(int tipPercent1, int tipPercent2, int tipPercent3, bool noTipSelection)
+        {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
         #endregion
 
         #region Batching

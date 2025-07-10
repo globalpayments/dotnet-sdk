@@ -19,6 +19,9 @@ namespace GlobalPayments.Api.Builders {
                 return SearchBuilder.StartDate;
             }
         }
+        internal string TransactionId {
+            get { return SearchBuilder.TransactionId; }
+        }
        
         internal string DisputeDocumentId { get; set; }
         internal string PayByLinkId { get; set; }

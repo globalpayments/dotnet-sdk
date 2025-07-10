@@ -179,7 +179,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
             SafTransaction = host.Has("storeAndForward") ? host.GetValue<int>("storeAndForward") == 1 : false;
             InvoiceNumber = host.GetValue<string>("invoiceNbr");
             // RecurringDataCode = host.GetValue<string>("recurringDataCode");
-            CavvResultCode = host.GetValue<int?>("CavvResultCode");
+            CavvResultCode = host.GetNullableValue<int?>("CavvResultCode");
             TokenPANLast = host.GetNullableValue<int?>("tokenPANLast");
             PartialApproval = host.GetNullableValue<int?>("partialApproval");
             TraceNumber = host.GetNullableValue<int?>("traceNumber");
