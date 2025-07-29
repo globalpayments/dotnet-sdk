@@ -365,6 +365,16 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 var apm = new JsonDoc()
                     .Set("provider", alternatepaymentMethod.AlternativePaymentMethodType?.ToString()?.ToLower())
                     .Set("address_override_mode", alternatepaymentMethod.AddressOverrideMode);
+
+                // Only check bank existence if AlternativePaymentType is OB
+                if (alternatepaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.OB) {
+                        var bank = new JsonDoc()
+                            .Set("name", EnumConverter.GetMapping(Target.GP_API, alternatepaymentMethod.Bank));
+                        var bankTransfer = new JsonDoc()
+                          .Set("bank", bank);
+
+                        paymentMethod.Set("bank_transfer", bankTransfer);
+                }
                 paymentMethod.Set("apm", apm);
             }
 
@@ -948,5 +958,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             return requestBody;
         }
+
     }
 }

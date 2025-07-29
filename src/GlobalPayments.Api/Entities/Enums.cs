@@ -1025,7 +1025,8 @@ public enum ReasonCode {
         UK_DIRECT_DEBIT,
         PAYBYBANKAPP,
         ALIPAY,
-        BLIK
+        BLIK,
+        OB
     }
 
     public enum CardType {
@@ -1218,5 +1219,43 @@ public enum ReasonCode {
         Indicator5,
         [Description("7")]
         Indicator7
+    }
+    public enum BankList {
+        [Map(Target.GP_API, "pkobankpolskisa")]
+        PKO_BP,
+        [Map(Target.GP_API, "santander")]
+        Santander,
+        [Map(Target.GP_API, "ing")]
+        ING_Bank_Slaski,
+        [Map(Target.GP_API, "bankpekaosa")]
+        PEKAO_SA,
+        [Map(Target.GP_API, "mbank")]
+        M_Bank,
+        [Map(Target.GP_API, "alior")]
+        Alior_Bank,
+        [Map(Target.GP_API, "bnpparibas")]
+        BNP_Paribas,
+        [Map(Target.GP_API, "millenium")]
+        Millenium,
+        [Map(Target.GP_API, "creditagricole")]
+        Credit_Agricole,
+        [Map(Target.GP_API, "citi")]
+        Citi_Handlowy,
+        [Map(Target.GP_API, "inteligo")]
+        Inteligo,
+        [Map(Target.GP_API, "bankispoldzielcze")]
+        Banki_Spoldzielcze,
+        [Map(Target.GP_API, "bosbank")]
+        BOS_Bank,
+        [Map(Target.GP_API, "nestbank")]
+        Nest_Bank,
+        [Map(Target.GP_API, "velobank")]
+        VeloBank,
+        [Map(Target.GP_API, "banknowysa")]
+        Bank_Nowy_S_A,
+        [Map(Target.GP_API, "plusbank")]
+        PLUS_BANK,
+        [Map(Target.GP_API, "bankpocztowy")]
+        Bank_Pocztowy
     }
 }

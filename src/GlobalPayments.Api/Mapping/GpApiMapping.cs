@@ -30,6 +30,7 @@ namespace GlobalPayments.Api.Mapping {
         private const string FILE_CREATE = "FILE_CREATE";
         private const string FILE_SINGLE = "FILE_SINGLE";
         public const string BLIK = "blik";
+        public const string OB = "OB";
 
         public static Transaction MapResponse(string rawResponse) {
             Transaction transaction = new Transaction();
@@ -153,9 +154,9 @@ namespace GlobalPayments.Api.Mapping {
                 else if (json.Get("payment_method")?.Has("apm") ?? false) {
                     transaction.PaymentMethodType = PaymentMethodType.APM;
 
-                    // Check if APM provider is BLIK (case-insensitive), then map APM data
-                    JsonDoc paymentmethod = json.Get("payment_method");
-                    if (IsBlikProvider(paymentmethod)) {
+                    // Check if APM provider is BLIK (case-insensitive) or BANK_PAYMENT, then map APM data
+                    JsonDoc paymentMethodJson = json.Get("payment_method");
+                    if (IsBlikProvider(paymentMethodJson) || IsBankPaymentProvider(paymentMethodJson)) {
                         MapAlternativePaymentData(json, transaction);
                     }
                 }
@@ -1509,9 +1510,34 @@ namespace GlobalPayments.Api.Mapping {
             var apm = paymentMethod?.Get("apm");
 
             transaction.AlternativePaymentResponse = new AlternativePaymentResponse {
-                RedirectUrl = paymentMethod?.GetValue<string>("redirect_url"),
+                RedirectUrl = apm?.GetValue<string>("redirect_url"),
                 ProviderName = apm?.GetValue<string>("provider")
             };
+
+            if (transaction.AlternativePaymentResponse.ProviderName == "BANK_PAYMENT") {
+
+                MapBankPaymentData(paymentMethod, transaction.AlternativePaymentResponse);
+            }
         }
+        private static bool IsBankPaymentProvider(JsonDoc paymentMethod) {
+
+            var provider = paymentMethod?.Get("apm")?.GetValue<string>("provider");
+            return string.Equals(provider, "BANK_PAYMENT", StringComparison.OrdinalIgnoreCase);
+        }
+        private static void MapBankPaymentData(JsonDoc paymentMethod, AlternativePaymentResponse apm) {
+            var bankDetails = new Bank();
+            var apmJson = paymentMethod.Get("apm");
+            if (apmJson != null && apmJson.Has("bank")) {
+                JsonDoc bank = apmJson.Get("bank");
+                bankDetails.Name = bank.GetValue<string>("name");
+                bankDetails.IdentifierCode = bank.GetValue<string>("identifier_code");
+                bankDetails.Iban = bank.GetValue<string>("iban");
+                bankDetails.Code = bank.GetValue<string>("code");
+                bankDetails.AccountNumber = bank.GetValue<string>("account_number");
+
+                apm.Bank = bankDetails;
+            }
+        }
+
     }
 }

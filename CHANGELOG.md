@@ -1,6 +1,19 @@
 # Changelog
 
-## Latest - v9.0.19 (06/23/25) 
+## Latest - v9.0.21 (07/28/25)
+### Enhancement
+[GPAPI] - Added SDK support for Open Banking PayU as a payment APM.
+
+### Bug Fixes:
+[UPA] - Fixed reference mapping for UPA transactions to ensure correct property assignment.
+
+## v9.0.20 (07/10/25)
+### Enhancement
+[UPA] - Added handling for multiple messages in the stream, and a timeout to the ReadAsync stream in the UpaTcpInterface.
+[UPA] - Added overload string type to EcrId property
+[UPA] - Additional support for nullable types
+
+## v9.0.19 (06/23/25) 
 ### Enhancement
 - [GPAPI] - Added SDK support for Blik as a payment APM.
 

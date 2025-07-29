@@ -15,8 +15,7 @@ namespace GlobalPayments.Api.Tests.GpEcom
         private const decimal AMOUNT = 10;
 
         [TestInitialize]
-        public void Init()
-        {
+        public void Init() {
             ServicesContainer.ConfigureService(new GpEcomConfig
             {
                 MerchantId = "heartlandgpsandbox",
@@ -30,8 +29,7 @@ namespace GlobalPayments.Api.Tests.GpEcom
 
             string APP_ID = "p2GgW0PntEUiUh4qXhJHPoDqj3G5GFGI";
             string APP_KEY = "lJk4Np5LoUEilFhH";
-            GpApiConfig gpApiConfig = new GpApiConfig
-            {
+            GpApiConfig gpApiConfig = new GpApiConfig {
                 AppId = APP_ID,
                 AppKey = APP_KEY,
                 Channel = Channel.CardNotPresent,
@@ -39,13 +37,27 @@ namespace GlobalPayments.Api.Tests.GpEcom
                 EnableLogging = true,
                 RequestLogger = new RequestConsoleLogger(),
                 Country = "PL",
-                AccessTokenInfo = new AccessTokenInfo
-                {
+                AccessTokenInfo = new AccessTokenInfo {
                     TransactionProcessingAccountName = "GPECOM_BLIK_APM_Transaction_Processing",
                     RiskAssessmentAccountName = "EOS_RiskAssessment"
                 }
             };
             ServicesContainer.ConfigureService(gpApiConfig,"blikConfig");
+
+            GpApiConfig gpApiConfigPayU = new GpApiConfig {
+                AppId = "ZbFY1jAz6sqq0GAyIPZe1raLCC7cUlpD",
+                AppKey = "4NpIQJDCIDzfTKhA",
+                Channel = Channel.CardNotPresent,
+                ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION,
+                EnableLogging = true,
+                RequestLogger = new RequestConsoleLogger(),
+                Country = "PL",
+                AccessTokenInfo = new AccessTokenInfo {
+                    TransactionProcessingAccountName = "transaction_processing",
+                    RiskAssessmentAccountName = "EOS_RiskAssessment"
+                }
+            };
+            ServicesContainer.ConfigureService(gpApiConfigPayU, "payuConfig");
         }
 
         [TestMethod]
@@ -568,6 +580,58 @@ namespace GlobalPayments.Api.Tests.GpEcom
             Assert.IsNotNull(response);
             Assert.AreEqual("blik", response.AlternativePaymentResponse.ProviderName);
             Assert.AreEqual("DECLINED", response.ResponseCode);
+        }
+        #endregion
+
+        #region GP API PayU APM Test Methods
+        [TestMethod]
+        public void PayUSale_WhenRequestIsValid_ShouldSucceed_WithBankName_ING() {
+            var paymentMethodDetails = new AlternativePaymentMethod {
+
+                AlternativePaymentMethodType = AlternativePaymentType.OB,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "PL",
+                AccountHolderName = "James Mason",
+                Bank = BankList.ING_Bank_Slaski
+            };
+
+            Transaction response = paymentMethodDetails.Charge(0.01m)
+                            .WithCurrency("PLN")
+                            .WithDescription("New APM")
+                            .Execute("payuConfig");
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.IsNotNull(response.AlternativePaymentResponse);
+            Assert.IsNotNull(response.AlternativePaymentResponse.RedirectUrl);
+            Assert.AreEqual("BANK_PAYMENT", response.AlternativePaymentResponse.ProviderName.ToUpper());
+        }
+
+
+        [TestMethod]
+        public void PayUSale_WhenRequestIsValid_ShouldSucceed_WithBankName_mBank() {
+            var paymentMethodDetails = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.OB,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "PL",
+                AccountHolderName = "James Mason",
+                Bank = BankList.M_Bank
+            };
+
+            Transaction response = paymentMethodDetails.Charge(0.01m)
+                            .WithCurrency("PLN")
+                            .WithDescription("New APM")
+                            .Execute("payuConfig");
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.IsNotNull(response.AlternativePaymentResponse);
+            Assert.IsNotNull(response.AlternativePaymentResponse.RedirectUrl);
+            Assert.AreEqual("BANK_PAYMENT", response.AlternativePaymentResponse.ProviderName.ToUpper());
         }
         #endregion
     }

@@ -58,6 +58,10 @@ namespace GlobalPayments.Api.PaymentMethods {
         public string AddressOverrideMode { get; set; }
 
         /// <summary>
+        /// The name of the bank associated with the alternative payment method.
+        /// </summary>
+        public BankList Bank { get; set; }
+        /// <summary>
         /// Creates a charge (sale) against the payment method.
         /// </summary>
         /// <param name="amount">The amount of the transaction</param>

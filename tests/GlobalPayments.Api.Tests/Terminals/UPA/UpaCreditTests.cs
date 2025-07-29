@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
@@ -43,6 +42,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Thread.Sleep(2500);
         }
 
+        #region Unit Test case for Sale Scenario
         [TestMethod]
         public void CreditSale() {
             var autoSub = new AutoSubstantiation {
@@ -102,7 +102,9 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual(11.00m, response.TransactionAmount);
             Assert.AreEqual(1.00m, response.TipAmount);
         }
+        #endregion
 
+        #region Unit Test case for Auth Scenario
         [TestMethod]
         public void PreAuth() {
             var autoSub = new AutoSubstantiation {
@@ -117,9 +119,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 .WithClerkId(123)
                 .WithCardBrandTransId("transId")
                 .WithAmount(10m)
-                .WithTerminalRefNumber("1234")
                 .WithAutoSubstantiation(autoSub)
-                .WithInvoiceNumber("1234")
                 .Execute();
 
             Assert.IsNotNull(response);
@@ -137,6 +137,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                .Execute();
             Assert.IsNotNull(preAuthResponse);
             Assert.AreEqual("00", preAuthResponse.DeviceResponseCode);
+
+            Thread.Sleep(3500);
 
             var lodging = new Lodging {
                 FolioNumber = 1,
@@ -162,16 +164,17 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 .WithClerkId(123)
                 .WithCardBrandTransId("transId")
                 .WithAmount(50m)
-                .WithTerminalRefNumber(preAuthResponse.ReferenceNumber)
+                .WithTransactionId(preAuthResponse.TransactionId)
                 .WithLodging(lodging)
                 .Execute();
             Assert.IsNotNull(incrementalPreAuthResponse);
             Assert.AreEqual("00", incrementalPreAuthResponse.DeviceResponseCode);
 
+            Thread.Sleep(3500);
+
             var completionResponse = _device.Capture(145m)
                 .WithEcrId("13")
                 .WithTransactionId(preAuthResponse.TransactionId)
-                .WithTerminalRefNumber(preAuthResponse.ReferenceNumber)
                 .Execute();
 
             Assert.IsNotNull(completionResponse);
@@ -187,7 +190,6 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                     .WithTaxAmount(5m)
                     .WithGratuity(1m)
                     .WithTaxType(TaxType.TAXEXEMPT)
-                    //.WithInvoiceNumber("12")
                     .WithProcessCPC(1)
                     .Execute();
 
@@ -208,11 +210,25 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Thread.Sleep(1500);
             var captureResponse = _device.Capture(10.00m)
                 .WithEcrId("13")
-                .WithTransactionId(authResponse.TerminalRefNumber)
+                .WithTransactionId(authResponse.TransactionId)
                 .Execute();
             Assert.IsNotNull(authResponse);
             Assert.AreEqual("00", authResponse.DeviceResponseCode);
         }
+
+        [TestMethod]
+        public void DeletePreAuth() {
+            var response = _device.DeletePreAuth()
+                .WithEcrId("13")
+                .WithTransactionId("200071138640")
+                .WithAmount(1m)
+                .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.DeviceResponseText);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+        }
+        #endregion
 
         [TestMethod]
         public void Tokenize() {
@@ -221,18 +237,6 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 .WithClerkId(123)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("00", response.DeviceResponseCode);
-        }
-
-        [TestMethod]
-        public void DeletePreAuth() {
-            var response = _device.DeletePreAuth()
-                .WithEcrId("13")
-                .WithTransactionId("200071138640")
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual("Success", response.DeviceResponseText);
             Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
@@ -279,6 +283,8 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             CreditCardData card = new CreditCardData {
                 Token = response.Token
             };
+
+            Thread.Sleep(5000);
 
             var tokenResponse = _device.Sale(11m)
                 .WithEcrId(13)
@@ -336,8 +342,11 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
+        #region Unit test case for Void Transaction
         [TestMethod]
-        public void CreditVoid() {
+        // Test that voiding a credit sale by terminal reference number returns a successful response
+        public void CreditSale_WhenVoidedByTerminalRefNumber_ShouldReturnSuccess() {
+            // Perform a sale transaction
             var response = _device.Sale(10m)
                 .WithEcrId(13)
                 .WithClerkId(123)
@@ -346,20 +355,63 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.DeviceResponseCode);
 
+            // Wait for the transaction to settle before voiding
             Thread.Sleep(5000);
+
+            // Void the transaction using the terminal reference number
             var voidResponse = _device.Void()
-            //.WithTransactionId(response.TransactionId) // use TransactionId or TerminalRefNumber
-            .WithTerminalRefNumber(response.TerminalRefNumber)
-            .WithEcrId("13")
-            .Execute();
+                .WithTerminalRefNumber(response.TerminalRefNumber)
+                .WithEcrId("13")
+                .Execute();
 
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.DeviceResponseCode);
         }
 
         [TestMethod]
-        public void UpdateTaxInfoWithNonCommercialCardFailure() {
-            var responseSale = _device.Sale(10m)
+        // Test that voiding a credit sale by transaction ID returns a successful response
+        public void CreditSale_WhenVoidedByTransactionId_ShouldReturnSuccess() {
+            // Perform a sale transaction
+            var response = _device.Sale(10m)
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .WithGratuity(0m)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+
+            // Wait for the transaction to settle before voiding
+            Thread.Sleep(5000);
+
+            // Void the transaction using the transaction ID
+            var voidResponse = _device.Void()
+                .WithTransactionId(response.TransactionId)
+                .WithEcrId("13")
+                .Execute();
+
+            Assert.IsNotNull(voidResponse);
+            Assert.AreEqual("00", voidResponse.DeviceResponseCode);
+        }
+
+        [TestMethod]
+        // Test that attempting to void a transaction without providing a terminal reference number
+        // or transaction ID throws the expected GatewayException
+        public void CreditSale_VoidWithoutTransactionIdOrRefNumber_ShouldThrowGatewayException() {
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                var voidResponse = _device.Void()
+                    .WithEcrId("13")
+                    .Execute();
+            });
+            Assert.AreEqual("Unexpected Device Response : VOID003  - NO TRANNO OR REFERENCENUMBER SUPPLIED", ex.Message);
+        }
+        #endregion
+
+        #region Unit test case for UpdateTax
+        [TestMethod]
+        // Test that updating tax info on a non-commercial card throws the expected GatewayException
+        public void UpdateTaxInfo_ShouldThrowException_WhenCardIsNotCommercial() {
+            // Perform a sale transaction with a non-commercial card
+            var responseSale = _device.Sale(1m)
                 .WithGratuity(0m)
                 .WithEcrId(13)
                 .Execute();
@@ -368,18 +420,21 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("Success", responseSale.Status);
             Assert.AreEqual("00", responseSale.DeviceResponseCode);
 
+            // Wait for the transaction to settle before updating tax info
             Thread.Sleep(5000);
 
-            var response = _device.UpdateTaxInfo(responseSale.TransactionAmount)
-                .WithTerminalRefNumber(responseSale.TerminalRefNumber)
-                .WithTransactionId(responseSale.TransactionId)
-                .WithTaxType(TaxType.TAXEXEMPT)
-                .WithEcrId("1")
-                .Execute();
-
-            Assert.IsNotNull(response);
-            Assert.AreEqual("Failed", response.Status);
+            // Attempt to update tax info and verify that the expected exception is thrown
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                var response = _device.UpdateTaxInfo(responseSale.TransactionAmount)
+                    .WithTerminalRefNumber(responseSale.TerminalRefNumber)
+                    .WithTransactionId(responseSale.TransactionId)
+                    .WithTaxType(TaxType.TAXEXEMPT)
+                    .WithEcrId("1")
+                    .Execute();
+            });
+            Assert.AreEqual("Unexpected Device Response : CPC001 - NOT A COMMERCIAL CARD. CANNOT UPDATE TAX.", ex.Message);
         }
+
         [TestMethod]
         public void UpdateTaxInfo() {
             var responseSale = _device.Sale(10m)
@@ -404,6 +459,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("Success", response.Status);
             Assert.AreEqual("00", response.DeviceResponseCode);
         }
+        #endregion
 
         [TestMethod]
         public void UpdateLodgingDetails() {
@@ -425,7 +481,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 };
 
             var response = _device.UpdateLodginDetail(responseSale.TransactionAmount)
-                .WithTerminalRefNumber(responseSale.TerminalRefNumber)
+                .WithTransactionId(responseSale.TransactionId)
                 .WithLodgingData(lodging)
                 .WithEcrId("1")
                 .Execute();
@@ -468,19 +524,36 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
-        [TestMethod, ExpectedException(typeof(BuilderException))]
-        public void CreditVoidNoTransactionId() {
-            _device.Void()
-                .WithEcrId("13")
-                .WithTerminalRefNumber("12")
-                .Execute();
-        }
-
+        #region Unit test case for Refund Scenario
         [TestMethod]
         public void CreditRefundByCard() {
             var returnResponse = _device.Refund(14m)
                 .WithInvoiceNumber(new Random().Next(10000, 99999).ToString())
                 .WithEcrId(13)
+                .Execute();
+            Assert.IsNotNull(returnResponse);
+            Assert.AreEqual("00", returnResponse.DeviceResponseCode);
+        }
+
+        [TestMethod]
+        // Test that refunding a sale by transaction ID returns a successful response
+        public void CreditRefund_ByTransactionId_ShouldReturnSuccess() {
+            // Perform a sale transaction
+            var saleResponse = _device.Sale(2.00m)
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .WithGratuity(0m)
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+
+            Thread.Sleep(2500);
+
+            // Refund the sale using the transaction ID
+            var returnResponse = _device.Refund(2.00m)
+                .WithTransactionId(saleResponse.TransactionId)
+                .WithEcrId(13)
+                .WithAllowDuplicates(false)
+                .WithAuthCode("")
                 .Execute();
             Assert.IsNotNull(returnResponse);
             Assert.AreEqual("00", returnResponse.DeviceResponseCode);
@@ -507,7 +580,22 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
         }
 
         [TestMethod]
-        public void CreditTipAdjust() {
+        // Test that refunding with a zero amount throws the expected GatewayException
+        public void CreditRefund_WithZeroAmount_ShouldThrowException() {
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                _device.Refund(0)
+                .WithEcrId(13)
+                .Execute();
+            });
+            Assert.AreEqual("Unexpected Device Response : SALE004 - TRANSACTION CANCELLED DUE TO INVALID BASE AMOUNT", ex.Message);
+        }
+        #endregion
+
+        #region Unit test case for tipAdjust Scenario
+        [TestMethod]
+        // Test that adjusting the tip by terminal reference number updates the transaction amount and returns a successful response
+        public void CreditTipAdjust_ByTerminalRefNumber_ShouldAdjustTipSuccessfully() {
+            // Perform a sale transaction with zero tip
             var saleResponse = _device.Sale(10.00m)
                 .WithEcrId(13)
                 .WithClerkId(123)
@@ -517,6 +605,30 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
 
             Thread.Sleep(2500);
 
+            // Adjust the tip using the terminal reference number
+            var tipAdjustResponse = _device.TipAdjust(3.00m)
+                .WithTerminalRefNumber(saleResponse.TerminalRefNumber)
+                .WithEcrId("13")
+                .Execute();
+            Assert.IsNotNull(tipAdjustResponse);
+            Assert.AreEqual(13.00m, tipAdjustResponse.TransactionAmount);
+            Assert.AreEqual("00", tipAdjustResponse.DeviceResponseCode);
+        }
+
+        [TestMethod]
+        // Test that adjusting the tip by transaction ID updates the transaction amount and returns a successful response
+        public void CreditTipAdjust_ByTransactionId_ShouldAdjustTipSuccessfully() {
+            // Perform a sale transaction with zero tip
+            var saleResponse = _device.Sale(10.00m)
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .WithGratuity(0.00m)
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+
+            Thread.Sleep(2500);
+
+            // Adjust the tip using the transaction ID
             var tipAdjustResponse = _device.TipAdjust(3.00m)
                 .WithTransactionId(saleResponse.TransactionId)
                 .WithEcrId("13")
@@ -525,6 +637,30 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual(13.00m, tipAdjustResponse.TransactionAmount);
             Assert.AreEqual("00", tipAdjustResponse.DeviceResponseCode);
         }
+
+        [TestMethod]
+        // Test that adjusting the tip by invoice number updates the transaction amount and returns a successful response
+        public void CreditTipAdjust_ByInvoiceNumber_ShouldAdjustTipSuccessfully() {
+            // Perform a sale transaction with zero tip
+            var saleResponse = _device.Sale(10.00m)
+                .WithEcrId(13)
+                .WithClerkId(123)
+                .WithGratuity(0.00m)
+                .Execute();
+            Assert.IsNotNull(saleResponse);
+
+            Thread.Sleep(2500);
+
+            // Adjust the tip using a random invoice number
+            var tipAdjustResponse = _device.TipAdjust(3.00m)
+                .WithInvoiceNumber(new Random().Next(10000, 99999).ToString())
+                .WithEcrId("13")
+                .Execute();
+            Assert.IsNotNull(tipAdjustResponse);
+            Assert.AreEqual(13.00m, tipAdjustResponse.TransactionAmount);
+            Assert.AreEqual("00", tipAdjustResponse.DeviceResponseCode);
+        }
+        #endregion
 
         [TestMethod]
         public void EndOfDay() {
@@ -546,8 +682,11 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
+        #region Unit test case for SaleReversal Scenario
         [TestMethod]
-        public void SaleReversal() {
+        // Test that reversing a credit sale by terminal reference number returns a successful response
+        public void CreditSale_WhenReversedByTerminalRefNumber_ShouldReturnSuccess() {
+            // Perform a sale transaction
             var response = _device.Sale(10)
                 .WithGratuity(0m)
                 .WithEcrId(13)
@@ -557,10 +696,12 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("00", response.DeviceResponseCode);
             Assert.IsNotNull(response.TerminalRefNumber);
 
+            // Wait for the transaction to settle before reversing
             Thread.Sleep(5000);
+
+            // Reverse the transaction using the terminal reference number
             var reverseResponse = _device.Reverse()
-                //.WithTransactionId(response.TransactionId)
-                .WithTransactionId(response.TerminalRefNumber)
+                .WithTerminalRefNumber(response.TerminalRefNumber)
                 .WithEcrId("12")
                 .Execute();
 
@@ -569,10 +710,36 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
         }
 
         [TestMethod]
+        // Test that attempting to reverse a sale with an invalid terminal reference number throws the expected GatewayException
+        public void SaleReversal_WithInvalidTerminalRefNumber_ShouldThrowInvalidLengthException() {
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                var reverseResponse = _device.Reverse()
+                    .WithTerminalRefNumber("23")
+                    .WithEcrId("12")
+                    .Execute();
+            });
+            Assert.AreEqual("Unexpected Device Response : ERR011 - [tranNo:23]-INVALID LENGTH", ex.Message);
+        }
+        
+        [TestMethod]
+        // Test that attempting to reverse a sale without providing a terminal reference number
+        // throws the expected GatewayException indicating a missing mandatory field.
+        public void SaleReversal_WithoutTerminalRefNumber_ThrowsMissingMandatoryFieldException() {
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                var reverseResponse = _device.Reverse()
+                    .WithEcrId("12")
+                    .Execute();
+            });
+            Assert.AreEqual("Unexpected Device Response : ERR013 - [tranNo]-MISSING MANDATORY FIELD", ex.Message);
+        }
+        #endregion
+
+        [TestMethod]
         public void VerifyWithTokenCreation() {
             var response = _device.Verify()
                 .WithEcrId(13)
                 .WithRequestMultiUseToken(true)
+                .WithCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.IsNotNull(response.Token);
@@ -620,9 +787,12 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.AreEqual("00", response.DeviceResponseCode);
         }
 
+        #region Unit Test case for Connection Timeout Scenario
         [TestMethod]
-        [ExpectedException(typeof(MessageException), "Connection not established within the specified timeout.")]
-        public void testConnectionTimeout() {
+        // Test that a connection timeout during a sale operation throws the expected MessageException
+        // run this test case without connecting UPA device
+        public void TestConnectionTimeout_ShouldThrowException_WhenTimeoutOccurs() {
+            // Create a device with an intentionally short timeout to trigger a timeout exception
             IDeviceInterface timeoutDevice = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.NUCLEUS_SATURN_1000,
                 ConnectionMode = ConnectionModes.TCP_IP,
@@ -631,10 +801,19 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 Timeout = 1, // overly-short timeout value to trigger exception in UpaTcpInterface
                 RequestIdProvider = new RandomIdProvider()
             });
+
             Assert.IsNotNull(timeoutDevice);
 
-            var response = _device.Sale(123m)
-                .Execute();
+            // Assert that a MessageException is thrown and contains the expected timeout message
+            // With this code to properly assert the exception message using string.Equals:
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                var response = timeoutDevice.Sale(1m)
+                    .WithEcrId(13)
+                    .Execute();
+            });
+            Assert.IsTrue(
+                ex.Message.Contains("A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond."));
         }
+        #endregion
     }
 }

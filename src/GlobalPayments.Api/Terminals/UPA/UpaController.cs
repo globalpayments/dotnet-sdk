@@ -371,12 +371,12 @@ namespace GlobalPayments.Api.Terminals.UPA {
             transaction.Set("cashBackAmount", builder.CashBackAmount.ToCurrencyString(true));
             transaction.Set("taxAmount", builder.TaxAmount.ToCurrencyString(true));
             transaction.Set("invoiceNbr", builder.InvoiceNumber ?? null);
-            transaction.Set("referenceNumber",  !string.IsNullOrEmpty(builder.TerminalRefNumber) ? builder.TerminalRefNumber : builder.TransactionType == TransactionType.Capture ? builder.TransactionId : null);
+            transaction.Set("referenceNumber",  !string.IsNullOrEmpty(builder.TransactionId) ? builder.TransactionId : builder.TransactionType == TransactionType.Capture ? builder.TransactionId : null);
             if (builder.TransactionType == TransactionType.Void 
                 || builder.TransactionType == TransactionType.Reversal 
                 || (builder.TransactionType == TransactionType.Edit && builder.TransactionModifier == TransactionModifier.UpdateTaxDetail) 
                 || (builder.TransactionType == TransactionType.Edit && builder.TransactionModifier == TransactionModifier.TipAdjust)) {
-                transaction.Set("tranNo", !string.IsNullOrEmpty(builder.TransactionId) ? builder.TransactionId : null);
+                transaction.Set("tranNo", !string.IsNullOrEmpty(builder.TerminalRefNumber) ? builder.TerminalRefNumber : null);
             }
             transaction.Set("taxIndicator", builder.TaxExempt ?? null);
             transaction.Set("processCPC", builder.ProcessCPC ?? null);

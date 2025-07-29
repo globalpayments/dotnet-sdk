@@ -96,5 +96,6 @@ namespace GlobalPayments.Api.Entities {
         public string AuthProtectionEligibilityType { get; set; }
         public string AuthReference { get; set; }
         public decimal? FeeAmount { get; set; }
+        public Bank Bank { get; set; }
     }
 }

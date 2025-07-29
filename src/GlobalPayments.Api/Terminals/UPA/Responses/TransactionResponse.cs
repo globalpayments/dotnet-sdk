@@ -148,8 +148,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
             }
 
             ResponseId = host.GetValue<string>("responseId");
-            TransactionId = host.GetValue<string>("tranNo");
-            TerminalRefNumber = host.GetValue<string>("responseId");
+            TransactionId = host.GetValue<string>("referenceNumber");
+            TerminalRefNumber = host.GetValue<string>("tranNo");
             ResponseDateTime = host.GetValue<string>("respDateTime");
             GatewayResponseCode = host.GetValue<string>("gatewayResponseCode");
             GatewayResponsemessage = host.GetValue<string>("gatewayResponseMessage");
