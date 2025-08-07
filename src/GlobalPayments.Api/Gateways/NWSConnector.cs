@@ -482,8 +482,9 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 }
             }
-
-            request.Set(DataElementId.DE_127, forwardingData);
+            if (forwardingData.entries.Count > 0) {
+                request.Set(DataElementId.DE_127, forwardingData);
+            }
             return SendRequest(request, builder, orgCorr1, orgCorr2);
         }
 
@@ -751,16 +752,16 @@ namespace GlobalPayments.Api.Gateways {
                                 }
                             }
                         }
-                        if (originalPaymentMethod is IPinProtected pin)
-                        {
-                            string pinBlock = pin.PinBlock;
-                            if (!string.IsNullOrEmpty(pinBlock))
-                            {
-                                // DE 52: Personal Identification Number (PIN) Data - b8
-                                request.Set(DataElementId.DE_052, StringUtils.BytesFromHex(pinBlock.Substring(0, 16)));
+                        if (originalPaymentMethod is IPinProtected pin) {
+                            if (originalPaymentMethod is EBT && transactionType == TransactionType.Refund) {
+                                string pinBlock = pin.PinBlock;
+                                if (!string.IsNullOrEmpty(pinBlock)) {
+                                    // DE 52: Personal Identification Number (PIN) Data - b8
+                                    request.Set(DataElementId.DE_052, StringUtils.BytesFromHex(pinBlock.Substring(0, 16)));
 
-                                // DE 53: Security Related Control Information - LLVAR an..48
-                                request.Set(DataElementId.DE_053, pinBlock.Substring(16));
+                                    // DE 53: Security Related Control Information - LLVAR an..48
+                                    request.Set(DataElementId.DE_053, pinBlock.Substring(16));
+                                }
                             }
                         }
 

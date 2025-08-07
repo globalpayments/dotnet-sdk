@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v9.0.21 (07/28/25)
+## Latest - v9.0.23 (08/06/25)
+### Enhancement
+[NWS] - Added support for Pin Debit cards.
+
+## v9.0.21 (07/28/25)
 ### Enhancement
 [GPAPI] - Added SDK support for Open Banking PayU as a payment APM.
 
