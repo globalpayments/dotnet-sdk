@@ -63,5 +63,10 @@
         public const string CompleteEMVTransaction = "CompleteEMVTransaction";
         public const string ProcessCardTransaction = "ProcessCardTransaction";
         public const string ContinueCardTransaction = "ContinueCardTransaction";
+        public const string SaveConfigFile = "SaveConfigFile";
+        public const string SetLogoCarouselInterval = "SetLogoCarouselInterval";
+        public const string GetBatteryPercentage = "GetBatteryPercentage";
+        public const string InjectCarouselLogo = "InjectCarouselLogo";
+        public const string RemoveCarouselLogo = "RemoveCarouselLogo";
     }
 }

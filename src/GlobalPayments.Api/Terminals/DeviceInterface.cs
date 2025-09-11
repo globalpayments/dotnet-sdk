@@ -332,9 +332,24 @@ namespace GlobalPayments.Api.Terminals
         public virtual IDeviceScreen LoadUDData(UDData udData) {
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
         }
+        public virtual IDeviceResponse InjectCarouselLogo(UDData uDData) {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse RemoveCarouselLogo(UDData uDData) {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
         public virtual IDeviceScreen RemoveUDData(UDData udData) {
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
-        }        
+        }
+        public virtual IDeviceResponse SaveConfigFile(UpaConfigContent upaConfig) {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse SetLogoCarouselInterval(int intervalTime, bool isFullScreen) {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
+        public virtual IDeviceResponse GetBatteryPercentage() {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
         public virtual IDeviceResponse Scan(ScanData scanData = null) {
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
         }       

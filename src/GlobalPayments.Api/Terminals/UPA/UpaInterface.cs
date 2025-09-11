@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -279,6 +280,80 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var jsonParse = JsonDoc.Parse(jsonObject);
             return new TransactionResponse(jsonParse);
         }
+
+        /// <summary>
+        /// Injects a carousel logo into the terminal.
+        /// </summary>
+        /// <param name="udData"></param>
+        /// <returns></returns>
+        /// <exception cref="MessageException"></exception>
+        public override IDeviceResponse InjectCarouselLogo(UDData udData) {
+
+            if (string.IsNullOrEmpty(udData.FileName)) {
+                throw new MessageException($"{nameof(udData.FileName)} is a mandatory parameter.");
+            }
+            // Check prefix
+            if (!udData.FileName.StartsWith("brand_logo_", StringComparison.OrdinalIgnoreCase)) {
+                throw new MessageException("FileName must start with 'brand_logo_'.");
+            }
+            // Check extension
+            if (!Regex.IsMatch(udData.FileName, @"^brand_logo_[^\\\/:*?""<>|]+\.(jpg|jpeg|bmp|png|gif)$", RegexOptions.IgnoreCase)) {
+                throw new MessageException("FileName must have a valid extension (.jpg, .jpeg, .bmp, .png, .gif).");
+            }
+
+            // Extract file extension from FileName
+            var extension = Path.GetExtension(udData.FileName)?.TrimStart('.').ToLower();
+            if (string.IsNullOrEmpty(extension)) {
+                throw new MessageException("FileName must include a valid file extension.");
+            }
+
+            var requestId = _controller.RequestIdProvider.GetRequestId();
+            var content = string.Empty;
+            JsonDoc doc, baseRequest;
+            TerminalUtilities.BuildGeneralUpaRequest(requestId, EcrId, UpaTransType.InjectCarouselLogo, out doc, out baseRequest);
+            var request = baseRequest.SubElement("data");
+            var requestParams = request.SubElement("params");
+
+            content = $"data:image/{extension};base64,{TerminalUtilities.BuildToBase64Content(udData.FilePath, UpaTransType.InjectCarouselLogo, true)}";
+            requestParams.Set("fileName", udData.FileName)
+                         .Set("content", content);
+
+            var response = _controller.Send(TerminalUtilities.BuildUpaRequest(doc.ToString()));
+            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonParse = JsonDoc.Parse(jsonObject);
+            return new TransactionResponse(jsonParse);
+        }
+
+        /// <summary>
+        /// Removes a carousel logo from the terminal.
+        /// </summary>
+        /// <param name="udData"></param>
+        /// <returns></returns>
+        /// <exception cref="MessageException"></exception>
+        public override IDeviceResponse RemoveCarouselLogo(UDData udData) {
+            if (string.IsNullOrEmpty(udData.FileName)) {
+                throw new MessageException($"{nameof(udData.FileName)} is a mandatory parameter.");
+            }
+            // Ensure fileName includes an extension and does not contain a file path
+            if (!Regex.IsMatch(udData.FileName, @"^[^\\\/:*?""<>|]+\.[a-zA-Z0-9]+$")) {
+                throw new MessageException("FileName must include a file extension and must not contain a file path.");
+            }
+            
+            var requestId = _controller.RequestIdProvider.GetRequestId();
+            var content = string.Empty;
+            JsonDoc doc, baseRequest;
+            TerminalUtilities.BuildGeneralUpaRequest(requestId, EcrId, UpaTransType.RemoveCarouselLogo, out doc, out baseRequest);
+            var request = baseRequest.SubElement("data");
+            var requestParams = request.SubElement("params");
+
+            requestParams.Set("fileName", udData.FileName);
+
+            var response = _controller.Send(TerminalUtilities.BuildUpaRequest(doc.ToString()));
+            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonParse = JsonDoc.Parse(jsonObject);
+            return new TransactionResponse(jsonParse);
+        }
+
         public override IDeviceScreen LoadUDData(UDData udData) {
             if (string.IsNullOrEmpty(udData.FileName)) {
                 throw new UnsupportedTransactionException($"{nameof(udData.FileName)} is a mandatory parameter.");
@@ -686,6 +761,85 @@ namespace GlobalPayments.Api.Terminals.UPA {
             var jsonParse = JsonDoc.Parse(jsonObject);
             return new TransactionResponse(jsonParse);
         }
+
+        /// <summary>
+        /// Saves a configuration file to the terminal.
+        /// </summary>
+        /// <param name="upaConfig">The configuration content to be saved.</param>
+        /// <returns>A device response indicating the result of the operation.</returns>
+        /// <exception cref="MessageException">
+        /// Thrown if upaConfig is null, FileContent is null or empty, or Length is out of range.
+        /// </exception>
+        public override IDeviceResponse SaveConfigFile(UpaConfigContent upaConfig) {
+            if (upaConfig == null) {
+                throw new MessageException("UpaConfigContent is invalid: upaConfig must not be null.");
+            }
+            if (string.IsNullOrEmpty(upaConfig.FileContent)) {
+                throw new MessageException("UpaConfigContent is invalid: FileContent must not be null or empty.");
+            }
+            if (upaConfig.Length < 0 || upaConfig.Length > 102400) {
+                throw new MessageException("UpaConfigContent is invalid: Length must be between 0 and 102400.");
+            }
+
+            var requestId = _controller.RequestIdProvider.GetRequestId();
+
+            JsonDoc doc, baseRequest;
+            TerminalUtilities.BuildGeneralUpaRequest(requestId, EcrId, UpaTransType.SaveConfigFile, out doc, out baseRequest);
+            var request = baseRequest.SubElement("data");
+            var requestParams = request.SubElement("params");
+            requestParams.Set("configType", ((int)upaConfig.ConfigType).ToString())
+                .Set("fileContents", upaConfig.FileContent.ToString())
+                .Set("length", upaConfig.Length.ToString())
+                .Set("reinitialize", upaConfig.Reinitialize.HasValue ? ((int)upaConfig.Reinitialize.Value).ToString() : "0");
+
+            var response = _controller.Send(TerminalUtilities.BuildUpaRequest(doc.ToString()));
+            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonParse = JsonDoc.Parse(jsonObject);
+            return new TransactionResponse(jsonParse);
+        }
+
+        /// <summary>
+        /// Sets the interval time for the logo carousel display on the terminal.
+        /// </summary>
+        /// <param name="intervalTime">The interval time in seconds (must be between 0 and 9 inclusive).</param>
+        /// <param name="isFullScreen">Indicates whether the carousel should be displayed in full screen mode.</param>
+        /// <returns>A device response indicating the result of the operation.</returns>
+        /// <exception cref="MessageException">Thrown if intervalTime is out of the valid range (0-9).</exception>
+        public override IDeviceResponse SetLogoCarouselInterval(int intervalTime, bool isFullScreen = false) {
+            // Validate intervalTime: must be between 0 and 9 (inclusive)
+            if (intervalTime < 0 || intervalTime > 9) {
+                throw new MessageException("intervalTime must be between 0 and 9 seconds.");
+            }
+
+            var requestId = _controller.RequestIdProvider.GetRequestId();
+
+            JsonDoc doc, baseRequest;
+            TerminalUtilities.BuildGeneralUpaRequest(requestId, EcrId, UpaTransType.SetLogoCarouselInterval, out doc, out baseRequest);
+            var request = baseRequest.SubElement("data");
+            var requestParams = request.SubElement("params");
+            requestParams.Set("intervalTime", intervalTime.ToString())
+                .Set("isFullScreen", isFullScreen.ToString());
+
+            var response = _controller.Send(TerminalUtilities.BuildUpaRequest(doc.ToString()));
+            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonParse = JsonDoc.Parse(jsonObject);
+            return new TransactionResponse(jsonParse);
+        }
+
+        /// <summary>
+        /// Retrieves the current battery percentage from the terminal.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="IDeviceResponse"/> containing the battery percentage information.
+        /// </returns>
+        public override IDeviceResponse GetBatteryPercentage() {
+            var requestId = _controller.RequestIdProvider.GetRequestId();
+            var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.GetBatteryPercentage));
+            string jsonObject = Encoding.UTF8.GetString(response);
+            var jsonParse = JsonDoc.Parse(jsonObject);
+            return new TransactionResponse(jsonParse);
+        }
+
         public override IDeviceResponse GetEncryptionType() {
             var requestId = _controller.RequestIdProvider.GetRequestId();
             var response = _controller.Send(TerminalUtilities.BuildUpaAdminRequest(requestId, EcrId, UpaTransType.GetEncryptionType));

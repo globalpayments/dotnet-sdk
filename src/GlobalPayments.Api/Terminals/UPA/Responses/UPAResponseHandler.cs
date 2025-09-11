@@ -144,6 +144,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public string TacOnline { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public string EcrId { get; set; }
+        public int BatteryLevel { get; set; }
         #endregion
 
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";

@@ -5,6 +5,7 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Terminals.Abstractions;
 using GlobalPayments.Api.Terminals.Enums;
+using GlobalPayments.Api.Terminals.UPA;
 using GlobalPayments.Api.Terminals.UPA.Responses;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +24,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.158",
+                IpAddress = "192.168.1.13",
                 Port = "8081",
                 Timeout = 15000,
                 RequestIdProvider = new RandomIdProvider(),
@@ -787,6 +788,348 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.IsNotNull(response);
             Assert.AreEqual("Success", response.Status);
         }
+
+        #region InjectCarouselLogo Command Unit Tests
+
+        [TestMethod]
+        public void InjectCarouselLogo_ShouldReturnSuccessStatus() {
+            UDData data = new UDData();
+            data.FileName = "brand_logo_test.png";
+            // The image files files are located in GlobalPayments.Api.Tests\Terminals\UPA\FileExamples\
+            // If the test case is failing try by Updating the file path with absolute path as below,
+            // for example: C:\Codes\sdk-private\tests\GlobalPayments.Api.Tests\Terminals\UPA\FileExamples\brand_logo_test.png
+            data.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\brand_logo_test.png";
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            var response = _device.InjectCarouselLogo(data);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void InjectCarouselLogo_ShouldThrowException_WhenFileNameDoesNotStartWithBrandLogo() {
+            UDData data = new UDData();
+            data.FileName = "test.png";
+            data.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\test.png";
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                var response = _device.InjectCarouselLogo(data);
+            });
+            Assert.AreEqual("FileName must start with 'brand_logo_'.", ex.Message);
+        }
+
+        [TestMethod]
+        public void InjectCarouselLogo_ShouldThrowException_WhenFileExtensionIsInvalid() {
+            UDData data = new UDData();
+            data.FileName = "brand_logo_test.html";
+            data.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\brand_logo_test.html";
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                var response = _device.InjectCarouselLogo(data);
+            });
+            Assert.AreEqual("FileName must have a valid extension (.jpg, .jpeg, .bmp, .png, .gif).", ex.Message);
+        }
+        #endregion
+
+        #region RemoveCarouselLogo Command Unit Tests
+        [TestMethod]
+        public void RemoveCarouselLogo_ShouldReturnSuccessStatus() {
+            UDData data = new UDData();
+            data.FileName = "brand_logo_test.png";
+            data.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\brand_logo_test.png";
+            _device.OnMessageSent += (message) =>
+            {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            var response = _device.RemoveCarouselLogo(data);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void RemoveCarouselLogo_ShouldThrowException_WhenFileNameHasNoExtension() {
+            UDData data = new UDData();
+            data.FileName = "brand_logo_test";
+            data.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\brand_logo_test.png";
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                var response = _device.RemoveCarouselLogo(data);
+            });
+
+            Assert.AreEqual("FileName must include a file extension and must not contain a file path.", ex.Message);
+        }
+
+        [TestMethod]
+        public void RemoveCarouselLogo_ShouldThrowException_WhenFileNameContainsFilePath() {
+
+            UDData data = new UDData();
+            data.FileName = "Terminals\\UPA\\FileExamples\\brand_logo_test.png";
+            data.FilePath = $@"{System.IO.Directory.GetCurrentDirectory()}\Terminals\UPA\FileExamples\brand_logo_test.png";
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                var response = _device.RemoveCarouselLogo(data);
+            });
+
+            Assert.AreEqual("FileName must include a file extension and must not contain a file path.", ex.Message);
+        }
+        #endregion
+
+        #region SaveConfigFile Command Tests
+        [TestMethod]
+        // Test that SaveConfigFile returns Success when a valid UpaConfigContent is provided and no reinitialization is set
+        public void SaveConfigFile_ShouldReturnSuccess_WhenValidConfigProvided_NoReinitialize() {
+            // Arrange: Create a valid UpaConfigContent object with XML configuration
+            var upaConfigContent = new UpaConfigContent() {
+                ConfigType = TerminalConfigType.ContactTerminalConfiguration,
+                FileContent = "",
+                Length = 100,
+                Reinitialize = Reinitialize.NoReinitializeApplication
+            };
+
+            upaConfigContent.FileContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<TerminalConfiguration>\n" +
+                "    <ContactTerminalConfiguration>\n" +
+                "        <TerminalType>Contact</TerminalType>\n" +
+                "        <TerminalCapabilities>...</TerminalCapabilities>\n" +
+                "    </ContactTerminalConfiguration>\n" +
+                "</TerminalConfiguration>";
+
+            // Attach a handler to OnMessageSent to verify a message is sent
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            // Set the ECR ID for the device
+            _device.EcrId = "13";
+
+            // Act: Call SaveConfigFile with the valid config
+            var response = _device.SaveConfigFile(upaConfigContent);
+
+            // Assert: The response should not be null and should indicate Success
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        // Test that SaveConfigFile returns Success when a valid UpaConfigContent is provided and reinitialization is set
+        public void SaveConfigFile_ReturnsSuccess_WhenValidConfigProvided_ReinitializeApplication() {
+            // Arrange: Create a valid UpaConfigContent object with XML configuration
+            var upaConfigContent = new UpaConfigContent() {
+                ConfigType = TerminalConfigType.ContactTerminalConfiguration,
+                FileContent = "",
+                Length = 100,
+                Reinitialize = Reinitialize.ReinitializeApplication
+            };
+
+            upaConfigContent.FileContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<TerminalConfiguration>\n" +
+                "    <ContactTerminalConfiguration>\n" +
+                "        <TerminalType>Contact</TerminalType>\n" +
+                "        <TerminalCapabilities>...</TerminalCapabilities>\n" +
+                "    </ContactTerminalConfiguration>\n" +
+                "</TerminalConfiguration>";
+
+            // Attach a handler to OnMessageSent to verify a message is sent
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            // Set the ECR ID for the device
+            _device.EcrId = "13";
+
+            // Act: Call SaveConfigFile with the valid config
+            var response = _device.SaveConfigFile(upaConfigContent);
+
+            // Assert: The response should not be null and should indicate Success
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        // Test that SaveConfigFile throws a MessageException when upaConfig is null
+        public void SaveConfigFile_ShouldThrow_WhenUpaConfigIsNull() {
+
+            // Test that SaveConfigFile throws a MessageException when upaConfig is null
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                _device.SaveConfigFile(null);
+            });
+
+            Assert.AreEqual("UpaConfigContent is invalid: upaConfig must not be null.", ex.Message);
+        }
+
+        [TestMethod]
+        // Test that SaveConfigFile throws a MessageException when FileContent is null or empty
+        public void SaveConfigFile_ShouldThrow_WhenFileContentIsNullOrEmpty() {
+            // Create a UpaConfigContent object with specific properties for testing
+            var upaConfig = new UpaConfigContent {
+                ConfigType = TerminalConfigType.ContactTerminalConfiguration,
+                FileContent = "",
+                Length = 100
+            };
+            // Expect a MessageException when FileContent is empty
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                _device.SaveConfigFile(upaConfig);
+            });
+            Assert.AreEqual("UpaConfigContent is invalid: FileContent must not be null or empty.", ex.Message);
+        }
+
+        [TestMethod]
+        // Test that SaveConfigFile throws a MessageException when Length is negative
+        public void SaveConfigFile_ShouldThrow_WhenLengthIsNegative() {
+            // Create a UpaConfigContent with empty FileContent to test validation
+            var upaConfig = new UpaConfigContent {
+                ConfigType = TerminalConfigType.ContactTerminalConfiguration,
+                FileContent = "",
+                Length = -1
+            };
+            upaConfig.FileContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+               "<TerminalConfiguration>\n" +
+               "    <ContactTerminalConfiguration>\n" +
+               "        <TerminalType>Contact</TerminalType>\n" +
+               "        <TerminalCapabilities>...</TerminalCapabilities>\n" +
+               "    </ContactTerminalConfiguration>\n" +
+               "</TerminalConfiguration>";
+            // Expect a MessageException with the correct error message
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                _device.SaveConfigFile(upaConfig);
+            });
+            Assert.AreEqual("UpaConfigContent is invalid: Length must be between 0 and 102400.", ex.Message);
+        }
+
+        [TestMethod]
+        // Test that SaveConfigFile throws a MessageException when Length is too large (greater than 102400)
+        public void SaveConfigFile_ShouldThrow_WhenLengthIsTooLarge() {
+            // Create a UpaConfigContent with an invalid Length (too large)
+            var upaConfig = new UpaConfigContent {
+                ConfigType = TerminalConfigType.ContactTerminalConfiguration,
+                FileContent = "<xml>...</xml>",
+                Length = 10200000
+            };
+            // Expect a MessageException with the correct error message
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                _device.SaveConfigFile(upaConfig);
+            });
+            Assert.AreEqual("UpaConfigContent is invalid: Length must be between 0 and 102400.", ex.Message);
+        }
+
+        #endregion
+
+        #region SetLogoCarouselInterval Command Tests
+        [TestMethod]
+        // Test that SetLogoCarouselInterval returns Success when a valid interval is provided
+        public void SetLogoCarouselInterval_ReturnsSuccess_WhenValidIntervalProvided_IsFullScreenFalse() {
+            bool isFullScreen = false;
+            int intervalTime = 5;
+            // Attach a handler to OnMessageSent to verify a message is sent
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            // Set the ECR ID for the device
+            _device.EcrId = "13";
+
+            // Call SetLogoCarouselInterval with a valid interval and verify the response
+            var response = _device.SetLogoCarouselInterval(intervalTime, isFullScreen);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        // Test that SetLogoCarouselInterval returns Success when a valid interval is provided
+        public void SetLogoCarouselInterval_ReturnsSuccess_WhenValidIntervalProvided_IsFullScreenTrue() {
+            bool isFullScreen = true;
+            int intervalTime = 5;
+            // Attach a handler to OnMessageSent to verify a message is sent
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            // Set the ECR ID for the device
+            _device.EcrId = "13";
+
+            // Call SetLogoCarouselInterval with a valid interval and verify the response
+            var response = _device.SetLogoCarouselInterval(intervalTime, isFullScreen);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        // Test that SetLogoCarouselInterval throws a MessageException when the interval is out of the valid range (0-9 seconds)
+        [TestMethod]
+        public void SetLogoCarouselInterval_ShouldThrowMessageException_WhenIntervalIsOutOfRange() {
+            bool isFullScreen = true;
+            int intervalTime = 12;
+            // Attach a handler to OnMessageSent to verify a message is sent
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            // Set the ECR ID for the device
+            _device.EcrId = "13";
+
+            // Expect a MessageException when interval is out of range
+            var ex = Assert.ThrowsException<MessageException>(() => {
+                var response = _device.SetLogoCarouselInterval(intervalTime, isFullScreen);
+            });
+
+            Assert.AreEqual("intervalTime must be between 0 and 9 seconds.", ex.Message);
+        }
+        #endregion
+
+        #region GetBatteryPercentage Command Tests
+
+        [TestMethod]
+        // Test that GetBatteryPercentage returns a valid response containing BatteryLevel and Success status
+        public void GetBatteryPercentage_ValidResponse_ContainsBatteryLevelAndSuccessStatus() {
+            // Attach a handler to OnMessageSent to ensure a message is sent
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            // Call GetBatteryPercentage and validate the response
+            var response = _device.GetBatteryPercentage();
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(((UPAResponseHandler)response).BatteryLevel);
+            Assert.AreEqual(100, ((UPAResponseHandler)response).BatteryLevel);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        // Test that GetBatteryPercentage throws a MessageException with the expected message when a connection timeout occurs
+        public void GetBatteryPercentage_ShouldThrowMessageException_WhenConnectionTimeout() {
+            // Attach a handler to OnMessageSent to ensure a message is sent
+            _device.OnMessageSent += (message) => {
+                Assert.IsNotNull(message);
+            };
+            _device.EcrId = "13";
+
+            // Assert that calling GetBatteryPercentage throws a MessageException with the correct message
+            var Ex = Assert.ThrowsException<MessageException>(() => {
+                _device.GetBatteryPercentage();
+            });
+            Assert.AreEqual("Connection not established within the specified timeout.", Ex.Message);
+        }
+        #endregion
 
         #region helper methods
         private void SaveSignatureFile(byte[] signatureData, string filename) {

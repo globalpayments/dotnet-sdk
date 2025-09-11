@@ -49,23 +49,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     .Set("currency_conversion", builder.DccRateData == null ? null : new JsonDoc()
                         .Set("id", builder.DccRateData?.DccId));
 
-                if (builder.PaymentMethod is TransactionReference transactionReference) {
-
-                    var apmResponse = transactionReference.AlternativePaymentResponse;
-                    bool isBlik = apmResponse?.ProviderName.Equals(GpApiMapping.BLIK, StringComparison.OrdinalIgnoreCase) ?? false;
-
-                    if (isBlik) {
-                        var apm = new JsonDoc()
-                            .Set("provider", apmResponse.ProviderName)
-                            .Set("redirect_url", apmResponse.RedirectUrl);
-
-                        var payment_method = new JsonDoc()
-                            .Set("apm", apm);
-
-                        data.Set("payment_method", payment_method);
-                    }
-                }
-
                 return new Request {
                     Verb = HttpMethod.Post,
                     Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{builder.TransactionId}/refund",

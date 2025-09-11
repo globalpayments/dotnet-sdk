@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v9.0.23 (08/06/25)
+## Latest - v9.0.24 (09/10/25)
+### Enhancement
+[UPA] - Added support for FI/SI Command SaveConfigFile, SetLogoCarouselInterval and GetBatteryPercentage.
+[UPA] - Added support for SI Command InjectCarouselLogo and RemoveCarouselLogo.
+[GPAPI] - Added Test Cases of the Blik and PayU alternative payment method handling in the SDK.
+
+## v9.0.23 (08/06/25)
 ### Enhancement
 [NWS] - Added support for Pin Debit cards.
 

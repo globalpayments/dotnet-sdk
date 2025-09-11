@@ -31,6 +31,9 @@ namespace GlobalPayments.Api.Terminals {
         IDeviceResponse ReturnToIdle();
         IDeviceScreen LoadUDData(UDData udData);
         IDeviceScreen RemoveUDData(UDData udData);        
+        IDeviceResponse SaveConfigFile(UpaConfigContent upaConfig);
+        IDeviceResponse SetLogoCarouselInterval(int intervalTime, bool isFullScreen);
+        IDeviceResponse GetBatteryPercentage();
         IDeviceResponse Scan(ScanData scanData = null);        
         IDeviceResponse Print(PrintData printData);
         IDeviceResponse SetTimeZone(string timezone);
@@ -115,6 +118,9 @@ namespace GlobalPayments.Api.Terminals {
         IBatchCloseResponse BatchClose();
         IBatchClearResponse BatchClear();
         IEODResponse EndOfDay();
+
+        IDeviceResponse InjectCarouselLogo(UDData uDData);
+        IDeviceResponse RemoveCarouselLogo(UDData uDData);
         #endregion
 
         #region Credit Calls

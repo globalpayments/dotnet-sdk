@@ -22,6 +22,10 @@ namespace GlobalPayments.Api.Terminals.UPA {
             if (response == null) {
                 return;
             }
+            if (Command.Equals("GetBatteryPercentage")) {
+                BatteryLevel = response.Get("cmdResult").GetValue<int>("BatteryLevel");
+            }
+
             var responseData = response.Get("data");
             if (responseData == null) {
                 return;
