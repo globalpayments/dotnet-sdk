@@ -6,13 +6,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Tests.Terminals;
 using GlobalPayments.Api.Utils.Logging;
+using Newtonsoft.Json.Linq;
+using System.Threading;
+using GlobalPayments.Api.Entities.Reporting;
 
 namespace GlobalPayments.Api.Tests.Portico {
     [TestClass]
     public class PorticoReportingTests {
 
         private IncrementalNumberProvider _generator;
-
+        private DateTime StartDate { get; set; }
+        private DateTime EndDate { get; set; }
         CreditCardData card;
         CreditTrackData track;
         CreditCardData VisaManual { get; set; }
@@ -36,12 +40,19 @@ namespace GlobalPayments.Api.Tests.Portico {
         [TestInitialize]
         public void Init()
         {
-            ServicesContainer.ConfigureService(new PorticoConfig
-            {
+            ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
                 IsSafDataSupported = true,
                 RequestLogger = new RequestConsoleLogger()
             });
+
+            var porticoConfig = new PorticoConfig {
+                SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A",
+                IsSafDataSupported = true,
+                RequestLogger = new RequestConsoleLogger(),
+                //ServiceUrl = ServiceEndpoints.PORTICO_PRODUCTION,
+            };
+            ServicesContainer.ConfigureService(porticoConfig,"ICSProdConfig");
 
             Address = new Address
             {
@@ -64,6 +75,9 @@ namespace GlobalPayments.Api.Tests.Portico {
                 ExpYear = 2020,
                 Cvn = "999"
             };
+
+            StartDate = DateTime.UtcNow.AddDays(-100);
+            EndDate = DateTime.UtcNow;
         }
         [TestMethod]
         public void ReportActivity()
@@ -76,6 +90,7 @@ namespace GlobalPayments.Api.Tests.Portico {
             Assert.IsNotNull(summary);
             Assert.IsTrue(summary.Count > 0);
         }
+
         [TestMethod]
         public void ReportTransactionDetailGetShippingDate()
         {
@@ -733,5 +748,140 @@ namespace GlobalPayments.Api.Tests.Portico {
                 .Execute();
             Assert.IsNotNull(response);
         }
+
+        #region ReportTokenUpdaterHistory Unit Test cases
+
+        [TestMethod]
+        public void ReportTokenUpdaterHistory_WithStartDateAndResultTypeDetails_ReturnsValidResults() {
+
+            // Arrange: Build a token updater history report request with a start date and result type set to 'Details'
+            var response = ReportingService.TokenUpdaterHistory()
+                 .WithStartDate(StartDate)
+                 .WithTokenUpdaterHistoryResultType(TokenUpdaterHistoryResultType.Details)
+                 .Execute("ICSProdConfig");
+
+            // Assert: Validate the response and ensure all expected fields are populated
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.ReportStartDate);
+            Assert.IsNotNull(response.ReportEndDate);
+            Assert.IsTrue(response.TotalMatchingRecords > 0);
+            Assert.IsTrue(response.Results.Count > 0);
+            Assert.IsNotNull(response.Results[0].TokenValue);
+            Assert.IsNotNull(response.Results[0].NewExpirationDate);
+            Assert.IsNotNull(response.Results[0].PreviousCardNumber);
+            Assert.IsNotNull(response.Results[0].UpdateAction);
+            Assert.IsNotNull(response.Results[0].UpdateDate);
+        }
+
+        [TestMethod]
+        public void ReportTokenUpdaterHistory_WithAllCriteria_ReturnsExpectedDetails() {
+
+            // Arrange: Build a token updater history report request with all available criteria
+            var response = ReportingService.TokenUpdaterHistory()
+                 .WithStartDate(StartDate)
+                 .WithEndDate(EndDate)
+                 .WithTokenValue("08V9cW16EzLhP9dYUCWC1111")
+                 .WithLimit(100)
+                 .WithOffset(0)
+                 .WithTokenUpdaterHistoryResultType(TokenUpdaterHistoryResultType.Details)
+                 .Execute("ICSProdConfig");
+
+            // Assert: Validate the response and ensure all expected fields are populated
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.ReportStartDate);
+            Assert.IsNotNull(response.ReportEndDate);
+            Assert.IsTrue(response.TotalMatchingRecords > 0);
+            Assert.IsTrue(response.Results.Count > 0);
+
+            // Assert: The first result should match the requested token value
+            Assert.AreEqual("xa64AO16AI3uSN3CYbSS5340", response.Results[0].TokenValue);
+
+            // Assert: Ensure all required fields in the result are populated
+            Assert.IsNotNull(response.Results[0].NewExpirationDate);
+            Assert.IsNotNull(response.Results[0].PreviousCardNumber);
+            Assert.IsNotNull(response.Results[0].UpdateAction);
+            Assert.IsNotNull(response.Results[0].UpdateDate);
+        }
+
+        [TestMethod]
+        public void ReportTokenUpdaterHistory_WithStartDateAndEndDateAndResultTypeDetails() {
+
+            // Arrange: Build a token updater history report request with a start date,end date and result type set to 'Details'
+            var response = ReportingService.TokenUpdaterHistory()
+                 .WithStartDate(StartDate)
+                 .WithEndDate(EndDate)
+                 .WithTokenUpdaterHistoryResultType(TokenUpdaterHistoryResultType.Details)
+                 .Execute("ICSProdConfig");
+
+            // Assert: Validate the response and ensure all expected fields are populated
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.ReportStartDate);
+            Assert.IsNotNull(response.ReportEndDate);
+            Assert.IsTrue(response.TotalMatchingRecords > 0);
+            Assert.IsTrue(response.Results.Count > 0);
+            Assert.IsNotNull(response.Results[0].TokenValue);
+            Assert.IsNotNull(response.Results[0].NewExpirationDate);
+            Assert.IsNotNull(response.Results[0].PreviousCardNumber);
+            Assert.IsNotNull(response.Results[0].UpdateAction);
+            Assert.IsNotNull(response.Results[0].UpdateDate);
+        }
+
+        [TestMethod]
+        public void ReportTokenUpdaterHistory_WithStartDateAndCountsResultType_ReturnsValidCounts() {
+
+            // Arrange: Build a token updater history report request with a start date and result type set to 'Counts'
+            var response = ReportingService.TokenUpdaterHistory()
+                 .WithStartDate(StartDate)
+                 .WithTokenUpdaterHistoryResultType(TokenUpdaterHistoryResultType.Counts)
+                 .Execute("ICSProdConfig");
+
+            // Assert: Validate the response and ensure all expected count fields are populated
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.ReportStartDate);
+            Assert.IsNotNull(response.ReportEndDate);
+            Assert.IsTrue(response.TotalMatchingRecords > 0);
+            Assert.IsTrue(response.CountUpdateExpirationDate > 0);
+        }
+
+        [TestMethod]
+        public void ReportTokenUpdaterHistory_WithStartAndEndDate_TokenValue_LimitOffset_CountsType_ReturnsResponse() {
+
+            // Arrange: Build a token updater history report request with start date, end date
+            // and token value, limit, offset, and result type set to 'Counts'
+            var response = ReportingService.TokenUpdaterHistory()
+                 .WithStartDate(StartDate)
+                 .WithEndDate(EndDate)
+                 .WithTokenValue("08V9cW16EzLhP9dYUCWC1111")
+                 .WithLimit(5)
+                 .WithOffset(0)
+                 .WithTokenUpdaterHistoryResultType(TokenUpdaterHistoryResultType.Counts)
+                 .Execute("ICSProdConfig");
+
+            // Assert: Validate the response and ensure all expected count fields are populated
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.ReportStartDate);
+            Assert.IsNotNull(response.ReportEndDate);
+            Assert.IsTrue(response.TotalMatchingRecords > 0);
+            Assert.IsTrue(response.CountUpdateExpirationDate > 0);
+        }
+
+        [TestMethod]
+        public void ReportTokenUpdaterHistory_WithStartDateAndEndDateAndResultTypeCounts() {
+
+            // Arrange: Build a token updater history report request with a start date,end date and result type set to 'Counts'
+            var response = ReportingService.TokenUpdaterHistory()
+                 .WithStartDate(StartDate)
+                 .WithEndDate(EndDate)
+                 .WithTokenUpdaterHistoryResultType(TokenUpdaterHistoryResultType.Counts)
+                 .Execute("ICSProdConfig");
+
+            // Assert: Validate the response and ensure all expected fields are populated
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.ReportStartDate);
+            Assert.IsNotNull(response.ReportEndDate);
+            Assert.IsTrue(response.TotalMatchingRecords > 0);
+            Assert.IsTrue(response.CountUpdateExpirationDate > 0);
+        }
+        #endregion
     }
 }

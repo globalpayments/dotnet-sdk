@@ -639,7 +639,29 @@ namespace GlobalPayments.Api.Entities {
 
         FindAccountsPaged = 1 << 27,
 
-        FindAccountDetail = 1 << 28
+        FindAccountDetail = 1 << 28,
+
+        /// <summary>
+        /// Indicates a Token Updater History report.
+        /// </summary>
+        TokenUpdaterHistory = 1 << 29
+    }
+
+    /// <summary>
+    /// Specifies the type of result returned for a token updater history action.
+    /// </summary>
+    /// <remarks>
+    /// This corresponds to the <c>TokenUpdaterHistoryActionResultType</c> simple type in the XML schema.
+    /// </remarks>
+    public enum TokenUpdaterHistoryResultType {
+        /// <summary>
+        /// Indicates that the result contains only counts (summary information).
+        /// </summary>
+        Counts,
+        /// <summary>
+        /// Indicates that the result contains detailed information.
+        /// </summary>
+        Details
     }
 
     /// <summary>

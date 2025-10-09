@@ -7,6 +7,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using GlobalPayments.Api.Entities.Reporting;
 
 namespace GlobalPayments.Api.Gateways {
     internal class PorticoConnector : XmlGateway, IPaymentGateway, IReportingService {
@@ -678,6 +679,16 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(criteria, "AltPaymentStatus", trb.SearchBuilder.AltPaymentStatus);
                     et.SubElement(criteria, "FullyCapturedInd", trb.SearchBuilder.FullyCaptured);
                     et.SubElement(criteria, "SAFIndicator", trb.SearchBuilder.SAFIndicator);
+                    
+                }
+
+                if (reportType == ReportType.TokenUpdaterHistory) {
+                    et.SubElement(transaction, "ReportStartDate", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+                    et.SubElement(transaction, "ReportEndDate", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK")); 
+                    et.SubElement(transaction, "TokenValue", trb.TokenValue);
+                    et.SubElement(transaction, "Limit", trb.Limit);
+                    et.SubElement(transaction, "Offset", trb.Offset);
+                    et.SubElement(transaction, "Action", trb.TokenUpdaterHistoryResultType.ToString());
                 }
 
                 if (
@@ -1149,7 +1160,40 @@ namespace GlobalPayments.Api.Gateways {
 
                 }
                 rvalue = summary as T;
-                return rvalue;
+               
+            }
+            
+            if(reportType.HasFlag(ReportType.TokenUpdaterHistory)) {
+
+                var tokenUpdaterHistory = new TokenUpdaterHistoryResponse {
+                    CountAccountsClosed = doc.GetValue<int>("CountAccountsClosed"),
+                    CountContactCardholder = doc.GetValue<int>("CountContactCardholder"),
+                    CountUpdateCardNumber = doc.GetValue<int>("CountUpdateCardNumber"),
+                    CountUpdateExpirationDate = doc.GetValue<int>("CountUpdateExpirationDate"),
+                    Limit = doc.GetValue<int>("Limit"),
+                    Offset = doc.GetValue<int>("Offset"),
+                    ReportEndDate = doc.GetValue<DateTime>("ReportEndDate"),
+                    ReportStartDate = doc.GetValue<DateTime>("ReportStartDate"),
+                    TotalMatchingRecords = doc.GetValue<int>("TotalMatchingRecords"),
+                    Results = new List<TokenDetails>()
+                };
+
+                var resultsElement = doc.Get("Results");
+
+                if (resultsElement != null) {
+                    foreach (var history in resultsElement.GetAll("TokenDetails")) {
+                        tokenUpdaterHistory.Results.Add(new TokenDetails {
+                            NewCardNumber = history.GetValue<string>("NewCardNumber"),
+                            NewExpirationDate = history.GetValue<string>("NewExpirationDate"),
+                            PreviousCardNumber = history.GetValue<string>("PreviousCardNumber"),
+                            PreviousExpirationDate = history.GetValue<string>("PreviousExpirationDate"),
+                            TokenValue = history.GetValue<string>("TokenValue"),
+                            UpdateAction = history.GetValue<string>("UpdateAction"),
+                            UpdateDate = history.GetValue<string>("UpdateDate")
+                        });
+                    }
+                }
+                rvalue = tokenUpdaterHistory as T;
             }
             return rvalue;
         }
@@ -1348,6 +1392,8 @@ namespace GlobalPayments.Api.Gateways {
                 return "ReportBatchDetail";
                 case ReportType.OpenAuths:
                 return "ReportOpenAuths";
+                case ReportType.TokenUpdaterHistory:
+                return "TokenUpdaterHistory";
                 default:
                 throw new UnsupportedTransactionException();
             }

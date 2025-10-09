@@ -1,27 +1,37 @@
 # Changelog
 
-## Latest - v9.0.24 (09/10/25)
+## Latest - v9.0.25 (10/08/25)
 ### Enhancement
-[UPA] - Added support for FI/SI Command SaveConfigFile, SetLogoCarouselInterval and GetBatteryPercentage.
-[UPA] - Added support for SI Command InjectCarouselLogo and RemoveCarouselLogo.
-[GPAPI] - Added Test Cases of the Blik and PayU alternative payment method handling in the SDK.
+- [Portico] - Added TokenUpdaterHistory Reporting support in Portico
+- [Macroscope] - Fixed macroscope issues as per scan report.
+
+## v9.0.24 (09/10/25)
+### Enhancement
+- [UPA] - Added support for FI/SI Command SaveConfigFile, SetLogoCarouselInterval and GetBatteryPercentage.
+- [UPA] - Added support for SI Command InjectCarouselLogo and RemoveCarouselLogo.
+- [GPAPI] - Added Test Cases of the Blik and PayU alternative payment method handling in the SDK.
 
 ## v9.0.23 (08/06/25)
 ### Enhancement
-[NWS] - Added support for Pin Debit cards.
+- [NWS] - Added support for Pin Debit cards.
 
 ## v9.0.21 (07/28/25)
 ### Enhancement
-[GPAPI] - Added SDK support for Open Banking PayU as a payment APM.
+- [GPAPI] - Added SDK support for Open Banking PayU as a payment APM.
 
 ### Bug Fixes:
-[UPA] - Fixed reference mapping for UPA transactions to ensure correct property assignment.
+- [UPA] - Fixed reference mapping for UPA transactions to ensure correct property assignment.
 
 ## v9.0.20 (07/10/25)
 ### Enhancement
-[UPA] - Added handling for multiple messages in the stream, and a timeout to the ReadAsync stream in the UpaTcpInterface.
-[UPA] - Added overload string type to EcrId property
-[UPA] - Additional support for nullable types
+- [UPA] - Added handling for multiple messages in the stream, and a timeout to the ReadAsync stream in the UpaTcpInterface.
+- [UPA] - Added overload string type to EcrId property
+- [UPA] - Additional support for nullable types
+- [PAX] - Configuring preset tips in amount and percentage
+- [PAX] - Suppressing tip prompt when not relevant
+- [PAX] - Enter Pin support
+- [PAX] - ShowMessage support
+- [PAX] - DisplayMessage support for non PCI cards such as loyalty/gift
 
 ## v9.0.19 (06/23/25) 
 ### Enhancement

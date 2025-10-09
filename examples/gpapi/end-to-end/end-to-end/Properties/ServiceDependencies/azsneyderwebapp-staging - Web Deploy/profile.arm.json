@@ -77,7 +77,10 @@
                 "httpsOnly": true,
                 "reserved": false,
                 "serverFarmId": "[variables('appServicePlan_ResourceId')]",
+                "clientCertEnabled": true,
+                "clientCertMode": "Required",
                 "siteConfig": {
+                  "ftpsState": "FtpsOnly",
                   "metadata": [
                     {
                       "name": "CURRENT_STACK",
@@ -91,8 +94,8 @@
               }
             },
             {
-              "location": "[parameters('resourceLocation')]",
               "name": "[variables('appServicePlan_name')]",
+              "location": "[parameters('resourceLocation')]",
               "type": "Microsoft.Web/serverFarms",
               "apiVersion": "2015-08-01",
               "sku": {

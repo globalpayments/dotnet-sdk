@@ -170,7 +170,10 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public Element Get(string tagName) {
-            return Element.FromNode(doc, element.GetElementsByTagName(tagName)[0]);
+            var nodes = element?.GetElementsByTagName(tagName);
+            if (nodes == null || nodes.Count == 0)
+                return null;
+            return Element.FromNode(doc, nodes[0]);
         }
 
         public Element[] GetAll() {
@@ -183,7 +186,9 @@ namespace GlobalPayments.Api.Utils {
         }
 
         public Element[] GetAll(string tagName) {
-            var nodes = element.GetElementsByTagName(tagName);
+            var nodes = element?.GetElementsByTagName(tagName);
+            if (nodes == null || nodes.Count == 0)
+                return Array.Empty<Element>();
             Element[] elements = new Element[nodes.Count];
             for (int i = 0; i < elements.Length; i++) {
                 elements[i] = Element.FromNode(doc, nodes[i]);

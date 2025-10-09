@@ -13,7 +13,9 @@ namespace GlobalPayments.Api.Services {
         public static TransactionReportBuilder<List<DepositSummary>> FindDeposits() {
             return new TransactionReportBuilder<List<DepositSummary>>(ReportType.FindDeposits);
         }
-
+        public static TransactionReportBuilder<TokenUpdaterHistoryResponse> TokenUpdaterHistory() {
+            return new TransactionReportBuilder<TokenUpdaterHistoryResponse>(ReportType.TokenUpdaterHistory);
+        }
         public static TransactionReportBuilder<List<DisputeSummary>> FindDisputes() {
             return new TransactionReportBuilder<List<DisputeSummary>>(ReportType.FindDisputes);
         }

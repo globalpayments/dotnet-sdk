@@ -24,7 +24,22 @@ namespace GlobalPayments.Api.Builders {
                 return _searchBuilder;
             }
         }
-
+        /// <summary>
+        /// Multi-use or single-use token; used as a reference to a payment method for this transaction.
+        /// </summary>
+        internal string TokenValue { get; set; }
+        /// <summary>
+        /// Records to be returned limit. Default is no limit.
+        /// </summary>
+        internal int Limit { get; set; }
+        /// <summary>
+        /// Offset for records to be returned. Default is no offset.
+        /// </summary>
+        internal int Offset { get; set; }
+        /// <summary>
+        /// Type of report to retrieve from ETS.
+        /// </summary>
+        internal TokenUpdaterHistoryResultType TokenUpdaterHistoryResultType { get; set; }
         internal int? Page { get; set; }
         internal int? PageSize { get; set; }
 
@@ -167,7 +182,42 @@ namespace GlobalPayments.Api.Builders {
             SearchBuilder.EndDate = value;
             return this;
         }
-
+        /// <summary>
+        /// Sets the token value to be used as a reference to a payment method for this transaction.
+        /// </summary>
+        /// <param name="value">The token value (multi-use or single-use).</param>
+        /// <returns>The current instance of <see cref="ReportBuilder{TResult}"/>.</returns>
+        public ReportBuilder<TResult> WithTokenValue(string value) {
+            TokenValue = value;
+            return this;
+        }
+        /// <summary>
+        /// Sets the maximum number of records to be returned in the report.
+        /// </summary>
+        /// <param name="value">The record limit.</param>
+        /// <returns>The current instance of <see cref="ReportBuilder{TResult}"/>.</returns>
+        public ReportBuilder<TResult> WithLimit(int value) {
+            Limit = value;
+            return this;
+        }
+        /// <summary>
+        /// Sets the offset for records to be returned in the report.
+        /// </summary>
+        /// <param name="value">The record offset.</param>
+        /// <returns>The current instance of <see cref="ReportBuilder{TResult}"/>.</returns>
+        public ReportBuilder<TResult> WithOffset(int value) {
+            Offset = value;
+            return this;
+        }
+        /// <summary>
+        /// Sets the result type for the Token Updater History report.
+        /// </summary>
+        /// <param name="value">The <see cref="TokenUpdaterHistoryResultType"/> value.</param>
+        /// <returns>The current instance of <see cref="ReportBuilder{TResult}"/>.</returns>
+        public ReportBuilder<TResult> WithTokenUpdaterHistoryResultType(TokenUpdaterHistoryResultType value) {
+            TokenUpdaterHistoryResultType = value;
+            return this;
+        }
         /// <summary>
         /// Sets the gateway deposit reference as criteria for the report.
         /// </summary>
