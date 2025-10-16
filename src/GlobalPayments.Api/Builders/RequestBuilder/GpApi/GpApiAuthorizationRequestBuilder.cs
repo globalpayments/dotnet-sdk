@@ -81,6 +81,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         card.Set("funding", builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.Debit ? "DEBIT" : "CREDIT"); // [DEBIT, CREDIT]
                     }
 
+                    paymentMethod.Set("card", card); //Modify so that AVS data can be sent
+
                     _maskedValues = ProtectSensitiveData.HideValues(
                         new MaskedValueEntry("payment_method.card.expiry_month", card.GetValue<string>("expiry_month")),
                         new MaskedValueEntry("payment_method.card.expiry_year", card.GetValue<string>("expiry_year")),
@@ -89,17 +91,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     );
 
                     var hasToken = builder.PaymentMethod is ITokenizable tokenData && !string.IsNullOrEmpty(tokenData.Token);
-
-                    if (!hasToken) {
-                        paymentMethod.Set("card", card);
-                    }                    
-                    else { //Brand reference when card was tokenized
-                        JsonDoc brand = new JsonDoc()
-                            .Set("brand_reference", builder.CardBrandTransactionId);
-                        if (brand.HasKeys()) {
-                            paymentMethod.Set("card", brand);
-                        }
-                    }
 
                     if (builder.TransactionType == TransactionType.Tokenize) {
                         var tokenizationData = new JsonDoc()

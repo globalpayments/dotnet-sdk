@@ -104,6 +104,16 @@ namespace GlobalPayments.Api.Builders {
         internal string Reference { get; set; }
         internal FundsData FundsData { get; set; }
         internal CreditDebitIndicator? CreditDebitIndicator { get; set; }
+        internal string OriginalUTCTransactionTime  {
+            get {
+                if (PaymentMethod is TransactionReference) {
+                    return ((TransactionReference)PaymentMethod).OriginalUTCTransactionTime;
+                }
+                return null;
+            }
+        }
+        internal int? AuthorizationCount { get; set; }
+        
         internal EmvFallbackCondition? EmvFallbackCondition { get; set; }
         //internal string EWICIssuingEntity { get; set; }
         //internal CustomerData AuthorizationCustomerData { get; set; }
@@ -481,6 +491,16 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
+        /// <summary>
+        /// Total  Authorization Count
+        /// </summary>
+        /// <param name="value">Authorization Count</param>
+        /// <returns>ManagementBuilder</returns>
+        public ManagementBuilder WithAuthorizationCount(int? value) {
+            AuthorizationCount = value;
+            return this;
+        }
+        
         internal ManagementBuilder(TransactionType type) : base(type) {}
 
         /// <summary>
@@ -595,6 +615,14 @@ namespace GlobalPayments.Api.Builders {
         }
         public ManagementBuilder WithFleetData(FleetData value) {
             FleetData = value;
+            return this;
+        }
+
+        public ManagementBuilder WithIssuerData(DE62_CardIssuerEntryTag tag, string value)  {
+            if (IssuerData == null) {
+                IssuerData = new Dictionary<DE62_CardIssuerEntryTag, string>();
+            }
+            IssuerData.Add(tag, value);
             return this;
         }
         public ManagementBuilder WithCustomerInitiated(bool value) {

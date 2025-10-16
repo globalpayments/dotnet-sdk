@@ -9,6 +9,7 @@ namespace GlobalPayments.Api.Network.Elements {
         public bool? SupportsReturnBalance { get; set; }
         public bool? SupportsCashOver { get; set; }
         public bool? MobileDevice { get; set; }
+        public bool? WexAdditionalProduct { get; set; }
 
         public DE48_33_PosConfiguration FromByteArray(byte[] buffer) {
             StringParser sp = new StringParser(buffer);
@@ -17,6 +18,7 @@ namespace GlobalPayments.Api.Network.Elements {
             SupportsReturnBalance = sp.ReadBoolean("Y");
             SupportsCashOver = sp.ReadBoolean("2");
             MobileDevice = sp.ReadBoolean("Y");
+            WexAdditionalProduct = sp.ReadBoolean("Y");
             return this;
         }
 
@@ -26,6 +28,7 @@ namespace GlobalPayments.Api.Network.Elements {
             rvalue = string.Concat(rvalue,SupportsReturnBalance == null ? " " : (bool)SupportsReturnBalance ? "Y" : "N");
             rvalue = string.Concat(rvalue,SupportsCashOver == null ? " " : (bool)SupportsCashOver ? "0" : "2");
             rvalue =  string.Concat(rvalue,MobileDevice == null ? " " : (bool)MobileDevice ? "Y" : "N");
+            rvalue = string.Concat(rvalue, WexAdditionalProduct == null ? " " : (bool)WexAdditionalProduct ? "Y" : "N");
             return Encoding.ASCII.GetBytes(StringUtils.TrimEnd(rvalue));
         }
 

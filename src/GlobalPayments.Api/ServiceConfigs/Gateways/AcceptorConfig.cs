@@ -23,6 +23,7 @@ namespace GlobalPayments.Api {
         public bool? SupportsReturnBalance { get; set; }
         public bool? SupportsCashOver { get; set; }
         public bool? MobileDevice { get; set; }
+        public bool? WexAdditionalProduct { get; set; }
         public bool? SupportsShutOffAmount { get; set; }
         public bool? SupportsDiscoverNetworkReferenceId { get; set; }
         public bool? SupportsAvsCnvVoidReferrals { get; set; }
@@ -38,6 +39,7 @@ namespace GlobalPayments.Api {
         public TokenizationType TokenizationType { get; set; }
         public string MerchantId { get; set; }
         
+        public bool? IncrementalAuthIndicator { get; set; }
         public AcceptorConfig() {
             CardDataInputCapability = CardDataInputCapability.MagStripe_KeyEntry;
             CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.None;

@@ -1126,10 +1126,12 @@ namespace GlobalPayments.Api.Builders {
             return this;
         }
 
-        public AuthorizationBuilder WithIssuerData(Dictionary<DE62_CardIssuerEntryTag, string> value) {
+        // Deprecated: Use WithFleetData on TransactionBuilder instead.
+        public AuthorizationBuilder WithIssuerData(Dictionary<DE62_CardIssuerEntryTag, string> value){
             IssuerData = value;
             return this;
         }
+
         public AuthorizationBuilder WithIssuerData(DE62_CardIssuerEntryTag tag, string value) {
             if (IssuerData == null) {
                 IssuerData = new Dictionary<DE62_CardIssuerEntryTag, string>();
@@ -1137,6 +1139,7 @@ namespace GlobalPayments.Api.Builders {
             IssuerData.Add(tag, value);
             return this;
         }
+
         public AuthorizationBuilder WithSystemTraceAuditNumber(int value) {
             SystemTraceAuditNumber = value;
             return this;

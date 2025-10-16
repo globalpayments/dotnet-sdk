@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v9.0.25 (10/08/25)
+## Latest - v9.0.26 (10/15/25)
+### Enhancement
+- [GPAPI] - Fixed an issue with AVS on TokenizedCard Verify and Charge transactions, where it was not being sent. AVS data is now transmitted correctly.
+- [NWS] - Spec update 21.1 with incremental authorization changes.
+
+## v9.0.25 (10/08/25)
 ### Enhancement
 - [Portico] - Added TokenUpdaterHistory Reporting support in Portico
 - [Macroscope] - Fixed macroscope issues as per scan report.

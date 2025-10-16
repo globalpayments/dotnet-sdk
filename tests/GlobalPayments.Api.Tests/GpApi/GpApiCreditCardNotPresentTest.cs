@@ -93,6 +93,58 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void VerifyTokenizedPaymentWithAVS() {
+            var tokenizedCard = new CreditCardData {
+                Token = card.Tokenize(),
+            };
+
+            var address = new Address {
+                StreetAddress1 = "123 Main St.",
+                City = "Downtown",
+                State = "NJ",
+                Country = "US",
+                PostalCode = "12345"
+            };
+
+            var response = tokenizedCard.Verify()
+               .WithCurrency("GBP")
+               .WithAddress(address)
+               .WithRequestMultiUseToken(true)
+               .Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.IsNotNull(response.AvsAddressResponse);
+            Assert.IsNotNull(response.AvsResponseCode);
+            Assert.AreEqual("VERIFIED", response.ResponseMessage);
+            Assert.AreEqual("123456", response.AuthorizationCode);
+        }
+
+        [TestMethod]
+        public void ChargeTokenizedPaymentWithAVS() {
+            var address = new Address {
+                StreetAddress1 = "123 Main St.",
+                City = "Downtown",
+                State = "NJ",
+                Country = "US",
+                PostalCode = "12345"
+            };
+
+            var tokenizedCard = new CreditCardData {
+                Token = card.Tokenize(),
+            };
+
+            var response = tokenizedCard.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithAddress(address)
+                .Execute();
+
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+            Assert.IsNotNull(response.AvsAddressResponse);
+            Assert.IsNotNull(response.AvsResponseCode);
+        }
+
+        [TestMethod]
         public void UpdatePaymentToken() {
             var response = ReportingService.FindStoredPaymentMethodsPaged(1, 1)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)

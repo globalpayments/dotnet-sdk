@@ -787,6 +787,7 @@ namespace GlobalPayments.Api.Gateways {
                         dataCode.CardPresence = DE22_CardPresence.CardPresent;
                     }
                 }
+                
             }
 
             // DE 3: Processing Code - n6 (n2: TRANSACTION TYPE, n2: ACCOUNT TYPE 1, n2: ACCOUNT TYPE 2) // M 1100, 1200, 1220, 1420
@@ -797,7 +798,15 @@ namespace GlobalPayments.Api.Gateways {
             request.Set(DataElementId.DE_004, StringUtils.ToNumeric(transactionAmount, 12));
 
             // DE 7: Date and Time, Transmission - n10 (MMDDhhmmss) // C
-            request.Set(DataElementId.DE_007, DateTime.UtcNow.ToString("MMddhhmmss"));
+            if (builder.OriginalUTCTransactionTime != null)
+            {
+                //get original transaction UTC time
+                request.Set(DataElementId.DE_007, builder.OriginalUTCTransactionTime);
+            }
+            else
+            {
+                request.Set(DataElementId.DE_007, DateTime.UtcNow.ToString("MMddhhmmss"));
+            }
 
             // DE 11: System Trace Audit Number (STAN) - n6 // M
             int stan = builder.SystemTraceAuditNumber;
@@ -886,12 +895,19 @@ namespace GlobalPayments.Api.Gateways {
 
                 if (de30Supported) {
                     if (transaction.OriginalAmount != null) {
-                        DE30_OriginalAmounts originalAmounts = new DE30_OriginalAmounts {
-                            OriginalTransactionAmount = transaction.OriginalAmount
-                        };
-
-                        request.Set(DataElementId.DE_030, originalAmounts);
+                        DE30_OriginalAmounts originalAmounts = new DE30_OriginalAmounts();
+                        //total Approved Incremental Amount
+                        if ((transactionType == TransactionType.Increment || transactionType == TransactionType.Reversal) && builder.AuthAmount != null) {
+                            originalAmounts.OriginalTransactionAmount = builder.AuthAmount;
+                            request.Set(DataElementId.DE_030, originalAmounts);
+                        } 
+                        else if (builder.Amount != null && (builder.Amount != transaction.OriginalAmount || transaction.OriginalAmountEstimated)) { 
+                            originalAmounts.OriginalTransactionAmount = transaction.OriginalAmount;
+                            request.Set(DataElementId.DE_030, originalAmounts);
+                        }
+                                                                        
                     }
+                    
                 }
             }
 
@@ -998,7 +1014,13 @@ namespace GlobalPayments.Api.Gateways {
                 EmvData tagData = EmvUtils.ParseTagData(builder.TagData, EnableLogging);
                 if (!string.IsNullOrEmpty(tagData.GetCardSequenceNumber()))
                     request.Set(DataElementId.DE_023, StringUtils.PadLeft(tagData.GetCardSequenceNumber(), 3, '0'));
-                request.Set(DataElementId.DE_055, tagData.GetSendBuffer());
+
+                //For all card brands other than WEX, DE 55 must not be sent in pre-auth completions 
+                bool ispreAuthCapture = transactionType.Equals(TransactionType.Capture);
+                if (!ispreAuthCapture || (MapCardType(paymentMethod).Equals(DE48_CardType.WEX) && ispreAuthCapture)) {
+                    request.Set(DataElementId.DE_055, tagData.GetSendBuffer());
+                }
+                
             }
 
             /* DE 56: Original Data Elements - LLVAR n..35
@@ -1041,6 +1063,12 @@ namespace GlobalPayments.Api.Gateways {
 
             // DE 72: Data Record - LLLVAR ans..999
             // DE 73: Date, Action - n6 (YYMMDD)
+
+            //DE 81:Number of Authorizations - n10
+            if (builder.AuthorizationCount != null) {
+                request.Set(DataElementId.DE_081, StringUtils.PadLeft(builder.AuthorizationCount, 10, '0'));
+            }
+           
             // DE 96: Key Management Data - LLLVAR b..999
             // DE 97: Amount, Net Reconciliation - x + n16
             // DE 102: Account Identification 1 - LLVAR ans..28
@@ -1203,7 +1231,7 @@ namespace GlobalPayments.Api.Gateways {
             if (builder.POSSiteConfigRecord != null) {
                 DE72_DataRecord dataRecord = new DE72_DataRecord("SCFG", builder.POSSiteConfigRecord);
                 request.Set(DataElementId.DE_072, dataRecord.ToByteArray());
-            }
+            }         
 
             return SendRequest(request, builder, orgCorr1, orgCorr2);
         }
@@ -1255,7 +1283,6 @@ namespace GlobalPayments.Api.Gateways {
 
         private Transaction SendRequest<T>(NetworkMessage request, T builder, byte[] orgCorr1, byte[] orgCorr2) where T : TransactionBuilder<Transaction> {
             byte[] sendBuffer = request.BuildMessage();
-            System.Diagnostics.Debug.WriteLine("Request Breakdown:\r\n" + request.ToString());
             //if (EnableLogging) {
             //System.Diagnostics.Debug.WriteLine("Request Breakdown:\r\n" + request.ToString());
             //}
@@ -1397,13 +1424,13 @@ namespace GlobalPayments.Api.Gateways {
                     //if (EnableLogging) {
                         //System.Diagnostics.Debug.WriteLine("\r\nResponse Breakdown:\r\n" + message.ToString());
                     //}
-
                     DE44_AdditionalResponseData additionalResponseData = message.GetDataElement<DE44_AdditionalResponseData>(DataElementId.DE_044);
                     DE48_MessageControl messageControl = message.GetDataElement<DE48_MessageControl>(DataElementId.DE_048);
                     DE54_AmountsAdditional additionalAmounts = message.GetDataElement<DE54_AmountsAdditional>(DataElementId.DE_054);
                     DE62_CardIssuerData cardIssuerData = message.GetDataElement<DE62_CardIssuerData>(DataElementId.DE_062);
-
+                    
                     if (cardIssuerData != null) {
+                        //issuer data                        
                         result.ReferenceNumber = cardIssuerData.Get("IRR");
                         result.TimeResponseFromHeartland = cardIssuerData.Get("HTR");
                         result.AvsResponseCode = cardIssuerData.Get("IAV");
@@ -1462,6 +1489,7 @@ namespace GlobalPayments.Api.Gateways {
                                 MessageTypeIndicator = request.MessageTypeIndicator,
                                 OriginalApprovedAmount = message.GetAmount(DataElementId.DE_004),
                                 OriginalProcessingCode = request.GetString(DataElementId.DE_003),
+                                OriginalUTCTransactionTime= message.GetString(DataElementId.DE_007),
                                 SystemTraceAuditNumber = request.GetString(DataElementId.DE_011),
                                 OriginalTransactionTime = request.GetString(DataElementId.DE_012),
                                 AcquiringInstitutionId = request.GetString(DataElementId.DE_032)
@@ -1487,7 +1515,7 @@ namespace GlobalPayments.Api.Gateways {
 
                             // card issuer data
                             if (cardIssuerData != null) {
-                                reference.SetNtsData(cardIssuerData.Get("NTS"));
+                                reference.SetNtsData(cardIssuerData.Get("NTS"));                               
                             }
 
                             // authorization builder
@@ -1733,6 +1761,7 @@ namespace GlobalPayments.Api.Gateways {
              */
             switch (builder.TransactionType) {
                 case TransactionType.Auth:
+                case TransactionType.Increment:
                 case TransactionType.Balance:
                 case TransactionType.Verify:
                     mtiValue += "1";
@@ -2127,6 +2156,9 @@ namespace GlobalPayments.Api.Gateways {
                                 if (managementBuilder.Amount == transactionReference.OriginalAmount) {
                                     return "400";
                                 }
+                                else  if (MapCardType(managementBuilder.PaymentMethod) == DE48_CardType.Visa || MapCardType(managementBuilder.PaymentMethod) == DE48_CardType.Mastercard) {
+                                    return "445";
+                                }
                                 return "401";
                             }
                         }
@@ -2159,6 +2191,9 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 case TransactionType.SiteConfig: {
                         return "692";
+                    }
+                case TransactionType.Increment: {
+                        return "101";
                     }
                 default: {
                         return "000";
@@ -2409,6 +2444,7 @@ namespace GlobalPayments.Api.Gateways {
                     posConfiguration.SupportsReturnBalance = AcceptorConfig.SupportsReturnBalance;
                     posConfiguration.SupportsCashOver = AcceptorConfig.SupportsCashOver;
                     posConfiguration.MobileDevice = AcceptorConfig.MobileDevice;
+                    posConfiguration.WexAdditionalProduct = AcceptorConfig.WexAdditionalProduct;
                     messageControl.PosConfiguration = posConfiguration;
                 }
             }
@@ -2420,6 +2456,7 @@ namespace GlobalPayments.Api.Gateways {
                     PerformDateCheck = AcceptorConfig.PerformDateCheck,
                     EchoSettlementData = AcceptorConfig.EchoSettlementData,
                     IncludeLoyaltyData = AcceptorConfig.IncludeLoyaltyData,
+                    IncrementalAuthIndicator = AcceptorConfig.IncrementalAuthIndicator
                 };
                 messageControl.MessageConfiguration = messageConfig;
             }
@@ -2552,29 +2589,11 @@ namespace GlobalPayments.Api.Gateways {
                 if (!string.IsNullOrEmpty(mb.ReferenceNumber)) {
                     cardIssuerData.Add(DE62_CardIssuerEntryTag.RetrievalReferenceNumber, mb.ReferenceNumber);
                 }
-
+                
                 // NTE Terminal Error
                 if (mb.TransactionType.Equals(TransactionType.BatchClose) && mb.BatchCloseType.Equals(BatchCloseType.Forced)) {
                     cardIssuerData.Add(DE62_CardIssuerEntryTag.TerminalError, "Y");
                 }
-                //This is specific to NTS/Vaps.Identified during Voyager EMV certification DEVEXP-935
-                //if (mb.PaymentMethod is TransactionReference reference) {
-                //    // NTS Specific Data
-                //    //if (reference.NtsData != null) {
-                //    //    cardIssuerData.Add(DE62_CardIssuerEntryTag.NTS_System, reference.NtsData.ToString());
-                //    //}
-
-                //    // original payment method
-                //    if (reference.OriginalPaymentMethod != null) {
-                //        if (reference.OriginalPaymentMethod is CreditCardData) {
-                //            cardIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, "NSI", "0");
-                //        }
-                //        else if (reference.OriginalPaymentMethod is ITrackData track) {
-                //            string nsiValue = track.TrackNumber.Equals(TrackNumber.TrackTwo) ? "2" : "1";
-                //            cardIssuerData.Add(DE62_CardIssuerEntryTag.SwipeIndicator, nsiValue);
-                //        }
-                //    }
-                //}
             }
             else {
                 AuthorizationBuilder authBuilder = (AuthorizationBuilder)(object)builder;
@@ -3072,7 +3091,13 @@ namespace GlobalPayments.Api.Gateways {
                 }
             }
             else if (transactionType.Equals(TransactionType.Reversal)) {
-                reasonCode = DE25_MessageReasonCode.TimeoutWaitingForResponse_Reversal;
+                // partial reversal
+                bool partialReversal = false;
+                if (paymentMethod != null) {
+                    partialReversal = !(builder.Amount == paymentMethod.OriginalAmount);
+                }
+
+                reasonCode = partialReversal ? DE25_MessageReasonCode.MerchantInitiatedVoid : DE25_MessageReasonCode.TimeoutWaitingForResponse_Reversal;
             }
             else if (transactionType.Equals(TransactionType.Refund) && (originalPaymentMethod is Debit || originalPaymentMethod is EBT)) {
                 reasonCode = DE25_MessageReasonCode.PinDebit_EBT_Acknowledgement;

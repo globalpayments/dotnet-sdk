@@ -61,6 +61,7 @@ namespace GlobalPayments.Api.Network {
                 factory.AddElementMapping(DataElementId.DE_063, DataElementType.LLLVAR, "Product Data", 999);
                 factory.AddElementMapping(DataElementId.DE_072, DataElementType.LLLVAR, "Data Record", 999);
                 factory.AddElementMapping(DataElementId.DE_073, DataElementType.NUMERIC, "Date, Action", 6);
+                factory.AddElementMapping(DataElementId.DE_081, DataElementType.NUMERIC, "Number of Authorizations", 10);
                 factory.AddElementMapping(DataElementId.DE_096, DataElementType.LLLVAR, "Key Management Data", 999);
                 factory.AddElementMapping(DataElementId.DE_097, DataElementType.NUMERIC, "Amount, Net Reconciliation", 16);
                 factory.AddElementMapping(DataElementId.DE_102, DataElementType.LLVAR, "Account Identification 1", 28);

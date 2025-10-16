@@ -8,6 +8,7 @@ namespace GlobalPayments.Api.Network.Elements {
         public bool? EchoSettlementData { get; set; }
         public bool? IncludeLoyaltyData { get; set; }
         public string TransactionGroupId { get; set; }
+        public bool? IncrementalAuthIndicator { get; set; }
 
         public DE48_34_MessageConfiguration FromByteArray(byte[] buffer) {
             StringParser sp = new StringParser(buffer);
@@ -15,6 +16,7 @@ namespace GlobalPayments.Api.Network.Elements {
             EchoSettlementData = sp.ReadBoolean();
             IncludeLoyaltyData = sp.ReadBoolean();
             TransactionGroupId = sp.ReadString(6);
+            IncrementalAuthIndicator = sp.ReadBoolean();
             return this;
         }
 
@@ -22,7 +24,9 @@ namespace GlobalPayments.Api.Network.Elements {
             string rvalue = string.Concat(
                 PerformDateCheck != null ? (bool)PerformDateCheck ? "1" : "0" : "0",
                 EchoSettlementData != null ? (bool)EchoSettlementData ? "1" : "0" : "0",
-                IncludeLoyaltyData != null ? (bool)IncludeLoyaltyData ? "1" : "0" : "0"
+                IncludeLoyaltyData != null ? (bool)IncludeLoyaltyData ? "1" : "0" : "0",
+                string.IsNullOrEmpty(TransactionGroupId) ? "      " : TransactionGroupId,
+                IncrementalAuthIndicator != null ? (bool)IncrementalAuthIndicator ? "Y" : "N" : "N"
             );
 
             if (!string.IsNullOrEmpty(TransactionGroupId)) {
