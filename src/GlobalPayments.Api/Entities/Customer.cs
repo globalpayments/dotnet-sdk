@@ -39,12 +39,24 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string Company { get; set; }
 
+        /// <summary>
+        /// Customer's password for authentication or account access.
+        /// </summary>
         public string CustomerPassword { get; set; }
 
+        /// <summary>
+        /// Customer's date of birth in string format (e.g., "YYYY-MM-DD").
+        /// </summary>
         public string DateOfBirth { get; set; }
 
+        /// <summary>
+        /// Customer's associated domain name, if applicable.
+        /// </summary>
         public string DomainName { get; set; }
 
+        /// <summary>
+        /// Device fingerprint for fraud prevention or device identification.
+        /// </summary>
         public string DeviceFingerPrint { get; set; }
 
         /// <summary>
@@ -92,15 +104,37 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string Status { get; set; }
         
+        ///<summary>
+        /// Customer's primary phone number.
+        /// </summary>
         public PhoneNumber Phone { get; set; }
-   
+
+        /// <summary>
+        /// List of documents associated with the customer (e.g., ID, proof of address).
+        /// </summary>
         public List<CustomerDocument> Documents { get; set; }
+
+        /// <summary>
+        /// Customer's preferred language code (e.g., "en-US", "fr-FR").
+        /// </summary>
+        public string Language { get; set; }
+
+        /// <summary>
+        /// Indicates whether the shipping address matches the billing address.
+        /// </summary>
+        public bool IsShippingAddressSameAsBilling { get; set; }
 
         /// <summary>
         /// Customer's existing payment methods
         /// </summary>
         public List<RecurringPaymentMethod> PaymentMethods { get; set; }
 
+        /// <summary>
+        /// Adds a payment method to the customer using the specified payment ID and payment method.
+        /// </summary>
+        /// <param name="paymentId">An application derived ID for the payment method.</param>
+        /// <param name="paymentMethod">The payment method to add.</param>
+        /// <returns>The added <see cref="RecurringPaymentMethod"/> instance.</returns>
         public RecurringPaymentMethod AddPaymentMethod(string paymentId, IPaymentMethod paymentMethod)
         {
             return AddPaymentMethod(paymentId, paymentMethod, null);

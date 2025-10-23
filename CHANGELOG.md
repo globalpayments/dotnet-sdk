@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v9.0.26 (10/15/25)
+## Latest - v9.0.27 (10/22/25)
+### Enhancement
+- [GPAPI] - Added support for generating Hosted Payment Page (HPP) links via Pay By Link
+
+## v9.0.26 (10/15/25)
 ### Enhancement
 - [GPAPI] - Fixed an issue with AVS on TokenizedCard Verify and Charge transactions, where it was not being sent. AVS data is now transmitted correctly.
 - [NWS] - Spec update 21.1 with incremental authorization changes.

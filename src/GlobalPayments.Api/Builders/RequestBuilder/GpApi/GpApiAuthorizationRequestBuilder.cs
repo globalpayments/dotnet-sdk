@@ -445,28 +445,77 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     .Set("type", payByLinkData.Type?.ToString())
                     .Set("expiration_date", payByLinkData.ExpirationDate ?? null);
 
-                var transaction = new JsonDoc()
+                if(payByLinkData.Type == PayByLinkType.PAYMENT) {    
+                    var transaction = new JsonDoc()
                     .Set("country", gateway.GpApiConfig.Country)
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
                     .Set("currency", builder.Currency)
                     .Set("allowed_payment_methods", GetAllowedPaymentMethod(payByLinkData.AllowedPaymentMethods));
 
-                requestData.Set("transactions", transaction)
-                    .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
+                    requestData.Set("transactions", transaction)
+                        .Set("status", payByLinkData.Status.ToString());
+                }
+
+                requestData.Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                     .Set("shipping_amount", payByLinkData.ShippingAmount.ToNumericCurrencyString())
                     .Set("shippable", payByLinkData.IsShippable != null && payByLinkData.IsShippable.Value ? "YES" : "NO")
                     .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
                     .Set("name", payByLinkData.Name ?? null);
+
+                if (payByLinkData.Type == PayByLinkType.HOSTED_PAYMENT_PAGE) {
+
+                   var payerData = SetPayerInformation(builder);
+
+                   if (payerData.HasKeys()) {
+                       requestData.Set("payer", payerData);
+                   }
+                   var order = new JsonDoc()
+                       .Set("amount", builder.Amount.ToNumericCurrencyString())
+                       .Set("currency", builder.Currency)
+                       .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString());
+
+                   var transactionConfiguration = new JsonDoc()
+                       .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
+                       .Set("country", gateway.GpApiConfig.Country)
+                       .Set("capture_mode", GetCaptureMode(builder))
+                       .Set("currency_conversion_mode", payByLinkData.IsDccEnabled == true ? "YES" : "NO")
+                       .Set("allowed_payment_methods", GetAllowedPaymentMethod(payByLinkData.AllowedPaymentMethods));
+
+                   var paymentMethodConfiguration = new JsonDoc()
+                       .Set("storage_mode", payByLinkData.Configuration.StorageMode.ToString())
+                       .Set("authentication", new JsonDoc()
+                           .Set("preference", payByLinkData.Configuration.ChallengeRequestIndicator?.ToString())
+                           .Set("exempt_status", payByLinkData.Configuration.ExemptStatus.ToString())
+                           .Set("billing_address_required", payByLinkData.Configuration.IsBillingAddressRequired == true ? "YES" : "NO"))
+                       .Set("apm", new JsonDoc()
+                           .Set("shipping_address_enabled", payByLinkData.Configuration.IsShippingAddressEnabled == true ? "YES" : "NO")
+                           .Set("address_override", payByLinkData.Configuration.IsAddressOverrideAllowed == true ? "YES" : "NO"));
+
+                   var shippingAddress = GetBasicAddressInformation(builder.ShippingAddress, true);
+
+                   var shippingPhone = SetPhoneInformation(builder.ShippingPhone);
+
+                   if (shippingAddress.HasKeys()) {
+                       order.Set("shipping_address", shippingAddress);
+                   }
+                   if (shippingPhone.HasKeys()) {
+                       order.Set("shipping_phone", shippingPhone);
+                   }
+
+                   order.Set("transaction_configuration", transactionConfiguration)
+                        .Set("payment_method_configuration", paymentMethodConfiguration);
+
+                   requestData.Set("order", order);
+                }
 
                 var notification = new JsonDoc()
                     .Set("cancel_url", payByLinkData.CancelUrl)
                     .Set("return_url", payByLinkData.ReturnUrl)
                     .Set("status_url", payByLinkData.StatusUpdateUrl);
 
-                requestData.Set("notifications", notification)
-                    .Set("status", payByLinkData.Status.ToString());
-
+                requestData.Set("notifications", notification);
+ 
                 return new Request {
                     Verb = HttpMethod.Post,
                     Endpoint = $"{merchantUrl}{GpApiRequest.PAYBYLINK_ENDPOINT}",
@@ -795,16 +844,38 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     payer.Set("documents", documents);
                 }
             }
+            else if(builder.PayByLinkData.Type == PayByLinkType.HOSTED_PAYMENT_PAGE) {
+
+                payer.Set("email", builder.CustomerData?.Email)
+                    .Set("language", builder.CustomerData?.Language)
+                    .Set("status", builder.CustomerData?.Status)
+                    .Set("name", builder.CustomerData?.FirstName + " " + builder.CustomerData?.LastName)
+                    .Set("first_name", builder.CustomerData?.FirstName)
+                    .Set("last_name", builder.CustomerData?.LastName)
+                    .Set("address_match_indicator", builder.CustomerData?.IsShippingAddressSameAsBilling == true ? "YES" : "NO");
+
+                JsonDoc billing_address = GetBasicAddressInformation(builder.BillingAddress, true);
+
+                payer.Set("billing_address", billing_address);
+
+                if (builder.CustomerData.Phone != null) {
+
+                    JsonDoc homePhone = SetPhoneInformation(builder.CustomerData.Phone);
+                    if(homePhone.HasKeys())
+                        payer.Set("mobile_phone", homePhone);
+                }
+            }
             return payer;
         }
 
-        private static JsonDoc GetBasicAddressInformation(Address address) {
+        private static JsonDoc GetBasicAddressInformation(Address address, bool isHppPayByLink = false) {
             return new JsonDoc().Set("line_1", address?.StreetAddress1)
-                            .Set("line_2", address?.StreetAddress2)
-                            .Set("city", address?.City)
-                            .Set("postal_code", address?.PostalCode)
-                            .Set("state", address?.State)
-                            .Set("country", address?.CountryCode);
+                .Set("line_2", address?.StreetAddress2)
+                .Set("line_3", address?.StreetAddress3)
+                .Set("city", address?.City)
+                .Set("postal_code", address?.PostalCode)
+                .Set("state", address?.State)
+                .Set("country", isHppPayByLink ? address?.Country : address?.CountryCode);
         }
 
         private static string GetCaptureMode(AuthorizationBuilder builder) {
@@ -949,6 +1020,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             return requestBody;
         }
-
+        private static JsonDoc SetPhoneInformation(PhoneNumber phoneNumber) {
+            return new JsonDoc()
+                .Set("country_code", phoneNumber?.CountryCode)
+                .Set("subscriber_number", phoneNumber?.Number);
+        }
     }
 }

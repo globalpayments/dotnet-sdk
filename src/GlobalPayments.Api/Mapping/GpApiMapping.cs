@@ -319,24 +319,70 @@ namespace GlobalPayments.Api.Mapping {
             return transaction;
         }
 
-        private static PayByLinkResponse MapPayByLinkResponse(JsonDoc doc)
-        {
-            return new PayByLinkResponse
-            {
-                Id = doc.GetValue<string>("id"),
-                AccountName = doc.GetValue<string>("account_name"),
-                Url = doc.GetValue<string>("url"),
-                Status = GetPayByLinkStatus(doc),
-                Type = GetPayByLinkType(doc),
-                UsageMode = GetPaymentMethodUsageMode(doc),
-                UsageLimit = doc.GetValue<int>("usage_limit"),
-                Reference = doc.GetValue<string>("reference"),
-                Name = doc.GetValue<string>("name"),
-                Description = doc.GetValue<string>("description"),
-                ViewedCount = doc.GetValue<string>("viewed_count"),
-                ExpirationDate = doc.GetValue("expiration_date", DateConverter),
-                IsShippable = GetIsShippable(doc)
-            };
+        private static PayByLinkResponse MapPayByLinkResponse(JsonDoc doc) {
+
+            var response = new PayByLinkResponse();
+
+            // Map ActionSummary
+            var action = doc.Get("action");
+
+            if (action?.HasKeys() == true) {
+                response.ActionSummary = new ActionSummary {
+                    Id = action.GetValue<string>("id"),
+                    Type = action.GetValue<string>("type"),
+                    TimeCreated = action.GetValue<DateTime>("time_created"),
+                    ResponseCode = action.GetValue<string>("result_code"),
+                    AppId = action.GetValue<string>("app_id"),
+                    AppName = action.GetValue<string>("app_name")
+                };
+            }
+
+            // Map Transactions
+            var transaction = doc.Get("transactions");
+
+            if (transaction?.HasKeys() == true) {
+                response.Channel = transaction.GetValue<string>("channel");
+                response.Currency = transaction.GetValue<string>("currency");
+                response.Amount = transaction.GetValue<int>("amount");
+                response.Country = transaction.GetValue<string>("country");
+                response.AllowedPaymentMethods = GetAllowedPaymentMethods(transaction);
+            }
+
+            // Map Order and nested Transaction Configuration if present
+            var order = doc.Get("order");
+            if (order?.HasKeys() == true) {
+                response.OrderAmount = order.GetValue<decimal>("amount");
+                response.OrderCurrency = order.GetValue<string>("currency");
+                response.OrderReference = order.GetValue<string>("reference");
+
+                var transactionConfig = order.Get("transaction_configuration");
+
+                if (transactionConfig?.HasKeys() == true) {
+                    response.Channel = transactionConfig.GetValue<string>("channel") ?? response.Channel;
+                    response.Country = transactionConfig.GetValue<string>("country") ?? response.Country;
+                }
+            }
+
+            // Map flat properties
+            response.Id = doc.GetValue<string>("id");
+            response.AccountName = doc.GetValue<string>("account_name");
+            response.Url = doc.GetValue<string>("url");
+            response.Status = GetPayByLinkStatus(doc);
+            response.Type = GetPayByLinkType(doc);
+            response.UsageMode = GetPaymentMethodUsageMode(doc);
+            response.UsageLimit = doc.GetValue<int>("usage_limit");
+            response.Reference = doc.GetValue<string>("reference");
+            response.Name = doc.GetValue<string>("name");
+            response.Description = doc.GetValue<string>("description");
+            response.ViewedCount = doc.GetValue<string>("viewed_count");
+            response.ExpirationDate = doc.GetValue("expiration_date", DateConverter);
+            response.IsShippable = GetIsShippable(doc);
+            response.ShippingAmount = doc.GetValue<int>("shipping_amount");
+            response.AppEmail = doc.GetValue<string>("app_email");
+            response.AppId = doc.GetValue<string>("app_ids");
+            response.Images = doc.GetArray<byte>("images")?.ToArray() ?? Array.Empty<byte>();
+
+            return response;
         }
 
         private static void MapBNPLResponse(JsonDoc response, ref Transaction transaction) {
