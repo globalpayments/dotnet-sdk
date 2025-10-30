@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v9.0.27 (10/22/25)
+## Latest - v9.0.28 (10/29/25)
+### Enhancement
+- [Portico] - Added COF to ITrack in PorticoConnector.
+- [Portico] - Added DataFormat to the Encryption Class and PorticoConnector.
+- [GP-API] - Added IsEnrolled to ThreeDSecure. This is based on the Enrolled status. Used in Secured3dBuilder.
+
+## v9.0.27 (10/22/25)
 ### Enhancement
 - [GPAPI] - Added support for generating Hosted Payment Page (HPP) links via Pay By Link
 

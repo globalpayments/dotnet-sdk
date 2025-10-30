@@ -581,7 +581,7 @@ namespace GlobalPayments.Api.Builders {
                         case TransactionType.VerifyEnrolled: {
                                 if (response.ThreeDSecure != null) {
                                     rvalue = response.ThreeDSecure;
-                                    if (new List<string>() { "True", "Y" }.Contains(rvalue.Enrolled)) {
+                                    if (rvalue.IsEnrolled) {
                                         rvalue.Amount = Amount;
                                         rvalue.Currency = Currency;
                                         rvalue.OrderId = response.OrderId;

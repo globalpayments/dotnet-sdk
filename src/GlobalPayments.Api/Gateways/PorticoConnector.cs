@@ -210,6 +210,15 @@ namespace GlobalPayments.Api.Gateways {
                 var track = builder.PaymentMethod as ITrackData;
                 var trackData = et.SubElement(cardData, hasToken ? "TokenData" : "TrackData");
                 if (!hasToken) {
+                    //credential on file
+                    if (builder.TransactionInitiator != null)
+                    {
+                        Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
+                        et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
+                        et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
+                        et.SubElement(cardOnFileData, "CategoryInd", builder.CategoryIndicator);
+                    }
+
                     trackData.Text(track.Value);
                     trackData.Set("method", track.EntryMethod.ToString().ToLower());
                     if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
@@ -359,6 +368,7 @@ namespace GlobalPayments.Api.Gateways {
                     et.SubElement(enc, "EncryptedTrackNumber", encryptionData.TrackNumber);
                     et.SubElement(enc, "KTB", encryptionData.KTB);
                     et.SubElement(enc, "KSN", encryptionData.KSN);
+                    et.SubElement(enc, "DataFormat", encryptionData.DataFormat);
                 }
             }
 

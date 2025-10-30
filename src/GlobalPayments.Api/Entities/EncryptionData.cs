@@ -23,6 +23,12 @@
         /// </summary>
         public string KSN { get; set; }
 
+        ///<summary>
+        /// DataFormat is an optional field to be used for encryption
+        /// Version "05" to define the encryption encoding format.
+        ///</summary>
+        public string DataFormat { get; set; }
+
         /// <summary>
         /// The key transmission block (KTB) used at the point of sale;
         /// where applicable.

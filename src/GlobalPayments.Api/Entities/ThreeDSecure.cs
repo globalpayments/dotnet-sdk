@@ -70,9 +70,29 @@ namespace GlobalPayments.Api.Entities {
         public string Eci { get; set; }
 
         /// <summary>
-        /// The enrolment status:
+        /// Ignore the case. 
         /// </summary>
-        public string Enrolled { get; set; }
+        private static readonly HashSet<string> EnrolledValues =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+            "True", "Y", "Enrolled"
+        };
+
+        private string _enrolled;
+        /// <summary>
+        /// The enrollment status:
+        /// </summary>
+        public string Enrolled {
+            get { return _enrolled; }
+            set {
+                _enrolled = value;
+                IsEnrolled = EnrolledValues.Contains(value ?? string.Empty);
+            }
+        }
+
+        /// <summary>
+        /// IsEnrolled is true or false based on the Enrolled status.
+        /// </summary>
+        public bool IsEnrolled { get; private set; }
 
         /// <summary>
         /// The exempt status
