@@ -634,10 +634,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         private void SetRequestStoredCredentials(StoredCredential storedCredential, JsonDoc request)
         {
             request.Set("initiator", EnumConverter.GetMapping(Target.GP_API, storedCredential.Initiator));
-                var storedCredentialJson = new JsonDoc()
-                    .Set("model", EnumConverter.GetMapping(Target.GP_API, storedCredential.Type))
-                    .Set("reason", EnumConverter.GetMapping(Target.GP_API, storedCredential.Reason))
-                    .Set("sequence", EnumConverter.GetMapping(Target.GP_API, storedCredential.Sequence));
+            var storedCredentialJson = new JsonDoc()
+                .Set("model", EnumConverter.GetMapping(Target.GP_API, storedCredential.Type))
+                .Set("reason", EnumConverter.GetMapping(Target.GP_API, storedCredential.Reason))
+                .Set("sequence", EnumConverter.GetMapping(Target.GP_API, storedCredential.Sequence))
+                .Set("contract_reference",  storedCredential.ContractReference);
             request.Set("stored_credential", storedCredentialJson);            
         }
 

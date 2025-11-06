@@ -7,5 +7,6 @@ namespace GlobalPayments.Api.Entities {
         public StoredCredentialSequence Sequence { get; set; }
         public StoredCredentialReason Reason { get; set; }
         public string SchemeId { get; set; }
+        public string ContractReference { get; set; }
     }
 }

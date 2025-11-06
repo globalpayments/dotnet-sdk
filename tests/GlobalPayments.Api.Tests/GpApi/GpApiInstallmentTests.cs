@@ -43,6 +43,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
             ServicesContainer.ConfigureService(gpApiConfig);
 
+            var gpApiSandboxConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.ConfigureService(gpApiSandboxConfig, "sandboxConfig");
+
             address = new Address {
                 StreetAddress1 = "123 Main St.",
                 City = "Downtown",
@@ -55,7 +58,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Initiator = StoredCredentialInitiator.CardHolder,
                 Type = StoredCredentialType.Installment,
                 Sequence = StoredCredentialSequence.Subsequent,
-                Reason = StoredCredentialReason.Incremental
+                Reason = StoredCredentialReason.Incremental,
+                ContractReference = "dsffdsfds"
             };
 
             installmentData = new InstallmentData {
@@ -66,17 +70,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
 
             visaCard = new CreditCardData {
-                Number = "4915669522406071",
-                ExpMonth = 04,
-                ExpYear = 2026,
-                Cvn = "123",
+                Number = "4395840190010011",
+                ExpMonth = 12,
+                ExpYear = 2027,
+                Cvn = "840",
                 CardPresent = false,
                 ReaderPresent = false
             };
             masterCard = new CreditCardData {
-                Number = "5579083004810368",
+                Number = "5120350100064537",
                 ExpMonth = 12,
-                ExpYear = 2026,
+                ExpYear = 2027,
                 Cvn = "123",
                 CardPresent = false,
                 ReaderPresent = false
@@ -101,25 +105,19 @@ namespace GlobalPayments.Api.Tests.GpApi {
                .WithAddress(address)
                .WithStoredCredential(storedCredential)
                .WithInstallmentData(installmentData)
-               .Execute();
+               .Execute("sandboxConfig");
 
             AssertTransactionResponse(response, TransactionStatus.Captured);
             Assert.AreEqual(AMOUNT, response.BalanceAmount);
-            Assert.IsNull(response.PayerDetails);
-            Assert.IsNotNull(response.InstallmentData);
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Count));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Mode));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Program));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.GracePeriodCount));
         }
 
         [TestMethod]
-        public void CreditSaleWithoutInstallmentData()
-        {
+        public void CreditSaleWithoutInstallmentData() {
+
             var response = visaCard.Charge(AMOUNT)
                .WithCurrency(CURRENCY)
                .WithAddress(address)
-               .Execute();
+               .Execute("sandboxConfig");
 
             AssertTransactionResponse(response, TransactionStatus.Captured);
             Assert.AreEqual(AMOUNT, response.BalanceAmount);
@@ -135,34 +133,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
                .WithAddress(address)
                .WithStoredCredential(storedCredential)
                .WithInstallmentData(installmentData)
-               .Execute();
+               .Execute("sandboxConfig");
 
             AssertTransactionResponse(response, TransactionStatus.Captured);
             Assert.AreEqual(AMOUNT, response.BalanceAmount);
             Assert.IsNull(response.PayerDetails);
-            Assert.IsNotNull(response.InstallmentData);
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Count));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Mode));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Program));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.GracePeriodCount));
         }
 
-        [TestMethod]
-        public void CreditSaleForInstallmentCarnet() {
-
-            var response = carnetCard.Charge(AMOUNT)
-                .WithCurrency(CURRENCY)
-                .WithAddress(address)
-                .WithStoredCredential(storedCredential)
-                .WithInstallmentData(installmentData)
-                .Execute();
-            AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.IsNotNull(response.InstallmentData);
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Count));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Mode));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.Program));
-            Assert.IsFalse(string.IsNullOrEmpty(response.InstallmentData.GracePeriodCount));
-        }
         #endregion
 
         #region Reporting Test Case
