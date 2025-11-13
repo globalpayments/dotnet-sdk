@@ -398,8 +398,8 @@ namespace GlobalPayments.Api.Entities.OnlineBoarding {
         //@Model.RenderField(WellKnownFieldNames.MobuylePhoneModel)
         //@Model.RenderField(WellKnownFieldNames.MobuyleOsVersion)
         public string FraudScreeningOptOut { get; set; }
-        public string PaypalThroughHeartlandOptOut { get; set; }
-        public string MasterpassThroughHeartlandOptOut { get; set; }
+        public string PaypalThroughGlobalPaymentsOptOut { get; set; }
+        public string MasterpassThroughGlobalPaymentsOptOut { get; set; }
         public string AVSDeclineAll { get; set; }
         public string MerchantEquipmentQuantity1 { get; set; }
     }

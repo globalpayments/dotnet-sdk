@@ -344,7 +344,7 @@ namespace GlobalPayments.Api.Network.Entities {
         [Map(Target.NWS, "SV")]
         SVSStoredValue,
         [Map(Target.NWS, "SW")]
-        HeartlandGiftCard_Proprietary,
+        GlobalPaymentsGiftCard_Proprietary,
         [Map(Target.NWS, "SZ")]
         ShazamDebit,
         [Map(Target.NWS, "TA")]

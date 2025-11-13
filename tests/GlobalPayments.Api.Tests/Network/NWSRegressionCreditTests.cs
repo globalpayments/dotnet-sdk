@@ -155,7 +155,7 @@ namespace GlobalPayments.Api.Tests.Network
         [TestMethod]
         public void Test_FleetCor_Sale() {
             track = TestCards.FleetWideSwipe();
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = track.Charge(10m)
                     .WithCurrency("USD")

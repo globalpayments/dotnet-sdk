@@ -11,7 +11,7 @@ namespace GlobalPayments.Api.Network.Entities {
         For asynchronous protocol two options exist, without link level and with link level support
         (protocol types 5 and 7 respectively). Use protocol type value of 7 when type message value is
         35 or 37. Use protocol type value of 5 when type message value is 01. For other type message
-        values consult with your Heartland representative.
+        values consult with your Global Payments representative.
         */
         Bisync_3270 = 0x06
     }

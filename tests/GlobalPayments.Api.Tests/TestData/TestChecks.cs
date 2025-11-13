@@ -23,7 +23,7 @@ namespace GlobalPayments.Api.Tests.TestData
             };
         }
 
-        public static eCheck HeartlandACH(
+        public static eCheck GlobalPaymentsACH(
             string secCode = SecCode.PPD,
             CheckType checkType = CheckType.PERSONAL,
             AccountType accountType = AccountType.CHECKING,

@@ -94,7 +94,7 @@ namespace GlobalPayments.Api.Tests.Network
                 VehicleNumber = "987654",
                 OdometerReading = "123456"
             };
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 4m, 5m, 20m);
 
             Transaction response = track.Charge(20m)

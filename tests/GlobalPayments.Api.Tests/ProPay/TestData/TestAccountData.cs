@@ -292,7 +292,7 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
                         {
                             new DeviceAttributeInfo()
                             {
-                                Name = "Heartland.AMD.OfficeKey",
+                                Name = "GlobalPayments.AMD.OfficeKey",
                                 Value = "123456"
                             }
                         };
@@ -344,7 +344,7 @@ namespace GlobalPayments.Api.Tests.ProPay.TestData
                 if (withAttributes) {
                     deviceInfo.Attributes = new List<DeviceAttributeInfo>() {
                             new DeviceAttributeInfo() {
-                                Name = "Heartland.AMD.OfficeKey",
+                                Name = "GlobalPayments.AMD.OfficeKey",
                                 Value = "123456"
                             }
                         };

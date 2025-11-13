@@ -241,7 +241,7 @@ namespace GlobalPayments.Api.Tests.Network {
             CreditCardData card = TestCards.MasterCardFleetManual(false, false);
             card.Cvn = "107";
 
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add(ProductCode.Unleaded_Gas, UnitOfMeasure.Gallons, 1, 10);
 
             FleetData fleetData = new FleetData();
@@ -261,7 +261,7 @@ namespace GlobalPayments.Api.Tests.Network {
             CreditCardData card = TestCards.VisaManual(false, false);
             card.Cvn = "110";
 
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add(ProductCode.Unleaded_Gas, UnitOfMeasure.Gallons, 1, 10);
 
             FleetData fleetData = new FleetData();

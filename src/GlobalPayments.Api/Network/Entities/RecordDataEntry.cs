@@ -8,7 +8,7 @@ namespace GlobalPayments.Api.Network.Entities {
         public string TransactionDate { get; set; }
         public string TransactionTime { get; set; }
         public string CompanyName { get; set; }
-        public string HeartlandCompanyId { get; set; }
+        public string GlobalPaymentsCompanyId { get; set; }
         public string MerchantName { get; set; }
         public string MerchantId { get; set; }
         public string MerchantStreet { get; set; }

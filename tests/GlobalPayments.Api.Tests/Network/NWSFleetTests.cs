@@ -64,7 +64,7 @@ namespace GlobalPayments.Api.Tests.Network {
             // MASTERCARD FLEET
             //card = TestCards.MasterCardFleetManual(true, true);
             //track = TestCards.MasterCardFleetSwipe();
-            //productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            //productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             //productData.Add("03", UnitOfMeasure.Gallons, 1, 10);
 
             // VOYAGER FLEET
@@ -81,7 +81,7 @@ namespace GlobalPayments.Api.Tests.Network {
             // VISA
             card = TestCards.VisaFleetManual(true, true);
             track = TestCards.VisaFleetSwipe();
-            //productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            //productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             //productData.Add("01", UnitOfMeasure.Gallons, 1, 10);
 
             //FleetOne
@@ -106,7 +106,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_001_manual_authorization() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = card.Authorize(10m)
                     .WithCurrency("USD")
@@ -130,7 +130,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_002_manual_sale() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = card.Charge(10m)
                     .WithCurrency("USD")
@@ -154,7 +154,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_003_swipe_refund() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = track.Refund(10m)
                         .WithCurrency("USD")
@@ -177,7 +177,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_004_swipe_stand_in_capture() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
 
             Transaction transaction = Transaction.FromNetwork(
@@ -216,7 +216,7 @@ namespace GlobalPayments.Api.Tests.Network {
                         track
                 );
 
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
 
             Transaction response = transaction.Capture(10m)
@@ -241,7 +241,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_006_swipe_void() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
 
             Transaction sale = track.Charge(10m)
@@ -289,7 +289,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_008_ICR_authorization() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
             Transaction response = track.Authorize(10m, false)
                         .WithCurrency("USD")
@@ -350,7 +350,7 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_009_swipe_sale_product_01() {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 1m, 3.99m, 3.99m);
 
             Transaction response = track.Charge(3.99m)
@@ -831,7 +831,7 @@ namespace GlobalPayments.Api.Tests.Network {
         //[TestMethod]
         //public void Voyager_EMV_Contactless_Refund()
         //{
-        //    ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+        //    ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
         //    productData.Add("01", UnitOfMeasure.Gallons, 2m, 5m, 10m);
         //   // track.EntryMethod = EntryMethod.Proximity;
         //    track.Value = ";7088850950270000131=32010000010100600?";
@@ -858,7 +858,7 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Voyager_EMV_Authorization_9F6E()
         {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 5m, 5m, 10m);
             fleetData = new FleetData
             {
@@ -930,7 +930,7 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Voyager_EMV_Sale()
         {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 25.000m, 1.000m, 25.00m);
             fleetData = new FleetData
             {
@@ -1026,7 +1026,7 @@ namespace GlobalPayments.Api.Tests.Network {
         [TestMethod]
         public void Voyager_EMV_Sale_Void()
         {
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", UnitOfMeasure.Gallons, 5m, 5m, 10m);
             fleetData = new FleetData
             {

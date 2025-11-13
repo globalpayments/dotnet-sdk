@@ -148,7 +148,7 @@ namespace GlobalPayments.Api.Network.Entities {
         [Map(Target.NWS, "0713")]
         UnmatchedPreAuthorizationCompletion,
         [Map(Target.NWS, "0714")]
-        DuplicateHeartlandGiftCardTransaction,
+        DuplicateGlobalPaymentsGiftCardTransaction,
         [Map(Target.NWS, "0715")]
         TransactionNotAllowed,
         [Map(Target.NWS, "0716")]

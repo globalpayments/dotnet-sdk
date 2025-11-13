@@ -7,8 +7,8 @@ using System.Text;
 namespace GlobalPayments.Api.Network.Elements {
     public class DE63_ProductData : IDataElement<DE63_ProductData> {
         //private int productCount;
-        public ProductDataFormat ProductDataFormat { get; set; } = ProductDataFormat.HeartlandStandardFormat;
-        public ProductCodeSet ProductCodeSet { get; set; } = ProductCodeSet.Heartland;
+        public ProductDataFormat ProductDataFormat { get; set; } = ProductDataFormat.GlobalPaymentsStandardFormat;
+        public ProductCodeSet ProductCodeSet { get; set; } = ProductCodeSet.GlobalPayments;
         public ServiceLevel ServiceLevel { get; set; } = ServiceLevel.SelfServe;
         public Dictionary<string, DE63_ProductDataEntry> ProductDataEntries { get; set; }
         public int ProductCount { get { return ProductDataEntries.Count; } set { } }
@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Network.Elements {
             ServiceLevel = EnumConverter.FromMapping<ServiceLevel>(Target.NWS, sp.ReadString(1));
 
             switch (ProductDataFormat) {
-                case ProductDataFormat.HeartlandStandardFormat:
+                case ProductDataFormat.GlobalPaymentsStandardFormat:
                     ProductCount = sp.ReadInt(3);
                     for (int i = 0; i < ProductCount; i++) {
                         string code = sp.ReadToChar('\\');
@@ -76,7 +76,7 @@ namespace GlobalPayments.Api.Network.Elements {
                         ProductDataEntries[code] = entry;
                     }
                     break;
-                case ProductDataFormat.Heartland_ProductCoupon_Format:
+                case ProductDataFormat.GlobalPayments_ProductCoupon_Format:
                     ProductCount = sp.ReadInt(2);
                     for (int i = 0; i < ProductCount; i++) {
                         //ProductCodeSet set = sp.ReadStringConstant<ProductCodeSet>(1);
@@ -139,7 +139,7 @@ namespace GlobalPayments.Api.Network.Elements {
                     , EnumConverter.GetMapping(Target.NWS, ServiceLevel));
 
             switch(ProductDataFormat) {
-                case ProductDataFormat.HeartlandStandardFormat: {
+                case ProductDataFormat.GlobalPaymentsStandardFormat: {
                     rvalue = string.Concat(rvalue,StringUtils.PadLeft(ProductCount, 3, '0'));
                     foreach (DE63_ProductDataEntry entry in ProductDataEntries.Values) {
                         rvalue = string.Concat(rvalue,entry.Code + "\\");
@@ -171,7 +171,7 @@ namespace GlobalPayments.Api.Network.Elements {
                                 ,(StringUtils.ToNumeric(entry.Amount) + "\\"));
                     }
                 } break;
-                case ProductDataFormat.Heartland_ProductCoupon_Format: {
+                case ProductDataFormat.GlobalPayments_ProductCoupon_Format: {
                     rvalue = string.Concat(rvalue,StringUtils.PadLeft(ProductCount, 3, '0'));
                     foreach(DE63_ProductDataEntry entry in ProductDataEntries.Values) {
                         rvalue = string.Concat(rvalue,entry.Code);

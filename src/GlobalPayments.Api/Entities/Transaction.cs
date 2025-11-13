@@ -407,7 +407,7 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// The result of an administrative Time Request
         /// </summary>
-        public string TimeResponseFromHeartland { get; set; }
+        public string TimeResponseFromGlobalPayments { get; set; }
 
         /// <summary>
         /// The gateway transaction ID of the transaction.

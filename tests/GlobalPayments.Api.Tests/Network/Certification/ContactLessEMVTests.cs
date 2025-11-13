@@ -193,7 +193,7 @@ namespace GlobalPayments.Api.Tests.Network.Certification
         {
             config.MerchantType = "5541";   //indoor    
             ServicesContainer.ConfigureService(config);
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 2m, 5m, 10m);
             FleetData fleetData = new FleetData
             {
@@ -224,7 +224,7 @@ namespace GlobalPayments.Api.Tests.Network.Certification
         {
             config.MerchantType = "5541";   //indoor    
             ServicesContainer.ConfigureService(config);
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 2m, 5m, 10m);
             FleetData fleetData = new FleetData
             {
@@ -275,7 +275,7 @@ namespace GlobalPayments.Api.Tests.Network.Certification
         {
             config.MerchantType = "5541";   //indoor    
             ServicesContainer.ConfigureService(config);
-            //ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            //ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             //productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 2m, 5m, 10m);
             //FleetData fleetData = new FleetData
             //{
@@ -750,7 +750,7 @@ namespace GlobalPayments.Api.Tests.Network.Certification
             ServicesContainer.ConfigureService(config, "ICR");
             acceptorConfig.CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe;
             acceptorConfig.OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended;
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 2m, 5m, 10m);
             FleetData fleetData = new FleetData
             {

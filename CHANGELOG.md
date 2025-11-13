@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v9.0.29 (11/05/25)
+## Latest - v10.0.0 (11/13/25)
+### Enhancement
+- [Rebranding] - Rebranding from Heartland to Global Payments.
+
+## v9.0.29 (11/05/25)
 ### Enhancement
 - [GPAPI] - Added ContractReference field in Stored Credential object.
 
@@ -446,7 +450,7 @@
 
 #### Enhancements
 
-- Heartland Profac: Device ordering
+- GlobalPayments Profac: Device ordering
 
 ## v5.1.8 (05/11/23)
 
@@ -584,17 +588,17 @@
 
 #### Enhancements
 
-- Heartland/Portico Gateway: added method for voiding eCheck using ClientTxnId to CheckService
+- GlobalPayments/Portico Gateway: added method for voiding eCheck using ClientTxnId to CheckService
 
 ## v4.2.2 (9/27/22)
 
 #### Enhancements
 
-- Heartland/Portico Gateway: add "ClientTxnId" to transaction response properties
+- GlobalPayments/Portico Gateway: add "ClientTxnId" to transaction response properties
 
 #### Bug Fixes:
 
-- Heartland/Portico Gateway: fix CreditReversal message structure
+- GlobalPayments/Portico Gateway: fix CreditReversal message structure
 
 ## v4.2.1 (9/22/22)
 
@@ -873,7 +877,7 @@
 
 #### Bug Fixes:
 
-- Fix issue in v1.7.31 and up for eCheck auths on Portico/Heartland
+- Fix issue in v1.7.31 and up for eCheck auths on Portico/GlobalPayments
 
 ---
 

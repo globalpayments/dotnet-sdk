@@ -75,7 +75,7 @@ namespace GlobalPayments.Api {
         /// </summary>
         public string X509CertificateBase64String { get; set; }
         /// <summary>
-        /// Name and Version of the SDK used for integration, where applicable.  Expected for users of the Heartland SDK.
+        /// Name and Version of the SDK used for integration, where applicable.  Expected for users of the Global Payments SDK.
         /// </summary>
         public string SDKNameVersion { get; set; }
 

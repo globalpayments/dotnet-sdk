@@ -144,9 +144,9 @@
         </form>
     </div>
     <script type="text/javascript">
-        (function (document, Heartland) {
+        (function (document, GlobalPayments) {
             // Create a new `HPS` object with the necessary configuration
-            var hps = new Heartland.HPS({
+            var hps = new GlobalPayments.HPS({
                 publicKey: 'pkapi_cert_P6dRqs1LzfWJ6HgGVZ',
                 type: 'iframe',
                 // Configure the iframe fields to tell the library where
@@ -340,7 +340,7 @@
             });
 
             // Attach a handler to interrupt the form submission
-            Heartland.Events.addHandler(document.getElementById('iframes'), 'submit', function (e) {
+            GlobalPayments.Events.addHandler(document.getElementById('iframes'), 'submit', function (e) {
                 // Prevent the form from continuing to the `action` address
                 e.preventDefault();
                 // Tell the iframes to tokenize the data
@@ -353,7 +353,7 @@
                     'cardNumber'
                 );
             });
-        }(document, Heartland));
+        }(document, GlobalPayments));
     </script>
 </body>
 </html>

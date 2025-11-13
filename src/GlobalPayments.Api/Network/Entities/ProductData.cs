@@ -6,9 +6,9 @@ namespace GlobalPayments.Api.Network.Entities {
     public class ProductData {
         private DE63_ProductData productData;
 
-        public ProductData(ServiceLevel serviceLevel, ProductCodeSet productCodeSet = ProductCodeSet.Heartland) {
+        public ProductData(ServiceLevel serviceLevel, ProductCodeSet productCodeSet = ProductCodeSet.GlobalPayments) {
             productData = new DE63_ProductData {
-                ProductDataFormat = ProductDataFormat.HeartlandStandardFormat,
+                ProductDataFormat = ProductDataFormat.GlobalPaymentsStandardFormat,
                 ProductCodeSet = productCodeSet,
                 ServiceLevel = serviceLevel
             };

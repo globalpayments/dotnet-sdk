@@ -438,7 +438,7 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("400", reverseResponse.ResponseCode);
         }
 
-        //--------------------------------------HeartLand Gift Cards Tokenization------------------------------------------//
+        //--------------------------------------Global Payments Gift Cards Tokenization------------------------------------------//
         [TestMethod]
         public void Test_File_ActionHMs() {
             GiftCard giftCard = TestCards.HmsGiftCard();

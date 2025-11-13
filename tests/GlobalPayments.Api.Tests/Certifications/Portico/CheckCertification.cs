@@ -84,7 +84,7 @@ namespace GlobalPayments.Api.Tests.Certifications.Portico
         [TestMethod]
         public void checks_005CorporatePersonalChecking()
         {
-            var check = TestChecks.Certification(SecCode.CCD, CheckType.PERSONAL, AccountType.CHECKING, "Heartland Pays");
+            var check = TestChecks.Certification(SecCode.CCD, CheckType.PERSONAL, AccountType.CHECKING, "GlobalPayments Pays");
             var response = check.Charge(15.00m)
                 .WithCurrency("USD")
                 .WithAddress(address)
@@ -105,7 +105,7 @@ namespace GlobalPayments.Api.Tests.Certifications.Portico
         [TestMethod]
         public void checks_006CorporateBuisnessChecking()
         {
-            var check = TestChecks.Certification(SecCode.CCD, CheckType.BUSINESS, AccountType.CHECKING, "Heartland Pays");
+            var check = TestChecks.Certification(SecCode.CCD, CheckType.BUSINESS, AccountType.CHECKING, "GlobalPayments Pays");
             var response = check.Charge(16.00m)
                 .WithCurrency("USD")
                 .WithAddress(address)
@@ -117,7 +117,7 @@ namespace GlobalPayments.Api.Tests.Certifications.Portico
         [TestMethod]
         public void checks_007CorporatePersonalSavings()
         {
-            var check = TestChecks.Certification(SecCode.CCD, CheckType.PERSONAL, AccountType.SAVINGS, "Heartland Pays");
+            var check = TestChecks.Certification(SecCode.CCD, CheckType.PERSONAL, AccountType.SAVINGS, "GlobalPayments Pays");
             var response = check.Charge(17.00m)
                 .WithCurrency("USD")
                 .WithAddress(address)
@@ -129,7 +129,7 @@ namespace GlobalPayments.Api.Tests.Certifications.Portico
         [TestMethod]
         public void checks_008CorporateBuisnessSavings()
         {
-            var check = TestChecks.Certification(SecCode.CCD, CheckType.BUSINESS, AccountType.SAVINGS, "Heartland Pays");
+            var check = TestChecks.Certification(SecCode.CCD, CheckType.BUSINESS, AccountType.SAVINGS, "GlobalPayments Pays");
             var response = check.Charge(18.00m)
                 .WithCurrency("USD")
                 .WithAddress(address)

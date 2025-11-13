@@ -86,7 +86,7 @@ namespace GlobalPayments.Api.Tests.Portico {
                 Status = "Active",
                 FirstName = "Bill",
                 LastName = "Johnson",
-                Company = "Heartland Payment Systems",
+                Company = "GlobalPayments Payment Systems",
                 Address = new Address {
                     StreetAddress1 = "987 Elm St",
                     City = "Princeton",
@@ -590,7 +590,7 @@ namespace GlobalPayments.Api.Tests.Portico {
                 Status = "Active",
                 FirstName = "Bill",
                 LastName = "Johnson",
-                Company = "Heartland Payment Systems",
+                Company = "GlobalPayments Payment Systems",
                 Address = new Address {
                     StreetAddress1 = "987 Elm St",
                     City = "Princeton",

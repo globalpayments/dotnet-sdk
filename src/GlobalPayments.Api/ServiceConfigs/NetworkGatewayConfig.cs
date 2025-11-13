@@ -16,7 +16,7 @@ namespace GlobalPayments.Api {
             _gatewayType = networkGatewayType;
         }
         public ConnectionType connectionType = ConnectionType.ISDN;
-        public MessageType messageType = MessageType.Heartland_POS_8583;
+        public MessageType messageType = MessageType.GlobalPayments_POS_8583;
         public ProtocolType protocolType = ProtocolType.TCP_IP;
         private IBatchProvider batchProvider;
         public AcceptorConfig AcceptorConfig { get; set; }

@@ -22,7 +22,7 @@ namespace GlobalPayments.Api.Network.Elements {
             RecordData.TransactionDate = sp.ReadString(8);
             RecordData.TransactionTime = sp.ReadString(6);
             RecordData.CompanyName = sp.ReadString(15);
-            RecordData.HeartlandCompanyId = sp.ReadString(5);
+            RecordData.GlobalPaymentsCompanyId = sp.ReadString(5);
             RecordData.MerchantName = sp.ReadString(20);
             RecordData.MerchantId = sp.ReadString(15);
             RecordData.MerchantStreet = sp.ReadString(30);
@@ -116,7 +116,7 @@ namespace GlobalPayments.Api.Network.Elements {
                 StringUtils.PadRight(RecordData.TransactionDate, 8, ' '),
                 StringUtils.PadRight(RecordData.TransactionTime, 6, ' '),
                 StringUtils.PadRight(RecordData.CompanyName, 15, ' '),
-                StringUtils.PadRight(RecordData.HeartlandCompanyId, 5, ' '),
+                StringUtils.PadRight(RecordData.GlobalPaymentsCompanyId, 5, ' '),
                 StringUtils.PadRight(RecordData.MerchantName, 20, ' '),
                 StringUtils.PadRight(RecordData.MerchantId, 15, ' '),
                 StringUtils.PadRight(RecordData.MerchantStreet, 30, ' '),

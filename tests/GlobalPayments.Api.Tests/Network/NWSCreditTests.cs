@@ -542,7 +542,7 @@ namespace GlobalPayments.Api.Tests.Network {
                 VehicleNumber = "987654",
                 OdometerReading = "123456"
             };
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 4m, 5m, 20m);
 
             Transaction response = track.Charge(31m)
@@ -833,7 +833,7 @@ namespace GlobalPayments.Api.Tests.Network {
                         fleetTrack
                 );
 
-            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.Heartland);
+            ProductData productData = new ProductData(ServiceLevel.FullServe, ProductCodeSet.GlobalPayments);
             productData.Add("01", Api.Network.Entities.UnitOfMeasure.Gallons, 1m, 10m, 10m);
 
             FleetData fleetData = new FleetData

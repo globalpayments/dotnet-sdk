@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Utils {
         private static readonly Regex WexRegex = new Regex(@"^(?:690046|707138)", RegexOptions.None);
         private static readonly Regex StoredValueRegex = new Regex(@"^(?:600649|603261|603571|627600|639470)", RegexOptions.None);
         private static readonly Regex ValueLinkRegex = new Regex(@"^(?:601056|603225)", RegexOptions.None);
-        private static readonly Regex HeartlandGiftRegex = new Regex(@"^(?:502244|627720|708355)", RegexOptions.None);
+        private static readonly Regex GlobalPaymentsGiftRegex = new Regex(@"^(?:502244|627720|708355)", RegexOptions.None);
         private static readonly Regex WorldFuelRegex = new Regex(@"^7000009[5-8]", RegexOptions.None);
         private static readonly Regex FleetCorGasCardRegex = new Regex(@"^707685", RegexOptions.None);
         private static readonly Regex FleetCorFleetwideRegex = new Regex(@"^70768598", RegexOptions.None);
@@ -32,7 +32,7 @@ namespace GlobalPayments.Api.Utils {
         private static Dictionary<string, Dictionary<string, string>> _readyLinkBinMap;
 
         static CardUtils() {
-            _regexMap = new Dictionary<string, Regex> { { "Amex", AmexRegex }, { "MC", MasterCardRegex }, { "Visa", VisaRegex }, { "DinersClub", DinersClubRegex }, { "EnRoute", RouteClubRegex }, { "Discover", DiscoverRegex }, { "Jcb", JcbRegex }, { "Voyager", VoyagerRegex }, { "Wex", WexRegex }, { "StoredValue", StoredValueRegex }, { "ValueLink", ValueLinkRegex }, { "HeartlandGift", HeartlandGiftRegex }, { "WorldFuels", WorldFuelRegex }, { "FleetCorGasCard", FleetCorGasCardRegex }, { "FleetCorFleetwide",  FleetCorFleetwideRegex }, { "FleetCorFuelmanPlus",  FleetCorFuelmanPlusRegex }, { "FleetOne",  FleetOneRegex }
+            _regexMap = new Dictionary<string, Regex> { { "Amex", AmexRegex }, { "MC", MasterCardRegex }, { "Visa", VisaRegex }, { "DinersClub", DinersClubRegex }, { "EnRoute", RouteClubRegex }, { "Discover", DiscoverRegex }, { "Jcb", JcbRegex }, { "Voyager", VoyagerRegex }, { "Wex", WexRegex }, { "StoredValue", StoredValueRegex }, { "ValueLink", ValueLinkRegex }, { "GlobalPaymentsGift", GlobalPaymentsGiftRegex }, { "WorldFuels", WorldFuelRegex }, { "FleetCorGasCard", FleetCorGasCardRegex }, { "FleetCorFleetwide",  FleetCorFleetwideRegex }, { "FleetCorFuelmanPlus",  FleetCorFuelmanPlusRegex }, { "FleetOne",  FleetOneRegex }
             };
 
             // fleet bin ranges

@@ -4,7 +4,7 @@ namespace GlobalPayments.Api.Network.Entities {
     [MapTarget(Target.NWS)]
     public enum ProductCodeSet {
         [Map(Target.NWS, "0")]
-        Heartland,
+        GlobalPayments,
         [Map(Target.NWS, "1")]
         ClientSpecific,
         [Map(Target.NWS, "2")]

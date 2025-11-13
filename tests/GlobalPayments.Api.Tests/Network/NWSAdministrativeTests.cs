@@ -94,7 +94,7 @@ namespace GlobalPayments.Api.Tests.Network
                 TransactionDate = DateTime.Now.ToString("yyMMdd"),
                 TransactionTime = DateTime.Now.ToString("hhmmss"),
                 CompanyName = "ShaunCorp",
-                HeartlandCompanyId = "SPSA",
+                GlobalPaymentsCompanyId = "SPSA",
                 MerchantName = "Test",
                 MerchantId = "NWSDOTNET01",
                 MerchantStreet = "123 Main St",
@@ -199,7 +199,7 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.IsNotNull(response);
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
-            Assert.IsNotNull(response.TimeResponseFromHeartland);
+            Assert.IsNotNull(response.TimeResponseFromGlobalPayments);
 
             // check response
             Assert.AreEqual("000", response.ResponseCode);

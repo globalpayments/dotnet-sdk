@@ -52,7 +52,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
@@ -79,7 +79,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "60523"
             };
             var autoSub = new AutoSubstantiation {
@@ -113,7 +113,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
@@ -169,7 +169,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
@@ -212,7 +212,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
@@ -267,7 +267,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
@@ -324,7 +324,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
@@ -364,7 +364,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
@@ -397,7 +397,7 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 

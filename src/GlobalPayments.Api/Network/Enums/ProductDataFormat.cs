@@ -4,10 +4,10 @@ namespace GlobalPayments.Api.Network.Entities {
     [MapTarget(Target.NWS)]
     public enum ProductDataFormat {
         [Map(Target.NWS, "0")]
-        HeartlandStandardFormat,
+        GlobalPaymentsStandardFormat,
         [Map(Target.NWS, "1")]
         ANSI_X9_TG23_Format,
         [Map(Target.NWS, "2")]
-        Heartland_ProductCoupon_Format
+        GlobalPayments_ProductCoupon_Format
     }
 }

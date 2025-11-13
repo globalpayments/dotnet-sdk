@@ -53,7 +53,7 @@ namespace GlobalPayments.Api.Network.Entities {
                 case 180: return "Not on file";
                 case 181: return "Transaction already adjusted";
                 case 182: return "Target not found";
-                case 183: return "Reserved for Heartland use";
+                case 183: return "Reserved for Global Payments use";
                 case 184: return "Invalid/missing driver ID";
                 case 185: return "Invalid/missing odometer";
                 case 186: return "Refer to card issuer (specific to partial approval processing)";

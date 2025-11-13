@@ -16,7 +16,7 @@ namespace GlobalPayments.Api.Tests.Services {
                 SecretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A"
             });
 
-            check = TestData.TestChecks.HeartlandACH();
+            check = TestData.TestChecks.GlobalPaymentsACH();
 
             address = new Address {
                 StreetAddress1 = "123 Main St.",

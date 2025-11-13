@@ -307,7 +307,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             };
 
             var address = new Address {
-                StreetAddress1 = "1 Heartland Way",
+                StreetAddress1 = "1 Global Payments Way",
                 PostalCode = "95124"
             };
 
