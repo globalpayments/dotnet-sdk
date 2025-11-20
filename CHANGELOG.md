@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v10.0.0 (11/13/25)
+## Latest - v10.0.1 (11/20/25)
+### Enhancement
+- [GPAPI] - Added support to enable authentication with Portico credentials in GPAPI.
+
+## v10.0.0 (11/13/25)
 ### Enhancement
 - [Rebranding] - Rebranding from Heartland to Global Payments.
 

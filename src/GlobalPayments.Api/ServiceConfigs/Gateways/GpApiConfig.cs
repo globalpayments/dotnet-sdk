@@ -1,4 +1,5 @@
 ﻿using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.Gateways.Interfaces;
 using GlobalPayments.Api.Utils;
@@ -67,6 +68,8 @@ namespace GlobalPayments.Api {
 
         public IAccessTokenProvider AccessTokenProvider { get; set; }
 
+        public PorticoTokenConfig PorticoTokenConfig { get; set; }
+
         public Dictionary<string, string> DynamicHeaders { get; set; }
 
         public GpApiConfig() : base(GatewayProvider.GP_API) { }
@@ -107,7 +110,8 @@ namespace GlobalPayments.Api {
                 AccessTokenInfo = AccessTokenInfo,
                 Environment = Environment,
                 StatusUrl = StatusUrl,
-                AccessTokenProvider = AccessTokenProvider
+                AccessTokenProvider = AccessTokenProvider,
+                PorticoTokenConfig = PorticoTokenConfig
             };
 
             var gateway = new GpApiConnector(gpApiConfig);
