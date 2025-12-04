@@ -35,7 +35,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
-                    .Set("currency_conversion", builder.DccRateData?.DccId ?? null);
+                    .Set("currency_conversion", builder.DccRateData?.DccId ?? null)
+                    .Set("description", builder.Description);
 
                 return new Request {
                     Verb = HttpMethod.Post,
@@ -47,7 +48,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                 var data = new JsonDoc()
                     .Set("amount", builder.Amount.ToNumericCurrencyString())
                     .Set("currency_conversion", builder.DccRateData == null ? null : new JsonDoc()
-                        .Set("id", builder.DccRateData?.DccId));
+                        .Set("id", builder.DccRateData?.DccId))
+                    .Set("description", builder.Description);
 
                 return new Request {
                     Verb = HttpMethod.Post,

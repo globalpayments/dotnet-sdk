@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v10.0.1 (11/20/25)
+## Latest - v10.0.2 (12/04/25)
+### Enhancement
+- [GPAPI] - Add 'description' to the ManagementRequestBuilder for Capture and Refund. 
+  
+## v10.0.1 (11/20/25)
 ### Enhancement
 - [GPAPI] - Added support to enable authentication with Portico credentials in GPAPI.
 
