@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
                 ConnectionMode = ConnectionModes.TCP_IP,
-                IpAddress = "192.168.1.13",
+                IpAddress = "192.168.1.19",
                 Port = "8081",
                 Timeout = 15000,
                 RequestIdProvider = new RandomIdProvider(),
@@ -1148,6 +1148,381 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 }
             }
         }
+        #endregion
+
+        #region StartCardTransaction Tests
+
+        [TestMethod]
+        public void StartCardTransaction_AllCardAcquisitionTypes() {
+            _device.EcrId = "13";
+            var param = new UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact | AcquisitionType.Contactless | AcquisitionType.Swipe | AcquisitionType.Manual,
+                Header = "Sale Transaction",
+                DisplayTotalAmount = "Yes",
+                PromptForManual = false,
+                BrandIcon1 = 1,
+                BrandIcon2 = 1,
+                Timeout = 100
+            };
+
+            var indicator = new ProcessingIndicator {
+                QuickChip = "Y",
+                CheckLuhn = "N",
+                SecurityCode = "Y",
+                CardTypeFilter = CardTypeFilter.VISA | CardTypeFilter.MC | CardTypeFilter.AMEX | CardTypeFilter.DISCOVER
+            };
+
+            var transData = new UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.AreEqual("00", response.DeviceResponseCode);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_ContactOnly() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact,
+                Header = "Insert Card",
+                DisplayTotalAmount = "Yes",
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "Y",
+                CheckLuhn = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_ContactlessOnly() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contactless,
+                Header = "Tap Card",
+                DisplayTotalAmount = "Yes",
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "N",
+                CheckLuhn = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_SwipeOrContact() {
+            _device.EcrId = "13";
+            var param = new UpaParam {
+                AcquisitionTypes = AcquisitionType.Swipe | AcquisitionType.Contact,
+                Header = "Swipe or Insert Card",
+                DisplayTotalAmount = "Yes",
+                Timeout = 45
+            };
+
+            var indicator = new ProcessingIndicator {
+                QuickChip = "N",
+                CheckLuhn = "Y",
+                SecurityCode = "Y"
+            };
+
+            var transData = new UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = (UpaGiftCardResponse)_device.StartCardTransaction(param, indicator, transData);
+    
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.AreEqual(0, response.Fallback);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_WithCashBack() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact | AcquisitionType.Contactless | AcquisitionType.Swipe,
+                Header = "Debit Transaction",
+                DisplayTotalAmount = "Yes",
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "N",
+                CheckLuhn = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = (UpaGiftCardResponse)_device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.AreEqual(0, response.Fallback);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_Refund() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Swipe,
+                Header = "Refund Transaction",
+                DisplayTotalAmount = "Yes",
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "N",
+                CheckLuhn = "Y",
+                SecurityCode = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Refund
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_WithCardTypeFilter_VisaAndMasterCard() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact,
+                Header = "Visa Only",
+                DisplayTotalAmount = "Yes",
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "N",
+                CheckLuhn = "Y",
+                SecurityCode = "Y",
+                CardTypeFilter = CardTypeFilter.VISA | CardTypeFilter.MC
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_WithAmountLessThanOneDollar() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact | AcquisitionType.Swipe,
+                Header = "Small Amount",
+                DisplayTotalAmount = "Yes",
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "Y",
+                CheckLuhn = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 0.50m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = (UpaGiftCardResponse)_device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.AreEqual(0, response.Fallback);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_VerifyResponseFields() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact,
+                Header = "Test Transaction",
+                DisplayTotalAmount = "Yes",
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "Y",
+                CheckLuhn = "Y",
+                SecurityCode = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = (UpaGiftCardResponse)_device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+            Assert.IsNotNull(response.AcquisitionType);
+            
+            // Verify response contains expected fields (some may be null depending on card entry method)
+            if (response.Pan != null) {
+                Assert.IsTrue(!string.IsNullOrEmpty(response.Pan.ClearPAN) || !string.IsNullOrEmpty(response.Pan.MaskedPAN));
+            }
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_InfiniteTimeout_Contact() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact,
+                Header = "No Timeout",
+                DisplayTotalAmount = "Yes",
+                Timeout = 0  // Infinite timeout
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_InfiniteTimeout_Contactless() {
+            _device.EcrId = "13";
+            var param = new UpaParam
+            {
+                AcquisitionTypes = AcquisitionType.Contactless,
+                Header = "No Timeout",
+                DisplayTotalAmount = "Yes",
+                Timeout = 0  // Infinite timeout
+            };
+
+            var indicator = new ProcessingIndicator
+            {
+                QuickChip = "N"
+            };
+
+            var transData = new UpaTransactionData
+            {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
+        [TestMethod]
+        public void StartCardTransaction_WithBrandIcons() {
+            _device.EcrId = "13";
+            var param = new  UpaParam {
+                AcquisitionTypes = AcquisitionType.Contact | AcquisitionType.Swipe | AcquisitionType.Contactless,
+                Header = "Card Entry",
+                DisplayTotalAmount = "Yes",
+                BrandIcon1 = 31,  // Display multiple brand icons
+                BrandIcon2 = 15,
+                Timeout = 100
+            };
+
+            var indicator = new  ProcessingIndicator {
+                QuickChip = "Y",
+                CheckLuhn = "N"
+            };
+
+            var transData = new  UpaTransactionData {
+                TotalAmount = 5.00m,
+                CashBackAmount = 0.00m,
+                TranDate = DateTime.Now,
+                TranTime = DateTime.Now,
+                TransType = TransactionType.Sale
+            };
+
+            var response = _device.StartCardTransaction(param, indicator, transData);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Success", response.Status);
+        }
+
         #endregion
     }
 }

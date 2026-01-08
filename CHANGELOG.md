@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v10.0.2 (12/04/25)
+## Latest - v10.0.3 (01/08/25)
+### Enhancement
+- [UPA] - Added Missing Output paramenters in StartCardTransaction Command.
+
+## v10.0.2 (12/04/25)
 ### Enhancement
 - [GPAPI] - Add 'description' to the ManagementRequestBuilder for Capture and Refund. 
   

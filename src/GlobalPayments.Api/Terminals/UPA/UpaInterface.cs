@@ -143,9 +143,21 @@ namespace GlobalPayments.Api.Terminals.UPA {
             if (param != null) {
                 var requestParams = request.SubElement("params");
                 requestParams.Set("timeOut", param.Timeout);
-                requestParams.Set("acquisitionTypes", param.AcquisitionTypes.ToString());
+                
+                // Convert AcquisitionTypes enum flags to pipe-separated mapped values
+                var acquisitionStrings = new List<string>();
+                foreach (AcquisitionType type in Enum.GetValues(typeof(AcquisitionType))) {
+                    if (type != AcquisitionType.None && param.AcquisitionTypes.HasFlag(type)) {
+                        var mapped = EnumConverter.GetMapping(Target.UPA, type);
+                        if (!string.IsNullOrEmpty(mapped)) {
+                            acquisitionStrings.Add(mapped);
+                        }
+                    }
+                }
+                requestParams.Set("acquisitionTypes", string.Join("|", acquisitionStrings));
+                
                 requestParams.Set("header", param.Header);
-                requestParams.Set("displayTotalAmount", param.DisplayTotalAmount);
+                requestParams.Set("displayTotalAmount", param.DisplayTotalAmount == "Yes" ? "Y" : "N");
                 requestParams.Set("PromptForManualEntryPassword", param.PromptForManual ? 1 : 0);
                 requestParams.Set("brandIcon1", param.BrandIcon1);
                 requestParams.Set("brandIcon2", param.BrandIcon2);
@@ -156,7 +168,20 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 requestIndicator.Set("quickChip", indicator.QuickChip);
                 requestIndicator.Set("checkLuhn", indicator.CheckLuhn);
                 requestIndicator.Set("securityCode", indicator.SecurityCode);
-                requestIndicator.Set("cardTypeFilter", indicator.CardTypeFilter.ToString());
+                
+                // Convert CardTypeFilter enum flags to pipe-separated mapped values
+                var cardTypeStrings = new List<string>();
+                foreach (CardTypeFilter type in Enum.GetValues(typeof(CardTypeFilter))) {
+                    if (indicator.CardTypeFilter.HasFlag(type)) {
+                        var mapped = EnumConverter.GetMapping(Target.UPA, type);
+                        if (!string.IsNullOrEmpty(mapped)) {
+                            cardTypeStrings.Add(mapped);
+                        }
+                    }
+                }
+                if (cardTypeStrings.Count > 0) {
+                    requestIndicator.Set("cardTypeFilter", string.Join("|", cardTypeStrings));
+                }
             }
 
             if (transData != null) {
@@ -164,7 +189,7 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 requestTransaction.Set("totalAmount", Regex.Replace(string.Format("{0:c}", transData.TotalAmount), "[^0-9.]", ""));
                 requestTransaction.Set("cashBackAmount", Regex.Replace(string.Format("{0:c}", transData.CashBackAmount), "[^0-9.]", ""));
                 requestTransaction.Set("tranDate", transData.TranDate.ToString("MMddyyyy"));
-                requestTransaction.Set("tranTime", transData.TranTime.ToString("hh:m:ss"));
+                requestTransaction.Set("tranTime", transData.TranTime.ToString("HH:mm:ss"));
                 requestTransaction.Set("transactionType", transData.TransType.ToString());
             }
 
