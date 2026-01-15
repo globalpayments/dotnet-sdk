@@ -5,9 +5,10 @@ using System.Text;
 using System.Xml;
 
 namespace GlobalPayments.Api.Utils {
-    internal class ElementTree {
+    internal class ElementTree : IDisposable {
         private XmlDocument doc;
         private Dictionary<string, string> namespaces;
+        private bool _disposed = false;
 
         public ElementTree() {
             doc = new XmlDocument();
@@ -116,11 +117,33 @@ namespace GlobalPayments.Api.Utils {
         {
             namespaces.Add(prefix, uri);
         }
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposed) {
+                if (disposing) {
+                    // Clear managed resources
+                    if (namespaces != null) {
+                        namespaces.Clear();
+                        namespaces = null;
+                    }
+                    
+                    // XmlDocument doesn't implement IDisposable, but we can help GC
+                    doc = null;
+                }
+                _disposed = true;
+            }
+        }
     }
 
-    internal class Element : IRawRequestBuilder {
+    internal class Element : IRawRequestBuilder, IDisposable {
         private XmlDocument doc;
         private XmlElement element;
+        private bool _disposed = false;
 
         public XmlElement GetElement() {
             return element;
@@ -216,6 +239,23 @@ namespace GlobalPayments.Api.Utils {
 
         public static Element FromNode(XmlDocument doc, XmlNode node) {
             return new Element(doc, (XmlElement)node);
+        }
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposed) {
+                if (disposing) {
+                    // Clear references to help GC
+                    // XmlDocument and XmlElement don't implement IDisposable
+                    doc = null;
+                    element = null;
+                }
+                _disposed = true;
+            }
         }
     }
 }

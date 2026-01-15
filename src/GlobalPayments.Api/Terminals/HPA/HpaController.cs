@@ -80,29 +80,30 @@ namespace GlobalPayments.Api.Terminals.HPA {
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
             }
-            ElementTree et = new ElementTree();
-            var transactionType = MapTransactionType(builder.TransactionType);
+            using (ElementTree et = new ElementTree()) {
+                var transactionType = MapTransactionType(builder.TransactionType);
 
-            Element request = et.Element("SIP");
-            et.SubElement(request, "Version").Text("1.0");
-            et.SubElement(request, "ECRId").Text("1004");
-            et.SubElement(request, "Request").Text(transactionType);
-            et.SubElement(request, "RequestId", requestId);
-            et.SubElement(request, "CardGroup", builder.PaymentMethodType.ToString());
-            et.SubElement(request, "ConfirmAmount").Text("0");
-            et.SubElement(request, "BaseAmount").Text(builder.Amount.ToNumericCurrencyString());
-            if (builder.Gratuity != null)
-                et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());
-            else et.SubElement(request, "TipAmount").Text("0");
+                Element request = et.Element("SIP");
+                et.SubElement(request, "Version").Text("1.0");
+                et.SubElement(request, "ECRId").Text("1004");
+                et.SubElement(request, "Request").Text(transactionType);
+                et.SubElement(request, "RequestId", requestId);
+                et.SubElement(request, "CardGroup", builder.PaymentMethodType.ToString());
+                et.SubElement(request, "ConfirmAmount").Text("0");
+                et.SubElement(request, "BaseAmount").Text(builder.Amount.ToNumericCurrencyString());
+                if (builder.Gratuity != null)
+                    et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());
+                else et.SubElement(request, "TipAmount").Text("0");
 
-            // EBT amount
-            if (builder.PaymentMethodType == PaymentMethodType.EBT)
-                et.SubElement(request, "EBTAmount").Text(builder.Amount.ToNumericCurrencyString());
+                // EBT amount
+                if (builder.PaymentMethodType == PaymentMethodType.EBT)
+                    et.SubElement(request, "EBTAmount").Text(builder.Amount.ToNumericCurrencyString());
 
-            // total
-            et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericCurrencyString());
+                // total
+                et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericCurrencyString());
 
-            return et.ToString(request);
+                return et.ToString(request);
+            }
         }
 
         internal string BuildManageTransaction(TerminalManageBuilder builder) {
@@ -110,24 +111,25 @@ namespace GlobalPayments.Api.Terminals.HPA {
             if (requestId == default(int) && RequestIdProvider != null) {
                 requestId = RequestIdProvider.GetRequestId();
             }
-            ElementTree et = new ElementTree();
-            var transactionType = MapTransactionType(builder.TransactionType);
+            using (ElementTree et = new ElementTree()) {
+                var transactionType = MapTransactionType(builder.TransactionType);
 
-            Element request = et.Element("SIP");
-            et.SubElement(request, "Version").Text("1.0");
-            et.SubElement(request, "ECRId").Text("1004");
-            et.SubElement(request, "Request").Text(MapTransactionType(builder.TransactionType));
-             if ((builder.TransactionType == TransactionType.Capture)||(builder.TransactionType == TransactionType.Void))
-                    et.SubElement(request, "RequestId", requestId);
-            et.SubElement(request, "TransactionId", builder.TransactionId);
+                Element request = et.Element("SIP");
+                et.SubElement(request, "Version").Text("1.0");
+                et.SubElement(request, "ECRId").Text("1004");
+                et.SubElement(request, "Request").Text(MapTransactionType(builder.TransactionType));
+                 if ((builder.TransactionType == TransactionType.Capture)||(builder.TransactionType == TransactionType.Void))
+                        et.SubElement(request, "RequestId", requestId);
+                et.SubElement(request, "TransactionId", builder.TransactionId);
             
-            if (builder.Amount != null)
-                et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericCurrencyString());
+                if (builder.Amount != null)
+                    et.SubElement(request, "TotalAmount").Text(builder.Amount.ToNumericCurrencyString());
 
-            if (builder.Gratuity != null)
-                et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());
+                if (builder.Gratuity != null)
+                    et.SubElement(request, "TipAmount").Text(builder.Gratuity.ToNumericCurrencyString());
 
-            return et.ToString(request);
+                return et.ToString(request);
+            }
         }
 
         internal override byte[] SerializeRequest(TerminalAuthBuilder builder) {

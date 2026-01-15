@@ -50,93 +50,98 @@ namespace GlobalPayments.Api.Gateways.BillPay {
         }
 
         private ConvenienceFeeResponse GetConvenienceFee(BillingBuilder builder) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "GetConvenienceFee");
-            var request = new GetConvenienceFeeRequest(et)
-                .Build(envelope, builder, Credentials);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "GetConvenienceFee");
+                var request = new GetConvenienceFeeRequest(et)
+                    .Build(envelope, builder, Credentials);
 
-            var response = DoTransaction(request, publicEndpoint);
-            var result = new ConvenienceFeeRequestResponse()
-                .WithResponseTagName("GetConvenienceFeeResponse")
-                .WithResponse(response)
-                .Map();
+                var response = DoTransaction(request, publicEndpoint);
+                var result = new ConvenienceFeeRequestResponse()
+                    .WithResponseTagName("GetConvenienceFeeResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return result;
+                if (result.IsSuccessful) {
+                    return result;
+                }
+
+                throw new GatewayException(message: "An error occurred attempting to retrieve the payment fee", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred attempting to retrieve the payment fee", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
 
         private BillingResponse PreloadBills(BillingBuilder builder) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "PreloadBills");
-            var request = new PreloadBillsRequest(et)
-                .Build(envelope, builder, Credentials);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "PreloadBills");
+                var request = new PreloadBillsRequest(et)
+                    .Build(envelope, builder, Credentials);
 
-            var response = DoTransaction(request, publicEndpoint);
-            var result = new PreloadBillsResponse()
-                .WithResponseTagName("PreloadBillsResponse")
-                .WithResponse(response)
-                .Map();
+                var response = DoTransaction(request, publicEndpoint);
+                var result = new PreloadBillsResponse()
+                    .WithResponseTagName("PreloadBillsResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return result;
+                if (result.IsSuccessful) {
+                    return result;
+                }
+
+                throw new GatewayException(message: "An error occurred attempting to load the hosted bills", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred attempting to load the hosted bills", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
 
         private BillingResponse CommitPreloadBills() {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "CommitPreloadedBills");
-            var request = new CommitPreloadedBillsRequest(et)
-                .Build(envelope, Credentials);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "CommitPreloadedBills");
+                var request = new CommitPreloadedBillsRequest(et)
+                    .Build(envelope, Credentials);
 
-            var response = DoTransaction(request, publicEndpoint);
-            var result = new BillingRequestResponse()
-                .WithResponseTagName("CommitPreloadedBillsResponse")
-                .WithResponse(response)
-                .Map();
+                var response = DoTransaction(request, publicEndpoint);
+                var result = new BillingRequestResponse()
+                    .WithResponseTagName("CommitPreloadedBillsResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return result;
+                if (result.IsSuccessful) {
+                    return result;
+                }
+
+                throw new GatewayException(message: "An error occurred attempting to commit the preloaded bills", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred attempting to commit the preloaded bills", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
 
         private BillingResponse ClearLoadedBills() {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "ClearLoadedBills");
-            var request = new ClearLoadedBillsRequest(et)
-                .Build(envelope, Credentials);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "ClearLoadedBills");
+                var request = new ClearLoadedBillsRequest(et)
+                    .Build(envelope, Credentials);
 
-            var response = DoTransaction(request, publicEndpoint);
+                var response = DoTransaction(request, publicEndpoint);
 
-            return new BillingRequestResponse()
-                .WithResponseTagName("ClearLoadedBillsResponse")
-                .WithResponse(response)
-                .Map();
+                return new BillingRequestResponse()
+                    .WithResponseTagName("ClearLoadedBillsResponse")
+                    .WithResponse(response)
+                    .Map();
+            }
         }
 
         private LoadSecurePayResponse LoadSecurePay(BillingBuilder builder) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "LoadSecurePayDataExtended");
-            var request = new LoadSecurePayRequest(et)
-                .Build(envelope, builder, Credentials);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "LoadSecurePayDataExtended");
+                var request = new LoadSecurePayRequest(et)
+                    .Build(envelope, builder, Credentials);
 
-            var response = DoTransaction(request, publicEndpoint);
-            var result = new SecurePayResponse()
-                .WithResponseTagName("LoadSecurePayDataExtendedResponse")
-                .WithResponse(response)
-                .Map();
+                var response = DoTransaction(request, publicEndpoint);
+                var result = new SecurePayResponse()
+                    .WithResponseTagName("LoadSecurePayDataExtendedResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return result;
+                if (result.IsSuccessful) {
+                    return result;
+                }
+
+                throw new GatewayException(message: "An error occurred attempting to load the hosted bill", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred attempting to load the hosted bill", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
     }
 }

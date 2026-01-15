@@ -20,23 +20,24 @@ namespace GlobalPayments.Api.Gateways {
         public T ProcessPayFac<T>(PayFacBuilder<T> builder) where T : class {
             UpdateGatewaySettings(builder);
 
-            var et = new ElementTree();
-            var request = et.Element("XMLRequest");
+            using (var et = new ElementTree()) {
+                var request = et.Element("XMLRequest");
 
-            // Credentials
-            et.SubElement(request, "certStr", CertStr);
-            et.SubElement(request, "termid", TermID);
-            et.SubElement(request, "class", "partner");
+                // Credentials
+                et.SubElement(request, "certStr", CertStr);
+                et.SubElement(request, "termid", TermID);
+                et.SubElement(request, "class", "partner");
 
-            //Transaction
-            var xmlTrans = et.SubElement(request, "XMLTrans");
-            et.SubElement(xmlTrans, "transType", MapRequestType(builder));
+                //Transaction
+                var xmlTrans = et.SubElement(request, "XMLTrans");
+                et.SubElement(xmlTrans, "transType", MapRequestType(builder));
 
-            // Account Details
-            HydrateAccountDetails(et, xmlTrans, builder);
+                // Account Details
+                HydrateAccountDetails(et, xmlTrans, builder);
 
-            var response = DoTransaction(et.ToString(request));
-            return MapResponse(builder, response) as T;
+                var response = DoTransaction(et.ToString(request));
+                return MapResponse(builder, response) as T;
+            }
         }
 
         private void UpdateGatewaySettings<T>(PayFacBuilder<T> builder) where T : class {

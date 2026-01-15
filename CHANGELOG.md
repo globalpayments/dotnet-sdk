@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v10.0.3 (01/08/25)
+## Latest - v10.0.4 (01/15/26)
+### Enhancement
+- [Portico] - CardHolder Data store on PC. Refactor resource management and enhance payment handling.
+
+## v10.0.3 (01/08/26)
 ### Enhancement
 - [UPA] - Added Missing Output paramenters in StartCardTransaction Command.
 

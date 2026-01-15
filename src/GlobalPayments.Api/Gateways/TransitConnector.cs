@@ -25,25 +25,28 @@ namespace GlobalPayments.Api.Gateways {
 
 
         public string GenerateKey(string userId, string password) {
-            var et = new ElementTree();
 
-            var root = et.Element("GenerateKey");
-            et.SubElement(root, "mid").Text(MerchantId);
-            et.SubElement(root, "userID").Text(userId);
-            et.SubElement(root, "password").Text(password);
-            et.SubElement(root, "transactionKey", TransactionKey);
+            using (var et = new ElementTree()) {
 
-            string rawResponse = DoTransaction(et.ToString(root));
+                var root = et.Element("GenerateKey");
+                et.SubElement(root, "mid").Text(MerchantId);
+                et.SubElement(root, "userID").Text(userId);
+                et.SubElement(root, "password").Text(password);
+                et.SubElement(root, "transactionKey", TransactionKey);
 
-            var response = ElementTree.Parse(rawResponse).Get("GenerateKeyResponse");
-            if (response.GetValue<string>("status").Equals("PASS")) {
-                TransactionKey = response.GetValue<string>("transactionKey");
-                return TransactionKey;
-            }
-            else {
-                string responseCode = response.GetValue<string>("responseCode");
-                string responseMessage = response.GetValue<string>("responseMessage");
-                throw new GatewayException("Failed to generate transaction key for the given credentials", responseCode, responseMessage);
+                string rawResponse = DoTransaction(et.ToString(root));
+
+                var response = ElementTree.Parse(rawResponse).Get("GenerateKeyResponse");
+
+                if (response.GetValue<string>("status").Equals("PASS")) {
+                    TransactionKey = response.GetValue<string>("transactionKey");
+                    return TransactionKey;
+                }
+                else {
+                    string responseCode = response.GetValue<string>("responseCode");
+                    string responseMessage = response.GetValue<string>("responseMessage");
+                    throw new GatewayException("Failed to generate transaction key for the given credentials", responseCode, responseMessage);
+                }
             }
         }
         private string GenerateManifest(decimal amount, string timestamp) {
@@ -63,135 +66,135 @@ namespace GlobalPayments.Api.Gateways {
                 request.Set("cardOnFile", builder.RequestMultiUseToken ? "Y" : "N");
             }
 
-            var cardDataSource = MapCardDataSource(builder);
-            request.Set("cardDataSource", cardDataSource);
-            if (builder.PaymentMethod is ICardData card) {
-                string cardNumber = card.Number;
-                string cardDataInputMode = "ELECTRONIC_COMMERCE_NO_SECURITY_CHANNEL_ENCRYPTED_SET_WITHOUT_CARDHOLDER_CERTIFICATE";
-                if (card.CardType.Equals("Amex") && !string.IsNullOrEmpty(card.Cvn)) {
-                    cardDataInputMode = "MANUALLY_ENTERED_WITH_KEYED_CID_AMEX_JCB";
-                } else if (AcceptorConfig.OperatingEnvironment == OperatingEnvironment.OnPremises_CardAcceptor_Attended) {
-                    cardDataInputMode = "KEY_ENTERED_INPUT";
+                var cardDataSource = MapCardDataSource(builder);
+                request.Set("cardDataSource", cardDataSource);
+                if (builder.PaymentMethod is ICardData card) {
+                    string cardNumber = card.Number;
+                    string cardDataInputMode = "ELECTRONIC_COMMERCE_NO_SECURITY_CHANNEL_ENCRYPTED_SET_WITHOUT_CARDHOLDER_CERTIFICATE";
+                    if (card.CardType.Equals("Amex") && !string.IsNullOrEmpty(card.Cvn)) {
+                        cardDataInputMode = "MANUALLY_ENTERED_WITH_KEYED_CID_AMEX_JCB";
+                    } else if (AcceptorConfig.OperatingEnvironment == OperatingEnvironment.OnPremises_CardAcceptor_Attended) {
+                        cardDataInputMode = "KEY_ENTERED_INPUT";
+                    }
+
+                    if (card is ITokenizable token && token.Token != null) {
+                        cardNumber = token.Token;
+                    }
+
+                    if (builder.StoredCredential != null && builder.StoredCredential.Initiator == StoredCredentialInitiator.Merchant) {
+                        cardDataInputMode = "MERCHANT_INITIATED_TRANSACTION_CARD_CREDENTIAL_STORED_ON_FILE";
+                        request.Set("cardOnFileTransactionIdentifier", builder.StoredCredential.SchemeId);
+                    }
+
+                    var cardholderPresentDetail = card.CardPresent ? "CARDHOLDER_PRESENT" : "CARDHOLDER_NOT_PRESENT_ELECTRONIC_COMMERCE";
+                    if (cardDataSource == "MAIL") {
+                        cardholderPresentDetail = "CARDHOLDER_NOT_PRESENT_MAIL_TRANSACTION";
+                    } else if (cardDataSource == "PHONE") {
+                        cardholderPresentDetail = "CARDHOLDER_NOT_PRESENT_PHONE_TRANSACTION";
+                    }
+
+                    request.Set("cardNumber", cardNumber)
+                        .Set("expirationDate", card.ShortExpiry)
+                        .Set("cvv2", card.Cvn)
+                        .Set("cardPresentDetail", card.CardPresent ? "CARD_PRESENT" : "CARD_NOT_PRESENT")
+                        .Set("cardholderPresentDetail", cardholderPresentDetail)
+                        .Set("cardDataInputMode", cardDataInputMode)
+                        .Set("cardholderAuthenticationMethod", "NOT_AUTHENTICATED")
+                        .Set("authorizationIndicator", builder.AmountEstimated == true ? "PREAUTH" : "FINAL");
+                }
+                else if (builder.PaymentMethod is ITrackData track) {
+                    request.Set(track.TrackNumber.Equals(TrackNumber.TrackTwo) ? "track2Data" : "track1Data", track.TrackData);
+                    request.Set("cardPresentDetail", "CARD_PRESENT")
+                        .Set("cardholderPresentDetail", "CARDHOLDER_PRESENT")
+                        .Set("cardDataInputMode", "MAGNETIC_STRIPE_READER_INPUT")
+                        .Set("cardholderAuthenticationMethod", "NOT_AUTHENTICATED");
+
+                    if (builder.HasEmvFallbackData) {
+                        request.Set("emvFallbackCondition", EnumConverter.GetMapping(Target.Transit, builder.EmvFallbackCondition))
+                            .Set("lastChipRead", EnumConverter.GetMapping(Target.Transit, builder.EmvLastChipRead))
+                            .Set("paymentAppVersion", builder.PaymentApplicationVersion ?? "unspecified");
+                    }
                 }
 
-                if (card is ITokenizable token && token.Token != null) {
-                    cardNumber = token.Token;
+                // AVS
+                if (builder.BillingAddress != null) {
+                    request.Set("addressLine1", builder.BillingAddress.StreetAddress1)
+                        .Set("zip", builder.BillingAddress.PostalCode);
                 }
 
-                if (builder.StoredCredential != null && builder.StoredCredential.Initiator == StoredCredentialInitiator.Merchant) {
-                    cardDataInputMode = "MERCHANT_INITIATED_TRANSACTION_CARD_CREDENTIAL_STORED_ON_FILE";
-                    request.Set("cardOnFileTransactionIdentifier", builder.StoredCredential.SchemeId);
+                // PIN Debit
+                if (builder.PaymentMethod is IPinProtected pinProtected && !string.IsNullOrEmpty(pinProtected.PinBlock)) {
+                    request.Set("pin", pinProtected.PinBlock.Substring(0, 16))
+                        .Set("pinKsn", pinProtected.PinBlock.Substring(16));
                 }
 
-                var cardholderPresentDetail = card.CardPresent ? "CARDHOLDER_PRESENT" : "CARDHOLDER_NOT_PRESENT_ELECTRONIC_COMMERCE";
-                if (cardDataSource == "MAIL") {
-                    cardholderPresentDetail = "CARDHOLDER_NOT_PRESENT_MAIL_TRANSACTION";
-                } else if (cardDataSource == "PHONE") {
-                    cardholderPresentDetail = "CARDHOLDER_NOT_PRESENT_PHONE_TRANSACTION";
+                if (builder.PaymentMethod is Credit pm && pm.CardType.Equals("Discover") && (cardDataSource.Equals("INTERNET"))) {
+                    request.Set("registeredUserIndicator", builder.LastRegisteredDate != default(DateTime) ? "YES" : "NO");
+                    request.Set("lastRegisteredChangeDate", builder.LastRegisteredDate != default(DateTime) ? builder.LastRegisteredDate.ToString("MM/dd/yyyy") : "00/00/0000");
                 }
 
-                request.Set("cardNumber", cardNumber)
-                    .Set("expirationDate", card.ShortExpiry)
-                    .Set("cvv2", card.Cvn)
-                    .Set("cardPresentDetail", card.CardPresent ? "CARD_PRESENT" : "CARD_NOT_PRESENT")
-                    .Set("cardholderPresentDetail", cardholderPresentDetail)
-                    .Set("cardDataInputMode", cardDataInputMode)
-                    .Set("cardholderAuthenticationMethod", "NOT_AUTHENTICATED")
-                    .Set("authorizationIndicator", builder.AmountEstimated == true ? "PREAUTH" : "FINAL");
-            }
-            else if (builder.PaymentMethod is ITrackData track) {
-                request.Set(track.TrackNumber.Equals(TrackNumber.TrackTwo) ? "track2Data" : "track1Data", track.TrackData);
-                request.Set("cardPresentDetail", "CARD_PRESENT")
-                    .Set("cardholderPresentDetail", "CARDHOLDER_PRESENT")
-                    .Set("cardDataInputMode", "MAGNETIC_STRIPE_READER_INPUT")
-                    .Set("cardholderAuthenticationMethod", "NOT_AUTHENTICATED");
-
-                if (builder.HasEmvFallbackData) {
-                    request.Set("emvFallbackCondition", EnumConverter.GetMapping(Target.Transit, builder.EmvFallbackCondition))
-                        .Set("lastChipRead", EnumConverter.GetMapping(Target.Transit, builder.EmvLastChipRead))
-                        .Set("paymentAppVersion", builder.PaymentApplicationVersion ?? "unspecified");
-                }
-            }
-
-            // AVS
-            if (builder.BillingAddress != null) {
-                request.Set("addressLine1", builder.BillingAddress.StreetAddress1)
-                    .Set("zip", builder.BillingAddress.PostalCode);
-            }
-
-            // PIN Debit
-            if (builder.PaymentMethod is IPinProtected pinProtected && !string.IsNullOrEmpty(pinProtected.PinBlock)) {
-                request.Set("pin", pinProtected.PinBlock.Substring(0, 16))
-                    .Set("pinKsn", pinProtected.PinBlock.Substring(16));
-            }
-
-            if (builder.PaymentMethod is Credit pm && pm.CardType.Equals("Discover") && (cardDataSource.Equals("INTERNET"))) {
-                request.Set("registeredUserIndicator", builder.LastRegisteredDate != default(DateTime) ? "YES" : "NO");
-                request.Set("lastRegisteredChangeDate", builder.LastRegisteredDate != default(DateTime) ? builder.LastRegisteredDate.ToString("MM/dd/yyyy") : "00/00/0000");
-            }
-
-            if (builder.Gratuity != null) {
-                request.Set("tip", builder.Gratuity.ToCurrencyString());
-            }
-
-            #region 3DS 1/2
-            if (builder.PaymentMethod is ISecure3d secure && secure.ThreeDSecure != null) {
-                if (secure.ThreeDSecure.Version.Equals(Secure3dVersion.One)) {
-                    request.Set("programProtocol", "1");
-                }
-                else {
-                    request.Set("programProtocol", "2")
-                        .Set("directoryServerTransactionID", secure.ThreeDSecure.DirectoryServerTransactionId);
+                if (builder.Gratuity != null) {
+                    request.Set("tip", builder.Gratuity.ToCurrencyString());
                 }
 
-                request.Set("eciIndicator", secure.ThreeDSecure.Eci)
-                    .Set("secureCode", secure.ThreeDSecure.SecureCode)
-                    .Set("digitalPaymentCryptogram", secure.ThreeDSecure.AuthenticationValue)
-                    .Set("securityProtocol", secure.ThreeDSecure.AuthenticationType)
-                    .Set("ucafCollectionIndicator", EnumConverter.GetMapping(Target.Transit, secure.ThreeDSecure.UCAFIndicator));
+                #region 3DS 1/2
+                if (builder.PaymentMethod is ISecure3d secure && secure.ThreeDSecure != null) {
+                    if (secure.ThreeDSecure.Version.Equals(Secure3dVersion.One)) {
+                        request.Set("programProtocol", "1");
+                    }
+                    else {
+                        request.Set("programProtocol", "2")
+                            .Set("directoryServerTransactionID", secure.ThreeDSecure.DirectoryServerTransactionId);
+                    }
 
-            }
-            #endregion
+                    request.Set("eciIndicator", secure.ThreeDSecure.Eci)
+                        .Set("secureCode", secure.ThreeDSecure.SecureCode)
+                        .Set("digitalPaymentCryptogram", secure.ThreeDSecure.AuthenticationValue)
+                        .Set("securityProtocol", secure.ThreeDSecure.AuthenticationType)
+                        .Set("ucafCollectionIndicator", EnumConverter.GetMapping(Target.Transit, secure.ThreeDSecure.UCAFIndicator));
 
-            #region Commercial Card Requests
-            if (builder.CommercialData != null) {
-                var cd = builder.CommercialData;
-
-                if (cd.CommercialIndicator.Equals(CommercialIndicator.Level_II)) {
-                    request.Set("commercialCardLevel", "LEVEL2");
                 }
-                else {
-                    request.Set("commercialCardLevel", "LEVEL3");
-                    request.SetProductDetails(cd.LineItems);
+                #endregion
+
+                #region Commercial Card Requests
+                if (builder.CommercialData != null) {
+                    var cd = builder.CommercialData;
+
+                    if (cd.CommercialIndicator.Equals(CommercialIndicator.Level_II)) {
+                        request.Set("commercialCardLevel", "LEVEL2");
+                    }
+                    else {
+                        request.Set("commercialCardLevel", "LEVEL3");
+                        request.SetProductDetails(cd.LineItems);
+                    }
+
+                    request.Set("salesTax", cd.TaxAmount.ToCurrencyString())
+                        .Set("chargeDescriptor", cd.Description)
+                        .Set("customerRefID", cd.CustomerReferenceId)
+                        .Set("purchaseOrder", cd.PoNumber)
+                        .Set("shipToZip", cd.DestinationPostalCode)
+                        .Set("shipFromZip", cd.OriginPostalCode)
+                        .Set("supplierReferenceNumber", cd.SupplierReferenceNumber)
+                        .Set("customerVATNumber", cd.CustomerVAT_Number)
+                        .Set("summaryCommodityCode", cd.SummaryCommodityCode)
+                        .Set("shippingCharges", cd.FreightAmount.ToCurrencyString())
+                        .Set("dutyCharges", cd.DutyAmount.ToCurrencyString())
+                        .Set("destinationCountryCode", cd.DestinationCountryCode)
+                        .Set("vatInvoice", cd.VAT_InvoiceNumber)
+                        .Set("orderDate", cd.OrderDate?.ToString("dd/MM/yyyy"))
+                        .SetAdditionalTaxDetails(cd.AdditionalTaxDetails);
                 }
+                #endregion
 
-                request.Set("salesTax", cd.TaxAmount.ToCurrencyString())
-                    .Set("chargeDescriptor", cd.Description)
-                    .Set("customerRefID", cd.CustomerReferenceId)
-                    .Set("purchaseOrder", cd.PoNumber)
-                    .Set("shipToZip", cd.DestinationPostalCode)
-                    .Set("shipFromZip", cd.OriginPostalCode)
-                    .Set("supplierReferenceNumber", cd.SupplierReferenceNumber)
-                    .Set("customerVATNumber", cd.CustomerVAT_Number)
-                    .Set("summaryCommodityCode", cd.SummaryCommodityCode)
-                    .Set("shippingCharges", cd.FreightAmount.ToCurrencyString())
-                    .Set("dutyCharges", cd.DutyAmount.ToCurrencyString())
-                    .Set("destinationCountryCode", cd.DestinationCountryCode)
-                    .Set("vatInvoice", cd.VAT_InvoiceNumber)
-                    .Set("orderDate", cd.OrderDate?.ToString("dd/MM/yyyy"))
-                    .SetAdditionalTaxDetails(cd.AdditionalTaxDetails);
-            }
-            #endregion
-
-            // Acceptor Config
-            request.Set("terminalCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardDataInputCapability))
-                .Set("terminalCardCaptureCapability", AcceptorConfig.CardCaptureCapability ? "CARD_CAPTURE_CAPABILITY" : "NO_CAPABILITY")
-                .Set("terminalOperatingEnvironment", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.OperatingEnvironment))
-                .Set("cardholderAuthenticationEntity", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardHolderAuthenticationEntity))
-                .Set("cardDataOutputCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardDataOutputCapability))
-                .Set("terminalAuthenticationCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardHolderAuthenticationCapability))
-                .Set("terminalOutputCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.TerminalOutputCapability))
-                .Set("maxPinLength", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.PinCaptureCapability));
+                // Acceptor Config
+                request.Set("terminalCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardDataInputCapability))
+                    .Set("terminalCardCaptureCapability", AcceptorConfig.CardCaptureCapability ? "CARD_CAPTURE_CAPABILITY" : "NO_CAPABILITY")
+                    .Set("terminalOperatingEnvironment", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.OperatingEnvironment))
+                    .Set("cardholderAuthenticationEntity", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardHolderAuthenticationEntity))
+                    .Set("cardDataOutputCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardDataOutputCapability))
+                    .Set("terminalAuthenticationCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.CardHolderAuthenticationCapability))
+                    .Set("terminalOutputCapability", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.TerminalOutputCapability))
+                    .Set("maxPinLength", EnumConverter.GetMapping(Target.Transit, AcceptorConfig.PinCaptureCapability));
 
             string response = DoTransaction(request.BuildRequest(builder));
             return MapResponse(builder, response);

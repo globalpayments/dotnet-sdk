@@ -61,125 +61,131 @@ namespace GlobalPayments.Api.Gateways.BillPay {
         }
 
         private T CreateSingleSignOnAccount(Customer customer) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "CreateSingleSignOnAccount");
-            var request = new CreateSingleSignOnAccountRequest(et)
-                .Build(envelope, Credentials, customer);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "CreateSingleSignOnAccount");
+                var request = new CreateSingleSignOnAccountRequest(et)
+                    .Build(envelope, Credentials, customer);
 
-            var response = DoTransaction(request, publicEndpoint);
+                var response = DoTransaction(request, publicEndpoint);
 
-            var result = new SingleSignOnAccountResponse()
-                .WithResponseTagName("CreateSingleSignOnAccountResponse")
-                .WithResponse(response)
-                .Map();
+                var result = new SingleSignOnAccountResponse()
+                    .WithResponseTagName("CreateSingleSignOnAccountResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                customer.Key = customer.Id;
-                return customer as T;
+                if (result.IsSuccessful) {
+                    customer.Key = customer.Id;
+                    return customer as T;
+                }
+
+                throw new GatewayException(message: "An error occurred while creating the customer", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred while creating the customer", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
         }
 
         private T UpdateSingleSignOnAccount(Customer customer) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "UpdateSingleSignOnAccount");
-            var request = new UpdateSingleSignOnAccountRequest(et)
-                .Build(envelope, Credentials, customer);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "UpdateSingleSignOnAccount");
+                var request = new UpdateSingleSignOnAccountRequest(et)
+                    .Build(envelope, Credentials, customer);
 
-            var response = DoTransaction(request, publicEndpoint);
+                var response = DoTransaction(request, publicEndpoint);
 
-            var result = new SingleSignOnAccountResponse()
-                .WithResponseTagName("UpdateSingleSignOnAccountResponse")
-                .WithResponse(response)
-                .Map();
+                var result = new SingleSignOnAccountResponse()
+                    .WithResponseTagName("UpdateSingleSignOnAccountResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return customer as T;
+                if (result.IsSuccessful) {
+                    return customer as T;
+                }
+
+                throw new GatewayException(message: "An error occurred while updating the customer", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred while updating the customer", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
         }
 
         private T DeleteSingleSignOnAccount(Customer customer) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "DeleteSingleSignOnAccount");
-            var request = new DeleteSingleSignOnAccountRequest(et)
-                .Build(envelope, Credentials, customer);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "DeleteSingleSignOnAccount");
+                var request = new DeleteSingleSignOnAccountRequest(et)
+                    .Build(envelope, Credentials, customer);
 
-            var response = DoTransaction(request, publicEndpoint);
+                var response = DoTransaction(request, publicEndpoint);
 
-            var result = new SingleSignOnAccountResponse()
-                .WithResponseTagName("DeleteSingleSignOnAccountResponse")
-                .WithResponse(response)
-                .Map();
+                var result = new SingleSignOnAccountResponse()
+                    .WithResponseTagName("DeleteSingleSignOnAccountResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return customer as T;
+                if (result.IsSuccessful) {
+                    return customer as T;
+                }
+
+                throw new GatewayException(message: "An error occurred while deleting the customer", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred while deleting the customer", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
         }
 
         private T CreateCustomerAccount(RecurringPaymentMethod paymentMethod) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "SaveCustomerAccount");
-            var request = new CreateCustomerAccountRequest(et)
-                .Build(envelope, Credentials, paymentMethod);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "SaveCustomerAccount");
+                var request = new CreateCustomerAccountRequest(et)
+                    .Build(envelope, Credentials, paymentMethod);
 
-            var response = DoTransaction(request, publicEndpoint);
+                var response = DoTransaction(request, publicEndpoint);
 
-            var result = new CreateCustomerAccountResponse()
-                .WithResponseTagName("SaveCustomerAccountResponse")
-                .WithResponse(response)
-                .Map();
+                var result = new CreateCustomerAccountResponse()
+                    .WithResponseTagName("SaveCustomerAccountResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                paymentMethod.Key = paymentMethod.Id;
-                return paymentMethod as T;
+                if (result.IsSuccessful) {
+                    paymentMethod.Key = paymentMethod.Id;
+                    return paymentMethod as T;
+                }
+
+                throw new GatewayException(message: "An error occurred while creating the customer account", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred while creating the customer account", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
         }
 
         private T UpdateCustomerAccount(RecurringPaymentMethod paymentMethod) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "UpdateCustomerAccount");
-            var request = new UpdateCustomerAccountRequest(et)
-                .Build(envelope, Credentials, paymentMethod);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "UpdateCustomerAccount");
+                var request = new UpdateCustomerAccountRequest(et)
+                    .Build(envelope, Credentials, paymentMethod);
 
-            var response = DoTransaction(request, publicEndpoint);
+                var response = DoTransaction(request, publicEndpoint);
 
-            var result = new CustomerAccountResponse()
-                .WithResponseTagName("UpdateCustomerAccountResponse")
-                .WithResponse(response)
-                .Map();
+                var result = new CustomerAccountResponse()
+                    .WithResponseTagName("UpdateCustomerAccountResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return paymentMethod as T;
+                if (result.IsSuccessful) {
+                    return paymentMethod as T;
+                }
+
+                throw new GatewayException(message: "An error occurred while updating the customer account", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred while updating the customer account", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
         }
 
         private T DeleteCustomerAccount(RecurringPaymentMethod paymentMethod) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "DeleteCustomerAccount");
-            var request = new DeleteCustomerAccountRequest(et)
-                .Build(envelope, Credentials, paymentMethod);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "DeleteCustomerAccount");
+                var request = new DeleteCustomerAccountRequest(et)
+                    .Build(envelope, Credentials, paymentMethod);
 
-            var response = DoTransaction(request, publicEndpoint);
+                var response = DoTransaction(request, publicEndpoint);
 
-            var result = new SingleSignOnAccountResponse()
-                .WithResponseTagName("DeleteCustomerAccountResponse")
-                .WithResponse(response)
-                .Map();
+                var result = new SingleSignOnAccountResponse()
+                    .WithResponseTagName("DeleteCustomerAccountResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.IsSuccessful) {
-                return paymentMethod as T;
+                if (result.IsSuccessful) {
+                    return paymentMethod as T;
+                }
+
+                throw new GatewayException(message: "An error occurred while deleting the customer account", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "An error occurred while deleting the customer account", responseCode: result.ResponseMessage, responseMessage: result.ResponseMessage);
         }
     }
 }

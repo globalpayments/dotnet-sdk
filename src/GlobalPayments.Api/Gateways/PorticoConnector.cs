@@ -31,446 +31,447 @@ namespace GlobalPayments.Api.Gateways {
 
         #region processing
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
-            var et = new ElementTree();
+            
+            using (var et = new ElementTree()) {
+                string transactionName = MapTransactionType(builder);
 
-            string transactionName = MapTransactionType(builder);
-
-            // build request
-            var transaction = et.Element(transactionName);
-            var block1 = et.SubElement(transaction, "Block1");
-            if (builder.TransactionType.HasFlag(TransactionType.Sale) || builder.TransactionType.HasFlag(TransactionType.Auth)) {
-                if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.ACH) {
-                    et.SubElement(block1, "AllowDup", builder.AllowDuplicates ? "Y" : "N");
-                    if (builder.TransactionModifier.Equals(TransactionModifier.None) && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.EBT && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring)
-                        et.SubElement(block1, "AllowPartialAuth", builder.AllowPartialAuth ? "Y" : "N");
-                }
-
-                if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit 
-                    && builder.TransactionModifier == TransactionModifier.None
-                    && builder.AmountEstimated != null) {
-                    et.SubElement(block1, "AmountIndicator", builder.AmountEstimated == true ? "E" : "F");
-                }
-            }
-            et.SubElement(block1, "Amt", builder.Amount);
-            et.SubElement(block1, "GratuityAmtInfo", builder.Gratuity);
-            et.SubElement(block1, "ConvenienceAmtInfo", builder.ConvenienceAmount);
-            et.SubElement(block1, "ShippingAmtInfo", builder.ShippingAmt);
-            et.SubElement(block1, "SurchargeAmtInfo", builder.SurchargeAmount);
-            // because plano...
-            et.SubElement(block1, builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit ? "CashbackAmtInfo" : "CashBackAmount", builder.CashBackAmount);
-
-            // offline auth code
-            et.SubElement(block1, "OfflineAuthCode", builder.OfflineAuthCode);
-
-            // alias action
-            if (builder.TransactionType == TransactionType.Alias) {
-                et.SubElement(block1, "Action").Text(builder.AliasAction.ToString());
-                et.SubElement(block1, "Alias").Text(builder.Alias);
-            }
-
-            #region card holder
-            if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring
-                && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift
-                && builder.TransactionType != TransactionType.Tokenize
-                && builder.TransactionType != TransactionType.Reversal
-                && transactionName != "CreditAdditionalAuth"
-                && transactionName != "CreditIncrementalAuth"
-            ) {
-                var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
-                var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
-
-                if (builder.BillingAddress != null) {
-                    et.SubElement(holder, isCheck ? "Address1" : "CardHolderAddr", builder.BillingAddress.StreetAddress1);
-                    et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
-                    et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
-                    et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
-                }
-
-                if (builder.CustomerData != null) {
-                    et.SubElement(holder, isCheck ? "EmailAddress" : "CardHolderEmail", builder.CustomerData.Email);
-                    et.SubElement(holder, "CardHolderFirstName", builder.CustomerData.FirstName);
-                    et.SubElement(holder, "CardHolderLastName", builder.CustomerData.LastName);
-                }
-
-                if (isCheck) {
-                    var check = builder.PaymentMethod as eCheck;
-                    if (!string.IsNullOrEmpty(check.CheckHolderName)) {
-                        if (check.CheckHolderName.Contains(' ')) {
-                            var names = check.CheckHolderName.Split(new char[] { ' ' }, 2);
-                            et.SubElement(holder, "FirstName", names[0]);
-                            et.SubElement(holder, "LastName", names[1]);
-                        }
-                        else {
-                            et.SubElement(holder, "FirstName", check.CheckHolderName);
-                        }
+                // build request
+                var transaction = et.Element(transactionName);
+                var block1 = et.SubElement(transaction, "Block1");
+                if (builder.TransactionType.HasFlag(TransactionType.Sale) || builder.TransactionType.HasFlag(TransactionType.Auth)) {
+                    if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.ACH) {
+                        et.SubElement(block1, "AllowDup", builder.AllowDuplicates ? "Y" : "N");
+                        if (builder.TransactionModifier.Equals(TransactionModifier.None) && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.EBT && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring)
+                            et.SubElement(block1, "AllowPartialAuth", builder.AllowPartialAuth ? "Y" : "N");
                     }
-                    et.SubElement(holder, "CheckName", check.CheckName);
-                    et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
-                    et.SubElement(holder, "DLNumber", check.DriversLicenseNumber);
-                    et.SubElement(holder, "DLState", check.DriversLicenseState);
 
-                    if (!string.IsNullOrEmpty(check.SsnLast4) || check.BirthYear != default(int)) {
-                        var identity = et.SubElement(holder, "IdentityInfo");
-                        et.SubElement(identity, "SSNL4", check.SsnLast4);
-                        et.SubElement(identity, "DOBYear", check.BirthYear);
+                    if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit 
+                        && builder.TransactionModifier == TransactionModifier.None
+                        && builder.AmountEstimated != null) {
+                        et.SubElement(block1, "AmountIndicator", builder.AmountEstimated == true ? "E" : "F");
                     }
                 }
-                else {
-                    var card = builder.PaymentMethod as CreditCardData;
-                    if (card != null && !string.IsNullOrEmpty(card.CardHolderName)) {
-                        if (card.CardHolderName.Trim().Contains(' ')) {
-                            var names = card.CardHolderName.Split(new char[] { ' ' }, 2);
-                            et.SubElement(holder, "CardHolderFirstName", names[0]);
-                            et.SubElement(holder, "CardHolderLastName", names[1]);
-                        }
-                        else {
-                            et.SubElement(holder, "CardHolderFirstName", card.CardHolderName.Trim());
-                        }
-                    }
-                }
-            }
+                et.SubElement(block1, "Amt", builder.Amount);
+                et.SubElement(block1, "GratuityAmtInfo", builder.Gratuity);
+                et.SubElement(block1, "ConvenienceAmtInfo", builder.ConvenienceAmount);
+                et.SubElement(block1, "ShippingAmtInfo", builder.ShippingAmt);
+                et.SubElement(block1, "SurchargeAmtInfo", builder.SurchargeAmount);
+                // because plano...
+                et.SubElement(block1, builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit ? "CashbackAmtInfo" : "CashBackAmount", builder.CashBackAmount);
 
-            #endregion
+                // offline auth code
+                et.SubElement(block1, "OfflineAuthCode", builder.OfflineAuthCode);
 
-            // card data
-            string tokenValue = null;
-            var hasToken = HasToken(builder.PaymentMethod, out tokenValue);
-
-            // because debit is weird (Ach too)
-            Element cardData = null;
-            if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH)
-                cardData = block1;
-            else cardData = et.Element("CardData");
-
-            #region ICardData
-            if (builder.PaymentMethod is ICardData) {
-                var card = builder.PaymentMethod as ICardData;
-
-                //credential on file
-                if (builder.TransactionInitiator != null) {
-                    Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
-                    et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
-                    et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
-                    et.SubElement(cardOnFileData, "CategoryInd", builder.CategoryIndicator);
+                // alias action
+                if (builder.TransactionType == TransactionType.Alias) {
+                    et.SubElement(block1, "Action").Text(builder.AliasAction.ToString());
+                    et.SubElement(block1, "Alias").Text(builder.Alias);
                 }
 
-                var manualEntry = et.SubElement(cardData, hasToken ? "TokenData" : "ManualEntry");
-                et.SubElement(manualEntry, hasToken ? "TokenValue" : "CardNbr").Text(tokenValue ?? card.Number);
-                et.SubElement(manualEntry, "ExpMonth", card.ExpMonth?.ToString());
-                et.SubElement(manualEntry, "ExpYear", card.ExpYear?.ToString());
-                et.SubElement(manualEntry, "CVV2", card.Cvn);
-                et.SubElement(manualEntry, "ReaderPresent", card.ReaderPresent ? "Y" : "N");
-                et.SubElement(manualEntry, "CardPresent", card.CardPresent ? "Y" : "N");
-                block1.Append(cardData);
+                #region card holder
+                if (builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Recurring
+                    && builder.PaymentMethod.PaymentMethodType != PaymentMethodType.Gift
+                    && builder.TransactionType != TransactionType.Tokenize
+                    && builder.TransactionType != TransactionType.Reversal
+                    && transactionName != "CreditAdditionalAuth"
+                    && transactionName != "CreditIncrementalAuth"
+                ) {
+                    var isCheck = (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH);
+                    var holder = et.SubElement(block1, isCheck ? "ConsumerInfo" : "CardHolderData");
 
-                // secure 3d
-                if (card is CreditCardData) {
-                    var CreditCardData = (card as CreditCardData);
-                    var secureEcom = CreditCardData.ThreeDSecure;
-                    if (secureEcom != null) {
-                        //Secure3D Element
-                        if (!string.IsNullOrEmpty(secureEcom.Eci) && (!IsAppleOrGooglePay(secureEcom.PaymentDataSource))) {
-                            var Secure3D = et.SubElement(block1, "Secure3D");
-                            et.SubElement(Secure3D, "Version", (int)(secureEcom.Version ?? Secure3dVersion.One));
-                            et.SubElement(Secure3D, "AuthenticationValue", secureEcom.Cavv);
-                            et.SubElement(Secure3D, "ECI", secureEcom.Eci);
-                            et.SubElement(Secure3D, "DirectoryServerTxnId", secureEcom.Xid);
+                    if (builder.BillingAddress != null) {
+                        et.SubElement(holder, isCheck ? "Address1" : "CardHolderAddr", builder.BillingAddress.StreetAddress1);
+                        et.SubElement(holder, isCheck ? "City" : "CardHolderCity", builder.BillingAddress.City);
+                        et.SubElement(holder, isCheck ? "State" : "CardHolderState", builder.BillingAddress.Province ?? builder.BillingAddress.State);
+                        et.SubElement(holder, isCheck ? "Zip" : "CardHolderZip", builder.BillingAddress.PostalCode);
+                    }
+
+                    if (builder.CustomerData != null) {
+                        et.SubElement(holder, isCheck ? "EmailAddress" : "CardHolderEmail", builder.CustomerData.Email);
+                        et.SubElement(holder, "CardHolderFirstName", builder.CustomerData.FirstName);
+                        et.SubElement(holder, "CardHolderLastName", builder.CustomerData.LastName);
+                    }
+
+                    if (isCheck) {
+                        var check = builder.PaymentMethod as eCheck;
+                        if (!string.IsNullOrEmpty(check.CheckHolderName)) {
+                            if (check.CheckHolderName.Contains(' ')) {
+                                var names = check.CheckHolderName.Split(new char[] { ' ' }, 2);
+                                et.SubElement(holder, "FirstName", names[0]);
+                                et.SubElement(holder, "LastName", names[1]);
+                            }
+                            else {
+                                et.SubElement(holder, "FirstName", check.CheckHolderName);
+                            }
                         }
-                        if (IsAppleOrGooglePay(secureEcom.PaymentDataSource) && builder.TransactionType != TransactionType.Refund) {
-                            var WalletData = et.SubElement(block1, "WalletData");
-                            et.SubElement(WalletData, "PaymentSource", secureEcom.PaymentDataSource);
-                            et.SubElement(WalletData, "Cryptogram", secureEcom.Cavv);
-                            et.SubElement(WalletData, "ECI", secureEcom.Eci);
+                        et.SubElement(holder, "CheckName", check.CheckName);
+                        et.SubElement(holder, "PhoneNumber", check.PhoneNumber);
+                        et.SubElement(holder, "DLNumber", check.DriversLicenseNumber);
+                        et.SubElement(holder, "DLState", check.DriversLicenseState);
+
+                        if (!string.IsNullOrEmpty(check.SsnLast4) || check.BirthYear != default(int)) {
+                            var identity = et.SubElement(holder, "IdentityInfo");
+                            et.SubElement(identity, "SSNL4", check.SsnLast4);
+                            et.SubElement(identity, "DOBYear", check.BirthYear);
                         }
                     }
-                    //WalletData Element
-                    if ((CreditCardData.MobileType == MobilePaymentMethodType.APPLEPAY || CreditCardData.MobileType == MobilePaymentMethodType.GOOGLEPAY)
-                        && !string.IsNullOrEmpty(CreditCardData.PaymentSource) && IsAppleOrGooglePay(CreditCardData.PaymentSource) && builder.TransactionType != TransactionType.Refund) {
-                        var WalletData = et.SubElement(block1, "WalletData");
-                        et.SubElement(WalletData, "PaymentSource", CreditCardData.PaymentSource);
-                        et.SubElement(WalletData, "Cryptogram", CreditCardData.Cryptogram);
-                        et.SubElement(WalletData, "ECI", CreditCardData.Eci);
-                        if (CreditCardData.Token != null) {
-                            et.SubElement(WalletData, "DigitalPaymentToken", CreditCardData.Token);
-                            block1.Remove("CardData");
-                            block1.Remove("CardHolderData");
+                    else {
+                        var card = builder.PaymentMethod as CreditCardData;
+                        if (card != null && !string.IsNullOrEmpty(card.CardHolderName)) {
+                            if (card.CardHolderName.Trim().Contains(' ')) {
+                                var names = card.CardHolderName.Split(new char[] { ' ' }, 2);
+                                et.SubElement(holder, "CardHolderFirstName", names[0]);
+                                et.SubElement(holder, "CardHolderLastName", names[1]);
+                            }
+                            else {
+                                et.SubElement(holder, "CardHolderFirstName", card.CardHolderName.Trim());
+                            }
                         }
                     }
                 }
-                // recurring data
-                if (builder.TransactionModifier == TransactionModifier.Recurring) {
-                    var recurring = et.SubElement(block1, "RecurringData");
-                    et.SubElement(recurring, "ScheduleID", builder.ScheduleId);
-                    et.SubElement(recurring, "OneTime").Text(builder.OneTimePayment ? "Y" : "N");
-                }
-            }
-            #endregion
-            #region ITrackData
-            else if (builder.PaymentMethod is ITrackData) {
-                var track = builder.PaymentMethod as ITrackData;
-                var trackData = et.SubElement(cardData, hasToken ? "TokenData" : "TrackData");
-                if (!hasToken) {
+
+                #endregion
+
+                // card data
+                string tokenValue = null;
+                var hasToken = HasToken(builder.PaymentMethod, out tokenValue);
+
+                // because debit is weird (Ach too)
+                Element cardData = null;
+                if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH)
+                    cardData = block1;
+                else cardData = et.Element("CardData");
+
+                #region ICardData
+                if (builder.PaymentMethod is ICardData) {
+                    var card = builder.PaymentMethod as ICardData;
+
                     //credential on file
-                    if (builder.TransactionInitiator != null)
-                    {
+                    if (builder.TransactionInitiator != null) {
                         Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
                         et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
                         et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
                         et.SubElement(cardOnFileData, "CategoryInd", builder.CategoryIndicator);
                     }
 
-                    trackData.Text(track.Value);
-                    trackData.Set("method", track.EntryMethod.ToString().ToLower());
-                    if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
-                        // Tag data
-                        if (!string.IsNullOrEmpty(builder.TagData)) {
-                            var tagData = et.SubElement(block1, "TagData");
-                            var tagValues = et.SubElement(tagData, "TagValues", builder.TagData);
-                            tagValues.Set("source", "chip");
-                        }
-                        if (builder.HasEmvFallbackData) {
-                            Element emvData = et.SubElement(block1, "EMVData");
-                            if (builder.EmvLastChipRead != null) {
-                                String chipCondition = builder.EmvLastChipRead == EmvLastChipRead.Successful ? "CHIP_FAILED_PREV_SUCCESS" : "CHIP_FAILED_PREV_FAILED";
-                                et.SubElement(emvData, "EMVChipCondition", chipCondition);
-                            }
-                            if (builder.PaymentMethod is IPinProtected @PinProtected && @PinProtected.PinBlock != null) {
-                                et.SubElement(emvData, "PINBlock", @PinProtected.PinBlock);
-                            }
-                            if (!block1.Has("EMVChipCondition") && !block1.Has("PINBlock")) {
-                                block1.Remove("EMVData");
-                            }
-                        }
-                    }
-                    if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {
-                        et.SubElement(block1, "AccountType", builder.AccountType?.ToString() ?? null);
-                        et.SubElement(block1, "EMVChipCondition", EnumConverter.GetMapping(Target.Portico, builder.EmvLastChipRead));
-                        et.SubElement(block1, "MessageAuthenticationCode", builder.MessageAuthenticationCode);
-                        et.SubElement(block1, "PosSequenceNbr", builder.PosSequenceNumber);
-                        et.SubElement(block1, "ReversalResonCode", builder.ReversalReasonCode);
-                        if (!string.IsNullOrEmpty(builder.TagData)) {
-                            var tagData = et.SubElement(block1, "TagData");
-                            et.SubElement(tagData, "TagValues", builder.TagData).Set("source", "chip");
-                        }
-                    }
-                    else block1.Append(cardData);
-                }
-                else et.SubElement(trackData, "TokenValue").Text(tokenValue);
-            }
-            #endregion
-            #region GIFT
-            else if (builder.PaymentMethod is GiftCard) {
-                var card = builder.PaymentMethod as GiftCard;
-
-                // currency
-                et.SubElement(block1, "Currency", builder.Currency);
-
-                // if it's replace add the new card and change the card data name to be old card data
-                if (builder.TransactionType == TransactionType.Replace) {
-                    var newCardData = et.SubElement(block1, "NewCardData");
-                    et.SubElement(newCardData, builder.ReplacementCard.ValueType, builder.ReplacementCard.Value);
-                    et.SubElement(newCardData, "PIN", builder.ReplacementCard.Pin);
-
-                    cardData = et.Element("OldCardData");
-                }
-                et.SubElement(cardData, card.ValueType, card.Value);
-                et.SubElement(cardData, "PIN", card.Pin);
-
-                if (builder.AliasAction != AliasAction.CREATE)
+                    var manualEntry = et.SubElement(cardData, hasToken ? "TokenData" : "ManualEntry");
+                    et.SubElement(manualEntry, hasToken ? "TokenValue" : "CardNbr").Text(tokenValue ?? card.Number);
+                    et.SubElement(manualEntry, "ExpMonth", card.ExpMonth?.ToString());
+                    et.SubElement(manualEntry, "ExpYear", card.ExpYear?.ToString());
+                    et.SubElement(manualEntry, "CVV2", card.Cvn);
+                    et.SubElement(manualEntry, "ReaderPresent", card.ReaderPresent ? "Y" : "N");
+                    et.SubElement(manualEntry, "CardPresent", card.CardPresent ? "Y" : "N");
                     block1.Append(cardData);
-            }
-            #endregion
-            #region eCheck
-            else if (builder.PaymentMethod is eCheck) {
-                var check = builder.PaymentMethod as eCheck;
 
-                // check action
-                et.SubElement(block1, "CheckAction").Text("SALE");
-
-                var accountInfo = et.SubElement(block1, "AccountInfo");
-                // account info
-                if (string.IsNullOrEmpty(check.Token)) {
-                    et.SubElement(accountInfo, "RoutingNumber", check.RoutingNumber);
-                    et.SubElement(accountInfo, "AccountNumber", check.AccountNumber);
-                    et.SubElement(accountInfo, "CheckNumber", check.CheckNumber);
-                    et.SubElement(accountInfo, "MICRData", check.MicrNumber);
+                    // secure 3d
+                    if (card is CreditCardData) {
+                        var CreditCardData = (card as CreditCardData);
+                        var secureEcom = CreditCardData.ThreeDSecure;
+                        if (secureEcom != null) {
+                            //Secure3D Element
+                            if (!string.IsNullOrEmpty(secureEcom.Eci) && (!IsAppleOrGooglePay(secureEcom.PaymentDataSource))) {
+                                var Secure3D = et.SubElement(block1, "Secure3D");
+                                et.SubElement(Secure3D, "Version", (int)(secureEcom.Version ?? Secure3dVersion.One));
+                                et.SubElement(Secure3D, "AuthenticationValue", secureEcom.Cavv);
+                                et.SubElement(Secure3D, "ECI", secureEcom.Eci);
+                                et.SubElement(Secure3D, "DirectoryServerTxnId", secureEcom.Xid);
+                            }
+                            if (IsAppleOrGooglePay(secureEcom.PaymentDataSource) && builder.TransactionType != TransactionType.Refund) {
+                                var WalletData = et.SubElement(block1, "WalletData");
+                                et.SubElement(WalletData, "PaymentSource", secureEcom.PaymentDataSource);
+                                et.SubElement(WalletData, "Cryptogram", secureEcom.Cavv);
+                                et.SubElement(WalletData, "ECI", secureEcom.Eci);
+                            }
+                        }
+                        //WalletData Element
+                        if ((CreditCardData.MobileType == MobilePaymentMethodType.APPLEPAY || CreditCardData.MobileType == MobilePaymentMethodType.GOOGLEPAY)
+                            && !string.IsNullOrEmpty(CreditCardData.PaymentSource) && IsAppleOrGooglePay(CreditCardData.PaymentSource) && builder.TransactionType != TransactionType.Refund) {
+                            var WalletData = et.SubElement(block1, "WalletData");
+                            et.SubElement(WalletData, "PaymentSource", CreditCardData.PaymentSource);
+                            et.SubElement(WalletData, "Cryptogram", CreditCardData.Cryptogram);
+                            et.SubElement(WalletData, "ECI", CreditCardData.Eci);
+                            if (CreditCardData.Token != null) {
+                                et.SubElement(WalletData, "DigitalPaymentToken", CreditCardData.Token);
+                                block1.Remove("CardData");
+                                block1.Remove("CardHolderData");
+                            }
+                        }
+                    }
+                    // recurring data
+                    if (builder.TransactionModifier == TransactionModifier.Recurring) {
+                        var recurring = et.SubElement(block1, "RecurringData");
+                        et.SubElement(recurring, "ScheduleID", builder.ScheduleId);
+                        et.SubElement(recurring, "OneTime").Text(builder.OneTimePayment ? "Y" : "N");
+                    }
                 }
-                else et.SubElement(block1, "TokenValue").Text(tokenValue);
+                #endregion
+                #region ITrackData
+                else if (builder.PaymentMethod is ITrackData) {
+                    var track = builder.PaymentMethod as ITrackData;
+                    var trackData = et.SubElement(cardData, hasToken ? "TokenData" : "TrackData");
+                    if (!hasToken) {
+                        //credential on file
+                        if (builder.TransactionInitiator != null)
+                        {
+                            Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
+                            et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
+                            et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
+                            et.SubElement(cardOnFileData, "CategoryInd", builder.CategoryIndicator);
+                        }
 
-                et.SubElement(accountInfo, "AccountType", check.AccountType.ToString());
-                et.SubElement(block1, "DataEntryMode", check.EntryMode.ToString().ToUpper());
-                et.SubElement(block1, "CheckType", check.CheckType.ToString());
-                et.SubElement(block1, "SECCode", check.SecCode);
-
-                // verify info
-                var verify = et.SubElement(block1, "VerifyInfo");
-                et.SubElement(verify, "CheckVerify").Text(check.CheckVerify ? "Y" : "N");
-                et.SubElement(verify, "ACHVerify").Text(check.AchVerify ? "Y" : "N");
-            }
-            #endregion
-            #region TransactionReference
-            if (builder.PaymentMethod is TransactionReference) {
-                var reference = builder.PaymentMethod as TransactionReference;
-                et.SubElement(block1, "GatewayTxnId", reference.TransactionId);
-                et.SubElement(block1, "ClientTxnId", reference.ClientTransactionId);
-            }
-            #endregion
-            #region RecurringPaymentMethod
-            if (builder.PaymentMethod is RecurringPaymentMethod) {
-                var method = builder.PaymentMethod as RecurringPaymentMethod;
-                //credential on file
-                if (builder.TransactionInitiator != null) {
-                    Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
-                    et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
-                    et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
+                        trackData.Text(track.Value);
+                        trackData.Set("method", track.EntryMethod.ToString().ToLower());
+                        if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Credit) {
+                            // Tag data
+                            if (!string.IsNullOrEmpty(builder.TagData)) {
+                                var tagData = et.SubElement(block1, "TagData");
+                                var tagValues = et.SubElement(tagData, "TagValues", builder.TagData);
+                                tagValues.Set("source", "chip");
+                            }
+                            if (builder.HasEmvFallbackData) {
+                                Element emvData = et.SubElement(block1, "EMVData");
+                                if (builder.EmvLastChipRead != null) {
+                                    String chipCondition = builder.EmvLastChipRead == EmvLastChipRead.Successful ? "CHIP_FAILED_PREV_SUCCESS" : "CHIP_FAILED_PREV_FAILED";
+                                    et.SubElement(emvData, "EMVChipCondition", chipCondition);
+                                }
+                                if (builder.PaymentMethod is IPinProtected @PinProtected && @PinProtected.PinBlock != null) {
+                                    et.SubElement(emvData, "PINBlock", @PinProtected.PinBlock);
+                                }
+                                if (!block1.Has("EMVChipCondition") && !block1.Has("PINBlock")) {
+                                    block1.Remove("EMVData");
+                                }
+                            }
+                        }
+                        if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Debit) {
+                            et.SubElement(block1, "AccountType", builder.AccountType?.ToString() ?? null);
+                            et.SubElement(block1, "EMVChipCondition", EnumConverter.GetMapping(Target.Portico, builder.EmvLastChipRead));
+                            et.SubElement(block1, "MessageAuthenticationCode", builder.MessageAuthenticationCode);
+                            et.SubElement(block1, "PosSequenceNbr", builder.PosSequenceNumber);
+                            et.SubElement(block1, "ReversalResonCode", builder.ReversalReasonCode);
+                            if (!string.IsNullOrEmpty(builder.TagData)) {
+                                var tagData = et.SubElement(block1, "TagData");
+                                et.SubElement(tagData, "TagValues", builder.TagData).Set("source", "chip");
+                            }
+                        }
+                        else block1.Append(cardData);
+                    }
+                    else et.SubElement(trackData, "TokenValue").Text(tokenValue);
                 }
+                #endregion
+                #region GIFT
+                else if (builder.PaymentMethod is GiftCard) {
+                    var card = builder.PaymentMethod as GiftCard;
 
-                // check action
-                if (method.PaymentType == "ACH") {
-                    block1.Remove("AllowDup"); // nix the allow duplication
+                    // currency
+                    et.SubElement(block1, "Currency", builder.Currency);
+
+                    // if it's replace add the new card and change the card data name to be old card data
+                    if (builder.TransactionType == TransactionType.Replace) {
+                        var newCardData = et.SubElement(block1, "NewCardData");
+                        et.SubElement(newCardData, builder.ReplacementCard.ValueType, builder.ReplacementCard.Value);
+                        et.SubElement(newCardData, "PIN", builder.ReplacementCard.Pin);
+
+                        cardData = et.Element("OldCardData");
+                    }
+                    et.SubElement(cardData, card.ValueType, card.Value);
+                    et.SubElement(cardData, "PIN", card.Pin);
+
+                    if (builder.AliasAction != AliasAction.CREATE)
+                        block1.Append(cardData);
+                }
+                #endregion
+                #region eCheck
+                else if (builder.PaymentMethod is eCheck) {
+                    var check = builder.PaymentMethod as eCheck;
+
+                    // check action
                     et.SubElement(block1, "CheckAction").Text("SALE");
+
+                    var accountInfo = et.SubElement(block1, "AccountInfo");
+                    // account info
+                    if (string.IsNullOrEmpty(check.Token)) {
+                        et.SubElement(accountInfo, "RoutingNumber", check.RoutingNumber);
+                        et.SubElement(accountInfo, "AccountNumber", check.AccountNumber);
+                        et.SubElement(accountInfo, "CheckNumber", check.CheckNumber);
+                        et.SubElement(accountInfo, "MICRData", check.MicrNumber);
+                    }
+                    else et.SubElement(block1, "TokenValue").Text(tokenValue);
+
+                    et.SubElement(accountInfo, "AccountType", check.AccountType.ToString());
+                    et.SubElement(block1, "DataEntryMode", check.EntryMode.ToString().ToUpper());
+                    et.SubElement(block1, "CheckType", check.CheckType.ToString());
+                    et.SubElement(block1, "SECCode", check.SecCode);
+
+                    // verify info
+                    var verify = et.SubElement(block1, "VerifyInfo");
+                    et.SubElement(verify, "CheckVerify").Text(check.CheckVerify ? "Y" : "N");
+                    et.SubElement(verify, "ACHVerify").Text(check.AchVerify ? "Y" : "N");
+                }
+                #endregion
+                #region TransactionReference
+                if (builder.PaymentMethod is TransactionReference) {
+                    var reference = builder.PaymentMethod as TransactionReference;
+                    et.SubElement(block1, "GatewayTxnId", reference.TransactionId);
+                    et.SubElement(block1, "ClientTxnId", reference.ClientTransactionId);
+                }
+                #endregion
+                #region RecurringPaymentMethod
+                if (builder.PaymentMethod is RecurringPaymentMethod) {
+                    var method = builder.PaymentMethod as RecurringPaymentMethod;
+                    //credential on file
+                    if (builder.TransactionInitiator != null) {
+                        Element cardOnFileData = et.SubElement(block1, "CardOnFileData");
+                        et.SubElement(cardOnFileData, "CardOnFile", EnumConverter.GetMapping(Target.Portico, builder.TransactionInitiator));
+                        et.SubElement(cardOnFileData, "CardBrandTxnId", builder.CardBrandTransactionId);
+                    }
+
+                    // check action
+                    if (method.PaymentType == "ACH") {
+                        block1.Remove("AllowDup"); // nix the allow duplication
+                        et.SubElement(block1, "CheckAction").Text("SALE");
+                    }
+
+                    // payment method stuff
+                    et.SubElement(block1, "PaymentMethodKey").Text(method.Key);
+                    if (method.PaymentMethod != null && method.PaymentMethod is CreditCardData) {
+                        var card = method.PaymentMethod as CreditCardData;
+                        var data = et.SubElement(block1, "PaymentMethodKeyData");
+                        et.SubElement(data, "ExpMonth", card.ExpMonth);
+                        et.SubElement(data, "ExpYear", card.ExpYear);
+                        et.SubElement(data, "CVV2", card.Cvn);
+                    }
+
+                    if (method.PaymentType == "ACH" && (method.SecCode != null)) {
+                        et.SubElement(block1, "SECCode").Text(method.SecCode);
+                    }
+
+                    // recurring data
+                    var recurring = et.SubElement(block1, "RecurringData");
+                    et.SubElement(recurring, "ScheduleID", builder.ScheduleId);
+                    et.SubElement(recurring, "OneTime").Text(builder.OneTimePayment ? "Y" : "N");
+                }
+                #endregion
+
+                // pin block
+                if (builder.PaymentMethod is IPinProtected) {
+                    if (!builder.TransactionType.HasFlag(TransactionType.Reversal))
+                        et.SubElement(block1, "PinBlock", ((IPinProtected)builder.PaymentMethod).PinBlock);
                 }
 
-                // payment method stuff
-                et.SubElement(block1, "PaymentMethodKey").Text(method.Key);
-                if (method.PaymentMethod != null && method.PaymentMethod is CreditCardData) {
-                    var card = method.PaymentMethod as CreditCardData;
-                    var data = et.SubElement(block1, "PaymentMethodKeyData");
-                    et.SubElement(data, "ExpMonth", card.ExpMonth);
-                    et.SubElement(data, "ExpYear", card.ExpYear);
-                    et.SubElement(data, "CVV2", card.Cvn);
-                }
+                // encryption
+                if (builder.PaymentMethod is IEncryptable) {
+                    var encryptionData = ((IEncryptable)builder.PaymentMethod).EncryptionData;
 
-                if (method.PaymentType == "ACH" && (method.SecCode != null)) {
-                    et.SubElement(block1, "SECCode").Text(method.SecCode);
-                }
-
-                // recurring data
-                var recurring = et.SubElement(block1, "RecurringData");
-                et.SubElement(recurring, "ScheduleID", builder.ScheduleId);
-                et.SubElement(recurring, "OneTime").Text(builder.OneTimePayment ? "Y" : "N");
-            }
-            #endregion
-
-            // pin block
-            if (builder.PaymentMethod is IPinProtected) {
-                if (!builder.TransactionType.HasFlag(TransactionType.Reversal))
-                    et.SubElement(block1, "PinBlock", ((IPinProtected)builder.PaymentMethod).PinBlock);
-            }
-
-            // encryption
-            if (builder.PaymentMethod is IEncryptable) {
-                var encryptionData = ((IEncryptable)builder.PaymentMethod).EncryptionData;
-
-                if (encryptionData != null) {
-                    var enc = et.SubElement(cardData, "EncryptionData");
-                    et.SubElement(enc, "Version").Text(encryptionData.Version);
-                    et.SubElement(enc, "EncryptedTrackNumber", encryptionData.TrackNumber);
-                    et.SubElement(enc, "KTB", encryptionData.KTB);
-                    et.SubElement(enc, "KSN", encryptionData.KSN);
-                    et.SubElement(enc, "DataFormat", encryptionData.DataFormat);
-                }
-            }
-
-            // set token flag
-            // eCheck cannot be tokenized w/Portico Gateway
-            if (builder.PaymentMethod is ITokenizable && !(builder.PaymentMethod is eCheck)) {
-                et.SubElement(cardData, "TokenRequest").Text(builder.RequestMultiUseToken ? "Y" : "N");
-            }
-
-            // balance inquiry type
-            if (builder.PaymentMethod is IBalanceable)
-                et.SubElement(block1, "BalanceInquiryType", builder.BalanceInquiryType);
-
-            // cpc request
-            if (builder.CommercialRequest) {
-                et.SubElement(block1, "CPCReq", "Y");
-            }
-
-            // details
-            if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
-                var addons = et.SubElement(block1, "AdditionalTxnFields");
-                et.SubElement(addons, "CustomerID", builder.CustomerId);
-                et.SubElement(addons, "Description", builder.Description);
-                et.SubElement(addons, "InvoiceNbr", builder.InvoiceNumber);
-            }
-
-            // ecommerce info
-            if (builder.EcommerceInfo != null) {
-                et.SubElement(block1, "Ecommerce", builder.EcommerceInfo.Channel.ToString());
-                if (!string.IsNullOrEmpty(builder.InvoiceNumber) || builder.EcommerceInfo.ShipMonth != default(int)) {
-                    var direct = et.SubElement(block1, "DirectMktData");
-                    et.SubElement(direct, "DirectMktInvoiceNbr").Text(builder.InvoiceNumber);
-                    et.SubElement(direct, "DirectMktShipDay").Text(builder.EcommerceInfo.ShipDay.ToString());
-                    et.SubElement(direct, "DirectMktShipMonth").Text(builder.EcommerceInfo.ShipMonth.ToString());
-                }
-            }
-
-            if (builder.CommercialData != null) {
-                var cd = builder.CommercialData;
-                var cpc = et.SubElement(block1, "CPCData");
-                et.SubElement(cpc, "CardHolderPONbr", cd.PoNumber);
-                et.SubElement(cpc, "TaxType", cd.TaxType.ToString());
-                et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
-            }
-            // dynamic descriptor
-            et.SubElement(block1, "TxnDescriptor", builder.DynamicDescriptor);
-
-            // auto substantiation
-            if (builder.AutoSubstantiation != null) {
-                var autoSub = et.SubElement(block1, "AutoSubstantiation");
-
-                var index = 0;
-                var fieldNames = new string[] { "First", "Second", "Third", "Fourth" };
-                foreach (var amount in builder.AutoSubstantiation.Amounts) {
-                    if (amount.Value != default(decimal)) {
-                        if (index > 3) {
-                            throw new BuilderException("You may only specify three different subtotals in a single transaction.");
-                        }
-
-                        var amountNode = et.SubElement(autoSub, fieldNames[index++] + "AdditionalAmtInfo");
-                        et.SubElement(amountNode, "AmtType", amount.Key);
-                        et.SubElement(amountNode, "Amt", amount.Value?.ToString());
+                    if (encryptionData != null) {
+                        var enc = et.SubElement(cardData, "EncryptionData");
+                        et.SubElement(enc, "Version").Text(encryptionData.Version);
+                        et.SubElement(enc, "EncryptedTrackNumber", encryptionData.TrackNumber);
+                        et.SubElement(enc, "KTB", encryptionData.KTB);
+                        et.SubElement(enc, "KSN", encryptionData.KSN);
+                        et.SubElement(enc, "DataFormat", encryptionData.DataFormat);
                     }
                 }
 
-                et.SubElement(autoSub, "MerchantVerificationValue", builder.AutoSubstantiation.MerchantVerificationValue);
-                et.SubElement(autoSub, "RealTimeSubstantiation", builder.AutoSubstantiation.RealTimeSubstantiation ? "Y" : "N");
-            }
+                // set token flag
+                // eCheck cannot be tokenized w/Portico Gateway
+                if (builder.PaymentMethod is ITokenizable && !(builder.PaymentMethod is eCheck)) {
+                    et.SubElement(cardData, "TokenRequest").Text(builder.RequestMultiUseToken ? "Y" : "N");
+                }
 
-            #region LodgingData
-            if (builder.LodgingData != null) {
-                var lodging = builder.LodgingData;
+                // balance inquiry type
+                if (builder.PaymentMethod is IBalanceable)
+                    et.SubElement(block1, "BalanceInquiryType", builder.BalanceInquiryType);
 
-                Element lodgingElement = et.SubElement(block1, "LodgingData");
-                et.SubElement(lodgingElement, "PrestigiousPropertyLimit", lodging.PrestigiousPropertyLimit);
-                et.SubElement(lodgingElement, "NoShow", lodging.NoShow ? "Y" : "N");
-                et.SubElement(lodgingElement, "AdvancedDepositType", lodging.AdvancedDepositType);
-                et.SubElement(lodgingElement, "PreferredCustomer", lodging.PreferredCustomer ? "Y" : "N");
+                // cpc request
+                if (builder.CommercialRequest) {
+                    et.SubElement(block1, "CPCReq", "Y");
+                }
 
-                if ((!string.IsNullOrEmpty(lodging.FolioNumber)) || (lodging.StayDuration != default(int)) || (lodging.CheckInDate != null) || (lodging.CheckOutDate != null) ||
-                    (lodging.Rate != default(decimal)) || (lodging.ExtraCharges != null)) {
-                    Element lodgingDataEdit = et.SubElement(lodgingElement, "LodgingDataEdit");
-                    et.SubElement(lodgingDataEdit, "FolioNumber", lodging.FolioNumber);
-                    et.SubElement(lodgingDataEdit, "Duration", lodging.StayDuration);
-                    et.SubElement(lodgingDataEdit, "CheckInDate", lodging.CheckInDate?.ToString("yyyy-MM-dd"));
-                    et.SubElement(lodgingDataEdit, "CheckOutDate", lodging.CheckOutDate?.ToString("yyyy-MM-dd"));
-                    et.SubElement(lodgingDataEdit, "Rate", lodging.Rate);
+                // details
+                if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
+                    var addons = et.SubElement(block1, "AdditionalTxnFields");
+                    et.SubElement(addons, "CustomerID", builder.CustomerId);
+                    et.SubElement(addons, "Description", builder.Description);
+                    et.SubElement(addons, "InvoiceNbr", builder.InvoiceNumber);
+                }
 
-                    if (lodging.ExtraCharges != null) {
-                        Element extraChargesElement = et.SubElement(lodgingDataEdit, "ExtraCharges");
-
-                        foreach (var chargeType in lodging.ExtraCharges.Keys) {
-                            et.SubElement(extraChargesElement, chargeType.ToString(), "Y");
-                        }
-                        et.SubElement(lodgingDataEdit, "ExtraChargeAmtInfo", lodging.ExtraChargeAmount);
+                // ecommerce info
+                if (builder.EcommerceInfo != null) {
+                    et.SubElement(block1, "Ecommerce", builder.EcommerceInfo.Channel.ToString());
+                    if (!string.IsNullOrEmpty(builder.InvoiceNumber) || builder.EcommerceInfo.ShipMonth != default(int)) {
+                        var direct = et.SubElement(block1, "DirectMktData");
+                        et.SubElement(direct, "DirectMktInvoiceNbr").Text(builder.InvoiceNumber);
+                        et.SubElement(direct, "DirectMktShipDay").Text(builder.EcommerceInfo.ShipDay.ToString());
+                        et.SubElement(direct, "DirectMktShipMonth").Text(builder.EcommerceInfo.ShipMonth.ToString());
                     }
                 }
-            }
-            #endregion
 
-            var response = DoTransaction(BuildEnvelope(et, transaction, builder.ClientTransactionId));
-            return MapResponse(response, builder.PaymentMethod);
+                if (builder.CommercialData != null) {
+                    var cd = builder.CommercialData;
+                    var cpc = et.SubElement(block1, "CPCData");
+                    et.SubElement(cpc, "CardHolderPONbr", cd.PoNumber);
+                    et.SubElement(cpc, "TaxType", cd.TaxType.ToString());
+                    et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
+                }
+                // dynamic descriptor
+                et.SubElement(block1, "TxnDescriptor", builder.DynamicDescriptor);
+
+                // auto substantiation
+                if (builder.AutoSubstantiation != null) {
+                    var autoSub = et.SubElement(block1, "AutoSubstantiation");
+
+                    var index = 0;
+                    var fieldNames = new string[] { "First", "Second", "Third", "Fourth" };
+                    foreach (var amount in builder.AutoSubstantiation.Amounts) {
+                        if (amount.Value != default(decimal)) {
+                            if (index > 3) {
+                                throw new BuilderException("You may only specify three different subtotals in a single transaction.");
+                            }
+
+                            var amountNode = et.SubElement(autoSub, fieldNames[index++] + "AdditionalAmtInfo");
+                            et.SubElement(amountNode, "AmtType", amount.Key);
+                            et.SubElement(amountNode, "Amt", amount.Value?.ToString());
+                        }
+                    }
+
+                    et.SubElement(autoSub, "MerchantVerificationValue", builder.AutoSubstantiation.MerchantVerificationValue);
+                    et.SubElement(autoSub, "RealTimeSubstantiation", builder.AutoSubstantiation.RealTimeSubstantiation ? "Y" : "N");
+                }
+
+                #region LodgingData
+                if (builder.LodgingData != null) {
+                    var lodging = builder.LodgingData;
+
+                    Element lodgingElement = et.SubElement(block1, "LodgingData");
+                    et.SubElement(lodgingElement, "PrestigiousPropertyLimit", lodging.PrestigiousPropertyLimit);
+                    et.SubElement(lodgingElement, "NoShow", lodging.NoShow ? "Y" : "N");
+                    et.SubElement(lodgingElement, "AdvancedDepositType", lodging.AdvancedDepositType);
+                    et.SubElement(lodgingElement, "PreferredCustomer", lodging.PreferredCustomer ? "Y" : "N");
+
+                    if ((!string.IsNullOrEmpty(lodging.FolioNumber)) || (lodging.StayDuration != default(int)) || (lodging.CheckInDate != null) || (lodging.CheckOutDate != null) ||
+                        (lodging.Rate != default(decimal)) || (lodging.ExtraCharges != null)) {
+                        Element lodgingDataEdit = et.SubElement(lodgingElement, "LodgingDataEdit");
+                        et.SubElement(lodgingDataEdit, "FolioNumber", lodging.FolioNumber);
+                        et.SubElement(lodgingDataEdit, "Duration", lodging.StayDuration);
+                        et.SubElement(lodgingDataEdit, "CheckInDate", lodging.CheckInDate?.ToString("yyyy-MM-dd"));
+                        et.SubElement(lodgingDataEdit, "CheckOutDate", lodging.CheckOutDate?.ToString("yyyy-MM-dd"));
+                        et.SubElement(lodgingDataEdit, "Rate", lodging.Rate);
+
+                        if (lodging.ExtraCharges != null) {
+                            Element extraChargesElement = et.SubElement(lodgingDataEdit, "ExtraCharges");
+
+                            foreach (var chargeType in lodging.ExtraCharges.Keys) {
+                                et.SubElement(extraChargesElement, chargeType.ToString(), "Y");
+                            }
+                            et.SubElement(lodgingDataEdit, "ExtraChargeAmtInfo", lodging.ExtraChargeAmount);
+                        }
+                    }
+                }
+                #endregion
+
+                var response = DoTransaction(BuildEnvelope(et, transaction, builder.ClientTransactionId));
+                return MapResponse(response, builder.PaymentMethod);
+            }
         }
 
         public string SerializeRequest(AuthorizationBuilder builder) {
@@ -478,250 +479,251 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         public Transaction ManageTransaction(ManagementBuilder builder) {
-            var et = new ElementTree();
+            using (var et = new ElementTree()) {
+                // build request
+                var transaction = et.Element(MapTransactionType(builder));
 
-            // build request
-            var transaction = et.Element(MapTransactionType(builder));
+                if (builder.TransactionType != TransactionType.BatchClose) {
+                    Element root = null;
+                    if (builder.TransactionType == TransactionType.Reversal
+                        || builder.TransactionType == TransactionType.Refund
+                        || builder.TransactionType == TransactionType.Increment
+                        || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift
+                        || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH) {
+                        root = et.SubElement(transaction, "Block1");
+                    }
+                    else { root = transaction; }
 
-            if (builder.TransactionType != TransactionType.BatchClose) {
-                Element root = null;
-                if (builder.TransactionType == TransactionType.Reversal
-                    || builder.TransactionType == TransactionType.Refund
-                    || builder.TransactionType == TransactionType.Increment
-                    || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Gift
-                    || builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH) {
-                    root = et.SubElement(transaction, "Block1");
-                }
-                else { root = transaction; }
-
-                if (builder.EcommerceInfo != null) {
-                    et.SubElement(root, "Ecommerce", builder.EcommerceInfo.Channel.ToString());
-                }
-
-                // amount
-                if (builder.Amount != null) {
-                    et.SubElement(root, "Amt").Text(builder.Amount.ToString());
-                }
-
-                // auth amount
-                if (builder.AuthAmount != null) {
-                    et.SubElement(root, "AuthAmt").Text(builder.AuthAmount.ToString());
-                }
-
-                if (builder.SurchargeAmount != null) {
-                    et.SubElement(root, "SurchargeAmtInfo", builder.SurchargeAmount);
-                }
-
-                // gratuity
-                if (builder.Gratuity != null) {
-                    et.SubElement(root, "GratuityAmtInfo").Text(builder.Gratuity.ToString());
-                }
-
-                // Transaction ID
-                et.SubElement(root, "GatewayTxnId", builder.TransactionId);
-
-                // Client Txn Id
-                if (
-                    builder.TransactionType == TransactionType.Reversal
-                    || (
-                        builder.PaymentMethod != null
-                        && builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH
-                    )
-                ) {
-                    et.SubElement(root, "ClientTxnId", builder.ClientTransactionId);
-                }
-
-                if (builder.AllowDuplicates) {
-                    et.SubElement(root, "AllowDup", "Y");
-                }
-
-                // Level II/III Data
-                if (builder.CommercialData != null) {
-                    var cd = builder.CommercialData;
-
-                    if (cd.CommercialIndicator == CommercialIndicator.Level_II || cd.CommercialIndicator == CommercialIndicator.Level_III) {
-                        var cpc = et.SubElement(root, "CPCData");
-                        et.SubElement(cpc, "CardHolderPONbr", cd.PoNumber);
-                        et.SubElement(cpc, "TaxType", cd.TaxType.ToString());
-                        et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
+                    if (builder.EcommerceInfo != null) {
+                        et.SubElement(root, "Ecommerce", builder.EcommerceInfo.Channel.ToString());
                     }
 
-                    if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod.PaymentMethodType is PaymentMethodType.Credit) {
+                    // amount
+                    if (builder.Amount != null) {
+                        et.SubElement(root, "Amt").Text(builder.Amount.ToString());
+                    }
 
-                        var isVisa = (builder.CardType.ToLowerInvariant() == "visa");
-                        var cpc = et.SubElement(root, "CorporateData");
-                        var data = et.SubElement(cpc, isVisa ? "Visa" : "MC");
+                    // auth amount
+                    if (builder.AuthAmount != null) {
+                        et.SubElement(root, "AuthAmt").Text(builder.AuthAmount.ToString());
+                    }
 
-                        BuildLineItems(et, data, isVisa, cd.LineItems);
+                    if (builder.SurchargeAmount != null) {
+                        et.SubElement(root, "SurchargeAmtInfo", builder.SurchargeAmount);
+                    }
 
-                        if (isVisa) {
-                            et.SubElement(data, "SummaryCommodityCode", cd.SummaryCommodityCode);
-                            et.SubElement(data, "DiscountAmt", cd.DiscountAmount);
-                            et.SubElement(data, "FreightAmt", cd.FreightAmount);
-                            et.SubElement(data, "DutyAmt", cd.DutyAmount);
-                            et.SubElement(data, "DestinationPostalZipCode", cd.DestinationPostalCode);
-                            et.SubElement(data, "ShipFromPostalZipCode", cd.OriginPostalCode);
-                            et.SubElement(data, "DestinationCountryCode", cd.DestinationCountryCode);
-                            et.SubElement(data, "InvoiceRefNbr", cd.VAT_InvoiceNumber);
-                            et.SubElement(data, "OrderDate", cd.OrderDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
-                            et.SubElement(data, "VATTaxAmtFreight", cd.VATTaxAmtFreight ?? cd.AdditionalTaxDetails?.TaxAmount ?? cd.TaxAmount);
-                            et.SubElement(data, "VATTaxRateFreight", cd.VATTaxRateFreight ?? cd.AdditionalTaxDetails?.TaxRate);
-                            // et.SubElement(data, "TaxTreatment", null);
-                            // et.SubElement(data, "DiscountTreatment", null);
+                    // gratuity
+                    if (builder.Gratuity != null) {
+                        et.SubElement(root, "GratuityAmtInfo").Text(builder.Gratuity.ToString());
+                    }
+
+                    // Transaction ID
+                    et.SubElement(root, "GatewayTxnId", builder.TransactionId);
+
+                    // Client Txn Id
+                    if (
+                        builder.TransactionType == TransactionType.Reversal
+                        || (
+                            builder.PaymentMethod != null
+                            && builder.PaymentMethod.PaymentMethodType == PaymentMethodType.ACH
+                        )
+                    ) {
+                        et.SubElement(root, "ClientTxnId", builder.ClientTransactionId);
+                    }
+
+                    if (builder.AllowDuplicates) {
+                        et.SubElement(root, "AllowDup", "Y");
+                    }
+
+                    // Level II/III Data
+                    if (builder.CommercialData != null) {
+                        var cd = builder.CommercialData;
+
+                        if (cd.CommercialIndicator == CommercialIndicator.Level_II || cd.CommercialIndicator == CommercialIndicator.Level_III) {
+                            var cpc = et.SubElement(root, "CPCData");
+                            et.SubElement(cpc, "CardHolderPONbr", cd.PoNumber);
+                            et.SubElement(cpc, "TaxType", cd.TaxType.ToString());
+                            et.SubElement(cpc, "TaxAmt", cd.TaxAmount);
                         }
 
-                    }
-                }
+                        if (cd.CommercialIndicator == CommercialIndicator.Level_III && builder.PaymentMethod.PaymentMethodType is PaymentMethodType.Credit) {
 
-                // Lodging Data
-                if (builder.LodgingData != null) {
-                    LodgingData lodging = builder.LodgingData;
+                            var isVisa = (builder.CardType.ToLowerInvariant() == "visa");
+                            var cpc = et.SubElement(root, "CorporateData");
+                            var data = et.SubElement(cpc, isVisa ? "Visa" : "MC");
 
-                    if (lodging.ExtraCharges != null) {
-                        Element lodgingDataEdit = et.SubElement(root, "LodgingDataEdit");
-                        Element extraChargesElement = et.SubElement(lodgingDataEdit, "ExtraCharges");
-                        foreach (var chargeType in lodging.ExtraCharges.Keys) {
-                            et.SubElement(extraChargesElement, chargeType.ToString(), "Y");
+                            BuildLineItems(et, data, isVisa, cd.LineItems);
+
+                            if (isVisa) {
+                                et.SubElement(data, "SummaryCommodityCode", cd.SummaryCommodityCode);
+                                et.SubElement(data, "DiscountAmt", cd.DiscountAmount);
+                                et.SubElement(data, "FreightAmt", cd.FreightAmount);
+                                et.SubElement(data, "DutyAmt", cd.DutyAmount);
+                                et.SubElement(data, "DestinationPostalZipCode", cd.DestinationPostalCode);
+                                et.SubElement(data, "ShipFromPostalZipCode", cd.OriginPostalCode);
+                                et.SubElement(data, "DestinationCountryCode", cd.DestinationCountryCode);
+                                et.SubElement(data, "InvoiceRefNbr", cd.VAT_InvoiceNumber);
+                                et.SubElement(data, "OrderDate", cd.OrderDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+                                et.SubElement(data, "VATTaxAmtFreight", cd.VATTaxAmtFreight ?? cd.AdditionalTaxDetails?.TaxAmount ?? cd.TaxAmount);
+                                et.SubElement(data, "VATTaxRateFreight", cd.VATTaxRateFreight ?? cd.AdditionalTaxDetails?.TaxRate);
+                                // et.SubElement(data, "TaxTreatment", null);
+                                // et.SubElement(data, "DiscountTreatment", null);
+                            }
+
                         }
-                        et.SubElement(lodgingDataEdit, "ExtraChargeAmtInfo", lodging.ExtraChargeAmount);
+                    }
+
+                    // Lodging Data
+                    if (builder.LodgingData != null) {
+                        LodgingData lodging = builder.LodgingData;
+
+                        if (lodging.ExtraCharges != null) {
+                            Element lodgingDataEdit = et.SubElement(root, "LodgingDataEdit");
+                            Element extraChargesElement = et.SubElement(lodgingDataEdit, "ExtraCharges");
+                            foreach (var chargeType in lodging.ExtraCharges.Keys) {
+                                et.SubElement(extraChargesElement, chargeType.ToString(), "Y");
+                            }
+                            et.SubElement(lodgingDataEdit, "ExtraChargeAmtInfo", lodging.ExtraChargeAmount);
+                        }
+                    }
+
+                    // Additional Txn Fields
+                    if (builder.TransactionType == TransactionType.Refund || builder.TransactionType == TransactionType.Reversal) {
+                        if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
+                            var addons = et.SubElement(root, "AdditionalTxnFields");
+                            et.SubElement(addons, "CustomerID", builder.CustomerId);
+                            et.SubElement(addons, "Description", builder.Description);
+                            et.SubElement(addons, "InvoiceNbr", builder.InvoiceNumber);
+                        }
+                    }
+
+                    // Token Management
+                    if (builder.TransactionType.Equals(TransactionType.TokenUpdate) || builder.TransactionType.Equals(TransactionType.TokenDelete)) {
+                        ITokenizable token = (ITokenizable)builder.PaymentMethod;
+
+                        // Set the token value
+                        et.SubElement(root, "TokenValue").Text(token.Token);
+
+                        var tokenActions = et.SubElement(root, "TokenActions");
+                        if (builder.TransactionType.Equals(TransactionType.TokenUpdate)) {
+                            CreditCardData card = (CreditCardData)builder.PaymentMethod;
+
+                            var setElement = et.SubElement(tokenActions, "Set");
+
+                            var expMonth = et.SubElement(setElement, "Attribute");
+                            et.SubElement(expMonth, "Name", "ExpMonth");
+                            et.SubElement(expMonth, "Value", card.ExpMonth);
+
+                            var expYear = et.SubElement(setElement, "Attribute");
+                            et.SubElement(expYear, "Name", "ExpYear");
+                            et.SubElement(expYear, "Value", card.ExpYear);
+                        }
+                        else {
+                            et.SubElement(tokenActions, "Delete");
+                        }
+                    }
+                }
+                else {
+                    if (builder.TransactionType == TransactionType.BatchClose) {
+                        if (builder.batchDeviceId != null) {
+                            var batchDeviceId = builder.batchDeviceId.ToString();
+                            transaction.Set("deviceId", batchDeviceId);
+                        }
                     }
                 }
 
-                // Additional Txn Fields
-                if (builder.TransactionType == TransactionType.Refund || builder.TransactionType == TransactionType.Reversal) {
-                    if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
-                        var addons = et.SubElement(root, "AdditionalTxnFields");
-                        et.SubElement(addons, "CustomerID", builder.CustomerId);
-                        et.SubElement(addons, "Description", builder.Description);
-                        et.SubElement(addons, "InvoiceNbr", builder.InvoiceNumber);
-                    }
-                }
-
-                // Token Management
-                if (builder.TransactionType.Equals(TransactionType.TokenUpdate) || builder.TransactionType.Equals(TransactionType.TokenDelete)) {
-                    ITokenizable token = (ITokenizable)builder.PaymentMethod;
-
-                    // Set the token value
-                    et.SubElement(root, "TokenValue").Text(token.Token);
-
-                    var tokenActions = et.SubElement(root, "TokenActions");
-                    if (builder.TransactionType.Equals(TransactionType.TokenUpdate)) {
-                        CreditCardData card = (CreditCardData)builder.PaymentMethod;
-
-                        var setElement = et.SubElement(tokenActions, "Set");
-
-                        var expMonth = et.SubElement(setElement, "Attribute");
-                        et.SubElement(expMonth, "Name", "ExpMonth");
-                        et.SubElement(expMonth, "Value", card.ExpMonth);
-
-                        var expYear = et.SubElement(setElement, "Attribute");
-                        et.SubElement(expYear, "Name", "ExpYear");
-                        et.SubElement(expYear, "Value", card.ExpYear);
-                    }
-                    else {
-                        et.SubElement(tokenActions, "Delete");
-                    }
-                }
+                var response = DoTransaction(BuildEnvelope(et, transaction, builder.ClientTransactionId));
+                return MapResponse(response, builder.PaymentMethod);
             }
-            else {
-                if (builder.TransactionType == TransactionType.BatchClose) {
-                    if (builder.batchDeviceId != null) {
-                        var batchDeviceId = builder.batchDeviceId.ToString();
-                        transaction.Set("deviceId", batchDeviceId);
-                    }
-                }
-            }
-
-            var response = DoTransaction(BuildEnvelope(et, transaction, builder.ClientTransactionId));
-            return MapResponse(response, builder.PaymentMethod);
         }
 
         public T ProcessReport<T>(ReportBuilder<T> builder) where T : class {
-            var et = new ElementTree();
-            ReportType reportType = builder.ReportType;
+            using (var et = new ElementTree()) {
+                ReportType reportType = builder.ReportType;
 
-            var transaction = et.Element(MapReportType(builder.ReportType));
-            if (builder is TransactionReportBuilder<T>) {
-                var trb = builder as TransactionReportBuilder<T>;
+                var transaction = et.Element(MapReportType(builder.ReportType));
+                if (builder is TransactionReportBuilder<T>) {
+                    var trb = builder as TransactionReportBuilder<T>;
 
-                if (reportType == ReportType.FindTransactions || reportType == ReportType.TransactionDetail) {
-                    et.SubElement(transaction, "TxnId", trb.TransactionId);
-                }
-                if (reportType == ReportType.FindTransactions || reportType == ReportType.Activity) {
-                    var criteria = et.SubElement(transaction, "Criteria");
-                    et.SubElement(criteria, "StartUtcDT", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
-                    et.SubElement(criteria, "EndUtcDT", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
-                    et.SubElement(criteria, "AuthCode", trb.SearchBuilder.AuthCode);
-                    et.SubElement(criteria, "CardHolderLastName", trb.SearchBuilder.CardHolderLastName);
-                    et.SubElement(criteria, "CardHolderFirtName", trb.SearchBuilder.CardHolderFirstName);
-                    et.SubElement(criteria, "CardNbrFirstSix", trb.SearchBuilder.CardNumberFirstSix);
-                    et.SubElement(criteria, "CardNbrLastFour", trb.SearchBuilder.CardNumberLastFour);
-                    et.SubElement(criteria, "InvoiceNbr", trb.SearchBuilder.InvoiceNumber);
-                    et.SubElement(criteria, "CardHolderPONbr", trb.SearchBuilder.CardHolderPoNumber);
-                    et.SubElement(criteria, "CustomerID", trb.SearchBuilder.CustomerId);
-                    //et.SubElement(criteria, "ServiceName", trb.SearchBuilder.);
-                    //et.SubElement(criteria, "PaymentType", trb.SearchBuilder.);
-                    //et.SubElement(criteria, "CardType", trb.SearchBuilder.);
-                    et.SubElement(criteria, "IssuerResult", trb.SearchBuilder.IssuerResult);
-                    et.SubElement(criteria, "SettlementAmt", trb.SearchBuilder.SettlementAmount);
-                    et.SubElement(criteria, "IssTxnId", trb.SearchBuilder.IssuerTransactionId);
-                    et.SubElement(criteria, "RefNbr", trb.SearchBuilder.ReferenceNumber);
-                    et.SubElement(criteria, "UserName", trb.SearchBuilder.Username);
-                    et.SubElement(criteria, "ClerkID", trb.SearchBuilder.ClerkId);
-                    et.SubElement(criteria, "BatchSeqNbr", trb.SearchBuilder.BatchSequenceNumber);
-                    et.SubElement(criteria, "BatchId", trb.SearchBuilder.BatchId);
-                    et.SubElement(criteria, "SiteTrace", trb.SearchBuilder.SiteTrace);
-                    et.SubElement(criteria, "DisplayName", trb.SearchBuilder.DisplayName);
-                    et.SubElement(criteria, "ClientTxnId", trb.SearchBuilder.ClientTransactionId);
-                    et.SubElement(criteria, "UniqueDeviceId", trb.SearchBuilder.UniqueDeviceId);
-                    et.SubElement(criteria, "AcctNbrLastFour", trb.SearchBuilder.AccountNumberLastFour);
-                    et.SubElement(criteria, "BankRountingNbr", trb.SearchBuilder.BankRoutingNumber);
-                    et.SubElement(criteria, "CheckNbr", trb.SearchBuilder.CheckNumber);
-                    et.SubElement(criteria, "CheckFirstName", trb.SearchBuilder.CheckFirstName);
-                    et.SubElement(criteria, "CheckLastName", trb.SearchBuilder.CheckLastName);
-                    et.SubElement(criteria, "CheckName", trb.SearchBuilder.CheckName);
-                    et.SubElement(criteria, "GiftCurrency", trb.SearchBuilder.GiftCurrency);
-                    et.SubElement(criteria, "GiftMaskedAlias", trb.SearchBuilder.GiftMaskedAlias);
-                    et.SubElement(criteria, "OneTime", trb.SearchBuilder.OneTime);
-                    et.SubElement(criteria, "PaymentMethodKey", trb.SearchBuilder.PaymentMethodKey);
-                    et.SubElement(criteria, "ScheduleID", trb.SearchBuilder.ScheduleId);
-                    et.SubElement(criteria, "BuyerEmailAddress", trb.SearchBuilder.BuyerEmailAddress);
-                    et.SubElement(criteria, "AltPaymentStatus", trb.SearchBuilder.AltPaymentStatus);
-                    et.SubElement(criteria, "FullyCapturedInd", trb.SearchBuilder.FullyCaptured);
-                    et.SubElement(criteria, "SAFIndicator", trb.SearchBuilder.SAFIndicator);
+                    if (reportType == ReportType.FindTransactions || reportType == ReportType.TransactionDetail) {
+                        et.SubElement(transaction, "TxnId", trb.TransactionId);
+                    }
+                    if (reportType == ReportType.FindTransactions || reportType == ReportType.Activity) {
+                        var criteria = et.SubElement(transaction, "Criteria");
+                        et.SubElement(criteria, "StartUtcDT", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+                        et.SubElement(criteria, "EndUtcDT", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+                        et.SubElement(criteria, "AuthCode", trb.SearchBuilder.AuthCode);
+                        et.SubElement(criteria, "CardHolderLastName", trb.SearchBuilder.CardHolderLastName);
+                        et.SubElement(criteria, "CardHolderFirtName", trb.SearchBuilder.CardHolderFirstName);
+                        et.SubElement(criteria, "CardNbrFirstSix", trb.SearchBuilder.CardNumberFirstSix);
+                        et.SubElement(criteria, "CardNbrLastFour", trb.SearchBuilder.CardNumberLastFour);
+                        et.SubElement(criteria, "InvoiceNbr", trb.SearchBuilder.InvoiceNumber);
+                        et.SubElement(criteria, "CardHolderPONbr", trb.SearchBuilder.CardHolderPoNumber);
+                        et.SubElement(criteria, "CustomerID", trb.SearchBuilder.CustomerId);
+                        //et.SubElement(criteria, "ServiceName", trb.SearchBuilder.);
+                        //et.SubElement(criteria, "PaymentType", trb.SearchBuilder.);
+                        //et.SubElement(criteria, "CardType", trb.SearchBuilder.);
+                        et.SubElement(criteria, "IssuerResult", trb.SearchBuilder.IssuerResult);
+                        et.SubElement(criteria, "SettlementAmt", trb.SearchBuilder.SettlementAmount);
+                        et.SubElement(criteria, "IssTxnId", trb.SearchBuilder.IssuerTransactionId);
+                        et.SubElement(criteria, "RefNbr", trb.SearchBuilder.ReferenceNumber);
+                        et.SubElement(criteria, "UserName", trb.SearchBuilder.Username);
+                        et.SubElement(criteria, "ClerkID", trb.SearchBuilder.ClerkId);
+                        et.SubElement(criteria, "BatchSeqNbr", trb.SearchBuilder.BatchSequenceNumber);
+                        et.SubElement(criteria, "BatchId", trb.SearchBuilder.BatchId);
+                        et.SubElement(criteria, "SiteTrace", trb.SearchBuilder.SiteTrace);
+                        et.SubElement(criteria, "DisplayName", trb.SearchBuilder.DisplayName);
+                        et.SubElement(criteria, "ClientTxnId", trb.SearchBuilder.ClientTransactionId);
+                        et.SubElement(criteria, "UniqueDeviceId", trb.SearchBuilder.UniqueDeviceId);
+                        et.SubElement(criteria, "AcctNbrLastFour", trb.SearchBuilder.AccountNumberLastFour);
+                        et.SubElement(criteria, "BankRountingNbr", trb.SearchBuilder.BankRoutingNumber);
+                        et.SubElement(criteria, "CheckNbr", trb.SearchBuilder.CheckNumber);
+                        et.SubElement(criteria, "CheckFirstName", trb.SearchBuilder.CheckFirstName);
+                        et.SubElement(criteria, "CheckLastName", trb.SearchBuilder.CheckLastName);
+                        et.SubElement(criteria, "CheckName", trb.SearchBuilder.CheckName);
+                        et.SubElement(criteria, "GiftCurrency", trb.SearchBuilder.GiftCurrency);
+                        et.SubElement(criteria, "GiftMaskedAlias", trb.SearchBuilder.GiftMaskedAlias);
+                        et.SubElement(criteria, "OneTime", trb.SearchBuilder.OneTime);
+                        et.SubElement(criteria, "PaymentMethodKey", trb.SearchBuilder.PaymentMethodKey);
+                        et.SubElement(criteria, "ScheduleID", trb.SearchBuilder.ScheduleId);
+                        et.SubElement(criteria, "BuyerEmailAddress", trb.SearchBuilder.BuyerEmailAddress);
+                        et.SubElement(criteria, "AltPaymentStatus", trb.SearchBuilder.AltPaymentStatus);
+                        et.SubElement(criteria, "FullyCapturedInd", trb.SearchBuilder.FullyCaptured);
+                        et.SubElement(criteria, "SAFIndicator", trb.SearchBuilder.SAFIndicator);
                     
+                    }
+
+                    if (reportType == ReportType.TokenUpdaterHistory) {
+                        et.SubElement(transaction, "ReportStartDate", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+                        et.SubElement(transaction, "ReportEndDate", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK")); 
+                        et.SubElement(transaction, "TokenValue", trb.TokenValue);
+                        et.SubElement(transaction, "Limit", trb.Limit);
+                        et.SubElement(transaction, "Offset", trb.Offset);
+                        et.SubElement(transaction, "Action", trb.TokenUpdaterHistoryResultType.ToString());
+                    }
+
+                    if (
+                        reportType == ReportType.Activity ||
+                        reportType == ReportType.OpenAuths ||
+                        reportType == ReportType.BatchDetail ||
+                        reportType == ReportType.FindTransactions
+                    ) {
+                        et.SubElement(transaction, "TzConversion", trb.TimeZoneConversion);
+                    }
+
+                    if (reportType == ReportType.OpenAuths || reportType == ReportType.BatchDetail) {
+                        et.SubElement(transaction, "DeviceId", trb.DeviceId);
+                    }
+
+                    if (reportType == ReportType.BatchDetail) {
+                        et.SubElement(transaction, "BatchId", trb.SearchBuilder.BatchId);
+                    }
+
                 }
 
-                if (reportType == ReportType.TokenUpdaterHistory) {
-                    et.SubElement(transaction, "ReportStartDate", trb.SearchBuilder.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
-                    et.SubElement(transaction, "ReportEndDate", trb.SearchBuilder.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss.FFFK")); 
-                    et.SubElement(transaction, "TokenValue", trb.TokenValue);
-                    et.SubElement(transaction, "Limit", trb.Limit);
-                    et.SubElement(transaction, "Offset", trb.Offset);
-                    et.SubElement(transaction, "Action", trb.TokenUpdaterHistoryResultType.ToString());
-                }
-
-                if (
-                    reportType == ReportType.Activity ||
-                    reportType == ReportType.OpenAuths ||
-                    reportType == ReportType.BatchDetail ||
-                    reportType == ReportType.FindTransactions
-                ) {
-                    et.SubElement(transaction, "TzConversion", trb.TimeZoneConversion);
-                }
-
-                if (reportType == ReportType.OpenAuths || reportType == ReportType.BatchDetail) {
-                    et.SubElement(transaction, "DeviceId", trb.DeviceId);
-                }
-
-                if (reportType == ReportType.BatchDetail) {
-                    et.SubElement(transaction, "BatchId", trb.SearchBuilder.BatchId);
-                }
-
+                var response = DoTransaction(BuildEnvelope(et, transaction));
+                return MapReportResponse<T>(response, builder.ReportType);
             }
-
-            var response = DoTransaction(BuildEnvelope(et, transaction));
-            return MapReportResponse<T>(response, builder.ReportType);
         }
 
         private string BuildEnvelope(ElementTree et, Element transaction, string clientTransactionId = null) {

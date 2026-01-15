@@ -20,161 +20,165 @@ namespace GlobalPayments.Api.Gateways {
 
 
         public Transaction ProcessAuthorization(AuthorizationBuilder builder) {
-            ElementTree et = new ElementTree();
-            IPaymentMethod paymentMethod = builder.PaymentMethod;
 
-            var transaction = et.Element(MapRequestType(builder))
-                .Set("xmlns", "http://schemas.merchantwarehouse.com/merchantware/v45/");
+            using (ElementTree et = new ElementTree()) {
+                IPaymentMethod paymentMethod = builder.PaymentMethod;
 
-            // Credentials
-            var credentials = et.SubElement(transaction, "Credentials");
-            et.SubElement(credentials, "MerchantName").Text(MerchantName);
-            et.SubElement(credentials, "MerchantSiteId").Text(MerchantSiteId);
-            et.SubElement(credentials, "MerchantKey").Text(MerchantKey);
+                var transaction = et.Element(MapRequestType(builder))
+                    .Set("xmlns", "http://schemas.merchantwarehouse.com/merchantware/v45/");
 
-            // Payment Data
-            var paymentData = et.SubElement(transaction, "PaymentData");
-            if (paymentMethod is CreditCardData) {
-                CreditCardData card = paymentMethod as CreditCardData;
-                if (card.Token != null) {
-                    if (card.MobileType != null) {
-                        et.SubElement(paymentData, "Source").Text("Wallet");
-                        et.SubElement(paymentData, "WalletId", MapWalletId(card.MobileType));
-                        et.SubElement(paymentData, "EncryptedPaymentData", card.Token);
+                // Credentials
+                var credentials = et.SubElement(transaction, "Credentials");
+                et.SubElement(credentials, "MerchantName").Text(MerchantName);
+                et.SubElement(credentials, "MerchantSiteId").Text(MerchantSiteId);
+                et.SubElement(credentials, "MerchantKey").Text(MerchantKey);
+
+                // Payment Data
+                var paymentData = et.SubElement(transaction, "PaymentData");
+                if (paymentMethod is CreditCardData) {
+                    CreditCardData card = paymentMethod as CreditCardData;
+                    if (card.Token != null) {
+                        if (card.MobileType != null) {
+                            et.SubElement(paymentData, "Source").Text("Wallet");
+                            et.SubElement(paymentData, "WalletId", MapWalletId(card.MobileType));
+                            et.SubElement(paymentData, "EncryptedPaymentData", card.Token);
+                        }
+                        else {
+                            et.SubElement(paymentData, "Source").Text("Vault");
+                            et.SubElement(paymentData, "VaultToken", card.Token);
+                        }
                     }
                     else {
-                        et.SubElement(paymentData, "Source").Text("Vault");
-                        et.SubElement(paymentData, "VaultToken", card.Token);
+                        et.SubElement(paymentData, "Source").Text("Keyed");
+                        et.SubElement(paymentData, "CardNumber", card.Number);
+                        et.SubElement(paymentData, "ExpirationDate", card.ShortExpiry);
+                        et.SubElement(paymentData, "CardHolder", card.CardHolderName);
+                        et.SubElement(paymentData, "CardVerificationValue", card.Cvn);
                     }
                 }
-                else {
-                    et.SubElement(paymentData, "Source").Text("Keyed");
-                    et.SubElement(paymentData, "CardNumber", card.Number);
-                    et.SubElement(paymentData, "ExpirationDate", card.ShortExpiry);
-                    et.SubElement(paymentData, "CardHolder", card.CardHolderName);
-                    et.SubElement(paymentData, "CardVerificationValue", card.Cvn);
+                else if (paymentMethod is CreditTrackData) {
+                    et.SubElement(paymentData, "Source").Text("READER");
+
+                    CreditTrackData track = paymentMethod as CreditTrackData;
+                    et.SubElement(paymentData, "TrackData", track.Value);
                 }
-            }
-            else if (paymentMethod is CreditTrackData) {
-                et.SubElement(paymentData, "Source").Text("READER");
 
-                CreditTrackData track = paymentMethod as CreditTrackData;
-                et.SubElement(paymentData, "TrackData", track.Value);
-            }
+                // AVS
+                et.SubElement(paymentData, "AvsStreetAddress", builder.BillingAddress?.StreetAddress1);
+                et.SubElement(paymentData, "AvsZipCode", builder.BillingAddress?.PostalCode);
 
-            // AVS
-            et.SubElement(paymentData, "AvsStreetAddress", builder.BillingAddress?.StreetAddress1);
-            et.SubElement(paymentData, "AvsZipCode", builder.BillingAddress?.PostalCode);
+                // Request
+                var request = et.SubElement(transaction, "Request");
+                et.SubElement(request, "Amount", builder.Amount.ToCurrencyString());
+                et.SubElement(request, "CashbackAmount", builder.CashBackAmount.ToCurrencyString());
+                et.SubElement(request, "SurchargeAmount", builder.ConvenienceAmount.ToCurrencyString());
+                //et.SubElement(request, "TaxAmount", builder..ToCurrencyString());
+                et.SubElement(request, "AuthorizationCode", builder.OfflineAuthCode);
 
-            // Request
-            var request = et.SubElement(transaction, "Request");
-            et.SubElement(request, "Amount", builder.Amount.ToCurrencyString());
-            et.SubElement(request, "CashbackAmount", builder.CashBackAmount.ToCurrencyString());
-            et.SubElement(request, "SurchargeAmount", builder.ConvenienceAmount.ToCurrencyString());
-            //et.SubElement(request, "TaxAmount", builder..ToCurrencyString());
-            et.SubElement(request, "AuthorizationCode", builder.OfflineAuthCode);
+                if (builder.AutoSubstantiation != null) {
+                    var healthcare = et.SubElement(request, "HealthCareAmountDetails");
 
-            if (builder.AutoSubstantiation != null) {
-                var healthcare = et.SubElement(request, "HealthCareAmountDetails");
+                    AutoSubstantiation auto = builder.AutoSubstantiation;
+                    et.SubElement(healthcare, "CopayAmount", auto.CopaySubTotal.ToCurrencyString());
+                    et.SubElement(healthcare, "ClinicalAmount", auto.ClinicSubTotal.ToCurrencyString());
+                    et.SubElement(healthcare, "DentalAmount", auto.DentalSubTotal.ToCurrencyString());
+                    et.SubElement(healthcare, "HealthCareTotalAmount", auto.TotalHealthcareAmount.ToCurrencyString());
+                    et.SubElement(healthcare, "PrescriptionAmount", auto.PrescriptionSubTotal.ToCurrencyString());
+                    et.SubElement(healthcare, "VisionAmount", auto.VisionSubTotal.ToCurrencyString());
+                }
 
-                AutoSubstantiation auto = builder.AutoSubstantiation;
-                et.SubElement(healthcare, "CopayAmount", auto.CopaySubTotal.ToCurrencyString());
-                et.SubElement(healthcare, "ClinicalAmount", auto.ClinicSubTotal.ToCurrencyString());
-                et.SubElement(healthcare, "DentalAmount", auto.DentalSubTotal.ToCurrencyString());
-                et.SubElement(healthcare, "HealthCareTotalAmount", auto.TotalHealthcareAmount.ToCurrencyString());
-                et.SubElement(healthcare, "PrescriptionAmount", auto.PrescriptionSubTotal.ToCurrencyString());
-                et.SubElement(healthcare, "VisionAmount", auto.VisionSubTotal.ToCurrencyString());
-            }
+                et.SubElement(request, "InvoiceNumber", builder.InvoiceNumber);
+                et.SubElement(request, "RegisterNumber", RegisterNumber);
+                et.SubElement(request, "MerchantTransactionId", builder.ClientTransactionId);
+                et.SubElement(request, "CardAcceptorTerminalId", TerminalId);
+                et.SubElement(request, "EnablePartialAuthorization", builder.AllowPartialAuth);
+                et.SubElement(request, "ForceDuplicate", builder.AllowDuplicates);
 
-            et.SubElement(request, "InvoiceNumber", builder.InvoiceNumber);
-            et.SubElement(request, "RegisterNumber", RegisterNumber);
-            et.SubElement(request, "MerchantTransactionId", builder.ClientTransactionId);
-            et.SubElement(request, "CardAcceptorTerminalId", TerminalId);
-            et.SubElement(request, "EnablePartialAuthorization", builder.AllowPartialAuth);
-            et.SubElement(request, "ForceDuplicate", builder.AllowDuplicates);
+                // Level III
+                if(builder.CommercialData != null) {
+                    var invoice = et.SubElement(request, "Invoice");
 
-            // Level III
-            if(builder.CommercialData != null) {
-                var invoice = et.SubElement(request, "Invoice");
+                    CommercialData cd = builder.CommercialData;
+                    et.SubElement(invoice, "TaxIndicator", MapTaxType(cd.TaxType));
+                    et.SubElement(invoice, "ProductDescription", cd.Description);
+                    et.SubElement(invoice, "DiscountAmount", cd.DiscountAmount);
+                    et.SubElement(invoice, "ShippingAmount", cd.FreightAmount);
+                    et.SubElement(invoice, "DutyAmount", cd.DutyAmount);
+                    et.SubElement(invoice, "DestinationPostalCode", cd.DestinationPostalCode);
+                    et.SubElement(invoice, "DestinationCountryCode", cd.DestinationCountryCode);
+                    et.SubElement(invoice, "ShipFromPostalCode", cd.OriginPostalCode);
 
-                CommercialData cd = builder.CommercialData;
-                et.SubElement(invoice, "TaxIndicator", MapTaxType(cd.TaxType));
-                et.SubElement(invoice, "ProductDescription", cd.Description);
-                et.SubElement(invoice, "DiscountAmount", cd.DiscountAmount);
-                et.SubElement(invoice, "ShippingAmount", cd.FreightAmount);
-                et.SubElement(invoice, "DutyAmount", cd.DutyAmount);
-                et.SubElement(invoice, "DestinationPostalCode", cd.DestinationPostalCode);
-                et.SubElement(invoice, "DestinationCountryCode", cd.DestinationCountryCode);
-                et.SubElement(invoice, "ShipFromPostalCode", cd.OriginPostalCode);
+                    if (cd.LineItems.Count > 0) {
+                        var lineItemsElement = et.SubElement(invoice, "LineItems");
 
-                if (cd.LineItems.Count > 0) {
-                    var lineItemsElement = et.SubElement(invoice, "LineItems");
-
-                    foreach (var item in cd.LineItems) {
-                        var lineItem = et.SubElement(lineItemsElement, "LineItem");
-                        et.SubElement(lineItem, "CommodityCode", item.CommodityCode);
-                        et.SubElement(lineItem, "Description", item.Description);
-                        et.SubElement(lineItem, "Upc", item.UPC);
-                        et.SubElement(lineItem, "Quantity", item.Quantity);
-                        et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
-                        et.SubElement(lineItem, "UnitCost", item.UnitCost);
-                        et.SubElement(lineItem, "DiscountAmount", item.DiscountDetails?.DiscountAmount);
-                        et.SubElement(lineItem, "TotalAmount", item.TotalAmount);
-                        et.SubElement(lineItem, "TaxAmount", item.TaxAmount);
-                        et.SubElement(lineItem, "ExtendedAmount", item.ExtendedAmount);
-                        et.SubElement(lineItem, "DebitOrCreditIndicator", item.CreditDebitIndicator.ToString());
-                        et.SubElement(lineItem, "NetOrGrossIndicator", item.NetGrossIndicator.ToString());
+                        foreach (var item in cd.LineItems) {
+                            var lineItem = et.SubElement(lineItemsElement, "LineItem");
+                            et.SubElement(lineItem, "CommodityCode", item.CommodityCode);
+                            et.SubElement(lineItem, "Description", item.Description);
+                            et.SubElement(lineItem, "Upc", item.UPC);
+                            et.SubElement(lineItem, "Quantity", item.Quantity);
+                            et.SubElement(lineItem, "UnitOfMeasure", item.UnitOfMeasure);
+                            et.SubElement(lineItem, "UnitCost", item.UnitCost);
+                            et.SubElement(lineItem, "DiscountAmount", item.DiscountDetails?.DiscountAmount);
+                            et.SubElement(lineItem, "TotalAmount", item.TotalAmount);
+                            et.SubElement(lineItem, "TaxAmount", item.TaxAmount);
+                            et.SubElement(lineItem, "ExtendedAmount", item.ExtendedAmount);
+                            et.SubElement(lineItem, "DebitOrCreditIndicator", item.CreditDebitIndicator.ToString());
+                            et.SubElement(lineItem, "NetOrGrossIndicator", item.NetGrossIndicator.ToString());
+                        }
                     }
                 }
-            }
 
-            var response = DoTransaction(BuildEnvelope(et, transaction));
-            return MapResponse(builder, response);
+                var response = DoTransaction(BuildEnvelope(et, transaction));
+                return MapResponse(builder, response);
+            }
         }
 
         public Transaction ManageTransaction(ManagementBuilder builder) {
-            var et = new ElementTree();
-            TransactionType transactionType = builder.TransactionType;
 
-            var transaction = et.Element(MapRequestType(builder))
+            using (var et = new ElementTree()) {
+                TransactionType transactionType = builder.TransactionType;
+
+                var transaction = et.Element(MapRequestType(builder))
                 .Set("xmlns", "http://schemas.merchantwarehouse.com/merchantware/v45/");
 
-            // Credentials
-            var credentials = et.SubElement(transaction, "Credentials");
-            et.SubElement(credentials, "MerchantName").Text(MerchantName);
-            et.SubElement(credentials, "MerchantSiteId").Text(MerchantSiteId);
-            et.SubElement(credentials, "MerchantKey").Text(MerchantKey);
+                // Credentials
+                var credentials = et.SubElement(transaction, "Credentials");
+                et.SubElement(credentials, "MerchantName").Text(MerchantName);
+                et.SubElement(credentials, "MerchantSiteId").Text(MerchantSiteId);
+                et.SubElement(credentials, "MerchantKey").Text(MerchantKey);
 
-            // Payment Data
-            if (transactionType.Equals(TransactionType.Refund)) {
-                var paymentData = et.SubElement(transaction, "PaymentData");
+                // Payment Data
+                if (transactionType.Equals(TransactionType.Refund)) {
+                    var paymentData = et.SubElement(transaction, "PaymentData");
 
-                et.SubElement(paymentData, "Source").Text("PreviousTransaction");
-                et.SubElement(paymentData, "Token", builder.TransactionId);
-            }
-
-            // Request
-            var request = et.SubElement(transaction, "Request");
-            if (!transactionType.Equals(TransactionType.Refund)) {
-                et.SubElement(request, "Token", builder.TransactionId);
-            }
-            et.SubElement(request, "Amount", builder.Amount.ToCurrencyString());
-            et.SubElement(request, "InvoiceNumber", builder.InvoiceNumber);
-            et.SubElement(request, "RegisterNumber", RegisterNumber);
-            et.SubElement(request, "MerchantTransactionId", builder.ClientTransactionId);
-            et.SubElement(request, "CardAcceptorTerminalId", TerminalId);
-
-            if (transactionType.Equals(TransactionType.TokenDelete) || transactionType.Equals(TransactionType.TokenUpdate)) {
-                var card = builder.PaymentMethod as CreditCardData;
-
-                et.SubElement(request, "VaultToken", card.Token);
-                if (transactionType.Equals(TransactionType.TokenUpdate)) {
-                    et.SubElement(request, "ExpirationDate", card.ShortExpiry);
+                    et.SubElement(paymentData, "Source").Text("PreviousTransaction");
+                    et.SubElement(paymentData, "Token", builder.TransactionId);
                 }
-            }
 
-            var response = DoTransaction(BuildEnvelope(et, transaction));
-            return MapResponse(builder, response);
+                // Request
+                var request = et.SubElement(transaction, "Request");
+                if (!transactionType.Equals(TransactionType.Refund)) {
+                    et.SubElement(request, "Token", builder.TransactionId);
+                }
+                et.SubElement(request, "Amount", builder.Amount.ToCurrencyString());
+                et.SubElement(request, "InvoiceNumber", builder.InvoiceNumber);
+                et.SubElement(request, "RegisterNumber", RegisterNumber);
+                et.SubElement(request, "MerchantTransactionId", builder.ClientTransactionId);
+                et.SubElement(request, "CardAcceptorTerminalId", TerminalId);
+
+                if (transactionType.Equals(TransactionType.TokenDelete) || transactionType.Equals(TransactionType.TokenUpdate)) {
+                    var card = builder.PaymentMethod as CreditCardData;
+
+                    et.SubElement(request, "VaultToken", card.Token);
+                    if (transactionType.Equals(TransactionType.TokenUpdate)) {
+                        et.SubElement(request, "ExpirationDate", card.ShortExpiry);
+                    }
+                }
+
+                var response = DoTransaction(BuildEnvelope(et, transaction));
+                return MapResponse(builder, response);
+            }
         }
 
         public string SerializeRequest(AuthorizationBuilder builder) {

@@ -28,17 +28,18 @@ namespace GlobalPayments.Api.Gateways.BillPay
         }
 
         internal T Execute(ReportBuilder<T> builder) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "GetTransactionByOrderID");
-            var request = new GetTransactionByOrderIDRequest(et)
-                .Build(envelope, builder, Credentials);
-            var response = DoTransaction(request, publicEndpoint);
-            var result = new TransactionByOrderIDRequestResponse()
-                            .WithResponseTagName("GetTransactionByOrderIDResponse")
-                            .WithResponse(response)
-                            .Map();
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "GetTransactionByOrderID");
+                var request = new GetTransactionByOrderIDRequest(et)
+                    .Build(envelope, builder, Credentials);
+                var response = DoTransaction(request, publicEndpoint);
+                var result = new TransactionByOrderIDRequestResponse()
+                                .WithResponseTagName("GetTransactionByOrderIDResponse")
+                                .WithResponse(response)
+                                .Map();
 
-            return result as T;
+                return result as T;
+            }
         }
     }
 }

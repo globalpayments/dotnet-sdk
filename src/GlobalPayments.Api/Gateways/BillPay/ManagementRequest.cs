@@ -45,41 +45,43 @@ namespace GlobalPayments.Api.Gateways.BillPay {
         }
 
         private Transaction ReversePayment(ManagementBuilder builder) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "ReversePayment");
-            var request = new ReversePaymentRequest(et)
-                .Build(envelope, builder, Credentials);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "ReversePayment");
+                var request = new ReversePaymentRequest(et)
+                    .Build(envelope, builder, Credentials);
 
-            var response = DoTransaction(request, publicEndpoint);
-            var result = new ReversalResponse()
-                .WithResponseTagName("ReversePaymentResponse")
-                .WithResponse(response)
-                .Map();
+                var response = DoTransaction(request, publicEndpoint);
+                var result = new ReversalResponse()
+                    .WithResponseTagName("ReversePaymentResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.ResponseCode == "0") {
-                return result;
+                if (result.ResponseCode == "0") {
+                    return result;
+                }
+
+                throw new GatewayException(message: "There was an error attempting to reverse the payment", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "There was an error attempting to reverse the payment", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
 
         private Transaction UpdateTokenExpirationDate(CreditCardData card) {
-            var et = new ElementTree();
-            var envelope = CreateSOAPEnvelope(et, "UpdateTokenExpirationDate");
-            var request = new UpdateTokenRequest(et)
-                .Build(envelope, card, Credentials);
+            using (var et = new ElementTree()) {
+                var envelope = CreateSOAPEnvelope(et, "UpdateTokenExpirationDate");
+                var request = new UpdateTokenRequest(et)
+                    .Build(envelope, card, Credentials);
 
-            var response = DoTransaction(request, publicEndpoint);
-            var result = new UpdateTokenResponse()
-                .WithResponseTagName("UpdateTokenExpirationDateResponse")
-                .WithResponse(response)
-                .Map();
+                var response = DoTransaction(request, publicEndpoint);
+                var result = new UpdateTokenResponse()
+                    .WithResponseTagName("UpdateTokenExpirationDateResponse")
+                    .WithResponse(response)
+                    .Map();
 
-            if (result.ResponseCode == "0") {
-                return result;
+                if (result.ResponseCode == "0") {
+                    return result;
+                }
+
+                throw new GatewayException(message: "There was an error attempting to the token expiry information", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
             }
-
-            throw new GatewayException(message: "There was an error attempting to the token expiry information", responseCode: result.ResponseCode, responseMessage: result.ResponseMessage);
         }
     }
 }
