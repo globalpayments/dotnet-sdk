@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace end_to_end
@@ -36,13 +37,26 @@ namespace end_to_end
 
                 string threeDSServerTransID = methodUrlResponse.ThreeDSServerTransID; // af65c369-59b9-4f8d-b2f6-7d7d5f5c69d5
 
-                // TODO: notify client-side that the Method URL step is complete                
-              
-                context.Response.Write("<script src=\"Scripts/globalpayments-3ds.js\"></script>");
-                context.Response.Write("<script>");                
-                context.Response.Write(String.Format("GlobalPayments.ThreeDSecure.handleMethodNotification('{0}'); console.log('threeDSServerTransID: {1}');", threeDSServerTransID, threeDSServerTransID));
-               
-                context.Response.Write("</script>");
+                // Validate the transaction ID format (UUID format)
+                if (string.IsNullOrWhiteSpace(threeDSServerTransID) || 
+                    !Regex.IsMatch(threeDSServerTransID, @"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")) {
+                    context.Response.StatusCode = 400;
+                    return;
+                }
+
+                // TODO: notify client-side that the Method URL step is complete    
+
+                // Properly serialize to JSON to prevent XSS
+                string serverTransIdJson = JsonConvert.SerializeObject(threeDSServerTransID);
+
+                context.Response.ContentType = "text/html";
+                using (var writer = new System.IO.StreamWriter(context.Response.OutputStream, Encoding.UTF8)) {
+                    writer.Write("<script src=\"Scripts/globalpayments-3ds.js\"></script>");
+                    writer.Write("<script>");
+                    writer.Write("GlobalPayments.ThreeDSecure.handleMethodNotification(" + serverTransIdJson + "); ");
+                    writer.Write("console.log('threeDSServerTransID: ' + " + serverTransIdJson + ");");
+                    writer.Write("</script>");
+                }
             }
 
             catch (Exception exce)

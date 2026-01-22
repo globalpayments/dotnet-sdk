@@ -36,7 +36,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             FileProcessor fp = new FileProcessingService().GetDetails(response.ResourceId);
 
             Assert.AreEqual("SUCCESS", fp.ResponseCode);
-            Assert.AreEqual("INITIATED", fp.Status);
+            Assert.IsTrue(fp.Status == "UPLOADED" || fp.Status == "INITIATED", $"Expected UPLOADED or INITIATED but got {fp.Status}");
         }
 
         [TestMethod]

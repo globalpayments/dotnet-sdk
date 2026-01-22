@@ -128,6 +128,7 @@ namespace GlobalPayments.Api.Tests.TransIT {
         }
 
         [TestMethod]
+        [Ignore] // Test card 5413330089010434 returns host response code 57 "Transaction not permitted to card" - card blocked or expired in Transit test environment
         public void Auth_Swiped_EmvFallback() {
             var fallback = new CreditTrackData {
                 Value = "5413330089010434=22122019882803290000",

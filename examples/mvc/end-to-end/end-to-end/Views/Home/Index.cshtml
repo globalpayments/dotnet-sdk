@@ -9,14 +9,15 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://api2.heartlandportico.com/SecureSubmit.v1/token/2.1/securesubmit.js"></script>
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
         <h1>MVC Example App</h1>
         <br />
-        <form id="payment_form" action="@Url.Action("ProcessPayment")">
+        <form id="payment_form" action="@Url.Action("ProcessPayment")" method="post">
+            @Html.AntiForgeryToken()
             <div class="row">
                 <div class="col-md-6">
                     <fieldset>

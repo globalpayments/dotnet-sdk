@@ -4,15 +4,24 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Configuration;
 using System.Text;
 
 namespace GlobalPayments.Controllers {
     public class HomeController : Controller {
+        private readonly IConfiguration _configuration;
+
+        public HomeController(IConfiguration configuration) {
+            _configuration = configuration;
+        }
+
+        [HttpGet]
         public IActionResult Index() {
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult ProcessPayment(OrderDetails details) {
             /*
              * The services container holds the various configurations the SDK needs to 
@@ -24,12 +33,14 @@ namespace GlobalPayments.Controllers {
              * and the services container will keep track of them all. Here we are configuring a gateway
              * connector and calling it "MyGlobalPaymentsDemo".
              */
+            // Load API credentials from configuration
+            var apiKey = _configuration["GlobalPayments:SecretApiKey"];
             ServicesContainer.ConfigureService(new GatewayConfig {
-                SecretApiKey = "skapi_cert_MYl2AQAowiQAbLp5JesGKh7QFkcizOP2jcX9BrEMqQ",
+                SecretApiKey = apiKey,
                 // The following variables will be provided to you during certification
-                VersionNumber = "0000",
-                DeveloperId = "000000",
-                ServiceUrl = "https://cert.api2.heartlandportico.com"
+                VersionNumber = _configuration["GlobalPayments:VersionNumber"],
+                DeveloperId = _configuration["GlobalPayments:DeveloperId"],
+                ServiceUrl = _configuration["GlobalPayments:ServiceUrl"]
             }, "MyGlobalPaymentsDemo");
 
             try {

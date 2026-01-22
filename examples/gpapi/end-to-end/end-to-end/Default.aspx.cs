@@ -12,8 +12,8 @@ namespace end_to_end
 {
     public partial class _Default : Page
     {
-        public const string APP_ID = "UJqPrAhrDkGzzNoFInpzKqoI8vfZtGRV";
-        public const string APP_KEY = "zCFrbrn0NKly9sB4";
+        public const string APP_ID = "4gPqnGBkppGYvoE5UX9EWQlotTxGUDbs";
+        public const string APP_KEY = "FQyJA5VuEQfcji2M";
         public static string accessToken;
         protected void Page_Load(object sender, EventArgs e)
         {

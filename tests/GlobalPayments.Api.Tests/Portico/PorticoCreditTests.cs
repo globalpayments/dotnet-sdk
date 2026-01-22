@@ -29,7 +29,8 @@ namespace GlobalPayments.Api.Tests {
         public void Init() {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w",
-                IsSafDataSupported = true
+                IsSafDataSupported = true,
+                RequestLogger =  new RequestConsoleLogger()
             });
 
             card = new CreditCardData {
@@ -428,7 +429,16 @@ namespace GlobalPayments.Api.Tests {
 
         [TestMethod]
         public void CreditRefund() {
-            var response = card.Refund(16m)
+            // First create a charge to refund
+            var chargeResponse = card.Charge(16m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(chargeResponse);
+            Assert.AreEqual("00", chargeResponse.ResponseCode);
+
+            // Now refund the charge
+            var response = chargeResponse.Refund(16m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
                 .Execute();
@@ -519,6 +529,15 @@ namespace GlobalPayments.Api.Tests {
 
         [TestMethod]
         public void CreditSwipeRefund() {
+            // First create a charge to refund
+            var chargeResponse = card.Charge(16m)
+                .WithCurrency("USD")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(chargeResponse);
+            Assert.AreEqual("00", chargeResponse.ResponseCode);
+
+            // Now refund using card object
             var response = card.Refund(16m)
                 .WithCurrency("USD")
                 .WithAllowDuplicates(true)
@@ -577,8 +596,10 @@ namespace GlobalPayments.Api.Tests {
             Assert.IsNotNull(response);
             Assert.AreEqual("00", response.ResponseCode);
 
+            // Partial reversal: Amt must match original auth amount (10), AuthAmt is new authorization amount (5)
             var voidResponse = Transaction.FromId(response.TransactionId)
-                .Reverse(5m)
+                .Reverse(10m)
+                .WithAuthAmount(5m)
                 .Execute();
             Assert.IsNotNull(voidResponse);
             Assert.AreEqual("00", voidResponse.ResponseCode);
@@ -608,7 +629,8 @@ namespace GlobalPayments.Api.Tests {
         public void CreditTestWithClientTransactionId() {
             var response = card.Charge(10m)
                 .WithCurrency("USD")
-                .WithClientTransactionId("1002755")
+                .WithClientTransactionId(ClientTransactionId)
+                .WithAllowDuplicates(true)
                 .Execute();
 
             Assert.IsNotNull(response);

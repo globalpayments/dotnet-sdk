@@ -1,6 +1,14 @@
 # Changelog
 
-## Latest - v10.0.4 (01/15/26)
+## Latest - v10.0.5 (01/22/26)
+### Enhancement
+- [Snyk] - Addressed XSS vulnerabilities, improved JSON handling, and upgraded TestTerminalApp to .NET 8.0 with enhanced security and dependency updates.
+- [CodeCoverage] - Revamped test suite across 13 files with +31 new tests, major refactoring, API behavior updates, enhanced reliability, and improved code organization and style.
+
+### Bug Fixes:
+- [NWS] - Tokenization: Mapping Token Properties to the Transaction Object
+
+## v10.0.4 (01/15/26)
 ### Enhancement
 - [Portico] - CardHolder Data store on PC. Refactor resource management and enhance payment handling.
 

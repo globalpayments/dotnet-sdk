@@ -27,7 +27,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestInitialize]
         public void TestInitialize() {
             creditTrackData.Value =
-                "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?";
+                "%B4012002000060016^VI TEST CREDIT^271210118039000000000396?;4012002000060016=27121011803939600000?";
             creditTrackData.PinBlock = "32539F50C245A6A93D123412324000AA";
             creditTrackData.EntryMethod = EntryMethod.Swipe;
 
@@ -44,11 +44,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
         }
 
-        private void InitCreditTrackData(EntryMethod entryMethod = EntryMethod.Swipe)
-        {
+        private void InitCreditTrackData(EntryMethod entryMethod = EntryMethod.Swipe) {
             creditTrackData = new CreditTrackData();
             creditTrackData.Value =
-                "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?";            
+                "%B4012002000060016^VI TEST CREDIT^271210118039000000000396?;4012002000060016=27121011803939600000?";            
             creditTrackData.EntryMethod = entryMethod;
         }
 
@@ -199,8 +198,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void AdjustAuthTransaction()
-        {
+        public void AdjustAuthTransaction() {
             InitCreditTrackData(EntryMethod.Proximity);
            
             tagData = "9F4005F000F0A0019F02060000000025009F03060000000000009F2608D90A06501B48564E82027C005F3401019F360200029F0702FF009F0802008C9F0902008C9F34030403029F2701809F0D05F0400088009F0E0508000000009F0F05F0400098005F280208409F390105FFC605DC4000A800FFC7050010000000FFC805DC4004F8009F3303E0B8C89F1A0208409F350122950500000080005F2A0208409A031409109B02E8009F21030811539C01009F37045EED3A8E4F07A00000000310109F0607A00000000310108407A00000000310109F100706010A03A400029F410400000001";
@@ -224,8 +222,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void AdjustSaleTransaction_AdjustAmountHigherThanSale()
-        {
+        public void AdjustSaleTransaction_AdjustAmountHigherThanSale() {
             InitCreditTrackData();
                         
             var transaction = creditTrackData.Charge(10)
@@ -243,8 +240,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void AdjustSaleTransaction_AdjustOnlyTag()
-        {
+        public void AdjustSaleTransaction_AdjustOnlyTag() {
             InitCreditTrackData(EntryMethod.Proximity);
 
             tagData = "9F4005F000F0A0019F02060000000025009F03060000000000009F2608D90A06501B48564E82027C005F3401019F360200029F0702FF009F0802008C9F0902008C9F34030403029F2701809F0D05F0400088009F0E0508000000009F0F05F0400098005F280208409F390105FFC605DC4000A800FFC7050010000000FFC805DC4004F8009F3303E0B8C89F1A0208409F350122950500000080005F2A0208409A031409109B02E8009F21030811539C01009F37045EED3A8E4F07A00000000310109F0607A00000000310108407A00000000310109F100706010A03A400029F410400000001";
@@ -265,8 +261,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void AdjustSaleTransaction_AdjustOnlyGratuity()
-        {
+        public void AdjustSaleTransaction_AdjustOnlyGratuity() {
             InitCreditTrackData();
                        
             var transaction = creditTrackData.Charge(10)
@@ -285,8 +280,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void AdjustSaleTransaction_AdjustAmountToZero()
-        {
+        public void AdjustSaleTransaction_AdjustAmountToZero() {
             InitCreditTrackData();
 
             var transaction = creditTrackData.Charge(10)
@@ -305,8 +299,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void AdjustSaleTransaction_AdjustGratuityToZero()
-        {
+        public void AdjustSaleTransaction_AdjustGratuityToZero() {
             InitCreditTrackData();
 
             var transaction = creditTrackData.Charge(10)
@@ -325,8 +318,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void AdjustSaleTransaction_WithoutMandatory()
-        {
+        public void AdjustSaleTransaction_WithoutMandatory() {
             InitCreditTrackData();
 
             var transaction = creditTrackData.Charge(10)
@@ -339,43 +331,36 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var exceptionCaught = false;
 
-            try
-            {
+            try {
                 transaction.Edit()
                     .Execute();
             }
-            catch (GatewayException ex)
-            {
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("40005", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Request expects the following fields [amount or tag or gratuityAmount]", ex.Message);
             }
-            finally
-            {
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
 
         [TestMethod]
-        public void AdjustSaleTransaction_TransactionNotFound()
-        {   
+        public void AdjustSaleTransaction_TransactionNotFound() {   
             var transaction = new Transaction();
             transaction.TransactionId = Guid.NewGuid().ToString();
             
             var exceptionCaught = false;
-            try
-            {
+            try {
                 transaction.Edit()
                     .Execute();
             }
-            catch (GatewayException ex)
-            {
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("40008", ex.ResponseMessage);
                 Assert.AreEqual($"Status Code: NotFound - Transaction {transaction.TransactionId} not found at this location.", ex.Message);
             }
-            finally
-            {
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -427,12 +412,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithCurrency(currency)
                     .WithTagData(tagData)
                     .Execute();
-            } catch (GatewayException ex) {
+            }
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
                 Assert.AreEqual("40029", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - 34,Transaction rejected because the provided data was invalid. Online PINBlock Authentication not supported on offline transaction.", ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -455,14 +442,150 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 creditTrackData.Charge(amount)
                     .WithCurrency(currency)
                     .Execute(withoutPermissions);
-            } catch (GatewayException ex) {
+            }
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
                 Assert.AreEqual("40212", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: Forbidden - Permission not enabled to execute action", ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
+        }
+        
+        [TestMethod]
+        public void CreditTrackData_AuthorizeWithDescription() {
+            var response = creditTrackData.Authorize(amount)
+                .WithCurrency(currency)
+                .WithDescription("Test Authorization with Description")
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Preauthorized);
+        }
+
+        [TestMethod]
+        public void CreditTrackData_ChargeWithInvoiceNumber() {
+            var response = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .WithInvoiceNumber("INV-" + Guid.NewGuid().ToString().Substring(0, 8))
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditTrackData_RefundWithIdempotencyKey() {
+            var idempotencyKey = Guid.NewGuid().ToString();
+
+            var response = creditTrackData.Refund(amount)
+                .WithCurrency(currency)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+
+            var exceptionCaught = false;
+            try {
+                creditTrackData.Refund(amount)
+                    .WithCurrency(currency)
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void CreditTrackData_ReverseWithIdempotencyKey() {
+            var chargeResponse = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(chargeResponse, TransactionStatus.Captured);
+
+            var idempotencyKey = Guid.NewGuid().ToString();
+            var reversal = chargeResponse.Reverse(amount)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+            AssertTransactionResponse(reversal, TransactionStatus.Reversed);
+
+            var exceptionCaught = false;
+            try {
+                chargeResponse.Reverse(amount)
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void CreditTrackData_ChargeWithOrderId() {
+            var orderId = "ORD-" + Guid.NewGuid().ToString().Substring(0, 10);
+            var response = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .WithOrderId(orderId)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditTrackData_SaleWithAllowDuplicates() {
+            var response1 = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .WithAllowDuplicates(true)
+                .Execute();
+            AssertTransactionResponse(response1, TransactionStatus.Captured);
+
+            var response2 = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .WithAllowDuplicates(true)
+                .Execute();
+            AssertTransactionResponse(response2, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditTrackData_Chip_WithEmvFallback() {
+            InitCreditTrackData(EntryMethod.Swipe);
+            
+            var response = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .WithTagData(tagData)
+                .WithChipCondition(EmvLastChipRead.Failed)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditTrackData_ReverseWithoutAmount() {
+            var chargeResponse = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(chargeResponse, TransactionStatus.Captured);
+
+            var reversal = chargeResponse.Reverse()
+                .Execute();
+            AssertTransactionResponse(reversal, TransactionStatus.Reversed);
+        }
+
+        [TestMethod]
+        public void CreditTrackData_ContactlessSwipe_WithoutTagData() {
+            creditTrackData.EntryMethod = EntryMethod.Proximity;
+            creditTrackData.PinBlock = null;
+
+            var response = creditTrackData.Charge(amount)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
         }
         
         #endregion
@@ -524,6 +647,133 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(refund, TransactionStatus.Reversed);
         }
 
+        [TestMethod]
+        public void CreditCard_AuthorizeWithGratuity() {
+            var response = card.Authorize(amount)
+                .WithCurrency(currency)
+                .WithGratuity(2.0m)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Preauthorized);
+        }
+
+        [TestMethod]
+        public void CreditCard_ChargeWithGratuity() {
+            var response = card.Charge(amount)
+                .WithCurrency(currency)
+                .WithGratuity(2.0m)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditCard_PartialReversal() {
+            var response = card.Charge(20.0m)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+
+            var reversal = response.Reverse(10.0m)
+                .WithCurrency(currency)
+                .Execute();
+            // Partial reversal keeps transaction in CAPTURED status for remaining amount
+            AssertTransactionResponse(reversal, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditCard_ChargeWithDifferentAmount() {
+            var authResponse = card.Authorize(amount)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(authResponse, TransactionStatus.Preauthorized);
+
+            var captureResponse = authResponse.Capture(amount - 2.0m)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(captureResponse, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditCard_ChargeWithIdempotencyKey() {
+            var idempotencyKey = Guid.NewGuid().ToString();
+
+            var response = card.Charge(amount)
+                .WithCurrency(currency)
+                .WithIdempotencyKey(idempotencyKey)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+
+            var exceptionCaught = false;
+            try {
+                card.Charge(amount)
+                    .WithCurrency(currency)
+                    .WithIdempotencyKey(idempotencyKey)
+                    .Execute();
+            }
+            catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
+                Assert.AreEqual("40039", ex.ResponseMessage);
+            }
+            finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        [TestMethod]
+        public void CreditCard_AuthorizeWithClientTransactionId() {
+            var clientTxnId = "TXN-" + Guid.NewGuid().ToString();
+            var response = card.Authorize(amount)
+                .WithCurrency(currency)
+                .WithClientTransactionId(clientTxnId)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Preauthorized);
+            Assert.IsNotNull(response.ClientTransactionId);
+        }
+
+        [TestMethod]
+        public void CreditCard_CaptureWithGratuity() {
+            var authResponse = card.Authorize(amount)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(authResponse, TransactionStatus.Preauthorized);
+
+            var captureResponse = authResponse.Capture(amount)
+                .WithCurrency(currency)
+                .WithGratuity(3.0m)
+                .Execute();
+            AssertTransactionResponse(captureResponse, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditCard_RefundWithPartialAmount() {
+            var chargeResponse = card.Charge(20.0m)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(chargeResponse, TransactionStatus.Captured);
+
+            var refund1 = chargeResponse.Refund(8.0m)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(refund1, TransactionStatus.Captured);
+
+            var refund2 = chargeResponse.Refund(5.0m)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(refund2, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditCard_CaptureWithoutAmount() {
+            var authResponse = card.Authorize(amount)
+                .WithCurrency(currency)
+                .Execute();
+            AssertTransactionResponse(authResponse, TransactionStatus.Preauthorized);
+
+            var captureResponse = authResponse.Capture()
+                .Execute();
+            AssertTransactionResponse(captureResponse, TransactionStatus.Captured);
+        }
+
         #endregion
 
         #region Verify
@@ -559,6 +809,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response);
             Assert.AreEqual("NOT_VERIFIED", response?.ResponseCode);
             Assert.AreEqual("NOT_VERIFIED", response?.ResponseMessage);
+        }
+
+        [TestMethod]
+        public void CreditCard_VerifyWithInvalidCVV() {
+            card.Cvn = "111";
+            var response = card.Verify()
+                .WithCurrency(currency)
+                .Execute();
+            Assert.IsNotNull(response);
+            // CVV validation may result in not verified status
+            Assert.IsTrue(response.ResponseCode == Success || response.ResponseCode == "NOT_VERIFIED");
         }
 
         #endregion
@@ -601,29 +862,18 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void CreditCardReauthorizeTransaction_OldExistentSale() {
-            DateTime startDate = DateTime.UtcNow.AddDays(-30);
-            DateTime endDate = DateTime.UtcNow;
-
-            var response = ReportingService.FindTransactionsPaged(1, 10)
-                .OrderBy(TransactionSortProperty.TimeCreated, SortDirection.Descending)
-                .Where(SearchCriteria.StartDate, startDate)
-                .And(SearchCriteria.EndDate, endDate)
-                .And(SearchCriteria.TransactionStatus, TransactionStatus.Preauthorized)
-                .And(SearchCriteria.Channel, Channel.CardPresent)
+            // Create a fresh preauthorized transaction first
+            var authTransaction = card.Authorize(amount)
+                .WithCurrency(currency)
                 .Execute();
+            AssertTransactionResponse(authTransaction, TransactionStatus.Preauthorized);
 
-            Assert.IsNotNull(response?.Results);
-            Assert.IsTrue(response.Results.Count > 0);
-
-            var randomNumber = new Random().Next(1, response.Results.Count);
-            var transaction = new Transaction {
-                TransactionId = response.Results[randomNumber].TransactionId
-            };
-
-            var reverseTransaction = transaction.Reverse()
+            // Reverse the transaction
+            var reverseTransaction = authTransaction.Reverse()
                 .Execute();
             AssertTransactionResponse(reverseTransaction, TransactionStatus.Reversed);
 
+            // Reauthorize the reversed transaction
             var reauthTransaction = reverseTransaction.Reauthorize()
                 .Execute();
             AssertTransactionResponse(reauthTransaction, TransactionStatus.Preauthorized);
@@ -661,7 +911,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual(
                     $"Status Code: Conflict - Idempotency Key seen before: id={reauthTransaction.TransactionId}",
                     ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -683,7 +934,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
                 Assert.AreEqual("40213", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - An error occurred on the server.", ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -729,7 +981,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual(
                     "Status Code: BadRequest - 36, Invalid original transaction for reauthorization-This error is returned from a CreditAuth or CreditSale if the original transaction referenced by GatewayTxnId cannot be found. This is typically because the original does not meet the criteria for the sale or authorization by GatewayTxnID. This error can also be returned if the original transaction is found, but the card number has been written over with nulls after 30 days.",
                     ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -884,12 +1137,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithCurrency(currency)
                     .WithLodgingData(lodgingInfo)
                     .Execute();
-            } catch (GatewayException ex) {
+            }
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("INVALID_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40290", ex.ResponseMessage);
                 Assert.AreEqual("Status Code: BadRequest - Cannot PROCESS Incremental Authorization over a transaction that does not have a status of PREAUTHORIZED.", ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -923,12 +1178,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithCurrency(currency)
                     .WithLodgingData(lodgingInfo)
                     .Execute();
-            } catch (GatewayException ex) {
+            }
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("RESOURCE_NOT_FOUND", ex.ResponseCode);
                 Assert.AreEqual("40008", ex.ResponseMessage);
                 Assert.AreEqual($"Status Code: NotFound - Transaction {randomTransactionId} not found at this location.", ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }

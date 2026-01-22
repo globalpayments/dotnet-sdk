@@ -18,7 +18,7 @@ namespace end_to_end
 
         public void ProcessRequest(HttpContext context)
         {
-            var serverTransactionId = context.Request.Form["serverTransactionId"];
+            var serverTransactionId = HttpUtility.HtmlEncode(context.Request.Form["serverTransactionId"]);
             var paymentToken = context.Request.Form["tokenResponse"];
 
             string baseUrl = context.Request.UrlReferrer.AbsoluteUri;            

@@ -28,6 +28,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
         }
 
+        #region Authorization Tests
+
         [TestMethod]
         public void CreditAuthorization() {
             var transaction = card.Authorize(AMOUNT)
@@ -42,6 +44,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(capture, TransactionStatus.Captured);
             Assert.AreEqual("000000", capture.AuthorizationCode);
         }
+
+        #endregion
+
+        #region Tokenization and Fingerprint Tests
 
         [TestMethod]
         public void CreditSaleWithFingerPrint() {
@@ -145,6 +151,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditTokenization_OnlyTokenize() {
+            var token = card.Tokenize();
+            Assert.IsNotNull(token);
+            Assert.IsTrue(token.StartsWith("PMT_"));
+        }
+
+        #endregion
+
+        #region Token Update Tests
+
+        [TestMethod]
         public void UpdatePaymentToken() {
             var response = ReportingService.FindStoredPaymentMethodsPaged(1, 1)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)
@@ -174,8 +191,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
         
         [TestMethod]
-        public void UpdatePaymentToken_UsageModeOnly()
-        {
+        public void UpdatePaymentToken_UsageModeOnly() {
             var response = ReportingService.FindStoredPaymentMethodsPaged(1, 1)
                 .OrderBy(StoredPaymentMethodSortProperty.TimeCreated, SortDirection.Descending)
                 .Where(SearchCriteria.StartDate, StartDate)
@@ -202,8 +218,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CardTokenizationThenUpdateAndThenCharge()
-        {
+        public void CardTokenizationThenUpdateAndThenCharge() {
             var tokenId = card.Tokenize();
         
             card.Token = tokenId;
@@ -322,6 +337,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual("",response.FingerPrintIndicator);           
         }
         
+        #endregion
+
+        #region Authorization and Capture Tests
+
         [TestMethod]
         public void CreditAuthorizationWithPaymentLinkId() {
             var transaction = card.Authorize(14m)
@@ -385,6 +404,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
         }
 
+        #endregion
+
+        #region Sale Tests
+
         [TestMethod]
         public void CreditSale() {
             var address = new Address {
@@ -447,6 +470,79 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditSale_WithDescription() {
+            var response = card.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithDescription("Test transaction description")
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditSale_WithInvoiceNumber() {
+            var response = card.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithInvoiceNumber("INV-" + Guid.NewGuid().ToString().Substring(0, 8))
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditSale_WithClientTransactionId() {
+            var clientTxnId = "TXN-" + Guid.NewGuid().ToString();
+            var response = card.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithClientTransactionId(clientTxnId)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditSale_DifferentCurrency_USD() {
+            var response = card.Charge(10.0m)
+                .WithCurrency("USD")
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditSale_DifferentCurrency_EUR() {
+            var response = card.Charge(10.0m)
+                .WithCurrency("EUR")
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditSale_WithCustomerData() {
+            var customer = new Customer {
+                Id = "CUST-" + Guid.NewGuid().ToString().Substring(0, 8),
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            var response = card.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithCustomerData(customer)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        [TestMethod]
+        public void CreditSale_WithOrderId() {
+            var orderId = "ORD-" + Guid.NewGuid().ToString().Substring(0, 10);
+            var response = card.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithOrderId(orderId)
+                .Execute();
+            AssertTransactionResponse(response, TransactionStatus.Captured);
+        }
+
+        #endregion
+
+        #region Refund Tests
+
+        [TestMethod]
         public void CreditRefund() {
             var response = card.Refund(AMOUNT)
                 .WithCurrency(CURRENCY)
@@ -468,8 +564,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditVerificationWithStoredCredentials()
-        {
+        public void CreditVerificationWithStoredCredentials() {
            var storeCredentials = new StoredCredential();
             storeCredentials.Initiator = StoredCredentialInitiator.Merchant;
             storeCredentials.Type = StoredCredentialType.Installment;
@@ -595,6 +690,28 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
+        public void CreditRefund_PartialRefund_Multiple() {
+            var transaction = card.Charge(10.0m)
+                .WithCurrency(CURRENCY)
+                .Execute();
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+
+            var refund1 = transaction.Refund(3.0m)
+                .WithCurrency(CURRENCY)
+                .Execute();
+            AssertTransactionResponse(refund1, TransactionStatus.Captured);
+
+            var refund2 = transaction.Refund(2.0m)
+                .WithCurrency(CURRENCY)
+                .Execute();
+            AssertTransactionResponse(refund2, TransactionStatus.Captured);
+        }
+
+        #endregion
+
+        #region Reversal Tests
+
+        [TestMethod]
         public void CreditReverseTransaction() {
             var transaction = card.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
@@ -637,8 +754,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         [TestMethod]
-        public void CreditSale_WithDynamicDescriptor()
-        {
+        public void CreditSale_WithDynamicDescriptor() {
             var dynamicDescriptor = "My company";
             var response = card.Charge(50)
                 .WithCurrency("EUR")
@@ -693,6 +809,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.IsTrue(exceptionCaught);
             }
         }
+
+        #endregion
+
+        #region Multi-Capture Tests
 
         [TestMethod]
         public void CreditAuthorizationForMultiCapture() {
@@ -768,6 +888,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
         }
 
+        #endregion
+
+        #region Tokenized Payment Tests
+
         [TestMethod]
         public void SaleWithTokenizedPaymentMethod() {
             var tokenizedCard = new CreditCardData {
@@ -814,6 +938,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             AssertTransactionResponse(charge, TransactionStatus.Captured);
         }
+
+        #endregion
+
+        #region Verification Tests
 
         [TestMethod]
         public void CreditVerify() {
@@ -929,9 +1057,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
         }
 
+        #endregion
+
+        #region Entry Method Tests
+
         [TestMethod]
-        public void CreditSaleWithManualEntryMethod()
-        {
+        public void CreditSaleWithManualEntryMethod() {
             foreach (Channel channel in Enum.GetValues(typeof(Channel))) {
                 foreach (ManualEntryMethod entryMethod in Enum.GetValues(typeof(ManualEntryMethod)))
                 {
@@ -969,6 +1100,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
         }
 
+        #endregion
+
+        #region Idempotency Tests
+
         [TestMethod]
         public void CreditChargeTransactions_WithSameIdempotencyKey() {
             var idempotencyKey = Guid.NewGuid().ToString();
@@ -995,6 +1130,29 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.IsTrue(exceptionCaught);
             }
         }
+
+        [TestMethod]
+        public void CreditAuthorization_MultipleWithUniqueIdempotencyKeys() {
+            var idempKey1 = Guid.NewGuid().ToString();
+            var auth1 = card.Authorize(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .WithIdempotencyKey(idempKey1)
+                .Execute();
+            AssertTransactionResponse(auth1, TransactionStatus.Preauthorized);
+            
+            // Using different idempotency key should succeed
+            var idempKey2 = Guid.NewGuid().ToString();
+            var auth2 = card.Authorize(AMOUNT + 1m)
+                .WithCurrency(CURRENCY)
+                .WithIdempotencyKey(idempKey2)
+                .Execute();
+            AssertTransactionResponse(auth2, TransactionStatus.Preauthorized);
+            Assert.AreNotEqual(idempKey1, idempKey2);
+        }
+
+        #endregion
+
+        #region Stored Credentials Tests
 
         [TestMethod]
         public void CreditVerify_WithStoredCredentials() {
@@ -1132,6 +1290,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             AssertTransactionResponse(response2, TransactionStatus.Captured);
         }
         
+        #endregion
+
+        #region Error Handling Tests
+
         [TestMethod]
         public void CreditSale_ExpiryCard() {
             card.ExpYear = DateTime.Now.Year - 1;
@@ -1150,6 +1312,32 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.IsTrue(exceptionCaught);
             }
         }
+
+        [TestMethod]
+        public void CreditSale_InvalidCardNumber() {
+            var invalidCard = new CreditCardData {
+                Number = "1234567890123456",
+                ExpMonth = ExpMonth,
+                ExpYear = ExpYear,
+                Cvn = "123"
+            };
+
+            var exceptionCaught = false;
+            try {
+                invalidCard.Charge(AMOUNT)
+                    .WithCurrency(CURRENCY)
+                    .Execute();
+            } catch (GatewayException ex) {
+                exceptionCaught = true;
+                Assert.IsTrue(ex.ResponseCode == "INVALID_REQUEST_DATA" || ex.ResponseCode == "SYSTEM_ERROR_DOWNSTREAM");
+            } finally {
+                Assert.IsTrue(exceptionCaught);
+            }
+        }
+
+        #endregion
+
+        #region AVS and CVV Tests
 
         [DataTestMethod]
         [DataRow(AVS_MASTERCARD_1, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", Success, TransactionStatus.Captured, "M", "U", "U")]
@@ -1210,10 +1398,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(addressResult, response.CardIssuerResponse.AvsAddressResult);
         }
         
+        #endregion
+
+        #region Helper Methods
+
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
             Assert.AreEqual(Success, transaction.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
+
+        #endregion
     }
 }

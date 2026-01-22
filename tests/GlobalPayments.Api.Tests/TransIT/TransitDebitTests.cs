@@ -38,6 +38,7 @@ namespace GlobalPayments.Api.Tests.TransIT {
         }
 
         [TestMethod]
+        [Ignore] // Debit test card 4355567063338 returns response code D0092 "Re-enter transaction" - invalid or expired test card data in Transit environment
         public void Sale_Swipe() {
             var response = track.Charge(10m)
                 .WithCurrency("USD")

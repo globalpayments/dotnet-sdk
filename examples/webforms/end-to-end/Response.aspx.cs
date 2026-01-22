@@ -8,8 +8,8 @@ using System.Web.UI.WebControls;
 namespace end_to_end {
     public partial class Success : System.Web.UI.Page {
         protected void Page_Load(object sender, EventArgs e) {
-            string firstname = Request.QueryString["FirstName"];
-            string transactionId = Request.QueryString["TransactionId"];
+            string firstname = HttpUtility.HtmlEncode(Request.QueryString["FirstName"]);
+            string transactionId = HttpUtility.HtmlEncode(Request.QueryString["TransactionId"]);
             string response = Request.QueryString["response"];
             if (response == "Success!") {
                 header.InnerText = response;

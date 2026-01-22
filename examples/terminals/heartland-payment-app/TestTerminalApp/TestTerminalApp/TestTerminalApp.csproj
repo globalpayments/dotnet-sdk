@@ -2,11 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GlobalPayments.Api" Version="1.3.5" />
+    <PackageReference Include="GlobalPayments.Api" Version="10.0.3" />
+    <!-- Security patches for vulnerable transitive dependencies -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
 </Project>

@@ -1428,7 +1428,16 @@ namespace GlobalPayments.Api.Gateways {
                     DE48_MessageControl messageControl = message.GetDataElement<DE48_MessageControl>(DataElementId.DE_048);
                     DE54_AmountsAdditional additionalAmounts = message.GetDataElement<DE54_AmountsAdditional>(DataElementId.DE_054);
                     DE62_CardIssuerData cardIssuerData = message.GetDataElement<DE62_CardIssuerData>(DataElementId.DE_062);
-                    
+
+                    // Extract DE 127 and map TokenOrAcctNum to Transaction.Token
+                    DE127_ForwardingData forwardingData = message.GetDataElement<DE127_ForwardingData>(DataElementId.DE_127);
+                    if (forwardingData != null && forwardingData.entries != null && forwardingData.entries.Count > 0){
+                        var entry = forwardingData.entries.First.Value;
+                        if (!string.IsNullOrEmpty(entry.TokenOrAcctNum)) {
+                            result.Token = entry.TokenOrAcctNum.Trim();
+                        }
+                    }
+
                     if (cardIssuerData != null) {
                         //issuer data                        
                         result.ReferenceNumber = cardIssuerData.Get("IRR");
@@ -1443,7 +1452,7 @@ namespace GlobalPayments.Api.Gateways {
                             //write set function
                             result.SetIssuerData(entry.IssuerTagValue, entry.IssuerEntry);
                         }
-                    }
+                    }                                 
 
                     if (additionalAmounts != null) {
                         result.AvailableBalance = additionalAmounts.GetAmount(DE3_AccountType.CashCard_CashAccount, DE54_AmountTypeCode.AccountAvailableBalance);

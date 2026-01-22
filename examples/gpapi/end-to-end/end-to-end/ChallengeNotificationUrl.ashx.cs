@@ -40,23 +40,21 @@ namespace end_to_end
 
                 // TODO: notify client-side that the Challenge step is complete and pass any required data
 
-                StringBuilder stringOut = new StringBuilder();
-                stringOut.AppendLine("{\"threeDSServerTransID\":\"" + threeDSServerTransID + "\"" + ",\"transStatus\":\"" + transStatus + "\"}");                
+                var responseData = new { threeDSServerTransID, transStatus };
+                string jsonOutput = JsonConvert.SerializeObject(responseData);
 
-                //string whattheheckgenererated = stringOut.ToString();
-
-                request = stringOut.ToString();               
+                request = jsonOutput;               
 
                 context.Response.Write("<script src=\"Scripts/globalpayments-3ds.js\"></script>");
                 context.Response.Write("<script>");
-                context.Response.Write(String.Format("GlobalPayments.ThreeDSecure.handleChallengeNotification({0});", stringOut));
+                context.Response.Write(String.Format("GlobalPayments.ThreeDSecure.handleChallengeNotification({0});", jsonOutput));
                 context.Response.Write("</script>");
                 
             }
             catch (Exception e)
             {
                 
-                context.Response.Write(String.Format("console.log('Error Challenge : , {0});", request));
+                context.Response.Write(String.Format("console.log('Error Challenge : , {0});", HttpUtility.JavaScriptStringEncode(request)));
                 context.Response.Write("</script>");
             }
             

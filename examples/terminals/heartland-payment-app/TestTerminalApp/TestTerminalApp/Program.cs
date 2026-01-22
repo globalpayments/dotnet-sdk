@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
+using GlobalPayments.Api.Terminals.Abstractions;
 
 namespace TestTerminalApp {
     class Program {
         static void Main(string[] args) {
             IDeviceInterface device = DeviceService.Create(new ConnectionConfig {
-                DeviceType = DeviceType.HSIP_ISC250,
+                DeviceType = DeviceType.HPA_ISC250,
                 ConnectionMode = ConnectionModes.TCP_IP,
                 IpAddress = "10.12.220.130",
                 Port = "12345",
@@ -19,7 +20,7 @@ namespace TestTerminalApp {
                 device.OpenLane();
 
                 Console.WriteLine("Please swipe the card Shane.");
-                var transaction = device.CreditSale(1, 32m)
+                var transaction = device.CreditSale(32m)
                     .WithAllowDuplicates(true)
                     .WithSignatureCapture(true)
                     .Execute();
@@ -68,7 +69,7 @@ namespace TestTerminalApp {
             Console.Clear();
         }
 
-        public static void PrintReceipt(TerminalResponse response) {
+        public static void PrintReceipt(ITerminalResponse response) {
             // build receipt string
             Console.WriteLine("ABC RETAIL SHOP");
             Console.WriteLine("1 Heartland Way");
@@ -83,7 +84,7 @@ namespace TestTerminalApp {
             if (!string.IsNullOrEmpty(response.ApplicationLabel)) {
                 Console.WriteLine("ACCT:     {0}", response.MaskedCardNumber);
                 Console.WriteLine("APP NAME: {0}", response.ApplicationLabel);
-                Console.WriteLine("AID:      {0}", response.ApplicationId);
+                Console.WriteLine("AID:  {0}", response.ApplicationId);
                 Console.WriteLine("{0}:      {1}", response.ApplicationCryptogramType, response.ApplicationCryptogram);
             }
             else {
@@ -93,7 +94,7 @@ namespace TestTerminalApp {
             Console.WriteLine("ENTRY:    {0}", response.EntryMethod);
             Console.WriteLine("APPROVAL: {0}", response.AuthorizationCode);
             Console.WriteLine();
-            Console.WriteLine("TOTAL:    {0:c}", response.TransactionAmount);
+            Console.WriteLine("TOTAL:  {0:c}", response.TransactionAmount);
 
             if (response.AmountDue != null && response.AmountDue != 0) {
                 Console.WriteLine("AMOUNT DUE: {0:c}", response.AmountDue);
@@ -101,7 +102,7 @@ namespace TestTerminalApp {
             Console.WriteLine();
             Console.WriteLine();
 
-            Action printSignature = () => {
+            System.Action printSignature = () => {
                 Console.WriteLine("I agree to pay the above total amount according to card issuer agreement");
                 Console.WriteLine();
                 Console.WriteLine();

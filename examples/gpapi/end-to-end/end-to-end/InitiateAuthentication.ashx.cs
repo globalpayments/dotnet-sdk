@@ -7,6 +7,7 @@ using GlobalPayments.Api.Utils.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -16,7 +17,7 @@ namespace end_to_end
     /// <summary>
     /// Summary description for InitiateAuthentication
     /// </summary>
-    public class InitiateAuthentication : IHttpHandler
+  public class InitiateAuthentication : IHttpHandler
     {
         public class ChallengeWindow
         {
@@ -50,7 +51,7 @@ namespace end_to_end
             public int screenHeight { get; set; }
             public int screenWidth { get; set; }
             public DateTime time { get; set; }
-            public int timezoneOffset { get; set; }
+            public double timezoneOffset { get; set; }  // Changed from int to double
             public string userAgent { get; set; }
         }
 
@@ -58,29 +59,52 @@ namespace end_to_end
 
         public void ProcessRequest(HttpContext context)
         {
-            Stream stream = context.Request.InputStream;
+      Stream stream = context.Request.InputStream;
             StreamReader sr = new StreamReader(stream);
 
-            string baseUrl = context.Request.UrlReferrer.AbsoluteUri;            
-            string currentIP = baseUrl;
+       // Get the configured notification base URL from Web.config
+            string notificationBaseUrl = ConfigurationManager.AppSettings["NotificationBaseUrl"];
+      
+    // Validate that a proper base URL is configured
+ if (string.IsNullOrEmpty(notificationBaseUrl) || 
+      notificationBaseUrl.Contains("localhost") || 
+  notificationBaseUrl.Contains("127.0.0.1") ||
+    notificationBaseUrl.Contains("REPLACE_WITH_YOUR_PUBLIC_URL"))
+         {
+            context.Response.StatusCode = 500;
+    context.Response.ContentType = "application/json";
+             context.Response.Write(JsonConvert.SerializeObject(new
+           {
+        error = "NotificationBaseUrl must be configured in Web.config with a publicly accessible URL. For local development, use a tunneling service like ngrok.",
+     details = "GlobalPayments API requires publicly accessible callback URLs for 3D Secure notifications."
+     }));
+                context.Response.End();
+ return;
+}
 
-            string json = sr.ReadToEnd();
+       // Ensure the base URL ends with a slash
+         if (!notificationBaseUrl.EndsWith("/"))
+            {
+            notificationBaseUrl += "/";
+}
 
-            InitiateAuth requestData = JsonConvert.DeserializeObject<InitiateAuth>(json);
+        string json = sr.ReadToEnd();
+
+  InitiateAuth requestData = JsonConvert.DeserializeObject<InitiateAuth>(json);
 
             // configure client & request settings
             GpApiConfig config = new GpApiConfig();
-            config.AppId = _Default.APP_ID;
-            config.AppKey = _Default.APP_KEY;
-            config.Environment = GlobalPayments.Api.Entities.Environment.TEST;
-            config.Country = "GB";
-            config.Channel = Channel.CardNotPresent;
-            config.MethodNotificationUrl = string.Format("{0}MethodNotificationUrl.ashx", currentIP);
-            config.MerchantContactUrl = "https://www.example.com/about";
-            config.ChallengeNotificationUrl = string.Format("{0}ChallengeNotificationUrl.ashx", currentIP);
-            //config.RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\initiate.txt");
+      config.AppId = _Default.APP_ID;
+     config.AppKey = _Default.APP_KEY;
+ config.Environment = GlobalPayments.Api.Entities.Environment.TEST;
+        config.Country = "GB";
+     config.Channel = Channel.CardNotPresent;
+  config.MethodNotificationUrl = string.Format("{0}MethodNotificationUrl.ashx", notificationBaseUrl);
+         config.MerchantContactUrl = "https://www.example.com/about";
+     config.ChallengeNotificationUrl = string.Format("{0}ChallengeNotificationUrl.ashx", notificationBaseUrl);
+      //config.RequestLogger = new RequestFileLogger(@"C:\temp\gpapi\initiate.txt");
 
-            ServicesContainer.ConfigureService(config);
+     ServicesContainer.ConfigureService(config);
 
             Address billingAddress = new Address();
             billingAddress.StreetAddress1 = "Apartment 852";

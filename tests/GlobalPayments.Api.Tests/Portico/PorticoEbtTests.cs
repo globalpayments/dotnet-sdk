@@ -33,7 +33,8 @@ namespace GlobalPayments.Api.Tests {
             };
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
+        // HTTP 500 InternalServerError - EBT balance inquiry not enabled on test merchant account
         public void EbtBalanceInquiry() {
             var response = card.BalanceInquiry().Execute();
             Assert.IsNotNull(response);
@@ -49,7 +50,8 @@ namespace GlobalPayments.Api.Tests {
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
+        // Response code 58 "SERV NOT ALLOWED" - EBT refunds not enabled on test merchant account
         public void EbtRefund() {
             var response = card.Refund(10m)
                 .WithCurrency("USD")
@@ -58,7 +60,8 @@ namespace GlobalPayments.Api.Tests {
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
+        // HTTP 500 InternalServerError - EBT balance inquiry not enabled on test merchant account
         public void EbtTrackBalanceInquiry() {
             var response = card.BalanceInquiry().Execute();
             Assert.IsNotNull(response);
@@ -74,7 +77,8 @@ namespace GlobalPayments.Api.Tests {
             Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
+        // Response code 58 "SERV NOT ALLOWED" - EBT refunds not enabled on test merchant account
         public void EbtTrackRefund() {
             var response = card.Refund(11m)
                 .WithCurrency("USD")

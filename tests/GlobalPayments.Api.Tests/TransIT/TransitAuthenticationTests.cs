@@ -14,6 +14,7 @@ namespace GlobalPayments.Api.Tests.TransIT {
         }
 
         [TestMethod]
+        [Ignore] // Test credentials (merchantId: 887000003282, userId: TA5654114) are no longer valid in Transit test environment
         public void GenerateKey_Manual() {
             // TODO: I have verified this works and am awaiting for guidance on how to handle the transaction keys before finalizing this piece
             string transactionKey = TransitService.GenerateTransactionKey(
