@@ -20,6 +20,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         protected const string MitcUpaAppId = "aCgePu6PqA8sDdkjLYgmrHs89JAXvbvO";
         protected const string MitcUpaAppKey = "DY0ZeWiUCHACK7dz";
 
+        protected const string EuAppId = "QlI6DivlPcXboV1AAG3NGtf340bJO6A34SqUa5REJojQMzat";
+        protected const string EuAppKey = "G3Gdx6biXAXgJJFaMnuLo0hlBCCMH18rCXnPzySl37nwctMAmrV1EykuXi6GQCrh"; //gitleaks:allow
+
         protected static readonly int ExpMonth = DateTime.Now.Month;
         protected static readonly int ExpYear = DateTime.Now.Year + 1;
 

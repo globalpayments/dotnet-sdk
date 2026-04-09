@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GlobalPayments.Api" Version="10.0.3" />
+    <PackageReference Include="GlobalPayments.Api" Version="10.0.5" />
     <!-- Security patches for vulnerable transitive dependencies -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />

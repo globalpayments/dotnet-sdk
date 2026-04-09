@@ -19,6 +19,11 @@
         public const string GP_API_PRODUCTION = "https://apis.globalpay.com/ucp";
         public const string GP_API_TEST = "https://apis.sandbox.globalpay.com/ucp";
         public const string GP_API_QA = "https://apis-uat.globalpay.com/ucp";
+        public const string GP_API_EU_PRODUCTION = "https://apis.eu.globalpay.com/ucp";
+        public const string GP_API_EU_TEST = "https://apis.sandbox.eu.globalpay.com/ucp";
+        public const string GP_API_EU_QA = "https://apis.qa.eu.globalpay.com/ucp";
+        public const string GP_API_EU_MTLS_TEST = "https://apis.mtls.sandbox.eu.globalpay.com/ucp";
+        public const string GP_API_EU_MTLS_PRODUCTION = "https://apis.mtls.eu.globalpay.com/ucp";
         public const string PROPAY_TEST = "https://xmltest.propay.com/API/PropayAPI.aspx";
         public const string PROPAY_TEST_CANADIAN = "https://xmltestcanada.propay.com/API/PropayAPI.aspx";
         public const string PROPAY_PRODUCTION = "https://epay.propay.com/API/PropayAPI.aspx";

@@ -72,16 +72,33 @@ namespace GlobalPayments.Api {
 
         public Dictionary<string, string> DynamicHeaders { get; set; }
 
+        /// <summary>
+        /// Specifies the data residency region for transaction data.
+        /// Only applicable to GP-API configurations.
+        /// Defaults to <see cref="DataResidency.None"/>.
+        /// </summary>
+        public DataResidency DataResidency { get; set; } = DataResidency.None;
+
         public GpApiConfig() : base(GatewayProvider.GP_API) { }
 
         internal override void ConfigureContainer(ConfiguredServices services) {
             if (string.IsNullOrEmpty(ServiceUrl)) {
-                if (Environment.Equals(Entities.Environment.QA))
-                    ServiceUrl = ServiceEndpoints.GP_API_QA;
-                else if (Environment.Equals(Entities.Environment.TEST))
-                    ServiceUrl = ServiceEndpoints.GP_API_TEST;
-                else
-                    ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION;
+                if (DataResidency == DataResidency.EU) {
+                    if (Environment.Equals(Entities.Environment.QA))
+                        ServiceUrl = ServiceEndpoints.GP_API_EU_QA;
+                    else if (Environment.Equals(Entities.Environment.TEST))
+                        ServiceUrl = ServiceEndpoints.GP_API_EU_TEST;
+                    else
+                        ServiceUrl = ServiceEndpoints.GP_API_EU_PRODUCTION;
+                }
+                else {
+                    if (Environment.Equals(Entities.Environment.QA))
+                        ServiceUrl = ServiceEndpoints.GP_API_QA;
+                    else if (Environment.Equals(Entities.Environment.TEST))
+                        ServiceUrl = ServiceEndpoints.GP_API_TEST;
+                    else
+                        ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION;
+                }
             }
 
             if (AccessTokenProvider == null) {
@@ -111,7 +128,8 @@ namespace GlobalPayments.Api {
                 Environment = Environment,
                 StatusUrl = StatusUrl,
                 AccessTokenProvider = AccessTokenProvider,
-                PorticoTokenConfig = PorticoTokenConfig
+                PorticoTokenConfig = PorticoTokenConfig,
+                DataResidency = DataResidency
             };
 
             var gateway = new GpApiConnector(gpApiConfig);

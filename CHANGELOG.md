@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v10.0.5 (01/22/26)
+## Latest - v10.0.6 (04/09/26)
+### Enhancement
+- [GPAPI] - Added support for EU Data Residency.
+- [NWS]   - Fixed Expiry date issue in NWS
+
+## v10.0.5 (01/22/26)
 ### Enhancement
 - [Snyk] - Addressed XSS vulnerabilities, improved JSON handling, and upgraded TestTerminalApp to .NET 8.0 with enhanced security and dependency updates.
 - [CodeCoverage] - Revamped test suite across 13 files with +31 new tests, major refactoring, API behavior updates, enhanced reliability, and improved code organization and style.

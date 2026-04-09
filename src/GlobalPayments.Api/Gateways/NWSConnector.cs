@@ -3175,7 +3175,7 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         private string FormatExpiry(string shortExpiry) {
-            if (shortExpiry != null) {
+            if (!string.IsNullOrEmpty(shortExpiry)){
                 return shortExpiry.Substring(2, 2) + (shortExpiry.Substring(0, 2));
             }
             return shortExpiry;
