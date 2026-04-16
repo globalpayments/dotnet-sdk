@@ -68,6 +68,11 @@ namespace GlobalPayments.Api.Entities {
         public decimal? BalanceAmount { get; set; }
 
         /// <summary>
+        /// The gratuity amount returned by the gateway.
+        /// </summary>
+        public decimal? GratuityAmount { get; set; }
+
+        /// <summary>
         /// Summary of the batch.
         /// </summary>
         public BatchSummary BatchSummary { get; set; }
@@ -371,14 +376,34 @@ namespace GlobalPayments.Api.Entities {
         public string ReferenceNumber { get; set; }
 
         /// <summary>
-        /// The original response code from the issuer/gateway.
+        /// The original response code from the issuer/gateway.<br/>
+        /// For GPAPI, this will be the Normalized Response<br/>
+        /// The Original Response will be <see cref="OriginalResponseCode"/>.
         /// </summary>
         public string ResponseCode { get; set; }
+
+        /// <summary>
+        /// The original response code from the issuer/gateway
+        /// <para>
+        /// Only populated when Response is not Normalized <see cref="ResponseCode"/>.
+        /// </para>
+        /// </summary>
+        public string OriginalResponseCode { get; set; }
 
         /// <summary>
         /// The original response message from the issuer/gateway.
         /// </summary>
         public string ResponseMessage { get; set; }
+
+        /// <summary>
+        /// Tells if the transaction was successful or not.
+        /// </summary>
+        public bool IsSuccess { get; set; }
+
+        /// <summary>
+        /// Determined if the transaction was Partially approved.
+        /// </summary>
+        public bool IsPartial { get; set; }
 
         /// <summary>
         /// A catch all for additional fields not mapped to a specific transaction properties.

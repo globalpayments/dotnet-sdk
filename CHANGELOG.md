@@ -1,6 +1,18 @@
 # Changelog
 
-## Latest - v10.0.6 (04/09/26)
+## Latest - v11.0.0 (04/16/26)
+### Enhancement - Breaking change
+- [GPAPI] - Responses are now normalized.
+		 - Normalized object returns:
+			1. OriginalResponseCode, this is mapped to transaction.OriginalResponseCode (new)
+			2. NormalizedResponseCode, this is mapped to transaction.ResponseCode 
+			3. IsApproved, this is mapped to transaction.IsSuccess (new)
+			4. IsPartial, this is mapped to  transaction.IsPartial (new)
+		 The AuthorizedAmount is now the Amount(previously it was in BalanceAmount).
+		 GratuityAmount is added (new). 
+- [GPAPI] - Added Test Cases for EU Data Residency.
+
+## v10.0.6 (04/09/26)
 ### Enhancement
 - [GPAPI] - Added support for EU Data Residency.
 - [NWS]   - Fixed Expiry date issue in NWS

@@ -38,8 +38,22 @@ namespace GlobalPayments.Api.Mapping {
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
 
-                transaction.ResponseCode = json.Get("action")?.GetValue<string>("result_code");
+                var rawCode = json.Get("payment_method")?.GetValue<string>("result") ??
+                   json.Get("action")?.GetValue<string>("result_code");
+
+                var normalized = ResponseNormalizer.Evaluate(rawCode);
+
+                transaction.ResponseCode = normalized.NormalizedResponseCode;
+                transaction.OriginalResponseCode = normalized.OriginalResponseCode;
                 transaction.ResponseMessage = json.GetValue<string>("status");
+
+                bool isApproved = normalized.IsApproved;
+
+                var resultStatus = json.Get("action")?.GetValue<string>("result_code");
+                var isSuccess = string.Equals(resultStatus, "SUCCESS", StringComparison.OrdinalIgnoreCase);
+
+                transaction.IsPartial = normalized.IsPartial;
+                transaction.IsSuccess = isSuccess || isApproved;
 
                 string actionType = json.Get("action")?.GetValue<string>("type");
 
@@ -91,9 +105,8 @@ namespace GlobalPayments.Api.Mapping {
                 var batchSummary = new BatchSummary();
                 batchSummary.BatchReference = json.GetValue<string>("batch_id");
                 transaction.BatchSummary = batchSummary;
-                transaction.BalanceAmount = json.GetValue<string>("amount").ToAmount();
-                transaction.AuthorizedAmount = (json.GetValue<string>("status").ToUpper().Equals(TransactionStatus.Preauthorized.ToString().ToUpper()) && !string.IsNullOrEmpty(json.GetValue<string>("amount"))) ?
-                json.GetValue<string>("amount").ToAmount() : null;
+                transaction.AuthorizedAmount = json.GetValue<string>("amount").ToAmount();
+                transaction.GratuityAmount = json.GetValue<string>("gratuity_amount").ToAmount();
                 transaction.Timestamp = json.GetValue<string>("time_created");                
                 transaction.ReferenceNumber = json.GetValue<string>("reference");
                 transaction.ClientTransactionId = json.GetValue<string>("reference");
@@ -120,6 +133,7 @@ namespace GlobalPayments.Api.Mapping {
                     BinCountry = paymentMethod?.GetValue<string>("country"),
                 };
                 transaction.CardDetails = cardDetails;
+                transaction.BalanceAmount = paymentMethod?.GetValue<string>("available_balance").ToAmount();
                 transaction.CardType = paymentMethod?.GetValue<string>("brand");
                 transaction.CardLast4 = paymentMethod?.GetValue<string>("masked_number_last4");
                 transaction.CvnResponseMessage = paymentMethod?.GetValue<string>("cvv_result");

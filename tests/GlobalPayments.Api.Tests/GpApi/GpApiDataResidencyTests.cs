@@ -50,7 +50,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency("EUR")
                 .Execute("EuConfig");
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.IsNotNull(response.TransactionId);
         }
 
@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute("DefaultConfig");
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.IsNotNull(response.TransactionId);
         }
 
@@ -105,6 +105,60 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsTrue(
                 ex.Message.Contains("Error occurred while communicating with gateway."),
                 $"Unexpected message: {ex.Message}");
+        }
+
+        /// <summary>
+        /// DataResidency.EU with QA ServiceUrl → connection fails.
+        /// The QA endpoint is not reachable from the test environment, so a GatewayException is thrown.
+        /// To see the actual endpoint used, run this test in Test Explorer and inspect the request log output.
+        /// </summary>
+        [TestMethod]
+        public void DataResidency_EU_WithQAServiceUrl_ThrowsGatewayException() {
+            var config = GpApiConfigSetup(EuAppId, EuAppKey, Channel.CardNotPresent);
+            config.DataResidency = DataResidency.EU;
+            config.RequestLogger = new RequestConsoleLogger();
+            config.ServiceUrl = ServiceEndpoints.GP_API_EU_QA;
+            config.AccessTokenInfo = new AccessTokenInfo {
+                TransactionProcessingAccountName = "internet"
+            };
+
+            ServicesContainer.ConfigureService(config);
+
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                card.Charge(1.00m)
+                    .WithCurrency("EUR")
+                    .Execute();
+            });
+
+            Assert.IsTrue(
+                ex.Message.Contains("Error occurred while communicating with gateway."),
+                $"Unexpected message: {ex.Message}");
+        }
+
+        /// <summary>
+        /// DataResidency.EU with Production ServiceUrl → authentication fails.
+        /// The production endpoint is reachable but rejects sandbox credentials with ACTION_NOT_AUTHORIZED.
+        /// To see the actual endpoint used, run this test in Test Explorer and inspect the request log output.
+        /// </summary>
+        [TestMethod]
+        public void DataResidency_EU_WithProdServiceUrl_ThrowsGatewayException() {
+            var config = GpApiConfigSetup(EuAppId, EuAppKey, Channel.CardNotPresent);
+            config.DataResidency = DataResidency.EU;
+            config.RequestLogger = new RequestConsoleLogger();
+            config.ServiceUrl = ServiceEndpoints.GP_API_EU_PRODUCTION;
+            config.AccessTokenInfo = new AccessTokenInfo {
+                TransactionProcessingAccountName = "internet"
+            };
+
+            ServicesContainer.ConfigureService(config);
+
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                card.Charge(1.00m)
+                    .WithCurrency("EUR")
+                    .Execute();
+            });
+
+            Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
         }
 
         /// <summary>

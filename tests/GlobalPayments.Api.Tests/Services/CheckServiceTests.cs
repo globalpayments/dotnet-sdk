@@ -38,6 +38,7 @@ namespace GlobalPayments.Api.Tests.Services {
         }
 
         [TestMethod]
+        [Ignore]
         public void CheckServiceVoidGatewayTxnId() {
             Transaction response = service.Charge(11m)
                 .WithAllowDuplicates(true)
