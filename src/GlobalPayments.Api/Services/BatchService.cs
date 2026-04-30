@@ -3,6 +3,11 @@ using GlobalPayments.Api.Entities;
 
 namespace GlobalPayments.Api.Services {
     public class BatchService {
+        /// <summary>
+        /// Closes the current batch without a batch ID. The request body identifies the batch using
+        /// the configured account_name (and account_id when available) from the active GP API configuration.
+        /// </summary>
+        /// <returns>A <see cref="BatchSummary"/> containing the batch close response details.</returns>
         public static BatchSummary CloseBatch() {
             var response = new ManagementBuilder(TransactionType.BatchClose).Execute();
             return response.BatchSummary;
@@ -62,6 +67,7 @@ namespace GlobalPayments.Api.Services {
         public static BatchSummary CloseBatch(int transactionTotal, decimal totalCredits, decimal totalDebits) {
             return CloseBatch(transactionTotal, totalCredits, totalDebits, "default");
         }
+
         public static BatchSummary CloseBatch(int transactionTotal, decimal totalCredits, decimal totalDebits, string configName) {
             Transaction response = new ManagementBuilder(TransactionType.BatchClose)
                         .WithBatchTotals(transactionTotal, totalDebits, totalCredits)
@@ -132,6 +138,35 @@ namespace GlobalPayments.Api.Services {
         public static BatchSummary CloseBatch(string batchReference, string configName) {
             Transaction response = new ManagementBuilder(TransactionType.BatchClose)
                 .WithBatchReference(batchReference)
+                .Execute(configName);
+            return response.BatchSummary;
+        }
+
+        /// <summary>
+        /// Closes the current batch without a batch ID, scoped by currency and payment methods.
+        /// Use this overload when the merchant has multiple processing accounts on GP API and the
+        /// batch must be disambiguated using the same currency and payment methods sent during the original transaction.
+        /// </summary>
+        /// <param name="currency">The currency that scopes the batch close (must match the original transaction).</param>
+        /// <param name="paymentMethods">The payment method names that scope the batch close (must match the original transaction).</param>
+        /// <returns>A <see cref="BatchSummary"/> containing the batch close response details.</returns>
+        public static BatchSummary CloseBatch(string currency, PaymentMethodName[] paymentMethods) {
+            return CloseBatch(currency, paymentMethods, "default");
+        }
+
+        /// <summary>
+        /// Closes the current batch without a batch ID, scoped by currency and payment methods, using the named configuration.
+        /// Use this overload when the merchant has multiple processing accounts on GP API and the
+        /// batch must be disambiguated using the same currency and payment methods sent during the original transaction.
+        /// </summary>
+        /// <param name="currency">The currency that scopes the batch close (must match the original transaction).</param>
+        /// <param name="paymentMethods">The payment method names that scope the batch close (must match the original transaction).</param>
+        /// <param name="configName">The named configuration to use.</param>
+        /// <returns>A <see cref="BatchSummary"/> containing the batch close response details.</returns>
+        public static BatchSummary CloseBatch(string currency, PaymentMethodName[] paymentMethods, string configName) {
+            Transaction response = new ManagementBuilder(TransactionType.BatchClose)
+                .WithCurrency(currency)
+                .WithPaymentMethodNames(paymentMethods)
                 .Execute(configName);
             return response.BatchSummary;
         }

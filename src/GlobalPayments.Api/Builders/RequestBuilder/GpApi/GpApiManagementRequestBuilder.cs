@@ -133,9 +133,41 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                 };
             }
             else if (builder.TransactionType == TransactionType.BatchClose) {
+                if (builder.HasBatchReference) {
+                    return new Request {
+                        Verb = HttpMethod.Post,
+                        Endpoint = $"{merchantUrl}{GpApiRequest.BATCHES_ENDPOINT}/{builder.BatchReference}",
+                    };
+                }
+
+                // When the caller supplies currency or payment_methods the batch is disambiguated by
+                // currency, country, channel and payment_methods. Otherwise the configured account_id
+                // alone identifies the target batch.
+                var data = new JsonDoc();
+                bool scopeByTransactionContext = !string.IsNullOrEmpty(builder.Currency) || builder.PaymentMethodNames != null;
+
+
+                if (!string.IsNullOrEmpty(gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)) {
+                    data.Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName);
+                }
+
+                if (!string.IsNullOrEmpty(gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)) {
+                    data.Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID);
+                }
+
+                if (scopeByTransactionContext) {
+                    data.Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
+                        .Set("currency", builder.Currency)
+                        .Set("country", gateway.GpApiConfig.Country)
+                        .Set("payment_methods", builder.PaymentMethodNames != null
+                            ? GetPaymentMethodNames(builder.PaymentMethodNames)
+                            : null);
+                }
+
                 return new Request {
                     Verb = HttpMethod.Post,
-                    Endpoint = $"{merchantUrl}/batches/{builder.BatchReference}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.BATCHES_ENDPOINT}",
+                    RequestBody = data.ToString(),
                 };
             }
             else if (builder.TransactionType == TransactionType.Reauth) {
@@ -338,6 +370,18 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                 AllowedActions = new Dictionary<string, List<string>>();
                 AllowedActions.Add(PaymentMethodType.BankPayment.ToString(), null);
             }
+        }
+
+        private static string[] GetPaymentMethodNames(PaymentMethodName[] paymentMethodNames) {
+
+            if (paymentMethodNames == null)
+                return null;
+
+            var result = new string[paymentMethodNames.Length];
+            for (int i = 0; i < paymentMethodNames.Length; i++) {
+                result[i] = EnumConverter.GetMapping(Target.GP_API, paymentMethodNames[i]);
+            }
+            return result;
         }
     }
 }

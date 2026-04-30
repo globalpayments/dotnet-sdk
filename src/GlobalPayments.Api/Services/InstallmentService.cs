@@ -3,7 +3,6 @@ using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Services {
     /// <summary>
@@ -19,6 +18,18 @@ namespace GlobalPayments.Api.Services {
         public static Installment Create(Installment entity, string configName = "default") {
 
             var response = new InstallmentBuilder(entity).Execute(configName);
+            return response;
+        }
+
+        /// <summary>
+        /// Gets installment details by ID
+        /// </summary>
+        /// <param name="installmentId">The ID of the installment</param>
+        /// <param name="configName">The configuration name</param>
+        /// <returns>Installment</returns>
+        public static Installment Get(string installmentId, string configName = "default") {
+
+            var response = new InstallmentBuilder(installmentId).Execute(configName);
             return response;
         }
     }

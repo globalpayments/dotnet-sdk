@@ -3,7 +3,6 @@ using GlobalPayments.Api.Gateways.Interfaces;
 using GlobalPayments.Api.PaymentMethods;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Builders {
     /// <summary>
@@ -17,14 +16,28 @@ namespace GlobalPayments.Api.Builders {
         internal IInstallmentEntity Entity;
 
         /// <summary>
+        /// Represents the installment ID for GET requests
+        /// </summary>
+        internal string InstallmentId;
+
+        /// <summary>
         /// Represents the parameterized constructor to set the installment Entity value
         /// </summary>
         /// <param name="entity"></param>
         public InstallmentBuilder(IInstallmentEntity entity = null) {
-            if (entity != null)
-            {
+            if (entity != null) {
                 Entity = entity;
             }
+        }
+
+        /// <summary>
+        /// Constructor to set the installment ID for GET requests
+        /// </summary>
+        /// <param name="installmentId"></param>
+        public InstallmentBuilder(string installmentId) {
+            if (installmentId == null)
+                throw new ApiException("Installment id is mandatory and cannot be null");
+            InstallmentId = installmentId;
         }
 
         /// <summary>

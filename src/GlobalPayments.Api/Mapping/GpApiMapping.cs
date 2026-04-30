@@ -64,6 +64,27 @@ namespace GlobalPayments.Api.Mapping {
                             Status = json.GetValue<string>("status"),
                             TotalAmount = json.GetValue<string>("amount").ToAmount(),
                             TransactionCount = json.GetValue<int>("transaction_count"),
+                            TimeCreated = json.GetValue("time_created", DateConverter),
+                            TimeLastUpdated = json.GetValue("time_last_updated", DateConverter),
+                            TimeClosed = json.GetValue("time_closed", DateConverter),
+                            OpenActionId = json.GetValue<string>("open_action_id"),
+                            CloseActionId = json.GetValue<string>("close_action_id"),
+                            MerchantName = json.GetValue<string>("merchant_name"),
+                            MerchantId = json.GetValue<string>("merchant_id"),
+                            AccountId = json.GetValue<string>("account_id"),
+                            AccountName = json.GetValue<string>("account_name"),
+                            SiteReference = json.GetValue<string>("site_reference"),
+                            DeviceReference = json.GetValue<string>("device_reference"),
+                            Currency = json.GetValue<string>("currency"),
+                            GratuityAmount = json.GetValue<string>("gratuity_amount").ToAmount(),
+                            SaleCount = json.Get("sales")?.GetValue<int>("count") ?? default(int),
+                            SaleAmount = json.Get("sales")?.GetValue<string>("amount").ToAmount(),
+                            ReturnCount = json.Get("refunds")?.GetValue<int>("count") ?? default(int),
+                            ReturnAmount = json.Get("refunds")?.GetValue<string>("amount").ToAmount(),
+                            DebitCount = json.Get("funding_debit")?.GetValue<int>("count") ?? default(int),
+                            DebitAmount = json.Get("funding_debit")?.GetValue<string>("amount").ToAmount(),
+                            CreditCount = json.Get("funding_credit")?.GetValue<int>("count") ?? default(int),
+                            CreditAmount = json.Get("funding_credit")?.GetValue<string>("amount").ToAmount(),
                         };
                         return transaction;
                     case PAYMENT_METHOD_CREATE:
@@ -187,8 +208,8 @@ namespace GlobalPayments.Api.Mapping {
                 if(json.Has("installment")) {
 
                     JsonDoc installment = json.Get("installment");
-                    var installmentdata = new InstallmentData
-                    {
+                    var installmentdata = new InstallmentData {
+                        Id = installment?.GetValue<string>("id"),
                         Count = installment?.GetValue<string>("count"),
                         Mode = installment?.GetValue<string>("mode"),
                         GracePeriodCount = installment?.GetValue<string>("grace_period_count"),
@@ -449,8 +470,8 @@ namespace GlobalPayments.Api.Mapping {
             if (doc.Has("installment")) {
 
                 JsonDoc installment = doc.Get("installment");
-                var installmentdata = new InstallmentData
-                {
+                var installmentdata = new InstallmentData {
+                    Id = installment?.GetValue<string>("id"),
                     Count = installment?.GetValue<string>("count"),
                     Mode = installment?.GetValue<string>("mode"),
                     GracePeriodCount = installment?.GetValue<string>("grace_period_count"),
@@ -1506,55 +1527,97 @@ namespace GlobalPayments.Api.Mapping {
                     Program = json?.GetValue<string>("program")
                 };
 
-                if (json.Has("payment_method"))
-                {
+                if (json.Has("payment_method")) {
                     JsonDoc paymentMethodJson = json.Get("payment_method");
-                    installmentData.Result = paymentMethodJson?.GetValue<string>("result");
                     installmentData.EntryMode = paymentMethodJson?.GetValue<string>("entry_mode");
+                    installmentData.Result = paymentMethodJson?.GetValue<string>("result");
                     installmentData.Message = paymentMethodJson?.GetValue<string>("message");
 
                     if (paymentMethodJson.Has("card")) {
-
                         JsonDoc cardJson = paymentMethodJson.Get("card");
                         Card card = new Card
                         {
                             Brand = cardJson?.GetValue<string>("brand"),
                             MaskedNumberLast4 = cardJson?.GetValue<string>("masked_number_last4"),
-                            BrandReference = cardJson?.GetValue<string>("brand_reference")
+                            BrandReference = cardJson?.GetValue<string>("brand_reference"),
+                            CardExpMonth = cardJson?.GetValue<string>("expiry_month"),
+                            CardExpYear = cardJson?.GetValue<string>("expiry_year"),
                         };
                         installmentData.Card = card;
                         installmentData.AuthCode = cardJson?.GetValue<string>("authcode");
                     }
+                }
 
-                    if (json.Has("action")) {
-                        JsonDoc actionJson = json.Get("action");
-                        Action action = new Action
-                        {
-                            Type = actionJson?.GetValue<string>("type"),
-                            Id = actionJson?.GetValue<string>("id"),
-                            TimeCreated = actionJson.GetValue<string>("time_created"),
-                            AppId = actionJson?.GetValue<string>("app_id"),
-                            AppName = actionJson?.GetValue<string>("app_name"),
-                            ResultCode = actionJson?.GetValue<string>("result_code")
+                if (json.Has("action")) {
+                    JsonDoc actionJson = json.Get("action");
+                    Action action = new Action {
+                        Type = actionJson?.GetValue<string>("type"),
+                        Id = actionJson?.GetValue<string>("id"),
+                        TimeCreated = actionJson.GetValue<string>("time_created"),
+                        AppId = actionJson?.GetValue<string>("app_id"),
+                        AppName = actionJson?.GetValue<string>("app_name"),
+                        ResultCode = actionJson?.GetValue<string>("result_code")
+                    };
+
+                    installmentData.Action = action;
+                }
+
+                if (json.Has("terms")) {
+                    installmentData.Terms = new List<Terms>();
+                    foreach (var term in json.GetArray<JsonDoc>("terms") ?? Enumerable.Empty<JsonDoc>()) {
+                        var installmentTerm = new Terms {
+                            Name = term.GetValue<string>("name"),
+                            Reference = term.GetValue<string>("reference"),
+                            Mode = term.GetValue<string>("mode"),
+                            TimeUnit = term.GetValue<string>("time_unit"),
+                            Count = term.GetValue<string>("count"),
+                            CostPercentage = term.GetValue<string>("cost_percentage"),
+                            TotalPlanCost = term.GetValue<string>("total_plan_cost"),
+                            PlanAmount = term.GetValue<string>("plan_amount"),
+                            Currency = term.GetValue<string>("currency"),
+                            Version = term.GetValue<string>("version"),
                         };
 
-                        installmentData.Action = action;
-                    }
-
-                    if (json.Has("terms")) {
-                        installmentData.Terms = new List<Terms>();
-                        foreach (var term in json.GetArray<JsonDoc>("terms") ?? Enumerable.Empty<JsonDoc>())
-                        {
-                            var installmentTerm = new Terms
-                            {
-                                Id = term.GetValue<string>("Id"),
-                                TimeUnit = term.GetValue<string>("time_unit"),
-                                TimeUnitNumbers = term.GetValue<List<int>>("time_unit_numbers"),
-                            };
-                            installmentData.Terms.Add(installmentTerm);
+                        if (term.Has("terms_and_conditions")) {
+                            installmentTerm.TermsAndConditionsList = new List<TermsAndConditions>();
+                            foreach (var tac in term.GetArray<JsonDoc>("terms_and_conditions") ?? Enumerable.Empty<JsonDoc>()) {
+                                installmentTerm.TermsAndConditionsList.Add(new TermsAndConditions {
+                                    Url = tac.GetValue<string>("url"),
+                                    Version = tac.GetValue<string>("version"),
+                                    Description = tac.GetValue<string>("description"),
+                                    Language = tac.GetValue<string>("language"),
+                                });
+                            }
                         }
+
+                        if (term.Has("fees")) {
+                            JsonDoc feesJson = term.Get("fees");
+                            var fees = new Fees {
+                                TotalAmount = feesJson.GetValue<string>("total_amount"),
+                                TotalSubsequentAmount = feesJson.GetValue<string>("total_subsequent_amount"),
+                                SubsequentAmount = feesJson.GetValue<string>("subsequent_amount"),
+                                TotalUpfrontAmount = feesJson.GetValue<string>("total_upfront_amount"),
+                                UpfrontAmount = feesJson.GetValue<string>("upfront_amount"),
+                            };
+
+                            if (feesJson.Has("fee_info")) {
+                                fees.FeeInfo = new List<FeeInfo>();
+                                foreach (var feeInfoJson in feesJson.GetArray<JsonDoc>("fee_info") ?? Enumerable.Empty<JsonDoc>()) {
+                                    fees.FeeInfo.Add(new FeeInfo {
+                                        Type = feeInfoJson.GetValue<string>("type"),
+                                        InterestRate = feeInfoJson.GetValue<string>("interest_rate"),
+                                        FlatAmount = feeInfoJson.GetValue<string>("flat_amount"),
+                                    });
+                                }
+                            }
+
+                            installmentTerm.Fees = fees;
+                        }
+
+                        installmentData.Terms.Add(installmentTerm);
                     }
                 }
+
                 return installmentData;
             }
             return new Installment();

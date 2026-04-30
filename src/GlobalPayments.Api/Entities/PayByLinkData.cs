@@ -84,6 +84,11 @@ namespace GlobalPayments.Api.Entities {
         public bool? IsDccEnabled { get; set; }
 
         /// <summary>
+        /// Visa installment configuration data for HPP.
+        /// </summary>
+        public InstallmentData InstallmentData { get; set; }
+
+        /// <summary>
         /// Gets or sets the configuration options for the payment method, such as address requirements,
         /// challenge request indicators, exemption status, and storage mode.
         /// </summary>

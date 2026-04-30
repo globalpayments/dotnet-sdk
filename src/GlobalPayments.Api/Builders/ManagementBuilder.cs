@@ -25,6 +25,12 @@ namespace GlobalPayments.Api.Builders {
         }
         internal decimal? batchDeviceId { get; set; }
         internal string BatchReference { get; set; }
+        /// <summary>
+        /// checks if the batch reference has been set for this transaction,
+        /// used to determine if batch reference should be sent in the request or not, 
+        /// as some gateways require batch reference to be sent only for certain transaction types
+        /// </summary>
+        internal bool HasBatchReference { get; private set; }
         internal IEnumerable<Bill> Bills { get; set; }
         internal string CardType {
             get
@@ -90,6 +96,12 @@ namespace GlobalPayments.Api.Builders {
         internal decimal TotalDebits { get; set; }
         internal string ReferenceNumber { get; set; }
         internal BatchCloseType BatchCloseType { get; set; }
+
+        /// <summary>
+        /// The payment method names used to filter the batch close operation.
+        /// </summary>
+        internal PaymentMethodName[] PaymentMethodNames { get; set; }
+
         internal decimal? CashBackAmount { get; set; }
         internal bool ForcedReversal { get; set; }
         internal bool CustomerInitiated { get; set; }
@@ -169,6 +181,7 @@ namespace GlobalPayments.Api.Builders {
         /// <returns></returns>
         public ManagementBuilder WithBatchReference(string value) {
             BatchReference = value;
+            HasBatchReference = true;
             return this;
         }
 
@@ -433,6 +446,16 @@ namespace GlobalPayments.Api.Builders {
         }
         public ManagementBuilder WithBatchCloseType(BatchCloseType value) {
             BatchCloseType = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the payment method names to filter the batch close operation.
+        /// </summary>
+        /// <param name="value">An array of payment method names to include in the batch close.</param>
+        /// <returns>The current <see cref="ManagementBuilder"/> instance.</returns>
+        public ManagementBuilder WithPaymentMethodNames(PaymentMethodName[] value) {
+            PaymentMethodNames = value;
             return this;
         }
         public ManagementBuilder WithBatchTotals(int transactionCount, decimal totalDebits, decimal totalCredits) {

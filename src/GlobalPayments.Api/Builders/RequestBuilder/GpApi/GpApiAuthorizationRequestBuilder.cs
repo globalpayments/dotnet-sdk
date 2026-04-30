@@ -276,7 +276,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             }
 
             // payment method storage mode
-            if (builder.RequestMultiUseToken) {
+            if (builder.StorageMode.HasValue) {
+                paymentMethod.Set("storage_mode", EnumConverter.GetMapping(Target.GP_API, builder.StorageMode.Value));
+            }
+            else if (builder.RequestMultiUseToken) {
                 paymentMethod.Set("storage_mode", "ON_SUCCESS");
             }
 
@@ -507,6 +510,27 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         .Set("payment_method_configuration", paymentMethodConfiguration);
 
                    requestData.Set("order", order);
+
+                   // Visa installments configuration for HPP
+                   if (payByLinkData.InstallmentData != null) {
+                       var installments = payByLinkData.InstallmentData;
+                       var installmentsData = new JsonDoc();
+
+                       if (installments.FundingMode.HasValue) {
+                           installmentsData.Set("funding_mode", EnumConverter.GetMapping(Target.GP_API, installments.FundingMode.Value));
+                       }
+
+                       if (installments.Terms != null) {
+                           var terms = new JsonDoc()
+                               .Set("max_time_unit_number", installments.Terms.MaxTimeUnitNumber.HasValue ? (int?)installments.Terms.MaxTimeUnitNumber.Value : null)
+                               .Set("max_amount", installments.Terms.MaxAmount.HasValue ? (int?)installments.Terms.MaxAmount.Value : null);
+                           installmentsData.Set("terms", terms);
+                       }
+
+                       if (installmentsData.HasKeys()) {
+                           requestData.Set("installments", installmentsData);
+                       }
+                   }
                 }
 
                 var notification = new JsonDoc()
@@ -612,6 +636,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 data.Set("notifications", SetNotificationUrls(builder));
             }
 
+            // Visa installment data (VIS program)
+            if (builder.InstallmentData != null &&
+                    builder.InstallmentData.Program != null &&
+                    builder.InstallmentData.Program.Equals("VIS")) {
+                data.Set("installment", SetVisaInstallmentData(builder.InstallmentData));
+            }
+
             // stored credential
             if (builder.StoredCredential != null) { 
                 SetRequestStoredCredentials(builder.StoredCredential, data);
@@ -676,6 +707,24 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             .Set("count", installmentData.Count)
                             .Set("grace_period_count", installmentData.GracePeriodCount);
 
+            return installment;
+        }
+
+        private static JsonDoc SetVisaInstallmentData(InstallmentData installmentData) {
+            var installment = new JsonDoc();
+            installment
+                .Set("program", installmentData.Program)
+                .Set("mode", installmentData.Mode)
+                .Set("count", installmentData.Count)
+                .Set("grace_period_count", installmentData.GracePeriodCount)
+                .Set("reference", installmentData.Reference)
+                .Set("funding_mode", installmentData.FundingMode.HasValue ? EnumConverter.GetMapping(Target.GP_API, installmentData.FundingMode.Value) : null)
+                .Set("eligible_plans", installmentData.EligiblePlans.HasValue ? EnumConverter.GetMapping(Target.GP_API, installmentData.EligiblePlans.Value) : null)
+                .Set("terms", installmentData.Terms != null ? new JsonDoc()
+                    .Set("max_time_unit_number", installmentData.Terms.MaxTimeUnitNumber.HasValue ? (int?)installmentData.Terms.MaxTimeUnitNumber.Value : null)
+                    .Set("max_amount", installmentData.Terms.MaxAmount.HasValue ? (int?)installmentData.Terms.MaxAmount.Value : null)
+                    .Set("language", installmentData.Terms.Language)
+                    .Set("version", installmentData.Terms.Version) : null);
             return installment;
         }
 
@@ -859,7 +908,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                 payer.Set("billing_address", billing_address);
 
-                if (builder.CustomerData.Phone != null) {
+                if (builder.CustomerData?.Phone != null) {
 
                     JsonDoc homePhone = SetPhoneInformation(builder.CustomerData.Phone);
                     if(homePhone.HasKeys())

@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v11.0.0 (04/16/26)
+## Latest - v11.0.1 (04/30/26)
+
+### Enhancement
+- [GPAPI] - Added GP API close-batch-without-ID support (currency + payment methods) and extended BatchSummary mapping
+- [GPAPI] - Added Visa Installment (VIS) support, enabling merchants to offer installment payment plans through the GP-API gateway.
+
+## v11.0.0 (04/16/26)
 ### Enhancement - Breaking change
 - [GPAPI] - Responses are now normalized.
 		 - Normalized object returns:

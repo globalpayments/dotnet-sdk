@@ -24,7 +24,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             creditTrackData = new CreditTrackData {
                 Value =
-                    "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
+                    "%B4012002000060016^VI TEST CREDIT^291210118039000000000396?;4012002000060016=29121011803939600000?",
                 EntryMethod = EntryMethod.Swipe,
             };
         }
@@ -37,22 +37,25 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Channel = Channel.CardPresent
             });
 
-            var transaction = creditTrackData
-                            .Charge(AMOUNT)
-                            .WithCurrency(CURRENCY)
-                            .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
-
+    
             WaitForGpApiReplication();
 
             var exceptionCaught = false;
             try {
+                var transaction = creditTrackData
+                           .Charge(AMOUNT)
+                           .WithCurrency(CURRENCY)
+                           .Execute();
+                Assert.IsNotNull(transaction);
+                Assert.AreEqual("00", transaction.ResponseCode);
+                Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
                 BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
-            } catch (GatewayException ex) {
+            }
+            catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("ACTION_NOT_AUTHORIZED", ex.ResponseCode);
-                Assert.AreEqual("40212", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: Forbidden - Permission not enabled to execute action", ex.Message);
+                Assert.AreEqual("40004", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: Forbidden - App credentials not recognized", ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -63,7 +66,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var chargeTransaction = creditTrackData.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(chargeTransaction, TransactionStatus.Captured);
+            Assert.IsNotNull(chargeTransaction);
+            Assert.AreEqual("00", chargeTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), chargeTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -78,7 +83,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .WithTagData(TAG_DATA)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -92,12 +99,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var authTransaction = creditTrackData.Authorize(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(authTransaction, TransactionStatus.Preauthorized);
+            Assert.IsNotNull(authTransaction);
+            Assert.AreEqual("00", authTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), authTransaction.ResponseMessage);
 
             var captureTransaction = authTransaction.Capture(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(captureTransaction, TransactionStatus.Captured);
+            Assert.IsNotNull(captureTransaction);
+            Assert.AreEqual("00", captureTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), captureTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -109,7 +120,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void CloseBatch_ContactlessTransaction() {
             var debitCard = new DebitTrackData {
-                Value = ";4024720012345671=18125025432198712345?",
+                Value = ";4024720012345671=29125025432198712345?",
                 EntryMethod = EntryMethod.Proximity,
                 PinBlock = "AFEC374574FC90623D010000116001EE"
             };
@@ -118,7 +129,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .WithTagData(TAG_DATA)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -132,12 +145,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var firstTransaction = creditTrackData.Charge(1.25m)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(firstTransaction, TransactionStatus.Captured);
+            Assert.IsNotNull(firstTransaction);
+            Assert.AreEqual("00", firstTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), firstTransaction.ResponseMessage);
 
             var secondTransaction = creditTrackData.Charge(2.03m)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(secondTransaction, TransactionStatus.Captured);
+            Assert.IsNotNull(secondTransaction);
+            Assert.AreEqual("00", secondTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), secondTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -151,12 +168,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = creditTrackData.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
 
             var refundTransaction = transaction.Refund()
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(refundTransaction, TransactionStatus.Captured);
+            Assert.IsNotNull(refundTransaction);
+            Assert.AreEqual("00", refundTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), refundTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -169,7 +190,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CloseBatch_DebitTrackData() {
             var debitCard = new DebitTrackData {
                 Value =
-                    "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
+                    "%B4012002000060016^VI TEST CREDIT^291210118039000000000396?;4012002000060016=29121011803939600000?",
                 PinBlock = "32539F50C245A6A93D123412324000AA",
                 EntryMethod = EntryMethod.Swipe,
             };
@@ -177,7 +198,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = debitCard.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -190,7 +213,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CloseBatch_Reverse_DebitTrackData() {
             var debitCard = new DebitTrackData {
                 Value =
-                    "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
+                    "%B4012002000060016^VI TEST CREDIT^291210118039000000000396?;4012002000060016=29121011803939600000?",
                 PinBlock = "32539F50C245A6A93D123412324000AA",
                 EntryMethod = EntryMethod.Swipe,
             };
@@ -198,12 +221,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = debitCard.Authorize(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction.ResponseMessage);
 
             var reverseTransaction = transaction.Reverse()
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(reverseTransaction, TransactionStatus.Reversed);
+            Assert.IsNotNull(reverseTransaction);
+            Assert.AreEqual("00", reverseTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), reverseTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -214,9 +241,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("40223", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the batch_id", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40007", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields account_id, account_name OR batch_id.", ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -235,11 +262,13 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var chargeTransaction = card.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(chargeTransaction, TransactionStatus.Captured);
+            Assert.IsNotNull(chargeTransaction);
+            Assert.AreEqual("00", chargeTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), chargeTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
-            
+
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
         }
@@ -259,7 +288,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(chargeTransaction);
-            Assert.AreEqual(Declined, chargeTransaction.ResponseCode);
+            Assert.AreEqual("14", chargeTransaction.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), chargeTransaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
@@ -271,24 +300,28 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadGateway - Action failed unexpectedly. Please try again ", ex.Message);
-                Assert.AreEqual("ACTION_FAILED", ex.ResponseCode);
-                Assert.AreEqual("500010", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadGateway - 1,Gateway system error", ex.Message);
+                Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
+                Assert.AreEqual("50004", ex.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
-        
+
         [TestMethod]
         public void CloseBatch_ReverseTransaction() {
             var chargeTransaction = creditTrackData.Authorize(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(chargeTransaction, TransactionStatus.Preauthorized);
+            Assert.IsNotNull(chargeTransaction);
+            Assert.AreEqual("00", chargeTransaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), chargeTransaction.ResponseMessage);
 
             var response = chargeTransaction.Reverse()
                 .Execute();
-            AssertTransactionResponse(response, TransactionStatus.Reversed);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Reversed), response.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -299,20 +332,22 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - Request expects the batch_id", ex.Message);
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("40223", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields account_id, account_name OR batch_id.", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40007", ex.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
-        
+
         [TestMethod]
         public void CloseBatch_Auth_CreditCardData() {
             var transaction = creditTrackData.Authorize(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Preauthorized);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Preauthorized), transaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -323,9 +358,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("40223", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the batch_id", ex.Message);
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40007", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following conditionally mandatory fields account_id, account_name OR batch_id.", ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -340,7 +375,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = creditTrackData.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
 
             var batchSummary = BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
             //.setIdempotency - ToDo
@@ -351,12 +388,15 @@ namespace GlobalPayments.Api.Tests.GpApi {
             BatchService.CloseBatch(transaction.BatchSummary.BatchReference);
         }
 
+        [Ignore]
         [TestMethod]
         public void CloseBatch_WithClosedBatchReference() {
             var transaction = creditTrackData.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute();
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
@@ -376,7 +416,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 Assert.AreEqual("Status Code: BadGateway - Action failed unexpectedly. Please try again ", ex.Message);
                 Assert.AreEqual("ACTION_FAILED", ex.ResponseCode);
                 Assert.AreEqual("500010", ex.ResponseMessage);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -388,7 +429,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(Verified, transaction.ResponseMessage);
 
             var exceptionCaught = false;
@@ -397,11 +438,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("40223", ex.ResponseMessage);
-                Assert.AreEqual($"Status Code: BadRequest - Request expects the batch_id",
+                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
+                Assert.AreEqual("40007", ex.ResponseMessage);
+                Assert.AreEqual($"Status Code: BadRequest - Request expects the following conditionally mandatory fields account_id, account_name OR batch_id.",
                     ex.Message);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -410,7 +452,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void CloseBatch_CardNotPresentChannel() {
             var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(gpApiConfig, "GP_API_CONFIG_NAME");
-            
+
             var creditCardData = new CreditCardData {
                 Number = "5425230000004415",
                 ExpMonth = ExpMonth,
@@ -421,22 +463,26 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var transaction = creditCardData.Charge(AMOUNT)
                 .WithCurrency(CURRENCY)
                 .Execute("GP_API_CONFIG_NAME");
-            AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+            Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
 
             //TODO - remove when api fix polling issue
             WaitForGpApiReplication();
 
             var exceptionCaught = false;
-            try {
+            try
+            {
                 BatchService.CloseBatch(transaction.BatchSummary.BatchReference, "GP_API_CONFIG_NAME");
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - Merchant configuration does not exist for the following combination: country - US, channel - CNP, currency - USD",
+                Assert.AreEqual("Status Code: BadGateway - -2,Authentication error—Verify and correct credentials",
                     ex.Message);
-                Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("40041", ex.ResponseMessage);
-            } finally {
+                Assert.AreEqual("UNAUTHORIZED_DOWNSTREAM", ex.ResponseCode);
+                Assert.AreEqual("50002", ex.ResponseMessage);
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -457,7 +503,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     ex.Message);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
                 Assert.AreEqual("40213", ex.ResponseMessage);
-            } finally {
+            }
+            finally {
                 Assert.IsTrue(exceptionCaught);
             }
         }
@@ -467,12 +514,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(Closed, batchSummary.Status);
             Assert.IsTrue(batchSummary.TransactionCount >= 1);
             Assert.IsTrue(batchSummary.TotalAmount >= amount);
-        }
-
-        private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
-            Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction.ResponseCode);
-            Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
     }
 }

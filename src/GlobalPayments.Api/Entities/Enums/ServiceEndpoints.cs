@@ -19,6 +19,7 @@
         public const string GP_API_PRODUCTION = "https://apis.globalpay.com/ucp";
         public const string GP_API_TEST = "https://apis.sandbox.globalpay.com/ucp";
         public const string GP_API_QA = "https://apis-uat.globalpay.com/ucp";
+        public const string GP_API_BOI_TEST = "https://apis.sandbox.boipagateway.com/ucp";
         public const string GP_API_EU_PRODUCTION = "https://apis.eu.globalpay.com/ucp";
         public const string GP_API_EU_TEST = "https://apis.sandbox.eu.globalpay.com/ucp";
         public const string GP_API_EU_QA = "https://apis.qa.eu.globalpay.com/ucp";
