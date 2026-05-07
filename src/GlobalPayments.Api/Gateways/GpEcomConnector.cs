@@ -614,7 +614,7 @@ namespace GlobalPayments.Api.Gateways {
                    request.Set("BLOCK_CARD_TYPE", string.Join("|", blockCardTypes.Select(x => EnumConverter.GetDescription(x)))) ;
                 }
                 request.Set("CUST_NUM", builder.HostedPaymentData.CustomerNumber);
-                if (HostedPaymentConfig.DisplaySavedCards.HasValue && builder.HostedPaymentData.CustomerKey != null) {
+                if (HostedPaymentConfig.DisplaySavedCards == true && builder.HostedPaymentData.CustomerKey != null) {
                     request.Set("HPP_SELECT_STORED_CARD", builder.HostedPaymentData.CustomerKey);
                 }
                 if (builder.HostedPaymentData.OfferToSaveCard.HasValue) {
@@ -623,7 +623,7 @@ namespace GlobalPayments.Api.Gateways {
                 if (builder.HostedPaymentData.CustomerExists.HasValue) {
                     request.Set("PAYER_EXIST", builder.HostedPaymentData.CustomerExists.Value ? "1" : "0");
                 }
-                if (!HostedPaymentConfig.DisplaySavedCards.HasValue) {
+                if (HostedPaymentConfig.DisplaySavedCards != true) {
                     request.Set("PAYER_REF", builder.HostedPaymentData.CustomerKey);
                 }
                 request.Set("PMT_REF", builder.HostedPaymentData.PaymentKey);
