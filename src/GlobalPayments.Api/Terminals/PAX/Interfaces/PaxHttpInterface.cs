@@ -30,7 +30,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
         }
 
         public byte[] Send(IDeviceMessage message) {
-            OnMessageSent?.Invoke(message.ToString());
+            var requestText = message.ToString();
+            OnMessageSent?.Invoke(requestText);
+            _settings.LogManagementProvider?.RequestSent(requestText);
 
             try {
                 string payload = Convert.ToBase64String(message.GetSendBuffer());
@@ -46,18 +48,22 @@ namespace GlobalPayments.Api.Terminals.PAX {
                         foreach (char c in rec_buffer)
                             buffer.Add((byte)c);
                     }
+                    string responseText;
                     if (buffer.ToArray().Length > 0)
                     {
-                        OnMessageReceived?.Invoke(Encoding.UTF8.GetString(buffer.ToArray(), 0, buffer.ToArray().Length));
+                        responseText = Encoding.UTF8.GetString(buffer.ToArray(), 0, buffer.ToArray().Length);
                     }
                     else
                     {
-                        OnMessageReceived?.Invoke("Terminal did not respond");
+                        responseText = "Terminal did not respond";
                     }
+                    OnMessageReceived?.Invoke(responseText);
+                    _settings.LogManagementProvider?.ResponseReceived(responseText);
                     return buffer.ToArray();
                 }).Result;
             }
             catch (Exception exc) {
+                _settings.LogManagementProvider?.RequestSent($"[ERROR] Terminal communication failed: {exc.Message}");
                 throw new MessageException("Failed to send message. Check inner exception for more details.", exc);
             }
         }

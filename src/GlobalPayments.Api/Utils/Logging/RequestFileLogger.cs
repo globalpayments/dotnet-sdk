@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using GlobalPayments.Api.Logging;
 
 namespace GlobalPayments.Api.Utils.Logging {
@@ -28,22 +27,29 @@ namespace GlobalPayments.Api.Utils.Logging {
         }
 
         public void RequestSent(string request) {
-            Task.Run(() => {
-                AppendText("Request: {0}", request);
-            });
+            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff") + "Z";
+            AppendText(
+                "-----------------------------------------------------------------------------\n" +
+                "[" + timestamp + "] Request: " + request + "\n"
+            );
         }
 
         public void ResponseReceived(string response) {
-            Task.Run(() => {
-                AppendText("Response: {0}", response.TrimEnd('\r', '\n'));
-            });
+            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff") + "Z";
+            AppendText(
+                "[" + timestamp + "] Response: " + response.TrimEnd('\r', '\n') + "\n" +
+                "-----------------------------------------------------------------------------"
+            );
         }
 
         public void AppendText(string format, params string[] args) {
             try {
                 lock (_fileLock) {
                     using (var sw = File.AppendText(_fileName)) {
-                        sw.WriteLine(format, args);
+                        if (args == null || args.Length == 0)
+                            sw.WriteLine(format);
+                        else
+                            sw.WriteLine(format, args);
                     }
                 }
             }

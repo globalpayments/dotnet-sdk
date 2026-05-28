@@ -1,6 +1,18 @@
 # Changelog
 
-## Latest - v11.0.1 (04/30/26)
+## Latest - v11.0.2 (05/28/26) 
+
+### Enhancement
+- [Portico] - Added support for sending additional transaction fields (such as InvoiceNbr, Description, and CustomerID) with Credit Incremental Authorization transaction.
+- [UPA]     - Added `ChipFallback` property to `TransactionSummary`; UPA response parsing now populates this field when a chip-to-magnetic-stripe fallback is detected.
+- [UPA]     - Fixed missing `TransactionAmount` on PreAuth responses by falling back to `host.amount` when `totalAmount` is absent, per UPA spec.
+- [PAX]     - Fixed field ordering in `TraceSubGroups.GetElementString()` — `OrigECRRefNumber` is now correctly appended at the end of the sequence, preventing corruption of subsequent fields.
+- [PAX]     - Wired `IRequestLogger` into PAX (TCP/HTTP) interfaces for request/response logging.
+- [HPA]     - Wired `IRequestLogger` into HPA (TCP) interface for request/response logging.
+- [Genius]  - Wired `IRequestLogger` into Genius (HTTP) interface for request/response logging.
+- [GPAPI] - Added APAC eCommerce test coverage validating GP-API endpoint connectivity for Sale, Auth, Pre-Auth, Capture, Void, Auth Reversal, Refund and MOTO transactions.
+
+## v11.0.1 (04/30/26)
 
 ### Enhancement
 - [GPAPI] - Added GP API close-batch-without-ID support (currency + payment methods) and extended BatchSummary mapping

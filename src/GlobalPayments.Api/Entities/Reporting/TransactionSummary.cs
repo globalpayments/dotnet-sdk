@@ -221,6 +221,11 @@ namespace GlobalPayments.Api.Entities {
         public string ReferenceNumber { get; set; }
         public string SafReferenceNumber { get; set; }
         public string TranNo { get; set; }
+        /// <summary>
+        /// True when the transaction was captured via chip fallback to MSR.
+        /// Populated by UPA terminal responses (spec field: fallback, N1, "0"/"1"); null on gateways that do not report it.
+        /// </summary>
+        public bool? ChipFallback { get; set; }
 
         public int? RepeatCount { get; set; }
 

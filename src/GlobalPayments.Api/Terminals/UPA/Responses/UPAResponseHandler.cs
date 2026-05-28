@@ -111,6 +111,7 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public ThreeDesDukpt ThreeDesDukpt { get; set; }
         public string EmvProcess { get; set; }
         public bool SafTransaction { get; set; }
+        public bool? ChipFallback { get; set; }
 
         //EMV
         public string ApplicationIdentifier { get; set; }

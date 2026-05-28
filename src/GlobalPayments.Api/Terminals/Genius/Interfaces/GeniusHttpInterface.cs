@@ -34,7 +34,9 @@ namespace GlobalPayments.Api.Terminals.Genius.Interfaces {
         }
 
         public byte[] Send(IDeviceMessage message) {
-            OnMessageSent?.Invoke(message.ToString());
+            var requestText = message.ToString();
+            OnMessageSent?.Invoke(requestText);
+            _settings.LogManagementProvider?.RequestSent(requestText);
 
             try {
                 return Task.Run(async () => {
@@ -54,12 +56,17 @@ namespace GlobalPayments.Api.Terminals.Genius.Interfaces {
                         string transportKey = root.GetValue<string>("TransportKey");
                         string validationKey = root.GetValue<string>("ValidationKey");
 
-                        return await InitializeTransactionAsync(transportKey);
+                        var responseBytes = await InitializeTransactionAsync(transportKey);
+                        var responseText = Encoding.UTF8.GetString(responseBytes, 0, responseBytes.Length);
+                        OnMessageReceived?.Invoke(responseText);
+                        _settings.LogManagementProvider?.ResponseReceived(responseText);
+                        return responseBytes;
                     }
                     else throw new MessageException(serviceResponse.StatusCode.ToString());
                 }).Result;
             }
             catch (Exception exc) {
+                _settings.LogManagementProvider?.RequestSent($"[ERROR] Terminal communication failed: {exc.Message}");
                 throw new MessageException("Failed to send message. Check inner exception for more details.", exc);
             }
         }

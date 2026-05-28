@@ -112,15 +112,20 @@ namespace GlobalPayments.Api.Terminals.HPA.Interfaces {
                 else throw new MessageException("Device not connected.");
             }
             finally {
-                OnMessageSent?.Invoke(message.ToString().Substring(2));
+                var requestText = message.ToString().Substring(2);
+                OnMessageSent?.Invoke(requestText);
+                _settings.LogManagementProvider?.RequestSent(requestText);
+                string responseText;
                 if (message_queue.ToArray().Length > 0)
                 {
-                    OnMessageReceived?.Invoke(Encoding.UTF8.GetString(message_queue.ToArray(), 0, message_queue.ToArray().Length));
+                    responseText = Encoding.UTF8.GetString(message_queue.ToArray(), 0, message_queue.ToArray().Length);
                 }
                 else
                 {
-                    OnMessageReceived?.Invoke("Terminal did not respond");
+                    responseText = "Terminal did not respond";
                 }
+                OnMessageReceived?.Invoke(responseText);
+                _settings.LogManagementProvider?.ResponseReceived(responseText);
                 if (!message.KeepAlive)
                 {
                     Disconnect();

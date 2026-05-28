@@ -88,6 +88,7 @@ namespace GlobalPayments.Api.Terminals.UPA
                                         HostTimeout = record.GetValue<bool>("hostTimeOut"),
                                         CardEntryMethod = record.GetValue<string>("cardAcquisition"),
                                         Status = record.GetValue<string>("responseCode"),
+                                        ChipFallback = record.Has("fallback") ? record.GetValue<string>("fallback") == "1" : (bool?)null,
                                         //record.GetValue<decimal>("requestAmount")
                                     };
                                     summaryResponse.Transactions.Add(transactionSummary);

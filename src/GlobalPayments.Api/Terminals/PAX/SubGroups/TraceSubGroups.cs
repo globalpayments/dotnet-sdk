@@ -21,8 +21,6 @@ namespace GlobalPayments.Api.Terminals.PAX {
             sb.Append((char)ControlCodes.US);
             sb.Append(InvoiceNumber);
             sb.Append((char)ControlCodes.US);
-            sb.Append(OrigECRRefNumber);
-            sb.Append((char)ControlCodes.US);
             sb.Append(AuthCode);
             sb.Append((char)ControlCodes.US);
             sb.Append(TransactionNumber);
@@ -30,7 +28,9 @@ namespace GlobalPayments.Api.Terminals.PAX {
             sb.Append(TimeStamp);
             sb.Append((char)ControlCodes.US);
             sb.Append(ClientTransactionId);
-
+            sb.Append((char)ControlCodes.US);
+            sb.Append(OrigECRRefNumber);
+            sb.Append((char)ControlCodes.US);
             return sb.ToString().TrimEnd((char)ControlCodes.US);
         }
     }

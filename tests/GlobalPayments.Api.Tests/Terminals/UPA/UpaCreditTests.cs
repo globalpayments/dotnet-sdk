@@ -7,6 +7,7 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace GlobalPayments.Api.Tests.Terminals.UPA {
     [TestClass]
@@ -15,7 +16,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
 
         private int validYear = DateTime.Now.Year + 1;
         private CreditCardData card;
-
+        
         public UpaCreditTests() {
             _device = DeviceService.Create(new ConnectionConfig {
                 DeviceType = DeviceType.UPA_DEVICE,
@@ -125,6 +126,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
             Assert.IsNotNull(response);
             Assert.AreEqual("Success", response.DeviceResponseText);
             Assert.AreEqual("00", response.DeviceResponseCode);
+            Assert.IsNotNull(response.TransactionAmount, "TransactionAmount should be populated from host.amount on PreAuth.");
         }
 
         [TestMethod]
@@ -137,6 +139,9 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                .Execute();
             Assert.IsNotNull(preAuthResponse);
             Assert.AreEqual("00", preAuthResponse.DeviceResponseCode);
+            // PreAuth responses (UPA spec 12.4.14.6) omit host.totalAmount and return host.amount instead.
+            // TransactionAmount falls back to host.amount; AuthorizedAmount is read from host.authorizedAmount only.
+            Assert.IsNotNull(preAuthResponse.TransactionAmount, "PreAuth TransactionAmount should fall back to host.amount.");
 
             Thread.Sleep(3500);
 
@@ -169,6 +174,7 @@ namespace GlobalPayments.Api.Tests.Terminals.UPA {
                 .Execute();
             Assert.IsNotNull(incrementalPreAuthResponse);
             Assert.AreEqual("00", incrementalPreAuthResponse.DeviceResponseCode);
+            Assert.IsNotNull(incrementalPreAuthResponse.TransactionAmount, "Incremental Auth TransactionAmount should fall back to host.amount.");
 
             Thread.Sleep(3500);
 

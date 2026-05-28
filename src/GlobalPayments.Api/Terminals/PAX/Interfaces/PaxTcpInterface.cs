@@ -83,15 +83,20 @@ namespace GlobalPayments.Api.Terminals.PAX {
                 throw new MessageException(exc.Message, exc);
             }
             finally {
-                OnMessageSent?.Invoke(message.ToString());
+                var requestText = message.ToString();
+                OnMessageSent?.Invoke(requestText);
+                _settings.LogManagementProvider?.RequestSent(requestText);
+                string responseText;
                 if (rvalue != null)
                 {
-                    OnMessageReceived?.Invoke(Encoding.UTF8.GetString(rvalue, 0, rvalue.Length));
+                    responseText = Encoding.UTF8.GetString(rvalue, 0, rvalue.Length);
                 }
                 else
                 {
-                    OnMessageReceived?.Invoke("Terminal did not respond");
+                    responseText = "Terminal did not respond";
                 }
+                OnMessageReceived?.Invoke(responseText);
+                _settings.LogManagementProvider?.ResponseReceived(responseText);
                 Disconnect();
             }
         }

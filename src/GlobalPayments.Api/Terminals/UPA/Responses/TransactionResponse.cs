@@ -171,7 +171,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
             TaxAmount = host.GetNullableValue<decimal?>("taxAmount");
             CashBackAmount = host.GetNullableValue<decimal?>("cashBackAmount");
             AuthorizedAmount = host.GetNullableValue<decimal?>("authorizedAmount");
-            TransactionAmount = host.GetNullableValue<decimal?>("totalAmount");
+            TransactionAmount = host.GetNullableValue<decimal?>("totalAmount")
+                ?? (Command == UpaTransType.PreAuth ? host.GetNullableValue<decimal?>("amount") : null);
             MerchantFee = host.GetNullableValue<decimal?>("surcharge");
             Token = host.GetValue<string>("tokenValue");
             TokenResponseCode = host.GetValue<string>("tokenRspCode");
@@ -220,8 +221,8 @@ namespace GlobalPayments.Api.Terminals.UPA {
             EntryMethod = payment.GetValue<string>("cardAcquisition");
 
             PinVerified = payment.GetValue<string>("PinVerified");
+            ChipFallback = payment.Has("fallback") ? payment.GetValue<string>("fallback") == "1" : (bool?)null;
             // TrackData = payment.GetValue<string>("trackData");
-            // FallBack = payment.GetValue<string>("fallback");
             // TraceNumber = payment.GetValue<string>("trackNumber");
         }
 

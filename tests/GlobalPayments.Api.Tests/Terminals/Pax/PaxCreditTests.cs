@@ -2,15 +2,16 @@
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Terminals;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
+using System.IO;
 
 namespace GlobalPayments.Api.Tests.Terminals.Pax {
     [TestClass]
     public class PaxCreditTests {
         IDeviceInterface _device;
-
         private int validYear = DateTime.Now.Year + 1;
 
         public PaxCreditTests() {
@@ -20,7 +21,9 @@ namespace GlobalPayments.Api.Tests.Terminals.Pax {
                 IpAddress = "192.168.1.70",
                 Port = "10009",
                 Timeout = 30000,
-                RequestIdProvider = new RandomIdProvider()
+                RequestIdProvider = new RandomIdProvider(),
+                LogManagementProvider = new RequestConsoleLogger(),
+                EnableLogging = true
             });
             Assert.IsNotNull(_device);
         }

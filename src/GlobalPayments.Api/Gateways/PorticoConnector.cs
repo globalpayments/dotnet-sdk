@@ -587,8 +587,8 @@ namespace GlobalPayments.Api.Gateways {
                         }
                     }
 
-                    // Additional Txn Fields
-                    if (builder.TransactionType == TransactionType.Refund || builder.TransactionType == TransactionType.Reversal) {
+                    // Additional Txn Fields (Increment included to support InvoiceNbr on CreditIncrementalAuth)
+                    if (builder.TransactionType == TransactionType.Refund || builder.TransactionType == TransactionType.Reversal || builder.TransactionType == TransactionType.Increment) {
                         if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
                             var addons = et.SubElement(root, "AdditionalTxnFields");
                             et.SubElement(addons, "CustomerID", builder.CustomerId);
