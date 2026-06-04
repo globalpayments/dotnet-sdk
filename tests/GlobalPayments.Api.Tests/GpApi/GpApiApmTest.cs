@@ -14,6 +14,10 @@ namespace GlobalPayments.Api.Tests.GpApi
     [TestClass]
     public class GpApiApmTest : BaseGpApiTests
     {
+        private const string EratyAppId = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
+        private const string EratyAppKey = "cQOKHoAAvNIcEN8s"; //gitleaks:allow
+        private const string EratyConfigName = "eraty";
+
         private AlternativePaymentMethod paymentMethod;
         private string currency;
         private Address shippingAddress;
@@ -23,6 +27,10 @@ namespace GlobalPayments.Api.Tests.GpApi
         public void TestInitialize() {
             var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(gpApiConfig);
+
+            var eratyConfig = GpApiConfigSetup(EratyAppId, EratyAppKey, Channel.CardNotPresent);
+            eratyConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "GPECOM_APM_Transaction_Processing" };
+            ServicesContainer.ConfigureService(eratyConfig, EratyConfigName);
 
             paymentMethod = new AlternativePaymentMethod {
                 AlternativePaymentMethodType = AlternativePaymentType.PAYPAL,
@@ -48,6 +56,8 @@ namespace GlobalPayments.Api.Tests.GpApi
                 CountryCode = "US"
             };
         }
+
+        #region PayPal Tests
 
         /**
          * How to have a success running test. When you will run the test in the console it will be printed the
@@ -363,6 +373,10 @@ namespace GlobalPayments.Api.Tests.GpApi
             Assert.AreEqual("INITIATED", response.ResponseMessage);
         }
 
+        #endregion
+
+        #region Alipay Tests
+
         [TestMethod]
         public void Alipay()
         {
@@ -523,5 +537,115 @@ namespace GlobalPayments.Api.Tests.GpApi
                 Assert.IsTrue(exceptionCaught);
             }
         }
+
+        #endregion
+
+        #region eRaty APM Tests
+
+        /**
+         * How to run this test successfully:
+         * 1. Run the test — the eRaty charge request will be submitted and a redirect URL will be printed to the console.
+         * 2. Copy the redirect URL and open it in a browser. This will launch the eRaty APM simulator.
+         * 3. On the eRaty APM simulator page, click the "Pay" button to simulate a successful BNPL payment.
+         * 4. After clicking Pay, use ReportTransactionDetail (passing the TransactionId from step 1)
+         *    to verify that the transaction status has been updated to "CAPTURED".
+         *
+         * To test the rejection flow:
+         * 3a. On the eRaty APM simulator page, click the "Reject" button instead of "Pay".
+         * 4a. Use ReportTransactionDetail (passing the TransactionId from step 1)
+         *     to verify that the transaction status has been updated to "DECLINED".
+         */
+
+        [TestMethod]
+        public void ERaty_Charge_WithTerms_ReturnsInitiated() {
+            var eraty = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.ERATY,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/cancelUrl",
+                AccountHolderName = "John Doe",
+                Country = "PL",
+                Terms = new Terms {
+                    TimeUnit = "MONTH",
+                    Count = "6",
+                    Mode = "BANK_INTEREST"
+                }
+            };
+
+            var payer = new Customer {
+                Key = "B8J9KSQA5M6S2",
+                Email = "abc@ccc.com"
+            };
+
+            var response = eraty.Charge(400m)
+                .WithCurrency("PLN")
+                .WithCustomerData(payer)
+                .Execute(EratyConfigName);
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("INITIATED", response.ResponseMessage);
+
+            var apmResponse = response.AlternativePaymentResponse;
+            Assert.IsNotNull(apmResponse);
+            Assert.IsFalse(string.IsNullOrEmpty(apmResponse.RedirectUrl));
+            Assert.AreEqual("ERATY", apmResponse.ProviderName?.ToUpper());
+            Assert.AreEqual("BNPL", apmResponse.Category);
+            Assert.IsNotNull(apmResponse.Terms);
+            Assert.AreEqual("MONTH", apmResponse.Terms.TimeUnit);
+            Assert.AreEqual("6", apmResponse.Terms.Count);
+            Assert.AreEqual("BANK_INTEREST", apmResponse.Terms.Mode);
+
+            var payerDetails = response.PayerDetails;
+            Assert.IsNotNull(payerDetails);
+            Assert.AreEqual("B8J9KSQA5M6S2", payerDetails.Reference);
+            Assert.AreEqual("abc@ccc.com", payerDetails.Email);
+            Assert.AreEqual("PL", payerDetails.Country);
+        }
+
+        [TestMethod]
+        public void ERaty_ReportTransactionDetail_Captured() {
+            var response = ReportingService.TransactionDetail("TRN_CK6ERuoZTHjYck9y2iCdmOfPcF0wSx_ddc4bb254221")
+                .Execute(EratyConfigName);
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response is TransactionSummary);
+            Assert.AreEqual("CAPTURED", response.TransactionStatus);
+        }
+
+        [TestMethod]
+        public void ERaty_ReportTransactionDetail_Declined() {
+            var response = ReportingService.TransactionDetail("TRN_Y74JLuGbMnoZbTRHcDETtbHUi5RdUA_2eefca13b34b")
+                .Execute(EratyConfigName);
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response is TransactionSummary);
+            Assert.AreEqual("DECLINED", response.TransactionStatus);
+        }
+
+        [TestMethod]
+        public void ERaty_Charge_WithoutTerms_ThrowsMandatoryDataMissing() {
+            var eraty = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.ERATY,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/cancelUrl",
+                AccountHolderName = "John Doe",
+                Country = "PL"
+            };
+
+            var payer = new Customer {
+                Key = "B8J9KSQA5M6S2",
+                Email = "abc@ccc.com"
+            };
+
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                eraty.Charge(400m)
+                     .WithCurrency("PLN")
+                     .WithCustomerData(payer)
+                     .Execute(EratyConfigName);
+            });
+
+            Assert.AreEqual("Status Code: BadRequest - Request expects the following fields : apm.terms.time_unit, apm.terms.count, apm.terms.mode", ex.Message);
+        }
+
+        #endregion
     }
 }

@@ -231,8 +231,10 @@ namespace GlobalPayments.Api.Mapping {
 
         private static PayerDetails MapPayerDetails(JsonDoc json, JsonDoc shippingAddress = null) {
             var payerDetails = new PayerDetails();
-            payerDetails.Id = json?.GetValue<string>("id") ?? null;
-            payerDetails.Email = json?.GetValue<string>("email") ?? null;
+            payerDetails.Id = json?.GetValue<string>("id");
+            payerDetails.Reference = json?.GetValue<string>("reference");
+            payerDetails.Email = json?.GetValue<string>("email");
+            payerDetails.Country = json?.GetValue<string>("country");
 
             if (json.Has("billing_address")) {
                 var billingAddress = json.Get("billing_address");
@@ -336,6 +338,20 @@ namespace GlobalPayments.Api.Mapping {
             apm.Type = paymentMethodApm.GetValue<string>("type");
             apm.ProtectionEligibility = paymentMethodApm.GetValue<string>("protection_eligibilty");
             apm.FeeAmount = paymentMethodApm.GetValue<string>("fee_amount")?.ToAmount();
+
+            // eRaty (BNPL) specific fields
+            apm.Category = paymentMethodApm.GetValue<string>("category");
+            apm.ProviderRedirectUrl = paymentMethodApm.GetValue<string>("provider_redirect_url");
+            apm.ProviderPayerName = paymentMethodApm.GetValue<string>("provider_payer_name");
+
+            var termsJson = paymentMethodApm.Get("terms");
+            if (termsJson != null) {
+                apm.Terms = new Terms {
+                    TimeUnit = termsJson.GetValue<string>("time_unit"),
+                    Count = termsJson.GetValue<string>("count"),
+                    Mode = termsJson.GetValue<string>("mode"),
+                };
+            }
 
             var authorization = json.Get("payment_method")?.Get("authorization");
             apm.AuthStatus = authorization?.GetValue<string>("status");

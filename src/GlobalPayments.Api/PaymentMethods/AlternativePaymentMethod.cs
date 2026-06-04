@@ -45,6 +45,9 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// </summary>
         public string Country { get; set; }
 
+        /// <summary>
+        /// The name of the account holder for the alternative payment method.
+        /// </summary>
         public string AccountHolderName { get; set; }
 
         /// <summary>
@@ -61,6 +64,12 @@ namespace GlobalPayments.Api.PaymentMethods {
         /// The name of the bank associated with the alternative payment method.
         /// </summary>
         public BankList Bank { get; set; }
+
+        /// <summary>
+        /// Terms for eRaty (BNPL) transactions.
+        /// </summary>
+        public Terms Terms { get; set; }
+
         /// <summary>
         /// Creates a charge (sale) against the payment method.
         /// </summary>

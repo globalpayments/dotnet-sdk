@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v11.0.2 (05/28/26) 
+## Latest - v11.0.3 (06/04/26) 
+
+### Enhancement
+- [GPAPI] - Added eRaty APM support: new `ERATY` payment type, `Terms` configuration (time unit, count, mode), and full response mapping including `Category`, `Terms`, `ProviderRedirectUrl`, and `ProviderPayerName` fields.
+
+## v11.0.2 (05/28/26) 
 
 ### Enhancement
 - [Portico] - Added support for sending additional transaction fields (such as InvoiceNbr, Description, and CustomerID) with Credit Incremental Authorization transaction.

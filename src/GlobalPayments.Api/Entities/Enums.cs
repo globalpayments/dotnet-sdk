@@ -1048,7 +1048,8 @@ public enum ReasonCode {
         PAYBYBANKAPP,
         ALIPAY,
         BLIK,
-        OB
+        OB,
+        ERATY
     }
 
     public enum CardType {

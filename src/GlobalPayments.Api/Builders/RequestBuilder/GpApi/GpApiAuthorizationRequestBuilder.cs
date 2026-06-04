@@ -369,6 +369,19 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                         paymentMethod.Set("bank_transfer", bankTransfer);
                 }
+
+                if (alternatepaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.ERATY) {
+                    apm.Set("category", "BNPL");
+
+                    if (alternatepaymentMethod.Terms != null) {
+                        var terms = new JsonDoc()
+                            .Set("time_unit", alternatepaymentMethod.Terms.TimeUnit)
+                            .Set("count", alternatepaymentMethod.Terms.Count)
+                            .Set("mode", alternatepaymentMethod.Terms.Mode);
+                        apm.Set("terms", terms);
+                    }
+                }
+
                 paymentMethod.Set("apm", apm);
             }
 
@@ -837,6 +850,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 payer.Set("mobile_phone", builder.CustomerData?.MobilePhone?.ToNumeric() ?? builder.MobilePhone?.ToString());
             }
             else if(builder.PaymentMethod is AlternativePaymentMethod) {
+                var alternativePaymentMethodPayer = (AlternativePaymentMethod)builder.PaymentMethod;
+
+                if (alternativePaymentMethodPayer.AlternativePaymentMethodType == AlternativePaymentType.ERATY) {
+                    payer.Set("email", builder.CustomerData?.Email);
+                    payer.Set("country", alternativePaymentMethodPayer.Country);
+                }
+
                 JsonDoc homePhone = new JsonDoc();
 
                 homePhone.Set("country_code", builder.HomePhone?.CountryCode)
