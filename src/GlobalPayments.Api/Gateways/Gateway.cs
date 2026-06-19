@@ -198,7 +198,7 @@ namespace GlobalPayments.Api.Gateways {
                                 cont++;
                             }
                             else {
-                                valueToReplace = list.Length > 1 ? valueToReplace?.GetArray<JsonDoc>(list[0]).FirstOrDefault() : valueToReplace.Has(parts[i]) ?  valueToReplace?.Get(parts[i]) : null;
+                                valueToReplace = list.Length > 1 ? valueToReplace?.GetArray<JsonDoc>(list[0]).FirstOrDefault() : (valueToReplace?.Has(parts[i]) ?? false) ?  valueToReplace?.Get(parts[i]) : null;
                             }
                         }
                         else {
