@@ -146,6 +146,57 @@ namespace GlobalPayments.Api.Terminals.UPA.Responses {
         public Dictionary<string, string> Parameters { get; set; }
         public string EcrId { get; set; }
         public int BatteryLevel { get; set; }
+
+        /// <summary>
+        /// Loyalty programme redemption ID returned by the TYP (Thank You Points) host.
+        /// Present only on Sale responses where a redemption was applied.
+        /// </summary>
+        public string RedeemId { get; set; }
+        /// <summary>
+        /// Status of the TYP redemption (e.g., "COMPLETE").
+        /// Present only when <see cref="RedeemId"/> is non-null.
+        /// </summary>
+        public string RedeemStatus { get; set; }
+        /// <summary>
+        /// Monetary value redeemed from the TYP loyalty balance, expressed in the transaction currency.
+        /// Null when no redemption was applied.
+        /// </summary>
+        public decimal? CurrencyAmountRedeemed { get; set; }
+        /// <summary>
+        /// Number of TYP loyalty points redeemed in this transaction.
+        /// Null when no redemption was applied.
+        /// </summary>
+        public decimal? PointsRedeemed { get; set; }
+        /// <summary>
+        /// Discount amount applied to the transaction as a result of TYP redemption.
+        /// Null when no redemption was applied.
+        /// </summary>
+        public decimal? DiscountAmountRedeemed { get; set; }
+        /// <summary>
+        /// Loyalty programme redemption ID for a voided or reversed TYP redemption.
+        /// Present only on Void/Reverse responses where a prior redemption was reversed.
+        /// </summary>
+        public string VoidRedeemId { get; set; }
+        /// <summary>
+        /// Status of the voided TYP redemption (e.g., "COMPLETE").
+        /// Present only when <see cref="VoidRedeemId"/> is non-null.
+        /// </summary>
+        public string VoidRedeemStatus { get; set; }
+        /// <summary>
+        /// Monetary value reversed from the TYP loyalty balance, expressed in the transaction currency.
+        /// Null when no void redemption was applied.
+        /// </summary>
+        public decimal? VoidCurrencyAmountRedeemed { get; set; }
+        /// <summary>
+        /// Number of TYP loyalty points reversed in this transaction.
+        /// Null when no void redemption was applied.
+        /// </summary>
+        public decimal? VoidPointsRedeemed { get; set; }
+        /// <summary>
+        /// Discount amount reversed as a result of voiding the TYP redemption.
+        /// Null when no void redemption was applied.
+        /// </summary>
+        public decimal? VoidDiscountAmountRedeemed { get; set; }
         #endregion
 
         const string INVALID_RESPONSE_FORMAT = "The response received is not in the proper format.";

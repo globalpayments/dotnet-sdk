@@ -210,6 +210,9 @@ namespace GlobalPayments.Api.Terminals.UPA {
         public override TerminalReportBuilder GetBatchReport() {
             return new TerminalReportBuilder(TerminalReportType.GetBatchReport);
         }
+        public override TerminalReportBuilder GetBatchDetailsReport() {
+            return new TerminalReportBuilder(TerminalReportType.GetBatchDetails);
+        }
         public override ITerminalReport GetBatchDetails(string batchId, bool printReport = false) {
             var builder = (new TerminalReportBuilder(TerminalReportType.GetBatchDetails))
                 .Where(UpaSearchCriteria.Batch, batchId);

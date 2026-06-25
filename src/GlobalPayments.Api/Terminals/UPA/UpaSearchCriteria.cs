@@ -4,6 +4,11 @@
     {
         EcrId,
         Batch,
-        ReportOutput
+        ReportOutput,
+        ReportType,
+        ReportSubType,
+        BothReports,
+        ClerkId,
+        PreviousBatchReport
     }
 }

@@ -196,6 +196,9 @@ namespace GlobalPayments.Api.Terminals
         public virtual TerminalReportBuilder GetBatchReport() {
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
         }
+        public virtual TerminalReportBuilder GetBatchDetailsReport() {
+            throw new UnsupportedTransactionException(ERROR_MESSAGE);
+        }
         public virtual TerminalReportBuilder GetOpenTabDetails() {
             throw new UnsupportedTransactionException(ERROR_MESSAGE);
         }

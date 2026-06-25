@@ -109,6 +109,7 @@ namespace GlobalPayments.Api.Terminals {
         TerminalReportBuilder LocalDetailReport();
         TerminalReportBuilder GetSAFReport();
         TerminalReportBuilder GetBatchReport();
+        TerminalReportBuilder GetBatchDetailsReport();
         TerminalReportBuilder GetOpenTabDetails();
         ITerminalReport GetBatchDetails(string batchId, bool printReport = false);
         TerminalReportBuilder FindBatches();

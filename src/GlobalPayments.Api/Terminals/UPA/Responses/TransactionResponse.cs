@@ -34,80 +34,80 @@ namespace GlobalPayments.Api.Terminals.UPA {
             if (!string.IsNullOrEmpty(Command)) {
                 switch (Command) {
                     case UpaTransType.GetAppInfo:
-                    HydrateGetAppInfoData(responseData);
-                    break;
+                        HydrateGetAppInfoData(responseData);
+                        break;
                     case UpaTransType.EnterPIN:
-                    if (responseData.Has("PinDUKPT")) {
-                        var pinDUKPT = responseData.Get("PinDUKPT");
-                        PinDUKPT = new PinDUKPTResponse();
-                        PinDUKPT.PinBlock = pinDUKPT.GetValue<string>("PinBlock") ?? null;
-                        PinDUKPT.Ksn = pinDUKPT.GetValue<string>("Ksn") ?? null;
-                    }
-                    break;
+                        if (responseData.Has("PinDUKPT")) {
+                            var pinDUKPT = responseData.Get("PinDUKPT");
+                            PinDUKPT = new PinDUKPTResponse();
+                            PinDUKPT.PinBlock = pinDUKPT.GetValue<string>("PinBlock") ?? null;
+                            PinDUKPT.Ksn = pinDUKPT.GetValue<string>("Ksn") ?? null;
+                        }
+                        break;
                     case UpaTransType.Scan:
-                    ScanData = responseData.GetValue<string>("scanData") ?? null;
-                    break;
+                        ScanData = responseData.GetValue<string>("scanData") ?? null;
+                        break;
                     case UpaTransType.PromptwithOptions:
-                    ButtonPressed = responseData.GetValue<int?>("button") ?? null;
-                    break;
+                        ButtonPressed = responseData.GetValue<int?>("button") ?? null;
+                        break;
                     case UpaTransType.PromptMenu:
-                    ButtonPressed = responseData.GetValue<int?>("button") ?? null;
-                    PromptMenuSelected = responseData.GetValue<int?>("menuSelected") ?? null;
-                    break;
+                        ButtonPressed = responseData.GetValue<int?>("button") ?? null;
+                        PromptMenuSelected = responseData.GetValue<int?>("menuSelected") ?? null;
+                        break;
                     case UpaTransType.GeneralEntry:
-                    ButtonPressed = responseData.GetValue<int?>("button") ?? null;
-                    ValueEntered = responseData.GetValue<string>("valueEntered") ?? null;
-                    break;
+                        ButtonPressed = responseData.GetValue<int?>("button") ?? null;
+                        ValueEntered = responseData.GetValue<string>("valueEntered") ?? null;
+                        break;
                     case UpaTransType.GetEncryptionType:
-                    DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;
-                    break;
+                        DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;
+                        break;
                     case UpaTransType.ExecuteUDDataFile:
-                    DataString = responseData.GetValue<string>("dataString");
-                    break;
+                        DataString = responseData.GetValue<string>("dataString");
+                        break;
                     case UpaTransType.GetConfigContents:
-                    HydrateGetConfigData(responseData);
-                    break;
+                        HydrateGetConfigData(responseData);
+                        break;
                     case UpaTransType.CommunicationCheck:
                     case UpaTransType.GetLastEOD:
                     case UpaTransType.ForceSale:
-                    Multiplemessage = responseData.GetValue<string>("multipleMessage");
-                    break;
+                        Multiplemessage = responseData.GetValue<string>("multipleMessage");
+                        break;
                     case UpaTransType.ProcessCardTransaction:
-                    DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;
-                    AcquisitionType = responseData.GetValue<string>("acquisitionType") ?? null;
-                    LuhnCheckPassed = responseData.GetValue<string>("LuhnCheckPassed") ?? null;
+                        DataEncryptionType = responseData.GetValue<string>("dataEncryptionType") ?? null;
+                        AcquisitionType = responseData.GetValue<string>("acquisitionType") ?? null;
+                        LuhnCheckPassed = responseData.GetValue<string>("LuhnCheckPassed") ?? null;
 
-                    if (responseData.Has("PAN")) {
-                        HydratePANData(responseData);
-                    }
-                    if (responseData.Has("trackData")) {
-                        HydrateTrackData(responseData);
-                    }
-                    EmvTags = responseData.GetValue<string>("EmvTags") ?? null;
-                    Cvv = responseData.GetValue<int?>("Cvv") ?? null;
-                    ExpirationDate = responseData.GetValue<string>("expDate") ?? null;
-                    ScanData = responseData.GetValue<string>("scanData") ?? null;
-                    if (responseData.Has("PinDUKPT")) {
-                        HydratePinDUKPTData(responseData);
-                    }
-                    if (responseData.Has("3DesDukpt")) {
-                        Hydrate3DesDukptData(responseData);
-                    }
-                    EmvProcess = responseData.GetValue<string>("EmvProcess") ?? null;
-                    break;
+                        if (responseData.Has("PAN")) {
+                            HydratePANData(responseData);
+                        }
+                        if (responseData.Has("trackData")) {
+                            HydrateTrackData(responseData);
+                        }
+                        EmvTags = responseData.GetValue<string>("EmvTags") ?? null;
+                        Cvv = responseData.GetValue<int?>("Cvv") ?? null;
+                        ExpirationDate = responseData.GetValue<string>("expDate") ?? null;
+                        ScanData = responseData.GetValue<string>("scanData") ?? null;
+                        if (responseData.Has("PinDUKPT")) {
+                            HydratePinDUKPTData(responseData);
+                        }
+                        if (responseData.Has("3DesDukpt")) {
+                            Hydrate3DesDukptData(responseData);
+                        }
+                        EmvProcess = responseData.GetValue<string>("EmvProcess") ?? null;
+                        break;
                     case UpaTransType.ContinueEmvTransaction:
                     case UpaTransType.ContinueCardTransaction:
                     case UpaTransType.CompleteEMVTransaction:
-                    EmvTags = responseData.GetValue<string>("EmvTags");
-                    if (responseData.Has("PinDUKPT")) {
-                        HydratePinDUKPTData(responseData);
-                    }
-                    break;
+                        EmvTags = responseData.GetValue<string>("EmvTags");
+                        if (responseData.Has("PinDUKPT")) {
+                            HydratePinDUKPTData(responseData);
+                        }
+                        break;
                     case UpaTransType.GetParam:
-                    HydrateParams(responseData);
-                    break;
+                        HydrateParams(responseData);
+                        break;
                     default:
-                    break;
+                        break;
                 }
             }
 
@@ -196,6 +196,22 @@ namespace GlobalPayments.Api.Terminals.UPA {
             TipDue = host.GetNullableValue<decimal?>("tipDue");
             CustomHash = host.GetValue<string>("customHash");
             AvailableBalance = host.GetNullableValue<decimal?>("availableBalance");
+
+            if (host.Has("redeemId")) {
+                RedeemId = host.GetValue<string>("redeemId");
+                RedeemStatus = host.GetValue<string>("redeemStatus");
+                CurrencyAmountRedeemed = host.GetNullableValue<decimal?>("currencyAmountRedeemed");
+                PointsRedeemed = host.GetNullableValue<decimal?>("pointsRedeemed");
+                DiscountAmountRedeemed = host.GetNullableValue<decimal?>("discountAmountRedeemed");
+            }
+
+            if (host.Has("voidRedeemId")) {
+                VoidRedeemId = host.GetValue<string>("voidRedeemId");
+                VoidRedeemStatus = host.GetValue<string>("voidRedeemStatus");
+                VoidCurrencyAmountRedeemed = host.GetNullableValue<decimal?>("voidCurrencyAmountRedeemed");
+                VoidPointsRedeemed = host.GetNullableValue<decimal?>("voidPointsRedeemed");
+                VoidDiscountAmountRedeemed = host.GetNullableValue<decimal?>("voidDiscountAmountRedeemed");
+            }
             // EmvIssuerResp = host.GetValue<string>("emvIssuerResp");
         }
 

@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v11.0.3 (06/04/26) 
+## Latest - v11.0.4 (06/25/26)
+
+### Enhancement
+- [UPA]   - Added ThankYouPoints (TYP) loyalty program support:
+  - New response fields in `TransactionResponse`: `RedeemId`, `RedeemStatus`, `CurrencyAmountRedeemed`, `PointsRedeemed`, `DiscountAmountRedeemed`, and their void counterparts.
+  - Added `IDeviceInterface.GetBatchDetailsReport()` for fluent UPA batch-detail report composition (TYP summary/detail queries).
+
+## v11.0.3 (06/04/26)
 
 ### Enhancement
 - [GPAPI] - Added eRaty APM support: new `ERATY` payment type, `Terms` configuration (time unit, count, mode), and full response mapping including `Category`, `Terms`, `ProviderRedirectUrl`, and `ProviderPayerName` fields.

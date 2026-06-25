@@ -283,7 +283,12 @@ namespace GlobalPayments.Api.Terminals.UPA {
                 return TerminalUtilities.BuildUpaRequest(doc.ToString());
 
             var txnParams = new JsonDoc().Set("reportOutput", builder.SearchBuilder.ReportOutput)
-                            .Set("batch", builder.SearchBuilder.Batch);
+                            .Set("batch", builder.SearchBuilder.Batch)
+                            .Set("reportType", builder.SearchBuilder.ReportType.HasValue ? EnumConverter.GetDescription(builder.SearchBuilder.ReportType.Value) : null)
+                            .Set("reportSubType", builder.SearchBuilder.ReportSubType.HasValue ? EnumConverter.GetDescription(builder.SearchBuilder.ReportSubType.Value) : null)
+                            .Set("bothReports", builder.SearchBuilder.BothReports.HasValue ? (builder.SearchBuilder.BothReports.Value ? "1" : "0") : null)
+                            .Set("clerkId", builder.SearchBuilder.ClerkId)
+                            .Set("previousBatchReport", builder.SearchBuilder.PreviousBatchReport.HasValue ? (builder.SearchBuilder.PreviousBatchReport.Value ? "1" : "0") : null);
 
             if (txnParams.HasKeys()) {
                 var txnData = baseRequest.SubElement("data");
