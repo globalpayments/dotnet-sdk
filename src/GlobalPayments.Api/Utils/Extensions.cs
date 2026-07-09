@@ -26,6 +26,30 @@ namespace GlobalPayments.Api.Utils {
             return dec?.ToNumericCurrencyString();
         }
 
+        /// <summary>
+        /// Converts a decimal amount to its ISO 4217 minor-unit string representation
+        /// using the exponent for <paramref name="currency"/> (e.g. JPY → 0, USD → 2, BHD → 3).
+        /// </summary>
+        /// <param name="dec">Amount in major units (e.g. 12.50m USD).</param>
+        /// <param name="currency">ISO 4217 alphabetic currency code; null/unknown defaults to exponent 2.</param>
+        /// <returns>Integer minor-units string formatted with <see cref="CultureInfo.InvariantCulture"/>.</returns>
+        public static string ToNumericCurrencyString(this decimal dec, string currency) {
+            int exponent = CurrencyUtils.GetExponent(currency);
+            decimal scaled = dec * (decimal)Math.Pow(10, exponent);
+            long rounded = (long)Math.Round(scaled, 0, MidpointRounding.AwayFromZero);
+            return rounded.ToString(CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Nullable overload of <see cref="ToNumericCurrencyString(decimal, string)"/>.
+        /// </summary>
+        /// <param name="dec">Optional amount in major units.</param>
+        /// <param name="currency">ISO 4217 alphabetic currency code.</param>
+        /// <returns>Minor-units string, or <c>null</c> when <paramref name="dec"/> is null.</returns>
+        public static string ToNumericCurrencyString(this decimal? dec, string currency) {
+            return dec?.ToNumericCurrencyString(currency);
+        }
+
         public static string RemoveInitialZero(this string amount) {
             if(amount.StartsWith("0")) {
                 return amount.Remove(0, 1);
@@ -50,6 +74,29 @@ namespace GlobalPayments.Api.Utils {
                 return amount / 100;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Parses an ISO 4217 minor-unit integer string into a decimal major-unit amount using
+        /// the exponent for <paramref name="currency"/> (e.g. "12000" + "JPY" → 12000m,
+        /// "1234" + "USD" → 12.34m, "1234" + "BHD" → 1.234m).
+        /// </summary>
+        /// <param name="str">Minor-units integer string returned by the gateway.</param>
+        /// <param name="currency">ISO 4217 alphabetic currency code; null/unknown defaults to exponent 2.</param>
+        /// <returns>The amount in major units, or <c>null</c> when <paramref name="str"/> is null/empty/unparseable.</returns>
+        public static decimal? FromMinorUnits(this string str, string currency) {
+            if (string.IsNullOrEmpty(str)) {
+                return null;
+            }
+            decimal amount;
+            if (!decimal.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture, out amount)) {
+                return null;
+            }
+            int exponent = CurrencyUtils.GetExponent(currency);
+            if (exponent == 0) {
+                return amount;
+            }
+            return amount / (decimal)Math.Pow(10, exponent);
         }
 
         public static decimal? ToDecimal(this string str)

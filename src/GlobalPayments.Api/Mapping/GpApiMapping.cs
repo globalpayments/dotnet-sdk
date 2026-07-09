@@ -126,8 +126,15 @@ namespace GlobalPayments.Api.Mapping {
                 var batchSummary = new BatchSummary();
                 batchSummary.BatchReference = json.GetValue<string>("batch_id");
                 transaction.BatchSummary = batchSummary;
-                transaction.AuthorizedAmount = json.GetValue<string>("amount").ToAmount();
-                transaction.GratuityAmount = json.GetValue<string>("gratuity_amount").ToAmount();
+                var txnCurrency = json.GetValue<string>("currency");
+                if (!string.IsNullOrEmpty(txnCurrency)) {
+                    if (transaction.TransactionReference == null) {
+                        transaction.TransactionReference = new TransactionReference();
+                    }
+                    transaction.TransactionReference.Currency = txnCurrency;
+                }
+                transaction.AuthorizedAmount = json.GetValue<string>("amount").FromMinorUnits(txnCurrency);
+                transaction.GratuityAmount = json.GetValue<string>("gratuity_amount").FromMinorUnits(txnCurrency);
                 transaction.Timestamp = json.GetValue<string>("time_created");                
                 transaction.ReferenceNumber = json.GetValue<string>("reference");
                 transaction.ClientTransactionId = json.GetValue<string>("reference");
@@ -154,7 +161,7 @@ namespace GlobalPayments.Api.Mapping {
                     BinCountry = paymentMethod?.GetValue<string>("country"),
                 };
                 transaction.CardDetails = cardDetails;
-                transaction.BalanceAmount = paymentMethod?.GetValue<string>("available_balance").ToAmount();
+                transaction.BalanceAmount = paymentMethod?.GetValue<string>("available_balance").FromMinorUnits(txnCurrency);
                 transaction.CardType = paymentMethod?.GetValue<string>("brand");
                 transaction.CardLast4 = paymentMethod?.GetValue<string>("masked_number_last4");
                 transaction.CvnResponseMessage = paymentMethod?.GetValue<string>("cvv_result");

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
@@ -19,6 +19,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             GetAllowedActions();
 
             var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+
+            // Resolve the currency for amount encoding. Management calls like Capture/Reverse
+            // typically omit .WithCurrency() and rely on the original authorization's currency,
+            // which is carried on the TransactionReference produced by the gateway response.
+            var amountCurrency = builder.Currency ?? (builder.PaymentMethod as TransactionReference)?.Currency;
           
             if (builder.PaymentMethod?.PaymentMethodType == PaymentMethodType.BankPayment) {
                 var message = $"The {builder.TransactionType.ToString()} is not supported for {PaymentMethodName.BankPayment.ToString()}";
@@ -33,8 +38,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             
             if (builder.TransactionType == TransactionType.Capture) {
                 var data = new JsonDoc()
-                    .Set("amount", builder.Amount.ToNumericCurrencyString())
-                    .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
+                    .Set("amount", builder.Amount.ToNumericCurrencyString(amountCurrency))
+                    .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString(amountCurrency))
                     .Set("currency_conversion", builder.DccRateData?.DccId ?? null)
                     .Set("description", builder.Description);
 
@@ -46,7 +51,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             }
             else if (builder.TransactionType == TransactionType.Refund) {
                 var data = new JsonDoc()
-                    .Set("amount", builder.Amount.ToNumericCurrencyString())
+                    .Set("amount", builder.Amount.ToNumericCurrencyString(amountCurrency))
                     .Set("currency_conversion", builder.DccRateData == null ? null : new JsonDoc()
                         .Set("id", builder.DccRateData?.DccId))
                     .Set("description", builder.Description);
@@ -59,7 +64,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             }
             else if (builder.TransactionType == TransactionType.Reversal) {
                 var data = new JsonDoc()
-                    .Set("amount", builder.Amount.ToNumericCurrencyString())
+                    .Set("amount", builder.Amount.ToNumericCurrencyString(amountCurrency))
                     .Set("currency_conversion", builder.DccRateData?.DccId ?? null);
 
                 var endpoint = $"{merchantUrl}";

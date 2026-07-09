@@ -594,7 +594,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 .Set("capture_mode", GetCaptureMode(builder)) // [AUTO, LATER, MULTIPLE]
                                                               //.Set("remaining_capture_count", "") //Pending Russell
                 .Set("authorization_mode", builder.AllowPartialAuth ? "PARTIAL" : null)
-                .Set("amount", builder.Amount.ToNumericCurrencyString())
+                .Set("amount", builder.Amount.ToNumericCurrencyString(builder.Currency))
                 .Set("currency", builder.Currency)
                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString());
             
@@ -604,10 +604,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             
             data.Set("description", builder.Description)
                 //.Set("order_reference", builder.OrderId)
-                .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString())
-                .Set("cashback_amount", builder.CashBackAmount.ToNumericCurrencyString())
-                .Set("surcharge_amount", builder.SurchargeAmount.ToNumericCurrencyString())
-                .Set("convenience_amount", builder.ConvenienceAmount.ToNumericCurrencyString())
+                .Set("gratuity_amount", builder.Gratuity.ToNumericCurrencyString(builder.Currency))
+                .Set("cashback_amount", builder.CashBackAmount.ToNumericCurrencyString(builder.Currency))
+                .Set("surcharge_amount", builder.SurchargeAmount.ToNumericCurrencyString(builder.Currency))
+                .Set("convenience_amount", builder.ConvenienceAmount.ToNumericCurrencyString(builder.Currency))
                 .Set("country", (builder.PaymentMethod is AlternativePaymentMethod) ? 
                     !string.IsNullOrEmpty(((AlternativePaymentMethod)builder.PaymentMethod).Country) ? 
                     ((AlternativePaymentMethod)builder.PaymentMethod).Country : gateway.GpApiConfig.Country : gateway.GpApiConfig.Country)

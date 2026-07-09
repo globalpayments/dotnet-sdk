@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GlobalPayments.Api.Utils;
 
 namespace GlobalPayments.Api.Tests.Utils

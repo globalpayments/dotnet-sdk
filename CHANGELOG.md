@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v11.0.4 (06/25/26)
+## Latest - v11.1.0 (07/09/26)
+
+### Enhancement
+- [GPAPI] - Added multi-currency support for basic eCommerce/MOTO transactions (Sale, Auth/Pre-Auth, Capture, Void, Auth Reversal, Refund, and manual key-in) with ISO 4217 currency-exponent normalization for amount encoding/decoding (e.g. BHD/KWD/OMR ×1000, JPY ×100, KRW/VND ×1).
+  - ** Behavior change:** Amount encoding/decoding for these transactions now scales by the currency's ISO 4217 minor-unit exponent instead of always using ×100. For zero-decimal currencies (e.g. KRW, VND, ISK) amounts are now sent/received as-is (×1), and for three-decimal currencies (e.g. BHD, KWD, OMR) as ×1000. Integrators transacting in these currencies will see different wire values than previous releases; amounts in two-decimal currencies (e.g. USD, EUR, JPY) are unaffected. Reporting, batch-summary, and other response paths remain on the legacy ÷100 decode for this release.
+
+## v11.0.4 (06/25/26)
 
 ### Enhancement
 - [UPA]   - Added ThankYouPoints (TYP) loyalty program support:
