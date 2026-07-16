@@ -33,7 +33,11 @@ namespace GlobalPayments.Api.Entities {
         }
 
         public Request SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null, string[] permissions = null, PorticoTokenConfig porticoTokenConfig = null) {
-            string nonce = DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
+            var __sdkTestTs = System.Environment.GetEnvironmentVariable("SDK_TESTING_TIMESTAMP");
+            var __now = long.TryParse(__sdkTestTs, out var __sdkMs)
+                ? DateTimeOffset.FromUnixTimeMilliseconds(__sdkMs).UtcDateTime
+                : DateTime.UtcNow;
+            string nonce = __now.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
 
             var request = new JsonDoc();
             var credentials = new List<Dictionary<string, string>>();

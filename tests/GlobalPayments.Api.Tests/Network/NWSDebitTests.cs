@@ -3,11 +3,7 @@ using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.Network.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
-using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GlobalPayments.Api.Tests.Network {
     [TestClass]
@@ -30,9 +26,6 @@ namespace GlobalPayments.Api.Tests.Network {
                 CardDataInputCapability = CardDataInputCapability.ContactlessEmv_ContactEmv_MagStripe_KeyEntry,
                 TerminalOutputCapability = TerminalOutputCapability.Printing_Display,
                 CardHolderAuthenticationCapability = CardHolderAuthenticationCapability.PIN,
-
-                //CardHolderAuthenticationEntity = CardHolderAuthenticationEntity.AuthorizingAgent,
-                //OperatingEnvironment = OperatingEnvironment.OnPremises_CardAcceptor_Unattended,
 
                 // hardware software config values
                 HardwareLevel = "34",
@@ -337,18 +330,6 @@ namespace GlobalPayments.Api.Tests.Network {
 
         [TestMethod]
         public void Test_161_ICR_reverse_authorization() {
-            //try {
-            //    track.Authorize(10m)
-            //            .WithCurrency("USD")
-            //            .WithForceGatewayTimeout(true)
-            //            .Execute("ICR");
-            //    Assert.Fail("Did not throw a timeout");
-            //}
-            //catch (GatewayTimeoutException exc) {
-            //    Assert.AreEqual(1, exc.ReversalCount);
-            //    Assert.AreEqual("400", exc.ReversalResponseCode);
-            //}
-
             Transaction response = track.Authorize(10m, true)
                         .WithCurrency("USD")
                         .Execute("ICR");
@@ -379,8 +360,6 @@ namespace GlobalPayments.Api.Tests.Network {
             Assert.AreEqual("4021", pmi.MessageReasonCode);
             System.Diagnostics.Debug.WriteLine(reversal.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(reversal.SystemTraceAuditNumber);
-            // check response
-            //Assert.AreEqual("400", reversal.ResponseCode);
         }
 
         [TestMethod]
@@ -422,11 +401,6 @@ namespace GlobalPayments.Api.Tests.Network {
             System.Diagnostics.Debug.WriteLine(capture.SystemTraceAuditNumber);
         }
 
-        //[TestMethod]
-        //public void Test_164_ICR_void_authorization() {
-
-        //}
-
         [TestMethod]
         public void ReadyLinkLoad() {
             track = new DebitTrackData {
@@ -450,56 +424,5 @@ namespace GlobalPayments.Api.Tests.Network {
             System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
             System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
         }
-
-        //[TestMethod]
-        //public void Test_164_ICR_auth_reversal() {
-        //    Transaction response = track.Authorize(1m, true)
-        //            .WithCurrency("USD")
-        //            .Execute("ICR");
-        //    Assert.IsNotNull(response);
-
-        //    // check message data
-        //    PriorMessageInformation pmi = response.MessageInformation;
-        //    Assert.IsNotNull(pmi);
-        //    Assert.AreEqual("1100", pmi.MessageTransactionIndicator);
-        //    Assert.AreEqual("000800", pmi.ProcessingCode);
-        //    Assert.AreEqual("101", pmi.FunctionCode);
-
-        //    // check response
-        //    //Assert.AreEqual("000", response.ResponseCode);
-
-        //    Transaction reversal = response.Reverse(1m)
-        //            .WithCurrency("USD")
-        //            .Execute("ICR");
-        //    Assert.IsNotNull(reversal);
-
-        //    // check message data
-        //    pmi = reversal.MessageInformation;
-        //    Assert.IsNotNull(pmi);
-        //    Assert.AreEqual("1420", pmi.MessageTransactionIndicator);
-        //    Assert.AreEqual("000800", pmi.ProcessingCode);
-        //    Assert.AreEqual("400", pmi.FunctionCode);
-        //    Assert.AreEqual("4021", pmi.MessageReasonCode);
-
-        //    // check response
-        //    Assert.AreEqual("400", reversal.ResponseCode);
-        //    System.Diagnostics.Debug.WriteLine(response.HostResponseDate);
-        //    System.Diagnostics.Debug.WriteLine(response.SystemTraceAuditNumber);
-        //}
-
-        //[TestMethod]
-        //public void Test_165_emv_debit_sale() {
-        //    DebitTrackData track = new DebitTrackData {
-        //        Value = ";4024720012345671=18125025432198712345?",
-        //        PinBlock = "AFEC374574FC90623D010000116001EE"
-        //    };
-
-        //    Transaction response = track.Charge(10m)
-        //            .WithCurrency("USD")
-        //            .WithTagData("82021C008407A0000002771010950580000000009A031709289C01005F280201245F2A0201245F3401019F02060000000010009F03060000000000009F080200019F090200019F100706010A03A420009F1A0201249F26089CC473F4A4CE18D39F2701809F3303E0F8C89F34030100029F3501229F360200639F370435EFED379F410400000019")
-        //            .Execute();
-        //    Assert.IsNotNull(response);
-        //    Assert.AreEqual("000", response.ResponseCode);
-        //}
     }
 }

@@ -17,14 +17,6 @@ namespace GlobalPayments.Api.Gateways {
         private const string IDEMPOTENCY_HEADER = "x-gp-idempotency";
 
         private string _AccessToken;
-        private string ReleaseVersion {
-            get {
-                try {
-                    return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
-                }
-                catch { return string.Empty; }
-            }
-        }
 
         public GpApiConfig GpApiConfig { get; set; }
         public Secure3dVersion Version { get { return Secure3dVersion.Any; } }
@@ -61,7 +53,7 @@ namespace GlobalPayments.Api.Gateways {
             Headers["X-GP-Version"] = "2021-03-22";
             Headers["Accept"] = "application/json";
             Headers["Accept-Encoding"] = "gzip";
-            Headers["x-gp-sdk"] = "net;version=" + ReleaseVersion;
+            Headers["x-gp-sdk"] = "net;version=" + Utils.ReleaseVersionUtils.GetReleaseVersion();
 
             DynamicHeaders = gpApiConfig.DynamicHeaders;
         }

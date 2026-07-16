@@ -26,5 +26,6 @@ namespace GlobalPayments.Api.Network.Elements {
         public string TokenOrAcctNum { get; set; }
         public string ExpiryDate { get; set; }
         public bool IsFileAction { get; set; }
+        public string CVVValue { get;set; }
     }
 }

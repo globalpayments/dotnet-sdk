@@ -744,15 +744,15 @@ namespace GlobalPayments.Api.Gateways {
             et.SubElement(header, "DeveloperID", DeveloperId);
             et.SubElement(header, "VersionNbr", VersionNumber);
             et.SubElement(header, "ClientTxnId", clientTransactionId);
-            et.SubElement(header, "PosReqDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+            et.SubElement(header, "PosReqDT", EffectiveNow().ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
             et.SubElement(header, "UniqueDeviceId", UniqueDeviceId);
 
-            et.SubElement(header, "SDKNameVersion", SDKNameVersion != null ? SDKNameVersion : "net;version=" + getReleaseVersion());
+            et.SubElement(header, "SDKNameVersion", SDKNameVersion != null ? SDKNameVersion : "net;version=" + Utils.ReleaseVersionUtils.GetReleaseVersion());
 
             if (IsSafDataSupported != null) {
                 Element safData = et.SubElement(header, "SAFData");
                 et.SubElement(safData, "SAFIndicator", (bool)IsSafDataSupported ? "Y" : "N");
-                et.SubElement(safData, "SAFOrigDT", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
+                et.SubElement(safData, "SAFOrigDT", EffectiveNow().ToString("yyyy-MM-ddTHH:mm:ss.FFFK"));
             }
 
             // Transaction
@@ -1431,15 +1431,13 @@ namespace GlobalPayments.Api.Gateways {
                 || paymentDataSource == PaymentDataSourceType.GOOGLEPAYAPP
                 || paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB;
         }
-        //Get the SDK release version from Assembly info
-        private string getReleaseVersion() {
-            try {
-                return Assembly.Load(new AssemblyName("GlobalPayments.Api"))?.GetName()?.Version?.ToString();
-            }
-            catch (Exception ex) {
-                return string.Empty;
-            }
+        private static DateTime EffectiveNow() {
+            var ts = System.Environment.GetEnvironmentVariable("SDK_TESTING_TIMESTAMP");
+            return long.TryParse(ts, out var ms)
+                ? DateTimeOffset.FromUnixTimeMilliseconds(ms).UtcDateTime
+                : DateTime.UtcNow;
         }
+
         #endregion
 
         private void BuildLineItems(ElementTree et, Element parent, bool isVisa, List<CommercialLineItem> items) {

@@ -5,8 +5,7 @@ using GlobalPayments.Api.Utils;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalPayments.Api.Network.Elements
-{
+namespace GlobalPayments.Api.Network.Elements {
     public class DE127_ForwardingData : IDataElement<DE127_ForwardingData> {
         public LinkedList<DE127_ForwardingDataEntry> entries;
 
@@ -19,7 +18,7 @@ namespace GlobalPayments.Api.Network.Elements
         public string MerchantId { get; set; }
         public string TokenOrAcctNum { get; set; }
         public string ExpiryDate { get; set; }
-
+        public string CVV { get; set; }
 
         private int GetEntryCount() {
             return entries.Count;
@@ -76,7 +75,7 @@ namespace GlobalPayments.Api.Network.Elements
             entry.MerchantId = (StringUtils.PadRight(MerchantId, 32, ' '));
             entry.TokenOrAcctNum = (StringUtils.PadRight(TokenOrAcctNum, 128, ' '));
             entry.ExpiryDate = (ExpiryDate != null ? ExpiryDate : StringUtils.PadRight("", 4, ' '));
-
+            entry.CVVValue = CVV;
             Add(entry);
         }
 
@@ -134,7 +133,8 @@ namespace GlobalPayments.Api.Network.Elements
                         entry.MerchantId = edToken.ReadString(32);
                         entry.TokenOrAcctNum  = edToken.ReadString(128);
                         entry.ExpiryDate = edToken.ReadString(4);
-                        edToken.ReadString(36);
+                        entry.CVVValue = edToken.ReadString(8);
+                        edToken.ReadString(28);
                         break;
                     default:
                         entry.EntryData = data;
@@ -191,8 +191,9 @@ namespace GlobalPayments.Api.Network.Elements
                                 StringUtils.PadRight("", 7, ' '),
                                 StringUtils.PadRight(entry.MerchantId, 32, ' '),
                                 StringUtils.PadRight(entry.TokenOrAcctNum, 128, ' '),
-                                entry.ExpiryDate != null ? entry.ExpiryDate : StringUtils.PadRight("", 4, ' '),
-                                StringUtils.PadRight("", 36, ' '));
+                                string.IsNullOrEmpty(entry.ExpiryDate) ? StringUtils.PadRight("", 4, ' ') : entry.ExpiryDate,
+                                StringUtils.PadRight(entry.CVVValue, 8, ' '), 
+                                StringUtils.PadRight("", 28, ' '));
                          rvalue = string.Concat(rvalue, StringUtils.ToLLLVar(entryDataTok));
                         break;
                     default:

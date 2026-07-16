@@ -9,10 +9,8 @@ namespace GlobalPayments.Api.Tests.Network {
     public class NWSCombined3DesTokenizationTest {
         private CreditCardData card;
         private CreditTrackData track;
-
+        AcceptorConfig acceptorConfig = new AcceptorConfig();
         public NWSCombined3DesTokenizationTest() {
-            AcceptorConfig acceptorConfig = new AcceptorConfig();
-
             //DE 127
             acceptorConfig.ServiceType = ServiceType.GPN_API;
             acceptorConfig.TokenizationOperationType = TokenizationOperationType.Tokenize;
@@ -39,7 +37,100 @@ namespace GlobalPayments.Api.Tests.Network {
             ServicesContainer.ConfigureService(config);
         }
 
+        #region SingleUseMultiUseToken
+        [TestMethod]
+        public void Test_CombinedFile_Action_Mastercard_SingleUseToken() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleUseToken;
+            var encryptionData = new EncryptionData();
+            encryptionData.KTB = "3A2067D00508DBE43E3342CC77B0575E04D9191B380C88036DD82D54C834DCB4130F52560AA9551B";
+            encryptionData.KSN = "F000019990E00003";
+            encryptionData.TrackNumber = TrackNumber.TrackTwo.ToString();
+
+            card = new CreditCardData();
+            card.TokenizationData = "";
+            card.EncryptionData = encryptionData;
+            card.Cvn = "123";
+            Transaction response = card.FileAction()
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_CombinedFile_Action_Mastercard_SingleToMultiUseToken() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleToMultiUseToken;
+            var encryptionData = new EncryptionData();
+            encryptionData.KTB = "3A2067D00508DBE43E3342CC77B0575E04D9191B380C88036DD82D54C834DCB4130F52560AA9551B";
+            encryptionData.KSN = "F000019990E00003";
+            encryptionData.TrackNumber = TrackNumber.TrackTwo.ToString();
+
+            card = TestCards.MasterCardManual();
+            card.TokenizationData = "F9AD9D8ED9FA8CE3D264B02608282638";
+            card.EncryptionData = encryptionData;
+            card.Cvn = "123";
+
+            var ex = Assert.ThrowsException<UnsupportedTransactionException>(() => {
+                Transaction response = card.FileAction().Execute();
+            });
+            Assert.AreEqual(
+                "Token conversion from Single-Use to Multi-Use is not supported for Combine(3DES/Tokenization) transactions.",
+                ex.Message
+            );
+        }
+
+        [TestMethod]
+        public void Test_SingleToMultiUseToken_Negative_InvalidToken() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleUseToken;
+            var encryptionData = new EncryptionData();
+            encryptionData.KTB = "INVALID_KTB";
+            encryptionData.KSN = "INVALID_KSN";
+            encryptionData.TrackNumber = TrackNumber.TrackTwo.ToString();
+
+            card = new CreditCardData();
+            card.TokenizationData = "";
+            card.EncryptionData = encryptionData;
+            card.Cvn = "123";
+            Transaction response = card.FileAction().Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreNotEqual("000", response.ResponseCode, "Expected failure when using invalid KSN and KTB");
+        }
+        #endregion
+
         #region Track 2 
+        [TestMethod]
+        public void Test_CombinedFile_Action_Mastercard1() {
+            var encryptionData = new EncryptionData();
+            encryptionData.KTB = "3A2067D00508DBE43E3342CC77B0575E04D9191B380C88036DD82D54C834DCB4130F52560AA9551B";
+            encryptionData.KSN = "F000019990E00003";
+            encryptionData.TrackNumber = TrackNumber.TrackTwo.ToString();
+
+            card = new CreditCardData();
+            card.TokenizationData = "";// "F9AD9D8ED9FA8CE3D264B02608282638";
+            card.EncryptionData = encryptionData;
+
+            Transaction response = card.FileAction()
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_CombinedFile_Action_MastercardUsingTrack() {
+            var encryptionData = new EncryptionData();
+            encryptionData.KTB = "3A2067D00508DBE43E3342CC77B0575E04D9191B380C88036DD82D54C834DCB4130F52560AA9551B";
+            encryptionData.KSN = "F000019990E00003";
+            encryptionData.TrackNumber = TrackNumber.TrackTwo.ToString();
+
+            var card = new CreditTrackData();
+            card.TokenizationData = "";
+            card.EncryptionData = encryptionData;
+
+            Transaction response = card.FileAction()
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
         [TestMethod]
         public void Test_CombinedFile_Action_Mastercard() {
             var encryptionData = new EncryptionData();

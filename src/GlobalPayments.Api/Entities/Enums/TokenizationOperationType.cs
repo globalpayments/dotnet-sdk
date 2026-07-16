@@ -9,6 +9,10 @@ namespace GlobalPayments.Api.Entities.Enums {
         [Map(Target.NWS, "3")]
         DeleteToken,
         [Map(Target.NWS, "4")]
-        UpdateToken
+        UpdateToken,
+        [Map(Target.NWS, "5")]
+        SingleUseToken,
+        [Map(Target.NWS, "6")]
+        SingleToMultiUseToken,
     }
 }

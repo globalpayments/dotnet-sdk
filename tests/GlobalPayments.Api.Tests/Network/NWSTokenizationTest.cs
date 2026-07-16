@@ -5,12 +5,12 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.Network
-{
+namespace GlobalPayments.Api.Tests.Network {
     [TestClass]
     public class NWSTokenizationTest {
         private CreditCardData card;
         private CreditTrackData track;
+        AcceptorConfig acceptorConfig = new AcceptorConfig();
 
         public NWSTokenizationTest() {
             Address address = new Address();
@@ -21,7 +21,6 @@ namespace GlobalPayments.Api.Tests.Network
             address.State = "KY";
             address.Country = "USA";
 
-            AcceptorConfig acceptorConfig = new AcceptorConfig();
             acceptorConfig.Address = address;
 
             // data code values
@@ -40,7 +39,8 @@ namespace GlobalPayments.Api.Tests.Network
             acceptorConfig.SupportsDiscoverNetworkReferenceId = true;
             acceptorConfig.SupportsAvsCnvVoidReferrals = true;
             acceptorConfig.SupportsEmvPin = true;
-
+            acceptorConfig.EchoSettlementData = true;
+            acceptorConfig.IncrementalAuthIndicator = false;
             //DE 127
             acceptorConfig.ServiceType = ServiceType.GPN_API;
             acceptorConfig.TokenizationOperationType = TokenizationOperationType.DeTokenize;
@@ -69,11 +69,53 @@ namespace GlobalPayments.Api.Tests.Network
             ServicesContainer.ConfigureService(config);
         }
 
+        #region SingleUseMultiUseToken
+        [TestMethod]
+        public void Test_File_Action_Mastercard_SingleUseToken() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleUseToken;
+            card = TestCards.MasterCardManual();
+            card.TokenizationData = "5506740000004316";
+            card.Cvn = "123";
+            Transaction response = card.FileAction()
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+        
+        [TestMethod]
+        public void Test_CombinedFile_Action_Mastercard_SingleToMultiUseToken() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleToMultiUseToken;
+            card = TestCards.MasterCardManual();
+            card.TokenizationData = "FCB87D22C00D15F19A18991289E32732";
+            card.Cvn = "123";
+            Transaction response = card.FileAction()
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_SingleToMultiUseToken_Negative_InvalidToken() {
+            // Attempt to swap an invalid single use token for a multi use token
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleToMultiUseToken;
+
+            card = TestCards.MasterCardManual();
+            card.TokenizationData = "INVALID_SINGLE_USE_TOKEN";
+            card.Cvn = "123";
+
+            Transaction response = card.FileAction().Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreNotEqual("000", response.ResponseCode, "Expected failure when using invalid single use token");
+        }
+        #endregion
+
         [TestMethod]
         public void Test_File_Action() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.Tokenize;
             card = TestCards.MasterCardManual();
             card.TokenizationData = "5506740000004316";// "5473500000000014";
-            Transaction response = card.FileAction()
+            var response = card.FileAction()
                     .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
@@ -82,7 +124,7 @@ namespace GlobalPayments.Api.Tests.Network
         [TestMethod]
         public void Test_001_Credit_Manual_Auth() {
             card = TestCards.MasterCardManual();
-            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";
+            card.TokenizationData = "FCB87D22C00D15F19A18991289E32732";
             Transaction response = card.Authorize(10m)
                     .WithCurrency("USD")
                     .Execute();
@@ -93,19 +135,65 @@ namespace GlobalPayments.Api.Tests.Network
         [TestMethod]
         public void Test_002_Credit_Manual_Sale() {
             card = TestCards.MasterCardManual();
-            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";
-            Transaction response = card.Charge(10m)
+            card.CardType = "MC";
+            card.TokenizationData = "F9AD9D8ED9FA8CE3D264B02608282638";
+            Transaction response = card.Charge(12m)
                     .WithCurrency("USD")
+                    .WithAllowDuplicates(false)
+                    .WithClientTransactionId("12345")
                     .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
         }
+
+        [TestMethod]
+        public void Test_002_Credit_Manual_SaleWithBillingAmount() {
+            card = TestCards.MasterCardManual();
+            var address = new Address();
+            address.StreetAddress1 = "123 Main St";
+            address.City = "Springfield";
+            address.State = "IL";
+            address.PostalCode = "62701";
+            address.Country = "USA";
+
+            card.TokenizationData = "FCB87D22C00D15F19A18991289E32732";
+
+            card.TokenizationData = "";
+            Transaction response = card.Charge(12m)
+                    .WithCurrency("USD")
+                    .WithAddress(address, AddressType.Billing)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+        [TestMethod]
+        public void Test_002_Credit_Manual_SaleWithShippingAmount() {
+            card = TestCards.MasterCardManual();
+            var address = new Address();
+            address.PostalCode = "12345";
+            address.Name = "STORE";
+            address.StreetAddress1 = "2 MY STREET";
+            address.City = "TOWN";
+            address.PostalCode = "12345";
+            address.State = "US";
+            address.Country = "USA";
+
+            card.TokenizationData = "FCB87D22C00D15F19A18991289E32732";
+            Transaction response = card.Charge(12m)
+                    .WithCurrency("USD")
+                    .WithAddress(address, AddressType.Shipping)
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
         //force draft capture
         [TestMethod]
         public void Test_016_AuthCapture() {
-            card = TestCards.MasterCardManual();
-            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";
-            Transaction response = card.Authorize(10m, true)
+            card = new CreditCardData();
+            card.CardType = "MC";
+            card.TokenizationData = "FCB87D22C00D15F19A18991289E32732";
+            Transaction response = card.Authorize(12m, true)
                     .WithCurrency("USD")
                     .Execute();
             Assert.IsNotNull(response);
@@ -140,7 +228,7 @@ namespace GlobalPayments.Api.Tests.Network
         [TestMethod]
         public void Test_004_Credit_Refund() {
             card = TestCards.MasterCardManual();
-            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";
+            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";
             Transaction response = card.Refund(10m)
                         .WithCurrency("USD")
                         .Execute();
@@ -151,7 +239,7 @@ namespace GlobalPayments.Api.Tests.Network
         [TestMethod]
         public void Test_005_Credit_Balance_Inquiry() {
             card = TestCards.MasterCardManual();
-            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";
+            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";
             Transaction response = card.BalanceInquiry()
                         .Execute();
             Assert.IsNotNull(response);
@@ -167,7 +255,7 @@ namespace GlobalPayments.Api.Tests.Network
         [TestMethod]
         public void Test_Sale_Reversal() {
             card = TestCards.MasterCardManual();
-            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";
+            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";
 
             NtsData ntsData = new NtsData(FallbackCode.Received_IssuerUnavailable, AuthorizerCode.Terminal_Authorized);
             Transaction response = card.Charge(10m)
@@ -203,7 +291,7 @@ namespace GlobalPayments.Api.Tests.Network
         [TestMethod]
         public void Test_015_Credit_Void() {
             card = TestCards.MasterCardManual();
-            card.TokenizationData = "4C3276D020FD1936C20921BBA0B7909B";// "8E4BDE85FCF1FD72A6CC9A8AC0EB740A";
+            card.TokenizationData = "FCB87D22C00D15F19A18991289E32732";
 
             Transaction response = card.Charge(10m)
                         .WithCurrency("USD")
@@ -250,7 +338,6 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("000", response.ResponseCode);
         }
          
-        //force draft capture
         [TestMethod]
         public void Test_016_AuthCapture_Mastercard_Purchasing() {
             card = TestCards.MasterCardPurchasingManual();
@@ -483,9 +570,6 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("1200", pmi.MessageTransactionIndicator);
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("200", pmi.FunctionCode);
-
-            // check response
-            //Assert.AreEqual("000", response.getResponseCode());
 
             Transaction reversal = response.Reverse(10m)
                     .WithCurrency("USD")
@@ -875,10 +959,6 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("101", pmi.FunctionCode);
 
-            // check response
-            //Assert.AreEqual("000", response.ResponseCode);
-            //response.TransactionReference.AuthCode = "00479A";
-
             Transaction captureResponse = response.Capture(10m)
                     .WithCurrency("USD")
                     .Execute();
@@ -1092,9 +1172,6 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("200", pmi.FunctionCode);
 
-            // check response
-            //Assert.AreEqual("000", response.getResponseCode());
-
             Transaction reversal = response.Reverse(10m)
                     .WithCurrency("USD")
                     .Execute();
@@ -1245,9 +1322,6 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("200", pmi.FunctionCode);
 
-            // check response
-            //Assert.AreEqual("000", response.getResponseCode());
-
             Transaction reversal = response.Reverse(10m)
                     .WithCurrency("USD")
                     .Execute();
@@ -1291,7 +1365,6 @@ namespace GlobalPayments.Api.Tests.Network
                         .Execute();
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
-
         }
 
         [TestMethod]
@@ -1465,7 +1538,7 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.IsNotNull(response);
             Assert.AreEqual("000", response.ResponseCode);
         }
-        //force draft capture
+
         [TestMethod]
         public void Test_016_AuthCapture_Paypal() {
             card = TestCards.Paypal();
@@ -1548,9 +1621,6 @@ namespace GlobalPayments.Api.Tests.Network
             Assert.AreEqual("003000", pmi.ProcessingCode);
             Assert.AreEqual("200", pmi.FunctionCode);
 
-            // check response
-            //Assert.AreEqual("000", response.getResponseCode());
-
             Transaction reversal = response.Reverse(10m)
                     .WithCurrency("USD")
                     .Execute();
@@ -1583,6 +1653,21 @@ namespace GlobalPayments.Api.Tests.Network
             Transaction reverseResponse = response.Void().Execute();
             Assert.IsNotNull(reverseResponse);
             Assert.AreEqual("400", reverseResponse.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_File_Action_WithPAN() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.Tokenize;
+            var track = new CreditTrackData();
+            track.EntryMethod = EntryMethod.Swipe;
+            track.Expiry = "9912";
+            track.TrackNumber = TrackNumber.TrackTwo;
+            track.TrackData = ";70768512345200005=99120?";
+            track.TokenizationData = "70768512345200005";
+            var response = track.FileAction()
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
         }
     }
 }

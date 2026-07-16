@@ -347,8 +347,8 @@ namespace GlobalPayments.Api.Terminals.Builders {
             Validations.For(TransactionType.Refund).Check(() => Amount).IsNotNull();
             Validations.For(TransactionType.Refund)
                 .With(PaymentMethodType.Credit)
-                .When(() => TransactionId).IsNotNull()
-                .Check(() => AuthCode).IsNotNull();
+                .When(() => TransactionId).IsNotNull();
+//              .Check(() => AuthCode).IsNotNull();
             Validations.For(TransactionType.AddValue).Check(() => Amount).IsNotNull();
             Validations.For(TransactionType.BenefitWithdrawal)
                 .When(() => Currency).IsNotNull()

@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v11.1.0 (07/09/26)
+## Latest - v11.2.0 (07/16/26)
+
+### Enhancement
+- [NWS] - Added tokenization support for Operation Types 5 (Single-Use Token) and 6 (Convert to Multi-Use Token), making CVV mandatory for all single-use token requests.
+
+## v11.1.0 (07/09/26)
 
 ### Enhancement
 - [GPAPI] - Added multi-currency support for basic eCommerce/MOTO transactions (Sale, Auth/Pre-Auth, Capture, Void, Auth Reversal, Refund, and manual key-in) with ISO 4217 currency-exponent normalization for amount encoding/decoding (e.g. BHD/KWD/OMR ×1000, JPY ×100, KRW/VND ×1).

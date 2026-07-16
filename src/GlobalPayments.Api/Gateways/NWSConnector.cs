@@ -519,6 +519,9 @@ namespace GlobalPayments.Api.Gateways {
                         forwardingData.ExpiryDate = giftCard.Expiry;
                     }
                 }
+            if (AcceptorConfig.TokenizationOperationType == TokenizationOperationType.SingleUseToken) {
+                forwardingData.CVV = string.IsNullOrEmpty(cardData?.Cvn) ? string.Empty : cardData.Cvn;
+            }
 
             //Merchant Id
             String merchantId = AcceptorConfig.MerchantId;
@@ -540,6 +543,8 @@ namespace GlobalPayments.Api.Gateways {
 
             //Tokenization Operation type
             TokenizationOperationType tokenOperationType = AcceptorConfig.TokenizationOperationType;
+            if(isCombine && tokenOperationType == TokenizationOperationType.SingleToMultiUseToken)
+                throw new UnsupportedTransactionException("Token conversion from Single-Use to Multi-Use is not supported for Combine(3DES/Tokenization) transactions.");
             setTokenizationOperationType(forwardingData, tokenOperationType);
             forwardingData.AddTokenizationData(tokenizationType);
 
@@ -551,10 +556,12 @@ namespace GlobalPayments.Api.Gateways {
                 switch (tokenOperationType) {
                     case TokenizationOperationType.Tokenize:
                     case TokenizationOperationType.UpdateToken:
+                    case TokenizationOperationType.SingleUseToken:
                        forwardingData.TokenizedFieldMatrix = TokenizationFieldMatrix.AccountNumber;
                         break;
                     case TokenizationOperationType.DeTokenize:
-                       forwardingData.TokenizedFieldMatrix = TokenizationFieldMatrix.TokenizedData;
+                    case TokenizationOperationType.SingleToMultiUseToken:
+                        forwardingData.TokenizedFieldMatrix = TokenizationFieldMatrix.TokenizedData;
                        break;
                     default:
                         forwardingData.TokenizedFieldMatrix = TokenizationFieldMatrix.TokenizedData;
@@ -1591,7 +1598,7 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 }
             }
-
+            
             return result;
         }
 

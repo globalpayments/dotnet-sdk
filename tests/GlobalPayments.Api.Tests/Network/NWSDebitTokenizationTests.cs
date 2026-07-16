@@ -76,6 +76,46 @@ namespace GlobalPayments.Api.Tests.Network {
             };
         }
 
+        #region SingleUseMultiUseToken
+        [TestMethod]
+        public void Test_File_Action_Mastercard_SingleUseToken() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleUseToken;
+            DebitTrackData track = new DebitTrackData();
+            track.Value = "4355567063338=2012101HJNw/ewskBgnZqkL";
+            track.PinBlock = "62968D2481D231E1A504010024A00014";
+            track.TokenizationData = "4355567063338";
+            Transaction response = track.FileAction()
+                        .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_CombinedFile_Action_Mastercard_SingleToMultiUseToken() {
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleToMultiUseToken;
+            DebitTrackData track = new DebitTrackData();
+            track.TokenizationData = "4355567063338";
+            Transaction response = track.FileAction()
+                    .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("000", response.ResponseCode);
+        }
+
+        [TestMethod]
+        public void Test_SingleToMultiUseToken_Negative_InvalidToken() {
+            // Attempt to swap an invalid single use token for a multi use token
+            acceptorConfig.TokenizationOperationType = TokenizationOperationType.SingleToMultiUseToken;
+
+            DebitTrackData track = new DebitTrackData();
+            track.TokenizationData = "INVALID_SINGLE_USE_TOKEN";
+
+            Transaction response = card.FileAction().Execute();
+
+            Assert.IsNotNull(response);
+            Assert.AreNotEqual("000", response.ResponseCode, "Expected failure when using invalid single use token");
+        }
+        #endregion
+
         [TestMethod]
         public void Test_File_Action() {
             acceptorConfig.TokenizationOperationType = TokenizationOperationType.Tokenize;
@@ -197,6 +237,5 @@ namespace GlobalPayments.Api.Tests.Network {
             // check response
             Assert.Equals("400", reversal.ResponseCode);
         }
-
     }
 }
