@@ -1,6 +1,19 @@
 # Changelog
 
-## Latest - v11.2.0 (07/16/26)
+## Latest - v11.2.1 (07/23/26)
+
+### Enhancement
+- [Portico] - Added `AuthorizationBuilder.WithDirectMarketInvoiceNumber(string)` to set `DirectMktData/DirectMktInvoiceNbr` (max 25 chars) independently of `WithInvoiceNumber`. This is backward compatible: on eCommerce transactions `WithInvoiceNumber(string)` still populates both `AdditionalTxnFields/InvoiceNbr` (max 60 chars) and `DirectMktInvoiceNbr` as before, but `WithDirectMarketInvoiceNumber(string)` now overrides only the direct-market field. This lets callers send a longer invoice number (> 25 chars) via `WithInvoiceNumber` while supplying a separate short value for `DirectMktInvoiceNbr`, avoiding the silent truncation the direct-market field would otherwise cause.
+
+  Per the Portico SOAP schema these are two distinct fields:
+
+  | Field | Schema type | Max length | Purpose (per schema) |
+  |-------|-------------|-----------|----------------------|
+  | `AdditionalTxnFields/InvoiceNbr` | restriction of `xs:string` | 60 | Invoice number for **non-eCommerce** transactions |
+  | `DirectMktData/DirectMktInvoiceNbr` | `directMktInvoiceNbrType` | 25 | Direct-market / **eCommerce** invoice number |
+
+
+## v11.2.0 (07/16/26)
 
 ### Enhancement
 - [NWS] - Added tokenization support for Operation Types 5 (Single-Use Token) and 6 (Convert to Multi-Use Token), making CVV mandatory for all single-use token requests.

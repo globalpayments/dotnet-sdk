@@ -185,6 +185,12 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         internal string InvoiceNumber { get; set; }
         /// <summary>
+        /// Gets or sets the direct-market invoice number used for eCommerce/MOTO
+        /// transactions (Portico <c>DirectMktData/DirectMktInvoiceNbr</c>, max 25 chars).
+        /// When null, the connector falls back to <see cref="InvoiceNumber"/> for backward compatibility.
+        /// </summary>
+        internal string InvoiceNumberDirectMarket { get; set; }
+        /// <summary>
         /// Gets or sets a value indicating whether Level II purchasing card data is present.
         /// </summary>
         internal bool Level2Request { get; set; }
@@ -908,10 +914,31 @@ namespace GlobalPayments.Api.Builders {
         /// <summary>
         /// Sets the invoice number; where applicable.
         /// </summary>
+        /// <remarks>
+        /// On Portico this populates <c>AdditionalTxnFields/InvoiceNbr</c> (max 60 chars). On eCommerce
+        /// transactions it also populates <c>DirectMktData/DirectMktInvoiceNbr</c> (max 25 chars) unless
+        /// <see cref="WithDirectMarketInvoiceNumber"/> is called, which overrides the direct-market value.
+        /// </remarks>
         /// <param name="value">The invoice number</param>
         /// <returns>AuthorizationBuilder</returns>
         public AuthorizationBuilder WithInvoiceNumber(string value) {
             InvoiceNumber = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the direct-market invoice number for eCommerce/MOTO transactions.
+        /// </summary>
+        /// <remarks>
+        /// On Portico this populates <c>DirectMktData/DirectMktInvoiceNbr</c> (max 25 chars), overriding
+        /// the value from <see cref="WithInvoiceNumber"/> for the direct-market field. Use this when the
+        /// invoice number exceeds 25 chars (which would otherwise be truncated) or when the direct-market
+        /// invoice number differs from <c>AdditionalTxnFields/InvoiceNbr</c>.
+        /// </remarks>
+        /// <param name="value">The direct-market invoice number (≤ 25 chars).</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithDirectMarketInvoiceNumber(string value) {
+            InvoiceNumberDirectMarket = value;
             return this;
         }
 

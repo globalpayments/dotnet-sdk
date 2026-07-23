@@ -2,6 +2,7 @@
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.TestData;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -14,7 +15,8 @@ namespace GlobalPayments.Api.Tests.Portico {
         public PorticoEcommerceTests() {
             ServicesContainer.ConfigureService(new PorticoConfig {
                 SecretApiKey = "skapi_cert_MZ64BQBBoHAA5N2pWWCvZ7c1HTKDM2g_4HsnyC6rIQ",
-                IsSafDataSupported = true
+                IsSafDataSupported = true,
+                RequestLogger = new RequestConsoleLogger()
             });
 
             card = TestCards.VisaManual();
@@ -69,6 +71,70 @@ namespace GlobalPayments.Api.Tests.Portico {
                     ShipMonth = 12
                 })
                 .WithInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        // ── NEW: InvoiceNumber field tests ───────────────────────────────────────────
+        //
+        // Portico has TWO distinct invoice-number fields. These tests document the recommended builder
+        // method for each transaction channel and the element it targets.
+        //
+        //   Channel                            Recommended builder method        Portico element                      Max
+        //   ---------------------------------  --------------------------------  -----------------------------------  ----
+        //   eCommerce (EcommerceInfo present)  WithDirectMarketInvoiceNumber()   DirectMktData/DirectMktInvoiceNbr    25
+        //   non-eCommerce (no EcommerceInfo)   WithInvoiceNumber()               AdditionalTxnFields/InvoiceNbr       60
+        //
+        // Backward-compatibility note (not strict routing): on eCommerce transactions WithInvoiceNumber
+        // ALSO populates DirectMktInvoiceNbr by default (legacy behavior). WithDirectMarketInvoiceNumber
+        // overrides only the direct-market field, so callers can send a short (<= 25) value there while
+        // keeping a longer value in AdditionalTxnFields/InvoiceNbr.
+        //
+        // Per the Portico SOAP schema, AdditionalTxnFields/InvoiceNbr is documented as being for
+        // transactions that are NOT eCommerce; the direct-marketing group carries the eCommerce value.
+        //
+        // Schema references:
+        //   https://cert.api2.heartlandportico.com/Gateway/PorticoSOAPSchema/build/Default/PosGateway_xsd~c-AdditionalTxnFieldsType~e-InvoiceNbr.html
+        //   https://cert.api2.heartlandportico.com/Gateway/PorticoSOAPSchema/build/Default/PosGateway_xsd~c-DirectMktDataType~e-DirectMktInvoiceNbr.html
+
+        /// <summary>
+        /// eCommerce sale: invoice number supplied via WithDirectMarketInvoiceNumber is emitted in DirectMktData/DirectMktInvoiceNbr; AdditionalTxnFields/InvoiceNbr is absent.
+        /// </summary>
+        [TestMethod]
+        public void EcomSale_WithDirectMarketInvoiceNumber_PopulatesDirectMktInvoiceNbr() {
+            // Scenario: eCommerce transaction — EcommerceInfo is present.
+            // Expectation: the invoice number is supplied via WithDirectMarketInvoiceNumber and is emitted
+            //   in DirectMktData/DirectMktInvoiceNbr (max 25). WithInvoiceNumber is NOT called, so the
+            //   AdditionalTxnFields/InvoiceNbr element is not produced.
+            // This is the recommended method for eCommerce/direct-marketing invoice numbers.
+            Transaction response = card.Charge(11m)
+                .WithCurrency("USD")
+                .WithEcommerceInfo(new EcommerceInfo {
+                    ShipDay = 25,
+                    ShipMonth = 12
+                })
+                .WithDirectMarketInvoiceNumber("1234567890")
+                .WithAllowDuplicates(true)
+                .Execute();
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode);
+        }
+
+        /// <summary>
+        /// Non-eCommerce sale: invoice number supplied via WithInvoiceNumber is emitted in AdditionalTxnFields/InvoiceNbr; no DirectMktData block is produced because EcommerceInfo is null.
+        /// </summary>
+        [TestMethod]
+        public void CreditSale_WithInvoiceNumber_NoEcommerceInfo_PopulatesInvoiceNbrOnly() {
+            // Scenario: non-eCommerce transaction — no EcommerceInfo is set.
+            // Expectation: the invoice number is supplied via WithInvoiceNumber and is emitted in
+            //   AdditionalTxnFields/InvoiceNbr (max 60). Because EcommerceInfo is null, no DirectMktData
+            //   block (and therefore no DirectMktInvoiceNbr) is produced.
+            // Schema: InvoiceNbr is "Used to log the invoice number on transactions that are not eCommerce."
+            Transaction response = card.Charge(15m)
+                .WithCurrency("USD")
+                .WithInvoiceNumber("INV-NON-ECOM-001")
                 .WithAllowDuplicates(true)
                 .Execute();
             Assert.IsNotNull(response);

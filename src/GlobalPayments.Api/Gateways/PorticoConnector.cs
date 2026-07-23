@@ -388,6 +388,9 @@ namespace GlobalPayments.Api.Gateways {
                 }
 
                 // details
+                // AdditionalTxnFields/InvoiceNbr (max 60) carries the invoice number for transactions
+                // that are NOT eCommerce (per the Portico SOAP schema). It is emitted here from
+                // WithInvoiceNumber whenever CustomerId, Description, or InvoiceNumber is supplied.
                 if (!string.IsNullOrEmpty(builder.CustomerId) || !string.IsNullOrEmpty(builder.Description) || !string.IsNullOrEmpty(builder.InvoiceNumber)) {
                     var addons = et.SubElement(block1, "AdditionalTxnFields");
                     et.SubElement(addons, "CustomerID", builder.CustomerId);
@@ -398,9 +401,23 @@ namespace GlobalPayments.Api.Gateways {
                 // ecommerce info
                 if (builder.EcommerceInfo != null) {
                     et.SubElement(block1, "Ecommerce", builder.EcommerceInfo.Channel.ToString());
-                    if (!string.IsNullOrEmpty(builder.InvoiceNumber) || builder.EcommerceInfo.ShipMonth != default(int)) {
+                    // DirectMktData/DirectMktInvoiceNbr (max 25) is the eCommerce / direct-marketing
+                    // invoice number and is only relevant when EcommerceInfo is present.
+                    //
+                    // Source precedence (backward compatible):
+                    //   1. WithDirectMarketInvoiceNumber (InvoiceNumberDirectMarket) when the caller set it
+                    //      explicitly — this is the recommended method for eCommerce and lets a caller send a
+                    //      short (<= 25) value distinct from a longer AdditionalTxnFields/InvoiceNbr.
+                    //   2. Otherwise fall back to WithInvoiceNumber (InvoiceNumber) so existing callers that
+                    //      only set the invoice number keep their previous behavior (value still lands in
+                    //      DirectMktInvoiceNbr on eCommerce transactions).
+                    //
+                    // The DirectMktData block is emitted when either the resolved invoice number is present
+                    // or a ship month was supplied (ship day/month are part of the same direct-marketing group).
+                    var directMktInvoiceNbr = builder.InvoiceNumberDirectMarket ?? builder.InvoiceNumber;
+                    if (!string.IsNullOrEmpty(directMktInvoiceNbr) || builder.EcommerceInfo.ShipMonth != default(int)) {
                         var direct = et.SubElement(block1, "DirectMktData");
-                        et.SubElement(direct, "DirectMktInvoiceNbr").Text(builder.InvoiceNumber);
+                        et.SubElement(direct, "DirectMktInvoiceNbr").Text(directMktInvoiceNbr);
                         et.SubElement(direct, "DirectMktShipDay").Text(builder.EcommerceInfo.ShipDay.ToString());
                         et.SubElement(direct, "DirectMktShipMonth").Text(builder.EcommerceInfo.ShipMonth.ToString());
                     }
