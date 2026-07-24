@@ -23,10 +23,16 @@ namespace GlobalPayments.Api.Gateways {
         public string ServiceUrl { get; set; }
 
         public Dictionary<string, string> DynamicHeaders;
-       
+
         public Entities.Environment Environment { get; set; }
 
         public Dictionary<string, string> MaskedRequestData;
+
+        // Guards all access to the shared Headers dictionary. The connector is reused as a
+        // singleton across concurrent callers, so header reads (request building) and writes
+        // (e.g. the Authorization token refresh) must be serialized to avoid corrupting the
+        // dictionary or leaking a header across threads.
+        protected readonly object _headerLock = new object();
 
         public Gateway(string contentType) {
             Headers = new Dictionary<string, string>();
@@ -56,7 +62,7 @@ namespace GlobalPayments.Api.Gateways {
         }
                 
 
-        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false) {
+        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false, Dictionary<string, string> perRequestHeaders = null) {
             HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
 
@@ -64,13 +70,30 @@ namespace GlobalPayments.Api.Gateways {
 
             var queryString = BuildQueryString(queryStringParams);
             HttpRequestMessage request = new HttpRequestMessage(verb, ServiceUrl + endpoint + queryString);
-            foreach (var item in Headers) {
+
+            // Take a snapshot of the shared Headers under lock before enumerating. The connector is
+            // reused as a singleton, so another thread may be rewriting a header (e.g. Authorization
+            // during a token refresh) while this request is being built; enumerating the live
+            // dictionary would otherwise throw "collection was modified" or read a torn state.
+            KeyValuePair<string, string>[] headerSnapshot;
+            lock (_headerLock) {
+                headerSnapshot = Headers.ToArray();
+            }
+            foreach (var item in headerSnapshot) {
                 request.Headers.Add(item.Key, item.Value);
             }
 
-            if(DynamicHeaders != null) {
-                foreach (var item in DynamicHeaders)
-                {
+            if (DynamicHeaders != null) {
+                foreach (var item in DynamicHeaders) {
+                    request.Headers.Add(item.Key, item.Value);
+                }
+            }
+
+            // Per-request headers (e.g. x-gp-idempotency) are applied only to this local request,
+            // never written back to the shared Headers dictionary, so concurrent callers can no
+            // longer overwrite or drop one another's idempotency key.
+            if (perRequestHeaders != null) {
+                foreach (var item in perRequestHeaders) {
                     request.Headers.Add(item.Key, item.Value);
                 }
             }

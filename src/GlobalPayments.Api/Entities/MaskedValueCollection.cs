@@ -18,26 +18,35 @@ namespace GlobalPayments.Api.Entities {
 
     public class MaskedValueCollection {
         private Dictionary<string, string> _maskedValues;
+        private readonly object _lock = new object();
 
         public Dictionary<string, string> ToDictionary() {
-            return _maskedValues;
+            // Return a snapshot copy rather than the live dictionary so callers can safely read
+            // it while another thread continues to add to or dispose of this collection.
+            lock (_lock) {
+                return _maskedValues == null
+                    ? null
+                    : new Dictionary<string, string>(_maskedValues);
+            }
         }
 
         public void DisposeMaskValues() {
-            if (_maskedValues != null) {
+            lock (_lock) {
                 _maskedValues = null;
             }
         }
 
         public bool AddValue(MaskedValueEntry entry) {
-            if (_maskedValues == null) {
-                _maskedValues = new Dictionary<string, string>();
+            lock (_lock) {
+                if (_maskedValues == null) {
+                    _maskedValues = new Dictionary<string, string>();
+                }
+                if (!ValidateValue(entry.Value) || _maskedValues.ContainsKey(entry.Key)) {
+                    return false;
+                }
+                _maskedValues[entry.Key] = Disguise(entry.Value, entry.NumTrailingChars, entry.NumLeadingChars);
+                return true;
             }
-            if (!ValidateValue(entry.Value) || _maskedValues.ContainsKey(entry.Key)) {
-                return false;
-            }
-            _maskedValues[entry.Key] = Disguise(entry.Value, entry.NumTrailingChars, entry.NumLeadingChars);
-            return true;
         }
 
         private bool ValidateValue(string value) {

@@ -27,11 +27,13 @@ namespace GlobalPayments.Api.Gateways {
             }
             internal set {
                 _AccessToken = value;
-                if (string.IsNullOrEmpty(_AccessToken)) {
-                    Headers.Remove("Authorization");
-                }
-                else {
-                    Headers["Authorization"] = $"Bearer {_AccessToken}";
+                lock (_headerLock) {
+                    if (string.IsNullOrEmpty(_AccessToken)) {
+                        Headers.Remove("Authorization");
+                    }
+                    else {
+                        Headers["Authorization"] = $"Bearer {_AccessToken}";
+                    }
                 }
             }
         }
@@ -175,15 +177,17 @@ namespace GlobalPayments.Api.Gateways {
         }
 
         private string DoTransactionWithIdempotencyKey(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null) {
+            // Pass the idempotency key as a per-request header rather than mutating the shared
+            // Headers dictionary. The connector is a singleton, so writing the key onto Headers
+            // allowed concurrent callers to overwrite or remove one another's key, which caused
+            // idempotent requests to be sent with the wrong key or none at all.
+            Dictionary<string, string> perRequestHeaders = null;
             if (!string.IsNullOrEmpty(idempotencyKey)) {
-                Headers[IDEMPOTENCY_HEADER] = idempotencyKey;
+                perRequestHeaders = new Dictionary<string, string> {
+                    { IDEMPOTENCY_HEADER, idempotencyKey }
+                };
             }
-            try {
-                return base.DoTransaction(verb, endpoint, data, queryStringParams);
-            }
-            finally {
-                Headers.Remove(IDEMPOTENCY_HEADER);
-            }
+            return base.DoTransaction(verb, endpoint, data, queryStringParams, perRequestHeaders: perRequestHeaders);
         }
 
         public string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null) {

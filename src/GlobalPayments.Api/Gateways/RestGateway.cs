@@ -9,11 +9,11 @@ namespace GlobalPayments.Api.Gateways {
     internal abstract class RestGateway : Gateway {
         public RestGateway() : base("application/json") {}
 
-        public virtual string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, bool isCharSet = true) {
+        public virtual string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, bool isCharSet = true, Dictionary<string, string> perRequestHeaders = null) {
             if (Request.MaskedValues != null){
                 MaskedRequestData = Request.MaskedValues;
             }
-            var response = SendRequest(verb, endpoint, data, queryStringParams, isCharSet : isCharSet);
+            var response = SendRequest(verb, endpoint, data, queryStringParams, isCharSet : isCharSet, perRequestHeaders : perRequestHeaders);
             DisposeMaskedValues();
             return HandleResponse(response);
         }
