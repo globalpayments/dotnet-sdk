@@ -1,7 +1,5 @@
 ﻿using GlobalPayments.Api.Entities.Enums;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 /// <summary>
 /// Contains entity classes and enumerations related to Pay By Link payment functionality,
@@ -93,5 +91,20 @@ namespace GlobalPayments.Api.Entities {
         /// challenge request indicators, exemption status, and storage mode.
         /// </summary>
         public PaymentMethodConfiguration Configuration { get; set; }
+
+        /// <summary>
+        /// The label displayed on the submit button of the hosted payment page.
+        /// </summary>
+        public string SubmitButtonLabel { get; set; }
+
+        /// <summary>
+        /// The surcharges applied to the order, broken down by card type.
+        /// </summary>
+        public Surcharge[] Surcharges { get; set; }
+
+        /// <summary>
+        /// Controls how the hosted payment page is embedded within an iframe on the merchant's site.
+        /// </summary>
+        public DisplayConfiguration DisplayConfiguration { get; set; }
     }
 }

@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v11.2.1 (07/23/26)
+## Latest - v11.3.0 (07/30/26)
+
+### Enhancement
+- [GPAPI] - Added Hosted Payment Page (HPP) Pay By Link support for `submit_button_label`, `display_configuration` (iframe domains), order-level `surcharge`, plus `entry_mode` and `digital_wallets` (including Click to Pay) in the payment method configuration. The link-create response now maps the echoed order-level `surcharge` back onto `PayByLinkResponse.Surcharges`.
+
+
+## v11.2.1 (07/23/26)
 
 ### Enhancement
 - [Portico] - Added `AuthorizationBuilder.WithDirectMarketInvoiceNumber(string)` to set `DirectMktData/DirectMktInvoiceNbr` (max 25 chars) independently of `WithInvoiceNumber`. This is backward compatible: on eCommerce transactions `WithInvoiceNumber(string)` still populates both `AdditionalTxnFields/InvoiceNbr` (max 60 chars) and `DirectMktInvoiceNbr` as before, but `WithDirectMarketInvoiceNumber(string)` now overrides only the direct-market field. This lets callers send a longer invoice number (> 25 chars) via `WithInvoiceNumber` while supplying a separate short value for `DirectMktInvoiceNbr`, avoiding the silent truncation the direct-market field would otherwise cause.

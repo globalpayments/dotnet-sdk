@@ -404,6 +404,7 @@ namespace GlobalPayments.Api.Mapping {
                 response.Amount = transaction.GetValue<int>("amount");
                 response.Country = transaction.GetValue<string>("country");
                 response.AllowedPaymentMethods = GetAllowedPaymentMethods(transaction);
+                response.Transactions = GetPayByLinkTransactions(transaction);
             }
 
             // Map Order and nested Transaction Configuration if present
@@ -412,6 +413,7 @@ namespace GlobalPayments.Api.Mapping {
                 response.OrderAmount = order.GetValue<decimal>("amount");
                 response.OrderCurrency = order.GetValue<string>("currency");
                 response.OrderReference = order.GetValue<string>("reference");
+                response.Surcharges = GetSurcharges(order);
 
                 var transactionConfig = order.Get("transaction_configuration");
 
@@ -651,6 +653,39 @@ namespace GlobalPayments.Api.Mapping {
                 return (PayByLinkType)Enum.Parse(typeof(PayByLinkType), doc.GetValue<string>("type").ToUpper());                            
             }
             return null;
+        }
+
+        private static Surcharge[] GetSurcharges(JsonDoc order)
+        {
+            if (!order.Has("surcharge")) {
+                return null;
+            }
+
+            var list = new List<Surcharge>();
+            foreach (var item in order.GetArray<JsonDoc>("surcharge") ?? Enumerable.Empty<JsonDoc>()) {
+                var surcharge = new Surcharge();
+                if (item.Has("card_type")) {
+                    surcharge.CardType = EnumConverter.FromMapping<SurchargeCardType>(Target.GP_API, item.GetValue<string>("card_type"));
+                }
+                if (item.Has("amount")) {
+                    surcharge.Amount = item.GetValue<string>("amount").ToAmount();
+                }
+                list.Add(surcharge);
+            }
+            return list.ToArray();
+        }
+
+        private static List<TransactionSummary> GetPayByLinkTransactions(JsonDoc transactions)
+        {
+            if (!transactions.Has("transaction_list")) {
+                return null;
+            }
+
+            var list = new List<TransactionSummary>();
+            foreach (var transaction in transactions.GetArray<JsonDoc>("transaction_list") ?? Enumerable.Empty<JsonDoc>()) {
+                list.Add(CreateTransactionSummary(transaction));
+            }
+            return list;
         }
 
         private static PayByLinkStatus? GetPayByLinkStatus(JsonDoc doc) 

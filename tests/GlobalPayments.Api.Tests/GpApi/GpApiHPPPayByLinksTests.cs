@@ -11,6 +11,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
     /// </summary>
     [TestClass]
     public class GpApiHPPPayByLinksTests : BaseGpApiTests {
+        private const string EuConfigName = "EuConfig";
         private Address shippingAddress;
         private Address billingAddress;
         private Customer newCustomer;
@@ -20,8 +21,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestInitialize]
         public void TestInitialize() {
             ServicesContainer.RemoveConfig();
-            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            ServicesContainer.RemoveConfig(EuConfigName);
 
+            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             gpApiConfig.Country = "US";
             gpApiConfig.AppId = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
             gpApiConfig.AppKey = "cQOKHoAAvNIcEN8s";
@@ -30,6 +32,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 TransactionProcessingAccountName = "GPECOM_HPP_Transaction_Processing"
             };
             ServicesContainer.ConfigureService(gpApiConfig);
+
+            var euConfig = GpApiConfigSetup(EuHppAppId, EuHppAppKey, Channel.CardNotPresent);
+            euConfig.Country = "US";
+            euConfig.ServiceUrl = ServiceEndpoints.GP_API_EU_TEST;
+            euConfig.AccessTokenInfo = new AccessTokenInfo {
+                TransactionProcessingAccountName = "GPECOM_Transaction_Processing_CNP"
+            };
+            ServicesContainer.ConfigureService(euConfig, EuConfigName);
 
             billingAddress = new Address {
                 StreetAddress1 = "8 MY ROAD",
@@ -67,6 +77,11 @@ namespace GlobalPayments.Api.Tests.GpApi {
             };
         }
 
+        #region Positive Tests
+
+        /// <summary>
+        /// Creates an HPP Pay By Link for a new customer and verifies the link is active.
+        /// </summary>
         [TestMethod]
         public void CreateHPPPayByLink_WithNewCustomer_ReturnsSuccess() {
 
@@ -111,6 +126,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response.PayByLinkResponse.Id);
         }
 
+        /// <summary>
+        /// Creates an HPP Pay By Link for an existing active customer and verifies the link is active.
+        /// </summary>
         [TestMethod]
         public void CreateHPPPayByLink_WithExistingActiveCustomer_ReturnsSuccess() {
 
@@ -158,5 +176,424 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(response.PayByLinkResponse.Id);
 
         }
+
+        /// <summary>
+        /// Creates an HPP Pay By Link with Click to Pay as the only enabled digital wallet provider.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithClickToPay_ReturnsSuccess() {
+
+            var payByLink = new PayByLinkData() {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = false,
+                ShippingAmount = 1,
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    EntryMode = PaymentEntryMode.Ecom,
+                    DigitalWalletProviders = new DigitalWalletProvider[] {
+                        DigitalWalletProvider.CLICK_TO_PAY
+                    }
+                },
+            };
+
+            var response = PayByLinkService.Create(payByLink, 10)
+                .WithCurrency("USD")
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithCustomerData(newCustomer)
+                .WithDescription("HPP_Links_Test")
+                .WithPhoneNumber("99", "1801555999", PhoneNumberType.Shipping)
+                .Execute(EuConfigName);
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayByLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.IsNotNull(response.PayByLinkResponse.Url);
+            Assert.IsNotNull(response.PayByLinkResponse.Id);
+        }
+
+        /// <summary>
+        /// Creates an HPP Pay By Link with Apple Pay and Google Pay digital wallets (no Click to Pay).
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithApplePayAndGooglePayNoClickToPay_ReturnsSuccess() {
+
+            var payByLink = new PayByLinkData() {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = true,
+                ShippingAmount = 1,
+                SubmitButtonLabel = "SUBMIT NOW",
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.CHALLENGE_MANDATED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.ALWAYS,
+                    EntryMode = PaymentEntryMode.Ecom,
+                    DigitalWalletProviders = new DigitalWalletProvider[] {
+                        DigitalWalletProvider.GOOGLEPAY,
+                        DigitalWalletProvider.APPLEPAY
+                    }
+                },
+            };
+
+            var response = PayByLinkService.Create(payByLink, 10)
+                .WithCurrency("USD")
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithCustomerData(newCustomer)
+                .WithDescription("HPP_Links_Test")
+                .WithPhoneNumber("99", "1801555999", PhoneNumberType.Shipping)
+                .Execute(EuConfigName);
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayByLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.IsNotNull(response.PayByLinkResponse.Url);
+            Assert.IsNotNull(response.PayByLinkResponse.Id);
+        }
+
+        /// <summary>
+        /// Creates an HPP Pay By Link with digital wallets (including Click to Pay) and iframe display configuration.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithDigitalWalletsAndDisplayConfig_ReturnsSuccess() {
+
+            var payByLink = new PayByLinkData() {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = true,
+                ShippingAmount = 1,
+                SubmitButtonLabel = "SUBMIT NOW",
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                DisplayConfiguration = new DisplayConfiguration {
+                    IframeDimensionsDomain = "https://www.example.com",
+                    IframeResponseDomain = "https://www.example.com"
+                },
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.CHALLENGE_MANDATED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.ALWAYS,
+                    EntryMode = PaymentEntryMode.Ecom,
+                    DigitalWalletProviders = new DigitalWalletProvider[] {
+                        DigitalWalletProvider.GOOGLEPAY,
+                        DigitalWalletProvider.APPLEPAY,
+                        DigitalWalletProvider.CLICK_TO_PAY
+                    }
+                },
+            };
+
+            var response = PayByLinkService.Create(payByLink, 10)
+                .WithCurrency("USD")
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithCustomerData(newCustomer)
+                .WithDescription("HPP_Links_Test")
+                .WithPhoneNumber("99", "1801555999", PhoneNumberType.Shipping)
+                .Execute(EuConfigName);
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayByLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.IsNotNull(response.PayByLinkResponse.Url);
+            Assert.IsNotNull(response.PayByLinkResponse.Id);
+        }
+
+        /// <summary>
+        /// Creates an HPP Pay By Link with order surcharges and digital wallets, using valid surcharge amounts.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithSurchargeAndDigitalWallets_ReturnsSuccess() {
+
+            var payByLink = new PayByLinkData() {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = false,
+                ShippingAmount = 1,
+                IsDccEnabled = true,
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Surcharges = new Surcharge[] {
+                    new Surcharge { CardType = SurchargeCardType.DEBIT, Amount = 1000.01m },
+                    new Surcharge { CardType = SurchargeCardType.CREDIT, Amount = 1000.02m },
+                    new Surcharge { CardType = SurchargeCardType.COMMERCIAL, Amount = 1000.03m }
+                },
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    EntryMode = PaymentEntryMode.Ecom,
+                    DigitalWalletProviders = new DigitalWalletProvider[] {
+                        DigitalWalletProvider.GOOGLEPAY,
+                        DigitalWalletProvider.APPLEPAY,
+                        DigitalWalletProvider.CLICK_TO_PAY
+                    }
+                },
+            };
+
+            var response = PayByLinkService.Create(payByLink, 1000)
+                .WithCurrency("USD")
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithCustomerData(newCustomer)
+                .WithDescription("HPP_Links_Test")
+                .WithPhoneNumber("99", "1801555999", PhoneNumberType.Shipping)
+                .Execute(EuConfigName);
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayByLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.IsNotNull(response.PayByLinkResponse.Url);
+            Assert.IsNotNull(response.PayByLinkResponse.Id);
+            Assert.IsNotNull(response.PayByLinkResponse.Surcharges);
+            Assert.AreEqual(3, response.PayByLinkResponse.Surcharges.Length);
+            Assert.AreEqual(SurchargeCardType.DEBIT, response.PayByLinkResponse.Surcharges[0].CardType);
+            Assert.AreEqual(1000.01m, response.PayByLinkResponse.Surcharges[0].Amount);
+            Assert.AreEqual(SurchargeCardType.CREDIT, response.PayByLinkResponse.Surcharges[1].CardType);
+            Assert.AreEqual(1000.02m, response.PayByLinkResponse.Surcharges[1].Amount);
+            Assert.AreEqual(SurchargeCardType.COMMERCIAL, response.PayByLinkResponse.Surcharges[2].CardType);
+            Assert.AreEqual(1000.03m, response.PayByLinkResponse.Surcharges[2].Amount);
+        }
+
+        /// <summary>
+        /// Creates an HPP Pay By Link exercising the full request: surcharges, digital wallets,
+        /// submit button label, and iframe display configuration.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithSurchargeDigitalWalletsAndDisplayConfig_ReturnsSuccess() {
+
+            var payByLink = new PayByLinkData() {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = true,
+                ShippingAmount = 1,
+                IsDccEnabled = true,
+                SubmitButtonLabel = "SUBMIT NOW",
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                DisplayConfiguration = new DisplayConfiguration {
+                    IframeDimensionsDomain = "https://www.example.com",
+                    IframeResponseDomain = "https://www.example.com"
+                },
+                Surcharges = new Surcharge[] {
+                    new Surcharge { CardType = SurchargeCardType.DEBIT, Amount = 1000.01m },
+                    new Surcharge { CardType = SurchargeCardType.CREDIT, Amount = 1000.02m },
+                    new Surcharge { CardType = SurchargeCardType.COMMERCIAL, Amount = 1000.03m }
+                },
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    EntryMode = PaymentEntryMode.Ecom,
+                    DigitalWalletProviders = new DigitalWalletProvider[] {
+                        DigitalWalletProvider.GOOGLEPAY,
+                        DigitalWalletProvider.APPLEPAY,
+                        DigitalWalletProvider.CLICK_TO_PAY
+                    }
+                },
+            };
+
+            var response = PayByLinkService.Create(payByLink, 1000)
+                .WithCurrency("USD")
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithAddress(shippingAddress, AddressType.Shipping)
+                .WithAddress(billingAddress, AddressType.Billing)
+                .WithCustomerData(newCustomer)
+                .WithDescription("HPP_Links_Test")
+                .WithPhoneNumber("99", "1801555999", PhoneNumberType.Shipping)
+                .Execute(EuConfigName);
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayByLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.IsNotNull(response.PayByLinkResponse.Url);
+            Assert.IsNotNull(response.PayByLinkResponse.Id);
+            Assert.IsNotNull(response.PayByLinkResponse.Surcharges);
+            Assert.AreEqual(3, response.PayByLinkResponse.Surcharges.Length);
+            Assert.AreEqual(SurchargeCardType.DEBIT, response.PayByLinkResponse.Surcharges[0].CardType);
+            Assert.AreEqual(1000.01m, response.PayByLinkResponse.Surcharges[0].Amount);
+            Assert.AreEqual(SurchargeCardType.CREDIT, response.PayByLinkResponse.Surcharges[1].CardType);
+            Assert.AreEqual(1000.02m, response.PayByLinkResponse.Surcharges[1].Amount);
+            Assert.AreEqual(SurchargeCardType.COMMERCIAL, response.PayByLinkResponse.Surcharges[2].CardType);
+            Assert.AreEqual(1000.03m, response.PayByLinkResponse.Surcharges[2].Amount);
+            Assert.IsNotNull(response.PayByLinkResponse.Transactions);
+            Assert.IsTrue(response.PayByLinkResponse.Transactions.Count > 0);
+            Assert.IsNotNull(response.PayByLinkResponse.Transactions[0].TransactionId);
+            Assert.IsNotNull(response.PayByLinkResponse.Transactions[0].TransactionStatus);
+        }
+
+        #endregion
+
+        #region Negative Tests
+
+        /// <summary>
+        /// Verifies that a surcharge amount below the order total is rejected with a GatewayException.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithInvalidSurchargeAndDigitalWallets_ThrowsGatewayException() {
+
+            var payByLink = new PayByLinkData() {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = false,
+                ShippingAmount = 1,
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Surcharges = new Surcharge[] {
+                    new Surcharge { CardType = SurchargeCardType.DEBIT, Amount = 1 },
+                    new Surcharge { CardType = SurchargeCardType.CREDIT, Amount = 2 },
+                    new Surcharge { CardType = SurchargeCardType.COMMERCIAL, Amount = 3 }
+                },
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    EntryMode = PaymentEntryMode.Ecom,
+                    DigitalWalletProviders = new DigitalWalletProvider[] {
+                        DigitalWalletProvider.GOOGLEPAY,
+                        DigitalWalletProvider.APPLEPAY,
+                        DigitalWalletProvider.CLICK_TO_PAY
+                    }
+                },
+            };
+
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                PayByLinkService.Create(payByLink, 10)
+                    .WithCurrency("USD")
+                    .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                    .WithAddress(shippingAddress, AddressType.Shipping)
+                    .WithAddress(billingAddress, AddressType.Billing)
+                    .WithCustomerData(newCustomer)
+                    .WithDescription("HPP_Links_Test")
+                    .WithPhoneNumber("99", "1801555999", PhoneNumberType.Shipping)
+                    .Execute(EuConfigName);
+            });
+
+            Assert.AreEqual("UNKNOWN_RESPONSE", ex.ResponseCode);
+            Assert.AreEqual("50012", ex.ResponseMessage);
+            Assert.AreEqual("Status Code: NotImplemented - Invalid surcharge amount configured. Please contact the merchant.",
+                ex.Message);
+        }
+
+        /// <summary>
+        /// Verifies that an incompatible Click to Pay configuration (APM-only method with USD) is rejected
+        /// with a GatewayException.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithClickToPay_InvalidConfiguration_ThrowsGatewayException() {
+
+            var payByLink = new PayByLinkData() {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.APM
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = false,
+                ShippingAmount = 1,
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    EntryMode = PaymentEntryMode.Ecom,
+                    DigitalWalletProviders = new DigitalWalletProvider[] {
+                        DigitalWalletProvider.CLICK_TO_PAY
+                    }
+                },
+            };
+
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                PayByLinkService.Create(payByLink, 10)
+                    .WithCurrency("USD")
+                    .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                    .WithAddress(shippingAddress, AddressType.Shipping)
+                    .WithAddress(billingAddress, AddressType.Billing)
+                    .WithCustomerData(newCustomer)
+                    .WithDescription("HPP_Links_Test")
+                    .WithPhoneNumber("99", "1801555999", PhoneNumberType.Shipping)
+                    .Execute(EuConfigName);
+            });
+
+            Assert.AreEqual("UNKNOWN_RESPONSE", ex.ResponseCode);
+            Assert.AreEqual("50012", ex.ResponseMessage);
+            Assert.AreEqual("Status Code: NotImplemented - Currency USD not allowed. Please contact merchant.",
+                ex.Message);
+        }
+
+        #endregion
     }
 }

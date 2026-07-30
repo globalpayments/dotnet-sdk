@@ -136,6 +136,16 @@ namespace GlobalPayments.Api.Entities {
         public string OrderReference { get; set; }
 
         /// <summary>
+        /// The order-level surcharges echoed back by the gateway, per card type.
+        /// </summary>
+        public Surcharge[] Surcharges { get; set; }
+
+        /// <summary>
+        /// The list of transactions associated with the link.
+        /// </summary>
+        public List<TransactionSummary> Transactions { get; set; }
+
+        /// <summary>
         /// A summary of the action performed, including metadata about the transaction.
         /// </summary>
         public ActionSummary ActionSummary { get; set; }

@@ -450,6 +450,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 }
             }
 
+            #region Pay By Link (Create)
+
             if (builder.TransactionType == TransactionType.Create && builder.PayByLinkData is PayByLinkData) {
                 var payByLinkData = builder.PayByLinkData;
                 var requestData = new JsonDoc()
@@ -500,6 +502,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                    var paymentMethodConfiguration = new JsonDoc()
                        .Set("storage_mode", payByLinkData.Configuration.StorageMode.ToString())
+                       .Set("entry_mode", payByLinkData.Configuration.EntryMode != null ? EnumConverter.GetMapping(Target.GP_API, payByLinkData.Configuration.EntryMode.Value) : null)
                        .Set("authentication", new JsonDoc()
                            .Set("preference", payByLinkData.Configuration.ChallengeRequestIndicator?.ToString())
                            .Set("exempt_status", payByLinkData.Configuration.ExemptStatus.ToString())
@@ -507,6 +510,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                        .Set("apm", new JsonDoc()
                            .Set("shipping_address_enabled", payByLinkData.Configuration.IsShippingAddressEnabled == true ? "YES" : "NO")
                            .Set("address_override", payByLinkData.Configuration.IsAddressOverrideAllowed == true ? "YES" : "NO"));
+
+                   var digitalWalletProviders = GetDigitalWalletProviders(payByLinkData.Configuration.DigitalWalletProviders);
+                   if (digitalWalletProviders != null) {
+                       paymentMethodConfiguration.Set("digital_wallets", new JsonDoc().Set("provider", digitalWalletProviders));
+                   }
 
                    var shippingAddress = GetBasicAddressInformation(builder.ShippingAddress, true);
 
@@ -519,10 +527,30 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                        order.Set("shipping_phone", shippingPhone);
                    }
 
+                   if (payByLinkData.ShippingAmount > 0) {
+                       order.Set("shipping_amount", payByLinkData.ShippingAmount.ToNumericCurrencyString());
+                   }
+
+                   var surcharges = GetSurcharges(payByLinkData.Surcharges);
+                   if (surcharges != null) {
+                       order.Set("surcharge", surcharges);
+                   }
+
                    order.Set("transaction_configuration", transactionConfiguration)
                         .Set("payment_method_configuration", paymentMethodConfiguration);
 
                    requestData.Set("order", order);
+
+                   requestData.Set("submit_button_label", payByLinkData.SubmitButtonLabel);
+
+                   if (payByLinkData.DisplayConfiguration != null) {
+                       var displayConfiguration = new JsonDoc()
+                           .Set("iframe_dimensions_domain", payByLinkData.DisplayConfiguration.IframeDimensionsDomain)
+                           .Set("iframe_response_domain", payByLinkData.DisplayConfiguration.IframeResponseDomain);
+                       if (displayConfiguration.HasKeys()) {
+                           requestData.Set("display_configuration", displayConfiguration);
+                       }
+                   }
 
                    // Visa installments configuration for HPP
                    if (payByLinkData.InstallmentData != null) {
@@ -559,6 +587,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     RequestBody = requestData.ToString(),
                 };
             }
+
+            #endregion
 
             if (builder.TransactionType == TransactionType.TransferFunds) {
                 if (!(builder.PaymentMethod is AccountFunds)) {
@@ -741,6 +771,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return installment;
         }
 
+        #region Pay By Link Helpers
+
         private static string[] GetAllowedPaymentMethod(PaymentMethodName[] allowedPaymentMethods) {
             if (allowedPaymentMethods == null)
                 return null;
@@ -752,6 +784,39 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             return result;
         }
+
+        private static string[] GetDigitalWalletProviders(DigitalWalletProvider[] providers) {
+            if (providers == null || providers.Length == 0)
+                return null;
+
+            string[] result = new string[providers.Length];
+            for (int i = 0; i < providers.Length; i++) {
+                result[i] = EnumConverter.GetMapping(Target.GP_API, providers[i]);
+            }
+
+            return result;
+        }
+
+        private static List<Dictionary<string, object>> GetSurcharges(Surcharge[] surcharges) {
+            if (surcharges == null || surcharges.Length == 0)
+                return null;
+
+            var result = new List<Dictionary<string, object>>();
+            foreach (var surcharge in surcharges) {
+                var item = new Dictionary<string, object>();
+                if (surcharge.CardType != null) {
+                    item.Add("card_type", EnumConverter.GetMapping(Target.GP_API, surcharge.CardType));
+                }
+                if (surcharge.Amount != null) {
+                    item.Add("amount", surcharge.Amount.ToNumericCurrencyString());
+                }
+                result.Add(item);
+            }
+
+            return result;
+        }
+
+        #endregion
 
         public static List<Dictionary<string, object>> MapFraudManagement(AuthorizationBuilder builder) {
             List<Dictionary<string, object>> rules = new List<Dictionary<string, object>>();

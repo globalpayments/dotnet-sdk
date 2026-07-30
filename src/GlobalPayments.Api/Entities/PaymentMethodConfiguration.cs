@@ -39,5 +39,15 @@ namespace GlobalPayments.Api.Entities {
         /// Indicates whether to store the card as part of a transaction.
         /// </summary>
         public StorageMode StorageMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the entry mode used to capture the payment on the hosted payment page.
+        /// </summary>
+        public PaymentEntryMode? EntryMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the digital wallet providers enabled on the hosted payment page.
+        /// </summary>
+        public DigitalWalletProvider[] DigitalWalletProviders { get; set; }
     }
 }
