@@ -291,7 +291,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
         }

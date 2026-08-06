@@ -9,8 +9,7 @@ using System.Net.Http;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
     internal class GpApiInstallmentRequestBuilder : IRequestBuilder<InstallmentBuilder> {
-        private static Dictionary<string, string> _maskedValues;
-        private static InstallmentBuilder _builder;
+        private InstallmentBuilder _builder;
         public Request BuildRequest(InstallmentBuilder builder, GpApiConnector gateway) {
             _builder = builder;
 

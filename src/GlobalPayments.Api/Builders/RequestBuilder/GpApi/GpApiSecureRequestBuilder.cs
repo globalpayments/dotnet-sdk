@@ -12,8 +12,9 @@ using System.Text;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
     internal class GpApiSecureRequestBuilder<T> : IRequestBuilder<SecureBuilder<T>> where T : class    {
-        private static Secure3dBuilder _3dBuilder { get; set; }
-        private static Dictionary<string, string> MaskedValues;
+        private Secure3dBuilder _3dBuilder { get; set; }
+        private readonly MaskedValueCollection _maskedValueCollection = new MaskedValueCollection();
+        private Dictionary<string, string> MaskedValues;
         public Request BuildRequest(SecureBuilder<T> builder, GpApiConnector gateway) {
             DisposeMaskedValues();
             if (builder is FraudBuilder<T>) {
@@ -34,12 +35,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             .Set("payer_login_data", SetPayerLoginDataParam(builder))
                             .Set("browser_data", SetBrowserDataParam(builder));
 
-                        Request.MaskedValues = MaskedValues;
-
                         return new Request {
                             Verb = HttpMethod.Post,
                             Endpoint = $"{merchantUrl}{GpApiRequest.RISK_ASSESSMENTS}",
                             RequestBody = requestData.ToString(),
+                            MaskedValues = MaskedValues,
                         };
                     default:
                         break;
@@ -100,12 +100,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     .Set("payment_method", paymentMethod)
                     .Set("notifications", notifications.HasKeys() ? notifications : null);
 
-                Request.MaskedValues = MaskedValues;
-
                 return new Request {
                     Verb = HttpMethod.Post,
                     Endpoint = $"{merchantUrl}{GpApiRequest.AUTHENTICATIONS_ENDPOINT}",
                     RequestBody = data.ToString(),
+                    MaskedValues = MaskedValues,
                 };
             }
             else if (builder.TransactionType == TransactionType.InitiateAuthentication)
@@ -259,12 +258,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     .Set("mobile_data", mobileData.HasKeys() && builder.AuthenticationSource == AuthenticationSource.MOBILE_SDK ? mobileData : null)
                     .Set("merchant_contact_url", gateway.GpApiConfig.MerchantContactUrl);
 
-                Request.MaskedValues = MaskedValues;
-
                 return new Request {
                     Verb = HttpMethod.Post,
                     Endpoint = $"{merchantUrl}{GpApiRequest.AUTHENTICATIONS_ENDPOINT}/{builder.ServerTransactionId}/initiate",
                     RequestBody = data.ToString(),
+                    MaskedValues = MaskedValues,
                 };
             }
             else if (builder.TransactionType == TransactionType.VerifySignature) {
@@ -305,11 +303,11 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             maskedValue.Add("payment_method.card.expiry_month", card.GetValue<string>("expiry_month"));
             maskedValue.Add("payment_method.card.expiry_year", card.GetValue<string>("expiry_year"));
 
-            MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
-            MaskedValues = ProtectSensitiveData.HideValue("payment_method.card.number", card.GetValue<string>("number"), 4, 6);
+            MaskedValues = _maskedValueCollection.HideValues(maskedValue);
+            MaskedValues = _maskedValueCollection.HideValue("payment_method.card.number", card.GetValue<string>("number"), 4, 6);
         }
 
-        private static JsonDoc InitiateAuthenticationData(GpApiConfig config)
+        private JsonDoc InitiateAuthenticationData(GpApiConfig config)
         {            
             #region ThreeDS
             var threeDS = new JsonDoc()
@@ -349,7 +347,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return data;           
         }
 
-        private static JsonDoc SetMobileDataParam()
+        private JsonDoc SetMobileDataParam()
         {
             string[] ModifySdkUiTypes() {
                 string[] result = new string[(int)_3dBuilder.MobileData?.SdkUiTypes.Length];
@@ -373,7 +371,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return mobileData.HasKeys() ? mobileData : null;
         }
 
-        private static JsonDoc SetBrowserDataParam(SecureBuilder<T> builder)
+        private JsonDoc SetBrowserDataParam(SecureBuilder<T> builder)
         {
             var browserData = new JsonDoc()
                 .Set("accept_header", builder.BrowserData?.AcceptHeader)
@@ -391,7 +389,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return browserData.HasKeys() ? browserData : null;
         }
 
-        private static JsonDoc SetPayerLoginDataParam(SecureBuilder<T> builder)
+        private JsonDoc SetPayerLoginDataParam(SecureBuilder<T> builder)
         {
             var payerLoginData = new JsonDoc()
                 .Set("authentication_data", builder.CustomerAuthenticationData)
@@ -401,7 +399,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return payerLoginData.HasKeys() ? payerLoginData : null;
         }
 
-        private static JsonDoc SetRecurringAuthorizationDataParam(SecureBuilder<T> builder)
+        private JsonDoc SetRecurringAuthorizationDataParam(SecureBuilder<T> builder)
         {
             var recurringAuthorizationData = new JsonDoc()
                 .Set("max_number_of_instalments", builder.MaxNumberOfInstallments)
@@ -411,7 +409,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return recurringAuthorizationData.HasKeys() ? recurringAuthorizationData : null;
         }
 
-        private static JsonDoc SetPayerPrior3DSAuthenticationDataParam(SecureBuilder<T> builder)
+        private JsonDoc SetPayerPrior3DSAuthenticationDataParam(SecureBuilder<T> builder)
         {
             var payerPrior3DSAuthenticationData = new JsonDoc()
                 .Set("authentication_method", builder.PriorAuthenticationMethod?.ToString())
@@ -422,7 +420,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return payerPrior3DSAuthenticationData.HasKeys() ? payerPrior3DSAuthenticationData : null;
         }
 
-        private static JsonDoc SetPayerParam(SecureBuilder<T> builder) {
+        private JsonDoc SetPayerParam(SecureBuilder<T> builder) {
             string format = builder.TransactionType == TransactionType.RiskAssess ? "yyyy-MM-ddThh:mm:ss" : "yyyy-MM-dd";
 
             var homePhone = new JsonDoc()
@@ -476,7 +474,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
            
         }
 
-        private static JsonDoc SetOrderParam(SecureBuilder<T> builder, bool isSecure3dBuilder = false)
+        private JsonDoc SetOrderParam(SecureBuilder<T> builder, bool isSecure3dBuilder = false)
         {
             var order = new JsonDoc()
                 .Set("time_created_reference", builder.OrderCreateDate?.ToString("yyyy-MM-ddThh:mm:ss.fffZ"))
@@ -514,7 +512,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         }
        
 
-        private static JsonDoc VerifyEnrolled(GpApiConfig config)
+        private JsonDoc VerifyEnrolled(GpApiConfig config)
         {            
             var notifications = new JsonDoc()
                 .Set("challenge_return_url", config.ChallengeNotificationUrl)
@@ -539,7 +537,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return threeDS;
         }
 
-        private static JsonDoc SetPaymentMethodParam(SecureBuilder<T> builder, bool is3DSecure = false)
+        private JsonDoc SetPaymentMethodParam(SecureBuilder<T> builder, bool is3DSecure = false)
         {
             var paymentMethod = new JsonDoc();
 
@@ -560,14 +558,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 maskedValue.Add("payment_method.card.expiry_month", card.GetValue<string>("expiry_month"));
                 maskedValue.Add("payment_method.card.expiry_year", card.GetValue<string>("expiry_year"));
 
-                MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
-                MaskedValues = ProtectSensitiveData.HideValue("payment_method.card.number", cardData.Number, 4, 6);
+                MaskedValues = _maskedValueCollection.HideValues(maskedValue);
+                MaskedValues = _maskedValueCollection.HideValue("payment_method.card.number", cardData.Number, 4, 6);
             }
 
             return paymentMethod;            
         }
 
-        private static JsonDoc SetStoreCredentialParam()
+        private JsonDoc SetStoreCredentialParam()
         {
             var storedCredential = new JsonDoc()
                     .Set("model", EnumConverter.GetMapping(Target.GP_API, _3dBuilder.StoredCredential?.Type))
@@ -577,10 +575,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return storedCredential.HasKeys() ? storedCredential : null;            
         }
 
-        private static void DisposeMaskedValues()
+        private void DisposeMaskedValues()
         {
             MaskedValues = null;
-            ProtectSensitiveData.DisposeCollection();
+            _maskedValueCollection.DisposeMaskValues();
         }
     }
 }

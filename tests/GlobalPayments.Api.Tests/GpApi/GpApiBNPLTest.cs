@@ -68,7 +68,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), response.ResponseMessage);
 
             Debug.Write(response.BNPLResponse.RedirectUrl);
@@ -178,7 +178,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 
@@ -231,7 +231,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 
@@ -291,7 +291,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 
@@ -331,7 +331,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
         }
@@ -351,7 +351,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 
@@ -392,7 +392,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
         }
@@ -412,7 +412,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 
@@ -454,7 +454,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 
@@ -506,7 +506,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Initiated.ToString().ToUpper(), transaction.ResponseMessage);
             Assert.IsNotNull(transaction.BNPLResponse.RedirectUrl);
 

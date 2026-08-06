@@ -69,7 +69,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);
             Assert.IsNotNull(response.FingerPrintIndicator);           
@@ -92,7 +92,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("VERIFIED", response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);           
             Assert.AreEqual("123456", response.AuthorizationCode);
@@ -119,7 +119,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.IsNotNull(response.AvsAddressResponse);
             Assert.IsNotNull(response.AvsResponseCode);
             Assert.AreEqual("VERIFIED", response.ResponseMessage);
@@ -236,7 +236,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
             Assert.IsNotNull(chargeResponse);
-            Assert.AreEqual("SUCCESS", chargeResponse.ResponseCode);
+            Assert.AreEqual("00", chargeResponse.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), chargeResponse.ResponseMessage);
         }
 
@@ -311,7 +311,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
             Assert.IsNotNull(response.FingerPrint);
             Assert.IsNotNull(response.FingerPrintIndicator);           
@@ -331,7 +331,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual(Declined, response.ResponseCode);
+            Assert.AreEqual("101", response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response.ResponseMessage);
             Assert.AreEqual("",response.FingerPrint);           
             Assert.AreEqual("",response.FingerPrintIndicator);           
@@ -577,7 +577,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("VERIFIED", response.ResponseMessage);
         }
 
@@ -762,7 +762,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage.ToUpper());
         }
 
@@ -949,7 +949,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(Verified, response.ResponseMessage);
         }
 
@@ -965,7 +965,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAddress(address)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(Verified, response.ResponseMessage);
         }
 
@@ -978,7 +978,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithIdempotencyKey(idempotencyKey)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(Verified, response.ResponseMessage);
 
             var exceptionCaught = false;
@@ -1089,7 +1089,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             foreach (EntryMethod entryMethod in Enum.GetValues(typeof(EntryMethod))) {
                 var creditTrackData = new CreditTrackData {
                     TrackData =
-                        "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
+                        "%B4012002000060016^VI TEST CREDIT^281210118039000000000396?;4012002000060016=28121011803939600000?",
                     EntryMethod = entryMethod
                 };
 
@@ -1166,7 +1166,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 })
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(Verified, response.ResponseMessage);
         }
 
@@ -1340,34 +1340,34 @@ namespace GlobalPayments.Api.Tests.GpApi {
         #region AVS and CVV Tests
 
         [DataTestMethod]
-        [DataRow(AVS_MASTERCARD_1, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", Success, TransactionStatus.Captured, "M", "U", "U")]
-        [DataRow(AVS_MASTERCARD_2, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", Success, TransactionStatus.Captured, "M", "I", "I")]
-        [DataRow(AVS_MASTERCARD_3, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", Success, TransactionStatus.Captured, "M", "P", "P")]
-        [DataRow(AVS_MASTERCARD_4, "MATCHED", "MATCHED", "MATCHED", Success, TransactionStatus.Captured, "M", "M", "M")]
-        [DataRow(AVS_MASTERCARD_5, "MATCHED", "NOT_MATCHED", "NOT_MATCHED", Success, TransactionStatus.Captured, "M", "N", "N")]
-        [DataRow(AVS_MASTERCARD_6, "MATCHED", "NOT_MATCHED", "MATCHED", Success, TransactionStatus.Captured, "M", "N", "M")]
-        [DataRow(AVS_MASTERCARD_7, "MATCHED", "NOT_MATCHED", "NOT_MATCHED", Success, TransactionStatus.Captured, "M", "N", "N")]
-        [DataRow(AVS_MASTERCARD_8, "NOT_MATCHED", "NOT_MATCHED", "MATCHED", Success, TransactionStatus.Captured, "N", "N", "M")]
-        [DataRow(AVS_MASTERCARD_9, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", Success, TransactionStatus.Captured, "N", "U", "U")]
-        [DataRow(AVS_MASTERCARD_10, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", Success, TransactionStatus.Captured, "N", "I", "I")]
-        [DataRow(AVS_MASTERCARD_11, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", Success, TransactionStatus.Captured, "N", "P", "P")]
-        [DataRow(AVS_MASTERCARD_12, "NOT_MATCHED", "NOT_CHECKED", "MATCHED", Success, TransactionStatus.Captured, "N", "P", "M")]
-        [DataRow(AVS_MASTERCARD_13, "NOT_MATCHED", "MATCHED", "NOT_MATCHED", Success, TransactionStatus.Captured, "N", "M", "N")]
-        [DataRow(AVS_MASTERCARD_14, "NOT_MATCHED", "NOT_MATCHED", "NOT_MATCHED", Success, TransactionStatus.Captured, "N", "N", "N")]
-        [DataRow(AVS_VISA_1, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", Declined, TransactionStatus.Declined, "I", "U", "U")]
-        [DataRow(AVS_VISA_2, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", Declined, TransactionStatus.Declined, "I", "I", "I")]
-        [DataRow(AVS_VISA_3, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", Declined, TransactionStatus.Declined, "I", "P", "P")]
-        [DataRow(AVS_VISA_4, "MATCHED", "MATCHED", "MATCHED", Declined, TransactionStatus.Declined, "M", "M", "M")]
-        [DataRow(AVS_VISA_5, "NOT_CHECKED", "MATCHED", "NOT_MATCHED", Declined, TransactionStatus.Declined, "I", "M", "N")]
-        [DataRow(AVS_VISA_6, "NOT_CHECKED", "NOT_MATCHED", "MATCHED", Declined, TransactionStatus.Declined, "I", "N", "M")]
-        [DataRow(AVS_VISA_7, "NOT_CHECKED", "NOT_MATCHED", "NOT_MATCHED", Declined, TransactionStatus.Declined, "I", "N", "N")]
-        [DataRow(AVS_VISA_8, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", Declined, TransactionStatus.Declined, "U", "U", "U")]
-        [DataRow(AVS_VISA_9, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", Declined, TransactionStatus.Declined, "U", "I", "I")]
-        [DataRow(AVS_VISA_10, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", Declined, TransactionStatus.Declined, "U", "P", "P")]
-        [DataRow(AVS_VISA_11, "NOT_CHECKED", "MATCHED", "MATCHED", Declined, TransactionStatus.Declined, "U", "M", "M")]
-        [DataRow(AVS_VISA_12, "NOT_CHECKED", "MATCHED", "NOT_MATCHED", Declined, TransactionStatus.Declined, "U", "M", "N")]
-        [DataRow(AVS_VISA_13, "NOT_CHECKED", "NOT_MATCHED", "MATCHED", Declined, TransactionStatus.Declined, "U", "N", "M")]
-        [DataRow(AVS_VISA_14, "NOT_CHECKED", "NOT_MATCHED", "NOT_MATCHED", Declined, TransactionStatus.Declined, "U", "N", "N")]
+        [DataRow(AVS_MASTERCARD_1, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", "00", TransactionStatus.Captured, "M", "U", "U")]
+        [DataRow(AVS_MASTERCARD_2, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", "00", TransactionStatus.Captured, "M", "I", "I")]
+        [DataRow(AVS_MASTERCARD_3, "MATCHED", "NOT_CHECKED", "NOT_CHECKED", "00", TransactionStatus.Captured, "M", "P", "P")]
+        [DataRow(AVS_MASTERCARD_4, "MATCHED", "MATCHED", "MATCHED", "00", TransactionStatus.Captured, "M", "M", "M")]
+        [DataRow(AVS_MASTERCARD_5, "MATCHED", "NOT_MATCHED", "NOT_MATCHED", "00", TransactionStatus.Captured, "M", "N", "N")]
+        [DataRow(AVS_MASTERCARD_6, "MATCHED", "NOT_MATCHED", "MATCHED", "00", TransactionStatus.Captured, "M", "N", "M")]
+        [DataRow(AVS_MASTERCARD_7, "MATCHED", "NOT_MATCHED", "NOT_MATCHED", "00", TransactionStatus.Captured, "M", "N", "N")]
+        [DataRow(AVS_MASTERCARD_8, "NOT_MATCHED", "NOT_MATCHED", "MATCHED", "00", TransactionStatus.Captured, "N", "N", "M")]
+        [DataRow(AVS_MASTERCARD_9, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", "00", TransactionStatus.Captured, "N", "U", "U")]
+        [DataRow(AVS_MASTERCARD_10, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", "00", TransactionStatus.Captured, "N", "I", "I")]
+        [DataRow(AVS_MASTERCARD_11, "NOT_MATCHED", "NOT_CHECKED", "NOT_CHECKED", "00", TransactionStatus.Captured, "N", "P", "P")]
+        [DataRow(AVS_MASTERCARD_12, "NOT_MATCHED", "NOT_CHECKED", "MATCHED", "00", TransactionStatus.Captured, "N", "P", "M")]
+        [DataRow(AVS_MASTERCARD_13, "NOT_MATCHED", "MATCHED", "NOT_MATCHED", "00", TransactionStatus.Captured, "N", "M", "N")]
+        [DataRow(AVS_MASTERCARD_14, "NOT_MATCHED", "NOT_MATCHED", "NOT_MATCHED", "00", TransactionStatus.Captured, "N", "N", "N")]
+        [DataRow(AVS_VISA_1, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", "101", TransactionStatus.Declined, "I", "U", "U")]
+        [DataRow(AVS_VISA_2, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", "101", TransactionStatus.Declined, "I", "I", "I")]
+        [DataRow(AVS_VISA_3, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", "101", TransactionStatus.Declined, "I", "P", "P")]
+        [DataRow(AVS_VISA_4, "MATCHED", "MATCHED", "MATCHED", "101", TransactionStatus.Declined, "M", "M", "M")]
+        [DataRow(AVS_VISA_5, "NOT_CHECKED", "MATCHED", "NOT_MATCHED", "101", TransactionStatus.Declined, "I", "M", "N")]
+        [DataRow(AVS_VISA_6, "NOT_CHECKED", "NOT_MATCHED", "MATCHED", "101", TransactionStatus.Declined, "I", "N", "M")]
+        [DataRow(AVS_VISA_7, "NOT_CHECKED", "NOT_MATCHED", "NOT_MATCHED", "101", TransactionStatus.Declined, "I", "N", "N")]
+        [DataRow(AVS_VISA_8, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", "101", TransactionStatus.Declined, "U", "U", "U")]
+        [DataRow(AVS_VISA_9, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", "101", TransactionStatus.Declined, "U", "I", "I")]
+        [DataRow(AVS_VISA_10, "NOT_CHECKED", "NOT_CHECKED", "NOT_CHECKED", "101", TransactionStatus.Declined, "U", "P", "P")]
+        [DataRow(AVS_VISA_11, "NOT_CHECKED", "MATCHED", "MATCHED", "101", TransactionStatus.Declined, "U", "M", "M")]
+        [DataRow(AVS_VISA_12, "NOT_CHECKED", "MATCHED", "NOT_MATCHED", "101", TransactionStatus.Declined, "U", "M", "N")]
+        [DataRow(AVS_VISA_13, "NOT_CHECKED", "NOT_MATCHED", "MATCHED", "101", TransactionStatus.Declined, "U", "N", "M")]
+        [DataRow(AVS_VISA_14, "NOT_CHECKED", "NOT_MATCHED", "NOT_MATCHED", "101", TransactionStatus.Declined, "U", "N", "N")]
         public void CreditSale_CvvResult(string cardNumber, string cvnResponseMessage, 
             string avsResponseCode, string avsAddressResponse, string status, TransactionStatus transactionStatus, 
             string cvvResult, string avsPostcode, string addressResult) {
@@ -1404,7 +1404,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
 

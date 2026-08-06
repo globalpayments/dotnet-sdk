@@ -27,11 +27,15 @@ namespace GlobalPayments.Api.Gateways {
             }
             internal set {
                 _AccessToken = value;
-                if (string.IsNullOrEmpty(_AccessToken)) {
-                    Headers.Remove("Authorization");
-                }
-                else {
-                    Headers["Authorization"] = $"Bearer {_AccessToken}";
+                // Headers is shared across threads on this singleton connector; guard the mutation
+                // so it cannot race with a concurrent request enumerating the headers.
+                lock (Headers) {
+                    if (string.IsNullOrEmpty(_AccessToken)) {
+                        Headers.Remove("Authorization");
+                    }
+                    else {
+                        Headers["Authorization"] = $"Bearer {_AccessToken}";
+                    }
                 }
             }
         }
@@ -79,7 +83,7 @@ namespace GlobalPayments.Api.Gateways {
             Request request = new GpApiMiCRequestBuilder().BuildRequest(rawRequest.ToString(), this);
 
             if (request != null) {
-                return DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                return DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, maskedValues: request.MaskedValues);
             }
             return null;
         }
@@ -91,7 +95,7 @@ namespace GlobalPayments.Api.Gateways {
             }
             var request = new GpApiFileProcessingRequestBuilder().BuildRequest(builder, this);
             if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);               
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, maskedValues: request.MaskedValues);               
                 return GpApiMapping.MapFileProcessingResponse(response);
             }
             return null;            
@@ -104,7 +108,7 @@ namespace GlobalPayments.Api.Gateways {
             }
             var request = new GpApiRecurringRequestBuilder<T>().BuildRequest(builder, this);
             if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, maskedValues: request.MaskedValues);
                 return GpApiMapping.MapRecurringEntity<T>(response, builder.Entity);
             }
             return result;
@@ -174,28 +178,28 @@ namespace GlobalPayments.Api.Gateways {
             return Activator.CreateInstance(typeof(GpApiTokenResponse), new object[] { response }) as GpApiTokenResponse;
         }
 
-        private string DoTransactionWithIdempotencyKey(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null) {
+        private string DoTransactionWithIdempotencyKey(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null, IDictionary<string, string> maskedValues = null) {
+            // The idempotency key is request-scoped. It must never be written to the shared Headers
+            // dictionary on this singleton connector, otherwise a concurrent request can overwrite it
+            // (causing DUPLICATE_ACTION) or the finally-block removal can strip another request's key.
+            IDictionary<string, string> additionalHeaders = null;
             if (!string.IsNullOrEmpty(idempotencyKey)) {
-                Headers[IDEMPOTENCY_HEADER] = idempotencyKey;
+                additionalHeaders = new Dictionary<string, string> { 
+                    { 
+                        IDEMPOTENCY_HEADER, idempotencyKey 
+                    } 
+                };
             }
-            try {
-                return base.DoTransaction(verb, endpoint, data, queryStringParams);
-            }
-            finally {
-                Headers.Remove(IDEMPOTENCY_HEADER);
-            }
+            return base.DoTransaction(verb, endpoint, data, queryStringParams, additionalHeaders: additionalHeaders, maskedValues: maskedValues);
         }
 
-        public string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null) {
+        public string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null, IDictionary<string, string> maskedValues = null) {
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
             try
             {
-                if (Request.MaskedValues != null) {
-                    MaskedRequestData = Request.MaskedValues;
-                }
-                return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
+                return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey, maskedValues);
             }
             catch (GatewayException ex)
             {
@@ -203,14 +207,9 @@ namespace GlobalPayments.Api.Gateways {
                     && !string.IsNullOrEmpty(GpApiConfig.AppId) && !string.IsNullOrEmpty(GpApiConfig.AppKey))
                 {
                     SignIn();
-                    return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey);
+                    return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey, maskedValues);
                 }
                 throw ex;
-            }
-            finally {
-                Request.MaskedValues = null;
-                ProtectSensitiveData.DisposeCollection();
-                MaskedRequestData = new Dictionary<string, string>();
             }
         }
 
@@ -237,7 +236,7 @@ namespace GlobalPayments.Api.Gateways {
             Request request = new GpApiAuthorizationRequestBuilder().BuildRequest(builder, this);
 
             if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues);
                 if (builder.PaymentMethod is AlternativePaymentMethod) {
                     return GpApiMapping.MapResponseAPM(response);
                 }
@@ -254,7 +253,7 @@ namespace GlobalPayments.Api.Gateways {
             Request request = new Builders.RequestBuilder.GpApi.GpApiManagementRequestBuilder().BuildRequest(builder, this);
 
             if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues);
                 if (builder.PaymentMethod is TransactionReference && builder.PaymentMethod.PaymentMethodType == PaymentMethodType.APM) {
                     return GpApiMapping.MapResponseAPM(response);
                 }
@@ -271,7 +270,7 @@ namespace GlobalPayments.Api.Gateways {
             Request request = new GpApiReportRequestBuilder<T>().BuildRequest(builder, this);
 
             if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, maskedValues: request.MaskedValues);
 
                 return GpApiMapping.MapReportResponse<T>(response, builder.ReportType);
             }
@@ -286,11 +285,7 @@ namespace GlobalPayments.Api.Gateways {
             var request = new GpApiSecureRequestBuilder<ThreeDSecure>().BuildRequest(builder, this);
 
             if (request != null) {
-                if (Request.MaskedValues != null) {
-                    MaskedRequestData = Request.MaskedValues;
-                }
-
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues);
 
                 return GpApiMapping.Map3DSecureData(response);
             }
@@ -307,7 +302,7 @@ namespace GlobalPayments.Api.Gateways {
             Request request = new GpApiPayFacRequestBuilder<T>().BuildRequest(builder, this);
 
             if (request != null){
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey); 
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues); 
                 return GpApiMapping.MapMerchantEndpointResponse<T>(response);
             }
             return result;
@@ -322,7 +317,7 @@ namespace GlobalPayments.Api.Gateways {
             Request request = new GpApiSecureRequestBuilder<T>().BuildRequest(builder, this);
 
             if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues);
                 return GpApiMapping.MapRiskAssessmentResponse<T>(response);
             }
             return result;
@@ -338,7 +333,7 @@ namespace GlobalPayments.Api.Gateways {
 
             if (request != null)
             {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, maskedValues: request.MaskedValues);
                 return GpApiMapping.MapInstallmentResponse(response);
             }
             return null;

@@ -55,7 +55,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
                             .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("01", response.ResponseCode);
             Assert.IsNotNull(response.AlternativePaymentResponse);
             Assert.IsNotNull(response.AlternativePaymentResponse.RedirectUrl);
             Assert.AreEqual("BLIK", response.AlternativePaymentResponse.ProviderName.ToUpper());
@@ -104,7 +104,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
                             .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("01", response.ResponseCode);
             Assert.IsNotNull(response.AlternativePaymentResponse);
             Assert.IsNotNull(response.AlternativePaymentResponse.RedirectUrl);
             Assert.AreEqual("BLIK", response.AlternativePaymentResponse.ProviderName.ToUpper());
@@ -178,7 +178,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
                             .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("01", response.ResponseCode);
             Assert.IsNotNull(response.AlternativePaymentResponse);
             Assert.IsNotNull(response.AlternativePaymentResponse.RedirectUrl);
             Assert.AreEqual("BANK_PAYMENT", response.AlternativePaymentResponse.ProviderName.ToUpper());
@@ -226,7 +226,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
                             .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("01", response.ResponseCode);
             Assert.IsNotNull(response.AlternativePaymentResponse);
             Assert.IsNotNull(response.AlternativePaymentResponse.RedirectUrl);
             Assert.AreEqual("BANK_PAYMENT", response.AlternativePaymentResponse.ProviderName.ToUpper());

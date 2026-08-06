@@ -13,6 +13,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
     internal class GpApiManagementRequestBuilder : IRequestBuilder<ManagementBuilder> {
 
         private static Dictionary<string, List<string>> AllowedActions { get; set; }
+        private readonly MaskedValueCollection _maskedValueCollection = new MaskedValueCollection();
         private Dictionary<string, string> MaskedValues;
 
         public Request BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
@@ -100,19 +101,18 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                 maskedValue.Add("card.expiry_month", card.GetValue<string>("expiry_month"));
                 maskedValue.Add("card.expiry_year", card.GetValue<string>("expiry_year"));
 
-                MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
+                MaskedValues = _maskedValueCollection.HideValues(maskedValue);
 
                 var data = new JsonDoc()
                     .Set("usage_mode", !string.IsNullOrEmpty(builder.PaymentMethodUsageMode.ToString()) ? EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode) : null)
                     .Set("name", !string.IsNullOrEmpty(cardData.CardHolderName) ? cardData.CardHolderName : null)
                     .Set("card", card);
 
-                Request.MaskedValues = MaskedValues;
-
                 return new Request {
                     Verb = new HttpMethod("PATCH"),
                     Endpoint = $"{merchantUrl}{GpApiRequest.PAYMENT_METHODS_ENDPOINT}/{(builder.PaymentMethod as ITokenizable).Token}",
                     RequestBody = data.ToString(),
+                    MaskedValues = MaskedValues,
                 };
             }
             else if (builder.TransactionType == TransactionType.TokenDelete && builder.PaymentMethod is ITokenizable) {

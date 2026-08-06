@@ -40,6 +40,27 @@ namespace GlobalPayments.Api.Entities {
             return true;
         }
 
+        // Instance-based masking helpers. These mirror the static ProtectSensitiveData API but keep
+        // all accumulation on this per-request instance, so concurrent transactions never share state.
+        public Dictionary<string, string> HideValue(string key, string value, int unmaskedLastChars = 0, int unmaskedFirstChars = 0) {
+            AddValue(new MaskedValueEntry(key, value, unmaskedFirstChars, unmaskedLastChars));
+            return ToDictionary();
+        }
+
+        public Dictionary<string, string> HideValues(params MaskedValueEntry[] entries) {
+            foreach (var entry in entries) {
+                AddValue(entry);
+            }
+            return ToDictionary();
+        }
+
+        public Dictionary<string, string> HideValues(Dictionary<string, string> list, int unmaskedLastChars = 0, int unmaskedFirstChars = 0) {
+            foreach (var item in list) {
+                AddValue(new MaskedValueEntry(item.Key, item.Value, unmaskedFirstChars, unmaskedLastChars));
+            }
+            return ToDictionary();
+        }
+
         private bool ValidateValue(string value) {
             if (string.IsNullOrEmpty(value)) {
                 return false;

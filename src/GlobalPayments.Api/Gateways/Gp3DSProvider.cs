@@ -18,10 +18,9 @@ namespace GlobalPayments.Api.Gateways {
         public string MethodNotificationUrl { get; set; }
         public string SharedSecret { get; set; }
         public Secure3dVersion Version { get { return Secure3dVersion.Two; } }
-        private Dictionary<string, string> MaskedValues;
 
         public Transaction ProcessSecure3d(Secure3dBuilder builder) {
-            MaskedValues = null;
+            var maskedValueCollection = new MaskedValueCollection();
             TransactionType transType = builder.TransactionType;
             IPaymentMethod paymentMethod = builder.PaymentMethod;
             ISecure3d secure3d = (ISecure3d)paymentMethod;
@@ -40,7 +39,7 @@ namespace GlobalPayments.Api.Gateways {
                     request.Set("scheme", MapCardScheme(CardUtils.GetBaseCardType(cardData.CardType).ToUpper()));
                     hashValue = cardData.Number;                   
 
-                    MaskedValues = ProtectSensitiveData.HideValue("number", cardData.Number, 4, 6);
+                    maskedValueCollection.HideValue("number", cardData.Number, 4, 6);
                 }
                 else if (paymentMethod is RecurringPaymentMethod storedCard) {
                     request.Set("payer_reference", storedCard.CustomerKey);
@@ -51,9 +50,7 @@ namespace GlobalPayments.Api.Gateways {
                 string hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, hashValue);
                 SetAuthHeader(hash);
 
-                Request.MaskedValues = MaskedValues;
-
-                string rawResponse = DoTransaction(HttpMethod.Post, "protocol-versions", request.ToString());
+                string rawResponse = DoTransaction(HttpMethod.Post, "protocol-versions", request.ToString(), maskedValues: maskedValueCollection.ToDictionary());
                 return MapResponse(rawResponse);
             }
             else if (transType.Equals(TransactionType.VerifySignature)) {
@@ -108,8 +105,8 @@ namespace GlobalPayments.Api.Gateways {
                     maskedValue.Add("card_detail.expiry_month", cardData.ExpMonth.ToString());
                     maskedValue.Add("card_detail.expiry_year", cardData.ExpYear.ToString().Substring(2));
 
-                    MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
-                    MaskedValues = ProtectSensitiveData.HideValue("card_detail.number", cardData.Number, 4, 6);
+                    maskedValueCollection.HideValues(maskedValue);
+                    maskedValueCollection.HideValue("card_detail.number", cardData.Number, 4, 6);
 
                     if (!string.IsNullOrEmpty(cardData.CardHolderName)) {
                         string[] names = cardData.CardHolderName.Split(' ');
@@ -287,9 +284,7 @@ namespace GlobalPayments.Api.Gateways {
                 string hash = GenerationUtils.GenerateHash(SharedSecret, timestamp, MerchantId, hashValue, secureEcom.ServerTransactionId);
                 SetAuthHeader(hash);
 
-                Request.MaskedValues = MaskedValues;
-
-                string rawResponse = DoTransaction(HttpMethod.Post, "authentications", request.ToString());
+                string rawResponse = DoTransaction(HttpMethod.Post, "authentications", request.ToString(), maskedValues: maskedValueCollection.ToDictionary());
                 return MapResponse(rawResponse);
             }
 

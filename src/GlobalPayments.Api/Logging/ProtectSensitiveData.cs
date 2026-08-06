@@ -1,8 +1,10 @@
 ﻿using GlobalPayments.Api.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace GlobalPayments.Api.Logging
 {
+    [Obsolete("ProtectSensitiveData accumulates masked values in process-shared static state and is not safe under concurrent use. Use a per-request MaskedValueCollection instance instead.")]
     public static class ProtectSensitiveData
     {
         private static MaskedValueCollection HideValueCollection;

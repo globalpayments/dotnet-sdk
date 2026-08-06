@@ -18,6 +18,8 @@ namespace GlobalPayments.Api.Gateways {
         //public bool EnableLogging { get; set; }
         public IRequestLogger RequestLogger { get; set; }
         public IWebProxy WebProxy { get; set; }
+        // This dictionary is shared when a connector is reused across threads. Always wrap reads and
+        // writes in lock (Headers) so one request cannot modify it while another is copying it.
         public Dictionary<string, string> Headers { get; set; }
         public int Timeout { get; set; }
         public string ServiceUrl { get; set; }
@@ -26,16 +28,13 @@ namespace GlobalPayments.Api.Gateways {
        
         public Entities.Environment Environment { get; set; }
 
-        public Dictionary<string, string> MaskedRequestData;
-
         public Gateway(string contentType) {
             Headers = new Dictionary<string, string>();
             _contentType = contentType;
             DynamicHeaders = new Dictionary<string, string>();
-            MaskedRequestData = new Dictionary<string, string>();
         }
 
-        private string GenerateRequestLog(HttpRequestMessage request, bool isXml = false) {
+        private string GenerateRequestLog(HttpRequestMessage request, bool isXml = false, IDictionary<string, string> maskedValues = null) {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"{request.Method.ToString()} {request.RequestUri}");
             foreach (var header in request.Headers) {
@@ -45,9 +44,9 @@ namespace GlobalPayments.Api.Gateways {
                 foreach (var header in request.Content.Headers) {
                     sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
                 }
-                if (MaskedRequestData.Count > 0 && Environment == Entities.Environment.PRODUCTION) {
+                if (maskedValues != null && maskedValues.Count > 0 && Environment == Entities.Environment.PRODUCTION) {
                     var data = request.Content.ReadAsStringAsync().Result;
-                    sb.AppendLine(MaskSensitiveData(data, isXml));
+                    sb.AppendLine(MaskSensitiveData(data, isXml, maskedValues));
                 }
                 else { sb.AppendLine(request.Content.ReadAsStringAsync().Result); }
                 
@@ -56,7 +55,7 @@ namespace GlobalPayments.Api.Gateways {
         }
                 
 
-        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false) {
+        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false, IDictionary<string, string> additionalHeaders = null, IDictionary<string, string> maskedValues = null) {
             HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
 
@@ -64,13 +63,28 @@ namespace GlobalPayments.Api.Gateways {
 
             var queryString = BuildQueryString(queryStringParams);
             HttpRequestMessage request = new HttpRequestMessage(verb, ServiceUrl + endpoint + queryString);
-            foreach (var item in Headers) {
-                request.Headers.Add(item.Key, item.Value);
+            // The connector (and therefore Headers) is a process-wide singleton shared across
+            // threads. Copy under a lock so a concurrent Headers mutation (e.g. the Authorization
+            // token refresh) cannot corrupt the enumeration for this request.
+            lock (Headers) {
+                foreach (var item in Headers) {
+                    request.Headers.Add(item.Key, item.Value);
+                }
             }
 
             if(DynamicHeaders != null) {
                 foreach (var item in DynamicHeaders)
                 {
+                    request.Headers.Add(item.Key, item.Value);
+                }
+            }
+
+            // Per-request headers (e.g. the idempotency key) must be applied to this request only,
+            // never staged on the shared Headers dictionary, to avoid one thread's value leaking
+            // into another concurrent request.
+            if (additionalHeaders != null) {
+                foreach (var item in additionalHeaders) {
+                    request.Headers.Remove(item.Key);
                     request.Headers.Add(item.Key, item.Value);
                 }
             }
@@ -88,7 +102,7 @@ namespace GlobalPayments.Api.Gateways {
                     }
                 }
 
-                RequestLogger?.RequestSent(GenerateRequestLog(request, isXml));
+                RequestLogger?.RequestSent(GenerateRequestLog(request, isXml, maskedValues));
                 
                 response = httpClient.SendAsync(request).Result;
 
@@ -175,7 +189,7 @@ namespace GlobalPayments.Api.Gateways {
             return string.Format("?{0}", string.Join("&", queryStringParams.Select(kvp => string.Format("{0}={1}", Uri.EscapeDataString(kvp.Key), Uri.EscapeDataString(kvp.Value)))));
         }
 
-        private string MaskSensitiveData(string data, bool isXml = false)
+        private string MaskSensitiveData(string data, bool isXml = false, IDictionary<string, string> maskedValues = null)
         {
             if (isXml) {
                 var xml = XDocument.Parse(data);
@@ -183,7 +197,7 @@ namespace GlobalPayments.Api.Gateways {
             }
 
             var dataParsed = JsonDoc.Parse(data);
-            foreach (var maskedItem in MaskedRequestData) {
+            foreach (var maskedItem in maskedValues) {
                 var key = maskedItem.Key;
                 var parts = key.Split('.');
                 var value = maskedItem.Value;

@@ -205,7 +205,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(dccDetails);
-            Assert.AreEqual(Success, dccDetails?.ResponseCode);
+            Assert.AreEqual("105", dccDetails?.ResponseCode);
             Assert.AreEqual("NOT_AVAILABLE", dccDetails?.ResponseMessage);
             Assert.IsNotNull(dccDetails.DccRateData);
 
@@ -281,7 +281,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         private void AssertDccInfoResponse(Transaction dccDetails, decimal expectedDccAmountValue) {
             Assert.IsNotNull(dccDetails);
-            Assert.AreEqual(Success, dccDetails?.ResponseCode);
+            Assert.AreEqual("00", dccDetails?.ResponseCode);
             Assert.AreEqual("AVAILABLE", dccDetails?.ResponseMessage);
             Assert.IsNotNull(dccDetails.DccRateData);
             Assert.AreEqual(expectedDccAmountValue, dccDetails.DccRateData.CardHolderAmount);
@@ -289,7 +289,7 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus, decimal expectedDccAmountValue) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction?.ResponseCode);
+            Assert.AreEqual("00", transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction?.ResponseMessage);
             if (!transactionStatus.Equals(TransactionStatus.Reversed)) {
                 Assert.AreEqual(expectedDccAmountValue, transaction.DccRateData.CardHolderAmount);

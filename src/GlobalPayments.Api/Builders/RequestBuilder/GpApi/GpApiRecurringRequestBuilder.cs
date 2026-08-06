@@ -8,7 +8,7 @@ using System.Net.Http;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
     internal class GpApiRecurringRequestBuilder<T> : IRequestBuilder<RecurringBuilder<T>> where T : class {
-        private static RecurringBuilder<T> _builder;
+        private RecurringBuilder<T> _builder;
         public Request BuildRequest(RecurringBuilder<T> builder, GpApiConnector gateway) {
             _builder = builder;
             JsonDoc data = null;

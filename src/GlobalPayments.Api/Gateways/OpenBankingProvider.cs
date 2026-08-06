@@ -20,13 +20,12 @@ namespace GlobalPayments.Api.Gateways
         public bool SupportsHostedPayments => false;
         public ShaHashType ShaHashType { get; set; }
 
-        private Dictionary<string, string> MaskedValues;
-
         public OpenBankingProvider() {
             this.Headers["Accept"] = "application/json";
         }
 
         public Transaction ProcessOpenBanking(AuthorizationBuilder builder) {
+            var maskedValueCollection = new MaskedValueCollection();
             string timestamp = builder.Timestamp ?? GenerationUtils.GenerateTimestamp(); 
             string orderId = builder.OrderId ?? GenerationUtils.GenerateOrderId();
             var amount = builder.Amount != null ? builder.Amount.ToNumericCurrencyString() : null;
@@ -68,7 +67,7 @@ namespace GlobalPayments.Api.Gateways
                     maskedValue.Add("payment.destination.account_number", destination.GetValue<string>("account_number"));
                     maskedValue.Add("payment.destination.iban", destination.GetValue<string>("iban"));
 
-                    MaskedValues = ProtectSensitiveData.HideValues(maskedValue, 4);
+                    maskedValueCollection.HideValues(maskedValue, 4);
 
                     JsonDoc remittance_reference = new JsonDoc();
                     remittance_reference.Set("type", builder.RemittanceReferenceType != null ? builder.RemittanceReferenceType.ToString() : null)
@@ -95,9 +94,7 @@ namespace GlobalPayments.Api.Gateways
 
             try
             {
-                Request.MaskedValues = MaskedValues;
-
-                string rawResponse = DoTransaction(HttpMethod.Post, "/payments", request.ToString());
+                string rawResponse = DoTransaction(HttpMethod.Post, "/payments", request.ToString(), maskedValues: maskedValueCollection.ToDictionary());
                 return OpenBankingMapping.MapResponse(rawResponse);
             }
             catch (GatewayException gatewayException)

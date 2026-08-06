@@ -54,7 +54,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(response);
-                Assert.AreEqual("SUCCESS", response.ResponseCode);
+                Assert.AreEqual("00", response.ResponseCode);
                 Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
                 Assert.IsNotNull(response.FraudFilterResponse);
                 Assert.AreEqual(items.Key.ToString(), response.FraudFilterResponse.FraudResponseMode);
@@ -78,7 +78,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
             Assert.IsNotNull(response.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), response.FraudFilterResponse.FraudResponseMode);
@@ -117,7 +117,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
             Assert.IsNotNull(response.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), response.FraudFilterResponse.FraudResponseMode);
@@ -148,7 +148,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
             Assert.IsNotNull(response.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), response.FraudFilterResponse.FraudResponseMode);
@@ -171,7 +171,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -197,7 +197,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -227,7 +227,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
         }
         
@@ -240,7 +240,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -268,7 +268,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
         }
 
@@ -282,7 +282,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -312,7 +312,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -342,7 +342,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -381,7 +381,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -414,7 +414,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -445,7 +445,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(refund);
-            Assert.AreEqual("SUCCESS", refund.ResponseCode);
+            Assert.AreEqual("00", refund.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), refund.ResponseMessage);
         }
         
@@ -458,7 +458,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.PASSIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -494,7 +494,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.PASSIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -524,7 +524,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.PASSIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -559,7 +559,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(trn);
-                Assert.AreEqual("SUCCESS", trn.ResponseCode);
+                Assert.AreEqual("00", trn.ResponseCode);
                 Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
                 Assert.IsNotNull(trn.FraudFilterResponse);
                 Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(),
@@ -602,7 +602,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -666,7 +666,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.PASSIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -697,7 +697,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -732,7 +732,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(trn);
-                Assert.AreEqual("SUCCESS", trn.ResponseCode);
+                Assert.AreEqual("00", trn.ResponseCode);
                 Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
                 Assert.IsNotNull(trn.FraudFilterResponse);
                 Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(),
@@ -764,7 +764,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.ACTIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);
@@ -818,7 +818,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), trn.ResponseMessage);
             Assert.IsNotNull(trn.FraudFilterResponse);
             Assert.AreEqual(FraudFilterMode.PASSIVE.ToString().ToUpper(), trn.FraudFilterResponse.FraudResponseMode);

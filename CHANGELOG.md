@@ -1,6 +1,19 @@
 # Changelog
 
-## Latest - v11.3.0 (07/30/26)
+## Latest - v11.3.1 (08/06/26)
+
+### Bug Fixes
+- [GPAPI] - Fixed a concurrency defect that could cause duplicate charges under parallel load. Request-scoped state (the `x-gp-idempotency` header) was being staged on the process-shared `Headers` dictionary of the singleton `GpApiConnector`, so concurrent transactions could overwrite each other's idempotency key (returning `DUPLICATE_ACTION`), strip a key entirely, or crash while enumerating the header collection mid-mutation. The idempotency key is now passed as a per-request header and is never written to the shared collection, and the shared `Headers` mutation for the `Authorization` token is now synchronized.
+- [GPAPI] - Fixed a related concurrency defect in request log masking. Masked-value state was held on process-shared/static fields (`ProtectSensitiveData`'s accumulator, `Request.MaskedValues`, and `Gateway.MaskedRequestData`), so parallel transactions could null out, overwrite, or crash while enumerating one another's masking data (`NullReferenceException` / `InvalidOperationException`). Masked values are now request-scoped: each builder/provider accumulates into its own `MaskedValueCollection`, the values ride on the `Request` instance, and they flow to the gateway as a per-call parameter instead of shared state. The `GpApiSecureRequestBuilder`, `GpApiPayFacRequestBuilder`, and `GpApiInstallmentRequestBuilder` were also converted from `static` internal state to per-call instance state, making concurrent 3DS/boarding/installment request building thread-safe.
+
+### Deprecations
+- [GPAPI] - Marked `ProtectSensitiveData` (`GlobalPayments.Api.Logging`) as `[Obsolete]`. It accumulates masked values in process-shared static state and is not safe under concurrent use. Use a per-request `MaskedValueCollection` instance instead. The SDK no longer uses this type internally; it remains for backward compatibility and will emit a compiler warning at call sites.
+
+### Changed
+- [GPAPI] - `Request.MaskedValues` is now an `internal` instance property instead of a `public static` member, as part of the masking concurrency fix. This was internal request-log plumbing that was never intended as consumer API (`Request` has an `internal` constructor and is never returned from or passed into any public method), so no supported integration is affected.
+
+
+## v11.3.0 (07/30/26)
 
 ### Enhancement
 - [GPAPI] - Added Hosted Payment Page (HPP) Pay By Link support for `submit_button_label`, `display_configuration` (iframe domains), order-level `surcharge`, plus `entry_mode` and `digital_wallets` (including Click to Pay) in the payment method configuration. The link-create response now maps the echoed order-level `surcharge` back onto `PayByLinkResponse.Surcharges`.

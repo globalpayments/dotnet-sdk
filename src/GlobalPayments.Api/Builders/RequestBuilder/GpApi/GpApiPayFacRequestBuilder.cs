@@ -14,8 +14,9 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
 {
     internal class GpApiPayFacRequestBuilder<T> : IRequestBuilder<PayFacBuilder<T>> where T : class
     {
-        private static PayFacBuilder<T> _builder { get; set; }
-        private static Dictionary<string, string> MaskedValues;
+        private PayFacBuilder<T> _builder { get; set; }
+        private readonly MaskedValueCollection _maskedValueCollection = new MaskedValueCollection();
+        private Dictionary<string, string> MaskedValues;
 
         public Request BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway)
         {
@@ -29,13 +30,12 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     {
                         var data = BuildCreateMerchantRequest();
 
-                        Request.MaskedValues = MaskedValues;
-
                         return new Request
                         {
                             Verb = HttpMethod.Post,
                             Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}",
                             RequestBody = data.ToString(),
+                            MaskedValues = MaskedValues,
                         };
                     }
                     break;
@@ -147,7 +147,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             }
         }
 
-        private static Dictionary<string, object> MapAddress(Address address, string countryCodeType = null, string functionKey = null)
+        private Dictionary<string, object> MapAddress(Address address, string countryCodeType = null, string functionKey = null)
         {
             var countryCode = string.Empty;
             switch (countryCodeType)
@@ -180,7 +180,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return item;
         }
 
-        private static Dictionary<string, object> MapCreditCardInfo(CreditCardData value)
+        private Dictionary<string, object> MapCreditCardInfo(CreditCardData value)
         {
             var item = new Dictionary<string, object>();
             item.Add("name", value.CardHolderName);
@@ -194,13 +194,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             maskedValue.Add("payer.payment_method.card.expiry_year", value.ExpYear.HasValue ? value.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
             maskedValue.Add("payer.payment_method.card.cvv", value.Cvn);
 
-            MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
-            MaskedValues = ProtectSensitiveData.HideValue("payer.payment_method.card.number", value.Number, 4, 6);
+            MaskedValues = _maskedValueCollection.HideValues(maskedValue);
+            MaskedValues = _maskedValueCollection.HideValue("payer.payment_method.card.number", value.Number, 4, 6);
 
             return item;
         }
 
-        private static JsonDoc SetMerchantInfo()
+        private JsonDoc SetMerchantInfo()
         {
             if (_builder.UserPersonalData == null)
             {
@@ -229,7 +229,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return data;
         }
 
-        private static JsonDoc BuildCreateMerchantRequest()
+        private JsonDoc BuildCreateMerchantRequest()
         {
             var merchantData = _builder.UserPersonalData;
             var data = SetMerchantInfo();
@@ -246,7 +246,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return data;
         }
 
-        private static JsonDoc SetPaymentStatistics()
+        private JsonDoc SetPaymentStatistics()
         {
             if (_builder.PaymentStatistics == null)
             {
@@ -259,7 +259,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                 .Set("highest_ticket_sales_amount", _builder.PaymentStatistics.HighestTicketSalesAmount.ToNumericCurrencyString());
         }
 
-        private static List<Dictionary<string, object>> SetPersonList(string type = null)
+        private List<Dictionary<string, object>> SetPersonList(string type = null)
         {
             if (_builder.PersonsData?.Count == 0 || _builder.PersonsData == null)
             {
@@ -306,7 +306,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return personInfo;
         }
 
-        private static Dictionary<string, object> SetBankTransferInfo(BankAccountData bankAccountData)
+        private Dictionary<string, object> SetBankTransferInfo(BankAccountData bankAccountData)
         {
             var data = new Dictionary<string, object>();
             data.Add("account_holder_type", bankAccountData?.AccountOwnershipType);
@@ -328,7 +328,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return data;
         }
 
-        private static Dictionary<string, object> SetCreditCardInfo(CreditCardData creditCardInformation)
+        private Dictionary<string, object> SetCreditCardInfo(CreditCardData creditCardInformation)
         {
             var item = new Dictionary<string, object>();
             if (!string.IsNullOrEmpty(creditCardInformation?.CardHolderName))
@@ -341,13 +341,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             maskedValue.Add("payment_methods;list.card.expiry_month", creditCardInformation?.ExpMonth.ToString().PadLeft(2, '0') ?? string.Empty);
             maskedValue.Add("payment_methods;list.card.expiry_year", creditCardInformation?.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) ?? string.Empty);            
 
-            MaskedValues = ProtectSensitiveData.HideValues(maskedValue);
-            MaskedValues = ProtectSensitiveData.HideValue("payment_methods;list.card.number", creditCardInformation?.Number, 4, 6);
+            MaskedValues = _maskedValueCollection.HideValues(maskedValue);
+            MaskedValues = _maskedValueCollection.HideValue("payment_methods;list.card.number", creditCardInformation?.Number, 4, 6);
 
             return item;
         }
 
-        private static List<Dictionary<string, object>> SetProductList(List<Product> productData)
+        private List<Dictionary<string, object>> SetProductList(List<Product> productData)
         {
             var products = new List<Dictionary<string, object>>();
 
@@ -366,7 +366,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return products;
         }
 
-        private static List<Dictionary<string, object>> SetPaymentMethod()
+        private List<Dictionary<string, object>> SetPaymentMethod()
         {
             if (_builder.PaymentMethodsFunctions == null)
             {
@@ -387,7 +387,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return paymentMethods;
         }
 
-        private static List<Dictionary<string, object>> SetAddressList()
+        private List<Dictionary<string, object>> SetAddressList()
         {
             if (_builder.UserPersonalData == null)
             {
@@ -414,7 +414,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             return addresses;
         }
 
-        private static JsonDoc BuildEditMerchantRequest()
+        private JsonDoc BuildEditMerchantRequest()
         {
             var requestBody = SetMerchantInfo();
             requestBody

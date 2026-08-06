@@ -75,7 +75,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("INITIATED", response.ResponseMessage);
 
             Console.WriteLine("copy the link and open it in a browser, do the login wih your paypal credentials and authorize the payment in the paypal form. You will be redirected to a blank page with a printed message like this: { \"success\": true }. This has to be done within a 25 seconds timeframe.");
@@ -120,7 +120,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("INITIATED", response.ResponseMessage);
 
             Console.WriteLine("copy the link and open it in a browser, do the login wih your paypal credentials and authorize the payment in the paypal form. You will be redirected to a blank page with a printed message like this: { \"success\": true }. This has to be done within a 25 seconds timeframe.");
@@ -172,7 +172,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(trn);
-            Assert.AreEqual("SUCCESS", trn.ResponseCode);
+            Assert.AreEqual("00", trn.ResponseCode);
             Assert.AreEqual("INITIATED", trn.ResponseMessage);
 
             Console.WriteLine("copy the link and open it in a browser, do the login wih your paypal credentials and authorize the payment in the paypal form. You will be redirected to a blank page with a printed message like this: { \"success\": true }. This has to be done within a 25 seconds timeframe.");
@@ -274,7 +274,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("INITIATED", response.ResponseMessage);
 
             Console.WriteLine("copy the link and open it in a browser, do the login wih your paypal credentials and authorize the payment in the paypal form. You will be redirected to a blank page with a printed message like this: { \"success\": true }. This has to be done within a 25 seconds timeframe.");
@@ -369,7 +369,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                         .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual("INITIATED", response.ResponseMessage);
         }
 
