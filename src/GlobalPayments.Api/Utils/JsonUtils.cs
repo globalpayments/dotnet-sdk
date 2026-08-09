@@ -132,7 +132,25 @@ namespace GlobalPayments.Api.Utils {
                     else return (T)Convert.ChangeType(value, typeof(T));
                 }
                 catch (InvalidCastException) {
-                    return (T)_dict[name];
+                    var raw = _dict[name];
+                    // Value is already the requested type (e.g. a nested JsonDoc). Original behaviour.
+                    if (raw is T typed) {
+                        return typed;
+                    }
+                    // Gateway sent an array where a scalar was expected, e.g. "created_on": ["..."].
+                    // Collapse to the first convertible element rather than casting the whole
+                    // collection, which would throw a second, uncaught InvalidCastException.
+                    if (raw is IEnumerable<string> collection) {
+                        foreach (var item in collection) {
+                            try {
+                                return (T)Convert.ChangeType(item, typeof(T));
+                            }
+                            catch {
+                                break;
+                            }
+                        }
+                    }
+                    return default(T);
                 }
             }
             return default(T);
