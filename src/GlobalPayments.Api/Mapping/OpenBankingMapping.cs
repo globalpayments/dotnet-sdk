@@ -84,11 +84,14 @@ namespace GlobalPayments.Api.Mapping
 
         private static BankPaymentType? GetBankPaymentType(JsonDoc response) {
             if (response.Has("payment_type")) {
-                if (BankPaymentType.FASTERPAYMENTS.ToString().ToUpper().Equals(response.GetValue<string>("payment_type").ToUpper())) {
-                    return BankPaymentType.FASTERPAYMENTS;
-                }
-                else if (BankPaymentType.SEPA.ToString().ToUpper().Equals(response.GetValue<string>("payment_type").ToUpper())) {
-                    return BankPaymentType.SEPA;
+                string paymentType = response.GetValue<string>("payment_type");
+                if (!string.IsNullOrEmpty(paymentType)) {
+                    if (BankPaymentType.FASTERPAYMENTS.ToString().ToUpper().Equals(paymentType.ToUpper())) {
+                        return BankPaymentType.FASTERPAYMENTS;
+                    }
+                    else if (BankPaymentType.SEPA.ToString().ToUpper().Equals(paymentType.ToUpper())) {
+                        return BankPaymentType.SEPA;
+                    }
                 }
             }
             return null;

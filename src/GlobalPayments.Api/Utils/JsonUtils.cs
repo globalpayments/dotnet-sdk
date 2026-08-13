@@ -132,11 +132,15 @@ namespace GlobalPayments.Api.Utils {
                     else return (T)Convert.ChangeType(value, typeof(T));
                 }
                 catch (InvalidCastException) {
-                    return (T)_dict[name];
+                    return DegradeOrDefault<T>(name);
                 }
             }
             return default(T);
         }
+
+        // Degrade an unconvertible stored value to default(T) rather than re-throwing.
+        private T DegradeOrDefault<T>(string name) =>
+            _dict[name] is T variable ? variable : default(T);
 
         public IEnumerable<JsonDoc> GetEnumerator(string name) {
             if (_dict.ContainsKey(name)) {
@@ -159,7 +163,7 @@ namespace GlobalPayments.Api.Utils {
                     return value == null ? default(T) : (T)Convert.ChangeType(value, nullableType);
                 }
                 catch (InvalidCastException) {
-                    return (T)_dict[name];
+                    return DegradeOrDefault<T>(name);
                 }
             }
             return default(T);

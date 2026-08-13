@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v11.3.1 (08/06/26)
+## Latest - v11.3.2 (08/13/26)
+
+### Bug Fixes
+- [GP-ECOM] - Open Banking transaction status mapping no longer crashes when the gateway returns a scalar field (e.g. `created_on`, `amount`, `payment_type`) as a JSON array. `JsonDoc.GetValue<T>`/`GetNullableValue<T>` now degrade to `default(T)` instead of re-throwing an `InvalidCastException` from their catch block, and `OpenBankingMapping.MapTransactionSummary` no longer throws a `NullReferenceException` when `payment_type` is returned as an array. Previously `GetTransactionStatus()` could fail with `System.InvalidCastException`, crashing Open Banking callbacks with a 500.
+
+## v11.3.1 (08/06/26)
 
 ### Bug Fixes
 - [GPAPI] - Fixed a concurrency defect that could cause duplicate charges under parallel load. Request-scoped state (the `x-gp-idempotency` header) was being staged on the process-shared `Headers` dictionary of the singleton `GpApiConnector`, so concurrent transactions could overwrite each other's idempotency key (returning `DUPLICATE_ACTION`), strip a key entirely, or crash while enumerating the header collection mid-mutation. The idempotency key is now passed as a per-request header and is never written to the shared collection, and the shared `Headers` mutation for the `Authorization` token is now synchronized.
