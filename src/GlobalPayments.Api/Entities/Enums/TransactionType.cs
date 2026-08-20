@@ -335,6 +335,11 @@ namespace GlobalPayments.Api.Entities {
         OrderDevice = 66,
 
         TransferFunds = 67,
-        FileAction = 68
+        FileAction = 68,
+
+        /// <summary>
+        /// Indicates a Click to Pay decrypt (GP-API /decrypt endpoint)
+        /// </summary>
+        Decrypt = 69
     }
 }

@@ -79,6 +79,36 @@ namespace GlobalPayments.Api.Entities {
 
         public string CardBrandTransactionId { get; set; }
 
+        /// <summary>
+        /// The decrypt identifier (DEC_ID) returned by the GP-API Click to Pay decrypt endpoint.
+        /// </summary>
+        public string DecryptId { get; set; }
+
+        /// <summary>
+        /// The digital wallet provider (e.g. CLICK_TO_PAY) returned by the decrypt endpoint.
+        /// </summary>
+        public string DigitalWalletProvider { get; set; }
+
+        /// <summary>
+        /// The token format returned by the decrypt endpoint (e.g. CARD_TOKEN).
+        /// </summary>
+        public string TokenFormat { get; set; }
+
+        /// <summary>
+        /// The payment account reference (PAR) returned by the decrypt endpoint.
+        /// </summary>
+        public string PaymentAccountReference { get; set; }
+
+        /// <summary>
+        /// The narrative returned by the decrypt endpoint.
+        /// </summary>
+        public string Narrative { get; set; }
+
+        /// <summary>
+        /// The card art image metadata returned by the decrypt endpoint.
+        /// </summary>
+        public DigitalWalletImage DigitalWalletImage { get; set; }
+
         public AlternativePaymentResponse AlternativePaymentResponse {
             get {
                 return TransactionReference?.AlternativePaymentResponse;

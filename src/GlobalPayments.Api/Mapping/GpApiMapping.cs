@@ -25,6 +25,7 @@ namespace GlobalPayments.Api.Mapping {
         private const string ADDRESS_LIST = "ADDRESS_LIST";
         private const string SPLIT = "SPLIT";
         private const string TRANSFER = "TRANSFER";
+        private const string DECRYPT_TOKEN = "DECRYPT_TOKEN";
         private const string DOCUMENT_UPLOAD = "DOCUMENT_UPLOAD";
         private const string FUNDS = "FUNDS";
         private const string FILE_CREATE = "FILE_CREATE";
@@ -113,6 +114,9 @@ namespace GlobalPayments.Api.Mapping {
                     case TRANSFER:
                         transaction.PaymentMethodType = PaymentMethodType.Account_Funds;
                         break;
+                    case DECRYPT_TOKEN:
+                        MapDecryptTokenResponse(json, transaction);
+                        return transaction;
                     case SPLIT:
                         if (json.Has("transfers")) {                            
                             transaction.TransfersFundsAccounts = MapTransferFundsAccountDetails(json);
@@ -234,6 +238,80 @@ namespace GlobalPayments.Api.Mapping {
             }           
 
             return transaction;
+        }
+
+        private static void MapDecryptTokenResponse(JsonDoc json, Transaction transaction) {
+            transaction.DecryptId = json.GetValue<string>("id");
+            transaction.Timestamp = json.GetValue<string>("time_created");
+            transaction.ReferenceNumber = json.GetValue<string>("reference");
+            transaction.ClientTransactionId = json.GetValue<string>("reference");
+
+            var paymentMethod = json.Get("payment_method");
+            if (paymentMethod != null) {
+                transaction.Token = paymentMethod.GetValue<string>("id");
+                transaction.Narrative = paymentMethod.GetValue<string>("narrative");
+
+                var digitalWallet = paymentMethod.Get("digital_wallet");
+                if (digitalWallet != null) {
+                    transaction.CardDetails = new Card {
+                        Brand = digitalWallet.GetValue<string>("brand"),
+                        Funding = digitalWallet.GetValue<string>("funding"),
+                        MaskedNumberLast4 = digitalWallet.GetValue<string>("number_last4"),
+                        Bin = digitalWallet.GetValue<string>("card_bin"),
+                        Eci = digitalWallet.GetValue<string>("eci"),
+                    };
+                    transaction.CardType = digitalWallet.GetValue<string>("brand");
+                    transaction.CardLast4 = digitalWallet.GetValue<string>("number_last4");
+                    transaction.DigitalWalletProvider = digitalWallet.GetValue<string>("provider");
+                    transaction.TokenFormat = digitalWallet.GetValue<string>("token_format");
+                    transaction.PaymentAccountReference = digitalWallet.GetValue<string>("payment_account_reference");
+
+                    var image = digitalWallet.Get("image");
+                    if (image != null) {
+                        transaction.DigitalWalletImage = new DigitalWalletImage {
+                            Width = image.GetValue<string>("width"),
+                            Height = image.GetValue<string>("height"),
+                            Url = image.GetValue<string>("url"),
+                            Status = image.GetValue<string>("status"),
+                        };
+                    }
+                }
+            }
+
+            if (json.Has("payer")) {
+                transaction.PayerDetails = MapDecryptPayerDetails(json.Get("payer"));
+            }
+        }
+
+        private static PayerDetails MapDecryptPayerDetails(JsonDoc payer) {
+            var details = new PayerDetails {
+                FirstName = payer.GetValue<string>("first_name"),
+                LastName = payer.GetValue<string>("last_name"),
+                Name = payer.GetValue<string>("name"),
+                Reference = payer.GetValue<string>("reference"),
+                Language = payer.GetValue<string>("language"),
+                VerificationType = payer.GetValue<string>("verification_type"),
+                TimeCreated = payer.GetValue<string>("time_created"),
+            };
+
+            var mobile = payer.Get("mobile_phone");
+            if (mobile != null) {
+                var countryCode = mobile.GetValue<string>("country_code");
+                var subscriberNumber = mobile.GetValue<string>("subscriber_number");
+                details.MobilePhone = (!string.IsNullOrEmpty(countryCode) && !string.IsNullOrEmpty(subscriberNumber))
+                    ? "+" + countryCode + subscriberNumber
+                    : subscriberNumber;
+            }
+
+            var billing = payer.Get("billing_address");
+            if (billing != null) {
+                details.Country = billing.GetValue<string>("country");
+                var address = MapAddressObject(billing);
+                address.Type = AddressType.Billing;
+                details.BillingAddress = address;
+            }
+
+            return details;
         }
 
         private static PayerDetails MapPayerDetails(JsonDoc json, JsonDoc shippingAddress = null) {

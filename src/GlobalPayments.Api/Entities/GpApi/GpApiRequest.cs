@@ -25,5 +25,6 @@ namespace GlobalPayments.Api.Entities.GpApi {
         public const string FILE_PROCESSING = "/files"; 
         public const string PAYERS_ENDPOINT = "/payers";
         public const string INSTALLMENT_ENDPOINT = "/installments";
+        public const string DECRYPT_ENDPOINT = "/decrypt";
     }
 }

@@ -51,5 +51,11 @@ namespace GlobalPayments.Api.Entities
         /// Indicates how the card is funded
         /// </summary>
         public string Funding { get; set; }
+
+        /// <summary>
+        /// The electronic commerce indicator (ECI) returned for digital wallet cards
+        /// (e.g. the GP-API Click to Pay decrypt <c>digital_wallet.eci</c> field).
+        /// </summary>
+        public string Eci { get; set; }
     }
 }

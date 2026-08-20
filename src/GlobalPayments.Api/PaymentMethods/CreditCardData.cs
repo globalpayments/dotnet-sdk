@@ -112,6 +112,22 @@ namespace GlobalPayments.Api.PaymentMethods {
 
         public string TokenizationData { get; set; }
 
+        /// <summary>
+        /// Click to Pay decrypt identifier (DEC_ID) returned by the GP-API decrypt endpoint.
+        /// When set, a Click to Pay charge references this decrypted result instead of sending encrypted token data.
+        /// </summary>
+        public string DecryptId { get; set; }
+
+        /// <summary>
+        /// The Digital Payment Application (DPA) reference for a Click to Pay payment token.
+        /// </summary>
+        public string DpaReference { get; set; }
+
+        /// <summary>
+        /// Indicates whether CVV is present when tokenizing a single-use payment method.
+        /// </summary>
+        public CvvPresent? CvvPresent { get; set; }
+
         public CreditCardData(string token = null) : base() {
             Token = token;
             CardPresent = false;

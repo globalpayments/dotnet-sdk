@@ -365,7 +365,7 @@ namespace GlobalPayments.Api.Builders {
         /// <summary>
         /// Gets or sets a value indicating whether sensitive fields in the gateway response should be masked.
         /// </summary>
-        internal bool MaskedDataResponse { get; set; }
+        internal bool? MaskedDataResponse { get; set; }
         /// <summary>
         /// Gets or sets the card types to block from being used in this transaction.
         /// </summary>

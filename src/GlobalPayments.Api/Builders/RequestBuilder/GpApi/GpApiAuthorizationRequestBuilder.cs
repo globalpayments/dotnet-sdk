@@ -24,16 +24,31 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             paymentMethod.Set("narrative", !string.IsNullOrEmpty(builder.DynamicDescriptor) ? builder.DynamicDescriptor : null);
 
             #region Encrypted/Decrypted Mobile
-            if (builder.PaymentMethod is CreditCardData && (builder.TransactionModifier == TransactionModifier.EncryptedMobile || builder.TransactionModifier == TransactionModifier.DecryptedMobile)) {
+            if (builder.PaymentMethod is CreditCardData && (builder.TransactionModifier == TransactionModifier.EncryptedMobile || builder.TransactionModifier == TransactionModifier.DecryptedMobile || (!string.IsNullOrEmpty((builder.PaymentMethod as CreditCardData).DecryptId) && (builder.PaymentMethod as CreditCardData).MobileType == EncyptedMobileType.CLICK_TO_PAY))) {
                 var digitalWallet = new JsonDoc();
                 var creditCardData = (builder.PaymentMethod as CreditCardData);
 
                 // Digital Wallet
-                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile) {
+                if (builder.TransactionModifier == TransactionModifier.EncryptedMobile || (!string.IsNullOrEmpty(creditCardData.DecryptId) && creditCardData.MobileType == EncyptedMobileType.CLICK_TO_PAY)) {
                     var payment_token = new JsonDoc();
                     switch (creditCardData.MobileType) {
                         case EncyptedMobileType.CLICK_TO_PAY:
-                            payment_token.Set("data", creditCardData.Token);
+                            // Decrypted Click to Pay charge references the DEC_ID + PMT_ID from a prior decrypt call
+                            if (!string.IsNullOrEmpty(creditCardData.DecryptId)) {
+                                digitalWallet.Set("decrypt", new JsonDoc().Set("id", creditCardData.DecryptId));
+                                payment_token
+                                    .Set("dpa_reference", creditCardData.DpaReference);
+                                if (!string.IsNullOrEmpty(creditCardData.Token)) {
+                                    paymentMethod.Set("id", creditCardData.Token);
+                                }
+                            }
+                            else {
+                                payment_token.Set("data", creditCardData.Token);
+                                if (builder.TransactionType == TransactionType.Decrypt) {
+                                    payment_token.Set("dpa_reference", creditCardData.DpaReference);
+                                    digitalWallet.Set("brand", creditCardData.CardType);
+                                }
+                            }
                             break;
                         default:
                             payment_token = JsonDoc.Parse(creditCardData.Token);
@@ -99,6 +114,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString())
                             .Set("usage_mode", EnumConverter.GetMapping(Target.GP_API, builder.PaymentMethodUsageMode))
                             .Set("card", card);
+
+                        if (builder.PaymentMethod is CreditCardData cvvCard && cvvCard.CvvPresent.HasValue) {
+                            tokenizationData.Set("cvv_present", EnumConverter.GetMapping(Target.GP_API, cvvCard.CvvPresent.Value));
+                        }
 
                         DisposeMaskedValues();
                         _maskedValues = _maskedValueCollection.HideValues(
@@ -611,6 +630,27 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 };
             }
 
+            if (builder.TransactionType == TransactionType.Decrypt) {
+                if (!(builder.PaymentMethod is CreditCardData)) {
+                    throw new UnsupportedTransactionException("Decrypt is only supported with CreditCardData containing a Click to Pay token.");
+                }
+                var decryptData = new JsonDoc()
+                    .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
+                    .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
+                    .Set("type", "DECRYPT")
+                    .Set("channel", EnumConverter.GetMapping(Target.GP_API, gateway.GpApiConfig.Channel))
+                    .Set("country", gateway.GpApiConfig.Country)
+                    .Set("currency", builder.Currency)
+                    .Set("payment_method", paymentMethod);
+
+                return new Request {
+                    Verb = HttpMethod.Post,
+                    Endpoint = $"{merchantUrl}{GpApiRequest.DECRYPT_ENDPOINT}",
+                    RequestBody = decryptData.ToString(),
+                    MaskedValues = _maskedValues,
+                };
+            }
+
             var data = new JsonDoc()
                 .Set("account_name", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountName)
                 .Set("account_id", gateway.GpApiConfig.AccessTokenInfo.TransactionProcessingAccountID)
@@ -623,8 +663,8 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 .Set("currency", builder.Currency)
                 .Set("reference", builder.ClientTransactionId ?? Guid.NewGuid().ToString());
             
-            if (builder.PaymentMethod is CreditCardData && ((builder.PaymentMethod as CreditCardData).MobileType == EncyptedMobileType.CLICK_TO_PAY)) {
-                data.Set("masked", builder.MaskedDataResponse ? "YES" : "NO");
+            if (builder.PaymentMethod is CreditCardData && builder.MaskedDataResponse.HasValue && ((builder.PaymentMethod as CreditCardData).MobileType == EncyptedMobileType.CLICK_TO_PAY)) {
+                data.Set("masked", builder.MaskedDataResponse.Value ? "YES" : "NO");
             }
             
             data.Set("description", builder.Description)
@@ -883,6 +923,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 if(builder.TransactionModifier == TransactionModifier.EncryptedMobile &&
                     builder.PaymentMethod is CreditCardData &&
                     ((CreditCardData)builder.PaymentMethod).HasInAppPaymentData()) {
+                    // A Click to Pay charge referencing a prior decrypt result is e-commerce, not in-app.
+                    if (!string.IsNullOrEmpty(((CreditCardData)builder.PaymentMethod).DecryptId)) {
+                        return "ECOM";
+                    }
                     return "IN_APP";
                 }
 

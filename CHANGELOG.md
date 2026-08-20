@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v11.3.2 (08/13/26)
+## Latest - v11.4.0 (08/20/26)
+
+### Enhancement
+- [GPAPI] - Added Click to Pay decrypt support. `CreditCardData.Decrypt()` posts an encrypted Click to Pay token to the GP-API `/decrypt` endpoint and returns the decrypt id (DEC_ID) as `Transaction.DecryptId` and the created payment method id (PMT_ID) as `Transaction.Token`. A subsequent Click to Pay charge can reference the decrypted result via the new `CreditCardData.DecryptId` and `DpaReference` properties, which emit `digital_wallet.decrypt.id` and `payment_token.dpa_reference` on `/transactions`. The decrypt response also maps `digital_wallet.eci` to `Card.Eci` on `Transaction.CardDetails`, and the payer's `language`, `verification_type`, and `time_created` to the new `PayerDetails.Language`, `PayerDetails.VerificationType`, and `PayerDetails.TimeCreated` properties. Also added `CreditCardData.CvvPresent`, which emits `cvv_present` when tokenizing a single-use payment method without a CVV.
+
+## v11.3.2 (08/13/26)
 
 ### Bug Fixes
 - [GP-ECOM] - Open Banking transaction status mapping no longer crashes when the gateway returns a scalar field (e.g. `created_on`, `amount`, `payment_type`) as a JSON array. `JsonDoc.GetValue<T>`/`GetNullableValue<T>` now degrade to `default(T)` instead of re-throwing an `InvalidCastException` from their catch block, and `OpenBankingMapping.MapTransactionSummary` no longer throws a `NullReferenceException` when `payment_type` is returned as an array. Previously `GetTransactionStatus()` could fail with `System.InvalidCastException`, crashing Open Banking callbacks with a 500.

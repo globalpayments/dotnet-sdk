@@ -28,6 +28,16 @@ namespace GlobalPayments.Api.Entities {
         public string LastName { get; set; }
 
         /// <summary>
+        /// Payer's full name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Payer's mobile phone number in international format.
+        /// </summary>
+        public string MobilePhone { get; set; }
+
+        /// <summary>
         /// Payer's email address.
         /// </summary>
         public string Email { get; set; }
@@ -46,5 +56,21 @@ namespace GlobalPayments.Api.Entities {
         /// Payer's shipping address.
         /// </summary>
         public Address ShippingAddress { get; set; }
+
+        /// <summary>
+        /// Payer's language/locale (e.g. GP-API <c>payer.language</c> = <c>en-GB</c>).
+        /// </summary>
+        public string Language { get; set; }
+
+        /// <summary>
+        /// How the payer was verified by the wallet (e.g. GP-API <c>payer.verification_type</c> =
+        /// <c>MOBILE_PHONE_NUMBER</c>).
+        /// </summary>
+        public string VerificationType { get; set; }
+
+        /// <summary>
+        /// Timestamp the payer record was created, returned in the GP-API <c>payer.time_created</c> field.
+        /// </summary>
+        public string TimeCreated { get; set; }
     }
 }

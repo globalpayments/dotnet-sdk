@@ -145,6 +145,15 @@ namespace GlobalPayments.Api.PaymentMethods {
         }
 
         /// <summary>
+        /// Decrypts a Click to Pay encrypted payment token via the GP-API decrypt endpoint.
+        /// </summary>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder Decrypt() {
+            return new AuthorizationBuilder(TransactionType.Decrypt, this)
+                .WithModifier(TransactionModifier.EncryptedMobile);
+        }
+
+        /// <summary>
         /// Gets token information for the specified token
         /// </summary>
         public Transaction GetTokenInformation(string configName = "default") {
