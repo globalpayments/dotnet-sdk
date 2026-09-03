@@ -1,6 +1,18 @@
 # Changelog
 
-## Latest - v11.4.0 (08/20/26)
+## Latest - v11.5.0 (09/03/26)
+
+### Enhancement
+
+- [GPAPI] - Added Cashpresso buy now, pay later support for merchants in Germany and Austria. Cashpresso is available for both direct transaction initiation and Hosted Payment Page flows, including supported payment plans, shipping details, product information, and redirect-based customer completion. Cashpresso transaction responses now include the provider, payment plan, and redirect information.
+- [NWS] - Implemented 3DES encryption, tokenization (Types 5 and 6), and mandatory CVV validation for Fleet card transactions across Visa, MasterCard, Voyager, WEX, and Fleetcor networks.
+
+### Bug Fixes
+- [GP-ECOM] - Fixed HPP response hash validation to match the HPP Reference "Check hash" specification. `HostedService.ParseResponse` previously included `PAYMENTMETHOD` in the SHA hash whenever `MERCHANT_RESPONSE_URL` was present, so Google Pay / Apple Pay responses (which echo `PAYMENTMETHOD` but settle as card payments) threw a false "Incorrect hash" `ApiException` even though the gateway processed the transaction. The hash now follows the spec: Card Payments — including Google Pay/Apple Pay — are validated over `AUTHCODE`, while alternative payment methods are validated over `PAYMENTMETHOD`.
+- [GP-ECOM] - Fixed parsing of asynchronous APM transaction Status Update notifications. These arrive with lowercase field names and no `MERCHANT_RESPONSE_URL`, so `MapTransactionStatusResponse` was never applied to them and every notification failed with "Incorrect hash". The status-update mapping is now applied to those notifications, and they are correctly validated over `PAYMENTMETHOD`.
+
+
+## v11.4.0 (08/20/26)
 
 ### Enhancement
 - [GPAPI] - Added Click to Pay decrypt support. `CreditCardData.Decrypt()` posts an encrypted Click to Pay token to the GP-API `/decrypt` endpoint and returns the decrypt id (DEC_ID) as `Transaction.DecryptId` and the created payment method id (PMT_ID) as `Transaction.Token`. A subsequent Click to Pay charge can reference the decrypted result via the new `CreditCardData.DecryptId` and `DpaReference` properties, which emit `digital_wallet.decrypt.id` and `payment_token.dpa_reference` on `/transactions`. The decrypt response also maps `digital_wallet.eci` to `Card.Eci` on `Transaction.CardDetails`, and the payer's `language`, `verification_type`, and `time_created` to the new `PayerDetails.Language`, `PayerDetails.VerificationType`, and `PayerDetails.TimeCreated` properties. Also added `CreditCardData.CvvPresent`, which emits `cvv_present` when tokenizing a single-use payment method without a CVV.

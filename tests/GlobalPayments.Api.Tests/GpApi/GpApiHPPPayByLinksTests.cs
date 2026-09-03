@@ -12,8 +12,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiHPPPayByLinksTests : BaseGpApiTests {
         private const string EuConfigName = "EuConfig";
+        private const string CashpressoConfigName = "CashpressoHpp";
+        private const string CashpressoAppId = "hlZAokTftDazLlWDPe8E6VAz5g9rSDPg";
+        private const string CashpressoAppKey = "ThDO2fISzzWCgkCZ"; //gitleaks:allow
         private Address shippingAddress;
         private Address billingAddress;
+        private Address germanyAddress;
         private Customer newCustomer;
         /// <summary>
         /// Initializes the test by configuring the GP API service with test credentials and settings.
@@ -22,6 +26,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         public void TestInitialize() {
             ServicesContainer.RemoveConfig();
             ServicesContainer.RemoveConfig(EuConfigName);
+            ServicesContainer.RemoveConfig(CashpressoConfigName);
 
             var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             gpApiConfig.Country = "US";
@@ -40,6 +45,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 TransactionProcessingAccountName = "GPECOM_Transaction_Processing_CNP"
             };
             ServicesContainer.ConfigureService(euConfig, EuConfigName);
+
+            var cashpressoConfig = GpApiConfigSetup(CashpressoAppId, CashpressoAppKey, Channel.CardNotPresent);
+            cashpressoConfig.Country = "DE";
+            cashpressoConfig.ServiceUrl = "https://apis-qa.globalpay.com/ucp";
+            cashpressoConfig.AccessTokenInfo = new AccessTokenInfo {
+                TransactionProcessingAccountName = "GPECOM_CASHPRESSO_APM_Transaction_Processing"
+            };
+            ServicesContainer.ConfigureService(cashpressoConfig, CashpressoConfigName);
 
             billingAddress = new Address {
                 StreetAddress1 = "8 MY ROAD",
@@ -74,6 +87,18 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     CountryCode = "44",
                     Number = "7853283864"
                 },
+            };
+
+            germanyAddress = new Address
+            {
+                StreetAddress1 = "Hauptstrasse 25",
+                StreetAddress2 = "Apartment 12",
+                StreetAddress3 = "Gebaeude C",
+                City = "Munich",
+                PostalCode = "80331",
+                State = "BY",
+                Country = "DE",
+                CountryCode = "DE"
             };
         }
 
@@ -595,5 +620,241 @@ namespace GlobalPayments.Api.Tests.GpApi {
         }
 
         #endregion
+
+        /// <summary>
+        /// Creates a Cashpresso HPP Pay By Link for a new customer and verifies the link is active.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithCashpressoApm_NewCustomer_ReturnsSuccess()
+        {
+            newCustomer.Status = "NEW";
+            newCustomer.FirstName = "Cajimus";
+            newCustomer.LastName = "Kibuwuh";
+            newCustomer.Language = "en";
+            newCustomer.Email = "Cajimus.Kibuwuh8286@example.com";
+            newCustomer.Phone = new PhoneNumber { CountryCode = "+49", Number = "996946283" };
+
+            var payByLink = new PayByLinkData()
+            {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card,
+                    PaymentMethodName.CASHPRESSO
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = false,
+                ShippingAmount = 0,
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Configuration = new PaymentMethodConfiguration
+                {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    ApmConfigurations = new ApmConfiguration[] {
+                        new ApmConfiguration {
+                            Provider = AlternativePaymentType.CASHPRESSO,
+                            PaymentPlans = new CashpressoPaymentPlan[] {
+                                CashpressoPaymentPlan.PAY_IN_3_INSTALLMENTS,
+                                CashpressoPaymentPlan.PAY_30_DAYS,
+                                CashpressoPaymentPlan.FLEXIBLE
+                            }
+                        }
+                    }
+                },
+                DisplayConfiguration = new DisplayConfiguration
+                {
+                    IframeDimensionsDomain = "https://www.example.com",
+                    IframeResponseDomain = "https://www.example.com",
+                    CardholderName = "YES",
+                    Cvv = "YES"
+                }
+            };
+
+            var response = PayByLinkService.Create(payByLink, 650)
+                .WithCurrency("EUR")
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithAddress(germanyAddress, AddressType.Shipping)
+                .WithAddress(germanyAddress, AddressType.Billing)
+                .WithCustomerData(newCustomer)
+                .WithDescription("HPP_Cashpresso_New_Customer_Test")
+                .WithPhoneNumber("49", "609568831", PhoneNumberType.Shipping)
+                .WithCashpressoShippingMethod(CashpressoShippingMethod.DELIVERY)
+                .WithShippingDate(new DateTime(2028, 1, 1))
+                .WithMiscProductData(new System.Collections.Generic.List<Product> {
+                    new Product {
+                        ProductName = "Iphone 16",
+                        ProductId = "IPH65434",
+                        Quantity = 1,
+                        UnitPrice = 650,
+                        TaxAmount = 0
+                    }
+                })
+                .Execute(CashpressoConfigName);
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayByLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.IsNotNull(response.PayByLinkResponse.Url);
+            Assert.IsNotNull(response.PayByLinkResponse.Id);
+        }
+
+        /// <summary>
+        /// Creates an HPP Pay By Link that enables the Cashpresso (BNPL) alternative payment method
+        /// and verifies the link is active.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithCashpressoApm_ExistingCustomer_ReturnsSuccess()
+        {
+
+            newCustomer.Id = "PYR_992a3181a1bb493ead11474ce0fbd567";
+            newCustomer.Status = "ACTIVE";
+            newCustomer.FirstName = "Cajimus";
+            newCustomer.LastName = "Kibuwuh";
+            newCustomer.Language = "en";
+            newCustomer.Email = "Cajimus.Kibuwuh8286@example.com";
+            newCustomer.Phone = new PhoneNumber { CountryCode = "+49", Number = "996946283" };
+
+            var payByLink = new PayByLinkData()
+            {
+                Type = PayByLinkType.HOSTED_PAYMENT_PAGE,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card,
+                    PaymentMethodName.CASHPRESSO
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = false,
+                ShippingAmount = 0,
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Configuration = new PaymentMethodConfiguration
+                {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    ApmConfigurations = new ApmConfiguration[] {
+                        new ApmConfiguration {
+                            Provider = AlternativePaymentType.CASHPRESSO,
+                            PaymentPlans = new CashpressoPaymentPlan[] {
+                                CashpressoPaymentPlan.PAY_IN_3_INSTALLMENTS,
+                                CashpressoPaymentPlan.PAY_30_DAYS
+                            }
+                        }
+                    }
+                },
+                DisplayConfiguration = new DisplayConfiguration
+                {
+                    IframeDimensionsDomain = "https://www.example.com",
+                    IframeResponseDomain = "https://www.example.com",
+                    CardholderName = "YES",
+                    Cvv = "YES"
+                }
+            };
+
+            var response = PayByLinkService.Create(payByLink, 650)
+                .WithCurrency("EUR")
+                .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                .WithAddress(germanyAddress, AddressType.Shipping)
+                .WithAddress(germanyAddress, AddressType.Billing)
+                .WithCustomerData(newCustomer)
+                .WithDescription("HPP_Cashpresso_Test")
+                .WithPhoneNumber("49", "609568831", PhoneNumberType.Shipping)
+                .WithCashpressoShippingMethod(CashpressoShippingMethod.DELIVERY)
+                .WithShippingDate(new DateTime(2028, 1, 1))
+                .WithMiscProductData(new System.Collections.Generic.List<Product> {
+                    new Product {
+                        ProductName = "Iphone 16",
+                        ProductId = "IPH65434",
+                        Quantity = 1,
+                        UnitPrice = 650,
+                        TaxAmount = 0
+                    }
+                })
+                .Execute(CashpressoConfigName);
+
+            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual(PayByLinkStatus.ACTIVE.ToString().ToUpper(), response.ResponseMessage.ToUpper());
+            Assert.IsNotNull(response.PayByLinkResponse.Url);
+            Assert.IsNotNull(response.PayByLinkResponse.Id);
+        }
+
+        /// <summary>
+        /// Rejects a Cashpresso HPP Pay By Link when the link type is missing.
+        /// </summary>
+        [TestMethod]
+        public void CreateHPPPayByLink_WithCashpressoApm_WithoutType_ThrowsGatewayException()
+        {
+            newCustomer.Id = "PYR_992a3181a1bb493ead11474ce0fbd567";
+            newCustomer.Status = "ACTIVE";
+            newCustomer.FirstName = "Cajimus";
+            newCustomer.LastName = "Kibuwuh";
+            newCustomer.Language = "en";
+            newCustomer.Email = "Cajimus.Kibuwuh8286@example.com";
+            newCustomer.Phone = new PhoneNumber { CountryCode = "+49", Number = "996946283" };
+
+            var payByLink = new PayByLinkData {
+                Type = null,
+                UsageMode = PaymentMethodUsageMode.Single,
+                AllowedPaymentMethods = new PaymentMethodName[] {
+                    PaymentMethodName.Card,
+                    PaymentMethodName.CASHPRESSO
+                },
+                UsageLimit = 1,
+                Name = "Mobile Bill Payment",
+                IsShippable = false,
+                ExpirationDate = DateTime.UtcNow.AddDays(10),
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/returnUrl",
+                Configuration = new PaymentMethodConfiguration {
+                    IsAddressOverrideAllowed = true,
+                    IsShippingAddressEnabled = true,
+                    ChallengeRequestIndicator = ChallengeRequestIndicator.NO_CHALLENGE_REQUESTED,
+                    ExemptStatus = ExemptStatus.LOW_VALUE,
+                    IsBillingAddressRequired = true,
+                    StorageMode = StorageMode.OFF,
+                    ApmConfigurations = new ApmConfiguration[] {
+                        new ApmConfiguration {
+                            Provider = AlternativePaymentType.CASHPRESSO,
+                            PaymentPlans = new CashpressoPaymentPlan[] {
+                                CashpressoPaymentPlan.PAY_IN_3_INSTALLMENTS,
+                                CashpressoPaymentPlan.PAY_30_DAYS,
+                                CashpressoPaymentPlan.FLEXIBLE
+                            }
+                        }
+                    }
+                }
+            };
+
+            var ex = Assert.ThrowsException<GatewayException>(() => {
+                PayByLinkService.Create(payByLink, 650)
+                    .WithCurrency("EUR")
+                    .WithClientTransactionId(GenerationUtils.GenerateRecurringKey())
+                    .WithAddress(germanyAddress, AddressType.Shipping)
+                    .WithAddress(germanyAddress, AddressType.Billing)
+                    .WithCustomerData(newCustomer)
+                    .WithDescription("HPP_Cashpresso_Missing_Type_Test")
+                    .WithPhoneNumber("49", "609568831", PhoneNumberType.Shipping)
+                    .WithCashpressoShippingMethod(CashpressoShippingMethod.DELIVERY)
+                    .WithShippingDate(new DateTime(2028, 1, 1))
+                    .Execute(CashpressoConfigName);
+            });
+
+            Assert.IsTrue(ex.Message.Contains("type"));
+        }
+
     }
 }

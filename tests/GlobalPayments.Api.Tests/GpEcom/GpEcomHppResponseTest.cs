@@ -1,4 +1,6 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using System;
+using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.GpEcom.Hpp;
 using GlobalPayments.Api.Utils;
@@ -75,6 +77,7 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 SharedSecret = "secret",
             });
 
+            // Real APM redirect response: carries MERCHANT_RESPONSE_URL + PAYMENTMETHOD and hashes over PAYMENTMETHOD (HPP Reference > Payment Methods > Check hash).
             var responseJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"PAYMENTMETHOD\": \"testpay\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"f91ddc74d0abb0ff8743b9fa8ac988a19aca2b40\", \"RESULT\": \"00\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"AUTHCODE\": \"12345\", \"SHIPPING_CODE\": \"654|123\", \"SHIPPING_CO\": \"GB\", \"BILLING_CODE\": \"50001\", \"BILLING_CO\": \"US\", \"CARD_PAYMENT_BUTTON\": \"Place Order\", \"AVSADDRESSRESULT\": \"M\", \"AVSPOSTCODERESULT\": \"M\", \"BATCHID\": \"445196\", \"DCC_ENABLE\": \"1\", \"HPP_FRAUDFILTER_MODE\": \"PASSIVE\", \"HPP_LANG\": \"EN\", \"MESSAGE\": \"[ test system ] Authorised\", \"PASREF\": \"15011597872195765\", \"CVNRESULT\": \"M\", \"HPP_FRAUDFILTER_RESULT\": \"PASS\", \"COMMENT1\": \"Mobile Channel\", \"COMMENT2\": \"Down Payment\", \"ECI\": \"5\", \"XID\": \"vJ9NXpFueXsAqeb4iAbJJbe+66s=\", \"CAVV\": \"AAACBUGDZYYYIgGFGYNlAAAAAAA=\", \"CARDDIGITS\": \"424242xxxx4242\", \"CARDTYPE\": \"VISA\", \"EXPDATE\": \"1025\", \"CHNAME\": \"James Mason\"}";
             var response = service.ParseResponse(responseJson, false);
 
@@ -86,6 +89,225 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             Assert.AreEqual("[ test system ] Authorised", response.ResponseMessage);
             Assert.AreEqual("15011597872195765", response.TransactionId);
             Assert.AreEqual("M", response.CvnResponseCode);
+        }
+
+        /// <summary>
+        /// An asynchronous APM Status Update notification (lowercase keys, no MERCHANT_RESPONSE_URL) is
+        /// mapped to the standard fields and validates its hash over PAYMENTMETHOD.
+        /// </summary>
+        [TestMethod]
+        public void ParseResponseForApmStatusUpdate() {
+            var service = new HostedService(new GpEcomConfig {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+            });
+
+            // Async APM status update: lowercase keys, no MERCHANT_RESPONSE_URL. Its hash is built over
+            // PAYMENTMETHOD ("sofort"), so the response must map the lowercase keys and still validate.
+            var responseJson = "{ \"timestamp\": \"20160829141523\", \"merchantid\": \"MerchantId\", \"orderid\": \"N6qsk4kYRZihmPrTXWYS6g\", \"result\": \"00\", \"message\": \"SUCCEEDED\", \"pasref\": \"14627849160897986\", \"paymentmethod\": \"sofort\", \"fundsstatus\": \"RECIEVED\", \"accountholdername\": \"James Mason\", \"country\": \"DE\", \"sha1hash\": \"08dfe2440415c7bc62540e968af2f986fab02c1f\" }";
+            var response = service.ParseResponse(responseJson, false);
+
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("SUCCEEDED", response.ResponseMessage);
+            Assert.AreEqual("N6qsk4kYRZihmPrTXWYS6g", response.OrderId);
+            Assert.AreEqual("14627849160897986", response.TransactionId);
+            Assert.IsNotNull(response.AlternativePaymentResponse);
+            Assert.AreEqual("sofort", response.AlternativePaymentResponse.ProviderName);
+            Assert.AreEqual("RECIEVED", response.AlternativePaymentResponse.PaymentStatus);
+        }
+
+        /// <summary>
+        /// A Google Pay HPP response echoes PAYMENTMETHOD but must validate its hash over AUTHCODE.
+        /// </summary>
+        [TestMethod]
+        public void GooglePayResponseUsesAuthCodeForHash() {
+            var service = new HostedService(new GpEcomConfig {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+            });
+
+            // GooglePay reports a PAYMENTMETHOD but settles as a card, so the hash is over AUTHCODE, not PAYMENTMETHOD.
+            var responseJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"843680654f377bfa845387fdbace35acc9d95778\", \"RESULT\": \"00\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"AUTHCODE\": \"12345\", \"PAYMENTMETHOD\": \"GooglePay\", \"CARD_PAYMENT_BUTTON\": \"Place Order\", \"AVSADDRESSRESULT\": \"M\", \"AVSPOSTCODERESULT\": \"M\", \"BATCHID\": \"445196\", \"MESSAGE\": \"[ test system ] Authorised\", \"PASREF\": \"15011597872195765\", \"CVNRESULT\": \"M\"}";
+            var response = service.ParseResponse(responseJson, false);
+
+            Assert.AreEqual("12345", response.AuthorizationCode);
+            Assert.AreEqual(1999, response.AuthorizedAmount.Value);
+            Assert.AreEqual("M", response.AvsResponseCode);
+            Assert.AreEqual("GTI5Yxb0SumL_TkDMCAxQA", response.OrderId);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("[ test system ] Authorised", response.ResponseMessage);
+            Assert.AreEqual("15011597872195765", response.TransactionId);
+            Assert.AreEqual("M", response.CvnResponseCode);
+        }
+
+        /// <summary>
+        /// An Apple Pay HPP response echoes PAYMENTMETHOD but must validate its hash over AUTHCODE.
+        /// </summary>
+        [TestMethod]
+        public void ApplePayResponseUsesAuthCodeForHash() {
+            var service = new HostedService(new GpEcomConfig {
+                MerchantId = "MerchantId",
+                AccountId = "internet",
+                SharedSecret = "secret",
+            });
+
+            // ApplePay reports a PAYMENTMETHOD but settles as a card, so the hash is over AUTHCODE, not PAYMENTMETHOD.
+            var responseJson = "{ \"MERCHANT_ID\": \"MerchantId\", \"ACCOUNT\": \"internet\", \"ORDER_ID\": \"GTI5Yxb0SumL_TkDMCAxQA\", \"AMOUNT\": \"1999\", \"TIMESTAMP\": \"20170725154824\", \"SHA1HASH\": \"843680654f377bfa845387fdbace35acc9d95778\", \"RESULT\": \"00\",  \"MERCHANT_RESPONSE_URL\": \"https://www.example.com/response\", \"AUTHCODE\": \"12345\", \"PAYMENTMETHOD\": \"ApplePay\", \"CARD_PAYMENT_BUTTON\": \"Place Order\", \"AVSADDRESSRESULT\": \"M\", \"AVSPOSTCODERESULT\": \"M\", \"BATCHID\": \"445196\", \"MESSAGE\": \"[ test system ] Authorised\", \"PASREF\": \"15011597872195765\", \"CVNRESULT\": \"M\"}";
+            var response = service.ParseResponse(responseJson, false);
+
+            Assert.AreEqual("12345", response.AuthorizationCode);
+            Assert.AreEqual("00", response.ResponseCode);
+            Assert.AreEqual("GTI5Yxb0SumL_TkDMCAxQA", response.OrderId);
+            Assert.AreEqual("15011597872195765", response.TransactionId);
+        }
+
+        /// <summary>
+        /// End-to-end: charges a card against the GP Ecom sandbox for a genuine AUTHCODE, then confirms a
+        /// Google Pay HPP response built from those values validates its hash over AUTHCODE.
+        /// </summary>
+        [TestMethod]
+        public void GooglePayHpp_EndToEnd_ValidatesHashAgainstGatewayAuthCode() {
+            var config = new GpEcomConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret"
+            };
+            ServicesContainer.ConfigureService(config, "gpEcomGooglePayE2E");
+
+            var card = new CreditCardData {
+                Number = "4111111111111111",
+                ExpMonth = 12,
+                ExpYear = DateTime.Now.Year + 1,
+                Cvn = "123",
+                CardHolderName = "John Smith"
+            };
+
+            var timestamp = GenerationUtils.GenerateTimestamp();
+            var orderId = GenerationUtils.GenerateOrderId();
+
+            // Real authorization against the GP Ecom sandbox to obtain a genuine AUTHCODE.
+            var gatewayResponse = card.Charge(19.99m)
+                .WithCurrency("EUR")
+                .WithOrderId(orderId)
+                .WithTimestamp(timestamp)
+                .WithAllowDuplicates(true)
+                .Execute("gpEcomGooglePayE2E");
+            Assert.AreEqual("00", gatewayResponse.ResponseCode, gatewayResponse.ResponseMessage);
+
+            var merchantId = config.MerchantId;
+            var result = gatewayResponse.ResponseCode;
+            var message = gatewayResponse.ResponseMessage;
+            var pasref = gatewayResponse.TransactionId;
+            var authCode = gatewayResponse.AuthorizationCode;
+
+            // Google Pay HPP response the gateway returns: PAYMENTMETHOD present, hash computed over AUTHCODE.
+            var responseHash = GenerationUtils.GenerateHash(config.SharedSecret, timestamp, merchantId, orderId, result, message, pasref, authCode);
+            var responseJson = new JsonDoc()
+                .Set("MERCHANT_ID", merchantId)
+                .Set("ACCOUNT", "hpp")
+                .Set("ORDER_ID", orderId)
+                .Set("AMOUNT", "1999")
+                .Set("TIMESTAMP", timestamp)
+                .Set("RESULT", result)
+                .Set("MESSAGE", message)
+                .Set("PASREF", pasref)
+                .Set("AUTHCODE", authCode)
+                .Set("PAYMENTMETHOD", "GooglePay")
+                .Set("MERCHANT_RESPONSE_URL", "https://www.example.com/response")
+                .Set("SHA1HASH", responseHash)
+                .ToString();
+
+            var hostedService = new HostedService(config, "gpEcomGooglePayE2E");
+            var parsed = hostedService.ParseResponse(responseJson, false);
+
+            Assert.AreEqual("00", parsed.ResponseCode);
+            Assert.AreEqual(authCode, parsed.AuthorizationCode);
+            Assert.AreEqual(orderId, parsed.OrderId);
+            Assert.AreEqual(pasref, parsed.TransactionId);
+        }
+
+        /// <summary>
+        /// End-to-end: charges an APM against the GP Ecom sandbox, then confirms the HPP response validates
+        /// its hash over PAYMENTMETHOD.
+        /// </summary>
+        [TestMethod]
+        public void ApmHpp_EndToEnd_ValidatesPaymentMethodHash() {
+            var config = new GpEcomConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = "api",
+                SharedSecret = "secret"
+            };
+            ServicesContainer.ConfigureService(config, "gpEcomApmE2E");
+
+            var apm = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.TESTPAY,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                Descriptor = "Test Transaction",
+                Country = "DE",
+                AccountHolderName = "James Mason"
+            };
+
+            var timestamp = GenerationUtils.GenerateTimestamp();
+            var orderId = GenerationUtils.GenerateOrderId();
+
+            // Real APM charge against the GP Ecom sandbox (returns 01/PENDING) to obtain genuine transaction values.
+            var gatewayResponse = apm.Charge(10m)
+                .WithCurrency("EUR")
+                .WithOrderId(orderId)
+                .WithTimestamp(timestamp)
+                .WithDescription("New APM")
+                .Execute("gpEcomApmE2E");
+            Assert.AreEqual("01", gatewayResponse.ResponseCode, gatewayResponse.ResponseMessage);
+
+            var merchantId = config.MerchantId;
+            var result = gatewayResponse.ResponseCode;
+            var message = gatewayResponse.ResponseMessage;
+            var pasref = gatewayResponse.TransactionId;
+            const string paymentMethod = "testpay";
+
+            // APM responses hash over PAYMENTMETHOD (HPP Reference > Payment Methods > Check hash).
+            var responseHash = GenerationUtils.GenerateHash(config.SharedSecret, timestamp, merchantId, orderId, result, message, pasref, paymentMethod);
+            var hostedService = new HostedService(config, "gpEcomApmE2E");
+
+            // Redirect response: uppercase keys, carries MERCHANT_RESPONSE_URL, hash over PAYMENTMETHOD.
+            var redirectJson = new JsonDoc()
+                .Set("MERCHANT_ID", merchantId)
+                .Set("ACCOUNT", "api")
+                .Set("ORDER_ID", orderId)
+                .Set("TIMESTAMP", timestamp)
+                .Set("RESULT", result)
+                .Set("MESSAGE", message)
+                .Set("PASREF", pasref)
+                .Set("PAYMENTMETHOD", paymentMethod)
+                .Set("MERCHANT_RESPONSE_URL", "https://www.example.com/returnUrl")
+                .Set("SHA1HASH", responseHash)
+                .ToString();
+            var redirect = hostedService.ParseResponse(redirectJson, false);
+            Assert.AreEqual("01", redirect.ResponseCode);
+            Assert.AreEqual(pasref, redirect.TransactionId);
+            Assert.IsNotNull(redirect.AlternativePaymentResponse);
+            Assert.AreEqual(paymentMethod, redirect.AlternativePaymentResponse.ProviderName);
+
+            // Status update: lowercase keys, no MERCHANT_RESPONSE_URL, hash over PAYMENTMETHOD.
+            var statusJson = new JsonDoc()
+                .Set("merchantid", merchantId)
+                .Set("orderid", orderId)
+                .Set("timestamp", timestamp)
+                .Set("result", result)
+                .Set("message", message)
+                .Set("pasref", pasref)
+                .Set("paymentmethod", paymentMethod)
+                .Set("fundsstatus", "RECIEVED")
+                .Set("sha1hash", responseHash)
+                .ToString();
+            var status = hostedService.ParseResponse(statusJson, false);
+            Assert.AreEqual("01", status.ResponseCode);
+            Assert.AreEqual(pasref, status.TransactionId);
+            Assert.IsNotNull(status.AlternativePaymentResponse);
+            Assert.AreEqual(paymentMethod, status.AlternativePaymentResponse.ProviderName);
         }
 
         [TestMethod, ExpectedException(typeof(ApiException))]

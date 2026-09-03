@@ -396,6 +396,16 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     }
                 }
 
+                if (alternatepaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.CASHPRESSO) {
+                    apm.Set("payment_plan", alternatepaymentMethod.PaymentPlan.Value.ToString());
+
+                    if (builder.CustomerData != null) {
+                        paymentMethod
+                            .Set("first_name", builder.CustomerData.FirstName)
+                            .Set("last_name", builder.CustomerData.LastName);
+                    }
+                }
+
                 paymentMethod.Set("apm", apm);
             }
 
@@ -497,11 +507,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                 if (payByLinkData.Type == PayByLinkType.HOSTED_PAYMENT_PAGE) {
 
+                   var isCashpressoPayByLink = IsCashpressoEnabledForPayByLink(payByLinkData);
+
                    var payerData = SetPayerInformation(builder);
 
                    if (payerData.HasKeys()) {
                        requestData.Set("payer", payerData);
                    }
+                   requestData.Set("transactions", new JsonDoc().Set("narrative", builder.Description));
                    var order = new JsonDoc()
                        .Set("amount", builder.Amount.ToNumericCurrencyString())
                        .Set("currency", builder.Currency)
@@ -520,10 +533,18 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                        .Set("authentication", new JsonDoc()
                            .Set("preference", payByLinkData.Configuration.ChallengeRequestIndicator?.ToString())
                            .Set("exempt_status", payByLinkData.Configuration.ExemptStatus.ToString())
-                           .Set("billing_address_required", payByLinkData.Configuration.IsBillingAddressRequired == true ? "YES" : "NO"))
-                       .Set("apm", new JsonDoc()
-                           .Set("shipping_address_enabled", payByLinkData.Configuration.IsShippingAddressEnabled == true ? "YES" : "NO")
-                           .Set("address_override", payByLinkData.Configuration.IsAddressOverrideAllowed == true ? "YES" : "NO"));
+                           .Set("billing_address_required", payByLinkData.Configuration.IsBillingAddressRequired == true ? "YES" : "NO"));
+
+                   var apmConfiguration = new JsonDoc()
+                       .Set("shipping_address_enabled", payByLinkData.Configuration.IsShippingAddressEnabled == true ? "YES" : "NO")
+                       .Set("address_override", payByLinkData.Configuration.IsAddressOverrideAllowed == true ? "YES" : "NO");
+
+                   var apmConfigurations = GetApmConfigurations(payByLinkData.Configuration.ApmConfigurations);
+                   if (apmConfigurations != null) {
+                       apmConfiguration.Set("configurations", apmConfigurations);
+                   }
+
+                   paymentMethodConfiguration.Set("apm", apmConfiguration);
 
                    var digitalWalletProviders = GetDigitalWalletProviders(payByLinkData.Configuration.DigitalWalletProviders);
                    if (digitalWalletProviders != null) {
@@ -550,6 +571,18 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                        order.Set("surcharge", surcharges);
                    }
 
+                   if (isCashpressoPayByLink) {
+                       if (builder.CashpressoShippingMethod != null) {
+                           order.Set("shipping_method", builder.CashpressoShippingMethod.ToString());
+                       }
+                       if (builder.ShippingDate != default(DateTime)) {
+                           order.Set("shipping_date", builder.ShippingDate.ToString("yyyy-MM-dd"));
+                       }
+                       if (builder.MiscProductData != null) {
+                           SetItemDetailsListForCashpressoHpp(builder, ref order);
+                       }
+                   }
+
                    order.Set("transaction_configuration", transactionConfiguration)
                         .Set("payment_method_configuration", paymentMethodConfiguration);
 
@@ -560,7 +593,9 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                    if (payByLinkData.DisplayConfiguration != null) {
                        var displayConfiguration = new JsonDoc()
                            .Set("iframe_dimensions_domain", payByLinkData.DisplayConfiguration.IframeDimensionsDomain)
-                           .Set("iframe_response_domain", payByLinkData.DisplayConfiguration.IframeResponseDomain);
+                           .Set("iframe_response_domain", payByLinkData.DisplayConfiguration.IframeResponseDomain)
+                           .Set("cardholder_name", payByLinkData.DisplayConfiguration.CardholderName)
+                           .Set("cvv", payByLinkData.DisplayConfiguration.Cvv);
                        if (displayConfiguration.HasKeys()) {
                            requestData.Set("display_configuration", displayConfiguration);
                        }
@@ -831,6 +866,55 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return result;
         }
 
+        private static bool IsCashpressoEnabledForPayByLink(PayByLinkData payByLinkData) {
+            if (payByLinkData == null) {
+                return false;
+            }
+            if (payByLinkData.AllowedPaymentMethods != null) {
+                foreach (var allowed in payByLinkData.AllowedPaymentMethods) {
+                    if (allowed == PaymentMethodName.CASHPRESSO) {
+                        return true;
+                    }
+                }
+            }
+            var apmConfigurations = payByLinkData.Configuration?.ApmConfigurations;
+            if (apmConfigurations != null) {
+                foreach (var apmConfiguration in apmConfigurations) {
+                    if (apmConfiguration?.Provider == AlternativePaymentType.CASHPRESSO) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static List<Dictionary<string, object>> GetApmConfigurations(ApmConfiguration[] apmConfigurations) {
+            if (apmConfigurations == null || apmConfigurations.Length == 0)
+                return null;
+
+            var result = new List<Dictionary<string, object>>();
+            foreach (var apmConfiguration in apmConfigurations) {
+                if (apmConfiguration == null)
+                    continue;
+
+                var configuration = new Dictionary<string, object> {
+                    { "provider", apmConfiguration.Provider?.ToString() }
+                };
+
+                if (apmConfiguration.PaymentPlans != null && apmConfiguration.PaymentPlans.Length > 0) {
+                    var paymentPlans = new string[apmConfiguration.PaymentPlans.Length];
+                    for (int i = 0; i < apmConfiguration.PaymentPlans.Length; i++) {
+                        paymentPlans[i] = apmConfiguration.PaymentPlans[i].ToString();
+                    }
+                    configuration.Add("payment_plans", paymentPlans);
+                }
+
+                result.Add(configuration);
+            }
+
+            return result.Count > 0 ? result : null;
+        }
+
         private static List<Dictionary<string, object>> GetSurcharges(Surcharge[] surcharges) {
             if (surcharges == null || surcharges.Length == 0)
                 return null;
@@ -958,6 +1042,24 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 if (alternativePaymentMethodPayer.AlternativePaymentMethodType == AlternativePaymentType.ERATY) {
                     payer.Set("email", builder.CustomerData?.Email);
                     payer.Set("country", alternativePaymentMethodPayer.Country);
+                }
+
+                if (alternativePaymentMethodPayer.AlternativePaymentMethodType == AlternativePaymentType.CASHPRESSO) {
+                    payer.Set("email", builder.CustomerData?.Email);
+
+                    var cashpressoBillingAddress = GetBasicAddressInformation(builder.BillingAddress);
+                    if (cashpressoBillingAddress.HasKeys()) {
+                        payer.Set("billing_address", cashpressoBillingAddress);
+                    }
+
+                    if (builder.HomePhone == null && builder.CustomerData?.Phone != null) {
+                        var cashpressoHomePhone = new JsonDoc()
+                            .Set("country_code", builder.CustomerData.Phone?.CountryCode)
+                            .Set("subscriber_number", builder.CustomerData.Phone?.Number);
+                        if (cashpressoHomePhone.HasKeys()) {
+                            payer.Set("home_phone", cashpressoHomePhone);
+                        }
+                    }
                 }
 
                 JsonDoc homePhone = new JsonDoc();
@@ -1131,6 +1233,44 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return order;
         }
 
+        private static JsonDoc SetItemDetailsListForCashpresso(AuthorizationBuilder builder, ref JsonDoc order) {
+            var items = new List<Dictionary<string, object>>();
+            decimal taxTotalAmount = 0;
+            foreach (var product in builder.MiscProductData) {
+                var item = new Dictionary<string, object>();
+                item.Add("description", product.Description);
+                item.Add("reference", product.ProductId);
+                item.Add("quantity", (product.Quantity ?? 0).ToString());
+                item.Add("unit_amount", (product.UnitPrice ?? 0).ToNumericCurrencyString());
+                item.Add("tax_amount", (product.TaxAmount ?? 0).ToNumericCurrencyString());
+                items.Add(item);
+                taxTotalAmount += product.TaxAmount ?? 0;
+            }
+
+            return order
+                .Set("tax_amount", taxTotalAmount.ToNumericCurrencyString())
+                .Set("items", items);
+        }
+
+        private static JsonDoc SetItemDetailsListForCashpressoHpp(AuthorizationBuilder builder, ref JsonDoc order) {
+            var items = new List<Dictionary<string, object>>();
+            decimal taxTotalAmount = 0;
+            foreach (var product in builder.MiscProductData) {
+                var item = new Dictionary<string, object>();
+                item.Add("label", product.ProductName);
+                item.Add("product_code", product.ProductId);
+                item.Add("quantity", (product.Quantity ?? 0).ToString());
+                item.Add("unit_amount", (product.UnitPrice ?? 0).ToNumericCurrencyString());
+                item.Add("tax_amount", (product.TaxAmount ?? 0).ToNumericCurrencyString());
+                items.Add(item);
+                taxTotalAmount += product.TaxAmount ?? 0;
+            }
+
+            return order
+                .Set("tax_amount", taxTotalAmount.ToNumericCurrencyString())
+                .Set("items", items);
+        }
+
         private static JsonDoc SetOrderInformation(AuthorizationBuilder builder, ref JsonDoc requestBody) {
             JsonDoc order;
             if (requestBody.Has("order")) {
@@ -1163,7 +1303,20 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             //AlternativePaymentMethod
             if (builder.PaymentMethod is AlternativePaymentMethod) { 
-                if (builder.MiscProductData != null) {
+                var alternativePaymentMethod = (AlternativePaymentMethod)builder.PaymentMethod;
+                if (alternativePaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.CASHPRESSO) {
+                    if (builder.MiscProductData != null) {
+                        SetItemDetailsListForCashpresso(builder, ref order);
+                    }
+
+                    if (builder.CashpressoShippingMethod != null) {
+                        order.Set("shipping_method", builder.CashpressoShippingMethod.ToString());
+                    }
+                    if (builder.ShippingDate != default(DateTime)) {
+                        order.Set("shipping_date", builder.ShippingDate.ToString("yyyy-MM-dd"));
+                    }
+                }
+                if (alternativePaymentMethod.AlternativePaymentMethodType != AlternativePaymentType.CASHPRESSO && builder.MiscProductData != null) {
                     SetItemDetailsListForApm(builder, ref order);
                 }
             }

@@ -99,10 +99,12 @@ namespace GlobalPayments.Api.Utils {
         public static T FromMapping<T>(Target target, object value) {
             var fields = typeof(T).GetRuntimeFields();            
             foreach (var field in fields) {
-                var attr = field.GetCustomAttribute<MapAttribute>();
-                if (attr != null && attr.Value.Equals(value) && attr.Target.Equals(target)) {
-                    var rvalue = (T)Enum.Parse(typeof(T), field.Name);
-                    return rvalue;
+                var attrs = field.GetCustomAttributes<MapAttribute>();
+                foreach (var attr in attrs) {
+                    if (attr.Value.Equals(value) && attr.Target.Equals(target)) {
+                        var rvalue = (T)Enum.Parse(typeof(T), field.Name);
+                        return rvalue;
+                    }
                 }
             }
             return default(T);

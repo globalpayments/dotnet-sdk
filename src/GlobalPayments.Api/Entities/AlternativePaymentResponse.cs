@@ -49,6 +49,21 @@ namespace GlobalPayments.Api.Entities {
         public string ProviderName { get; set; }
 
         /// <summary>
+        /// Payment-method result message returned by GP-API.
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// Payment-method entry mode returned by GP-API.
+        /// </summary>
+        public string EntryMode { get; set; }
+
+        /// <summary>
+        /// Provider narrative returned by GP-API.
+        /// </summary>
+        public string ProviderNarrative { get; set; }
+
+        /// <summary>
         /// Acknowledgement status returned by the APM provider.
         /// </summary>
         public string Ack { get; set; }
@@ -202,6 +217,31 @@ namespace GlobalPayments.Api.Entities {
         /// The payer name returned by the APM provider.
         /// </summary>
         public string ProviderPayerName { get; set; }
+
+        /// <summary>
+        /// Notification wait value returned by GP-API.
+        /// </summary>
+        public string WaitNotification { get; set; }
+
+        /// <summary>
+        /// Provider fund status returned by GP-API.
+        /// </summary>
+        public string FundStatus { get; set; }
+
+        /// <summary>
+        /// Optional redirect value returned by GP-API.
+        /// </summary>
+        public string OptionalRedirect { get; set; }
+
+        /// <summary>
+        /// Mandate reference returned by GP-API.
+        /// </summary>
+        public string MandateReference { get; set; }
+
+        /// <summary>
+        /// The selected payment plan returned by the APM provider (e.g., Cashpresso <c>payment_plan</c>).
+        /// </summary>
+        public string PaymentPlan { get; set; }
 
         /// <summary>
         /// Installment terms for eRaty (BNPL) transactions.

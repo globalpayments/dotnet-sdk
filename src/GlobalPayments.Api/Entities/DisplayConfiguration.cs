@@ -13,5 +13,15 @@ namespace GlobalPayments.Api.Entities {
         /// The domain that will receive the response posted from the iframe hosting the payment page.
         /// </summary>
         public string IframeResponseDomain { get; set; }
+
+        /// <summary>
+        /// Controls whether the cardholder name field is displayed on the hosted payment page.
+        /// </summary>
+        public string CardholderName { get; set; }
+
+        /// <summary>
+        /// Controls whether the CVV field is displayed on the hosted payment page.
+        /// </summary>
+        public string Cvv { get; set; }
     }
 }

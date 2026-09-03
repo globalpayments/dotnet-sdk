@@ -71,6 +71,12 @@ namespace GlobalPayments.Api.PaymentMethods {
         public Terms Terms { get; set; }
 
         /// <summary>
+        /// Payment plan for Cashpresso (BNPL) transactions. Conditionally mandatory when
+        /// <see cref="AlternativePaymentMethodType"/> is <see cref="AlternativePaymentType.CASHPRESSO"/>.
+        /// </summary>
+        public CashpressoPaymentPlan? PaymentPlan { get; set; }
+
+        /// <summary>
         /// Creates a charge (sale) against the payment method.
         /// </summary>
         /// <param name="amount">The amount of the transaction</param>

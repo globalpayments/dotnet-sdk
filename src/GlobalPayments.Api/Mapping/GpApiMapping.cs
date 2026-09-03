@@ -127,6 +127,17 @@ namespace GlobalPayments.Api.Mapping {
                 }
 
                 transaction.TransactionId = json.GetValue<string>("id");
+                transaction.Type = json.GetValue<string>("type");
+                transaction.Channel = json.GetValue<string>("channel");
+                transaction.CaptureMode = json.GetValue<string>("capture_mode");
+                transaction.Currency = json.GetValue<string>("currency");
+                transaction.Country = json.GetValue<string>("country");
+                transaction.MerchantId = json.GetValue<string>("merchant_id");
+                transaction.MerchantName = json.GetValue<string>("merchant_name");
+                transaction.AccountId = json.GetValue<string>("account_id");
+                transaction.AccountName = json.GetValue<string>("account_name");
+                transaction.Description = json.GetValue<string>("description");
+                transaction.Action = MapAction(json.Get("action"));
                 var batchSummary = new BatchSummary();
                 batchSummary.BatchReference = json.GetValue<string>("batch_id");
                 transaction.BatchSummary = batchSummary;
@@ -397,6 +408,9 @@ namespace GlobalPayments.Api.Mapping {
             JsonDoc json = JsonDoc.Parse(rawResponse);
 
             var paymentMethodApm = json.Get("payment_method")?.Get("apm") ?? new JsonDoc();
+            apm.Message = json.Get("payment_method")?.GetValue<string>("message");
+            apm.EntryMode = json.Get("payment_method")?.GetValue<string>("entry_mode");
+            apm.ProviderNarrative = json.Get("payment_method")?.GetValue<string>("provider_narrative");
             apm.RedirectUrl = json.Get("payment_method")?.GetValue<string>("redirect_url") ?? (paymentMethodApm.GetValue<string>("redirect_url"));
             if (paymentMethodApm.Has("provider")) {
                 apm.ProviderName = paymentMethodApm?.Get("provider")?.GetValue<string>("name") ?? paymentMethodApm?.GetValue<string>("provider");
@@ -428,6 +442,14 @@ namespace GlobalPayments.Api.Mapping {
             apm.Category = paymentMethodApm.GetValue<string>("category");
             apm.ProviderRedirectUrl = paymentMethodApm.GetValue<string>("provider_redirect_url");
             apm.ProviderPayerName = paymentMethodApm.GetValue<string>("provider_payer_name");
+            apm.WaitNotification = paymentMethodApm.GetValue<string>("wait_notification");
+            apm.FundStatus = paymentMethodApm.GetValue<string>("fund_status");
+            apm.OptionalRedirect = paymentMethodApm.GetValue<string>("optional_redirect");
+            apm.MandateReference = paymentMethodApm.Get("mandate")?.GetValue<string>("reference");
+            apm.Bank = MapBank(paymentMethodApm.Get("bank"));
+
+            // Cashpresso (BNPL) specific fields
+            apm.PaymentPlan = paymentMethodApm.GetValue<string>("payment_plan");
 
             var termsJson = paymentMethodApm.Get("terms");
             if (termsJson != null) {
@@ -453,6 +475,35 @@ namespace GlobalPayments.Api.Mapping {
             transaction.AlternativePaymentResponse = apm;
 
             return transaction;
+        }
+
+        private static Action MapAction(JsonDoc actionJson) {
+            if (actionJson == null) {
+                return null;
+            }
+
+            return new Action {
+                Id = actionJson.GetValue<string>("id"),
+                Type = actionJson.GetValue<string>("type"),
+                TimeCreated = actionJson.GetValue<string>("time_created"),
+                ResultCode = actionJson.GetValue<string>("result_code"),
+                AppId = actionJson.GetValue<string>("app_id"),
+                AppName = actionJson.GetValue<string>("app_name")
+            };
+        }
+
+        private static Bank MapBank(JsonDoc bankJson) {
+            if (bankJson == null) {
+                return null;
+            }
+
+            return new Bank {
+                AccountNumber = bankJson.GetValue<string>("account_number"),
+                Iban = bankJson.GetValue<string>("iban"),
+                IdentifierCode = bankJson.GetValue<string>("identifier_code"),
+                Name = bankJson.GetValue<string>("name"),
+                Code = bankJson.GetValue<string>("code")
+            };
         }
 
         private static PayByLinkResponse MapPayByLinkResponse(JsonDoc doc) {
@@ -491,7 +542,16 @@ namespace GlobalPayments.Api.Mapping {
                 response.OrderAmount = order.GetValue<decimal>("amount");
                 response.OrderCurrency = order.GetValue<string>("currency");
                 response.OrderReference = order.GetValue<string>("reference");
+                response.ShippingMethod = order.GetValue<string>("shipping_method");
+                response.ShippingDate = order.GetValue<string>("shipping_date");
+                response.TaxAmount = order.GetValue<string>("tax_amount")?.ToAmount();
                 response.Surcharges = GetSurcharges(order);
+
+                var paymentMethodConfiguration = order.Get("payment_method_configuration");
+                var apm = paymentMethodConfiguration?.Get("apm");
+                if (apm?.Has("configurations") == true) {
+                    response.ApmConfigurations = MapApmConfigurations(apm.GetArray<JsonDoc>("configurations"));
+                }
 
                 var transactionConfig = order.Get("transaction_configuration");
 
@@ -521,6 +581,31 @@ namespace GlobalPayments.Api.Mapping {
             response.Images = doc.GetArray<byte>("images")?.ToArray() ?? Array.Empty<byte>();
 
             return response;
+        }
+
+        private static List<ApmConfiguration> MapApmConfigurations(IEnumerable<JsonDoc> configurations) {
+            var result = new List<ApmConfiguration>();
+            foreach (var configuration in configurations ?? Enumerable.Empty<JsonDoc>()) {
+                var provider = configuration.GetValue<string>("provider");
+                AlternativePaymentType? providerType = null;
+                if (!string.IsNullOrEmpty(provider) && Enum.TryParse(provider, true, out AlternativePaymentType parsedProvider)) {
+                    providerType = parsedProvider;
+                }
+
+                var plans = configuration.GetArray<string>("payment_plans");
+                var paymentPlans = new List<CashpressoPaymentPlan>();
+                foreach (var plan in plans ?? Enumerable.Empty<string>()) {
+                    if (Enum.TryParse(plan, true, out CashpressoPaymentPlan parsedPlan)) {
+                        paymentPlans.Add(parsedPlan);
+                    }
+                }
+
+                result.Add(new ApmConfiguration {
+                    Provider = providerType,
+                    PaymentPlans = paymentPlans.ToArray()
+                });
+            }
+            return result;
         }
 
         private static void MapBNPLResponse(JsonDoc response, ref Transaction transaction) {
@@ -635,6 +720,8 @@ namespace GlobalPayments.Api.Mapping {
                         alternativePaymentResponse.RedirectUrl = apm?.GetValue<string>("redirect_url");
                         alternativePaymentResponse.ProviderName = apm?.GetValue<string>("provider");
                         alternativePaymentResponse.ProviderReference = apm?.GetValue<string>("provider_reference");
+                        alternativePaymentResponse.Category = apm?.GetValue<string>("category");
+                        alternativePaymentResponse.PaymentPlan = apm?.GetValue<string>("payment_plan");
                         summary.AlternativePaymentResponse = alternativePaymentResponse;
                         summary.PaymentType = EnumConverter.GetMapping(Target.GP_API, PaymentMethodName.APM);
                     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
@@ -28,7 +29,13 @@ namespace GlobalPayments.Api.Services {
         public Transaction ParseResponse(string json, bool encoded = false) {
             var response = JsonDoc.Parse(json, encoded ? JsonEncoders.Base64Encoder : null);
 
-            if (response.Has("MERCHANT_RESPONSE_URL")) {
+            // Only asynchronous APM status-update notifications arrive with lowercase keys and no
+            // MERCHANT_RESPONSE_URL. Map those lowercase keys to the standard uppercase names here.
+            // A normal card response also has no MERCHANT_RESPONSE_URL, but for it this call does nothing:
+            // the lowercase keys are absent, so every lookup is null and JsonDoc.Set ignores null values.
+            // (If JsonDoc.Set is ever changed to overwrite with null, revisit this so card responses are
+            // not wiped out.)
+            if (!response.Has("MERCHANT_RESPONSE_URL")) {
                 MapTransactionStatusResponse(ref response);
             }
 
@@ -38,10 +45,15 @@ namespace GlobalPayments.Api.Services {
             var result = response.GetValue<string>("RESULT");
             var message = response.GetValue<string>("MESSAGE");
             var transactionId = response.GetValue<string>("PASREF");
-            var authCode = response.GetValue<string>("AUTHCODE") ?? null;
-            var paymentMethod = response.GetValue<string>("PAYMENTMETHOD") ?? null;
+            var authCode = response.GetValue<string>("AUTHCODE");
+            var paymentMethod = response.GetValue<string>("PAYMENTMETHOD");
             var sha1Hash = response.GetValue<string>($"{_config.ShaHashType}HASH");
-            var hash = GenerationUtils.GenerateHash(_config.SharedSecret, _config.ShaHashType, timestamp, merchantId, orderId, result, message, transactionId, response.Has("MERCHANT_RESPONSE_URL") ? paymentMethod != null ? paymentMethod : authCode : authCode);
+            // The response hash is built from a different last field depending on the payment type
+            // (see HPP Reference > Check hash): card payments end in ...pasref.authcode, while APMs end
+            // in ...pasref.paymentmethod. Google Pay / Apple Pay report a PAYMENTMETHOD but settle as
+            // cards, so they use AUTHCODE like any card; only real APMs use PAYMENTMETHOD.
+            var hashPaymentValue = paymentMethod != null && !IsDigitalWallet(paymentMethod) ? paymentMethod : authCode;
+            var hash = GenerationUtils.GenerateHash(_config.SharedSecret, _config.ShaHashType, timestamp, merchantId, orderId, result, message, transactionId, hashPaymentValue);
             if (!hash.Equals(sha1Hash))
                 throw new ApiException("Incorrect hash. Please check your code and the Developers Documentation.");
 
@@ -81,6 +93,15 @@ namespace GlobalPayments.Api.Services {
             }
 
             return transaction;
+        }
+
+        // Wallets that report a PAYMENTMETHOD on the HPP response but settle as a card, so their hash
+        // is validated over AUTHCODE. Add new card-settling wallets here.
+        private static readonly HashSet<string> DigitalWalletMethods =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "GooglePay", "ApplePay" };
+
+        private static bool IsDigitalWallet(string paymentMethod) {
+            return DigitalWalletMethods.Contains(paymentMethod);
         }
 
         private void MapTransactionStatusResponse(ref JsonDoc response)

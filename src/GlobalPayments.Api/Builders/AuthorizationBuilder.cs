@@ -363,6 +363,10 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         internal BNPLShippingMethod BNPLShippingMethod {get;set;}
         /// <summary>
+        /// Gets or sets the Cashpresso (BNPL) shipping method for the order.
+        /// </summary>
+        internal CashpressoShippingMethod? CashpressoShippingMethod { get; set; }
+        /// <summary>
         /// Gets or sets a value indicating whether sensitive fields in the gateway response should be masked.
         /// </summary>
         internal bool? MaskedDataResponse { get; set; }
@@ -1522,6 +1526,15 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.ReturnUrl)).IsNotNull()
                 .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.AccountHolderName)).IsNotNull();
 
+            Validations.For(PaymentMethodType.APM)
+                .With(TransactionModifier.AlternativePaymentMethod)
+                .When(builder => {
+                    var alternativePaymentMethod = ((AuthorizationBuilder)builder).PaymentMethod as AlternativePaymentMethod;
+                    return alternativePaymentMethod != null && alternativePaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.CASHPRESSO;
+                })
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.PaymentPlan))
+                .IsNotNull("PaymentPlan cannot be null for Cashpresso transactions.");
+
 
         }
 
@@ -1799,6 +1812,16 @@ namespace GlobalPayments.Api.Builders {
             }
 
             BNPLShippingMethod = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the Cashpresso (BNPL) shipping method for the order; where applicable.
+        /// </summary>
+        /// <param name="value">The Cashpresso shipping method to apply to the order.</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithCashpressoShippingMethod(CashpressoShippingMethod value) {
+            CashpressoShippingMethod = value;
             return this;
         }
 

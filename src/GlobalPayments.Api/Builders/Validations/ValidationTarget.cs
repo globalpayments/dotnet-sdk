@@ -39,5 +39,11 @@ namespace GlobalPayments.Api.Builders {
             precondition = new ValidationClause(parent, this, prop, true);
             return precondition;
         }
+
+        public ValidationTarget When(Func<object, bool> condition) {
+            precondition = new ValidationClause(parent, this, null, true);
+            precondition.callback = condition;
+            return this;
+        }
     }
 }

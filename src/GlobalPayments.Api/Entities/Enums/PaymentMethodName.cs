@@ -47,6 +47,12 @@ namespace GlobalPayments.Api.Entities {
         /// BLIK payment method.
         /// </summary>
         [Map(Target.GP_API, "BLIK")]
-        BLIK
+        BLIK,
+
+        /// <summary>
+        /// Cashpresso (BNPL) alternative payment method.
+        /// </summary>
+        [Map(Target.GP_API, "CASHPRESSO")]
+        CASHPRESSO
     }
 }

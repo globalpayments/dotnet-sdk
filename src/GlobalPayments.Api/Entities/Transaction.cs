@@ -22,6 +22,61 @@ namespace GlobalPayments.Api.Entities {
         /// The authorized amount.
         /// </summary>
         public decimal? AuthorizedAmount { get; set; }
+
+        /// <summary>
+        /// Transaction type returned by GP-API.
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Transaction channel returned by GP-API.
+        /// </summary>
+        public string Channel { get; set; }
+
+        /// <summary>
+        /// Capture mode returned by GP-API.
+        /// </summary>
+        public string CaptureMode { get; set; }
+
+        /// <summary>
+        /// Transaction currency returned by GP-API.
+        /// </summary>
+        public string Currency { get; set; }
+
+        /// <summary>
+        /// Transaction country returned by GP-API.
+        /// </summary>
+        public string Country { get; set; }
+
+        /// <summary>
+        /// Merchant identifier returned by GP-API.
+        /// </summary>
+        public string MerchantId { get; set; }
+
+        /// <summary>
+        /// Merchant name returned by GP-API.
+        /// </summary>
+        public string MerchantName { get; set; }
+
+        /// <summary>
+        /// Processing account identifier returned by GP-API.
+        /// </summary>
+        public string AccountId { get; set; }
+
+        /// <summary>
+        /// Processing account name returned by GP-API.
+        /// </summary>
+        public string AccountName { get; set; }
+
+        /// <summary>
+        /// Transaction description returned by GP-API.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Action details returned by GP-API.
+        /// </summary>
+        public Action Action { get; set; }
         public string AutoSettleFlag { get; set; }
 
         /// <summary>

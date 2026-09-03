@@ -126,6 +126,21 @@ namespace GlobalPayments.Api.Entities {
         public decimal? OrderAmount { get; set; }
 
         /// <summary>
+        /// The shipping method returned for the order.
+        /// </summary>
+        public string ShippingMethod { get; set; }
+
+        /// <summary>
+        /// The shipping date returned for the order.
+        /// </summary>
+        public string ShippingDate { get; set; }
+
+        /// <summary>
+        /// The order tax amount returned by the gateway.
+        /// </summary>
+        public decimal? TaxAmount { get; set; }
+
+        /// <summary>
         /// The currency code (ISO 4217) for the order.
         /// </summary>
         public string OrderCurrency { get; set; }
@@ -144,6 +159,11 @@ namespace GlobalPayments.Api.Entities {
         /// The list of transactions associated with the link.
         /// </summary>
         public List<TransactionSummary> Transactions { get; set; }
+
+        /// <summary>
+        /// Alternative payment provider configurations returned for the link.
+        /// </summary>
+        public List<ApmConfiguration> ApmConfigurations { get; set; }
 
         /// <summary>
         /// A summary of the action performed, including metadata about the transaction.

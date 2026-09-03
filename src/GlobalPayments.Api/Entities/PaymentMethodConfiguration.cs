@@ -49,5 +49,11 @@ namespace GlobalPayments.Api.Entities {
         /// Gets or sets the digital wallet providers enabled on the hosted payment page.
         /// </summary>
         public DigitalWalletProvider[] DigitalWalletProviders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the alternative payment method (APM) provider configurations enabled on the
+        /// hosted payment page (e.g. Cashpresso BNPL and its payment plans).
+        /// </summary>
+        public ApmConfiguration[] ApmConfigurations { get; set; }
     }
 }

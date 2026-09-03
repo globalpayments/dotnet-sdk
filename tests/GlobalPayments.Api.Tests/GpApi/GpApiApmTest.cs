@@ -9,14 +9,17 @@ using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GlobalPayments.Api.Tests.GpApi
-{
+namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
-    public class GpApiApmTest : BaseGpApiTests
-    {
+    public class GpApiApmTest : BaseGpApiTests {
+
         private const string EratyAppId = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
         private const string EratyAppKey = "cQOKHoAAvNIcEN8s"; //gitleaks:allow
         private const string EratyConfigName = "eraty";
+
+        private const string CashpressoAppId = "hlZAokTftDazLlWDPe8E6VAz5g9rSDPg";
+        private const string CashpressoAppKey = "ThDO2fISzzWCgkCZ"; //gitleaks:allow
+        private const string CashpressoConfigName = "cashpresso";
 
         private AlternativePaymentMethod paymentMethod;
         private string currency;
@@ -31,6 +34,12 @@ namespace GlobalPayments.Api.Tests.GpApi
             var eratyConfig = GpApiConfigSetup(EratyAppId, EratyAppKey, Channel.CardNotPresent);
             eratyConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "GPECOM_APM_Transaction_Processing" };
             ServicesContainer.ConfigureService(eratyConfig, EratyConfigName);
+
+            var cashpressoConfig = GpApiConfigSetup(CashpressoAppId, CashpressoAppKey, Channel.CardNotPresent);
+            cashpressoConfig.Country = "DE";
+            cashpressoConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "GPECOM_CASHPRESSO_APM_Transaction_Processing" };
+            cashpressoConfig.ServiceUrl= "https://apis-qa.globalpay.com/ucp";
+            ServicesContainer.ConfigureService(cashpressoConfig, CashpressoConfigName);
 
             paymentMethod = new AlternativePaymentMethod {
                 AlternativePaymentMethodType = AlternativePaymentType.PAYPAL,
@@ -644,6 +653,161 @@ namespace GlobalPayments.Api.Tests.GpApi
             });
 
             Assert.AreEqual("Status Code: BadRequest - Request expects the following fields : apm.terms.time_unit, apm.terms.count, apm.terms.mode", ex.Message);
+        }
+
+        #endregion
+
+        #region Cashpresso APM Tests
+
+        /**
+         * How to run this test successfully:
+         * 1. Run the test — the Cashpresso charge request will be submitted and a redirect URL will be printed to the console.
+         * 2. Copy the redirect URL and open it in a browser to launch the Cashpresso APM simulator and confirm the payment.
+         * 3. Use ReportTransactionDetail (passing the TransactionId from step 1) to verify the updated transaction status.
+         *
+         * Notes:
+         * - Region: Germany/Austria. FLEXIBLE payment plan is not supported.
+         * - PAY_IN_3_INSTALLMENTS has a minimum amount of 150.00.
+         */
+
+        [TestMethod]
+        public void Cashpresso_Charge_WithPaymentPlan_PAY_IN_3_INSTALLMENTS_ReturnsInitiated() {
+            var cashpresso = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.CASHPRESSO,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/cancelUrl",
+                AccountHolderName = "James Mason",
+                Country = "DE",
+                PaymentPlan = CashpressoPaymentPlan.PAY_IN_3_INSTALLMENTS
+            };
+
+            var payer = new Customer {
+                Key = "B8J9KSQA5M6S2",
+                Email = "abc@ccc.com",
+                FirstName = "James",
+                LastName = "Mason",
+                Phone = new PhoneNumber { CountryCode = "49", Number = "609568831" }
+            };
+
+            var response = cashpresso.Charge(200m)
+                .WithCurrency("EUR")
+                .WithCustomerData(payer)
+                .WithAddress(GetCashpressoAddress(), AddressType.Billing)
+                .WithAddress(GetCashpressoAddress(), AddressType.Shipping)
+                .WithPhoneNumber("49", "609568831", PhoneNumberType.Home)
+                .WithCashpressoShippingMethod(CashpressoShippingMethod.DELIVERY)
+                .WithShippingDate(new DateTime(2028, 1, 1))
+                .WithMiscProductData(GetCashpressoProducts(200m))
+                .Execute(CashpressoConfigName);
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("INITIATED", response.ResponseMessage);
+
+            var apmResponse = response.AlternativePaymentResponse;
+            Assert.IsNotNull(apmResponse);
+            Assert.IsFalse(string.IsNullOrEmpty(apmResponse.RedirectUrl));
+            Assert.AreEqual("CASHPRESSO", apmResponse.ProviderName?.ToUpper());
+            Assert.AreEqual("BNPL", apmResponse.Category);
+            Assert.AreEqual(CashpressoPaymentPlan.PAY_IN_3_INSTALLMENTS.ToString(), apmResponse.PaymentPlan);
+        }
+
+        [TestMethod]
+        public void Cashpresso_Charge_WithPaymentPlan_PAY_30_DAYS_ReturnsInitiated() {
+            var cashpresso = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.CASHPRESSO,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/cancelUrl",
+                AccountHolderName = "James Mason",
+                Country = "DE",
+                PaymentPlan = CashpressoPaymentPlan.PAY_30_DAYS
+            };
+
+            var payer = new Customer {
+                Key = "B8J9KSQA5M6S2",
+                Email = "abc@ccc.com",
+                FirstName = "James",
+                LastName = "Mason",
+                Phone = new PhoneNumber { CountryCode = "49", Number = "609568831" }
+            };
+
+            var response = cashpresso.Charge(200m)
+                .WithCurrency("EUR")
+                .WithCustomerData(payer)
+                .WithAddress(GetCashpressoAddress(), AddressType.Billing)
+                .WithAddress(GetCashpressoAddress(), AddressType.Shipping)
+                .WithPhoneNumber("49", "609568831", PhoneNumberType.Home)
+                .WithCashpressoShippingMethod(CashpressoShippingMethod.DELIVERY)
+                .WithShippingDate(new DateTime(2028, 1, 1))
+                .WithMiscProductData(GetCashpressoProducts(200m))
+                .Execute(CashpressoConfigName);
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("INITIATED", response.ResponseMessage);
+
+            var apmResponse = response.AlternativePaymentResponse;
+            Assert.IsNotNull(apmResponse);
+            Assert.IsFalse(string.IsNullOrEmpty(apmResponse.RedirectUrl));
+            Assert.AreEqual("CASHPRESSO", apmResponse.ProviderName?.ToUpper());
+            Assert.AreEqual("BNPL", apmResponse.Category);
+            Assert.AreEqual(CashpressoPaymentPlan.PAY_30_DAYS.ToString(), apmResponse.PaymentPlan);
+        }
+
+
+        [TestMethod]
+        public void Cashpresso_Charge_WithoutPaymentPlan_ThrowsBuilderException() {
+            var cashpresso = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.CASHPRESSO,
+                ReturnUrl = "https://www.example.com/returnUrl",
+                StatusUpdateUrl = "https://www.example.com/statusUrl",
+                CancelUrl = "https://www.example.com/cancelUrl",
+                AccountHolderName = "James Mason",
+                Country = "DE"
+            };
+
+            var payer = new Customer {
+                Key = "B8J9KSQA5M6S2",
+                Email = "abc@ccc.com",
+                FirstName = "James",
+                LastName = "Mason",
+                Phone = new PhoneNumber { CountryCode = "49", Number = "609568831" }
+            };
+
+            var ex = Assert.ThrowsException<BuilderException>(() => {
+                cashpresso.Charge(200m)
+                     .WithCurrency("EUR")
+                     .WithCustomerData(payer)
+                     .WithCashpressoShippingMethod(CashpressoShippingMethod.DELIVERY)
+                     .WithShippingDate(new DateTime(2028, 1, 1))
+                     .Execute(CashpressoConfigName);
+            });
+
+            Assert.AreEqual("PaymentPlan cannot be null for Cashpresso transactions.", ex.Message);
+        }
+
+        private static Address GetCashpressoAddress() {
+            return new Address {
+                StreetAddress1 = "Marienplatz 8",
+                StreetAddress2 = "Suite 302, Commercial Center",
+                StreetAddress3 = "Old Town District",
+                City = "Munich",
+                PostalCode = "80331",
+                State = "BY",
+                CountryCode = "DE"
+            };
+        }
+
+        private static List<Product> GetCashpressoProducts(decimal amount) {
+            return new List<Product> {
+                new Product {
+                    ProductId = "Invoice No.68775",
+                    Description = "Iphone 16",
+                    Quantity = 1,
+                    UnitPrice = amount,
+                    TaxAmount = 0
+                }
+            };
         }
 
         #endregion
