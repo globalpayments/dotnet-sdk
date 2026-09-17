@@ -8,7 +8,7 @@ using System.Net.Http;
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
     internal class GpApiReportRequestBuilder<T> : IRequestBuilder<ReportBuilder<T>> where T : class {
         public Request BuildRequest(ReportBuilder<T> builder, GpApiConnector gateway){
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
             var request = new Request();
             if (builder is TransactionReportBuilder<T> trb) {                
                 switch (builder.ReportType) {
@@ -306,7 +306,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                     case ReportType.FindAccountsPaged:
                         var endpoint = merchantUrl;
                         if(!string.IsNullOrEmpty(userTrb.SearchBuilder.MerchantId)) {
-                            endpoint = $"{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{userTrb.SearchBuilder.MerchantId}";
+                            endpoint = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig, userTrb.SearchBuilder.MerchantId);
                         }
                         request = new Request {
                             Verb = HttpMethod.Get,

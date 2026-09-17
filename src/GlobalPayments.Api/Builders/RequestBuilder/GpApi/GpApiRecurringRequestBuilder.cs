@@ -13,7 +13,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             _builder = builder;
             JsonDoc data = null;
 
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
             
             switch (builder.TransactionType) {
                 case TransactionType.Create:

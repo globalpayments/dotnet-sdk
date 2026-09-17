@@ -45,10 +45,10 @@ namespace GlobalPayments.Api.Tests.GpEcom
             ServicesContainer.ConfigureService(gpApiConfig,"blikConfig");
 
             GpApiConfig gpApiConfigPayU = new GpApiConfig {
-                AppId = "ZbFY1jAz6sqq0GAyIPZe1raLCC7cUlpD",
-                AppKey = "4NpIQJDCIDzfTKhA",
+                AppId = "",  //update the app id of sandbox
+                AppKey = "", //update the app =key of sandbox
                 Channel = Channel.CardNotPresent,
-                ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION,
+                ServiceUrl = ServiceEndpoints.GP_API_TEST,
                 EnableLogging = true,
                 RequestLogger = new RequestConsoleLogger(),
                 Country = "PL",

@@ -13,8 +13,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
     public class GpApiHPPPayByLinksTests : BaseGpApiTests {
         private const string EuConfigName = "EuConfig";
         private const string CashpressoConfigName = "CashpressoHpp";
-        private const string CashpressoAppId = "hlZAokTftDazLlWDPe8E6VAz5g9rSDPg";
-        private const string CashpressoAppKey = "ThDO2fISzzWCgkCZ"; //gitleaks:allow
+        private const string CashpressoAppId = "";
+        private const string CashpressoAppKey = "";
         private Address shippingAddress;
         private Address billingAddress;
         private Address germanyAddress;
@@ -30,8 +30,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             gpApiConfig.Country = "US";
-            gpApiConfig.AppId = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
-            gpApiConfig.AppKey = "cQOKHoAAvNIcEN8s";
+            gpApiConfig.AppId = "";
+            gpApiConfig.AppKey = "";
             gpApiConfig.ServiceUrl = ServiceEndpoints.GP_API_TEST;
             gpApiConfig.AccessTokenInfo = new AccessTokenInfo {
                 TransactionProcessingAccountName = "GPECOM_HPP_Transaction_Processing"

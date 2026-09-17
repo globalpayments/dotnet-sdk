@@ -18,7 +18,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         public Request BuildRequest(SecureBuilder<T> builder, GpApiConnector gateway) {
             DisposeMaskedValues();
             if (builder is FraudBuilder<T>) {
-                var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+                var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
                 switch (builder.TransactionType) {
                     case TransactionType.RiskAssess:
                         var requestData = new JsonDoc()
@@ -57,7 +57,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         private Request BuildSecure3dBuilderRequest(Secure3dBuilder builder, GpApiConnector gateway) {
             DisposeMaskedValues();
             _3dBuilder = builder;
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
             if (builder.TransactionType == TransactionType.VerifyEnrolled) {
                 var storedCredential = new JsonDoc()
                     .Set("model", EnumConverter.GetMapping(Target.GP_API, builder.StoredCredential?.Type))

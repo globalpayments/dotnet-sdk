@@ -13,12 +13,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiApmTest : BaseGpApiTests {
 
-        private const string EratyAppId = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
-        private const string EratyAppKey = "cQOKHoAAvNIcEN8s"; //gitleaks:allow
+        private const string EratyAppId = "";
+        private const string EratyAppKey = ""; 
         private const string EratyConfigName = "eraty";
 
-        private const string CashpressoAppId = "hlZAokTftDazLlWDPe8E6VAz5g9rSDPg";
-        private const string CashpressoAppKey = "ThDO2fISzzWCgkCZ"; //gitleaks:allow
+        private const string CashpressoAppId = "";
+        private const string CashpressoAppKey = ""; 
         private const string CashpressoConfigName = "cashpresso";
 
         private AlternativePaymentMethod paymentMethod;

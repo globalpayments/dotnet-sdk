@@ -38,8 +38,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private const string ApacAppId  = "16Br1RfjChBrsFnWlu7NGIp9LKm2MWWFyGg3SU3UfEl3voA2";
         private const string ApacAppKey = "xV9wnRLmi8qPqvMZoxAH9S0RtoQlodCYuvCboVYUohW6DObtcrYL1uj4YOZilKyu";
-        private const string EratyAppId = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
-        private const string EratyAppKey = "cQOKHoAAvNIcEN8s"; //gitleaks:allow
+        private const string EratyAppId = "";
+        private const string EratyAppKey = ""; 
         private const string BrandVisa        = "VISA";
         private const string BrandMastercard  = "MC";
         private const string DefaultConfigName = "defaultCurrency";

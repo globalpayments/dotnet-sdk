@@ -20,8 +20,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiVisaInstallmentTest : BaseGpApiTests {
 
-        private const string VISA_INSTALLMENT_APP_ID = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
-        private const string VISA_INSTALLMENT_APP_KEY = "cQOKHoAAvNIcEN8s";
+        private const string VISA_INSTALLMENT_APP_ID = "";
+        private const string VISA_INSTALLMENT_APP_KEY = "";
         private const string INSTALLMENT_ACCOUNT_NAME = "GPECOM_Installments_Processing";
         private const string INSTALLMENT_CONFIG_NAME = "installments";
         private const string CURRENCY = "GBP";

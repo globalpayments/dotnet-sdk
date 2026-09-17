@@ -12,8 +12,8 @@ using static System.Net.WebRequestMethods;
 namespace GlobalPayments.Api.Tests.GpApi.Certification {
     [TestClass]
     public class GpAPIAPMTests : BaseGpApiTests {
-        string APP_ID = "ZbFY1jAz6sqq0GAyIPZe1raLCC7cUlpD";
-        string APP_KEY = "4NpIQJDCIDzfTKhA";
+        string APP_ID = ""; // add the app id with the credentials 
+        string APP_KEY = ""; // add the app key with the credentials  
 
         [TestInitialize]
         public void TestInitialize() {
@@ -22,7 +22,7 @@ namespace GlobalPayments.Api.Tests.GpApi.Certification {
                 AppId = APP_ID,
                 AppKey = APP_KEY,
                 Channel = Channel.CardNotPresent,
-                ServiceUrl = ServiceEndpoints.GP_API_PRODUCTION,
+                ServiceUrl = ServiceEndpoints.GP_API_TEST,
                 EnableLogging = true,
                 RequestLogger = new RequestConsoleLogger(),
                 Country = "PL",

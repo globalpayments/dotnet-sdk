@@ -19,7 +19,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
         public Request BuildRequest(ManagementBuilder builder, GpApiConnector gateway) {
             GetAllowedActions();
 
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
 
             // Resolve the currency for amount encoding. Management calls like Capture/Reverse
             // typically omit .WithCurrency() and rely on the original authorization's currency,
@@ -72,7 +72,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
 
                 if (builder.PaymentMethod.PaymentMethodType == PaymentMethodType.Account_Funds) {
                     if (!string.IsNullOrEmpty(builder.FundsData?.MerchantId)) {
-                        endpoint = $"{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{builder.FundsData.MerchantId}";
+                        endpoint = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig, builder.FundsData.MerchantId);
                     }
                     endpoint += $"{GpApiRequest.TRANSFER_ENDPOINT}/{builder.TransactionId}/reversal";
                 }
@@ -356,7 +356,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                                 
                 var endpoint = merchantUrl;
                 if (!string.IsNullOrEmpty(builder.FundsData.MerchantId)) {
-                    endpoint = $"/merchants/{builder.FundsData.MerchantId}";
+                    endpoint = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig, builder.FundsData.MerchantId);
                 }
 
                 return new Request {

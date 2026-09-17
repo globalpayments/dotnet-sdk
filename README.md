@@ -146,6 +146,27 @@ catch (ApiException e)
 }
 ```
 
+## GP-API Partner Merchant Routing
+
+Partners processing on behalf of a merchant can configure both the Merchant Management Account (MMA) ID and the merchant ID. Keep application credentials outside source control, for example in local configuration.
+
+```csharp
+var config = new GpApiConfig
+{
+    AppId = "GP_API_APP_ID",
+    AppKey = "GP_API_APP_KEY",
+    MerchantManagementAccountID = "MMA_ID",
+    MerchantId = "MERCHANT_ID",
+    Channel = Channel.CardNotPresent,
+    Country = "US"
+};
+
+ServicesContainer.ConfigureService(config);
+```
+
+With both values configured, merchant requests are sent to `/accounts/{MMA_ID}/merchants/{MERCHANT_ID}/...`. Setting only `MerchantId` retains the existing `/merchants/{MERCHANT_ID}/...` routing. Leaving both values unset retains the default endpoints. Access-token requests always use `/accesstoken` and are not scoped to an MMA or merchant.
+
+
 ## Contributing
 
 All our code is open sourced and we encourage fellow developers to contribute and help improve it!

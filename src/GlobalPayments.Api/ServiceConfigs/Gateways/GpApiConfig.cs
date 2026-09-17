@@ -64,6 +64,11 @@ namespace GlobalPayments.Api {
 
         public string MerchantId { get; set; }
 
+        /// <summary>
+        /// GP-API merchant management account id used to scope partner merchant requests.
+        /// </summary>
+        public string MerchantManagementAccountID { get; set; }
+
         public string StatusUrl { get; set; }
 
         public IAccessTokenProvider AccessTokenProvider { get; set; }
@@ -124,6 +129,7 @@ namespace GlobalPayments.Api {
                 WebProxy = WebProxy,
                 DynamicHeaders = DynamicHeaders,
                 MerchantId = MerchantId,
+                MerchantManagementAccountID = MerchantManagementAccountID,
                 AccessTokenInfo = AccessTokenInfo,
                 Environment = Environment,
                 StatusUrl = StatusUrl,

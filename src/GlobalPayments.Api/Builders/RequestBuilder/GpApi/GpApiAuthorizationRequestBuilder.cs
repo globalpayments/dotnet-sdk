@@ -18,7 +18,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         public Request BuildRequest(AuthorizationBuilder builder, GpApiConnector gateway) {
             DisposeMaskedValues();
             
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
             var paymentMethod = new JsonDoc()
                 .Set("entry_mode", GetEntryMode(builder, gateway.GpApiConfig.Channel)); // [MOTO, ECOM, IN_APP, CHIP, SWIPE, MANUAL, CONTACTLESS_CHIP, CONTACTLESS_SWIPE]
             paymentMethod.Set("narrative", !string.IsNullOrEmpty(builder.DynamicDescriptor) ? builder.DynamicDescriptor : null);
@@ -655,7 +655,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                 var endpoint = merchantUrl;
                 if (!string.IsNullOrEmpty(fundsData.MerchantId)) {
-                    endpoint = $"/merchants/{fundsData.MerchantId}";
+                    endpoint = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig, fundsData.MerchantId);
                 }
                 return new Request
                 {

@@ -10,7 +10,9 @@ using System.Text;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
     internal class GpApiFileProcessingRequestBuilder : IRequestBuilder<FileProcessingBuilder> {
-        public Request BuildRequest(FileProcessingBuilder builder, GpApiConnector gateway) {           
+        public Request BuildRequest(FileProcessingBuilder builder, GpApiConnector gateway) {
+            var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
+
             switch (builder.FileProcessingActionType) {
                 case FileProcessingActionType.CREATE_UPLOAD_URL:
                     var data = new JsonDoc()
@@ -26,14 +28,14 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                     return new Request {
                         Verb = HttpMethod.Post,
-                        Endpoint = $"{GpApiRequest.FILE_PROCESSING}",
+                        Endpoint = $"{merchantUrl}{GpApiRequest.FILE_PROCESSING}",
                         RequestBody = data.ToString(),
                     };
                     
                 case FileProcessingActionType.GET_DETAILS: 
                     return new Request {
                         Verb = HttpMethod.Get,
-                        Endpoint = $"{GpApiRequest.FILE_PROCESSING}/{builder.ResourceId}"                        
+                        Endpoint = $"{merchantUrl}{GpApiRequest.FILE_PROCESSING}/{builder.ResourceId}"
                     };
                     
                 default:

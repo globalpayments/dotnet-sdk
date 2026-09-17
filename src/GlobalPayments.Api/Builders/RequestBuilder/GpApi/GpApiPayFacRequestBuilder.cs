@@ -21,7 +21,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
         public Request BuildRequest(PayFacBuilder<T> builder, GpApiConnector gateway)
         {
             _builder = builder;
-            var merchantUrl = !string.IsNullOrEmpty(gateway.GpApiConfig.MerchantId) ? $"/merchants/{gateway.GpApiConfig.MerchantId}" : string.Empty;
+            var merchantManagementUrl = GpApiRequest.GetMerchantManagementUrl(gateway.GpApiConfig);
             Validate(builder.TransactionType, gateway);
             switch (builder.TransactionType)
             {
@@ -33,7 +33,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                         return new Request
                         {
                             Verb = HttpMethod.Post,
-                            Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}",
+                            Endpoint = merchantManagementUrl,
                             RequestBody = data.ToString(),
                             MaskedValues = MaskedValues,
                         };
@@ -45,7 +45,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                         return new Request
                         {
                             Verb = new HttpMethod("PATCH"),
-                            Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{_builder.UserReference.UserId}",
+                            Endpoint = $"{merchantManagementUrl}/{_builder.UserReference.UserId}",
                             RequestBody = BuildEditMerchantRequest().ToString(),
                         };
                     }
@@ -70,10 +70,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
 
                         dataRequest.Set("payer", paymentMethod);
 
-                        var endpoint = merchantUrl;
+                        var endpoint = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
                         if (!string.IsNullOrEmpty(builder.UserReference?.UserId))
                         {
-                            endpoint = $"/merchants/{builder.UserReference.UserId}";
+                            endpoint = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig, builder.UserReference.UserId);
                         }
 
                         return new Request
@@ -90,7 +90,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                         return new Request
                         {
                             Verb = HttpMethod.Get,
-                            Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{_builder.UserReference.UserId}",
+                            Endpoint = $"{merchantManagementUrl}/{_builder.UserReference.UserId}",
                         };
                     }
                     break;
@@ -105,7 +105,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     return new Request
                     {
                         Verb = HttpMethod.Post,
-                        Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{_builder.UserReference.UserId}/settlement/funds",
+                        Endpoint = $"{merchantManagementUrl}/{_builder.UserReference.UserId}/settlement/funds",
                         RequestBody = dataFunds.ToString(),
                     };
                     
@@ -118,7 +118,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     return new Request
                     {
                             Verb = HttpMethod.Post,
-                            Endpoint = $"{merchantUrl}{GpApiRequest.MERCHANT_MANAGEMENT_ENDPOINT}/{_builder.UserReference.UserId}/documents",
+                            Endpoint = $"{merchantManagementUrl}/{_builder.UserReference.UserId}/documents",
                             RequestBody = requestData.ToString()
                     };                    
                     break;

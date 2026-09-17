@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v11.5.0 (09/03/26)
+## Latest - v11.6.0 (09/17/26)
+
+### Enhancement
+- [GPAPI] - Added `GpApiConfig.MerchantManagementAccountID` for partner GP-API accounts that need to route merchant requests through a specific merchant management account. When both `MerchantManagementAccountID` and `MerchantId` are configured, merchant-scoped GP-API requests now use `/accounts/{MMA_ID}/merchants/{MER_ID}/...`; access-token requests remain unchanged.
+
+## v11.5.0 (09/03/26)
 
 ### Enhancement
 
@@ -10,7 +15,6 @@
 ### Bug Fixes
 - [GP-ECOM] - Fixed HPP response hash validation to match the HPP Reference "Check hash" specification. `HostedService.ParseResponse` previously included `PAYMENTMETHOD` in the SHA hash whenever `MERCHANT_RESPONSE_URL` was present, so Google Pay / Apple Pay responses (which echo `PAYMENTMETHOD` but settle as card payments) threw a false "Incorrect hash" `ApiException` even though the gateway processed the transaction. The hash now follows the spec: Card Payments — including Google Pay/Apple Pay — are validated over `AUTHCODE`, while alternative payment methods are validated over `PAYMENTMETHOD`.
 - [GP-ECOM] - Fixed parsing of asynchronous APM transaction Status Update notifications. These arrive with lowercase field names and no `MERCHANT_RESPONSE_URL`, so `MapTransactionStatusResponse` was never applied to them and every notification failed with "Incorrect hash". The status-update mapping is now applied to those notifications, and they are correctly validated over `PAYMENTMETHOD`.
-
 
 ## v11.4.0 (08/20/26)
 

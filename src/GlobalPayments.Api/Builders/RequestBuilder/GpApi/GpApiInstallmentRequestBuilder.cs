@@ -12,12 +12,13 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
         private InstallmentBuilder _builder;
         public Request BuildRequest(InstallmentBuilder builder, GpApiConnector gateway) {
             _builder = builder;
+            var merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
 
             // GET installment by ID
             if (builder.InstallmentId != null && builder.Entity == null) {
                 return new Request {
                     Verb = HttpMethod.Get,
-                    Endpoint = $"{GpApiRequest.INSTALLMENT_ENDPOINT}/{builder.InstallmentId}",
+                    Endpoint = $"{merchantUrl}{GpApiRequest.INSTALLMENT_ENDPOINT}/{builder.InstallmentId}",
                 };
             }
 
@@ -26,7 +27,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
             return new Request
             {
                 Verb = HttpMethod.Post,
-                Endpoint = $"{GpApiRequest.INSTALLMENT_ENDPOINT}",
+                Endpoint = $"{merchantUrl}{GpApiRequest.INSTALLMENT_ENDPOINT}",
                 RequestBody = data.ToString(),
             };
         }

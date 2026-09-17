@@ -8,7 +8,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
     internal class GpApiMiCRequestBuilder : IRequestBuilder<string>
     {
         public Request BuildRequest(string rawRequest, GpApiConnector connector) {
-            string merchantUrl = !string.IsNullOrEmpty(connector.GpApiConfig.MerchantId) ? $"/merchants/{connector.GpApiConfig.MerchantId}" : null;
+            string merchantUrl = GpApiRequest.GetMerchantUrl(connector.GpApiConfig);
             var request = new Request {
                 Verb = HttpMethod.Post,
                 Endpoint = $"{merchantUrl}{GpApiRequest.DEVICES}",
