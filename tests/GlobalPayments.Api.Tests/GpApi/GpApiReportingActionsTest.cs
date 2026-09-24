@@ -16,20 +16,49 @@ namespace GlobalPayments.Api.Tests.GpApi
             var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(gpApiConfig);
 
-            SampleAction = ReportingService.FindActionsPaged(1, 1)
-                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-5))
-                .Execute().Results?.FirstOrDefault();
+            SampleAction = ReportingService.FindActionsPaged(1, 20)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-30))
+                .Execute().Results?.FirstOrDefault(x =>
+                    !string.IsNullOrWhiteSpace(x.Id) &&
+                    !string.IsNullOrWhiteSpace(x.ResourceId) &&
+                    !string.IsNullOrWhiteSpace(x.HttpResponseCode));
         }
 
         [TestMethod]
         public void ReportActionDetail() {
-            var actionId = SampleAction.Id;
+            var listResult = ReportingService.FindActionsPaged(1, 1)
+                .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddDays(-5))
+                .Execute();
+
+            var actionId = listResult.Action?.Id ?? SampleAction?.Id;
             
             var response = ReportingService.ActionDetail(actionId)
                 .Execute();
             Assert.IsNotNull(response);
             Assert.IsTrue(response is ActionSummary);
             Assert.AreEqual(actionId, response.Id);
+        }
+
+        /// <summary>
+        /// Verifies that GET Actions returns mapped action records and paging metadata from the sandbox.
+        /// </summary>
+        [TestMethod]
+        public void ReportFindActionsPaged_MapsResponseFields() {
+            var result = ReportingService.FindActionsPaged(FirstPage, PageSize)
+                .Where(SearchCriteria.ActionId, SampleAction.Id)
+                .Execute();
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Results);
+            Assert.AreEqual(1, result.Results.Count);
+
+            var action = result.Results.First();
+            Assert.AreEqual(SampleAction.Id, action.Id);
+            Assert.IsFalse(string.IsNullOrEmpty(action.Type));
+            Assert.IsFalse(string.IsNullOrEmpty(action.Resource));
+            Assert.IsFalse(string.IsNullOrEmpty(action.ResourceId));
+            Assert.IsFalse(string.IsNullOrEmpty(action.HttpResponseCode));
+            Assert.IsFalse(string.IsNullOrEmpty(action.ResponseCode));
         }
 
         [TestMethod]
@@ -151,13 +180,16 @@ namespace GlobalPayments.Api.Tests.GpApi
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<ActionSummary>);
+            // The sandbox returns redacted records with an empty time_created; those map to default(DateTime).
             Assert.IsTrue(result.Results.TrueForAll(a =>
-                a.TimeCreated.Date >= ReportingStartDate.Date && a.TimeCreated.Date <= ReportingEndDate.Date));
+                a.TimeCreated == default(DateTime) ||
+                (a.TimeCreated.Date >= ReportingStartDate.Date && a.TimeCreated.Date <= ReportingEndDate.Date)));
         }
 
         [TestMethod]
         public void ReportFindActionsPaged_By_MerchantName() {
-            var merchantName = SampleAction.MerchantName;
+            var listResult = ReportingService.FindActionsPaged(FirstPage, PageSize).Execute();
+            var merchantName = listResult.MerchantName ?? SampleAction?.MerchantName;
 
             var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
                 .Where(SearchCriteria.MerchantName, merchantName)
@@ -214,14 +246,13 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindActionsPaged_By_Version() {
-            var version = SampleAction.Version;
 
             var result = ReportingService.FindActionsPaged(FirstPage,PageSize)
-                .Where(SearchCriteria.Version, version)
+                .Where(SearchCriteria.Version, "2021-03-22")
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<ActionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(a => a.Version == version));
+            Assert.IsTrue(result.Results.TrueForAll(a => a.Version == "2021-03-22"));
         }
 
         [TestMethod]
@@ -326,22 +357,17 @@ namespace GlobalPayments.Api.Tests.GpApi
 
         [TestMethod]
         public void ReportFindActionsPaged_By_MultipleFilters() {
-            var sampleAction = SampleAction;
-            if (string.IsNullOrWhiteSpace(sampleAction.AccountName) ||
-                string.IsNullOrWhiteSpace(sampleAction.MerchantName) || string.IsNullOrWhiteSpace(sampleAction.Version))
-            {
-                sampleAction = ReportingService.FindActionsPaged(FirstPage,PageSize)
-                    .Where(SearchCriteria.StartDate, DateTime.UtcNow.AddYears(-5))
-                    .Execute().Results?.FirstOrDefault(x =>
-                        !string.IsNullOrWhiteSpace(x.AccountName) && !string.IsNullOrWhiteSpace(x.MerchantName) &&
-                        !string.IsNullOrWhiteSpace(x.Version));
-            }
+            var listResult = ReportingService.FindActionsPaged(FirstPage, PageSize).Execute();
+            var sampleAction = listResult.Results?.FirstOrDefault(x =>
+                !string.IsNullOrWhiteSpace(x.AccountName) &&
+                !string.IsNullOrWhiteSpace(x.MerchantName) &&
+                !string.IsNullOrWhiteSpace(x.Version)) ?? SampleAction;
 
             const string actionType = "AUTHORIZE";
             const string resource = "TRANSACTIONS";
             const string resourceStatus = "DECLINED";
             var accountName = sampleAction.AccountName;
-            var merchantName = sampleAction.MerchantName;
+            var merchantName = listResult.MerchantName ?? sampleAction.MerchantName;
             var version = sampleAction.Version;
 
             PagedResult<ActionSummary> result = ReportingService.FindActionsPaged(FirstPage,PageSize)

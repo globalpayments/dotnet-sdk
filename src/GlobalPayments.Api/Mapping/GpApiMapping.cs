@@ -926,7 +926,7 @@ namespace GlobalPayments.Api.Mapping {
                 result = MapActionSummary(json) as T;
             }
             else if (reportType == ReportType.FindActionsPaged && result is PagedResult<ActionSummary>) {
-                SetPagingInfo(result as PagedResult<ActionSummary>, json);
+                SetActionsPagingInfo(result as PagedResult<ActionSummary>, json);
                 foreach (var doc in json.GetArray<JsonDoc>("actions") ?? Enumerable.Empty<JsonDoc>()) {
                     (result as PagedResult<ActionSummary>).Add(MapActionSummary(doc));
                 }
@@ -966,6 +966,18 @@ namespace GlobalPayments.Api.Mapping {
             result.Page = json.Get("paging")?.GetValue<int>("page") ?? default(int);
             result.Order = json.Get("paging")?.GetValue<string>("order");
             result.OrderBy = json.Get("paging")?.GetValue<string>("order_by");
+        }
+
+        // Envelope fields below are only defined by the GET /ucp/actions response; their
+        // semantics differ on the settlement/deposit envelopes, so they stay scoped here.
+        private static void SetActionsPagingInfo(PagedResult<ActionSummary> result, JsonDoc json) {
+            SetPagingInfo(result, json);
+            result.CurrentPageSize = json.GetValue<int>("current_page_size");
+            result.MerchantId = json.GetValue<string>("merchant_id");
+            result.MerchantName = json.GetValue<string>("merchant_name");
+            result.FromTimeCreated = json.Get("filter")?.GetValue("from_time_created", DateConverter);
+            result.ToTimeCreated = json.Get("filter")?.GetValue("to_time_created", DateConverter);
+            result.Action = MapAction(json.Get("action"));
         }
 
         public static DepositSummary MapDepositSummary(JsonDoc doc) {
@@ -1100,21 +1112,41 @@ namespace GlobalPayments.Api.Mapping {
         }
 
         public static ActionSummary MapActionSummary(JsonDoc doc) {
+            var metrics = doc.Get("metrics");
+            Dictionary<string, string> mappedMetrics = null;
+            if (metrics?.HasKeys() == true) {
+                mappedMetrics = new Dictionary<string, string>();
+                foreach (var key in metrics.Keys) {
+                    mappedMetrics[key] = metrics.GetValue<string>(key);
+                }
+            }
+
             return new ActionSummary {
                 Id = doc.GetValue<string>("id"),
                 Type = doc.GetValue<string>("type"),
-                TimeCreated = doc.GetValue<DateTime>("time_created"),
+                // GP-API returns an empty string for optional dates; Convert.ChangeType would throw on it.
+                TimeCreated = doc.GetValue("time_created", DateConverter) ?? default(DateTime),
                 Resource = doc.GetValue<string>("resource"),
+                ResourceRequestUrl = doc.GetValue<string>("resource_request_url"),
                 Version = doc.GetValue<string>("version"),
+                ResourceParentId = doc.GetValue<string>("resource_parent_id"),
                 ResourceId = doc.GetValue<string>("resource_id"),
                 ResourceStatus = doc.GetValue<string>("resource_status"),
                 HttpResponseCode = doc.GetValue<string>("http_response_code"),
+                HttpResponseMessage = doc.GetValue<string>("http_response_message"),
                 ResponseCode = doc.GetValue<string>("response_code"),
+                ResponseDetailedCode = doc.GetValue<string>("response_detailed_code"),
+                ResponseDetailedMessage = doc.GetValue<string>("response_detailed_message"),
                 AppId = doc.GetValue<string>("app_id"),
                 AppName = doc.GetValue<string>("app_name"),
+                AppDeveloper = doc.GetValue<string>("app_developer"),
+                MerchantId = doc.GetValue<string>("merchant_id"),
                 AccountId = doc.GetValue<string>("account_id"),
                 AccountName = doc.GetValue<string>("account_name"),
                 MerchantName = doc.GetValue<string>("merchant_name"),
+                SourceLocation = doc.GetValue<string>("source_location"),
+                DestinationLocation = doc.GetValue<string>("destination_location"),
+                Metrics = mappedMetrics,
             };
         }
 

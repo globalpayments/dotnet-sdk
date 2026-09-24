@@ -1535,6 +1535,32 @@ namespace GlobalPayments.Api.Builders {
                 .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.PaymentPlan))
                 .IsNotNull("PaymentPlan cannot be null for Cashpresso transactions.");
 
+            Validations.For(PaymentMethodType.APM)
+                .With(TransactionModifier.AlternativePaymentMethod)
+                .When(builder => {
+                    var alternativePaymentMethod = ((AuthorizationBuilder)builder).PaymentMethod as AlternativePaymentMethod;
+                    return alternativePaymentMethod != null &&
+                        alternativePaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.BLIK &&
+                        alternativePaymentMethod.Mode == BlikMode.LEVEL_ZERO &&
+                        (((AuthorizationBuilder)builder).TransactionType == TransactionType.Sale ||
+                         ((AuthorizationBuilder)builder).TransactionType == TransactionType.Auth);
+                })
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.IpAddress))
+                .IsNotNull("IpAddress cannot be null for Blik Level 0 transactions.");
+
+            Validations.For(PaymentMethodType.APM)
+                .With(TransactionModifier.AlternativePaymentMethod)
+                .When(builder => {
+                    var alternativePaymentMethod = ((AuthorizationBuilder)builder).PaymentMethod as AlternativePaymentMethod;
+                    return alternativePaymentMethod != null &&
+                        alternativePaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.BLIK &&
+                        alternativePaymentMethod.Mode == BlikMode.LEVEL_ZERO &&
+                        (((AuthorizationBuilder)builder).TransactionType == TransactionType.Sale ||
+                         ((AuthorizationBuilder)builder).TransactionType == TransactionType.Auth);
+                })
+                .Check(() => PaymentMethod).PropertyOf(nameof(AlternativePaymentMethod.UserAgent))
+                .IsNotNull("UserAgent cannot be null for Blik Level 0 transactions.");
+
 
         }
 

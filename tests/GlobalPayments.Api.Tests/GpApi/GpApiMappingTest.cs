@@ -459,16 +459,80 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("type"), action.Type);
             Assert.AreEqual(doc.GetValue<DateTime>("time_created"), action.TimeCreated);
             Assert.AreEqual(doc.GetValue<string>("resource"), action.Resource);
+            Assert.AreEqual(doc.GetValue<string>("resource_request_url"), action.ResourceRequestUrl);
             Assert.AreEqual(doc.GetValue<string>("version"), action.Version);
+            Assert.AreEqual(doc.GetValue<string>("resource_parent_id"), action.ResourceParentId);
             Assert.AreEqual(doc.GetValue<string>("resource_id"), action.ResourceId);
             Assert.AreEqual(doc.GetValue<string>("resource_status"), action.ResourceStatus);
             Assert.AreEqual(doc.GetValue<string>("http_response_code"), action.HttpResponseCode);
+            Assert.AreEqual(doc.GetValue<string>("http_response_message"), action.HttpResponseMessage);
             Assert.AreEqual(doc.GetValue<string>("response_code"), action.ResponseCode);
+            Assert.AreEqual(doc.GetValue<string>("response_detailed_code"), action.ResponseDetailedCode);
+            Assert.AreEqual(doc.GetValue<string>("response_detailed_message"), action.ResponseDetailedMessage);
             Assert.AreEqual(doc.GetValue<string>("app_id"), action.AppId);
             Assert.AreEqual(doc.GetValue<string>("app_name"), action.AppName);
+            Assert.AreEqual(doc.GetValue<string>("app_developer"), action.AppDeveloper);
+            Assert.AreEqual(doc.GetValue<string>("merchant_id"), action.MerchantId);
             Assert.AreEqual(doc.GetValue<string>("account_id"), action.AccountId);
             Assert.AreEqual(doc.GetValue<string>("account_name"), action.AccountName);
             Assert.AreEqual(doc.GetValue<string>("merchant_name"), action.MerchantName);
+            Assert.AreEqual(doc.GetValue<string>("source_location"), action.SourceLocation);
+            Assert.AreEqual(doc.GetValue<string>("destination_location"), action.DestinationLocation);
+            Assert.IsNotNull(action.Metrics);
+            Assert.AreEqual(doc.Get("metrics").GetValue<string>("X-GP-Version"), action.Metrics["X-GP-Version"]);
+        }
+
+        [TestMethod]
+        public void MapActionSummary_EmptyTimeCreated_MapsDefaultDate() {
+            // Arrange
+            const string rawJson = "{\"id\":\"\",\"type\":\"\",\"time_created\":\"\",\"resource\":\"\",\"resource_status\":\"CAPTURED\"}";
+
+            // Act
+            ActionSummary action = GpApiMapping.MapActionSummary(JsonDoc.Parse(rawJson));
+
+            // Assert
+            Assert.AreEqual(default(DateTime), action.TimeCreated);
+            Assert.AreEqual("CAPTURED", action.ResourceStatus);
+        }
+
+        [TestMethod]
+        public void MapReportResponse_FindActionsPaged_MapsEnvelopeAndActionRecords() {
+            // Arrange
+            const string rawJson = "{\"total_record_count\":1,\"current_page_size\":1,\"merchant_id\":\"MER_123\",\"merchant_name\":\"Sandbox_merchant\",\"filter\":{\"from_time_created\":\"2022-05-01\",\"to_time_created\":\"2023-05-01\"},\"paging\":{\"page\":1,\"page_size\":5,\"order_by\":\"TIME_CREATED\",\"order\":\"ASC\"},\"actions\":[{\"id\":\"ACT_123\",\"type\":\"MERCHANT_EDIT\",\"time_created\":\"2023-05-01T12:00:00.000Z\",\"resource\":\"TRANSACTIONS\",\"resource_id\":\"TRN_123\",\"resource_status\":\"DECLINED\",\"version\":\"2021-03-22\",\"http_response_code\":\"400\",\"response_code\":\"DECLINED\",\"app_id\":\"APP_123\",\"app_name\":\"test_app\",\"merchant_name\":\"Sandbox_merchant\",\"account_name\":\"transaction_processing\"}],\"action\":{\"id\":\"ACT_result\",\"type\":\"ACTION_LIST\",\"time_created\":\"2023-05-01T12:01:00.000Z\",\"result_code\":\"SUCCESS\",\"app_id\":\"APP_123\",\"app_name\":\"test_app\"}}";
+
+            // Act
+            PagedResult<ActionSummary> result = GpApiMapping.MapReportResponse<PagedResult<ActionSummary>>(rawJson, ReportType.FindActionsPaged);
+
+            // Assert
+            Assert.AreEqual(1, result.TotalRecordCount);
+            Assert.AreEqual(1, result.CurrentPageSize);
+            Assert.AreEqual("MER_123", result.MerchantId);
+            Assert.AreEqual("Sandbox_merchant", result.MerchantName);
+            Assert.AreEqual(new DateTime(2022, 5, 1), result.FromTimeCreated.Value.Date);
+            Assert.AreEqual(new DateTime(2023, 5, 1), result.ToTimeCreated.Value.Date);
+            Assert.AreEqual(1, result.Page);
+            Assert.AreEqual(5, result.PageSize);
+            Assert.AreEqual("TIME_CREATED", result.OrderBy);
+            Assert.AreEqual("ASC", result.Order);
+            Assert.AreEqual(1, result.Results.Count);
+            Assert.AreEqual("ACT_123", result.Results[0].Id);
+            Assert.AreEqual("MERCHANT_EDIT", result.Results[0].Type);
+            Assert.AreEqual("TRANSACTIONS", result.Results[0].Resource);
+            Assert.AreEqual("TRN_123", result.Results[0].ResourceId);
+            Assert.AreEqual("DECLINED", result.Results[0].ResourceStatus);
+            Assert.AreEqual("2021-03-22", result.Results[0].Version);
+            Assert.AreEqual("400", result.Results[0].HttpResponseCode);
+            Assert.AreEqual("DECLINED", result.Results[0].ResponseCode);
+            Assert.AreEqual("APP_123", result.Results[0].AppId);
+            Assert.AreEqual("test_app", result.Results[0].AppName);
+            Assert.AreEqual("Sandbox_merchant", result.Results[0].MerchantName);
+            Assert.AreEqual("transaction_processing", result.Results[0].AccountName);
+            Assert.IsNotNull(result.Action);
+            Assert.AreEqual("ACT_result", result.Action.Id);
+            Assert.AreEqual("ACTION_LIST", result.Action.Type);
+            Assert.AreEqual("SUCCESS", result.Action.ResultCode);
+            Assert.AreEqual("APP_123", result.Action.AppId);
+            Assert.AreEqual("test_app", result.Action.AppName);
         }
 
         [TestMethod]

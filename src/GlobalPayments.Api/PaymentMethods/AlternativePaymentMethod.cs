@@ -77,6 +77,31 @@ namespace GlobalPayments.Api.PaymentMethods {
         public CashpressoPaymentPlan? PaymentPlan { get; set; }
 
         /// <summary>
+        /// The APM processing mode. Set to LEVEL_ZERO for the Blik Level 0 flow.
+        /// </summary>
+        public BlikMode? Mode { get; set; }
+
+        /// <summary>
+        /// Identifies who supplies the one-time payment code (e.g. PAYER for Blik Level 0).
+        /// </summary>
+        public PaymentCodeInitiator? PaymentCodeInitiator { get; set; }
+
+        /// <summary>
+        /// The one-time payment code entered by the payer for Blik Level 0.
+        /// </summary>
+        public string PaymentCode { get; set; }
+
+        /// <summary>
+        /// The payer's IP address. Mandatory for Blik Level 0.
+        /// </summary>
+        public string IpAddress { get; set; }
+
+        /// <summary>
+        /// The payer's user agent. Mandatory for Blik Level 0.
+        /// </summary>
+        public string UserAgent { get; set; }
+
+        /// <summary>
         /// Creates a charge (sale) against the payment method.
         /// </summary>
         /// <param name="amount">The amount of the transaction</param>

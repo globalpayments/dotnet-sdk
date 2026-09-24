@@ -372,7 +372,10 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
                 var apm = new JsonDoc()
                     .Set("provider", alternatepaymentMethod.AlternativePaymentMethodType?.ToString()?.ToLower())
-                    .Set("address_override_mode", alternatepaymentMethod.AddressOverrideMode);
+                    .Set("address_override_mode", alternatepaymentMethod.AddressOverrideMode)
+                    .Set("mode", alternatepaymentMethod.Mode?.ToString()?.ToLower())
+                    .Set("payment_code_initiator", alternatepaymentMethod.PaymentCodeInitiator?.ToString()?.ToLower())
+                    .Set("payment_code", alternatepaymentMethod.PaymentCode);
 
                 // Only check bank existence if AlternativePaymentType is OB
                 if (alternatepaymentMethod.AlternativePaymentMethodType == AlternativePaymentType.OB) {
@@ -1060,6 +1063,15 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                             payer.Set("home_phone", cashpressoHomePhone);
                         }
                     }
+                }
+
+                if (alternativePaymentMethodPayer.AlternativePaymentMethodType == AlternativePaymentType.BLIK &&
+                    alternativePaymentMethodPayer.Mode == BlikMode.LEVEL_ZERO) {
+                    payer.Set("first_name", builder.CustomerData?.FirstName)
+                         .Set("last_name", builder.CustomerData?.LastName)
+                         .Set("email", builder.CustomerData?.Email)
+                         .Set("ip_address", alternativePaymentMethodPayer.IpAddress)
+                         .Set("user_agent", alternativePaymentMethodPayer.UserAgent);
                 }
 
                 JsonDoc homePhone = new JsonDoc();

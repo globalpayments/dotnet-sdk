@@ -1053,6 +1053,21 @@ public enum ReasonCode {
         CASHPRESSO
     }
 
+    /// <summary>
+    /// The APM processing mode. Used by Blik to select the Level 0 streamlined flow.
+    /// </summary>
+    public enum BlikMode {
+        LEVEL_ZERO
+    }
+
+    /// <summary>
+    /// Identifies who supplies the one-time payment code for an APM transaction.
+    /// </summary>
+    public enum PaymentCodeInitiator {
+        PAYER,
+        MERCHANT
+    }
+
     public enum CardType {
         VISA,
         MC,

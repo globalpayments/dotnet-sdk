@@ -1,6 +1,15 @@
 # Changelog
 
-## Latest - v11.6.0 (09/17/26)
+## Latest - v11.7.0 (09/24/26)
+
+### Enhancement
+- [GPAPI] - Added support for Blik Level 0 payments, allowing merchants to process one-time payment codes with the required customer and payer information.
+- [GPAPI] - Expanded GET Action and GET Actions support to expose all action response fields, including request URL, parent resource, response details, application and merchant metadata, locations, and metrics. Added mapping coverage for the complete action response shape.
+
+### Bug Fixes
+- [GPAPI] - Fixed a `FormatException` that failed the entire GET Actions response when the gateway returned an empty `time_created` on any action record. Such records now map to `default(DateTime)`.
+
+## v11.6.0 (09/17/26)
 
 ### Enhancement
 - [GPAPI] - Added `GpApiConfig.MerchantManagementAccountID` for partner GP-API accounts that need to route merchant requests through a specific merchant management account. When both `MerchantManagementAccountID` and `MerchantId` are configured, merchant-scoped GP-API requests now use `/accounts/{MMA_ID}/merchants/{MER_ID}/...`; access-token requests remain unchanged.

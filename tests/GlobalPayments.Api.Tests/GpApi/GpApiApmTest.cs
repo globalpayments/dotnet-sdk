@@ -7,6 +7,7 @@ using GlobalPayments.Api.Entities.Enums;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Utils;
+using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpApi {
@@ -20,6 +21,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private const string CashpressoAppId = "";
         private const string CashpressoAppKey = ""; 
         private const string CashpressoConfigName = "cashpresso";
+
+        private const string BlikAppId = "";
+        private const string BlikAppKey = ""; //gitleaks:allow
+        private const string BlikConfigName = "blik";
 
         private AlternativePaymentMethod paymentMethod;
         private string currency;
@@ -40,6 +45,14 @@ namespace GlobalPayments.Api.Tests.GpApi {
             cashpressoConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "GPECOM_CASHPRESSO_APM_Transaction_Processing" };
             cashpressoConfig.ServiceUrl= "https://apis-qa.globalpay.com/ucp";
             ServicesContainer.ConfigureService(cashpressoConfig, CashpressoConfigName);
+
+            var blikConfig = GpApiConfigSetup(BlikAppId, BlikAppKey, Channel.CardNotPresent);
+            blikConfig.DataResidency = DataResidency.EU;
+            blikConfig.ServiceUrl = "https://apis-qa.globalpay.com/ucp";
+            blikConfig.Country = "PL";
+            blikConfig.AccessTokenInfo = new AccessTokenInfo { TransactionProcessingAccountName = "GPECOM_BLIK_APM_Transaction_Processing" };
+            blikConfig.RequestLogger = new RequestConsoleLogger();
+            ServicesContainer.ConfigureService(blikConfig, BlikConfigName);
 
             paymentMethod = new AlternativePaymentMethod {
                 AlternativePaymentMethodType = AlternativePaymentType.PAYPAL,
@@ -808,6 +821,148 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     TaxAmount = 0
                 }
             };
+        }
+
+        #endregion
+
+        #region Blik Level 0 Tests
+
+        // Validates a successful Blik Level 0 (streamlined) sale using the payer-initiated payment code and mandatory payer fields.
+        [TestMethod]
+        public void BlikLevelZeroSale_WhenRequestIsValid_ShouldSucceed() {
+            var blik = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                Mode = BlikMode.LEVEL_ZERO,
+                PaymentCodeInitiator = PaymentCodeInitiator.PAYER,
+                PaymentCode = "999000",
+                ReturnUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                StatusUpdateUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                CancelUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                AccountHolderName = "James2 Carl",
+                Country = "PL",
+                IpAddress = "106.215.180.111",
+                UserAgent = "PostmanRuntime/7.51.1"
+            };
+
+            var payer = new Customer {
+                FirstName = "James",
+                LastName = "Mason",
+                Email = "james2.carl@gmail.com"
+            };
+
+            var response = blik.Charge(10.00m)
+                .WithCurrency("PLN")
+                .WithCustomerData(payer)
+                .Execute(BlikConfigName);
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("01", response.ResponseCode);
+            Assert.IsNotNull(response.AlternativePaymentResponse);
+            Assert.AreEqual("BLIK", response.AlternativePaymentResponse.ProviderName?.ToUpper());
+        }
+
+        [TestMethod]
+        public void BlikLevelZeroSale_WhenStatusUpdateUrlMissing_ThrowsBuilderException() {
+            var blik = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                Mode = BlikMode.LEVEL_ZERO,
+                PaymentCodeInitiator = PaymentCodeInitiator.PAYER,
+                PaymentCode = "999000",
+                ReturnUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                CancelUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                AccountHolderName = "James2 Carl",
+                Country = "PL"
+            };
+
+            var ex = Assert.ThrowsException<BuilderException>(() => {
+                blik.Charge(10.00m).WithCurrency("PLN").Execute(BlikConfigName);
+            });
+
+            Assert.AreEqual("StatusUpdateUrl cannot be null for this transaction type.", ex.Message);
+        }
+
+        [TestMethod]
+        public void BlikLevelZeroSale_WhenReturnUrlMissing_ThrowsBuilderException() {
+            var blik = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                Mode = BlikMode.LEVEL_ZERO,
+                PaymentCodeInitiator = PaymentCodeInitiator.PAYER,
+                PaymentCode = "999000",
+                StatusUpdateUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                CancelUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                AccountHolderName = "James2 Carl",
+                Country = "PL"
+            };
+
+            var ex = Assert.ThrowsException<BuilderException>(() => {
+                blik.Charge(10.00m).WithCurrency("PLN").Execute(BlikConfigName);
+            });
+
+            Assert.AreEqual("ReturnUrl cannot be null for this transaction type.", ex.Message);
+        }
+
+        [TestMethod]
+        public void BlikLevelZeroSale_WhenAccountHolderNameMissing_ThrowsBuilderException() {
+            var blik = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                Mode = BlikMode.LEVEL_ZERO,
+                PaymentCodeInitiator = PaymentCodeInitiator.PAYER,
+                PaymentCode = "999000",
+                ReturnUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                StatusUpdateUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                CancelUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                Country = "PL"
+            };
+
+            var ex = Assert.ThrowsException<BuilderException>(() => {
+                blik.Charge(10.00m).WithCurrency("PLN").Execute(BlikConfigName);
+            });
+
+            Assert.AreEqual("AccountHolderName cannot be null for this transaction type.", ex.Message);
+        }
+
+        [TestMethod]
+        public void BlikLevelZeroSale_WhenIpAddressMissing_ThrowsBuilderException() {
+            var blik = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                Mode = BlikMode.LEVEL_ZERO,
+                PaymentCodeInitiator = PaymentCodeInitiator.PAYER,
+                PaymentCode = "999000",
+                ReturnUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                StatusUpdateUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                CancelUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                AccountHolderName = "James2 Carl",
+                Country = "PL",
+                UserAgent = "PostmanRuntime/7.51.1"
+            };
+
+            var ex = Assert.ThrowsException<BuilderException>(() => {
+                blik.Charge(10.00m).WithCurrency("PLN").Execute(BlikConfigName);
+            });
+
+            Assert.AreEqual("IpAddress cannot be null for Blik Level 0 transactions.", ex.Message);
+        }
+
+        [TestMethod]
+        public void BlikLevelZeroSale_WhenUserAgentMissing_ThrowsBuilderException() {
+            var blik = new AlternativePaymentMethod {
+                AlternativePaymentMethodType = AlternativePaymentType.BLIK,
+                Mode = BlikMode.LEVEL_ZERO,
+                PaymentCodeInitiator = PaymentCodeInitiator.PAYER,
+                PaymentCode = "999000",
+                ReturnUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                StatusUpdateUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                CancelUrl = "https://webhook.site/3731109f-2ed1-43b4-9142-a1935d55f31a",
+                AccountHolderName = "James2 Carl",
+                Country = "PL",
+                IpAddress = "106.215.180.111"
+            };
+
+            var ex = Assert.ThrowsException<BuilderException>(() => {
+                blik.Charge(10.00m).WithCurrency("PLN").Execute(BlikConfigName);
+            });
+
+            Assert.AreEqual("UserAgent cannot be null for Blik Level 0 transactions.", ex.Message);
         }
 
         #endregion
