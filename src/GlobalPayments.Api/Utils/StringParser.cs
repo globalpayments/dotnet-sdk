@@ -112,7 +112,7 @@ namespace GlobalPayments.Api.Utils {
                 return ReadRemaining();
             }
 
-            string rvalue = buffer.Substring(position, index);
+            string rvalue = buffer.Substring(position, index - position);
             position = index;
             if (remove) {
                 position++;
