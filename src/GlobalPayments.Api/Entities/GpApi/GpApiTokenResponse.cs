@@ -22,6 +22,7 @@ namespace GlobalPayments.Api.Entities {
         internal string Email { get; private set; }
         internal string MerchantId { get; private set; }
         internal string MerchantName { get; private set; }
+        internal string IntervalToExpire { get; private set; }
         internal GpApiAccount[] Accounts { get; private set; }
         internal string DataAccountName { get { return GetAccountName(DATA_ACCOUNT_NAME_PREFIX); } }
         internal string DisputeManagementAccountName { get { return GetAccountName(DISPUTE_MANAGEMENT_ACCOUNT_NAME_PREFIX); } }
@@ -60,6 +61,7 @@ namespace GlobalPayments.Api.Entities {
             AppName = doc.GetValue<string>("app_name");
             TimeCreated = doc.GetValue<DateTime>("time_created");
             SecondsToExpire = doc.GetValue<int>("seconds_to_expire");
+            IntervalToExpire = doc.GetValue<string>("interval_to_expire");
             Email = doc.GetValue<string>("email");
 
             if (doc.Has("scope")) {
@@ -72,6 +74,7 @@ namespace GlobalPayments.Api.Entities {
                         accounts.Add(new GpApiAccount {
                             Id = account.GetValue<string>("id"),
                             Name = account.GetValue<string>("name"),
+                            Permissions = account.GetArray<string>("permissions")?.ToArray(),
                         });
                     }
                     Accounts = accounts.ToArray();

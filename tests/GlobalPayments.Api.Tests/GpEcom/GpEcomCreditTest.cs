@@ -1,20 +1,45 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GlobalPayments.Api.Tests.GpEcom {
+    /// <summary>
+    /// GPEcom credit transaction tests, including Visa AFT sandbox authorization coverage.
+    /// </summary>
     [TestClass]
     public class GpEcomCreditTest {
-        CreditCardData card;
+        private const string VisaAftEcomConfigName = "VisaAftEcom";
+        private const string VisaAftMotoConfigName = "VisaAftMoto";
+        private const string GpEcomApiAccountId = "api";
+        private const string GpEcomDccAccountId = "apidcc";
+        private const string VisaAftEcomChannel = "ECOM";
+        private const string VisaAftMotoChannel = "MOTO";
+        private const decimal VisaAftAmount = 10m;
+        private const decimal VisaAftStoredCredentialAmount = 15.15m;
+        private const string VisaAftCurrency = "USD";
+        private const string VisaAftInvalidCurrency = "INVALID";
+        private const string VisaAftInvalidCustomerId = "invalidCustomer";
+        private const string VisaAftInvalidPaymentId = "invalidPayment";
+        private const string VisaAftStoredCustomerId = "20190729-GlobalApi";
+        private const string VisaAftStoredPaymentId = "20190729-GlobalApi-Credit";
 
+        CreditCardData card;
+        VisaDirectAftData visaDirectAftData;
+        StoredCredential storedCredential;
+        /// <summary>
+        /// Configures the GPEcom sandbox accounts and resets the named Visa AFT configuration.
+        /// </summary>
         [TestInitialize]
-        public void Init() {
+        public void TestInitialize() {
+            ServicesContainer.RemoveConfig(VisaAftEcomConfigName);
+            ServicesContainer.RemoveConfig(VisaAftMotoConfigName);
             var config = new GpEcomConfig {
                 MerchantId = "heartlandgpsandbox",
-                AccountId = "api",
+                AccountId = GpEcomApiAccountId,
                 SharedSecret = "secret",
                 RebatePassword = "rebate",
                 RefundPassword = "refund",
@@ -22,8 +47,37 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             };
             ServicesContainer.ConfigureService(config);
 
-            config.AccountId = "apidcc";
-            ServicesContainer.ConfigureService(config, "dcc");
+            var dccConfig = new GpEcomConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = GpEcomDccAccountId,
+                SharedSecret = "secret",
+                RebatePassword = "rebate",
+                RefundPassword = "refund",
+                RequestLogger = new RequestConsoleLogger()
+            };
+            ServicesContainer.ConfigureService(dccConfig, "dcc");
+
+            var visaAftEcomConfig = new GpEcomConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = GpEcomApiAccountId,
+                SharedSecret = "secret",
+                RebatePassword = "rebate",
+                RefundPassword = "refund",
+                Channel = VisaAftEcomChannel,
+                RequestLogger = new RequestConsoleLogger()
+            };
+            ServicesContainer.ConfigureService(visaAftEcomConfig, VisaAftEcomConfigName);
+
+            var visaAftMotoConfig = new GpEcomConfig {
+                MerchantId = "heartlandgpsandbox",
+                AccountId = GpEcomApiAccountId,
+                SharedSecret = "secret",
+                RebatePassword = "rebate",
+                RefundPassword = "refund",
+                Channel = VisaAftMotoChannel,
+                RequestLogger = new RequestConsoleLogger()
+            };
+            ServicesContainer.ConfigureService(visaAftMotoConfig, VisaAftMotoConfigName);
 
             card = new CreditCardData {
                 Number = "4111111111111111",
@@ -31,6 +85,24 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 ExpYear = 2025,
                 Cvn = "123",
                 CardHolderName = "Joe Smith"
+            };
+
+           visaDirectAftData = new VisaDirectAftData {
+                SenderReferenceNumber = "REF123456",
+                SenderAccountNumber = "9876543210",
+                SenderName = "John Smith",
+                SenderAddress = "10 High Street",
+                SenderCity = "Nottingham",
+                SenderCountry = "GBR",
+                AccountNumberType = "123456789",
+                RecipientAccountNumber = "MMC0F00YE4000000715"
+           };
+
+            storedCredential = new StoredCredential {
+                Type = StoredCredentialType.Recurring,
+                Initiator = StoredCredentialInitiator.Merchant,
+                Sequence = StoredCredentialSequence.Subsequent,
+                SchemeId = "MMC0F00YE4000000715"
             };
         }
 
@@ -185,6 +257,130 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             Assert.IsNotNull(captureResponse);
             Assert.AreEqual("00", captureResponse.ResponseCode, captureResponse.ResponseMessage);
         }
+
+        #region Visa AFT Positive Tests
+
+        /// <summary>
+        /// Verifies Visa AFT authorization with the ECOM channel in the GPEcom sandbox.
+        /// </summary>
+        [TestMethod]
+        public void AuthorizeVisaAft_Ecom_ReturnsSuccess() {
+            Transaction response = card.Authorize(VisaAftAmount)
+                .WithCurrency(VisaAftCurrency)
+                .WithVisaDirectAftSupplementaryData(visaDirectAftData)
+                .Execute(VisaAftEcomConfigName);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+        }
+
+        /// <summary>
+        /// Verifies Visa AFT authorization with the MOTO channel in the GPEcom sandbox.
+        /// </summary>
+        [TestMethod]
+        public void AuthorizeVisaAft_Moto_ReturnsSuccess() {
+            Transaction response = card.Authorize(VisaAftAmount)
+                .WithCurrency(VisaAftCurrency)
+                .WithVisaDirectAftSupplementaryData(visaDirectAftData)
+                .Execute(VisaAftMotoConfigName);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+        }
+
+        /// <summary>
+        /// Verifies stored-credential Visa AFT authorization with the ECOM channel.
+        /// </summary>
+        [TestMethod]
+        public void AuthorizeStoredCredentialVisaAft_Ecom_ReturnsSuccess() {
+            // Arrange
+            var storedCard = new RecurringPaymentMethod(VisaAftStoredCustomerId, VisaAftStoredPaymentId);
+
+            // Act
+            Transaction response = storedCard.Authorize(VisaAftStoredCredentialAmount)
+                .WithCurrency(VisaAftCurrency)
+                .WithAllowDuplicates(true)
+                .WithStoredCredential(storedCredential)
+                .WithVisaDirectAftSupplementaryData(visaDirectAftData)
+                .Execute(VisaAftEcomConfigName);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+            Assert.IsNotNull(response.SchemeId);
+        }
+
+        /// <summary>
+        /// Verifies stored-credential Visa AFT authorization with the MOTO channel.
+        /// </summary>
+        [TestMethod]
+        public void AuthorizeStoredCredentialVisaAft_Moto_ReturnsSuccess() {
+            // Arrange
+            var storedCard = new RecurringPaymentMethod(VisaAftStoredCustomerId, VisaAftStoredPaymentId);
+
+            // Act
+            Transaction response = storedCard.Authorize(VisaAftStoredCredentialAmount)
+                .WithCurrency(VisaAftCurrency)
+                .WithAllowDuplicates(true)
+                .WithStoredCredential(storedCredential)
+                .WithVisaDirectAftSupplementaryData(visaDirectAftData)
+                .Execute(VisaAftMotoConfigName);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual("00", response.ResponseCode, response.ResponseMessage);
+            Assert.IsNotNull(response.SchemeId);
+        }
+
+        #endregion
+
+        #region Visa AFT Negative Tests
+
+        /// <summary>
+        /// Verifies that Visa AFT authorization with an invalid stored-customer key is rejected.
+        /// </summary>
+        [TestMethod]
+        public void AuthorizeStoredCredentialVisaAft_InvalidCustomerKey_ThrowsGatewayException() {
+            // Arrange
+            var storedCard = new RecurringPaymentMethod(VisaAftInvalidCustomerId, VisaAftInvalidPaymentId);
+
+            // Act
+            GatewayException exception = Assert.ThrowsException<GatewayException>(() => {
+                storedCard.Authorize(VisaAftStoredCredentialAmount)
+                    .WithCurrency(VisaAftCurrency)
+                    .WithAllowDuplicates(true)
+                    .WithStoredCredential(storedCredential)
+                    .WithVisaDirectAftSupplementaryData(visaDirectAftData)
+                    .Execute(VisaAftEcomConfigName);
+            });
+
+            // Assert
+            Assert.AreEqual("520", exception.ResponseCode);
+            Assert.AreEqual($"This Payer Ref [{VisaAftInvalidCustomerId}] does not exist", exception.ResponseMessage);
+            Assert.AreEqual($"Unexpected Gateway Response: 520 - This Payer Ref [{VisaAftInvalidCustomerId}] does not exist", exception.Message);
+        }
+
+        /// <summary>
+        /// Verifies that Visa AFT authorization with an unsupported currency is rejected.
+        /// </summary>
+        [TestMethod]
+        public void AuthorizeVisaAft_InvalidCurrency_ThrowsGatewayException() {
+            // Act
+            GatewayException exception = Assert.ThrowsException<GatewayException>(() =>
+                card.Authorize(VisaAftAmount)
+                    .WithCurrency(VisaAftInvalidCurrency)
+                    .WithVisaDirectAftSupplementaryData(visaDirectAftData)
+                    .Execute(VisaAftEcomConfigName));
+
+            // Assert
+            Assert.AreEqual("506", exception.ResponseCode);
+            StringAssert.Contains(exception.ResponseMessage, "[amount currency=\"INVALID\"] ' does not conform to the schema");
+            Assert.AreEqual($"Unexpected Gateway Response: 506 - {exception.ResponseMessage}", exception.Message);
+        }
+
+        #endregion
 
         [TestMethod]
         public void CardBlockingPaymentRequest() {
@@ -537,5 +733,6 @@ namespace GlobalPayments.Api.Tests.GpEcom {
                 Assert.IsTrue(exceptionCaught);
             };
         }
+
     }
 }

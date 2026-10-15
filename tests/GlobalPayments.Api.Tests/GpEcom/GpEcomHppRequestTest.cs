@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
@@ -740,6 +741,58 @@ namespace GlobalPayments.Api.Tests.GpEcom {
             Assert.IsTrue(hppJson.Contains("\"HPP_DO_NOT_RETURN_ADDRESS\":\"FALSE\""));
             Assert.IsTrue(hppJson.Contains("\"HPP_REMOVE_SHIPPING\":\"TRUE\""));
         }
+
+        #region Visa AFT HPP Tests
+
+        /// <summary>
+        /// Verifies that approved Visa AFT fields are serialized while unknown keys are omitted.
+        /// </summary>
+        [TestMethod]
+        public void SerializeVisaAftSupplementaryData_OnlyAllowedFields() {
+            var supplementaryData = new Dictionary<string, string> {
+                { "VD_SENDER_NAME", "BOBBINS BOBBY" },
+                { "VD_SENDER_ADDRESS", "10 High Street" },
+                { "VD_SENDER_CITY", "NOTTINGHAM" },
+                { "VD_SENDER_COUNTRY", "GBR" },
+                { "VD_ACCOUNT_TYPE", "03" },
+                { "VD_RECIPIENT_ACCOUNTNUMBER", "12345678" },
+                { "UNSUPPORTED_FIELD", "ignored" }
+            };
+
+            var hppJson = _service.Authorize(1m)
+                .WithCurrency("EUR")
+                .WithVisaAftSupplementaryData(supplementaryData)
+                .Serialize();
+            var request = JsonDoc.Parse(hppJson, JsonEncoders.Base64Encoder);
+
+            Assert.AreEqual("BOBBINS BOBBY", request.GetValue<string>("VD_SENDER_NAME"));
+            Assert.AreEqual("10 High Street", request.GetValue<string>("VD_SENDER_ADDRESS"));
+            Assert.AreEqual("NOTTINGHAM", request.GetValue<string>("VD_SENDER_CITY"));
+            Assert.AreEqual("GBR", request.GetValue<string>("VD_SENDER_COUNTRY"));
+            Assert.AreEqual("03", request.GetValue<string>("VD_ACCOUNT_TYPE"));
+            Assert.AreEqual("12345678", request.GetValue<string>("VD_RECIPIENT_ACCOUNTNUMBER"));
+            Assert.IsFalse(request.Has("UNSUPPORTED_FIELD"));
+        }
+
+        /// <summary>
+        /// Verifies that Visa AFT fields are omitted when supplementary data is not supplied.
+        /// </summary>
+        [TestMethod]
+        public void SerializeVisaAftSupplementaryData_WithoutData_OmitsFields() {
+            var hppJson = _service.Authorize(1m)
+                .WithCurrency("EUR")
+                .Serialize();
+            var request = JsonDoc.Parse(hppJson, JsonEncoders.Base64Encoder);
+
+            Assert.IsFalse(request.Has("VD_SENDER_NAME"));
+            Assert.IsFalse(request.Has("VD_SENDER_ADDRESS"));
+            Assert.IsFalse(request.Has("VD_SENDER_CITY"));
+            Assert.IsFalse(request.Has("VD_SENDER_COUNTRY"));
+            Assert.IsFalse(request.Has("VD_ACCOUNT_TYPE"));
+            Assert.IsFalse(request.Has("VD_RECIPIENT_ACCOUNTNUMBER"));
+        }
+
+        #endregion
 
         [TestMethod]
         public void FraudFilterPassive() {

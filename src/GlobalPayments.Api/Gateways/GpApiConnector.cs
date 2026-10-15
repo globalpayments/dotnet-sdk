@@ -171,7 +171,10 @@ namespace GlobalPayments.Api.Gateways {
         public GpApiTokenResponse GetAccessToken() {
             AccessToken = null;
 
-            Request request = GpApiConfig.AccessTokenProvider.SignIn(GpApiConfig.AppId, GpApiConfig.AppKey, GpApiConfig.SecondsToExpire, GpApiConfig.IntervalToExpire, GpApiConfig.Permissions, GpApiConfig.PorticoTokenConfig);
+            GpApiSessionInfo sessionInfo = GpApiConfig.AccessTokenProvider as GpApiSessionInfo;
+            Request request = sessionInfo == null
+                ? GpApiConfig.AccessTokenProvider.SignIn(GpApiConfig.AppId, GpApiConfig.AppKey, GpApiConfig.SecondsToExpire, GpApiConfig.IntervalToExpire, GpApiConfig.Permissions, GpApiConfig.PorticoTokenConfig)
+                : sessionInfo.SignIn(GpApiConfig.AppId, GpApiConfig.AppKey, GpApiConfig.SecondsToExpire, GpApiConfig.IntervalToExpire, GpApiConfig.Permissions, GpApiConfig.PorticoTokenConfig, GpApiConfig.RestrictedToken);
 
             string response = base.DoTransaction(request.Verb, request.Endpoint, request.RequestBody);
 

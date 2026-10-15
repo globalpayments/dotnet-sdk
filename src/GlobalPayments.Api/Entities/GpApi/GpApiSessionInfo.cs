@@ -33,6 +33,10 @@ namespace GlobalPayments.Api.Entities {
         }
 
         public Request SignIn(string appId, string appKey, int? secondsToExpire = null, IntervalToExpire? intervalToExpire = null, string[] permissions = null, PorticoTokenConfig porticoTokenConfig = null) {
+            return SignIn(appId, appKey, secondsToExpire, intervalToExpire, permissions, porticoTokenConfig, null);
+        }
+
+        internal Request SignIn(string appId, string appKey, int? secondsToExpire, IntervalToExpire? intervalToExpire, string[] permissions, PorticoTokenConfig porticoTokenConfig, bool? restrictedToken) {
             var __sdkTestTs = System.Environment.GetEnvironmentVariable("SDK_TESTING_TIMESTAMP");
             var __now = long.TryParse(__sdkTestTs, out var __sdkMs)
                 ? DateTimeOffset.FromUnixTimeMilliseconds(__sdkMs).UtcDateTime
@@ -91,6 +95,10 @@ namespace GlobalPayments.Api.Entities {
                     .Set("seconds_to_expire", secondsToExpire)
                     .Set("interval_to_expire", EnumConverter.GetMapping(Target.GP_API, intervalToExpire))
                     .Set("permissions", permissions);
+
+                if (restrictedToken.HasValue) {
+                    request.Set("restricted_token", restrictedToken.Value ? "YES" : "NO");
+                }
             }
             return new Request {
                 Verb = HttpMethod.Post,

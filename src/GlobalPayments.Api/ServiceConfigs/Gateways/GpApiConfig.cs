@@ -26,6 +26,11 @@ namespace GlobalPayments.Api {
         /// </summary>
         public IntervalToExpire? IntervalToExpire { get; set; }
         /// <summary>
+        /// Controls whether tokenization responses mask account, merchant, and application details.
+        /// True sends YES, false sends NO, and null omits the restricted-token option.
+        /// </summary>
+        public bool? RestrictedToken { get; set; }
+        /// <summary>
         /// Channel
         /// </summary>
         public Channel Channel { get; set; } = Channel.CardNotPresent;
@@ -116,6 +121,7 @@ namespace GlobalPayments.Api {
                 AppKey = AppKey,
                 SecondsToExpire = SecondsToExpire,
                 IntervalToExpire = IntervalToExpire,
+                RestrictedToken = RestrictedToken,
                 Channel = Channel,
                 Language = Language,
                 Country = Country,

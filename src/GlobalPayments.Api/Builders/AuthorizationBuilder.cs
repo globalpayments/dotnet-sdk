@@ -303,6 +303,14 @@ namespace GlobalPayments.Api.Builders {
         /// </summary>
         internal Dictionary<string, List<string[]>> SupplementaryData { get; set; }
         /// <summary>
+        /// Gets or sets the Visa Direct AFT data for GPEcom API authorizations.
+        /// </summary>
+        internal VisaDirectAftData VisaDirectAftSupplementaryData { get; set; }
+        /// <summary>
+        /// Gets or sets supplementary Visa AFT data for GPEcom hosted payment requests.
+        /// </summary>
+        internal Dictionary<string, string> SupplementaryDataVisaAft { get; set; }
+        /// <summary>
         /// Gets or sets the surcharge amount added on top of the base transaction total.
         /// </summary>
         internal decimal? SurchargeAmount { get; set; }
@@ -1248,6 +1256,26 @@ namespace GlobalPayments.Api.Builders {
             // add the values to it
             SupplementaryData[type].Add(values);
 
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the Visa Direct AFT data for a GPEcom API authorization.
+        /// </summary>
+        /// <param name="data">The Visa Direct AFT data.</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithVisaDirectAftSupplementaryData(VisaDirectAftData data) {
+            VisaDirectAftSupplementaryData = data;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets Visa AFT supplementary data for GPEcom hosted payment requests.
+        /// </summary>
+        /// <param name="values">The Visa AFT fields and their values.</param>
+        /// <returns>AuthorizationBuilder</returns>
+        public AuthorizationBuilder WithVisaAftSupplementaryData(Dictionary<string, string> values) {
+            SupplementaryDataVisaAft = values;
             return this;
         }
 

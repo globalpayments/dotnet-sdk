@@ -741,7 +741,9 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                 data.Set("order", order);
             }
 
-            if (builder.PaymentMethod is AlternativePaymentMethod || builder.PaymentMethod is BNPL) {
+            if (builder.PaymentMethod is AlternativePaymentMethod ||
+                builder.PaymentMethod is BNPL ||
+                builder.SupplementaryData != null) {
                 SetOrderInformation(builder, ref data);
             }
 
@@ -1350,6 +1352,39 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
 
             if (shippingAddress.HasKeys()) {
                 order.Set("shipping_address", shippingAddress);
+            }
+
+            if (builder.SupplementaryData != null) {
+                var supplementaryData = new List<Dictionary<string, object>>();
+                foreach (var supplementaryDataType in builder.SupplementaryData) {
+                    if (string.IsNullOrEmpty(supplementaryDataType.Key)) {
+                        continue;
+                    }
+
+                    var fields = new List<string>();
+                    if (supplementaryDataType.Value != null) {
+                        foreach (var fieldSet in supplementaryDataType.Value) {
+                            if (fieldSet != null) {
+                                foreach (var field in fieldSet) {
+                                    if (field != null) {
+                                        fields.Add(field);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (fields.Count > 0) {
+                        supplementaryData.Add(new Dictionary<string, object> {
+                            { "type", supplementaryDataType.Key },
+                            { "fields", fields }
+                        });
+                    }
+                }
+
+                if (supplementaryData.Count > 0) {
+                    order.Set("supplementary_data", supplementaryData);
+                }
             }
 
             if (!requestBody.Has("order") && order.HasKeys()) {               

@@ -24,6 +24,16 @@ namespace GlobalPayments.Api.Services {
 
             return new AccessTokenInfo {
                 Token = data.Token,
+                Type = data.Type,
+                AppId = data.AppId,
+                AppName = data.AppName,
+                TimeCreated = data.TimeCreated,
+                SecondsToExpire = data.SecondsToExpire,
+                IntervalToExpire = data.IntervalToExpire,
+                Email = data.Email,
+                MerchantId = data.MerchantId,
+                MerchantName = data.MerchantName,
+                Accounts = data.Accounts,
                 DataAccountName = data.DataAccountName,
                 DisputeManagementAccountName = data.DisputeManagementAccountName,
                 TokenizationAccountName = data.TokenizationAccountName,

@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v11.7.0 (09/24/26)
+## Latest - v11.8.0 (10/15/26)
+
+### Enhancement
+- [GP-ECOM] - Added Visa AFT supplementary data support to GPEcom API and hosted payment authorization requests, including the approved non-contiguous API fields and `VD_*` HPP fields.
+- [GPAPI] - Added support for Visa Account Funding Transactions (AFTs), allowing UK merchants to process these transactions through the SDK without building custom gateway requests.
+- [GPAPI] - Expanded access-token request and response support to include restricted-token requests, token metadata, merchant scope, account permissions, and account details.
+
+## v11.7.0 (09/24/26)
 
 ### Enhancement
 - [GPAPI] - Added support for Blik Level 0 payments, allowing merchants to process one-time payment codes with the required customer and payer information.

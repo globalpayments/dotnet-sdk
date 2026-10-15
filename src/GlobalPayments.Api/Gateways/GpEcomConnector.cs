@@ -13,6 +13,14 @@ using GlobalPayments.Api.Utils;
 namespace GlobalPayments.Api.Gateways {
     internal class GpEcomConnector : XmlGateway, IPaymentGateway, IRecurringService, IReportingService {
         private static Dictionary<string, string> mapCardType = new Dictionary<string, string> { { "DinersClub", "Diners" } };
+        private static readonly HashSet<string> VisaAftSupplementaryDataKeys = new HashSet<string> {
+            "VD_SENDER_NAME",
+            "VD_SENDER_ADDRESS",
+            "VD_SENDER_CITY",
+            "VD_SENDER_COUNTRY",
+            "VD_ACCOUNT_TYPE",
+            "VD_RECIPIENT_ACCOUNTNUMBER"
+        };
 
         public string MerchantId { get; set; }
         public string AccountId { get; set; }
@@ -354,19 +362,31 @@ namespace GlobalPayments.Api.Gateways {
                 #endregion
 
                 #region SUPPLEMENTARY DATA
-                if (builder.SupplementaryData != null) {
+                if (builder.SupplementaryData != null || builder.VisaDirectAftSupplementaryData != null) {
                     var supplementaryData = et.SubElement(request, "supplementarydata");
-                    Dictionary<string, List<string[]>> suppData = builder.SupplementaryData;
 
-                    foreach (string key in suppData.Keys) {
-                        List<string[]> dataSets = suppData[key];
-
-                        foreach (string[] data in dataSets) {
-                            Element item = et.SubElement(supplementaryData, "item").Set("type", key);
-                            for (int i = 1; i <= data.Length; i++) {
-                                et.SubElement(item, "field" + i.ToString().PadLeft(2, '0'), data[i - 1]);
+                    if (builder.SupplementaryData != null) {
+                        foreach (KeyValuePair<string, List<string[]>> entry in builder.SupplementaryData) {
+                            foreach (string[] data in entry.Value) {
+                                Element item = et.SubElement(supplementaryData, "item").Set("type", entry.Key);
+                                for (int i = 0; i < data.Length; i++) {
+                                    et.SubElement(item, "field" + (i + 1).ToString().PadLeft(2, '0'), data[i]);
+                                }
                             }
                         }
+                    }
+
+                    if (builder.VisaDirectAftSupplementaryData != null) {
+                        Element item = et.SubElement(supplementaryData, "item")
+                            .Set("type", "visaDirect");
+                        et.SubElement(item, "field01", builder.VisaDirectAftSupplementaryData.SenderReferenceNumber);
+                        et.SubElement(item, "field02", builder.VisaDirectAftSupplementaryData.SenderAccountNumber);
+                        et.SubElement(item, "field03", builder.VisaDirectAftSupplementaryData.SenderName);
+                        et.SubElement(item, "field04", builder.VisaDirectAftSupplementaryData.SenderAddress);
+                        et.SubElement(item, "field05", builder.VisaDirectAftSupplementaryData.SenderCity);
+                        et.SubElement(item, "field08", builder.VisaDirectAftSupplementaryData.SenderCountry);
+                        et.SubElement(item, "field22", builder.VisaDirectAftSupplementaryData.AccountNumberType);
+                        et.SubElement(item, "field23", builder.VisaDirectAftSupplementaryData.RecipientAccountNumber);
                     }
                 }
                 #endregion
@@ -667,6 +687,13 @@ namespace GlobalPayments.Api.Gateways {
                 }
                 //TO DO
                 //request.Set("HPP_ADDRESS_READONLY", builder.HostedPaymentData.AddressReadOnly ? "1" : "0");
+            }
+            if (builder.SupplementaryDataVisaAft != null) {
+                foreach (KeyValuePair<string, string> entry in builder.SupplementaryDataVisaAft) {
+                    if (VisaAftSupplementaryDataKeys.Contains(entry.Key)) {
+                        request.Set(entry.Key, entry.Value);
+                    }
+                }
             }
             if (builder.ShippingAddress != null) {
                 // FRAUD VALUES
