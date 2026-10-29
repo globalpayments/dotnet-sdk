@@ -7,12 +7,17 @@ using GlobalPayments.Api.Entities.TransactionApi.Response;
 using GlobalPayments.Api.Gateways.Events;
 using GlobalPayments.Api.Network.Entities;
 using GlobalPayments.Api.PaymentMethods;
-
+using GlobalPayments.Api.Entities.Reporting;
 namespace GlobalPayments.Api.Entities {
     /// <summary>
     /// Transaction response.
     /// </summary>
     public class Transaction {
+        /// <summary>
+        /// The account returned by a GP-API account edit.
+        /// </summary>
+        public MerchantAccountSummary AccountDetails { get; set; }
+
         /// <summary>
         /// The Address used in the transaction.
         /// </summary>
@@ -209,8 +214,7 @@ namespace GlobalPayments.Api.Entities {
 
 
         /// <summary>
-        /// The last four digits of the card number used in
-        /// the transaction.
+        /// The last four digits of the card number used in the transaction.
         /// </summary>
         [Obsolete("Will soon be replaced with CardDetails.MaskedCardNumber")]
         public string CardLast4 { get; set; }

@@ -422,7 +422,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAddress(address)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual(AMOUNT, response.BalanceAmount);
+            Assert.AreEqual(AMOUNT, response.AuthorizedAmount);
             Assert.IsNull(response.PayerDetails);
         }
         
@@ -434,7 +434,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual(AMOUNT, response.BalanceAmount);
+            Assert.AreEqual(AMOUNT, response.AuthorizedAmount);
             Assert.IsNull(response.PayerDetails);
         }
         
@@ -449,9 +449,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadRequest - The surcharge amount is greater than 5% of the transaction amount", ex.Message);
+                Assert.AreEqual("Status Code: BadRequest - The value of element surcharge_amount is not valid", ex.Message);
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("50020", ex.ResponseMessage);
+                Assert.AreEqual("400171", ex.ResponseMessage);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);
@@ -624,7 +624,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual(AMOUNT - 2m, response.BalanceAmount);
+            Assert.AreEqual(AMOUNT - 2m, response.AuthorizedAmount);
         }
 
         [TestMethod]
@@ -640,7 +640,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(CURRENCY)
                 .Execute();
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual(decimal.Round(refundAmount, 2, MidpointRounding.AwayFromZero), response.BalanceAmount);
+            Assert.AreEqual(decimal.Round(refundAmount, 2, MidpointRounding.AwayFromZero), response.AuthorizedAmount);
         }
 
         [TestMethod]
@@ -1226,7 +1226,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual("ENROLLED", secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual("AVAILABLE", secureEcom.Status);
             Assert.IsNotNull(secureEcom.IssuerAcsUrl);
             Assert.IsNotNull(secureEcom.PayerAuthenticationRequest);

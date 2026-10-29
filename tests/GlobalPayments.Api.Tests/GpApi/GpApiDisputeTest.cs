@@ -60,10 +60,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("INVALID_DISPUTE_ACTION", ex.ResponseCode);
-                Assert.AreEqual("40067", ex.ResponseMessage);
-                Assert.AreEqual("Status Code: BadRequest - 124," +
-                                "Unable to accept for that id. Please check the Case id again.", ex.Message);
+                Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
+                Assert.AreEqual("50046", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadGateway - Unable to process your request due to an error with a system down stream.", ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }

@@ -325,6 +325,9 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         return request;
 
                     case ReportType.FindAccountDetail:
+                        if (!string.IsNullOrEmpty(userTrb.SearchBuilder.MerchantId)) {
+                            merchantUrl = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig, userTrb.SearchBuilder.MerchantId);
+                        }
                         request = new Request {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}{GpApiRequest.ACCOUNTS_ENDPOINT}/{builder.SearchBuilder.AccountId}",

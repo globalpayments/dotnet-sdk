@@ -7,6 +7,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 
@@ -51,24 +52,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                     }
                     else if (builder.TransactionModifier == TransactionModifier.Account)
                     {
-                        var dataRequest = new JsonDoc();
-                        var paymentMethod = new Dictionary<string, object>();
-
-                        if (builder.CreditCardInformation != null)
-                        {
-                            var card = new Dictionary<string, object>();
-                            card.Add("name", builder.CreditCardInformation?.CardHolderName);
-                            card.Add("card", builder.CreditCardInformation is CreditCardData ? MapCreditCardInfo(builder.CreditCardInformation) : null);
-                            paymentMethod.Add("payment_method", card);                            
-                        }
-
-                        if ((builder.Addresses != null) && (builder.Addresses.ContainsKey(AddressType.Billing)))
-                        {
-                            paymentMethod.Add("billing_address",
-                                MapAddress(builder.Addresses[AddressType.Billing], "alpha2"));
-                        }
-
-                        dataRequest.Set("payer", paymentMethod);
+                        var dataRequest = BuildEditAccountRequest();
 
                         var endpoint = GpApiRequest.GetMerchantUrl(gateway.GpApiConfig);
                         if (!string.IsNullOrEmpty(builder.UserReference?.UserId))
@@ -81,6 +65,7 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                             Verb = new HttpMethod("PATCH"),
                             Endpoint = $"{endpoint}{GpApiRequest.ACCOUNTS_ENDPOINT}/{_builder.AccountNumber}",
                             RequestBody = dataRequest.ToString(),
+                            MaskedValues = _maskedValueCollection.ToDictionary(),
                         };
                     }
                     break;
@@ -176,26 +161,6 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
                 item.Add("state", address.State);
 
             item.Add("country", countryCode);
-
-            return item;
-        }
-
-        private Dictionary<string, object> MapCreditCardInfo(CreditCardData value)
-        {
-            var item = new Dictionary<string, object>();
-            item.Add("name", value.CardHolderName);
-            item.Add("number", value.Number);
-            item.Add("expiry_month", value.ExpMonth.HasValue ? value.ExpMonth.ToString().PadLeft(2, '0') : string.Empty);
-            item.Add("expiry_year", value.ExpYear.HasValue ? value.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
-            item.Add("cvv", value.Cvn);
-
-            var maskedValue = new Dictionary<string, string>();
-            maskedValue.Add("payer.payment_method.card.expiry_month", value.ExpMonth.HasValue ? value.ExpMonth.ToString().PadLeft(2, '0') : string.Empty);
-            maskedValue.Add("payer.payment_method.card.expiry_year", value.ExpYear.HasValue ? value.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : string.Empty);
-            maskedValue.Add("payer.payment_method.card.cvv", value.Cvn);
-
-            MaskedValues = _maskedValueCollection.HideValues(maskedValue);
-            MaskedValues = _maskedValueCollection.HideValue("payer.payment_method.card.number", value.Number, 4, 6);
 
             return item;
         }
@@ -412,6 +377,72 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi
             }
 
             return addresses;
+        }
+
+        /// <summary>
+        /// Builds optional account edits and request-scoped card masks.
+        /// </summary>
+        /// <returns>The PATCH request body.</returns>
+        private JsonDoc BuildEditAccountRequest() {
+            var data = _builder.AccountUpdateData;
+            var request = new JsonDoc();
+            if (data?.Status != null) {
+                request.Set("status", data.Status.Value.ToString());
+            }
+            var payer = new JsonDoc();
+            var paymentMethod = new JsonDoc().Set("reference", data?.PaymentMethodReference);
+            var card = _builder.CreditCardInformation;
+            if (card != null) {
+                var month = card.ExpMonth.HasValue ? card.ExpMonth.ToString().PadLeft(2, '0') : null;
+                var year = card.ExpYear.HasValue ? card.ExpYear.ToString().PadLeft(4, '0').Substring(2, 2) : null;
+                paymentMethod.Set("name", card.CardHolderName);
+                paymentMethod.Set("card", new JsonDoc()
+                    .Set("name", card.CardHolderName)
+                    .Set("number", card.Number)
+                    .Set("expiry_month", month)
+                    .Set("expiry_year", year)
+                    .Set("cvv", card.Cvn));
+                _maskedValueCollection.HideValue("payer.payment_method.card.number", card.Number, 4, 6);
+                _maskedValueCollection.HideValue("payer.payment_method.card.expiry_month", month);
+                _maskedValueCollection.HideValue("payer.payment_method.card.expiry_year", year);
+                _maskedValueCollection.HideValue("payer.payment_method.card.cvv", card.Cvn);
+            }
+            if (paymentMethod.HasKeys()) {
+                payer.Set("payment_method", paymentMethod);
+            }
+            Address billing;
+            if (_builder.Addresses != null && _builder.Addresses.TryGetValue(AddressType.Billing, out billing) && billing != null) {
+                // Retain the existing layout used by the GP-API payout-card example.
+                payer.Set("billing_address", new JsonDoc()
+                    .Set("line_1", billing.StreetAddress1)
+                    .Set("line_2", billing.StreetAddress2)
+                    .Set("line_3", billing.StreetAddress3)
+                    .Set("city", billing.City)
+                    .Set("state", billing.State)
+                    .Set("postal_code", billing.PostalCode)
+                    .Set("country", CountryUtils.GetCountryCodeByCountry(billing.CountryCode)));
+            }
+            if (payer.HasKeys()) {
+                request.Set("payer", payer);
+            }
+            request.Set("card_replacement_reason", data?.CardReplacementReason)
+                .Set("status_change_reason", data?.StatusChangeReason)
+                .Set("capabilities", data?.Capabilities);
+            if (data?.StatusUrl != null) {
+                request.Set("notifications", new JsonDoc().Set("status_url", data.StatusUrl));
+            }
+            var limits = data?.ProcessingLimits;
+            if (limits != null) {
+                request.Set("processing_limits", new JsonDoc()
+                    .Set("allowed_negative_balance_amount", limits.AllowedNegativeBalanceAmount.ToNumericCurrencyString(null))
+                    .Set("card_transaction_limit_amount", limits.CardTransactionLimitAmount.ToNumericCurrencyString(null))
+                    .Set("card_monthly_limit_amount", limits.CardMonthlyLimitAmount.ToNumericCurrencyString(null))
+                    .Set("bank_transfer_transaction_limit_amount", limits.BankTransferTransactionLimitAmount.ToNumericCurrencyString(null))
+                    .Set("bank_transfer_monthly_limit_amount", limits.BankTransferMonthlyLimitAmount.ToNumericCurrencyString(null))
+                    .Set("disable_payout_card_limit_percentage", limits.DisablePayoutCardLimitPercentage?.ToString(CultureInfo.InvariantCulture))
+                    .Set("disable_payout_bank_transfer_limit_percentage", limits.DisablePayoutBankTransferLimitPercentage?.ToString(CultureInfo.InvariantCulture)));
+            }
+            return request;
         }
 
         private JsonDoc BuildEditMerchantRequest()

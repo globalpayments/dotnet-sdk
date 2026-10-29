@@ -238,7 +238,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                .WithCurrency("USD")
                .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             AssertTransactionResponse(response, TransactionStatus.Captured);
         }
 
@@ -266,7 +266,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         /// <param name="transactionStatus">Expected transaction status</param>
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
     }

@@ -306,6 +306,9 @@ namespace GlobalPayments.Api.Gateways {
 
             if (request != null){
                 var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues); 
+                if (builder.TransactionType == TransactionType.Edit && builder.TransactionModifier == TransactionModifier.Account) {
+                    return GpApiMapping.MapAccountEditResponse(response) as T;
+                }
                 return GpApiMapping.MapMerchantEndpointResponse<T>(response);
             }
             return result;

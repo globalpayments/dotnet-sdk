@@ -1,14 +1,502 @@
-﻿using GlobalPayments.Api.Entities;
+﻿using GlobalPayments.Api.Builders;
+using GlobalPayments.Api.Entities;
+using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.PayFac;
+using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.Mapping;
+using GlobalPayments.Api.Services;
+using GlobalPayments.Api.Tests.TestData;
 using GlobalPayments.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
+using System.Reflection;
 
 namespace GlobalPayments.Api.Tests.GpApi {
     [TestClass]
     public class GpApiMappingTest {
+        private const string AccountResponseJson = @"{
+            'id':'FMA_contract','name':'Fund management','type':'FUND_MANAGEMENT','status':'ACTIVE',
+            'permissions':['ACC_GET'],'countries':['US'],'currencies':['USD'],'channels':['CNP'],
+            'payment_methods':['CARD','BANK_TRANSFER'],'email_id':'accounts@example.com',
+            'merchant_id':'MER_contract','merchant_name':'Contract merchant',
+            'time_created':'2026-01-02T03:04:05.678Z','time_last_updated':'2026-01-02T03:04:05.678Z',
+            'card_replacment_reason':'LOST','capabilities':['PAY_IN_ENABLE','PAY_OUT_DISABLE'],
+            'configurations':[{'id':'RTC_contract','status':'ACTIVE','serial_number':'serial_contract',
+                'actions':['AUTHORIZE','LINK_LIST'],'countries':['US'],'currencies':['USD'],
+                'channels':['CNP'],'payment_methods':['CARD','BANK_TRANSFER'],
+                'platform':{'id':'PFC_configuration','reference':'PTF_configuration','name':'TRUUST',
+                    'platform_name':'Configuration platform','platform_mid':'configuration_mid',
+                    'country':'GB','email':'platform@example.com','authentication':'ENABLE',
+                    'masked_secretkey_last4':'XXXXXXXX1234'}}],
+            'addresses':[{'line_1':'Line 1','line_2':'Line 2','line_3':'Line 3','city':'Atlanta','state':'GA','postal_code':'30346','country':'US'}],
+            'action':{'id':'ACT_contract','type':'ACCOUNTS_SINGLE','time_created':'2026-01-02T03:04:05.678Z',
+                'result_code':'SUCCESS','app_id':'APP_contract','app_name':'Contract app'}}";
+
+        /// <summary>
+        /// Serializes a status-only edit without adding unrelated account fields.
+        /// </summary>
+        [DataTestMethod]
+        [DataRow(MerchantAccountStatus.ACTIVE, "ACTIVE")]
+        [DataRow(MerchantAccountStatus.INACTIVE, "INACTIVE")]
+        public void BuildEditAccountRequest_WithStatus_MapsOnlyStatus(MerchantAccountStatus status, string expectedStatus) {
+            var builder = new PayFacService().EditAccount()
+                .WithAccountNumber("FMA_contract")
+                .WithAccountUpdateData(new AccountUpdateData { Status = status });
+
+            var request = BuildEditAccountRequest(builder);
+
+            Assert.IsNotNull(request);
+            Assert.AreEqual("PATCH", request.Verb.Method);
+            Assert.AreEqual("/accounts/FMA_contract", request.Endpoint);
+            Assert.AreEqual("{\"status\":\"" + expectedStatus + "\"}", request.RequestBody);
+        }
+
+        /// <summary>
+        /// Leaves status out of edits that do not request a status change.
+        /// </summary>
+        [TestMethod]
+        public void BuildEditAccountRequest_WithoutStatus_OmitsStatus() {
+            var builder = new PayFacService().EditAccount()
+                .WithAccountNumber("FMA_contract")
+                .WithAccountUpdateData(new AccountUpdateData { StatusChangeReason = "ReadyToProcess" });
+
+            var request = BuildEditAccountRequest(builder);
+
+            Assert.IsNotNull(request);
+            Assert.AreEqual("{\"status_change_reason\":\"ReadyToProcess\"}", request.RequestBody);
+        }
+
+        /// <summary>
+        /// Builds every optional account edit field without sending a gateway request.
+        /// </summary>
+        [TestMethod]
+        public void BuildEditAccountRequest_WithOptionalFields_MapsAllFields() {
+            var builder = new PayFacService().EditAccount()
+                .WithAccountNumber("FMA_contract")
+                .WithAccountUpdateData(new AccountUpdateData {
+                    PaymentMethodReference = "payment_reference",
+                    CardReplacementReason = "LOST",
+                    StatusChangeReason = "ReadyToProcess",
+                    StatusUrl = "https://example.com/account-status",
+                    Capabilities = new List<string> { "PAY_IN_ENABLE" },
+                    ProcessingLimits = new AccountProcessingLimits {
+                        AllowedNegativeBalanceAmount = 0m,
+                        CardTransactionLimitAmount = 101.01m,
+                        CardMonthlyLimitAmount = 202.02m,
+                        BankTransferTransactionLimitAmount = 303.03m,
+                        BankTransferMonthlyLimitAmount = 404.04m,
+                        DisablePayoutCardLimitPercentage = 12.5m,
+                        DisablePayoutBankTransferLimitPercentage = 25.5m
+                    }
+                });
+            var oldCulture = CultureInfo.CurrentCulture;
+            try {
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
+                var request = BuildEditAccountRequest(builder);
+
+                Assert.IsNotNull(request);
+                Assert.AreEqual("PATCH", request.Verb.Method);
+                Assert.AreEqual("/accounts/FMA_contract", request.Endpoint);
+                var body = JsonDoc.Parse(request.RequestBody);
+                Assert.IsNotNull(body);
+                Assert.IsNull(body.GetValue<string>("status"));
+                Assert.AreEqual("payment_reference", body.Get("payer")?.Get("payment_method")?.GetValue<string>("reference"));
+                Assert.AreEqual("LOST", body.GetValue<string>("card_replacement_reason"));
+                Assert.AreEqual("ReadyToProcess", body.GetValue<string>("status_change_reason"));
+                Assert.AreEqual("https://example.com/account-status", body.Get("notifications")?.GetValue<string>("status_url"));
+                var capabilities = body.GetArray<string>("capabilities");
+                Assert.IsNotNull(capabilities);
+                CollectionAssert.AreEqual(new List<string> { "PAY_IN_ENABLE" }, new List<string>(capabilities));
+                var limits = body.Get("processing_limits");
+                Assert.IsNotNull(limits);
+                Assert.AreEqual("0", limits.GetValue<string>("allowed_negative_balance_amount"));
+                Assert.AreEqual("10101", limits.GetValue<string>("card_transaction_limit_amount"));
+                Assert.AreEqual("20202", limits.GetValue<string>("card_monthly_limit_amount"));
+                Assert.AreEqual("30303", limits.GetValue<string>("bank_transfer_transaction_limit_amount"));
+                Assert.AreEqual("40404", limits.GetValue<string>("bank_transfer_monthly_limit_amount"));
+                Assert.AreEqual("12.5", limits.GetValue<string>("disable_payout_card_limit_percentage"));
+                Assert.AreEqual("25.5", limits.GetValue<string>("disable_payout_bank_transfer_limit_percentage"));
+            }
+            finally {
+                CultureInfo.CurrentCulture = oldCulture;
+            }
+        }
+
+        /// <summary>
+        /// Preserves payout-card fields, billing address, and request-scoped sensitive-field masks.
+        /// </summary>
+        [TestMethod]
+        public void BuildEditAccountRequest_WithPayoutCard_MapsFieldsAndMasks() {
+            var card = TestCards.VisaManual();
+            card.CardHolderName = "Account holder";
+            var builder = new PayFacService().EditAccount()
+                .WithAccountNumber("FMA_contract")
+                .WithCreditCardData(card)
+                .WithAddress(new Address {
+                    StreetAddress1 = "Line 1",
+                    StreetAddress2 = "Line 2",
+                    StreetAddress3 = "Line 3",
+                    City = "Atlanta",
+                    State = "GA",
+                    PostalCode = "30346",
+                    Country = "US"
+                });
+
+            var request = BuildEditAccountRequest(builder);
+
+            Assert.IsNotNull(request);
+            var body = JsonDoc.Parse(request.RequestBody);
+            Assert.IsNotNull(body);
+            var payer = body.Get("payer");
+            Assert.IsNotNull(payer);
+            var paymentMethod = payer.Get("payment_method");
+            Assert.IsNotNull(paymentMethod);
+            Assert.AreEqual(card.CardHolderName, paymentMethod.GetValue<string>("name"));
+            var mappedCard = paymentMethod.Get("card");
+            Assert.IsNotNull(mappedCard);
+            Assert.AreEqual(card.CardHolderName, mappedCard.GetValue<string>("name"));
+            Assert.IsTrue(card.Number == mappedCard.GetValue<string>("number"), "The payout card number must be preserved.");
+            Assert.AreEqual(card.ExpMonth.Value.ToString("00", CultureInfo.InvariantCulture), mappedCard.GetValue<string>("expiry_month"));
+            Assert.AreEqual(card.ExpYear.Value.ToString("0000", CultureInfo.InvariantCulture).Substring(2), mappedCard.GetValue<string>("expiry_year"));
+            Assert.IsTrue(card.Cvn == mappedCard.GetValue<string>("cvv"), "The payout card verification value must be preserved.");
+            var billing = payer.Get("billing_address");
+            Assert.IsNotNull(billing);
+            Assert.AreEqual("Line 1", billing.GetValue<string>("line_1"));
+            Assert.AreEqual("Line 2", billing.GetValue<string>("line_2"));
+            Assert.AreEqual("Line 3", billing.GetValue<string>("line_3"));
+            Assert.AreEqual("Atlanta", billing.GetValue<string>("city"));
+            Assert.AreEqual("GA", billing.GetValue<string>("state"));
+            Assert.AreEqual("30346", billing.GetValue<string>("postal_code"));
+            Assert.AreEqual("US", billing.GetValue<string>("country"));
+            var masksProperty = typeof(Request).GetProperty("MaskedValues", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(masksProperty);
+            var masks = (Dictionary<string, string>)masksProperty.GetValue(request);
+            Assert.IsNotNull(masks);
+            Assert.AreEqual(4, masks.Count);
+            Assert.AreEqual(card.Number.Substring(0, 6) + new string('X', card.Number.Length - 10) + card.Number.Substring(card.Number.Length - 4), masks["payer.payment_method.card.number"]);
+            Assert.AreEqual("XX", masks["payer.payment_method.card.expiry_month"]);
+            Assert.AreEqual("XX", masks["payer.payment_method.card.expiry_year"]);
+            Assert.AreEqual(new string('X', card.Cvn.Length), masks["payer.payment_method.card.cvv"]);
+        }
+
+        /// <summary>
+        /// Invokes the internal PayFac request builder without exposing it as public SDK API or making HTTP calls.
+        /// </summary>
+        /// <param name="builder">The account edit request.</param>
+        /// <returns>The constructed PATCH request.</returns>
+        private static Request BuildEditAccountRequest(PayFacBuilder<Transaction> builder) {
+            var assembly = typeof(GpApiMapping).Assembly;
+            var requestBuilderType = assembly.GetType("GlobalPayments.Api.Builders.RequestBuilder.GpApi.GpApiPayFacRequestBuilder`1");
+            Assert.IsNotNull(requestBuilderType);
+            requestBuilderType = requestBuilderType.MakeGenericType(typeof(Transaction));
+            var requestBuilder = Activator.CreateInstance(requestBuilderType);
+            var connectorType = assembly.GetType("GlobalPayments.Api.Gateways.GpApiConnector");
+            Assert.IsNotNull(connectorType);
+            var connector = Activator.CreateInstance(connectorType, new object[] { new GpApiConfig() });
+            var method = requestBuilderType.GetMethod("BuildRequest");
+            Assert.IsNotNull(method);
+            return (Request)method.Invoke(requestBuilder, new object[] { builder, connector });
+        }
+
+        /// <summary>
+        /// Maps every common account response field directly from a fixed JSON response.
+        /// </summary>
+        [TestMethod]
+        public void MapReportResponse_FindAccountDetail_MapsAllFields() {
+            // Act
+            var account = GpApiMapping.MapReportResponse<MerchantAccountSummary>(AccountResponseJson, ReportType.FindAccountDetail);
+
+            // Assert
+            AssertMappedAccount(account);
+        }
+
+        /// <summary>
+        /// Maps account paging, filters, merchant metadata, action, and account records.
+        /// </summary>
+        [TestMethod]
+        public void MapReportResponse_FindAccountsPaged_MapsEnvelopeAndAccountRecords() {
+            // Arrange
+            var rawJson = @"{
+                'total_record_count':11,'current_page_size':1,
+                'merchant_id':'MER_contract','merchant_name':'Contract merchant',
+                'paging':{'page':2,'page_size':10,'order':'ASC','order_by':'TIME_CREATED'},
+                'filter':{'from_time_created':'2026-01-01','to_time_created':'2026-01-31'},
+                'action':{'id':'ACT_contract','type':'ACCOUNTS_LIST','time_created':'2026-01-02T03:04:05.678Z',
+                    'result_code':'SUCCESS','app_id':'APP_contract','app_name':'Contract app'},
+                'accounts':[" + AccountResponseJson + "]}";
+
+            // Act
+            var page = GpApiMapping.MapReportResponse<PagedResult<MerchantAccountSummary>>(rawJson, ReportType.FindAccountsPaged);
+
+            // Assert
+            Assert.IsNotNull(page);
+            Assert.AreEqual(11, page.TotalRecordCount);
+            Assert.AreEqual(1, page.CurrentPageSize);
+            Assert.AreEqual(2, page.Page);
+            Assert.AreEqual(10, page.PageSize);
+            Assert.AreEqual("ASC", page.Order);
+            Assert.AreEqual("TIME_CREATED", page.OrderBy);
+            Assert.AreEqual("MER_contract", page.MerchantId);
+            Assert.AreEqual("Contract merchant", page.MerchantName);
+            Assert.AreEqual(new DateTime(2026, 1, 1), page.FromTimeCreated);
+            Assert.AreEqual(new DateTime(2026, 1, 31), page.ToTimeCreated);
+            AssertMappedAccountAction(page.Action, "ACCOUNTS_LIST");
+            Assert.IsNotNull(page.Results);
+            Assert.AreEqual(1, page.Results.Count);
+            AssertMappedAccount(page.Results[0]);
+        }
+
+        /// <summary>
+        /// Maps all FMA statistics independently of the current culture.
+        /// </summary>
+        [TestMethod]
+        public void MapReportResponse_FindFmaAccount_MapsAllStatistics() {
+            // Arrange
+            const string rawJson = @"{'id':'FMA_contract','payment_processing_statistics':{
+                'card_transaction_limit_amount':'10101','card_monthly_limit_amount':'20202',
+                'bank_transfer_per_transaction_limit_amount':'30303','bank_transfer_monthly_limit_amount':'40404',
+                'bank_transfer_month_to_date_processed_amount':'50505','card_month_to_date_processed_amount':'60606',
+                'available_balance_amount':'70707','pending_balance_amount':'80808','reserve_balance_amount':'90909',
+                'allowed_negative_balance_amount':'-1010','disable_payout_card_limit_percentage':'300.5',
+                'disable_payout_bank_transfer_limit_percentage':'250.5','card_month_to_date_processed_percentage':'12.75',
+                'bank_transfer_month_to_date_processed_percentage':'10.25'}}";
+            var oldCulture = CultureInfo.CurrentCulture;
+            try {
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
+
+                // Act
+                var account = GpApiMapping.MapReportResponse<MerchantAccountSummary>(rawJson, ReportType.FindAccountDetail);
+
+                // Assert
+                Assert.IsNotNull(account);
+                Assert.AreEqual("FMA_contract", account.Id);
+                var stats = account.PaymentProcessingStatistics;
+                Assert.IsNotNull(stats);
+                Assert.AreEqual(101.01m, stats.CardTransactionLimitAmount);
+                Assert.AreEqual(202.02m, stats.CardMonthlyLimitAmount);
+                Assert.AreEqual(303.03m, stats.BankTransferPerTransactionLimitAmount);
+                Assert.AreEqual(404.04m, stats.BankTransferMonthlyLimitAmount);
+                Assert.AreEqual(505.05m, stats.BankTransferMonthToDateProcessedAmount);
+                Assert.AreEqual(606.06m, stats.CardMonthToDateProcessedAmount);
+                Assert.AreEqual(707.07m, stats.AvailableBalanceAmount);
+                Assert.AreEqual(808.08m, stats.PendingBalanceAmount);
+                Assert.AreEqual(909.09m, stats.ReserveBalanceAmount);
+                Assert.AreEqual(-10.10m, stats.AllowedNegativeBalanceAmount);
+                Assert.AreEqual(300.5m, stats.DisablePayoutCardLimitPercentage);
+                Assert.AreEqual(250.5m, stats.DisablePayoutBankTransferLimitPercentage);
+                Assert.AreEqual(12.75m, stats.CardMonthToDateProcessedPercentage);
+                Assert.AreEqual(10.25m, stats.BankTransferMonthToDateProcessedPercentage);
+            }
+            finally {
+                CultureInfo.CurrentCulture = oldCulture;
+            }
+        }
+
+        /// <summary>
+        /// Preserves absent account sections and legacy configuration strings.
+        /// </summary>
+        [TestMethod]
+        public void MapAccount_WithOptionalFieldsMissing_PreservesLegacyConfigurations() {
+            // Arrange
+            const string rawJson = @"{'id':'FMA_contract','type':null,'status':null,'configurations':['legacy']}";
+
+            // Act
+            var account = GpApiMapping.MapReportResponse<MerchantAccountSummary>(rawJson, ReportType.FindAccountDetail);
+
+            // Assert
+            Assert.IsNotNull(account);
+            Assert.AreEqual("FMA_contract", account.Id);
+            CollectionAssert.AreEqual(new[] { "legacy" }, account.Configurations);
+            Assert.IsNull(account.AccountConfigurations);
+            Assert.IsNull(account.Channels);
+            Assert.IsNull(account.Type);
+            Assert.IsNull(account.Status);
+            Assert.IsNull(account.Action);
+            Assert.IsNull(account.PaymentProcessingStatistics);
+            Assert.IsNull(account.Platform);
+        }
+
+        /// <summary>
+        /// Maps an empty account list without synthesizing action metadata.
+        /// </summary>
+        [TestMethod]
+        public void MapAccounts_WithEmptyResults_ReturnsEmptyPage() {
+            // Arrange
+            const string rawJson = @"{'total_record_count':0,'current_page_size':0,'accounts':[]}";
+
+            // Act
+            var page = GpApiMapping.MapReportResponse<PagedResult<MerchantAccountSummary>>(rawJson, ReportType.FindAccountsPaged);
+
+            // Assert
+            Assert.IsNotNull(page);
+            Assert.AreEqual(0, page.TotalRecordCount);
+            Assert.AreEqual(0, page.CurrentPageSize);
+            Assert.IsNotNull(page.Results);
+            Assert.AreEqual(0, page.Results.Count);
+            Assert.IsNull(page.Action);
+        }
+
+        /// <summary>
+        /// Distinguishes absent or empty account statistics from explicit zero.
+        /// </summary>
+        [TestMethod]
+        public void MapAccount_WithPartialObjects_ReturnsNullableValues() {
+            // Arrange
+            const string rawJson = @"{'configurations':[{}],'platform':{},
+                'payment_processing_statistics':{'available_balance_amount':'','pending_balance_amount':'0'}}";
+
+            // Act
+            var account = GpApiMapping.MapReportResponse<MerchantAccountSummary>(rawJson, ReportType.FindAccountDetail);
+
+            // Assert
+            Assert.IsNotNull(account);
+            Assert.IsNotNull(account.AccountConfigurations);
+            Assert.AreEqual(1, account.AccountConfigurations.Count);
+            Assert.IsNull(account.AccountConfigurations[0].Id);
+            Assert.IsNull(account.AccountConfigurations[0].Status);
+            Assert.IsNull(account.AccountConfigurations[0].SerialNumber);
+            Assert.IsNull(account.AccountConfigurations[0].Actions);
+            Assert.IsNull(account.AccountConfigurations[0].Platform);
+            Assert.IsNull(account.AccountConfigurations[0].Countries);
+            Assert.IsNull(account.AccountConfigurations[0].Currencies);
+            Assert.IsNull(account.AccountConfigurations[0].Channels);
+            Assert.IsNotNull(account.AccountConfigurations[0].PaymentMethods);
+            Assert.AreEqual(0, account.AccountConfigurations[0].PaymentMethods.Count);
+            Assert.IsNotNull(account.PaymentProcessingStatistics);
+            Assert.IsNull(account.PaymentProcessingStatistics.AvailableBalanceAmount);
+            Assert.AreEqual(0m, account.PaymentProcessingStatistics.PendingBalanceAmount);
+            Assert.IsNull(account.PaymentProcessingStatistics.CardTransactionLimitAmount);
+            Assert.IsNotNull(account.Platform);
+            Assert.IsNull(account.Platform.Id);
+            Assert.IsNull(account.Platform.Reference);
+            Assert.IsNull(account.Platform.Name);
+            Assert.IsNull(account.Platform.PlatformName);
+            Assert.IsNull(account.Platform.PlatformMid);
+            Assert.IsNull(account.Platform.MaskedCertstrKeyLast4);
+            Assert.IsNull(account.Platform.TermId);
+            Assert.IsNull(account.Platform.Country);
+            Assert.IsNull(account.Platform.Email);
+            Assert.IsNull(account.Platform.Authentication);
+            Assert.IsNull(account.Platform.MaskedSecretKeyLast4);
+        }
+
+        /// <summary>
+        /// Maps every platform field returned by the FMA account endpoint.
+        /// </summary>
+        [TestMethod]
+        public void MapAccount_WithPlatform_MapsAllFields() {
+            const string rawJson = @"{'id':'FMA_contract','platform':{
+                'id':'PFC_contract','reference':'PTF_contract','name':'PROPAY',
+                'platform_name':'Contract platform','platform_mid':'123456789',
+                'masked_certstr_key_last4':'XXXXXXXX1234','termid':'123456'}}";
+
+            var account = GpApiMapping.MapReportResponse<MerchantAccountSummary>(rawJson, ReportType.FindAccountDetail);
+
+            Assert.IsNotNull(account);
+            Assert.AreEqual("FMA_contract", account.Id);
+            Assert.IsNotNull(account.Platform);
+            Assert.AreEqual("PFC_contract", account.Platform.Id);
+            Assert.AreEqual("PTF_contract", account.Platform.Reference);
+            Assert.AreEqual("PROPAY", account.Platform.Name);
+            Assert.AreEqual("Contract platform", account.Platform.PlatformName);
+            Assert.AreEqual("123456789", account.Platform.PlatformMid);
+            Assert.AreEqual("XXXXXXXX1234", account.Platform.MaskedCertstrKeyLast4);
+            Assert.AreEqual("123456", account.Platform.TermId);
+        }
+
+        /// <summary>
+        /// Rejects malformed account statistics rather than silently converting them to zero.
+        /// </summary>
+        [TestMethod]
+        public void MapFmaAccount_WithInvalidAmount_ThrowsGatewayException() {
+            // Arrange
+            const string rawJson = @"{'payment_processing_statistics':{'available_balance_amount':'invalid'}}";
+
+            // Act
+            var error = Assert.ThrowsException<GatewayException>(() =>
+                GpApiMapping.MapReportResponse<MerchantAccountSummary>(rawJson, ReportType.FindAccountDetail));
+
+            // Assert
+            Assert.AreEqual("Invalid GP-API account statistic: available_balance_amount", error.Message);
+        }
+
+        /// <summary>
+        /// Asserts every common account field and nested configuration field.
+        /// </summary>
+        /// <param name="account">The mapped account.</param>
+        private static void AssertMappedAccount(MerchantAccountSummary account) {
+            Assert.IsNotNull(account);
+            Assert.AreEqual("FMA_contract", account.Id);
+            Assert.AreEqual("Fund management", account.Name);
+            Assert.AreEqual(MerchantAccountType.FUND_MANAGEMENT, account.Type);
+            Assert.AreEqual(MerchantAccountStatus.ACTIVE, account.Status);
+            CollectionAssert.AreEqual(new[] { "ACC_GET" }, account.Permissions);
+            CollectionAssert.AreEqual(new[] { "US" }, account.Countries);
+            CollectionAssert.AreEqual(new[] { "USD" }, account.Currencies);
+            CollectionAssert.AreEqual(new[] { Channel.CardNotPresent }, account.Channels);
+            CollectionAssert.AreEqual(new[] { PaymentMethodName.Card, PaymentMethodName.BankTransfer }, account.PaymentMethods);
+            Assert.AreEqual("accounts@example.com", account.EmailId);
+            Assert.AreEqual("MER_contract", account.MerchantId);
+            Assert.AreEqual("Contract merchant", account.MerchantName);
+            Assert.AreEqual("2026-01-02T03:04:05.678Z", account.TimeCreated);
+            Assert.AreEqual("2026-01-02T03:04:05.678Z", account.TimeLastUpdated);
+            Assert.AreEqual("LOST", account.CardReplacementReason);
+            CollectionAssert.AreEqual(new[] { "PAY_IN_ENABLE", "PAY_OUT_DISABLE" }, account.Capabilities);
+            Assert.IsNotNull(account.AccountConfigurations);
+            Assert.AreEqual(1, account.AccountConfigurations.Count);
+            var configuration = account.AccountConfigurations[0];
+            Assert.IsNotNull(configuration);
+            Assert.AreEqual("RTC_contract", configuration.Id);
+            Assert.AreEqual("ACTIVE", configuration.Status);
+            Assert.AreEqual("serial_contract", configuration.SerialNumber);
+            CollectionAssert.AreEqual(new[] { "AUTHORIZE", "LINK_LIST" }, configuration.Actions);
+            Assert.IsNotNull(configuration.Platform);
+            Assert.AreEqual("PFC_configuration", configuration.Platform.Id);
+            Assert.AreEqual("PTF_configuration", configuration.Platform.Reference);
+            Assert.AreEqual("TRUUST", configuration.Platform.Name);
+            Assert.AreEqual("Configuration platform", configuration.Platform.PlatformName);
+            Assert.AreEqual("configuration_mid", configuration.Platform.PlatformMid);
+            Assert.AreEqual("GB", configuration.Platform.Country);
+            Assert.AreEqual("platform@example.com", configuration.Platform.Email);
+            Assert.AreEqual("ENABLE", configuration.Platform.Authentication);
+            Assert.AreEqual("XXXXXXXX1234", configuration.Platform.MaskedSecretKeyLast4);
+            Assert.IsNull(configuration.Platform.MaskedCertstrKeyLast4);
+            Assert.IsNull(configuration.Platform.TermId);
+            CollectionAssert.AreEqual(new[] { "US" }, configuration.Countries);
+            CollectionAssert.AreEqual(new[] { "USD" }, configuration.Currencies);
+            CollectionAssert.AreEqual(new[] { Channel.CardNotPresent }, configuration.Channels);
+            CollectionAssert.AreEqual(new[] { PaymentMethodName.Card, PaymentMethodName.BankTransfer }, configuration.PaymentMethods);
+            Assert.IsNotNull(account.Addresses);
+            Assert.AreEqual(1, account.Addresses.Count);
+            Assert.AreEqual("Line 1", account.Addresses[0].StreetAddress1);
+            Assert.AreEqual("Line 2", account.Addresses[0].StreetAddress2);
+            Assert.AreEqual("Line 3", account.Addresses[0].StreetAddress3);
+            Assert.AreEqual("Atlanta", account.Addresses[0].City);
+            Assert.AreEqual("GA", account.Addresses[0].State);
+            Assert.AreEqual("30346", account.Addresses[0].PostalCode);
+            Assert.AreEqual("US", account.Addresses[0].CountryCode);
+            AssertMappedAccountAction(account.Action, "ACCOUNTS_SINGLE");
+        }
+
+        /// <summary>
+        /// Asserts all account action metadata fields.
+        /// </summary>
+        /// <param name="action">The mapped action.</param>
+        /// <param name="type">The expected account operation.</param>
+        private static void AssertMappedAccountAction(Entities.Action action, string type) {
+            Assert.IsNotNull(action);
+            Assert.AreEqual("ACT_contract", action.Id);
+            Assert.AreEqual(type, action.Type);
+            Assert.AreEqual("2026-01-02T03:04:05.678Z", action.TimeCreated);
+            Assert.AreEqual("SUCCESS", action.ResultCode);
+            Assert.AreEqual("APP_contract", action.AppId);
+            Assert.AreEqual("Contract app", action.AppName);
+        }
+
         [TestMethod]
         public void MapTransactionSummaryTest() {
             // Arrange

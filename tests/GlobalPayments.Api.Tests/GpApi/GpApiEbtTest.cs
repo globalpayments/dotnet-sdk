@@ -31,7 +31,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             ebtTrackData = new EBTTrackData {
                 Value =
-                    "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?",
+                    "%B4012002000060016^VI TEST CREDIT^281210118039000000000396?;4012002000060016=28121011803939600000?",
                 EntryMethod = EntryMethod.Swipe,
                 PinBlock = "32539F50C245A6A93D123412324000AA",
                 CardHolderName = "Jane Doe"
@@ -144,7 +144,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private void AssertEbtResponse(Transaction response, TransactionStatus transactionStatus) {
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), response.ResponseMessage);
         }
     }

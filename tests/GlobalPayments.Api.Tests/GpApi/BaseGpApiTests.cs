@@ -31,6 +31,16 @@ namespace GlobalPayments.Api.Tests.GpApi {
         protected const string MMAAccountID = "MMA_003720f36d9d4f7f9348b5a4981071ce";
         protected const string AlternateMMAAccountID = "MMA_344aebc638864d7381909dcf78d4c760";
 
+        /// <summary>
+        /// The app ID for the designated merchant-scoped sandbox FMA.
+        /// </summary>
+        protected const string MerchantFmaAppId = "PJoqXXSANSbA8292ASpE0ChpAPrmOwqO";
+
+        /// <summary>
+        /// The app key for the designated merchant-scoped sandbox FMA.
+        /// </summary>
+        protected const string MerchantFmaAppKey = "DwUQD4kIgA9cJEKZ";
+
         protected static readonly int ExpMonth = DateTime.Now.Month;
         protected static readonly int ExpYear = DateTime.Now.Year + 1;
 

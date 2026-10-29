@@ -6,6 +6,7 @@ using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Action = GlobalPayments.Api.Entities.Action;
 
@@ -947,7 +948,7 @@ namespace GlobalPayments.Api.Mapping {
                 }                
             }
             else if (reportType == ReportType.FindAccountsPaged && result is PagedResult<MerchantAccountSummary>) {
-                SetPagingInfo(result as PagedResult<MerchantAccountSummary>, json);
+                SetAccountPagingInfo(result as PagedResult<MerchantAccountSummary>, json);
                 foreach (var doc in json.GetArray<JsonDoc>("accounts") ?? Enumerable.Empty<JsonDoc>()) {
                     (result as PagedResult<MerchantAccountSummary>).Add(MapMerchantAccountSummary(doc));
                 }
@@ -978,6 +979,21 @@ namespace GlobalPayments.Api.Mapping {
             result.FromTimeCreated = json.Get("filter")?.GetValue("from_time_created", DateConverter);
             result.ToTimeCreated = json.Get("filter")?.GetValue("to_time_created", DateConverter);
             result.Action = MapAction(json.Get("action"));
+        }
+
+        /// <summary>
+        /// Maps the account list envelope without changing other report envelopes.
+        /// </summary>
+        /// <param name="result">The account page.</param>
+        /// <param name="json">The GP-API response.</param>
+        private static void SetAccountPagingInfo(PagedResult<MerchantAccountSummary> result, JsonDoc json) {
+            SetPagingInfo(result, json);
+            result.CurrentPageSize = json.GetValue<int>("current_page_size");
+            result.MerchantId = json.GetValue<string>("merchant_id");
+            result.MerchantName = json.GetValue<string>("merchant_name");
+            result.FromTimeCreated = json.Get("filter")?.GetValue("from_time_created", DateConverter);
+            result.ToTimeCreated = json.Get("filter")?.GetValue("to_time_created", DateConverter);
+            result.Action = MapAccountAction(json.Get("action"));
         }
 
         public static DepositSummary MapDepositSummary(JsonDoc doc) {
@@ -1363,8 +1379,7 @@ namespace GlobalPayments.Api.Mapping {
             };
         }
 
-        private static MerchantAccountSummary MapMerchantAccountSummary(JsonDoc account)
-        {
+        private static MerchantAccountSummary MapMerchantAccountSummary(JsonDoc account) {
             var merchantAccountSummary = new MerchantAccountSummary();
             merchantAccountSummary.Id = account.GetValue<string>("id");
             merchantAccountSummary.Name = account.GetValue<string>("name");
@@ -1375,9 +1390,30 @@ namespace GlobalPayments.Api.Mapping {
             merchantAccountSummary.Currencies = account.GetArray<string>("currencies")?.ToList();
             merchantAccountSummary.PaymentMethods = GetPaymentMethodsName(account);
             merchantAccountSummary.Configurations = account.GetArray<string>("configurations")?.ToList();
-            if(account.Has("type"))
+            merchantAccountSummary.AccountConfigurations = account.GetArray<JsonDoc>("configurations")?.Select(configuration => new AccountConfiguration {
+                Id = configuration.GetValue<string>("id"),
+                Status = configuration.GetValue<string>("status"),
+                SerialNumber = configuration.GetValue<string>("serial_number"),
+                Actions = configuration.GetArray<string>("actions")?.ToList(),
+                Platform = MapAccountPlatform(configuration.Get("platform")),
+                Countries = configuration.GetArray<string>("countries")?.ToList(),
+                Currencies = configuration.GetArray<string>("currencies")?.ToList(),
+                Channels = configuration.GetArray<string>("channels")?.Select(x => EnumConverter.FromMapping<Channel>(Target.GP_API, x)).ToList(),
+                PaymentMethods = GetPaymentMethodsName(configuration)
+            }).ToList();
+            merchantAccountSummary.EmailId = account.GetValue<string>("email_id");
+            merchantAccountSummary.MerchantId = account.GetValue<string>("merchant_id");
+            merchantAccountSummary.MerchantName = account.GetValue<string>("merchant_name");
+            merchantAccountSummary.TimeCreated = AccountTimestamp(account, "time_created");
+            merchantAccountSummary.TimeLastUpdated = AccountTimestamp(account, "time_last_updated");
+            merchantAccountSummary.CardReplacementReason = account.GetValue<string>("card_replacment_reason");
+            merchantAccountSummary.Capabilities = account.GetArray<string>("capabilities")?.ToList();
+            merchantAccountSummary.Platform = MapAccountPlatform(account.Get("platform"));
+            merchantAccountSummary.Action = MapAccountAction(account.Get("action"));
+            merchantAccountSummary.PaymentProcessingStatistics = MapAccountProcessingStatistics(account.Get("payment_processing_statistics"));
+            if(!string.IsNullOrEmpty(account.GetValue<string>("type")))
                 merchantAccountSummary.Type = (MerchantAccountType)Enum.Parse(typeof(MerchantAccountType), account.GetValue<string>("type"));
-            if(account.Has("status"))
+            if(!string.IsNullOrEmpty(account.GetValue<string>("status")))
                 merchantAccountSummary.Status = (MerchantAccountStatus)Enum.Parse(typeof(MerchantAccountStatus), account.GetValue<string>("status"));           
             if (account.Has("addresses")) {
                 var addresses = new List<Address>();
@@ -1389,6 +1425,124 @@ namespace GlobalPayments.Api.Mapping {
             }
 
             return merchantAccountSummary;
+        }
+
+        /// <summary>
+        /// Maps platform fields shared by accounts and their processing configurations.
+        /// </summary>
+        /// <param name="platform">The optional platform object.</param>
+        /// <returns>The mapped platform, or null if absent.</returns>
+        private static AccountPlatform MapAccountPlatform(JsonDoc platform) {
+            if (platform == null) {
+                return null;
+            }
+            return new AccountPlatform {
+                Id = platform.GetValue<string>("id"),
+                Reference = platform.GetValue<string>("reference"),
+                Name = platform.GetValue<string>("name"),
+                PlatformName = platform.GetValue<string>("platform_name"),
+                PlatformMid = platform.GetValue<string>("platform_mid"),
+                MaskedCertstrKeyLast4 = platform.GetValue<string>("masked_certstr_key_last4"),
+                TermId = platform.GetValue<string>("termid"),
+                Country = platform.GetValue<string>("country"),
+                Email = platform.GetValue<string>("email"),
+                Authentication = platform.GetValue<string>("authentication"),
+                MaskedSecretKeyLast4 = platform.GetValue<string>("masked_secretkey_last4")
+            };
+        }
+
+        /// <summary>
+        /// Retains ISO-8601 formatting when JsonDoc has already parsed a timestamp into a DateTime.
+        /// </summary>
+        /// <param name="json">The account or action object.</param>
+        /// <param name="name">The timestamp field.</param>
+        /// <returns>The invariant timestamp, or the original string if it was not parsed.</returns>
+        private static string AccountTimestamp(JsonDoc json, string name) {
+            return json.GetValue<string>(name, value => value is DateTime
+                ? ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss.fffK", CultureInfo.InvariantCulture)
+                : Convert.ToString(value, CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// Maps account action metadata with invariant timestamp formatting.
+        /// </summary>
+        /// <param name="json">The optional action object.</param>
+        /// <returns>The mapped action, or null if absent.</returns>
+        private static Action MapAccountAction(JsonDoc json) {
+            var action = MapAction(json);
+            if (action != null) {
+                action.TimeCreated = AccountTimestamp(json, "time_created");
+            }
+            return action;
+        }
+
+        /// <summary>
+        /// Maps a successful account PATCH using request context rather than an undocumented action type.
+        /// </summary>
+        /// <param name="rawResponse">The GP-API response body.</param>
+        /// <returns>The compatible transaction wrapper and its complete account details.</returns>
+        internal static Transaction MapAccountEditResponse(string rawResponse) {
+            var json = JsonDoc.Parse(rawResponse);
+            if (json == null) {
+                throw new GatewayException("Invalid GP-API account edit response.");
+            }
+            var account = MapMerchantAccountSummary(json);
+            return new Transaction {
+                AccountDetails = account,
+                AccountId = account.Id,
+                AccountName = account.Name,
+                MerchantId = account.MerchantId,
+                MerchantName = account.MerchantName,
+                Action = account.Action,
+                ResponseCode = account.Action?.ResultCode == "SUCCESS" ? "00" : account.Action?.ResultCode,
+                ResponseMessage = account.Action?.ResultCode
+            };
+        }
+
+        /// <summary>
+        /// Parses an optional account decimal independently of the current culture.
+        /// </summary>
+        /// <param name="json">The statistics object.</param>
+        /// <param name="name">The response field.</param>
+        /// <param name="isAmount">Whether to convert minor units to major units.</param>
+        /// <returns>The decimal value, or null for an omitted or empty field.</returns>
+        private static decimal? AccountDecimal(JsonDoc json, string name, bool isAmount = true) {
+            var value = json.GetValue<string>(name);
+            if (string.IsNullOrEmpty(value)) {
+                return null;
+            }
+            decimal parsed;
+            if (!decimal.TryParse(value, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out parsed)) {
+                throw new GatewayException("Invalid GP-API account statistic: " + name);
+            }
+            return isAmount ? parsed / 100m : parsed;
+        }
+
+        /// <summary>
+        /// Maps all fund management account limits, balances, and percentages.
+        /// </summary>
+        /// <param name="json">The optional payment_processing_statistics object.</param>
+        /// <returns>The statistics, or null if the object is absent.</returns>
+        private static AccountProcessingStatistics MapAccountProcessingStatistics(JsonDoc json) {
+            if (json == null) {
+                return null;
+            }
+            return new AccountProcessingStatistics {
+                CardTransactionLimitAmount = AccountDecimal(json, "card_transaction_limit_amount"),
+                CardMonthlyLimitAmount = AccountDecimal(json, "card_monthly_limit_amount"),
+                BankTransferPerTransactionLimitAmount = AccountDecimal(json, "bank_transfer_per_transaction_limit_amount"),
+                BankTransferMonthlyLimitAmount = AccountDecimal(json, "bank_transfer_monthly_limit_amount"),
+                BankTransferMonthToDateProcessedAmount = AccountDecimal(json, "bank_transfer_month_to_date_processed_amount"),
+                CardMonthToDateProcessedAmount = AccountDecimal(json, "card_month_to_date_processed_amount"),
+                AvailableBalanceAmount = AccountDecimal(json, "available_balance_amount"),
+                PendingBalanceAmount = AccountDecimal(json, "pending_balance_amount"),
+                ReserveBalanceAmount = AccountDecimal(json, "reserve_balance_amount"),
+                AllowedNegativeBalanceAmount = AccountDecimal(json, "allowed_negative_balance_amount"),
+                DisablePayoutCardLimitPercentage = AccountDecimal(json, "disable_payout_card_limit_percentage", false),
+                DisablePayoutBankTransferLimitPercentage = AccountDecimal(json, "disable_payout_bank_transfer_limit_percentage", false),
+                CardMonthToDateProcessedPercentage = AccountDecimal(json, "card_month_to_date_processed_percentage", false),
+                BankTransferMonthToDateProcessedPercentage = AccountDecimal(json, "bank_transfer_month_to_date_processed_percentage", false)
+            };
         }
 
         private static List<PaymentMethodName> GetPaymentMethodsName(JsonDoc doc)

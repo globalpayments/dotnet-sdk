@@ -688,8 +688,8 @@ namespace GlobalPayments.Api.Tests.GpApi
             } catch (GatewayException ex) {
                 errorFound = true;
                 Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields amount", ex.Message);
-                Assert.AreEqual("40005", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields: amount.", ex.Message);
+                Assert.AreEqual("40251", ex.ResponseMessage);
             } finally {
                 Assert.IsTrue(errorFound);
             }

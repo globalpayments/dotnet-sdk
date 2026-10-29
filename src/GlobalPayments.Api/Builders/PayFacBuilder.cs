@@ -15,6 +15,21 @@ namespace GlobalPayments.Api.Builders
         public TransactionModifier TransactionModifier { get; set; }
 
         /// <summary>
+        /// Optional fields specific to GP-API account edits.
+        /// </summary>
+        internal AccountUpdateData AccountUpdateData { get; set; }
+
+        /// <summary>
+        /// Sets optional GP-API account edit fields without requiring payout card data.
+        /// </summary>
+        /// <param name="value">The account fields to update.</param>
+        /// <returns>This builder.</returns>
+        public PayFacBuilder<TResult> WithAccountUpdateData(AccountUpdateData value) {
+            AccountUpdateData = value;
+            return this;
+        }
+
+        /// <summary>
         /// Primary Bank Account Information - Optional. Used to add a bank account to which funds can be settled
         /// </summary>
         public BankAccountData BankAccountData { get; set; }

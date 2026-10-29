@@ -92,7 +92,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             // Initiate authentication
@@ -126,7 +126,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response.ResponseMessage);
 
             Thread.Sleep(2000);
@@ -162,7 +162,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             // Initiate authentication
@@ -194,7 +194,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual("00", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
         
@@ -210,7 +210,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             // Initiate authentication
@@ -241,7 +241,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(verifyResponse);
-            Assert.AreEqual(Success, verifyResponse.ResponseCode);
+            Assert.AreEqual("00", verifyResponse.ResponseCode);
             Assert.AreEqual("VERIFIED", verifyResponse.ResponseMessage);
 
             // Create transaction
@@ -250,7 +250,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual("00", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
         
@@ -273,7 +273,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             // Initiate authentication
@@ -304,7 +304,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(verifyResponse);
-            Assert.AreEqual(Success, verifyResponse.ResponseCode);
+            Assert.AreEqual("00", verifyResponse.ResponseCode);
             Assert.AreEqual("VERIFIED", verifyResponse.ResponseMessage);
 
             // Create transaction
@@ -313,7 +313,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual("00", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -337,7 +337,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             // Initiate authentication
@@ -371,7 +371,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual("00", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -389,7 +389,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             // Initiate authentication
@@ -447,7 +447,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
             // Assert.AreEqual(1500, secureEcom.Amount);
 
@@ -486,7 +486,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual("00", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Captured), response?.ResponseMessage);
         }
 
@@ -502,7 +502,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled, "Card not enrolled");
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             // Initiate authentication
@@ -573,7 +573,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
                 Assert.IsNotNull(secureEcom);
                 Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
-                Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+                Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
                 Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
@@ -605,7 +605,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .WithCurrency(Currency)
                     .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
         }
 
@@ -623,7 +623,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage.ToUpper());
         }
 
@@ -645,7 +645,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(secureEcom);
             Assert.AreEqual(ENROLLED, secureEcom.Enrolled);
-            Assert.AreEqual(Secure3dVersion.Two, secureEcom.Version);
+            Assert.AreEqual(Secure3dVersion.Any, secureEcom.Version);
             Assert.AreEqual(AVAILABLE, secureEcom.Status);
 
             var initAuth = Secure3dService.InitiateAuthentication(tokenizedCard, secureEcom)
@@ -709,7 +709,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                     .Execute();
             
             Assert.IsNotNull(response);
-            Assert.AreEqual("SUCCESS", response.ResponseCode);
+            Assert.AreEqual("00", response.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), response.ResponseMessage);
         }
     }

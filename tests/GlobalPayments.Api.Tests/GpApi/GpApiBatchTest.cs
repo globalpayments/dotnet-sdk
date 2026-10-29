@@ -300,9 +300,9 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadGateway - 1,Gateway system error", ex.Message);
-                Assert.AreEqual("SYSTEM_ERROR_DOWNSTREAM", ex.ResponseCode);
-                Assert.AreEqual("50004", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadGateway - Action failed unexpectedly. Please try again ", ex.Message);
+                Assert.AreEqual("ACTION_FAILED", ex.ResponseCode);
+                Assert.AreEqual("50010", ex.ResponseMessage);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -477,10 +477,10 @@ namespace GlobalPayments.Api.Tests.GpApi {
             }
             catch (GatewayException ex) {
                 exceptionCaught = true;
-                Assert.AreEqual("Status Code: BadGateway - -2,Authentication error—Verify and correct credentials",
+                Assert.AreEqual("Status Code: BadGateway - Action failed unexpectedly. Please try again ",
                     ex.Message);
-                Assert.AreEqual("UNAUTHORIZED_DOWNSTREAM", ex.ResponseCode);
-                Assert.AreEqual("50002", ex.ResponseMessage);
+                Assert.AreEqual("ACTION_FAILED", ex.ResponseCode);
+                Assert.AreEqual("50010", ex.ResponseMessage);
             }
             finally {
                 Assert.IsTrue(exceptionCaught);

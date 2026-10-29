@@ -260,7 +260,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                     .Execute();
 
                 Assert.IsNotNull(transaction);
-                Assert.AreEqual(Success, transaction.ResponseCode);
+                Assert.AreEqual("00", transaction.ResponseCode);
                 Assert.AreEqual(GetMapping(TransactionStatus.Captured), transaction.ResponseMessage);
                 Assert.AreEqual("123456", transaction.AuthorizationCode);
                 Assert.IsFalse(string.IsNullOrEmpty(transaction.TransactionId));

@@ -1,6 +1,22 @@
 # Changelog
 
-## Latest - v11.8.0 (10/15/26)
+## Latest - v11.9.0 (10/29/26)
+
+### Enhancement
+- [GPAPI] - Added optional status updates through `AccountUpdateData.Status`, with status-only merchant-scoped FMA PATCH sandbox coverage.
+- [GPAPI] - Exposed processing configuration identifiers, status, serial numbers, actions, and nested platform details, including country, email, authentication setting, and masked secret key. Added read-only TRA account sandbox coverage.
+- [GPAPI] - Exposed account processing platform details through `MerchantAccountSummary.Platform`, including platform identifiers, names, merchant ID, masked certificate key, and terminal ID.
+- [GPAPI] - Expanded GET Accounts, GET Account, PATCH Edit Account, and GET FMA Account coverage. Account lists now expose merchant, filter, paging, and action metadata; single accounts expose email and typed processing configurations; FMA accounts expose capabilities and all processing statistics. Account edits support payment method references, prepaid card replacement, notifications, capabilities, status change reasons, and processing limits.
+- [GPAPI] - Added `MerchantAccountSummary.AccountConfigurations` for structured configuration objects without changing the existing `Configurations` string-list property. `PayFacService.EditAccount()` still returns `Transaction`; mapped account response details are available through `Transaction.AccountDetails`.
+
+### Bug Fixes
+- [GPAPI] - Fixed successful account-edit responses throwing an unsupported transaction exception. PATCH response mapping now uses the requested account-edit operation rather than depending on the action type string. Payout card masks are propagated to the request logger.
+- [GPAPI] - Account-detail requests now respect an explicit merchant search criterion, including FMA lookups and existing account-address lookups.
+
+### Changed
+- [CodeCoverage] - Updated GP-API tests to align with current gateway responses and expanded merchant-account and response-mapping coverage.
+
+## v11.8.0 (10/15/26)
 
 ### Enhancement
 - [GP-ECOM] - Added Visa AFT supplementary data support to GPEcom API and hosted payment authorization requests, including the approved non-contiguous API fields and `VD_*` HPP fields.

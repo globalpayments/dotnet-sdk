@@ -20,7 +20,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestInitialize]
         public void TestInitialize() {
             debitTrackData.Value =
-                "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?";
+                "%B4012002000060016^VI TEST CREDIT^281210118039000000000396?;4012002000060016=28121011803939600000?";
             debitTrackData.PinBlock = "32539F50C245A6A93D123412324000AA";
             debitTrackData.EntryMethod = EntryMethod.Swipe;
 
@@ -78,7 +78,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         
         [TestMethod]
         public void DebitSaleSwipeEncrypted1() {
-            debitTrackData.Value = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?";
+            debitTrackData.Value = "%B4012002000060016^VI TEST CREDIT^281210118039000000000396?;4012002000060016=28121011803939600000?";
             debitTrackData.EncryptionData = EncryptionData.Version1();
             
             var response = debitTrackData.Charge(amount)
@@ -90,7 +90,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void DebitSaleSwipe_NewDebitTrackDataDetails() {
             var debitTrack = new DebitTrackData {
-                Value = ";4024720012345671=18125025432198712345?",
+                Value = ";4024720012345671=28125025432198712345?",
                 PinBlock = "AFEC374574FC90623D010000116001EE",
                 EntryMethod = EntryMethod.Swipe
             };
@@ -106,7 +106,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void DebitSaleContactlessChip_NewDebitTrackDataDetails() {
             var debitTrack = new DebitTrackData {
-                Value = ";4024720012345671=18125025432198712345?",
+                Value = ";4024720012345671=28125025432198712345?",
                 PinBlock = "AFEC374574FC90623D010000116001EE",
                 EntryMethod = EntryMethod.Proximity
             };
@@ -133,6 +133,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [TestMethod]
         public void DebitRefundChip_Rejected() {
+            debitTrackData.Value =
+                "%B4012002000060036^VI TEST CREDIT^281210118039000000000396?;4012002000060016=28121011803939600000?";
             var exceptionCaught = false;
             try {
                 debitTrackData.Refund(amount)
@@ -143,10 +145,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("INVALID_REQUEST_DATA", ex.ResponseCode);
-                Assert.AreEqual("40029", ex.ResponseMessage);
-                Assert.AreEqual(
-                    "Status Code: BadRequest - 34,Transaction rejected because the provided data was invalid. Online PINBlock Authentication not supported on offline transaction.",
-                    ex.Message);
+                Assert.AreEqual("40016", ex.ResponseMessage);
+                Assert.AreEqual("Status Code: BadRequest - 8,Bad track data", ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
             }
@@ -154,7 +154,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
     }

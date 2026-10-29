@@ -78,7 +78,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tagData)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Declined, response?.ResponseCode);
+            Assert.AreEqual("55", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("55", response.CardIssuerResponse.Result);
         }
@@ -122,7 +122,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Declined, response?.ResponseCode);
+            Assert.AreEqual("14", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("14", response.CardIssuerResponse.Result);
         }
@@ -141,7 +141,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tag)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Declined, response?.ResponseCode);
+            Assert.AreEqual("54", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("54", response.CardIssuerResponse.Result);
         }
@@ -174,7 +174,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         [TestMethod]
         public void AdjustSaleTransaction() {
             var card = new CreditTrackData();
-                card.Value = "%B4012002000060016^VI TEST CREDIT^251210118039000000000396?;4012002000060016=25121011803939600000?";
+                card.Value = "%B4012002000060016^VI TEST CREDIT^281210118039000000000396?;4012002000060016=28121011803939600000?";
 
             var tagData = "9F4005F000F0A0019F02060000000025009F03060000000000009F2608D90A06501B48564E82027C005F3401019F360200029F0702FF009F0802008C9F0902008C9F34030403029F2701809F0D05F0400088009F0E0508000000009F0F05F0400098005F280208409F390105FFC605DC4000A800FFC7050010000000FFC805DC4004F8009F3303E0B8C89F1A0208409F350122950500000080005F2A0208409A031409109B02E8009F21030811539C01009F37045EED3A8E4F07A00000000310109F0607A00000000310108407A00000000310109F100706010A03A400029F410400000001";
             
@@ -186,7 +186,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tagData)
                 .Execute();
 
-                AssertTransactionResponse(transaction, TransactionStatus.Captured);
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
 
             var response = transaction.Edit()
                 .WithAmount((decimal)10.01)
@@ -194,7 +194,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithGratuity((decimal)5.01)
                 .Execute();
 
-                AssertTransactionResponse(response, TransactionStatus.Captured);        
+            AssertTransactionResponse(transaction, TransactionStatus.Captured);
         }
 
         [TestMethod]
@@ -374,7 +374,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithTagData(tagData)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Declined, response?.ResponseCode);
+            Assert.AreEqual("55", response?.ResponseCode);
             Assert.AreEqual(GetMapping(TransactionStatus.Declined), response?.ResponseMessage);
             Assert.AreEqual("55", response.CardIssuerResponse.Result);
         }
@@ -784,7 +784,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual("00", response?.ResponseCode);
             Assert.AreEqual(Verified, response?.ResponseMessage);
         }
         
@@ -794,7 +794,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithCurrency(currency)
                 .Execute();
             Assert.IsNotNull(response);
-            Assert.AreEqual(Success, response?.ResponseCode);
+            Assert.AreEqual("00", response?.ResponseCode);
             Assert.AreEqual(Verified, response?.ResponseMessage);
         }
         
@@ -819,7 +819,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(response);
             // CVV validation may result in not verified status
-            Assert.IsTrue(response.ResponseCode == Success || response.ResponseCode == "NOT_VERIFIED");
+            Assert.IsTrue(response.ResponseCode == "00" || response.ResponseCode == "NOT_VERIFIED");
         }
 
         #endregion
@@ -997,7 +997,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
 
             var lodgingInfo = new LodgingData();
@@ -1019,7 +1019,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
             Assert.AreEqual((decimal)22.02, transaction.AuthorizedAmount);
 
@@ -1027,7 +1027,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(capture);
-            Assert.AreEqual("SUCCESS", capture.ResponseCode);
+            Assert.AreEqual("00", capture.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), capture.ResponseMessage.ToUpper());
         }
         
@@ -1038,7 +1038,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
 
             transaction = transaction.AdditionalAuth(10)
@@ -1047,7 +1047,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
             Assert.AreEqual((decimal)22.02, transaction.AuthorizedAmount);
 
@@ -1055,7 +1055,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(capture);
-            Assert.AreEqual("SUCCESS", capture.ResponseCode);
+            Assert.AreEqual("00", capture.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), capture.ResponseMessage.ToUpper());
         }
         
@@ -1066,7 +1066,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
 
             var lodgingInfo = new LodgingData {
@@ -1092,7 +1092,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Preauthorized.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
             Assert.AreEqual((decimal)22.02, transaction.AuthorizedAmount);
 
@@ -1100,7 +1100,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(capture);
-            Assert.AreEqual("SUCCESS", capture.ResponseCode);
+            Assert.AreEqual("00", capture.ResponseCode);
             Assert.AreEqual(TransactionStatus.Reversed.ToString().ToUpper(), capture.ResponseMessage.ToUpper());
         }
         
@@ -1111,7 +1111,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
 
             Assert.IsNotNull(transaction);
-            Assert.AreEqual("SUCCESS", transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(TransactionStatus.Captured.ToString().ToUpper(), transaction.ResponseMessage.ToUpper());
 
             var lodgingInfo = new LodgingData {
@@ -1192,7 +1192,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction?.ResponseCode);
+            Assert.AreEqual("00", transaction?.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction?.ResponseMessage);
         }
     }

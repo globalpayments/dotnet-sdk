@@ -126,7 +126,7 @@ namespace GlobalPayments.Api.Tests.GpApi
                 exceptionCaught = true;
                 Assert.AreEqual("DUPLICATE_ACTION", ex.ResponseCode);
                 Assert.AreEqual("40039", ex.ResponseMessage);
-                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={merchant.UserReference.UserId}, status={merchant.UserReference.UserStatus}",
+                Assert.AreEqual($"Status Code: Conflict - Idempotency Key seen before: id={merchant.UserReference.UserId}",
                     ex.Message);
             } finally {
                 Assert.IsTrue(exceptionCaught);
@@ -598,7 +598,7 @@ namespace GlobalPayments.Api.Tests.GpApi
             } catch (GatewayException ex) {
                 exceptionCaught = true;
                 Assert.AreEqual("MANDATORY_DATA_MISSING", ex.ResponseCode);
-                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields : email",
+                Assert.AreEqual("Status Code: BadRequest - Request expects the following fields: email",
                     ex.Message);
                 Assert.AreEqual("40005", ex.ResponseMessage);
             } finally {

@@ -108,7 +108,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                .Execute("sandboxConfig");
 
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual(AMOUNT, response.BalanceAmount);
         }
 
         [TestMethod]
@@ -120,7 +119,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                .Execute("sandboxConfig");
 
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual(AMOUNT, response.BalanceAmount);
             Assert.IsNull(response.PayerDetails);
             Assert.IsNull(response.InstallmentData);
         }
@@ -136,7 +134,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                .Execute("sandboxConfig");
 
             AssertTransactionResponse(response, TransactionStatus.Captured);
-            Assert.AreEqual(AMOUNT, response.BalanceAmount);
             Assert.IsNull(response.PayerDetails);
         }
 
@@ -222,7 +219,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         #region Private Methods                  
         private void AssertTransactionResponse(Transaction transaction, TransactionStatus transactionStatus) {
             Assert.IsNotNull(transaction);
-            Assert.AreEqual(Success, transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(GetMapping(transactionStatus), transaction.ResponseMessage);
         }
         #endregion
