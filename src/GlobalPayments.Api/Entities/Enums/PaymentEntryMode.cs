@@ -25,6 +25,26 @@ namespace GlobalPayments.Api.Entities {
         Moto,
 
         [Map(Target.GP_API, "SWIPE")]
-        Swipe
+        Swipe,
+        /// <summary>
+        /// Payment details obtained over the phone.
+        /// </summary>
+        [Map(Target.GP_API, "PHONE")]
+        Phone,
+        /// <summary>
+        /// Payment details obtained by postal mail.
+        /// </summary>
+        [Map(Target.GP_API, "MAIL")]
+        Mail,
+        /// <summary>
+        /// Customer-present entry with an undetermined method.
+        /// </summary>
+        [Map(Target.GP_API, "PRESENT")]
+        Present,
+        /// <summary>
+        /// An undetermined payment entry mode.
+        /// </summary>
+        [Map(Target.GP_API, "UNKNOWN")]
+        Unknown
     }
 }

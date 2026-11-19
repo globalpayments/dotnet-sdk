@@ -96,7 +96,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .Execute();
             Assert.IsNotNull(result?.Results);
             Assert.IsTrue(result.Results is List<TransactionSummary>);
-            Assert.IsTrue(result.Results.TrueForAll(t => t.BatchSequenceNumber == batchId));
+            Assert.IsTrue(result.Results.TrueForAll(t => t.BatchId == batchId));
         }
 
         [TestMethod]

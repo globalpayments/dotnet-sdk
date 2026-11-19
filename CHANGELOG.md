@@ -1,6 +1,18 @@
 # Changelog
 
-## Latest - v11.9.0 (10/29/26)
+## Latest - v11.10.0 (11/19/26)
+
+### Enhancement
+- [GPAPI] - Added authentication list and detail reads, expanded 3DS request support, and mapped the authentication response fields and paging metadata.
+- [GPAPI] - Added PHONE, MAIL, PRESENT, and UNKNOWN entry modes and eight additional authentication stored-credential models. Authentication details now expose whitelist status and documented flat mobile response fields while retaining support for nested ACS rendering details.
+- [GPAPI] - Completed batch transaction response mapping for account, site, device, batch count and filter metadata, tax, gratuity, surcharge, cashback, and card verification results.
+- [GPAPI] - Added batch summary and batch transaction reporting, including batch totals, brand and host breakdowns, action metadata, and the remaining response fields. GP-API transaction summaries expose `batch_id` through `TransactionSummary.BatchId` while preserving the existing `BatchSequenceNumber` mapping.
+
+### Bug Fixes
+- [GPAPI] - Corrected the 3DS result request to use GET `/authentications/{id}/result`.
+- [GPAPI] - Prevented scalar mobile ACS rendering types from causing a null-reference error during authentication response mapping.
+
+## v11.9.0 (10/29/26)
 
 ### Enhancement
 - [GPAPI] - Added optional status updates through `AccountUpdateData.Status`, with status-only merchant-scoped FMA PATCH sandbox coverage.

@@ -40,6 +40,30 @@ namespace GlobalPayments.Api.Entities {
         /// </summary>
         public string MerchantName { get; set; }
         /// <summary>
+        /// The batch transaction count returned by a batch transactions report.
+        /// </summary>
+        public int? BatchTransactionCount { get; set; }
+        /// <summary>
+        /// The processing account identifier returned by a batch transactions report.
+        /// </summary>
+        public string AccountId { get; set; }
+        /// <summary>
+        /// The processing account name returned by a batch transactions report.
+        /// </summary>
+        public string AccountName { get; set; }
+        /// <summary>
+        /// The site reference returned by a batch transactions report.
+        /// </summary>
+        public string SiteReference { get; set; }
+        /// <summary>
+        /// The device reference returned by a batch transactions report.
+        /// </summary>
+        public string DeviceReference { get; set; }
+        /// <summary>
+        /// The batch ID returned in the report filter.
+        /// </summary>
+        public string BatchId { get; set; }
+        /// <summary>
         /// Gets or sets the start of the time-created range applied to the search.
         /// </summary>
         public DateTime? FromTimeCreated { get; set; }

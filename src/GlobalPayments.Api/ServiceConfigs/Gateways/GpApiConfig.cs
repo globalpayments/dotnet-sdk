@@ -75,6 +75,14 @@ namespace GlobalPayments.Api {
         public string MerchantManagementAccountID { get; set; }
 
         public string StatusUrl { get; set; }
+        /// <summary>
+        /// Merchant URL returned to the payer after the payment method flow.
+        /// </summary>
+        public string ReturnUrl { get; set; }
+        /// <summary>
+        /// URL that receives a decoupled authentication challenge result.
+        /// </summary>
+        public string DecoupledChallengeReturnUrl { get; set; }
 
         public IAccessTokenProvider AccessTokenProvider { get; set; }
 
@@ -139,6 +147,8 @@ namespace GlobalPayments.Api {
                 AccessTokenInfo = AccessTokenInfo,
                 Environment = Environment,
                 StatusUrl = StatusUrl,
+                ReturnUrl = ReturnUrl,
+                DecoupledChallengeReturnUrl = DecoupledChallengeReturnUrl,
                 AccessTokenProvider = AccessTokenProvider,
                 PorticoTokenConfig = PorticoTokenConfig,
                 DataResidency = DataResidency

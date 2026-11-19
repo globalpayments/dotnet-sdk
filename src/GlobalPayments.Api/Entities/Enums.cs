@@ -644,7 +644,27 @@ namespace GlobalPayments.Api.Entities {
         /// <summary>
         /// Indicates a Token Updater History report.
         /// </summary>
-        TokenUpdaterHistory = 1 << 29
+        TokenUpdaterHistory = 1 << 29,
+
+        /// <summary>
+        /// Indicates a single authentication detail report.
+        /// </summary>
+        AuthenticationDetail = 1 << 30,
+
+        /// <summary>
+        /// Indicates a paged authentication report.
+        /// </summary>
+        FindAuthenticationsPaged = 1 << 31,
+
+        /// <summary>
+        /// Indicates a list of transactions within a batch.
+        /// </summary>
+        BatchTransactions = 1 << 32,
+
+        /// <summary>
+        /// Indicates a single batch report fetched by its ID.
+        /// </summary>
+        BatchById = 1 << 33
     }
 
     /// <summary>

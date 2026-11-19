@@ -42,6 +42,26 @@ namespace GlobalPayments.Api.Entities {
 
         public string AvsResponseCode { get; set; }
 
+        /// <summary>
+        /// The card address returned by the GP-API batch transactions endpoint.
+        /// </summary>
+        public string AvsAddress { get; set; }
+
+        /// <summary>
+        /// The card address verification result returned by GP-API.
+        /// </summary>
+        public string AvsAddressResult { get; set; }
+
+        /// <summary>
+        /// The postal code verification result returned by GP-API.
+        /// </summary>
+        public string AvsPostalCodeResult { get; set; }
+
+        /// <summary>
+        /// The card security code verification result, not the security code itself.
+        /// </summary>
+        public string CvvResult { get; set; }
+
         public DateTime? BatchCloseDate { get; set; }
 
         public string BatchId { get; set; }

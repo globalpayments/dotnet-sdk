@@ -1010,7 +1010,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.IsNotNull(secureEcom.ChallengeReturnUrl);
             Assert.IsNotNull(secureEcom.MessageType);
             Assert.IsNotNull(secureEcom.SessionDataFieldName);
-            Assert.IsNull(secureEcom.Eci);
+            Assert.AreEqual("",secureEcom.Eci);
         }
     }
 }

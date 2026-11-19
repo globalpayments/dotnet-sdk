@@ -19,6 +19,11 @@ namespace GlobalPayments.Api.Entities {
         public MerchantAccountSummary AccountDetails { get; set; }
 
         /// <summary>
+        /// The complete GP-API authentication response associated with this 3DS operation.
+        /// </summary>
+        public AuthenticationSummary AuthenticationDetails { get; set; }
+
+        /// <summary>
         /// The Address used in the transaction.
         /// </summary>
         public Address Address { get; set; }

@@ -32,6 +32,11 @@ namespace GlobalPayments.Api.Entities {
         public string AccountId { get; set; }
 
         /// <summary>
+        /// The country associated with the batch.
+        /// </summary>
+        public string Country { get; set; }
+
+        /// <summary>
         /// The name of the transaction processing account.
         /// </summary>
         public string AccountName { get; set; }
@@ -98,6 +103,27 @@ namespace GlobalPayments.Api.Entities {
         /// The total gratuity amount for the batch.
         /// </summary>
         public decimal? GratuityAmount { get; set; }
+
+        /// <summary>
+        /// The transaction count returned by the batch detail endpoint.
+        /// </summary>
+        public int? BatchTransactionCount { get; set; }
+
+        /// <summary>
+        /// The transaction totals grouped by card brand.
+        /// </summary>
+        public List<BatchBrandBreakdown> BrandBreakdown { get; set; }
+
+        /// <summary>
+        /// The totals grouped by processing host, when returned.
+        /// </summary>
+        public BatchHostBreakdown HostBreakdown { get; set; }
+
+        /// <summary>
+        /// The action details returned with the batch.
+        /// </summary>
+        public Action Action { get; set; }
+
         public bool IsBalanced {
             get {
                 if (ResponseCode != null) {

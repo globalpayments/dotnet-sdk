@@ -103,6 +103,14 @@ namespace GlobalPayments.Api.Builders {
             AuthenticationSource = value;
             return this;
         }
+        /// <summary>Sets how the payment method was obtained for the authentication.</summary>
+        /// <param name="value">The payment entry mode.</param>
+        /// <returns>The current builder.</returns>
+        public Secure3dBuilder WithEntryMode(PaymentEntryMode value)
+        {
+            PaymentEntryMode = value;
+            return this;
+        }
         public Secure3dBuilder WithAuthenticationRequestType(AuthenticationRequestType value)
         {
             AuthenticationRequestType = value;
@@ -151,6 +159,30 @@ namespace GlobalPayments.Api.Builders {
         public Secure3dBuilder WithCustomerEmail(string value)
         {
             CustomerEmail = value;
+            return this;
+        }
+        /// <summary>Sets the payer's full name.</summary>
+        /// <param name="value">The payer name.</param>
+        /// <returns>The current builder.</returns>
+        public Secure3dBuilder WithCustomerName(string value)
+        {
+            CustomerName = value;
+            return this;
+        }
+        /// <summary>Sets the payer's date of birth.</summary>
+        /// <param name="value">The payer's date of birth.</param>
+        /// <returns>The current builder.</returns>
+        public Secure3dBuilder WithCustomerDateOfBirth(DateTime value)
+        {
+            CustomerDateOfBirth = value;
+            return this;
+        }
+        /// <summary>Sets the payment-method name sent with the authentication.</summary>
+        /// <param name="value">The payment-method name.</param>
+        /// <returns>The current builder.</returns>
+        public Secure3dBuilder WithPaymentMethodName(string value)
+        {
+            PaymentMethodName = value;
             return this;
         }
         public Secure3dBuilder WithDecoupledFlowRequest(bool value)
@@ -459,6 +491,14 @@ namespace GlobalPayments.Api.Builders {
         public Secure3dBuilder WithWhitelistStatus(bool whitelistStatus)
         {
             WhitelistStatus = whitelistStatus;
+            return this;
+        }
+        /// <summary>Sets the GP-API whitelist status.</summary>
+        /// <param name="whitelistStatus">A GP-API whitelist status value.</param>
+        /// <returns>The current builder.</returns>
+        public Secure3dBuilder WithWhitelistStatus(string whitelistStatus)
+        {
+            WhitelistStatusValue = whitelistStatus;
             return this;
         }
         public Secure3dBuilder WithWorkNumber(string countryCode, string number)

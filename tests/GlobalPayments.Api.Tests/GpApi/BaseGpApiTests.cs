@@ -30,6 +30,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
         protected const string PartnerAppKey = "KYYh3YJwyfzqjWNa"; //gitleaks:allow
         protected const string MMAAccountID = "MMA_003720f36d9d4f7f9348b5a4981071ce";
         protected const string AlternateMMAAccountID = "MMA_344aebc638864d7381909dcf78d4c760";
+        protected const string newappid = "hkjrcsGDhWiDt8GEhoDMKy3pzFz5R0Bo";
+        protected const string newappkey = "cQOKHoAAvNIcEN8s";
 
         /// <summary>
         /// The app ID for the designated merchant-scoped sandbox FMA.

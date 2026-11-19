@@ -3,6 +3,8 @@ using GlobalPayments.Api.Entities.GpApi;
 using GlobalPayments.Api.Gateways;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Utils;
+using System.Collections.Generic;
+using System;
 using System.Net.Http;
 
 namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
@@ -16,6 +18,16 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         return new Request {
                             Verb = HttpMethod.Get,
                             Endpoint = $"{merchantUrl}{GpApiRequest.TRANSACTION_ENDPOINT}/{trb.TransactionId}",
+                        };
+                    case ReportType.BatchById:
+                        return new Request {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}{GpApiRequest.BATCHES_ENDPOINT}/{Uri.EscapeDataString(trb.SearchBuilder.BatchId)}",
+                        };
+                    case ReportType.BatchTransactions:
+                        return new Request {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}{GpApiRequest.BATCHES_ENDPOINT}/{Uri.EscapeDataString(trb.SearchBuilder.BatchId)}/transactions",
                         };
                     case ReportType.FindTransactionsPaged:
                         request = new Request {
@@ -251,6 +263,42 @@ namespace GlobalPayments.Api.Builders.RequestBuilder.GpApi {
                         request.AddQueryStringParam("version", trb.SearchBuilder.Version);
                         request.AddQueryStringParam("response_code", trb.SearchBuilder.ResponseCode);
                         request.AddQueryStringParam("http_response_code", trb.SearchBuilder.HttpResponseCode);
+
+                        return request;
+                    case ReportType.AuthenticationDetail:
+                        var authenticationDetail = builder as AuthenticationReportBuilder<T>;
+                        return new Request {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}{GpApiRequest.AUTHENTICATIONS_ENDPOINT}/{authenticationDetail.AuthenticationId}",
+                        };
+                    case ReportType.FindAuthenticationsPaged:
+                        var authenticationList = builder as AuthenticationReportBuilder<T>;
+                        request = new Request {
+                            Verb = HttpMethod.Get,
+                            Endpoint = $"{merchantUrl}{GpApiRequest.AUTHENTICATIONS_ENDPOINT}",
+                        };
+                        request.AddQueryStringParam("page", trb.Page?.ToString());
+                        request.AddQueryStringParam("page_size", trb.PageSize?.ToString());
+                        request.AddQueryStringParam("order_by", authenticationList.AuthenticationOrderBy);
+                        request.AddQueryStringParam("order", EnumConverter.GetMapping(Target.GP_API, trb.Order));
+                        request.AddQueryStringParam("from_time_created", trb.StartDate?.ToString("yyyy-MM-dd"));
+                        request.AddQueryStringParam("to_time_created", trb.EndDate?.ToString("yyyy-MM-dd"));
+                        request.AddQueryStringParam("id", authenticationList.AuthenticationId);
+                        request.AddQueryStringParam("amount", authenticationList.AuthenticationAmount.ToNumericCurrencyString());
+                        request.AddQueryStringParam("country", authenticationList.AuthenticationCountry);
+                        request.AddQueryStringParam("currency", authenticationList.AuthenticationCurrency);
+                        request.AddQueryStringParam("source", authenticationList.AuthenticationSource);
+                        request.AddQueryStringParam("three_ds.ds_trans_ref", authenticationList.DirectoryServerTransactionReference);
+                        request.AddQueryStringParam("three_ds.server_trans_ref", authenticationList.ServerTransactionReference);
+                        request.AddQueryStringParam("three_ds.liability_shift", authenticationList.LiabilityShift);
+                        request.AddQueryStringParam("three_ds.authentication_value", authenticationList.AuthenticationValue);
+                        request.AddQueryStringParam("three_ds.eci", authenticationList.Eci);
+                        request.AddQueryStringParam("three_ds.message_version", authenticationList.MessageVersion);
+                        if (!string.IsNullOrEmpty(authenticationList.AuthenticationValue)) {
+                            request.MaskedValues = new Dictionary<string, string> {
+                                { "three_ds.authentication_value", authenticationList.AuthenticationValue }
+                            };
+                        }
 
                         return request;
 

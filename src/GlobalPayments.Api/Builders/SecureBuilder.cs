@@ -30,7 +30,12 @@ namespace GlobalPayments.Api.Builders
         internal PreOrderIndicator? PreOrderIndicator { get; set; }
         internal ReorderIndicator? ReorderIndicator { get; set; }
         internal string CustomerAccountId { get; set; }
+        internal string CustomerName { get; set; }
+        internal DateTime? CustomerDateOfBirth { get; set; }
+        internal string WhitelistStatusValue { get; set; }
         internal string CustomerEmail { get; set; } = null;
+        internal string PaymentMethodName { get; set; }
+        internal PaymentEntryMode? PaymentEntryMode { get; set; }
         internal AgeIndicator? AccountAgeIndicator { get; set; }
         internal DateTime? AccountChangeDate { get; set; }
         internal DateTime? AccountCreateDate { get; set; }

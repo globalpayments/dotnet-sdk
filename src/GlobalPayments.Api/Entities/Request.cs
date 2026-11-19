@@ -8,6 +8,7 @@ namespace GlobalPayments.Api.Entities {
         public HttpMethod Verb { get; set; } = HttpMethod.Get;
         public string Endpoint { get; set; }
         public string RequestBody { get; set; }
+        internal bool SendBodyWithGet { get; set; }
         public Dictionary<string, string> QueryStringParams { get; }
 
         // Request-scoped masked values. Instance (not static) so concurrent transactions cannot

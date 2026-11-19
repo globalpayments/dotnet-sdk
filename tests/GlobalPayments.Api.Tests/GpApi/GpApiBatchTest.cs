@@ -1,4 +1,5 @@
 ﻿using System;
+using GlobalPayments.Api.Builders;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
@@ -75,6 +76,86 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             var batchSummary = BatchService.CloseBatch(chargeTransaction.BatchSummary.BatchReference);
             AssertBatchCloseResponse(batchSummary, AMOUNT);
+        }
+
+        /// <summary>
+        /// Verifies that an open batch can be retrieved by its ID.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Sandbox")]
+        public void GetBatch_AfterSale_ReturnsBatchSummary() {
+            var transaction = creditTrackData.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+
+            WaitForGpApiReplication();
+
+            var batchReference = transaction.BatchSummary.BatchReference;
+            var batch = ReportingService.GetBatch(batchReference).Execute();
+
+            Assert.IsNotNull(batch);
+            Assert.AreEqual(batchReference, batch.BatchReference);
+            Assert.AreEqual("OPEN", batch.Status);
+            Assert.IsTrue(batch.BatchTransactionCount >= 1);
+            Assert.IsNotNull(batch.Action);
+            Assert.AreEqual("BATCH_SINGLE", batch.Action.Type);
+        }
+
+        /// <summary>
+        /// Verifies that transactions associated with an open batch can be retrieved.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Sandbox")]
+        public void GetBatchTransactions_AfterSale_ReturnsTransactions() {
+            var transaction = creditTrackData.Charge(AMOUNT)
+                .WithCurrency(CURRENCY)
+                .Execute();
+            Assert.IsNotNull(transaction);
+            Assert.AreEqual("00", transaction.ResponseCode);
+
+            WaitForGpApiReplication();
+
+            var batchReference = transaction.BatchSummary.BatchReference;
+            var batchTransactions = ReportingService.GetBatchTransactions(batchReference).Execute();
+
+            Assert.IsNotNull(batchTransactions);
+            Assert.IsNotNull(batchTransactions.Results);
+            Assert.IsTrue(batchTransactions.Results.Count > 0);
+            Assert.IsTrue(batchTransactions.Results.Exists(
+                item => item.TransactionId == transaction.TransactionId));
+        }
+
+        /// <summary>
+        /// Verifies that batch report operations require a batch ID.
+        /// </summary>
+        [TestMethod]
+        public void GetBatch_MissingBatchId_ThrowsBuilderException() {
+            Assert.ThrowsException<BuilderException>(() =>
+                ReportingService.GetBatch(null).Execute());
+        }
+
+        /// <summary>
+        /// Verifies that batch transaction report operations require a batch ID.
+        /// </summary>
+        [TestMethod]
+        public void GetBatchTransactions_MissingBatchId_ThrowsBuilderException() {
+            Assert.ThrowsException<BuilderException>(() =>
+                ReportingService.GetBatchTransactions(null).Execute());
+        }
+
+        /// <summary>
+        /// Verifies that the existing BatchSummary report type does not inherit GetBatch validation.
+        /// </summary>
+        [TestMethod]
+        public void BatchSummary_WithoutBatchId_DoesNotThrowBuilderException() {
+            var exception = Assert.ThrowsException<ApiException>(() =>
+                new TransactionReportBuilder<BatchSummary>(ReportType.BatchSummary).Execute("unconfigured"));
+
+            Assert.AreEqual(
+                "The specified configuration has not been configured for reporting.",
+                exception.Message);
         }
 
         [TestMethod]

@@ -36,7 +36,7 @@ namespace GlobalPayments.Api.Gateways {
 
         private string GenerateRequestLog(HttpRequestMessage request, bool isXml = false, IDictionary<string, string> maskedValues = null) {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{request.Method.ToString()} {request.RequestUri}");
+            sb.AppendLine($"{request.Method.ToString()} {MaskSensitiveQueryParameters(request.RequestUri, maskedValues)}");
             foreach (var header in request.Headers) {
                 sb.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
             }
@@ -53,9 +53,30 @@ namespace GlobalPayments.Api.Gateways {
             }
             return sb.ToString();
         }
+
+        internal static string MaskSensitiveQueryParameters(Uri requestUri, IDictionary<string, string> maskedValues) {
+            if (requestUri == null || maskedValues == null || maskedValues.Count == 0 || string.IsNullOrEmpty(requestUri.Query)) {
+                return requestUri?.ToString();
+            }
+
+            var queryParameters = requestUri.Query.Substring(1).Split('&');
+            for (int i = 0; i < queryParameters.Length; i++) {
+                var separator = queryParameters[i].IndexOf('=');
+                var encodedName = separator < 0 ? queryParameters[i] : queryParameters[i].Substring(0, separator);
+                var name = Uri.UnescapeDataString(encodedName);
+                if (maskedValues.ContainsKey(name)) {
+                    queryParameters[i] = encodedName + "=%2A%2A%2A";
+                }
+            }
+
+            var uriBuilder = new UriBuilder(requestUri) {
+                Query = string.Join("&", queryParameters)
+            };
+            return uriBuilder.Uri.ToString();
+        }
                 
 
-        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false, IDictionary<string, string> additionalHeaders = null, IDictionary<string, string> maskedValues = null) {
+        protected GatewayResponse SendRequest(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string contentType = null, bool isCharSet = true, bool isXml = false, IDictionary<string, string> additionalHeaders = null, IDictionary<string, string> maskedValues = null, bool sendBodyWithGet = false) {
             HttpClient httpClient = new HttpClient(HttpClientHandlerBuilder.Build(WebProxy)) {
                 Timeout = TimeSpan.FromMilliseconds(Timeout)
 
@@ -91,7 +112,7 @@ namespace GlobalPayments.Api.Gateways {
 
             HttpResponseMessage response = null;
             try {
-                if (verb != HttpMethod.Get && data != null) {
+                if ((verb != HttpMethod.Get || sendBodyWithGet) && data != null) {
                     if (isCharSet) {
                         request.Content = new StringContent(data, Encoding.UTF8, contentType ?? _contentType);
                     }

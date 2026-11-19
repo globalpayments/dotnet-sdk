@@ -15,6 +15,7 @@ This SDK makes it easy to integrate your .NET application with our Card Not Pres
 * Secure Card Storage & Customer Management
 * Subscriptions / Recurring Billing Solutions
 * Credit, Debit, Gift & Loyalty, and eCheck/ACH
+* GP-API Batch Reporting
 
 ### Card Not Present (Ecommerce & MOTO) Specific
 
@@ -30,6 +31,18 @@ This SDK makes it easy to integrate your .NET application with our Card Not Pres
 
 * Minimize PCI Compliance requirements with Semi-Integrated / Out of Scope devices
 * Secure End-To-End Encryption
+
+### GP-API Batch Reporting
+
+After configuring the GP-API gateway, retrieve a batch summary and its transactions by batch ID:
+
+```csharp
+var batchId = "<GP-API batch ID>";
+var batch = ReportingService.GetBatch(batchId).Execute();
+var batchTransactions = ReportingService.GetBatchTransactions(batchId).Execute();
+```
+
+`GetBatch` returns a `BatchSummary`. `GetBatchTransactions` returns a paged result containing `TransactionSummary` items and paging metadata.
 
 ## Requirements
 

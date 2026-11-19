@@ -61,33 +61,7 @@ namespace GlobalPayments.Api.Mapping {
 
                 switch (actionType) {
                     case BATCH_CLOSE:
-                        transaction.BatchSummary = new BatchSummary {
-                            BatchReference = json.GetValue<string>("id"),
-                            Status = json.GetValue<string>("status"),
-                            TotalAmount = json.GetValue<string>("amount").ToAmount(),
-                            TransactionCount = json.GetValue<int>("transaction_count"),
-                            TimeCreated = json.GetValue("time_created", DateConverter),
-                            TimeLastUpdated = json.GetValue("time_last_updated", DateConverter),
-                            TimeClosed = json.GetValue("time_closed", DateConverter),
-                            OpenActionId = json.GetValue<string>("open_action_id"),
-                            CloseActionId = json.GetValue<string>("close_action_id"),
-                            MerchantName = json.GetValue<string>("merchant_name"),
-                            MerchantId = json.GetValue<string>("merchant_id"),
-                            AccountId = json.GetValue<string>("account_id"),
-                            AccountName = json.GetValue<string>("account_name"),
-                            SiteReference = json.GetValue<string>("site_reference"),
-                            DeviceReference = json.GetValue<string>("device_reference"),
-                            Currency = json.GetValue<string>("currency"),
-                            GratuityAmount = json.GetValue<string>("gratuity_amount").ToAmount(),
-                            SaleCount = json.Get("sales")?.GetValue<int>("count") ?? default(int),
-                            SaleAmount = json.Get("sales")?.GetValue<string>("amount").ToAmount(),
-                            ReturnCount = json.Get("refunds")?.GetValue<int>("count") ?? default(int),
-                            ReturnAmount = json.Get("refunds")?.GetValue<string>("amount").ToAmount(),
-                            DebitCount = json.Get("funding_debit")?.GetValue<int>("count") ?? default(int),
-                            DebitAmount = json.Get("funding_debit")?.GetValue<string>("amount").ToAmount(),
-                            CreditCount = json.Get("funding_credit")?.GetValue<int>("count") ?? default(int),
-                            CreditAmount = json.Get("funding_credit")?.GetValue<string>("amount").ToAmount(),
-                        };
+                        transaction.BatchSummary = MapBatchSummary(json);
                         return transaction;
                     case PAYMENT_METHOD_CREATE:
                     case PAYMENT_METHOD_DETOKENIZE:
@@ -493,6 +467,120 @@ namespace GlobalPayments.Api.Mapping {
             };
         }
 
+        /// <summary>
+        /// Maps a GP-API batch response to its SDK entity.
+        /// </summary>
+        /// <param name="json">The batch response.</param>
+        /// <returns>The mapped batch summary.</returns>
+        private static BatchSummary MapBatchSummary(JsonDoc json) {
+            var currency = json.GetValue<string>("currency");
+            var summary = new BatchSummary {
+                BatchReference = json.GetValue<string>("id"),
+                Status = json.GetValue<string>("status"),
+                TotalAmount = json.GetValue<string>("amount").FromMinorUnits(currency),
+                TransactionCount = json.GetValue<int>("transaction_count"),
+                BatchTransactionCount = json.GetNullableValue<int?>("batch_transaction_count"),
+                TimeCreated = json.GetValue("time_created", DateConverter),
+                TimeLastUpdated = json.GetValue("time_last_updated", DateConverter),
+                TimeClosed = json.GetValue("time_closed", DateConverter),
+                OpenActionId = json.GetValue<string>("open_action_id"),
+                CloseActionId = json.GetValue<string>("close_action_id"),
+                MerchantName = json.GetValue<string>("merchant_name"),
+                MerchantId = json.GetValue<string>("merchant_id"),
+                AccountId = json.GetValue<string>("account_id"),
+                AccountName = json.GetValue<string>("account_name"),
+                Country = json.GetValue<string>("country"),
+                SiteReference = json.GetValue<string>("site_reference"),
+                DeviceReference = json.GetValue<string>("device_reference"),
+                Currency = currency,
+                GratuityAmount = json.GetValue<string>("gratuity_amount").FromMinorUnits(currency),
+                SaleCount = json.Get("sales")?.GetValue<int>("count") ?? default(int),
+                SaleAmount = json.Get("sales")?.GetValue<string>("amount").FromMinorUnits(currency),
+                ReturnCount = json.Get("refunds")?.GetValue<int>("count") ?? default(int),
+                ReturnAmount = json.Get("refunds")?.GetValue<string>("amount").FromMinorUnits(currency),
+                DebitCount = json.Get("funding_debit")?.GetValue<int>("count") ?? default(int),
+                DebitAmount = json.Get("funding_debit")?.GetValue<string>("amount").FromMinorUnits(currency),
+                CreditCount = json.Get("funding_credit")?.GetValue<int>("count") ?? default(int),
+                CreditAmount = json.Get("funding_credit")?.GetValue<string>("amount").FromMinorUnits(currency),
+                Action = MapAction(json.Get("action")),
+                HostBreakdown = MapBatchHostBreakdown(json.Get("host_breakdown"), currency)
+            };
+
+            var brandBreakdowns = json.GetArray<JsonDoc>("brand_breakdown");
+            if (brandBreakdowns != null) {
+                summary.BrandBreakdown = new List<BatchBrandBreakdown>();
+                foreach (var brand in brandBreakdowns) {
+                    summary.BrandBreakdown.Add(new BatchBrandBreakdown {
+                        Brand = brand.GetValue<string>("brand"),
+                        Amount = brand.GetValue<string>("amount").FromMinorUnits(currency),
+                        Count = brand.GetNullableValue<int?>("count"),
+                        GratuityAmount = brand.GetValue<string>("gratuity_amount").FromMinorUnits(currency),
+                        Sales = MapBatchAmountSummary(brand.Get("sales"), currency),
+                        Refunds = MapBatchAmountSummary(brand.Get("refunds"), currency),
+                        FundingDebit = MapBatchAmountSummary(brand.Get("funding_debit"), currency),
+                        FundingCredit = MapBatchAmountSummary(brand.Get("funding_credit"), currency)
+                    });
+                }
+            }
+
+            return summary;
+        }
+
+        /// <summary>
+        /// Maps a nested batch count and amount breakdown.
+        /// </summary>
+        /// <param name="json">The optional breakdown response.</param>
+        /// <param name="currency">The currency used to convert the amount from minor units.</param>
+        /// <returns>The mapped count and amount, or <c>null</c> when the breakdown is absent.</returns>
+        private static BatchAmountSummary MapBatchAmountSummary(JsonDoc json, string currency) {
+            if (json == null) {
+                return null;
+            }
+
+            return new BatchAmountSummary {
+                Count = json.GetNullableValue<int?>("count"),
+                Amount = json.GetValue<string>("amount").FromMinorUnits(currency)
+            };
+        }
+
+        /// <summary>
+        /// Maps the optional processing-host breakdown returned for a batch.
+        /// </summary>
+        /// <param name="json">The host breakdown response.</param>
+        /// <param name="currency">The currency used to convert amounts from minor units.</param>
+        /// <returns>The mapped host breakdown, or <c>null</c> when it is absent.</returns>
+        private static BatchHostBreakdown MapBatchHostBreakdown(JsonDoc json, string currency) {
+            if (json == null) {
+                return null;
+            }
+
+            return new BatchHostBreakdown {
+                MerchantName = json.GetValue<string>("merchant_name"),
+                Reference = json.GetValue<string>("reference"),
+                Count = json.GetNullableValue<int?>("count"),
+                Amount = json.GetValue<string>("amount").FromMinorUnits(currency),
+                FundingDebit = MapBatchHostFundingBreakdown(json.Get("funding_debit"), currency),
+                FundingCredit = MapBatchHostFundingBreakdown(json.Get("funding_credit"), currency)
+            };
+        }
+
+        /// <summary>
+        /// Maps host sales and refunds for one funding direction.
+        /// </summary>
+        /// <param name="json">The optional funding direction response.</param>
+        /// <param name="currency">The currency used to convert amounts from minor units.</param>
+        /// <returns>The mapped funding breakdown, or <c>null</c> when it is absent.</returns>
+        private static BatchHostFundingBreakdown MapBatchHostFundingBreakdown(JsonDoc json, string currency) {
+            if (json == null) {
+                return null;
+            }
+
+            return new BatchHostFundingBreakdown {
+                Sales = MapBatchAmountSummary(json.Get("sales"), currency),
+                Refunds = MapBatchAmountSummary(json.Get("refunds"), currency)
+            };
+        }
+
         private static Bank MapBank(JsonDoc bankJson) {
             if (bankJson == null) {
                 return null;
@@ -638,6 +726,7 @@ namespace GlobalPayments.Api.Mapping {
                 ReferenceNumber = doc.GetValue<string>("reference"),
                 ClientTransactionId = doc.GetValue<string>("reference"),
                 TransactionLocalDate = doc.GetValue("time_created_reference", DateConverter),
+                BatchId = doc.GetValue<string>("batch_id"),
                 BatchSequenceNumber = doc.GetValue<string>("batch_id"),
                 Country = doc.GetValue<string>("country"),
                 OriginalTransactionId = doc.GetValue<string>("parent_resource_id"),
@@ -875,7 +964,17 @@ namespace GlobalPayments.Api.Mapping {
 
             JsonDoc json = JsonDoc.Parse(rawResponse);
 
-            if (reportType == ReportType.TransactionDetail && result is TransactionSummary) {
+            if (reportType == ReportType.BatchById && result is BatchSummary) {
+                result = MapBatchSummary(json) as T;
+            }
+            else if (reportType == ReportType.BatchTransactions && result is PagedResult<TransactionSummary>) {
+                var batchTransactions = result as PagedResult<TransactionSummary>;
+                SetBatchTransactionsPagingInfo(batchTransactions, json);
+                foreach (var doc in json.GetArray<JsonDoc>("transactions") ?? Enumerable.Empty<JsonDoc>()) {
+                    batchTransactions.Add(MapBatchTransactionSummary(doc));
+                }
+            }
+            else if (reportType == ReportType.TransactionDetail && result is TransactionSummary) {
                 result = MapTransactionSummary(json) as T;
             }
             else if ((reportType == ReportType.FindTransactionsPaged || reportType == ReportType.FindSettlementTransactionsPaged) && result is PagedResult<TransactionSummary>) {
@@ -932,6 +1031,22 @@ namespace GlobalPayments.Api.Mapping {
                     (result as PagedResult<ActionSummary>).Add(MapActionSummary(doc));
                 }
             }
+            else if (reportType == ReportType.AuthenticationDetail && result is AuthenticationSummary) {
+                result = MapAuthenticationSummary(json) as T;
+            }
+            else if (reportType == ReportType.FindAuthenticationsPaged && result is PagedResult<AuthenticationSummary>) {
+                var pagedResult = result as PagedResult<AuthenticationSummary>;
+                SetAuthenticationPagingInfo(pagedResult, json);
+                var authenticationRecords = json.GetArray<JsonDoc>("authentications");
+                if (authenticationRecords != null) {
+                    foreach (var doc in authenticationRecords) {
+                        pagedResult.Add(MapAuthenticationSummary(doc));
+                    }
+                }
+                else if (json.Get("authentications") is JsonDoc authenticationRecord) {
+                    pagedResult.Add(MapAuthenticationSummary(authenticationRecord));
+                }
+            }
             else if (reportType == ReportType.FindPayByLinkPaged && result is PagedResult<PayByLinkSummary>) {
                 SetPagingInfo(result as PagedResult<PayByLinkSummary>, json);
                 foreach (var doc in json.GetArray<JsonDoc>("links") ?? Enumerable.Empty<JsonDoc>()) {
@@ -960,6 +1075,168 @@ namespace GlobalPayments.Api.Mapping {
             return result;
         }
 
+        private static void SetAuthenticationPagingInfo(PagedResult<AuthenticationSummary> result, JsonDoc json) {
+            SetPagingInfo(result, json);
+            result.CurrentPageSize = json.GetValue<int>("current_page_size");
+            result.MerchantId = json.GetValue<string>("merchant_id");
+            result.MerchantName = json.GetValue<string>("merchant_name");
+            result.AccountId = json.GetValue<string>("account_id");
+            result.AccountName = json.GetValue<string>("account_name");
+            result.FromTimeCreated = json.Get("filter")?.GetValue("from_time_created", DateConverter);
+            result.ToTimeCreated = json.Get("filter")?.GetValue("to_time_created", DateConverter);
+            result.Action = MapAction(json.Get("action"));
+        }
+
+        private static AuthenticationSummary MapAuthenticationSummary(JsonDoc json) {
+            var paymentMethod = json.Get("payment_method");
+            var card = paymentMethod?.Get("card");
+
+            var summary = new AuthenticationSummary {
+                Id = json.GetValue<string>("id"),
+                TimeCreated = json.GetValue("time_created", DateConverter),
+                TimeLastUpdated = json.GetValue("time_last_updated", DateConverter),
+                TransactionType = json.GetValue<string>("transaction_type"),
+                Status = json.GetValue<string>("status"),
+                Channel = json.GetValue<string>("channel"),
+                Amount = json.GetValue<string>("amount").ToAmount(),
+                Currency = json.GetValue<string>("currency"),
+                Country = json.GetValue<string>("country"),
+                Source = json.GetValue<string>("source"),
+                MerchantId = json.GetValue<string>("merchant_id"),
+                MerchantName = json.GetValue<string>("merchant_name"),
+                AccountId = json.GetValue<string>("account_id"),
+                AccountName = json.GetValue<string>("account_name"),
+                Reference = json.GetValue<string>("reference"),
+                ActionCreateId = json.GetValue<string>("action_create_id"),
+                ThreeDSecure = MapAuthenticationThreeDSecure(json.Get("three_ds")),
+                Notifications = MapAuthenticationNotifications(json.Get("notifications")),
+                System = MapAuthenticationSystem(json.Get("system")),
+                Action = MapAction(json.Get("action")),
+                PaymentMethod = paymentMethod == null ? null : new AuthenticationPaymentMethodSummary {
+                    Result = paymentMethod.GetValue<string>("result"),
+                    Message = paymentMethod.GetValue<string>("message"),
+                    EntryMode = paymentMethod.GetValue<string>("entry_mode"),
+                    Fingerprint = paymentMethod.GetValue<string>("fingerprint"),
+                    FingerprintPresenceIndicator = paymentMethod.GetValue<string>("fingerprint_presence_indicator"),
+                    Name = paymentMethod.GetValue<string>("name"),
+                    Card = MapAuthenticationCard(card),
+                    ThreeDSecure = MapAuthenticationThreeDSecure(paymentMethod.Get("three_ds"))
+                }
+            };
+
+            if (summary.ThreeDSecure != null) {
+                summary.ThreeDSecure.ServerTransactionId = summary.Id;
+            }
+
+            return summary;
+        }
+
+        private static AuthenticationCardSummary MapAuthenticationCard(JsonDoc card) {
+            if (card == null) {
+                return null;
+            }
+
+            return new AuthenticationCardSummary {
+                Funding = card.GetValue<string>("funding"),
+                Brand = card.GetValue<string>("brand"),
+                AuthCode = card.GetValue<string>("authcode"),
+                BrandReference = card.GetValue<string>("brand_reference"),
+                MaskedNumberFirst6Last4 = card.GetValue<string>("masked_number_first6last4"),
+                CvvIndicator = card.GetValue<string>("cvv_indicator"),
+                CvvResult = card.GetValue<string>("cvv_result"),
+                AvsAddressResult = card.GetValue<string>("avs_address_result"),
+                AvsPostalCodeResult = card.GetValue<string>("avs_postal_code_result")
+            };
+        }
+
+        private static ThreeDSecure MapAuthenticationThreeDSecure(JsonDoc threeDS) {
+            if (threeDS == null) {
+                return null;
+            }
+
+            var mobileData = threeDS.Get("mobile_data");
+            var acsRenderingType = mobileData?.Get("acs_rendering_type");
+            var methodData = threeDS.Get("method_data");
+
+            return new ThreeDSecure {
+                AcsTransactionId = threeDS.GetValue<string>("acs_trans_ref"),
+                AcsReferenceNumber = threeDS.GetValue<string>("acs_reference_number"),
+                AcsStartVersion = threeDS.GetValue<string>("acs_protocol_version_start"),
+                AcsEndVersion = threeDS.GetValue<string>("acs_protocol_version_end"),
+                DirectoryServerStartVersion = threeDS.GetValue<string>("ds_protocol_version_start"),
+                DirectoryServerEndVersion = threeDS.GetValue<string>("ds_protocol_version_end"),
+                AcsInfoIndicator = threeDS.GetArray<string>("acs_info_indicator"),
+                Version = string.IsNullOrEmpty(threeDS.GetValue<string>("message_version")) ? (Secure3dVersion?)null : Parse3DSVersion(threeDS.GetValue<string>("message_version")),
+                DirectoryServerTransactionId = threeDS.GetValue<string>("ds_trans_ref"),
+                ProviderServerTransRef = threeDS.GetValue<string>("server_trans_ref"),
+                Enrolled = threeDS.GetValue<string>("enrolled_status"),
+                LiabilityShift = threeDS.GetValue<string>("liability_shift"),
+                AuthenticationValue = threeDS.GetValue<string>("value"),
+                AuthenticationValueData = threeDS.GetValue<string>("authentication_value"),
+                Eci = threeDS.GetValue<string>("eci"),
+                Status = threeDS.GetValue<string>("status"),
+                StatusReason = threeDS.GetValue<string>("status_reason"),
+                MessageCategory = threeDS.GetValue<string>("message_category"),
+                MessageVersion = threeDS.GetValue<string>("message_version"),
+                AuthenticationSource = threeDS.GetValue<string>("authentication_source"),
+                AuthenticationType = threeDS.GetValue<string>("authentication_type"),
+                AuthenticationRequestType = threeDS.GetValue<string>("authentication_request_type"),
+                WhitelistStatus = threeDS.GetValue<string>("whitelist_status"),
+                CardHolderResponseInfo = threeDS.GetValue<string>("cardholder_response_info"),
+                ChallengeStatus = threeDS.GetValue<string>("challenge_status"),
+                ChallengeMandated = threeDS.GetValue<string>("challenge_status") == "MANDATED",
+                ChallengeModel = threeDS.GetValue<string>("challenge_model"),
+                SessionDataFieldName = threeDS.GetValue<string>("session_data_field_name"),
+                MessageType = threeDS.GetValue<string>("message_type"),
+                ChallengeValue = threeDS.GetValue<string>("challenge_value"),
+                RedirectUrl = threeDS.GetValue<string>("redirect_url"),
+                AcsChallengeRequestUrl = threeDS.GetValue<string>("acs_challenge_request_url"),
+                MethodUrl = threeDS.GetValue<string>("method_url"),
+                MethodData = methodData == null ? null : new ThreeDSecureMethodData {
+                    ThreeDSServerTransactionId = methodData.GetValue<string>("three_ds_server_trans_id"),
+                    ThreeDSMethodReturnUrl = methodData.GetValue<string>("three_ds_method_return_url"),
+                    EncodedMethodData = methodData.GetValue<string>("encoded_method_data")
+                },
+                AcsDecoupledResponseIndicator = threeDS.GetArray<string>("acs_decoupled_response_indicator"),
+                ExemptionOptimizationResult = threeDS.GetValue<string>("exemption_optimization_result"),
+                MessageExtensionValues = threeDS.GetArray<string>("message_extension"),
+                AcsInterface = mobileData?.GetValue<string>("acs_interface") ?? acsRenderingType?.GetValue<string>("acs_interface"),
+                AcsUiTemplate = mobileData?.GetValue<string>("acs_ui_template") ?? acsRenderingType?.GetValue<string>("acs_ui_template"),
+                MobileData = mobileData == null ? null : new ThreeDSecureMobileData {
+                    AcsSignedContent = mobileData.GetValue<string>("acs_signed_content"),
+                    AcsRenderingTypeValue = acsRenderingType == null ? mobileData.GetValue<string>("acs_rendering_type") : null,
+                    AcsInterface = mobileData.GetValue<string>("acs_interface"),
+                    AcsUiTemplate = mobileData.GetValue<string>("acs_ui_template"),
+                    AcsRenderingType = acsRenderingType == null ? null : new ThreeDSecureAcsRenderingType {
+                        AcsInterface = acsRenderingType.GetValue<string>("acs_interface"),
+                        AcsUiTemplate = acsRenderingType.GetValue<string>("acs_ui_template")
+                    }
+                }
+            };
+        }
+
+        private static AuthenticationNotificationsSummary MapAuthenticationNotifications(JsonDoc notifications) {
+            if (notifications == null) {
+                return null;
+            }
+
+            return new AuthenticationNotificationsSummary {
+                ChallengeReturnUrl = notifications.GetValue<string>("challenge_return_url")
+            };
+        }
+
+        private static AuthenticationSystemSummary MapAuthenticationSystem(JsonDoc system) {
+            if (system == null) {
+                return null;
+            }
+
+            return new AuthenticationSystemSummary {
+                Mid = system.GetValue<string>("mid"),
+                Tid = system.GetValue<string>("tid"),
+                Name = system.GetValue<string>("name")
+            };
+        }
+
 
         private static void SetPagingInfo<T>(PagedResult<T> result, JsonDoc json) where T : class {
             result.TotalRecordCount = json.GetValue<int>("total_record_count", "total_count");
@@ -967,6 +1244,45 @@ namespace GlobalPayments.Api.Mapping {
             result.Page = json.Get("paging")?.GetValue<int>("page") ?? default(int);
             result.Order = json.Get("paging")?.GetValue<string>("order");
             result.OrderBy = json.Get("paging")?.GetValue<string>("order_by");
+        }
+
+        /// <summary>
+        /// Maps paging and response metadata for transactions within a batch.
+        /// </summary>
+        /// <param name="result">The batch transactions report.</param>
+        /// <param name="json">The GP-API response envelope.</param>
+        private static void SetBatchTransactionsPagingInfo(PagedResult<TransactionSummary> result, JsonDoc json) {
+            SetPagingInfo(result, json);
+            result.BatchTransactionCount = json.GetNullableValue<int?>("batch_transaction_count");
+            result.AccountId = json.GetValue<string>("account_id");
+            result.AccountName = json.GetValue<string>("account_name");
+            result.SiteReference = json.GetValue<string>("site_reference");
+            result.DeviceReference = json.GetValue<string>("device_reference");
+            result.BatchId = json.Get("filter")?.GetValue<string>("batch_id");
+            result.CurrentPageSize = json.GetValue<int>("current_page_size");
+            result.MerchantId = json.GetValue<string>("merchant_id");
+            result.MerchantName = json.GetValue<string>("merchant_name");
+            result.Action = MapAction(json.Get("action"));
+        }
+
+        /// <summary>
+        /// Maps a transaction returned within a batch, including its amount and verification details.
+        /// </summary>
+        /// <param name="json">The batch transaction response.</param>
+        /// <returns>The mapped transaction summary.</returns>
+        private static TransactionSummary MapBatchTransactionSummary(JsonDoc json) {
+            var summary = MapTransactionSummary(json);
+            summary.Amount = json.GetValue<string>("amount").FromMinorUnits(summary.Currency);
+            summary.TaxAmount = json.GetValue<string>("tax_amount").FromMinorUnits(summary.Currency);
+            summary.GratuityAmount = json.GetValue<string>("gratuity_amount").FromMinorUnits(summary.Currency);
+            summary.SurchargeAmount = json.GetValue<string>("surcharge_amount").FromMinorUnits(summary.Currency);
+            summary.CashBackAmount = json.GetValue<string>("cashback_amount").FromMinorUnits(summary.Currency);
+            var card = json.Get("payment_method")?.Get("card");
+            summary.CvvResult = card?.GetValue<string>("cvv_result");
+            summary.AvsAddress = card?.GetValue<string>("avs_address");
+            summary.AvsAddressResult = card?.GetValue<string>("avs_address_result");
+            summary.AvsPostalCodeResult = card?.GetValue<string>("avs_postal_code_result");
+            return summary;
         }
 
         // Envelope fields below are only defined by the GET /ucp/actions response; their
@@ -1280,6 +1596,9 @@ namespace GlobalPayments.Api.Mapping {
         }
 
         private static Secure3dVersion Parse3DSVersion(string messageVersion) {
+            if (string.IsNullOrEmpty(messageVersion)) {
+                return Secure3dVersion.Any;
+            }
             if (messageVersion.StartsWith("1."))
                 return Secure3dVersion.One;
             if (messageVersion.StartsWith("2."))
@@ -1291,8 +1610,25 @@ namespace GlobalPayments.Api.Mapping {
         {
             if (!string.IsNullOrEmpty(rawResponse)) {
                 JsonDoc json = JsonDoc.Parse(rawResponse);
+                var authenticationDetails = MapAuthenticationSummary(json);
 
                 var transaction = new Transaction {
+                    AuthenticationDetails = authenticationDetails,
+                    TransactionId = json.GetValue<string>("id"),
+                    Timestamp = json.GetValue<string>("time_created"),
+                    Type = json.GetValue<string>("transaction_type"),
+                    Status = json.GetValue<string>("status"),
+                    ResponseMessage = json.GetValue<string>("status"),
+                    Channel = json.GetValue<string>("channel"),
+                    Currency = json.GetValue<string>("currency"),
+                    Country = json.GetValue<string>("country"),
+                    MerchantId = json.GetValue<string>("merchant_id"),
+                    MerchantName = json.GetValue<string>("merchant_name"),
+                    AccountId = json.GetValue<string>("account_id"),
+                    AccountName = json.GetValue<string>("account_name"),
+                    ReferenceNumber = json.GetValue<string>("reference"),
+                    AuthorizedAmount = json.GetValue<string>("amount").FromMinorUnits(json.GetValue<string>("currency")),
+                    Action = MapAction(json.Get("action")),
                     ThreeDSecure = new ThreeDSecure {
                         ServerTransactionId = json.GetValue<string>("id"),                        
                         MessageVersion = json.Get("three_ds")?.GetValue<string>("message_version"),
@@ -1326,7 +1662,8 @@ namespace GlobalPayments.Api.Mapping {
                         ChallengeReturnUrl = json.Get("notifications")?.GetValue<string>("challenge_return_url"),
                         LiabilityShift = json.Get("three_ds")?.GetValue<string>("liability_shift"),
                         AuthenticationSource = json.Get("three_ds")?.GetValue<string>("authentication_source"),
-                        AuthenticationType = json.Get("three_ds")?.GetValue<string>("authentication_request_type"),
+                        AuthenticationType = json.Get("three_ds")?.GetValue<string>("authentication_type"),
+                        AuthenticationRequestType = json.Get("three_ds")?.GetValue<string>("authentication_request_type"),
                         DecoupledResponseIndicator = json.Get("three_ds")?.GetValue<string>("acs_decoupled_response_indicator"),
                         //AcsInfoIndicator = json.Get("three_ds")?.GetArray<string>("acs_decoupled_response_indicator"),
                         WhitelistStatus = json.Get("three_ds")?.GetValue<string>("whitelist_status"),
@@ -1341,13 +1678,18 @@ namespace GlobalPayments.Api.Mapping {
 
                         transaction.ThreeDSecure.PayerAuthenticationRequest = mobileData.GetValue<string>("acs_signed_content");
 
-                        if (mobileData.Get("acs_rendering_type").HasKeys()) {
+                        if (mobileData.Get("acs_rendering_type")?.HasKeys() == true) {
                             JsonDoc acsRenderingType = mobileData.Get("acs_rendering_type");
                             transaction.ThreeDSecure.AcsInterface = acsRenderingType.GetValue<string>("acs_interface");
                             transaction.ThreeDSecure.AcsUiTemplate = acsRenderingType.GetValue<string>("acs_ui_template");
                         }
                     }
-                }
+                };
+
+                transaction.ThreeDSecure.ServerTransactionId = transaction.AuthenticationDetails?.Id;
+                transaction.ThreeDSecure.AuthenticationDetails = authenticationDetails;
+                transaction.ThreeDSecure.Merge(authenticationDetails?.ThreeDSecure);
+                transaction.ThreeDSecure.Status = json.GetValue<string>("status");
 
                 var messageExtensions = json.Get("three_ds")?.GetEnumerator("message_extension");
 

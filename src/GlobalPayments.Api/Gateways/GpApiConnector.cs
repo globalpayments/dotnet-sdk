@@ -181,7 +181,7 @@ namespace GlobalPayments.Api.Gateways {
             return Activator.CreateInstance(typeof(GpApiTokenResponse), new object[] { response }) as GpApiTokenResponse;
         }
 
-        private string DoTransactionWithIdempotencyKey(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null, IDictionary<string, string> maskedValues = null) {
+        private string DoTransactionWithIdempotencyKey(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null, IDictionary<string, string> maskedValues = null, bool sendBodyWithGet = false) {
             // The idempotency key is request-scoped. It must never be written to the shared Headers
             // dictionary on this singleton connector, otherwise a concurrent request can overwrite it
             // (causing DUPLICATE_ACTION) or the finally-block removal can strip another request's key.
@@ -193,16 +193,16 @@ namespace GlobalPayments.Api.Gateways {
                     } 
                 };
             }
-            return base.DoTransaction(verb, endpoint, data, queryStringParams, additionalHeaders: additionalHeaders, maskedValues: maskedValues);
+            return base.DoTransaction(verb, endpoint, data, queryStringParams, additionalHeaders: additionalHeaders, maskedValues: maskedValues, sendBodyWithGet: sendBodyWithGet);
         }
 
-        public string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null, IDictionary<string, string> maskedValues = null) {
+        public string DoTransaction(HttpMethod verb, string endpoint, string data = null, Dictionary<string, string> queryStringParams = null, string idempotencyKey = null, IDictionary<string, string> maskedValues = null, bool sendBodyWithGet = false) {
             if (string.IsNullOrEmpty(AccessToken)) {
                 SignIn();
             }
             try
             {
-                return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey, maskedValues);
+                return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey, maskedValues, sendBodyWithGet);
             }
             catch (GatewayException ex)
             {
@@ -210,7 +210,7 @@ namespace GlobalPayments.Api.Gateways {
                     && !string.IsNullOrEmpty(GpApiConfig.AppId) && !string.IsNullOrEmpty(GpApiConfig.AppKey))
                 {
                     SignIn();
-                    return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey, maskedValues);
+                    return DoTransactionWithIdempotencyKey(verb, endpoint, data, queryStringParams, idempotencyKey, maskedValues, sendBodyWithGet);
                 }
                 throw ex;
             }
@@ -288,7 +288,7 @@ namespace GlobalPayments.Api.Gateways {
             var request = new GpApiSecureRequestBuilder<ThreeDSecure>().BuildRequest(builder, this);
 
             if (request != null) {
-                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues);
+                var response = DoTransaction(request.Verb, request.Endpoint, request.RequestBody, request.QueryStringParams, builder.IdempotencyKey, request.MaskedValues, request.SendBodyWithGet);
 
                 return GpApiMapping.Map3DSecureData(response);
             }

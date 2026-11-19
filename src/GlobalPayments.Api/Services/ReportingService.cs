@@ -29,6 +29,28 @@ namespace GlobalPayments.Api.Services {
             return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.BatchDetail);
         }
 
+        /// <summary>
+        /// Retrieves a batch by its GP-API batch ID.
+        /// </summary>
+        /// <param name="batchId">The GP-API batch ID.</param>
+        /// <returns>A report builder that returns the batch summary.</returns>
+        public static TransactionReportBuilder<BatchSummary> GetBatch(string batchId) {
+            var builder = new TransactionReportBuilder<BatchSummary>(ReportType.BatchById);
+            builder.WithBatchId(batchId);
+            return builder;
+        }
+
+        /// <summary>
+        /// Retrieves the transactions within a GP-API batch.
+        /// </summary>
+        /// <param name="batchId">The GP-API batch ID.</param>
+        /// <returns>A report builder that returns the batch transactions and paging metadata.</returns>
+        public static TransactionReportBuilder<PagedResult<TransactionSummary>> GetBatchTransactions(string batchId) {
+            var builder = new TransactionReportBuilder<PagedResult<TransactionSummary>>(ReportType.BatchTransactions);
+            builder.WithBatchId(batchId);
+            return builder;
+        }
+
         public static TransactionReportBuilder<List<TransactionSummary>> OpenAuths()
         {
             return new TransactionReportBuilder<List<TransactionSummary>>(ReportType.OpenAuths);
@@ -117,6 +139,23 @@ namespace GlobalPayments.Api.Services {
         public static ReportBuilder<PagedResult<ActionSummary>> FindActionsPaged(int page, int pageSize) {
             return new TransactionReportBuilder<PagedResult<ActionSummary>>(ReportType.FindActionsPaged)
                 .WithPaging(page, pageSize);
+        }
+
+        /// <summary>Creates a paged GP-API authentication search.</summary>
+        /// <param name="page">The page number, starting at one.</param>
+        /// <param name="pageSize">The maximum number of records to return.</param>
+        /// <returns>A builder for filtering and executing the authentication search.</returns>
+        public static AuthenticationReportBuilder<PagedResult<AuthenticationSummary>> FindAuthenticationsPaged(int page, int pageSize) {
+            return new AuthenticationReportBuilder<PagedResult<AuthenticationSummary>>(ReportType.FindAuthenticationsPaged)
+                .WithPaging(page, pageSize);
+        }
+
+        /// <summary>Creates a request for one GP-API authentication.</summary>
+        /// <param name="authenticationId">The authentication identifier.</param>
+        /// <returns>A builder that retrieves the authentication details.</returns>
+        public static AuthenticationReportBuilder<AuthenticationSummary> AuthenticationDetail(string authenticationId) {
+            return new AuthenticationReportBuilder<AuthenticationSummary>(ReportType.AuthenticationDetail)
+                .WithAuthenticationId(authenticationId);
         }
 
         public ReportBuilder<PagedResult<MerchantSummary>> FindMerchants(int page, int pageSize) {

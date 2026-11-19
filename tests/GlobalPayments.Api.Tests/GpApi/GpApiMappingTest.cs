@@ -35,6 +35,39 @@ namespace GlobalPayments.Api.Tests.GpApi {
             'addresses':[{'line_1':'Line 1','line_2':'Line 2','line_3':'Line 3','city':'Atlanta','state':'GA','postal_code':'30346','country':'US'}],
             'action':{'id':'ACT_contract','type':'ACCOUNTS_SINGLE','time_created':'2026-01-02T03:04:05.678Z',
                 'result_code':'SUCCESS','app_id':'APP_contract','app_name':'Contract app'}}";
+        private const string AuthenticationResponseJson = @"{
+            'id':'AUT_contract','time_created':'2026-01-02T03:04:05.678Z',
+            'time_last_updated':'2026-01-03T04:05:06.789Z','transaction_type':'SALE','status':'AVAILABLE',
+            'channel':'CNP','amount':'1234','currency':'GBP','country':'GB','source':'BROWSER',
+            'merchant_id':'MER_contract','merchant_name':'Contract merchant','account_id':'TRA_contract',
+            'account_name':'transaction_processing','reference':'authentication_reference',
+            'payment_method':{'result':'00','message':'APPROVED','entry_mode':'ECOM','fingerprint':'fingerprint',
+                'fingerprint_presence_indicator':'NEW','name':'Test card',
+                'card':{'funding':'CREDIT','brand':'VISA','authcode':'AUTH','brand_reference':'BRAND_REF',
+                    'masked_number_first6last4':'411111xxxx1111','cvv_indicator':'PRESENT','cvv_result':'MATCHED',
+                    'avs_address_result':'MATCHED','avs_postal_code_result':'NOT_CHECKED'},
+                'three_ds':{'acs_trans_ref':'ACS_PAYMENT','ds_trans_ref':'DS_PAYMENT',
+                    'server_trans_ref':'SERVER_PAYMENT','liability_shift':'YES','value':'CAVV_PAYMENT',
+                    'eci':'05','status':'AUTHENTICATION_SUCCESSFUL','status_reason':'HIGH_CONFIDENCE',
+                    'message_category':'PAYMENT_AUTHENTICATION','message_version':'2.2.0','challenge_status':'NOT_MANDATED'}},
+            'three_ds':{'acs_trans_ref':'ACS_AUTH','acs_reference_number':'ACS_REF','ds_trans_ref':'DS_AUTH',
+                'server_trans_ref':'SERVER_AUTH','liability_shift':'YES','value':'CAVV_AUTH','eci':'05',
+                'status':'AUTHENTICATION_SUCCESSFUL','status_reason':'HIGH_CONFIDENCE',
+                'message_category':'PAYMENT_AUTHENTICATION','message_version':'2.2.0','challenge_status':'NOT_MANDATED',
+                'ds_protocol_version_start':'2.1.0','ds_protocol_version_end':'2.2.0',
+                'acs_protocol_version_start':'2.1.0','acs_protocol_version_end':'2.2.0',
+                'acs_info_indicator':['AUTHENTICATION_AVAILABLE_AT_ACS'],'enrolled_status':'ENROLLED',
+                'challenge_model':'STATIC_CHALLENGE','session_data_field_name':'threeDSSessionData',
+                'message_type':'CREQ','challenge_value':'challenge-value','redirect_url':'https://acs.example/redirect',
+                'acs_challenge_request_url':'https://acs.example/challenge','method_url':'https://acs.example/method',
+                'method_data':{'three_ds_server_trans_id':'METHOD_TRANS','three_ds_method_return_url':'https://example.com/method-return',
+                    'encoded_method_data':'encoded-method-data'},
+                'mobile_data':{'acs_signed_content':'signed-content',
+                    'acs_rendering_type':{'acs_interface':'NATIVE','acs_ui_template':'SINGLE_SELECT'}}},
+            'notifications':{'challenge_return_url':'https://example.com/challenge-return'},
+            'action_create_id':'ACT_CREATE','system':{'mid':'MID_contract','tid':'TID_contract','name':'System'},
+            'action':{'id':'ACT_auth','type':'CHECK_AVAILABILITY','time_created':'2026-01-02T03:04:05.678Z',
+                'result_code':'SUCCESS','app_id':'APP_contract','app_name':'Contract app'}}";
 
         /// <summary>
         /// Serializes a status-only edit without adding unrelated account fields.
@@ -517,6 +550,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("currency"), transaction.Currency);
             Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ReferenceNumber);
             Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ClientTransactionId);
+            Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchId);
             Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSequenceNumber);
             Assert.AreEqual(doc.GetValue<string>("country"), transaction.Country);
             Assert.AreEqual(doc.GetValue<string>("parent_resource_id"), transaction.OriginalTransactionId);
@@ -555,6 +589,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("currency"), transaction.Currency);
             Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ReferenceNumber);
             Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ClientTransactionId);
+            Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchId);
             Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSequenceNumber);
             Assert.AreEqual(doc.GetValue<string>("country"), transaction.Country);
             Assert.AreEqual(doc.GetValue<string>("parent_resource_id"), transaction.OriginalTransactionId);
@@ -613,6 +648,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(obj.currency, transaction.Currency);
             Assert.AreEqual(obj.reference, transaction.ReferenceNumber);
             Assert.AreEqual(obj.reference, transaction.ClientTransactionId);
+            Assert.AreEqual(obj.batch_id, transaction.BatchId);
             Assert.AreEqual(obj.batch_id, transaction.BatchSequenceNumber);
             Assert.AreEqual(obj.country, transaction.Country);
             Assert.AreEqual(obj.parent_resource_id, transaction.OriginalTransactionId);
@@ -668,6 +704,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(obj.currency, transaction.Currency);
             Assert.AreEqual(obj.reference, transaction.ReferenceNumber);
             Assert.AreEqual(obj.reference, transaction.ClientTransactionId);
+            Assert.AreEqual(obj.batch_id, transaction.BatchId);
             Assert.AreEqual(obj.batch_id, transaction.BatchSequenceNumber);
             Assert.AreEqual(obj.country, transaction.Country);
             Assert.AreEqual(obj.parent_resource_id, transaction.OriginalTransactionId);
@@ -1023,6 +1060,138 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual("test_app", result.Action.AppName);
         }
 
+        /// <summary>Maps authentication detail fields and paged-list envelope metadata.</summary>
+        [TestMethod]
+        public void MapReportResponse_Authentications_MapsDetailAndPagedEnvelope() {
+            var detail = GpApiMapping.MapReportResponse<AuthenticationSummary>(
+                AuthenticationResponseJson, ReportType.AuthenticationDetail);
+            var listResponseJson = @"{
+                'current_page_size':1,'merchant_id':'MER_contract','merchant_name':'Contract merchant',
+                'account_id':'TRA_contract','account_name':'transaction_processing',
+                'filter':{'from_time_created':'2026-01-01','to_time_created':'2026-01-31'},
+                'paging':{'page_size':20,'page':2,'order':'DESC','order_by':'TIME_CREATED'},
+                'authentications':" + AuthenticationResponseJson + @",
+                'action':{'id':'ACT_list','type':'AUTHENTICATIONS_LIST',
+                    'time_created':'2026-01-04T05:06:07.890Z','result_code':'SUCCESS'}}";
+            var page = GpApiMapping.MapReportResponse<PagedResult<AuthenticationSummary>>(
+                listResponseJson, ReportType.FindAuthenticationsPaged);
+
+            Assert.AreEqual("AUT_contract", detail.Id);
+            Assert.AreEqual("SALE", detail.TransactionType);
+            Assert.AreEqual("AVAILABLE", detail.Status);
+            Assert.AreEqual(12.34m, detail.Amount);
+            Assert.AreEqual("TRA_contract", detail.AccountId);
+            Assert.AreEqual("authentication_reference", detail.Reference);
+            Assert.AreEqual("Test card", detail.PaymentMethod.Name);
+            Assert.AreEqual("fingerprint", detail.PaymentMethod.Fingerprint);
+            Assert.AreEqual("AUTH", detail.PaymentMethod.Card.AuthCode);
+            Assert.AreEqual("411111xxxx1111", detail.PaymentMethod.Card.MaskedNumberFirst6Last4);
+            Assert.AreEqual("AUTHENTICATION_SUCCESSFUL", detail.PaymentMethod.ThreeDSecure.Status);
+            Assert.AreEqual("AUTHENTICATION_SUCCESSFUL", detail.ThreeDSecure.Status);
+            Assert.AreEqual("NOT_MANDATED", detail.ThreeDSecure.ChallengeStatus);
+            Assert.AreEqual("2.2.0", detail.ThreeDSecure.MessageVersion);
+            Assert.AreEqual("STATIC_CHALLENGE", detail.ThreeDSecure.ChallengeModel);
+            Assert.AreEqual("challenge-value", detail.ThreeDSecure.ChallengeValue);
+            Assert.AreEqual("https://acs.example/challenge", detail.ThreeDSecure.AcsChallengeRequestUrl);
+            Assert.AreEqual("METHOD_TRANS", detail.ThreeDSecure.MethodData.ThreeDSServerTransactionId);
+            Assert.AreEqual("signed-content", detail.ThreeDSecure.MobileData.AcsSignedContent);
+            Assert.AreEqual("NATIVE", detail.ThreeDSecure.MobileData.AcsRenderingType.AcsInterface);
+            Assert.AreEqual("https://example.com/challenge-return", detail.Notifications.ChallengeReturnUrl);
+            Assert.AreEqual("ACT_CREATE", detail.ActionCreateId);
+            Assert.AreEqual("TID_contract", detail.System.Tid);
+            Assert.AreEqual("ACT_auth", detail.Action.Id);
+
+            Assert.AreEqual(1, page.CurrentPageSize);
+            Assert.AreEqual("MER_contract", page.MerchantId);
+            Assert.AreEqual("TRA_contract", page.AccountId);
+            Assert.AreEqual(new DateTime(2026, 1, 1), page.FromTimeCreated.Value.Date);
+            Assert.AreEqual(new DateTime(2026, 1, 31), page.ToTimeCreated.Value.Date);
+            Assert.AreEqual(2, page.Page);
+            Assert.AreEqual(20, page.PageSize);
+            Assert.AreEqual("DESC", page.Order);
+            Assert.AreEqual(1, page.Results.Count);
+            Assert.AreEqual("AUT_contract", page.Results[0].Id);
+            Assert.AreEqual("ACT_list", page.Action.Id);
+
+            var transaction = GpApiMapping.Map3DSecureData(AuthenticationResponseJson);
+            Assert.AreEqual("AUT_contract", transaction.TransactionId);
+            Assert.AreEqual("MER_contract", transaction.MerchantId);
+            Assert.AreEqual("TRA_contract", transaction.AccountId);
+            Assert.AreEqual("AUT_contract", transaction.AuthenticationDetails.Id);
+            Assert.AreEqual("https://acs.example/redirect", transaction.AuthenticationDetails.ThreeDSecure.RedirectUrl);
+        }
+
+        /// <summary>Maps the documented scalar mobile rendering type and flat mobile response fields.</summary>
+        [TestMethod]
+        public void MapAuthentication_WithFlatMobileData_ReturnsDocumentedFields() {
+            const string response = @"{
+                'id':'AUT_mobile','status':'CHALLENGE_REQUIRED','source':'MOBILE_SDK',
+                'three_ds':{'message_version':'2.2.0','status':'CHALLENGE_REQUIRED',
+                    'mobile_data':{'acs_signed_content':'signed-content','acs_rendering_type':'NATIVE',
+                        'acs_interface':'HTML','acs_ui_template':'MULTI_SELECT'}}}";
+
+            var transaction = GpApiMapping.Map3DSecureData(response);
+            var threeDS = transaction.AuthenticationDetails.ThreeDSecure;
+
+            Assert.AreEqual("CHALLENGE_REQUIRED", transaction.Status);
+            Assert.IsNotNull(threeDS);
+            Assert.AreEqual("HTML", threeDS.AcsInterface);
+            Assert.AreEqual("MULTI_SELECT", threeDS.AcsUiTemplate);
+            Assert.IsNotNull(threeDS.MobileData);
+            Assert.AreEqual("signed-content", threeDS.MobileData.AcsSignedContent);
+            Assert.AreEqual("NATIVE", threeDS.MobileData.AcsRenderingTypeValue);
+            Assert.AreEqual("HTML", threeDS.MobileData.AcsInterface);
+            Assert.AreEqual("MULTI_SELECT", threeDS.MobileData.AcsUiTemplate);
+            Assert.IsNull(threeDS.MobileData.AcsRenderingType);
+        }
+
+        /// <summary>Maps whitelist status and the documented result string arrays.</summary>
+        [TestMethod]
+        public void MapAuthentication_WithResultArrays_ReturnsWhitelistAndExtensions() {
+            const string response = @"{
+                'id':'AUT_result','status':'SUCCESS_AUTHENTICATED',
+                'three_ds':{'status':'AUTHENTICATION_SUCCESSFUL',
+                    'whitelist_status':'WHITELISTED_BY_CARDHOLDER',
+                    'acs_decoupled_response_indicator':['DECOUPLED_AUTHENTICATION_UTILISED'],
+                    'message_extension':['extension-one','extension-two']}}";
+
+            var transaction = GpApiMapping.Map3DSecureData(response);
+            var details = transaction.AuthenticationDetails;
+
+            Assert.AreEqual("SUCCESS_AUTHENTICATED", transaction.Status);
+            Assert.AreEqual("SUCCESS_AUTHENTICATED", details.Status);
+            Assert.AreEqual("AUTHENTICATION_SUCCESSFUL", details.ThreeDSecure.Status);
+            Assert.AreEqual("WHITELISTED_BY_CARDHOLDER", details.ThreeDSecure.WhitelistStatus);
+            CollectionAssert.AreEqual(new[] { "DECOUPLED_AUTHENTICATION_UTILISED" },
+                new List<string>(details.ThreeDSecure.AcsDecoupledResponseIndicator));
+            CollectionAssert.AreEqual(new[] { "extension-one", "extension-two" },
+                new List<string>(details.ThreeDSecure.MessageExtensionValues));
+        }
+
+        /// <summary>Maps all newly supported authentication entry modes to their documented wire values.</summary>
+        [DataTestMethod]
+        [DataRow(PaymentEntryMode.Phone, "PHONE")]
+        [DataRow(PaymentEntryMode.Mail, "MAIL")]
+        [DataRow(PaymentEntryMode.Present, "PRESENT")]
+        [DataRow(PaymentEntryMode.Unknown, "UNKNOWN")]
+        public void MapAuthenticationEntryMode_ReturnsDocumentedValue(PaymentEntryMode mode, string expected) {
+            Assert.AreEqual(expected, EnumConverter.GetMapping(Target.GP_API, mode));
+        }
+
+        /// <summary>Maps all newly supported authentication stored-credential models.</summary>
+        [DataTestMethod]
+        [DataRow(StoredCredentialType.AddPaymentMethod, "ADD_PAYMENT_METHOD")]
+        [DataRow(StoredCredentialType.SplitOrDelayedShipment, "SPLIT_OR_DELAYED_SHIPMENT")]
+        [DataRow(StoredCredentialType.TopUp, "TOP_UP")]
+        [DataRow(StoredCredentialType.MailOrder, "MAIL_ORDER")]
+        [DataRow(StoredCredentialType.TelephoneOrder, "TELEPHONE_ORDER")]
+        [DataRow(StoredCredentialType.WhitelistStatusCheck, "WHITELIST_STATUS_CHECK")]
+        [DataRow(StoredCredentialType.OtherPayment, "OTHER_PAYMENT")]
+        [DataRow(StoredCredentialType.BillingAgreement, "BILLING_AGREEMENT")]
+        public void MapAuthenticationStoredCredential_ReturnsDocumentedValue(StoredCredentialType model, string expected) {
+            Assert.AreEqual(expected, EnumConverter.GetMapping(Target.GP_API, model));
+        }
+
         [TestMethod]
         public void MapResponseTest_CreateTransaction() {
             // Arrange
@@ -1035,12 +1204,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             // Assert
             Assert.AreEqual(doc.GetValue<string>("id"), transaction.TransactionId);
-            Assert.AreEqual(doc.GetValue<string>("amount").ToAmount(), transaction.BalanceAmount);
+            Assert.AreEqual(14m, transaction.AuthorizedAmount);
             Assert.AreEqual(doc.GetValue<string>("time_created"), transaction.Timestamp);
             Assert.AreEqual(doc.GetValue<string>("status"), transaction.ResponseMessage);
             Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ReferenceNumber);
             Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSummary?.BatchReference);
-            Assert.AreEqual(doc.Get("action").GetValue<string>("result_code"), transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("id"), transaction.Token);
             Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.CardIssuerResponse.Result);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("authcode"), transaction.AuthorizationCode);
@@ -1062,12 +1231,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             // Assert
             Assert.AreEqual(doc.GetValue<string>("id"), transaction.TransactionId);
-            Assert.AreEqual(doc.GetValue<string>("amount").ToAmount(), transaction.BalanceAmount);
+            Assert.AreEqual(19.99m, transaction.AuthorizedAmount);
             Assert.AreEqual(doc.GetValue<string>("time_created"), transaction.Timestamp);
             Assert.AreEqual(doc.GetValue<string>("status"), transaction.ResponseMessage);
             Assert.AreEqual(doc.GetValue<string>("reference"), transaction.ReferenceNumber);
             Assert.AreEqual(doc.GetValue<string>("batch_id"), transaction.BatchSummary?.BatchReference);
-            Assert.AreEqual(doc.Get("action").GetValue<string>("result_code"), transaction.ResponseCode);
+            Assert.AreEqual("00", transaction.ResponseCode);
             Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("id"), transaction.Token);
             Assert.AreEqual(doc.Get("payment_method")?.GetValue<string>("result"), transaction.CardIssuerResponse.Result);
             Assert.AreEqual(doc.Get("payment_method")?.Get("card")?.GetValue<string>("authcode"), transaction.AuthorizationCode);
@@ -1094,6 +1263,278 @@ namespace GlobalPayments.Api.Tests.GpApi {
             Assert.AreEqual(doc.GetValue<string>("status"), transaction?.BatchSummary?.Status);
             Assert.AreEqual(doc.GetValue<string>("amount").ToAmount(), transaction?.BatchSummary?.TotalAmount);
             Assert.AreEqual(doc.GetValue<int>("transaction_count"), transaction?.BatchSummary?.TransactionCount);
+        }
+
+        /// <summary>
+        /// Verifies that all batch response fields, including nested brand and host totals, are mapped.
+        /// </summary>
+        [TestMethod]
+        public void MapReportResponse_BatchById_MapsAllFields() {
+            const string rawJson = @"{
+                ""id"": ""BAT_123"",
+                ""status"": ""CLOSED"",
+                ""time_created"": ""2024-01-31T13:33:00Z"",
+                ""time_last_updated"": ""2024-01-31T18:08:29.307Z"",
+                ""time_closed"": ""2024-01-31T18:08:00Z"",
+                ""open_action_id"": ""ACT_OPEN"",
+                ""close_action_id"": ""ACT_CLOSE"",
+                ""merchant_id"": ""MER_123"",
+                ""merchant_name"": ""Sandbox Merchant"",
+                ""account_id"": ""TRA_123"",
+                ""account_name"": ""Transaction Processing"",
+                ""country"": ""US"",
+                ""site_reference"": ""site-1"",
+                ""device_reference"": ""device-1"",
+                ""batch_transaction_count"": 48,
+                ""transaction_count"": 47,
+                ""amount"": ""31396"",
+                ""currency"": ""USD"",
+                ""gratuity_amount"": ""100"",
+                ""sales"": { ""count"": 36, ""amount"": ""45012"" },
+                ""refunds"": { ""count"": 12, ""amount"": ""-13616"" },
+                ""funding_debit"": { ""count"": 1, ""amount"": ""500"" },
+                ""funding_credit"": { ""count"": 47, ""amount"": ""30896"" },
+                ""brand_breakdown"": [
+                    {
+                        ""brand"": ""VISA"",
+                        ""count"": 47,
+                        ""amount"": ""31296"",
+                        ""gratuity_amount"": ""100"",
+                        ""sales"": { ""count"": 35, ""amount"": ""44912"" },
+                        ""refunds"": { ""count"": 12, ""amount"": ""-13616"" },
+                        ""funding_debit"": { ""count"": 0, ""amount"": ""0"" },
+                        ""funding_credit"": { ""count"": 47, ""amount"": ""31296"" }
+                    }
+                ],
+                ""host_breakdown"": {
+                    ""merchant_name"": ""GP API CP"",
+                    ""reference"": ""2323"",
+                    ""count"": 48,
+                    ""amount"": ""31396"",
+                    ""funding_debit"": {
+                        ""sales"": { ""count"": 0, ""amount"": ""0"" },
+                        ""refunds"": { ""count"": 0, ""amount"": ""0"" }
+                    },
+                    ""funding_credit"": {
+                        ""sales"": { ""count"": 36, ""amount"": ""45012"" },
+                        ""refunds"": { ""count"": 12, ""amount"": ""-13616"" }
+                    }
+                },
+                ""action"": {
+                    ""id"": ""ACT_CLOSE"",
+                    ""type"": ""CLOSE"",
+                    ""time_created"": ""2024-01-31T18:08:29.307Z"",
+                    ""result_code"": ""SUCCESS"",
+                    ""app_id"": ""APP_123"",
+                    ""app_name"": ""batch-app""
+                }
+            }";
+
+            var summary = GpApiMapping.MapReportResponse<BatchSummary>(rawJson, ReportType.BatchById);
+
+            Assert.AreEqual("BAT_123", summary.BatchReference);
+            Assert.AreEqual("CLOSED", summary.Status);
+            Assert.AreEqual(new DateTime(2024, 1, 31, 13, 33, 0), summary.TimeCreated);
+            Assert.AreEqual(new DateTime(2024, 1, 31, 18, 8, 29, 307), summary.TimeLastUpdated);
+            Assert.AreEqual(new DateTime(2024, 1, 31, 18, 8, 0), summary.TimeClosed);
+            Assert.AreEqual("ACT_OPEN", summary.OpenActionId);
+            Assert.AreEqual("ACT_CLOSE", summary.CloseActionId);
+            Assert.AreEqual("MER_123", summary.MerchantId);
+            Assert.AreEqual("Sandbox Merchant", summary.MerchantName);
+            Assert.AreEqual("TRA_123", summary.AccountId);
+            Assert.AreEqual("Transaction Processing", summary.AccountName);
+            Assert.AreEqual("US", summary.Country);
+            Assert.AreEqual("site-1", summary.SiteReference);
+            Assert.AreEqual("device-1", summary.DeviceReference);
+            Assert.AreEqual(48, summary.BatchTransactionCount);
+            Assert.AreEqual(47, summary.TransactionCount);
+            Assert.AreEqual(313.96m, summary.TotalAmount);
+            Assert.AreEqual("USD", summary.Currency);
+            Assert.AreEqual(1m, summary.GratuityAmount);
+            Assert.AreEqual(36, summary.SaleCount);
+            Assert.AreEqual(450.12m, summary.SaleAmount);
+            Assert.AreEqual(12, summary.ReturnCount);
+            Assert.AreEqual(-136.16m, summary.ReturnAmount);
+            Assert.AreEqual(1, summary.DebitCount);
+            Assert.AreEqual(5m, summary.DebitAmount);
+            Assert.AreEqual(47, summary.CreditCount);
+            Assert.AreEqual(308.96m, summary.CreditAmount);
+
+            Assert.IsNotNull(summary.BrandBreakdown);
+            Assert.AreEqual(1, summary.BrandBreakdown.Count);
+            var brand = summary.BrandBreakdown[0];
+            Assert.AreEqual("VISA", brand.Brand);
+            Assert.AreEqual(47, brand.Count);
+            Assert.AreEqual(312.96m, brand.Amount);
+            Assert.AreEqual(1m, brand.GratuityAmount);
+            Assert.AreEqual(35, brand.Sales.Count);
+            Assert.AreEqual(449.12m, brand.Sales.Amount);
+            Assert.AreEqual(12, brand.Refunds.Count);
+            Assert.AreEqual(-136.16m, brand.Refunds.Amount);
+            Assert.AreEqual(0, brand.FundingDebit.Count);
+            Assert.AreEqual(0m, brand.FundingDebit.Amount);
+            Assert.AreEqual(47, brand.FundingCredit.Count);
+            Assert.AreEqual(312.96m, brand.FundingCredit.Amount);
+
+            Assert.IsNotNull(summary.HostBreakdown);
+            Assert.AreEqual("GP API CP", summary.HostBreakdown.MerchantName);
+            Assert.AreEqual("2323", summary.HostBreakdown.Reference);
+            Assert.AreEqual(48, summary.HostBreakdown.Count);
+            Assert.AreEqual(313.96m, summary.HostBreakdown.Amount);
+            Assert.AreEqual(0, summary.HostBreakdown.FundingDebit.Sales.Count);
+            Assert.AreEqual(0m, summary.HostBreakdown.FundingDebit.Sales.Amount);
+            Assert.AreEqual(36, summary.HostBreakdown.FundingCredit.Sales.Count);
+            Assert.AreEqual(450.12m, summary.HostBreakdown.FundingCredit.Sales.Amount);
+            Assert.AreEqual(12, summary.HostBreakdown.FundingCredit.Refunds.Count);
+            Assert.AreEqual(-136.16m, summary.HostBreakdown.FundingCredit.Refunds.Amount);
+
+            Assert.IsNotNull(summary.Action);
+            Assert.AreEqual("ACT_CLOSE", summary.Action.Id);
+            Assert.AreEqual("CLOSE", summary.Action.Type);
+            Assert.IsFalse(string.IsNullOrEmpty(summary.Action.TimeCreated));
+            Assert.AreEqual("SUCCESS", summary.Action.ResultCode);
+            Assert.AreEqual("APP_123", summary.Action.AppId);
+            Assert.AreEqual("batch-app", summary.Action.AppName);
+        }
+
+        /// <summary>
+        /// Verifies that transactions and response metadata from a batch transaction query are mapped.
+        /// </summary>
+        [TestMethod]
+        public void MapReportResponse_BatchTransactions_MapsResultsAndPaging() {
+            const string rawJson = @"{
+                ""total_record_count"": 1,
+                ""current_page_size"": 1,
+                ""batch_transaction_count"": 7,
+                ""account_id"": ""TRA_123"",
+                ""account_name"": ""processing"",
+                ""site_reference"": ""site-123"",
+                ""device_reference"": ""device-123"",
+                ""filter"": { ""batch_id"": ""BAT_FILTER"" },
+                ""merchant_id"": ""MER_123"",
+                ""merchant_name"": ""Sandbox Merchant"",
+                ""paging"": { ""page"": 1, ""page_size"": 10, ""order"": ""ASC"", ""order_by"": ""TIME_CREATED"" },
+                ""action"": { ""id"": ""ACT_LIST"", ""type"": ""BATCH_LIST"", ""result_code"": ""SUCCESS"" },
+                ""transactions"": [
+                    {
+                        ""id"": ""TRN_123"",
+                        ""time_created"": ""2024-01-31T13:33:00Z"",
+                        ""status"": ""CAPTURED"",
+                        ""type"": ""SALE"",
+                        ""amount"": ""1234"",
+                        ""tax_amount"": ""123"",
+                        ""gratuity_amount"": ""200"",
+                        ""surcharge_amount"": ""50"",
+                        ""cashback_amount"": ""300"",
+                        ""payment_method"": {
+                            ""card"": {
+                                ""cvv_result"": ""MATCHED"",
+                                ""avs_address"": ""123 Test Street"",
+                                ""avs_address_result"": ""MATCHED"",
+                                ""avs_postal_code_result"": ""NOT_MATCHED""
+                            }
+                        },
+                        ""currency"": ""USD"",
+                        ""batch_id"": ""BAT_123"",
+                        ""country"": ""US""
+                    }
+                ]
+            }";
+
+            var result = GpApiMapping.MapReportResponse<PagedResult<TransactionSummary>>(
+                rawJson, ReportType.BatchTransactions);
+
+            Assert.AreEqual(1, result.TotalRecordCount);
+            Assert.AreEqual(1, result.CurrentPageSize);
+            Assert.AreEqual("MER_123", result.MerchantId);
+            Assert.AreEqual("Sandbox Merchant", result.MerchantName);
+            Assert.AreEqual(1, result.Page);
+            Assert.AreEqual(10, result.PageSize);
+            Assert.AreEqual("ASC", result.Order);
+            Assert.AreEqual("TIME_CREATED", result.OrderBy);
+            Assert.IsNotNull(result.Action);
+            Assert.AreEqual("ACT_LIST", result.Action.Id);
+            Assert.AreEqual(1, result.Results.Count);
+            Assert.AreEqual("TRN_123", result.Results[0].TransactionId);
+            Assert.AreEqual(12.34m, result.Results[0].Amount);
+            Assert.AreEqual("USD", result.Results[0].Currency);
+            Assert.AreEqual("BAT_123", result.Results[0].BatchId);
+            Assert.AreEqual("BAT_123", result.Results[0].BatchSequenceNumber);
+            Assert.AreEqual(7, result.BatchTransactionCount);
+            Assert.AreEqual("TRA_123", result.AccountId);
+            Assert.AreEqual("processing", result.AccountName);
+            Assert.AreEqual("site-123", result.SiteReference);
+            Assert.AreEqual("device-123", result.DeviceReference);
+            Assert.AreEqual("BAT_FILTER", result.BatchId);
+            var transaction = result.Results[0];
+            Assert.AreEqual(1.23m, transaction.TaxAmount);
+            Assert.AreEqual(2m, transaction.GratuityAmount);
+            Assert.AreEqual(0.50m, transaction.SurchargeAmount);
+            Assert.AreEqual(3m, transaction.CashBackAmount);
+            Assert.AreEqual("MATCHED", transaction.CvvResult);
+            Assert.AreEqual("123 Test Street", transaction.AvsAddress);
+            Assert.AreEqual("MATCHED", transaction.AvsAddressResult);
+            Assert.AreEqual("NOT_MATCHED", transaction.AvsPostalCodeResult);
+        }
+
+        /// <summary>
+        /// Verifies missing optional batch transaction fields remain absent.
+        /// </summary>
+        [TestMethod]
+        public void MapReportResponse_BatchTransactions_WithMissingOptionalFields() {
+            var result = GpApiMapping.MapReportResponse<PagedResult<TransactionSummary>>(
+                @"{""transactions"":[{""id"":""TRN_optional""}]}", ReportType.BatchTransactions);
+            Assert.IsNull(result.BatchTransactionCount);
+            Assert.IsNull(result.BatchId);
+            Assert.IsNull(result.AccountId);
+            Assert.IsNull(result.AccountName);
+            Assert.IsNull(result.SiteReference);
+            Assert.IsNull(result.DeviceReference);
+            Assert.AreEqual(1, result.Results.Count);
+            var transaction = result.Results[0];
+            Assert.AreEqual("TRN_optional", transaction.TransactionId);
+            Assert.IsNull(transaction.Amount);
+            Assert.IsNull(transaction.TaxAmount);
+            Assert.IsNull(transaction.GratuityAmount);
+            Assert.IsNull(transaction.SurchargeAmount);
+            Assert.IsNull(transaction.CashBackAmount);
+            Assert.IsNull(transaction.CvvResult);
+            Assert.IsNull(transaction.AvsAddress);
+            Assert.IsNull(transaction.AvsAddressResult);
+            Assert.IsNull(transaction.AvsPostalCodeResult);
+        }
+
+        /// <summary>
+        /// Verifies batch transaction amounts respect currency precision and preserve zero values.
+        /// </summary>
+        /// <param name="currency">The response currency.</param>
+        /// <param name="expected">The expected amount in major units.</param>
+        [DataTestMethod]
+        [DataRow("USD", "1.23")]
+        [DataRow("KRW", "123")]
+        [DataRow("JPY", "1.23")]
+        [DataRow("BHD", "0.123")]
+        public void MapReportResponse_BatchTransactions_WithCurrencyPrecision(string currency, string expected) {
+            var rawJson = @"{""batch_transaction_count"":0,""filter"":null,""transactions"":[{
+                ""amount"":""123"",""tax_amount"":""123"",""gratuity_amount"":""123"",
+                ""surcharge_amount"":""123"",""cashback_amount"":""0"",
+                ""payment_method"":{""card"":null},""currency"":""" + currency + @"""}]}";
+            var result = GpApiMapping.MapReportResponse<PagedResult<TransactionSummary>>(
+                rawJson, ReportType.BatchTransactions);
+            Assert.AreEqual(0, result.BatchTransactionCount);
+            Assert.IsNull(result.BatchId);
+            Assert.AreEqual(1, result.Results.Count);
+            var transaction = result.Results[0];
+            var amount = decimal.Parse(expected, CultureInfo.InvariantCulture);
+            Assert.AreEqual(amount, transaction.Amount);
+            Assert.AreEqual(amount, transaction.TaxAmount);
+            Assert.AreEqual(amount, transaction.GratuityAmount);
+            Assert.AreEqual(amount, transaction.SurchargeAmount);
+            Assert.AreEqual(0m, transaction.CashBackAmount);
+            Assert.IsNull(transaction.CvvResult);
+            Assert.IsNull(transaction.AvsAddress);
+            Assert.IsNull(transaction.AvsAddressResult);
+            Assert.IsNull(transaction.AvsPostalCodeResult);
         }
 
         [TestMethod]

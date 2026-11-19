@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.Entities.Enums;
+using GlobalPayments.Api.Entities.Reporting;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
 using GlobalPayments.Api.Tests.GpApi.Client;
@@ -23,6 +23,7 @@ namespace GlobalPayments.Api.Tests.GpApi {
         private const string ENROLLED = "ENROLLED";
         private const string NOT_ENROLLED = "NOT_ENROLLED";
         private const string SUCCESS_AUTHENTICATED = "SUCCESS_AUTHENTICATED";
+        private const string AuthenticationReportsConfigName = "authenticationReports";
 
         #endregion
         private GpApi3DSecureAcsClient acsClient;
@@ -35,19 +36,17 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            var gpApiConfig = GpApiConfigSetup(AppId, AppKey, Channel.CardNotPresent);
+            var gpApiConfig = GpApiConfigSetup(newappid, newappkey, Channel.CardNotPresent);
             ServicesContainer.ConfigureService(gpApiConfig);
         }
 
-        public GpApi3DSecureTest() {            
-            // Create card data
+        public GpApi3DSecureTest() {
             card = new CreditCardData {
                 ExpMonth = ExpMonth,
                 ExpYear = ExpYear,
                 CardHolderName = "John Smith"
             };
 
-            // Shipping address
             shippingAddress = new Address {
                 StreetAddress1 = "Apartment 852",
                 StreetAddress2 = "Complex 741",
@@ -58,7 +57,6 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 CountryCode = "840"
             };
 
-            // Browser data
             browserData = new BrowserData {
                 AcceptHeader = "text/html,application/xhtml+xml,application/xml;q=9,image/webp,img/apng,*/*;q=0.8",
                 ColorDepth = ColorDepth.TWENTY_FOUR_BITS,
@@ -69,9 +67,70 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 ScreenWidth = 1920,
                 ChallengeWindowSize = ChallengeWindowSize.WINDOWED_600X400,
                 Timezone = "0",
-                UserAgent =
-                    "Mozilla/5.0 (Windows NT 6.1; Win64, x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+                UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
             };
+        }
+
+        /// <summary>
+        /// Checks availability, then retrieves the created authentication through public reporting APIs.
+        /// </summary>
+        [TestMethod]
+        public void CheckAvailability_ThenFindAuthentication_ReturnsMappedResults() {
+            var authenticationReportsConfig = GpApiConfigSetup(newappid, newappkey, Channel.CardNotPresent);
+
+            ServicesContainer.ConfigureService(authenticationReportsConfig, AuthenticationReportsConfigName);
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+            var reference = Guid.NewGuid().ToString();
+
+            var availability = Secure3dService.CheckEnrollment(card)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithReferenceNumber(reference)
+                .WithEntryMode(PaymentEntryMode.Ecom)
+                .WithPaymentMethodName(card.CardHolderName)
+                .Execute(AuthenticationReportsConfigName);
+
+            Assert.IsNotNull(availability);
+            Assert.IsFalse(string.IsNullOrEmpty(availability.ServerTransactionId));
+
+            var detail = ReportingService.AuthenticationDetail(availability.ServerTransactionId)
+                .Execute(AuthenticationReportsConfigName);
+            Assert.IsNotNull(detail);
+            Assert.AreEqual(availability.ServerTransactionId, detail.Id);
+            Assert.AreEqual(availability.Status, detail.Status);
+            Assert.AreEqual("ECOM", detail.PaymentMethod.EntryMode);
+            Assert.AreEqual(card.CardHolderName, detail.PaymentMethod.Name);
+
+            var page = ReportingService.FindAuthenticationsPaged(1, 10)
+                .WithAuthenticationId(availability.ServerTransactionId)
+                .Execute(AuthenticationReportsConfigName);
+            Assert.IsNotNull(page);
+            Assert.IsNotNull(page.Results);
+            Assert.IsTrue(page.Results.Exists(item => item.Id == availability.ServerTransactionId));
+        }
+
+        /// <summary>
+        /// Checks availability with payment-method metadata and verifies mapped authentication details.
+        /// </summary>
+        [TestMethod]
+        public void CheckAvailability_WithEntryModeAndPaymentMethodName_ReturnsAuthenticationDetails() {
+            card.Number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_1;
+            var reference = Guid.NewGuid().ToString();
+
+            var authentication = Secure3dService.CheckEnrollment(card)
+                .WithAmount(Amount)
+                .WithCurrency(Currency)
+                .WithReferenceNumber(reference)
+                .WithEntryMode(PaymentEntryMode.Ecom)
+                .WithPaymentMethodName(card.CardHolderName)
+                .Execute();
+
+            Assert.IsNotNull(authentication);
+            Assert.AreEqual(AVAILABLE, authentication.Status);
+            Assert.IsFalse(string.IsNullOrEmpty(authentication.ServerTransactionId));
+            Assert.IsNotNull(authentication.AuthenticationDetails);
+            Assert.AreEqual(authentication.ServerTransactionId, authentication.AuthenticationDetails.Id);
+            Assert.AreEqual(reference, authentication.AuthenticationDetails.Reference);
         }
 
         #region 3DS v2 tests
@@ -88,6 +147,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
             var secureEcom = Secure3dService.CheckEnrollment(card)
                 .WithCurrency(Currency)
                 .WithAmount(Amount)
+                .WithEntryMode(PaymentEntryMode.Ecom)
+                .WithPaymentMethodName(card.CardHolderName)
                 .Execute();
 
             Assert.IsNotNull(secureEcom);
@@ -100,8 +161,12 @@ namespace GlobalPayments.Api.Tests.GpApi {
                 .WithAmount(Amount)
                 .WithCurrency(Currency)
                 .WithAuthenticationSource(AuthenticationSource.BROWSER)
+                .WithEntryMode(PaymentEntryMode.Ecom)
+                .WithPaymentMethodName(card.CardHolderName)
                 .WithMethodUrlCompletion(MethodUrlCompletion.YES)
                 .WithOrderCreateDate(DateTime.Now)
+                .WithCustomerName(card.CardHolderName)
+                .WithCustomerDateOfBirth(new DateTime(1990, 1, 1))
                 .WithAddress(shippingAddress, AddressType.Shipping)
                 .WithBrowserData(browserData)
                 .WithCustomerEmail("jason@globalpay.com")
@@ -109,6 +174,8 @@ namespace GlobalPayments.Api.Tests.GpApi {
 
             Assert.IsNotNull(initAuth);
             Assert.AreEqual(SUCCESS_AUTHENTICATED, initAuth.Status);
+            Assert.IsNotNull(initAuth.AuthenticationDetails);
+            Assert.AreEqual(initAuth.ServerTransactionId, initAuth.AuthenticationDetails.Id);
 
             // Get authentication data
             secureEcom = Secure3dService.GetAuthenticationData()
